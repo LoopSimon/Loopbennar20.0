@@ -1,0 +1,438 @@
+################################################
+##           Creator: @Ottokard#1942          ##
+################################################
+
+
+namespace = simegasa_events
+
+#Simegasa Relation Events
+
+country_event = { #startup event for simegasa, to accept hag demands or no?
+	id = simegasa_events.1
+	title = simegasa_events.1.t
+	desc = simegasa_events.1.d
+	picture = PRAYING_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+		NOT = {
+			is_year = 1445
+		}
+		tag = L66
+	}
+
+	option = {
+		ai_chance = {
+			factor = 60
+		}
+		name = simegasa_events.1.a # accept hag demands
+		every_owned_province = {
+			limit = {
+				OR = {
+					area = tsudhagis_area
+					area = kvathagis_area
+				}
+			}
+			cede_province = S70
+		}
+		hidden_effect = {
+			every_subject_country = {
+				every_owned_province = {
+					limit = {
+						area = tsudhagis_area
+						area = kvathagis_area
+					}
+					cede_province = S70
+				}
+			}
+		}
+		hidden_effect = { #makes mengi hate simegasa
+			every_known_country = {
+				limit = { culture_group = mengi }
+				add_opinion = {
+					who = ROOT
+					modifier = L66_hag_aligned_for_other_mengi
+				}
+			}
+		}
+		
+		create_alliance = S70
+		reverse_add_opinion = { #makes yezel mora like simegasa
+			who = S70
+			modifier = L66_hag_aligned_for_yezel_mora
+		}
+		hidden_effect = {
+			S70 = {
+				reverse_add_opinion = { #makes simegasa like yezel mora
+					who = L66
+					modifier = L66_hag_aligned_for_yezel_mora
+				}
+			}
+		}
+		add_truce_with = S70
+		ai_chance = {
+			factor = 0
+		}
+		add_historical_friend = S70
+		S70 = {
+			add_historical_friend = L66
+		}
+		define_general = {
+			name = "Zufa zor Zahera"
+			shock = 4
+			fire = 2
+			manuever = 5
+			siege = 4
+			trait = planetouched_commander_personality
+		} 
+		custom_tooltip = simegasa_mengi_disaprove_hag_aliance_tt
+		custom_tooltip = simegasa_sky_domain_not_happy_tt
+		hidden_effect = {
+			clr_country_flag = simegasa_start_no_ally_flag
+			country_event = {
+				id = simegasa_events.2
+				days = 31
+			}
+		}
+	}
+
+	option = {
+		ai_chance = {
+			factor = 40
+		}
+		name = simegasa_events.1.b #betray hag masters 
+		hidden_effect = {
+			S70 = {
+				country_event = {
+					id = shadow.100
+					days = 3
+				}
+			}
+		}
+		add_country_modifier = {
+			name = L66_final_rally
+			duration = 3650
+		}
+		hidden_effect = {
+			define_ruler_to_general = {
+				fire = 0
+				shock = 4
+				manuever = 2
+				siege = 1
+			}
+		}
+		custom_tooltip = simegasa_hags_not_happy_tt
+	}
+}
+
+
+country_event = { #wrath of the righteous, mewojala rebellion
+	id = simegasa_events.2
+	title = simegasa_events.2.t
+	desc = simegasa_events.2.d
+	picture = CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+	}
+	
+	option = {
+		name = simegasa_events.2.a # play as mewojala
+		release = S69
+		S69 = { grant_independence = yes }
+		switch_tag = S69
+		hidden_effect = {
+			S69 = {	
+				define_ruler = {
+					name = "Amru IV"
+					dynasty = "zor Yiwah-Yafet"
+					adm = 2
+					dip = 5
+					mil = 4
+					male = yes
+					age = 19
+				}
+				add_ruler_personality = mage_personality
+				set_ruler_flag = evocation_1
+				set_ruler_flag = transmutation_1
+				set_ruler_flag = evocation_2
+				set_ruler_flag = transmutation_2
+				set_ruler_flag = initialized_magic_flags
+				define_ruler_to_general = {
+					fire = 1
+					shock = 8
+					manuever = 2
+					siege = 6
+					trait = war_wizard_personality
+				}
+				capital_scope = {
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					cavalry = S69
+					cavalry = S69
+				}
+				add_manpower = 10
+				add_adm_power = 50
+				add_dip_power = 50
+				add_mil_power = 50
+				create_advisor = commandant
+			}
+			L66 = {
+				disband_all_regiments = yes
+				capital_scope = {
+					infantry = L66
+					infantry = L66
+					infantry = L66
+					infantry = L66
+					infantry = L66
+					infantry = L66
+					infantry = L66
+					infantry = L66
+					infantry = L66
+					cavalry = L66
+					cavalry = L66
+					cavalry = L66
+					cavalry = L66
+				}
+			}
+		}
+		swap_non_generic_missions = yes
+		S69 = {
+			declare_war_with_cb = {
+				casus_belli = cb_evil_ruler
+				who = L66
+			}
+		}
+		5590 = {
+			remove_core = L66
+		}
+		5688 = {
+			remove_core = L66
+		}
+	}
+
+	option = {
+		name = simegasa_events.2.b # we stayin dark bby.
+		release = S69
+		S69 = { grant_independence = yes }
+		hidden_effect = {
+			S69 = {	
+				define_ruler = {
+					name = "Amru IV"
+					dynasty = "zor Yiwah-Yafet"
+					adm = 2
+					dip = 5
+					mil = 4
+					male = yes
+					age = 19
+					
+				}
+				add_ruler_personality = mage_personality
+				set_ruler_flag = evocation_1
+				set_ruler_flag = evocation_2
+				set_ruler_flag = transmutation_1
+				set_ruler_flag = transmutation_2
+				set_ruler_flag = initialized_magic_flags
+				define_ruler_to_general = {
+					fire = 1
+					shock = 8
+					manuever = 2
+					siege = 6
+					trait = war_wizard_personality
+				}
+				capital_scope = {
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					infantry = S69
+					cavalry = S69
+					cavalry = S69
+				}
+				add_adm_power = 50
+				add_dip_power = 50
+				add_mil_power = 50
+				add_manpower = 10
+				create_advisor = commandant
+			}
+		}
+		add_stability = -1
+		add_manpower = -5
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -30
+		}
+		5590 = {
+			remove_core = L66
+		}
+		5688 = {
+			remove_core = L66
+		}
+		S69 = {
+			declare_war_with_cb = {
+				casus_belli = cb_evil_ruler
+				who = L66
+			}
+		}
+	}
+
+	after = {
+		set_global_flag = S69_righteous_war
+		S69 = {
+			country_event = {
+				id = simegasa_events.5
+			}
+		}
+	}
+}
+
+country_event = { #revenge of the righteous, mewojala victory - maybe move this to mewojala file eventually.
+	id = simegasa_events.3
+	title = simegasa_events.3.t
+	desc = simegasa_events.3.d
+	picture = IMPALED_SOLDIERS_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+	}
+	
+	option = {
+		name = simegasa_events.3.a
+		add_stability = 1
+		add_estate_loyalty_modifier = {
+			estate = estate_nobles
+			desc = S69_righteous_victory
+			loyalty = 20
+			duration = 7300
+		}
+		add_estate_loyalty_modifier = {
+			estate = estate_church
+			desc = S69_righteous_victory
+			loyalty = 20
+			duration = 7300
+		}
+		add_estate_loyalty_modifier = {
+			estate = estate_adventurers
+			desc = S69_righteous_victory
+			loyalty = 20
+			duration = 7300
+		}
+		5689 = {
+			change_religion = sky_domain
+			add_province_modifier = {
+				name = S69_fearful_populance
+				duration = 7300
+			}
+			remove_core = L66
+		}
+		6741 = {
+			change_religion = sky_domain
+			add_province_modifier = {
+				name = S69_fearful_populance
+				duration = 7300
+			}
+			remove_core = L66
+		}
+		5498 = {
+			change_religion = sky_domain
+			add_province_modifier = {
+				name = S69_fearful_populance
+				duration = 7300
+			}
+			remove_core = L66
+		}
+		clr_global_flag = S69_righteous_war
+	}
+}
+
+country_event = { #simegasa wins
+	id = simegasa_events.4
+	title = simegasa_events.4.t
+	desc = simegasa_events.4.d
+	picture = LOOMING_DEATH_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+	}
+	
+	option = {
+		name = simegasa_events.4.a
+		add_stability = 1
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 30
+		}
+		add_estate_loyalty_modifier = {
+			estate = estate_church
+			desc = L66_black_burn_example
+			loyalty = 20
+			duration = 7300
+		}
+		add_estate_loyalty_modifier = {
+			estate = estate_mages
+			desc = L66_black_burn_example
+			loyalty = 20
+			duration = 7300
+		}
+		5590 = {
+			add_province_modifier = {
+				name = S69_fearful_populance
+				duration = 7300
+			}
+			remove_core = S69
+			add_core = L66
+			change_religion = shadow_pact
+		}
+		5688 = {
+			add_province_modifier = {
+				name = S69_fearful_populance
+				duration = 7300
+			}
+			remove_core = S69
+			add_core = L66
+			change_religion = shadow_pact
+		}
+		clr_global_flag = S69_righteous_war
+	}
+}
+
+country_event = { #white peace yezel
+	id = simegasa_events.5
+	title = simegasa_events.5.t
+	desc = simegasa_events.5.d
+	picture = IMPALED_SOLDIERS_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	trigger = {
+	}
+	
+	option = {
+		every_war_enemy_country = {
+			limit = {
+				NOT = { 
+					Tag = L66
+				}
+			}
+			white_peace = S69
+		}
+	}
+}

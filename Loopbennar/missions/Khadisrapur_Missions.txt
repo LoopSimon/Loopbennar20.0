@@ -1,0 +1,2445 @@
+R11_start = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } }
+
+	R11_no_hope = {
+		icon = mission_head_on_spike
+		position = 1
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_core = ROOT
+					NOT = {
+						owned_by = ROOT
+						owned_by = R84
+					}
+				}
+				AND = {
+					province_id = 4519 #Phabar
+					NOT = { is_core = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			4519 = { is_core = ROOT }
+			all_core_province = {
+				OR = {
+					owned_by = ROOT
+					owned_by = R84
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = khadisrapur_support_heroic_realms duration = 5475 }
+			simple_dynamic_effect_without_alternative = { #manually adding back in the alternative, avoids firing an event in the else part of an if-else
+				first_custom_tooltip = R11_no_hope_effect_req_tt
+				first_limit = "exists = R80 exists = R79"
+				first_effect = "
+					add_casus_belli = { target = R80 type = cb_vassalize_mission months = 240 }
+					add_casus_belli = { target = R79 type = cb_vassalize_mission months = 240 }
+					country_event = { id = khadisrapur.4 }
+				"
+				second_custom_tooltip = mission_alternatively_tt
+				second_limit = "NOT = { AND = { exists = R80 exists = R79 } }"
+				second_effect = "
+					country_event = { id = khadisrapur.2 }
+					custom_tooltip = EVENT_INSIGHT_INTRO
+					custom_tooltip = R11_no_hope_effect_2_tt
+				"
+			}
+		}
+	}
+}
+R11_start_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } }
+}
+R11_start_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } }
+}
+R11_start_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } }
+}
+
+R11_pre_victory_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } has_country_flag = voice_tilathi_flag }
+
+	R11_voice_tilathi = {
+		icon = mission_city_of_victory_vij
+		position = 2
+		required_missions = { R11_no_hope }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = R12
+					owner = { NOT = { has_opinion = { who = ROOT value = 120 } } }
+				}
+				AND = {
+					owner = {
+						overlord_of = R12
+						army_size = ROOT
+					}
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { R12 = { is_subject = yes } }
+				is_supporting_independence_of = R12
+				R12 = {
+					overlord = {
+						NOT = {
+							army_size = ROOT
+							truce_with = ROOT
+						}
+					}
+				}
+			}
+			reverse_has_opinion = { who = R12 value = 120 }
+			NOT = { truce_with = R12 }
+		}
+
+		effect = { country_event = { id = khadisrapur.6 } }
+	}
+}
+R11_pre_victory_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } has_country_flag = khadisrapur_pre_victory_unlock }
+
+	R11_inform_sharaja = {
+		icon = mission_writing_book
+		position = 2
+		required_missions = { R11_no_hope }
+		provinces_to_highlight = { owned_by = R07 } #Rajnadhaga
+
+		trigger = {
+			reverse_has_opinion = { who = R07 value = 125 }
+			OR = {
+				diplomat = 1
+				statesman = 1
+				spymaster = 1
+			}
+		}
+
+		effect = {
+			add_trust = { who = R07 value = 20 mutual = yes }
+			add_country_modifier = { name = khadisrapur_against_the_odds duration = 3650 }
+			4509 = { add_permanent_claim = ROOT }
+			4514 = { add_permanent_claim = ROOT }
+			nakara_area = { add_permanent_claim = ROOT }
+			hidden_effect = { R07 = { save_global_event_target_as = rajnadhaga_or_was_rajnadhaga_target } }
+		}
+	}
+
+	R11_letter_south = {
+		icon = porcelain_from_meissen
+		position = 3
+		required_missions = { R11_inform_sharaja }
+		provinces_to_highlight = {
+			owner = { NOT = { has_opinion = { who = ROOT value = 100 } } }
+			OR = {
+				owner = { has_government_attribute = is_raja }
+				owner = { has_reform = senapti_reform }
+				has_province_modifier = porcelain_city
+				owner = { home_trade_node = { province_id = 1361 } }
+			}
+		}
+
+		trigger = {
+			diplomatic_reputation = 3
+			OR = {
+				calc_true_if = {
+					amount = 3
+					porcelain_cities = {
+						type = all
+						owner = { has_opinion = { who = ROOT value = 100 } }
+					}
+				}
+				calc_true_if = {
+					amount = 3
+					all_known_country = {
+						custom_trigger_tooltip = {
+							tooltip = R11_letter_south_trigger_tt
+							home_trade_node = { province_id = 1361 }
+						}
+						has_opinion = { who = ROOT value = 100 }
+					}
+				}
+				AND = {
+					any_known_country = {
+						has_reform = raja_reform
+						has_opinion = { who = ROOT value = 100 }
+					}
+					calc_true_if = {
+						amount = 2
+						all_known_country = {
+							has_reform = senapti_reform
+							has_opinion = { who = ROOT value = 100 }
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = khadisrapur.12 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = R11_letter_south_default
+			tooltip = {
+				complex_dynamic_effect_without_alternative = {
+					first_custom_tooltip = R11_contacted_the_porcelain_cities
+					first_limit = "
+						calc_true_if = {
+							amount = 3
+							porcelain_cities = {
+								type = all
+								owner = { has_opinion = { who = ROOT value = 100 } }
+							}
+						}
+					"
+					first_effect = "
+						add_country_modifier = { name = khadisrapur_letter_south_porcelain_mod duration = 7300 }
+						capital_scope = { add_base_tax = 2 add_base_production = 2 add_base_manpower = 2 }
+					"
+					second_custom_tooltip = R11_contacted_the_gulf_of_rahen
+					second_limit = "
+						calc_true_if = {
+							amount = 3
+							all_known_country = {
+								home_trade_node = { province_id = 1361 }
+								has_opinion = { who = ROOT value = 100 }
+							}
+						}
+					"
+					second_effect = "
+						add_country_modifier = { name = khadisrapur_letter_south_merchants_mod duration = 7300 }
+						add_loan = { fixed_interest = 1 duration = 60 }
+						add_loan = { fixed_interest = 1 duration = 60 }
+						add_loan = { fixed_interest = 1 duration = 60 }
+					"
+					third_custom_tooltip = R11_contacted_the_raj
+					third_limit = "
+						any_known_country = {
+							has_government_attribute = is_raja
+							has_opinion = { who = ROOT value = 100 }
+						}
+						calc_true_if = {
+							amount = 2
+							all_known_country = {
+								has_reform = senapti_reform
+								has_opinion = { who = ROOT value = 100 }
+							}
+						}
+					"
+					third_effect = "
+						add_country_modifier = { name = khadisrapur_letter_south_raj_mod duration = 7300 }
+						define_advisor = {  type = fortification_expert skill = 2 discount = yes culture = royal_harimari }
+					"
+				}
+			}
+		}
+	}
+
+	R11_eradicate_bloodsong = {
+		icon = mission_destroyed_city
+		position = 4
+		required_missions = { R11_letter_south }
+		provinces_to_highlight = {
+			NOT = { country_or_subject_holds = ROOT }
+			OR = {
+				owned_by = R64
+				area = nakara_area
+				AND = {
+					area = tilathi_area
+					NOT = { province_id = 4510 }
+				}
+			}
+		}
+
+		trigger = {
+			R64 = { exists = no }
+			nakara_area = { type = all country_or_subject_holds = ROOT }
+			4514 = { country_or_subject_holds = ROOT }
+			4509 = { country_or_subject_holds = ROOT }
+		}
+
+		effect = {
+			4523 = { change_culture = ROOT change_religion = ROOT }
+			if = {
+				limit = { 4628 = { culture = brown_orc } }
+				4628 = { change_culture = shamadhan change_religion = accretive_path }
+			}
+			yodhilakra_area = { add_permanent_claim = ROOT }
+			4507 = { add_province_triggered_modifier = khadisrapur_alliance_ptm }
+			country_event = { id = racial_pop_misc.2 days = 365 random = 730 }
+		}
+	}
+}
+R11_pre_victory_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } has_country_flag = khadisrapur_pre_victory_unlock }
+
+	R11_defenders_khadisrapur = {
+		icon = mission_italian_condottiere
+		position = 2
+		required_missions = { R11_no_hope }
+		provinces_to_highlight = { province_id = 4465 } #Khadisrapur
+
+		trigger = {
+			estate_loyalty = { estate = estate_adventurers loyalty = 50 }
+			OR = {
+				num_of_estate_privileges = { estate = estate_adventurers value = 4 }
+				check_variable = { which = num_adventurere_agendas_completed value = 1 }
+			}
+			4465 = { NOT = { has_construction = building } }
+		}
+
+		effect = {
+			4465 = {
+				add_building_construction = { building = ramparts speed = 1 cost = 0 }
+				add_permanent_province_modifier = { name = khadisrapur_free_manufactory duration = -1 }
+			}
+			raghajandi_area = { add_permanent_claim = ROOT }
+			khasardul_area = { add_permanent_claim = ROOT }
+			khamarutar_area = { add_permanent_claim = ROOT }
+			marudhoj_area = { add_permanent_claim = ROOT }
+		}
+	}
+
+	R11_reign_lowlands = {
+		icon = mission_subjugate_rajputana
+		position = 3
+		required_missions = { R11_defenders_khadisrapur }
+		provinces_to_highlight = {
+			OR = {
+				area = khasardul_area
+				area = raghajandi_area
+				area = khamarutar_area
+				area = marudhoj_area
+			}
+			OR = {
+				NOT = { country_or_subject_holds = ROOT }
+				AND = {
+					province_id = 4630
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							OR = {
+								NOT = { local_autonomy = 10 }
+								has_province_modifier = autonomy_decreased
+							}
+						}
+						AND = {
+							owned_by_subject_of = ROOT
+							owner = { NOT = { liberty_desire = 50 } }
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			khasardul_area = { type = all country_or_subject_holds = ROOT }
+			raghajandi_area = { type = all country_or_subject_holds = ROOT }
+			khamarutar_area = { type = all country_or_subject_holds = ROOT }
+			marudhoj_area = { type = all country_or_subject_holds = ROOT }
+			4630 = {
+				OR = {
+					AND = {
+						owned_by = ROOT
+						OR = {
+							NOT = { local_autonomy = 10 }
+							has_province_modifier = autonomy_decreased
+						}
+					}
+					owner = {
+						is_subject_of = ROOT
+						NOT = { liberty_desire = 50 }
+					}
+				}
+			}
+		}
+
+		effect = {
+			sir_area = { add_permanent_claim = ROOT }
+			pharata_area = { add_permanent_claim = ROOT }
+			nadida_area = { add_permanent_claim = ROOT }
+			ghatasak_area = { add_permanent_claim = ROOT }
+
+			4630 = {
+				simple_dynamic_effect = {
+					first_custom_tooltip = R11_reign_lowlands_trigger_tt
+					first_limit = "has_province_modifier = autonomy_decreased"
+					first_effect = "
+						custom_tooltip = R11_reign_lowlands_effect_2_tt
+						hidden_effect = { remove_province_modifier = autonomy_decreased }
+					"
+					second_limit = "NOT = { has_province_modifier = autonomy_decreased }"
+					second_effect = "ROOT = { add_adm_power = 50 }"
+				}
+			}
+		}
+	}
+
+	R11_resettle_refugees = {
+		icon = mission_orc_chillin
+		position = 5
+		required_missions = {
+			R11_eradicate_bloodsong
+			R11_reign_lowlands
+			R11_journey_north
+		}
+		provinces_to_highlight = {
+			region = shamakhad_region
+			OR = {
+				AND = {
+					is_permanent_claim = ROOT
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					owned_by = ROOT
+					local_autonomy = 20
+					NOT = { development = 15 }
+				}
+			}
+		}
+
+		trigger = {
+			shamakhad_region = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					custom_trigger_tooltip = {
+						tooltip = R11_resettle_refugees_trigger_tt
+						NOT = { is_permanent_claim = ROOT }
+					}
+				}
+			}
+			NOT = {
+				any_owned_province = {
+					region = shamakhad_region
+					local_autonomy = 20
+					NOT = { development = 15 }
+				}
+			}
+			OR = {
+				high_tolerance_orcish_race_trigger = yes
+				medium_tolerance_orcish_race_trigger = yes
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = khadisrapur_returning_refugees duration = 5475 }
+			add_country_modifier = { name = khadisrapur_arms_mod_1 duration = -1 }
+		}
+	}
+
+	R11_heroic_victory = {
+		icon = give_him_back_his_legions
+		position = 6
+		required_missions = { R11_resettle_refugees }
+
+		trigger = {
+			is_or_was_tag = { tag = R11 }
+			government_rank = 2
+			estate_loyalty = { estate = all loyalty = 60 }
+			OR = {
+				has_commanding_three_star = yes
+				mil_power = 250
+			}
+		}
+
+		effect = {
+			country_event = { id = khadisrapur.15 }
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = R11_heroic_victory_effect_req_tt
+				first_limit = "has_idea = war_council"
+				first_effect = "add_country_modifier = { name = khadisrapur_returning_heroes duration = 7300 }"
+			}
+		}
+	}
+}
+R11_pre_victory_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } has_country_flag = khadisrapur_pre_victory_unlock }
+
+	R11_thunder_strikes = {
+		icon = mission_stormy_seas
+		position = 2
+		required_missions = { R11_no_hope }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 4521 #Ghilakhad
+						province_id = 4518 #Shalava
+						province_id = 4519 #Phabar
+					}
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+						}
+					}
+				}
+				AND = {
+					province_id = 4521
+					NOT = {
+						AND = {
+							num_of_units_in_province = { who = ROOT amount = 8 }
+							fort_level = 2
+							OR = {
+								NOT = { local_autonomy = 10 }
+								has_province_modifier = autonomy_decreased
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			owns_core_province = 4521
+			owns_core_province = 4518
+			owns_core_province = 4519
+			4521 = {
+				num_of_units_in_province = { who = ROOT amount = 8 }
+				fort_level = 2
+				OR = {
+					NOT = { local_autonomy = 10 }
+					has_province_modifier = autonomy_decreased
+				}
+			}
+			OR = {
+				high_tolerance_orcish_race_trigger = yes
+				medium_tolerance_orcish_race_trigger = yes
+				AND = {
+					has_country_modifier = racial_focus_orcish
+					NOT = {
+						has_country_modifier = racial_pop_orcish_expulsion
+						has_country_modifier = racial_pop_orcish_purge
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { exists = R63 }
+				R63 = {
+					every_owned_province = { cede_province = previous_owner }
+					every_owned_province = { cede_province = R11 } #Failsafe
+					every_core_province = { remove_core = R63 }
+					every_claimed_province = { remove_claim = R63 }
+				}
+			}
+			kradhungur_area = { add_permanent_claim = ROOT }
+			tamvihar_area = { add_permanent_claim = ROOT }
+			4521 = { province_event = { id = khadisrapur.8 } }
+			country_event = { id = racial_pop_misc.2 days = 365 random = 730 }
+		}
+	}
+
+	R11_cripple_command = {
+		icon = mission_beautiful_hobgoblin_stache
+		position = 3
+		required_missions = { R11_thunder_strikes }
+		provinces_to_highlight = {
+			OR = {
+				area = tamvihar_area
+				area = kradhungur_area
+			}
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			kradhungur_area = { type = all owned_by = ROOT is_core = ROOT }
+			tamvihar_area = { type = all owned_by = ROOT is_core = ROOT }
+			has_country_modifier = racial_pop_hobgoblin_expulsion
+			NOT = { has_country_modifier = racial_pop_hobgoblin_purge } #For tooltip purposes
+		}
+
+		effect = {
+			kradhungur_area = {
+				limit = { NOT = { province_id = 4519 } }
+				add_province_modifier = { name = khadisrapur_hobgoblin_resistance duration = -1 }
+			}
+			tamvihar_area = { add_province_modifier = { name = khadisrapur_hobgoblin_resistance duration = -1 } }
+			anb_add_accepted_culture_or_dip_power = { culture = brown_orc free = yes }
+			4532 = { province_event = { id = khadisrapur.10 days = 730 } }
+		}
+	}
+
+	R11_journey_north = {
+		icon = mission_forest_pilgrim
+		position = 4
+		required_missions = { R11_cripple_command }
+		provinces_to_highlight = {
+			OR = {
+				area = kradhungur_area
+				area = tamvihar_area
+			}
+			OR = {
+				has_province_modifier = khadisrapur_hobgoblin_resistance
+				devastation = 0.01
+			}
+		}
+
+		trigger = {
+			kradhungur_area = {
+				type = all
+				NOT = {
+					has_province_modifier = khadisrapur_hobgoblin_resistance
+					devastation = 0.01
+				}
+			}
+			tamvihar_area = {
+				type = all
+				NOT = {
+					has_province_modifier = khadisrapur_hobgoblin_resistance
+					devastation = 0.01
+				}
+			}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = R11_journey_north_trigger_tt
+					OR = {
+						artist = 2
+						diplomat = 2
+						philosopher = 2
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = R11_journey_north_trigger_2_tt
+					OR = {
+						inquisitor = 2
+						theologian = 2
+						statesman = 2
+					}
+				}
+			}
+		}
+
+		effect = { country_event = { id = khadisrapur.11 } }
+	}
+}
+R11_post_victory_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } has_country_flag = khadisrapur_post_victory_unlock }
+
+	R11_rajnadhaga_gambit = {
+		icon = mission_haless_map
+		position = 8
+		required_missions = { R11_restore_pirvandi }
+		provinces_to_highlight = {
+			OR = {
+				owned_by = R07
+				AND = {
+					R07 = { exists = no }
+					province_id = 4460 #Sarnihanpur
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { exists = R07 }
+				R07 = {
+					alliance_with = ROOT
+					has_opinion = { who = ROOT value = 150 }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = aggressive_expansion } }
+				}
+			}
+			else = { owns = 4460 }
+			dip_power = 150
+			OR = {
+				statesman = 3
+				diplomat = 3
+				dip = 4
+			}
+		}
+
+		effect = {
+			add_dip_power = -150
+			hidden_effect = {
+				west_rajnadhaga_area = { set_province_flag = rajnadhaga_rightful_territory add_permanent_claim = R07 }
+				khadirnadi_area = { set_province_flag = rajnadhaga_rightful_territory add_permanent_claim = R07 }
+				east_rajnadhaga_area = { set_province_flag = rajnadhaga_rightful_territory add_permanent_claim = R07 }
+				tiltaghar_area = { set_province_flag = rajnadhaga_rightful_territory add_permanent_claim = R07 }
+				middle_nadimraj_area = { set_province_flag = rajnadhaga_rightful_territory add_permanent_claim = R07 }
+				bidhilar_area = { set_province_flag = rajnadhaga_rightful_territory add_permanent_claim = R07 }
+				4510 = { set_province_flag = rajnadhaga_rightful_territory add_permanent_claim = R07 }
+				R07 = {
+					every_owned_province = {
+						limit = {
+							region = shamakhad_region
+							NOT = { has_province_flag = rajnadhaga_rightful_territory }
+						}
+						cede_province = R11
+					}
+				}
+			}
+			country_event = { id = khadisrapur.17 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = R11_rajnadhaga_gambit_effect_tt
+		}
+	}
+
+	R11_consolidation_shamakhad = {
+		icon = mission_conquer_malwa_guj
+		position = 9
+		required_missions = { R11_rajnadhaga_gambit }
+		provinces_to_highlight = {
+			OR = {
+				owned_by = R10 #Sarnavan
+				AND = {
+					region = shamakhad_region
+					NOT = {
+						country_or_subject_holds = R07 #Rajnadhaga
+						owned_by = ROOT
+					}
+				}
+			}
+		}
+
+		trigger = {
+			shamakhad_region = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					country_or_subject_holds = R07
+				}
+			}
+			NOT = {
+				exists = R10
+				overextension_percentage = 0.01
+				governing_capacity_percentage = 1
+			}
+		}
+
+		effect = { country_event = { id = khadisrapur.21 } }
+	}
+
+	R11_secure_borders = {
+		icon = mission_rajputana_frontier
+		position = 10
+		required_missions = { R11_consolidation_shamakhad }
+		provinces_to_highlight = {
+			OR = {
+				owner = { capital_scope = { region = xianjie_region } }
+				AND = {
+					region = demon_hills_region
+					NOT = { owned_by = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			any_known_country = {
+				capital_scope = { region = xianjie_region }
+				OR = {
+					alliance_with = ROOT
+					NOT = { army_size = ROOT }
+				}
+			}
+			demon_hills_region = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			Y03 = {
+				OR = {
+					exists = no
+					is_subject_of = ROOT
+				}
+			}
+			tamvihar_area = { fort_level = 2 }
+			yodhilakra_area = { fort_level = 2 }
+			tilathi_area = { fort_level = 2 }
+			mil_power = 200
+		}
+
+		effect = {
+			add_mil_power = -200
+			country_event = { id = khadisrapur.25 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = R11_secure_companies_effect
+		}
+	}
+
+	R11_organize_companies = {
+		icon = mission_table_of_ranks
+		position = 11
+		required_missions = { R11_secure_borders }
+		provinces_to_highlight = {
+			region = demon_hills_region
+			OR = {
+				NOT = { owned_by = Y03 }
+				AND = {
+					province_group = four_starting_shirgrii
+					NOT = { fort_level = 4 }
+				}
+			}
+		}
+
+		trigger = {
+			four_starting_shirgrii = {
+				type = all
+				fort_level = 4
+			}
+			demon_hills_region = { type = all owned_by = Y03 }
+			Y03 = {
+				OR = {
+					land_forcelimit = 50
+					army_size = 40
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = khadisrapur_generic_improve_gov_bar_effect_tt
+			add_historical_friend = Y03
+			Y03 = {
+				add_historical_friend = ROOT
+				khadisrapur_become_free_company_effect = yes
+				tooltip = {
+					if = {
+						limit = { NOT = { government = monarchy } }
+						change_government = monarchy
+					}
+					add_government_reform = heroic_realm_free_company
+				}
+				add_country_modifier = { name = khadisrapur_guardians_hills duration = -1 }
+			}
+			custom_tooltip = R11_organize_companies_effect_tt
+		}
+	}
+
+	R11_see_west = {
+		icon = form_the_swiss_guard
+		position = 12
+		required_missions = { R11_organize_companies }
+		provinces_to_highlight = { province_id = 4533 } #Maruvad
+
+		trigger = {
+			4533 = {
+				has_building = mage_tower
+				has_forcelimit_building_trigger = yes
+				has_manpower_building_trigger = yes
+				has_great_project = { type = godswall tier = 3 }
+			}
+			army_professionalism = 0.5
+			has_commanding_three_star = yes
+		}
+
+		effect = {
+			custom_tooltip = R11_see_west_effect_tt
+			country_event = { id = khadisrapur.29 }
+		}
+	}
+
+	R11_what_valley = {
+		icon = mission_unknown_mission
+		position = 13
+		required_missions = { R11_see_west }
+		provinces_to_highlight = { region = nomsyulhan_region }
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 7
+				region = nomsyulhan_region
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				region = nomsyulhan_region
+				fort_level = 4
+			}
+		}
+
+		effect = {
+			4533 = { change_trade_goods = precursor_relics }
+			4476 = { change_trade_goods = precursor_relics }
+		}
+	}
+}
+R11_post_victory_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } has_country_flag = khadisrapur_post_victory_unlock }
+
+	R11_restore_pirvandi = {
+		icon = mission_consume_the_baghels
+		position = 7
+		required_missions = { R11_heroic_victory }
+		provinces_to_highlight = { province_id = 4476 } #Pirhakhad
+
+		trigger = {
+			4476 = {
+				development = 25
+				has_trade_building_trigger = yes
+			}
+			OR = {
+				4476 = { has_building = state_house }
+				adm_power = 100
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { 4476 = { NOT = { has_building = state_house } } }
+				add_adm_power = -100
+			}
+			4476 = {
+				change_province_name = "Pirvand"
+				rename_capital = "Piranpur"
+				center_of_trade = 1
+				add_permanent_province_modifier = { name = khadisrapur_pirvandi_estate duration = -1 }
+			}
+		}
+	}
+
+	R11_four_season = {
+		icon = mission_expand_textile_industry
+		position = 8
+		required_missions = { R11_restore_pirvandi }
+		provinces_to_highlight = {
+			region = shamakhad_region
+			OR = {
+				AND = {
+					has_winter = mild_winter
+					ROOT = {
+						NOT = {
+							any_owned_province = {
+								has_winter = mild_winter
+								OR = {
+									has_building = soldier_households
+									AND = {
+										base_manpower = 8
+										has_manpower_building_trigger = yes
+									}
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					has_terrain = desert
+					OR = {
+						has_trade_building_trigger = no
+						has_manufactory_trigger = no
+					}
+				}
+				AND = {
+					has_terrain = farmlands
+					NOT = {
+						is_capital_of = ROOT
+						num_of_times_expanded_infrastructure = 2
+					}
+				}
+			}
+		}
+
+		trigger = {
+			any_owned_province = {
+				region = shamakhad_region
+				has_winter = mild_winter
+				OR = {
+					has_building = soldier_households
+					AND = {
+						base_manpower = 8
+						has_manpower_building_trigger = yes
+					}
+				}
+			}
+			any_owned_province = {
+				region = shamakhad_region
+				has_terrain = desert
+				has_trade_building_trigger = yes
+				has_manufactory_trigger = yes
+			}
+			any_owned_province = {
+				region = shamakhad_region
+				NOT = { is_capital_of = ROOT }
+				has_terrain = farmlands
+				num_of_times_expanded_infrastructure = 2
+			}
+		}
+
+		effect = { country_event = { id = khadisrapur.18 } }
+	}
+
+	R11_pragmatic_splendor = {
+		icon = mng_nomadic_frontier
+		position = 9
+		required_missions = { R11_four_season }
+		provinces_to_highlight = {
+			region = shamakhad_region
+			OR = {
+				AND = {
+					has_terrain = highlands
+					OR = {
+						trade_goods = copper
+						trade_goods = iron
+						trade_goods = coal
+					}
+					ROOT = {
+						NOT = {
+							any_owned_province = {
+								region = shamakhad_region
+								has_terrain = highlands
+								OR = {
+									trade_goods = copper
+									trade_goods = iron
+									trade_goods = coal
+								}
+								development = 25
+								has_forcelimit_building_trigger = yes
+								num_of_units_in_province = { who = ROOT type = artillery amount = 20 }
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 4465 #Khadisrapur
+					NOT = {
+						AND = {
+							province_has_current_tech_fort_trigger = yes
+							has_building = state_house
+						}
+					}
+				}
+				AND = {
+					has_terrain = highlands
+					province_has_current_tech_fort_trigger = no
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 2
+								region = shamakhad_region
+								OR = {
+									has_terrain = highlands
+									has_terrain = mountain
+								}
+								province_has_current_tech_fort_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			any_owned_province = {
+				region = shamakhad_region
+				has_terrain = highlands
+				OR = {
+					trade_goods = copper
+					trade_goods = iron
+					trade_goods = coal
+				}
+				development = 25
+				has_forcelimit_building_trigger = yes
+				num_of_units_in_province = { who = ROOT type = artillery amount = 20 }
+			}
+			4465 = {
+				has_building = state_house
+				province_has_current_tech_fort_trigger = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				region = shamakhad_region
+				OR = {
+					has_terrain = mountain
+					has_terrain = highlands
+				}
+				province_has_current_tech_fort_trigger = yes
+			}
+		}
+
+		effect = {
+			random_owned_province = {
+				limit = {
+					region = shamakhad_region
+					has_terrain = highlands
+					trade_goods = copper
+					development = 25
+					has_forcelimit_building_trigger = yes
+					num_of_units_in_province = { who = ROOT type = artillery amount = 20 }
+				}
+				kill_units = { who = ROOT type = artillery amount = 20 }
+			}
+			4465 = { add_permanent_province_modifier = { name = khadisrapur_highlands_relocation duration = -1 } }
+			custom_tooltip = R62_privileges_available
+			tooltip = { set_estate_privilege = estate_uppercastes_khedarid_architecture }
+		}
+	}
+
+	R11_temple_crowd = {
+		icon = mission_across_the_vindhyas
+		position = 10
+		required_missions = { R11_pragmatic_splendor }
+		provinces_to_highlight = {
+			province_group = temple_province_group
+			region = shamakhad_region
+			OR = {
+				NOT = {
+					AND = {
+						development = 25
+						has_num_minorities_in_province = { num = 3 }
+					}
+				}
+				AND = {
+					province_id = 4546 #Ghatasak
+					OR = {
+						has_province_modifier = temple_complex
+						has_province_modifier = ruined_temple_complex
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				caste_fluidity_is_neutral = yes
+				caste_fluidity_is_fluid = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 3
+				region = shamakhad_region
+				province_group = temple_province_group
+				development = 25
+				has_num_minorities_in_province = { num = 3 }
+			}
+			4546 = {
+				OR = {
+					has_province_modifier = temple_complex
+					has_province_modifier = ruined_temple_complex
+				}
+			}
+		}
+
+		effect = {
+			add_stability_or_adm_power = yes
+			custom_tooltip = R62_privileges_available
+			tooltip = { set_estate_privilege = estate_lowercastes_khedarid_architecture }
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = R11_temple_crowd_effect_req_tt
+				first_limit = "4546 = { has_province_modifier = temple_complex }"
+				first_effect = "4546 = { add_permanent_province_modifier = { name = khadisrapur_redeemed duration = -1 } }"
+			}
+		}
+	}
+
+	R11_golden_age = {
+		icon = mission_islamic_golden_age
+		position = 11
+		required_missions = {
+			R11_secure_borders
+			R11_temple_crowd
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				AND = {
+					culture = khedarid
+					NOT = { development = 15 }
+				}
+				AND = {
+					culture_group = upper_raheni
+					NOT = { development = 10 }
+				}
+				AND = {
+					is_prosperous = no
+					ROOT = {
+						NOT = {
+							calc_true_if = {
+								amount = 5
+								all_states = { is_prosperous = yes }
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			NOT = {
+				any_owned_province = {
+					culture = khedarid
+					NOT = { development = 15 }
+				}
+			}
+			NOT = {
+				any_owned_province = {
+					culture_group = upper_raheni
+					NOT = { development = 10 }
+				}
+			}
+			calc_true_if = {
+				amount = 5
+				all_states = { is_prosperous = yes }
+			}
+		}
+
+		effect = { country_event = { id = khadisrapur.28 } }
+	}
+
+	R11_fellowship_sentiment = {
+		icon = mission_son_fetishist_alliances
+		position = 13
+		required_missions = { R11_vote_confidence }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = R73
+					owner = {
+						OR = {
+							NOT = { trust = { who = ROOT value = 100 } }
+							monthly_income = ROOT
+						}
+					}
+				}
+				AND = {
+					region = shamakhad_region
+					culture_group = upper_raheni
+					NOT = { culture = shamakhadi }
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = R11_fellowship_sentiment_trigger_tt
+				has_country_flag = khadisrapur_adventure_knows_no_bounds_completed_flag
+			}
+			R73 = { trust = { who = ROOT value = 100 } }
+			monthly_income = R73
+			monthly_income = 250
+			calc_true_if = {
+				amount = 15
+				shamakhad_region = {
+					type = all
+					culture = shamakhadi
+				}
+			}
+			OR = {
+				in_golden_age = yes
+				has_had_golden_age = yes
+			}
+		}
+
+		effect = { country_event = { id = khadisrapur.34 } }
+	}
+
+	R11_unification = {
+		icon = mission_crown_of_norway
+		position = 14
+		required_missions = { R11_fellowship_sentiment }
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4465
+				province_id = 4509
+				province_id = 4515
+			}
+			NOT = { num_of_units_in_province = { amount = 50 who = ROOT } }
+		}
+
+		trigger = {
+			4465 = { num_of_units_in_province = { amount = 50 who = ROOT } }
+			4509 = { num_of_units_in_province = { amount = 50 who = ROOT } }
+			4515 = { num_of_units_in_province = { amount = 50 who = ROOT } }
+			if = {
+				limit = { R73 = { government = monarchy } }
+				marriage_with = R73
+			}
+			army_size = R73
+			NOT = { great_power_rank = 8 }
+			OR = {
+				statesman = 5
+				diplomat = 5
+				AND = {
+					OR = {
+						statesman = 3
+						diplomat = 3
+					}
+					dip_power = 150
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						statesman = 5
+						diplomat = 5
+					}
+				}
+				add_dip_power = -150
+			}
+			country_event = { id = khadisrapur.36 }
+		}
+	}
+}
+R11_post_victory_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } has_country_flag = khadisrapur_post_victory_unlock }
+
+	R11_heroes_army = {
+		icon = mission_warrior_gold
+		position = 7
+		required_missions = { R11_heroic_victory }
+		provinces_to_highlight = { province_id = 4518 } #Shalava
+
+		trigger = {
+			estate_loyalty = { estate = estate_adventurers loyalty = 60 }
+			estate_influence = { estate = estate_adventurers influence = 50 }
+			has_estate_privilege = estate_adventurers_advisors
+			4518 = {
+				has_manpower_building_trigger = yes
+				has_forcelimit_building_trigger = yes
+			}
+		}
+
+		effect = {
+			4518 = {
+				change_province_name = "Himmatpur"
+				rename_capital = "Himmatpur"
+			}
+			custom_tooltip = R11_heroes_army_effect_tt
+		}
+	}
+
+	R11_expand_contracts = {
+		icon = mission_assemble_an_army
+		position = 8
+		required_missions = { R11_heroes_army }
+
+		trigger = {
+			army_size_percentage = 0.85
+			num_of_mercenaries = 30
+			OR = {
+				AND = {
+					has_idea_group = mercenary_ideas
+					has_idea = expanded_contracts
+				}
+				mil_power = 150
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { has_idea = expanded_contracts } }
+				add_mil_power = -150
+			}
+			country_event = { id = khadisrapur.19 }
+		}
+	}
+
+	R11_heroes_plaza = {
+		icon = mission_lit_jesuit_academy
+		position = 9
+		required_missions = { R11_expand_contracts }
+		provinces_to_highlight = {
+			province_id = 4465 #Khadisrapur
+			NOT = {
+				AND = {
+					development = 35
+					has_ruler_leader_from = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			4465 = {
+				development = 35
+				has_ruler_leader_from = ROOT
+			}
+			has_global_modifier_value = { which = improve_relation_modifier value = 0.75 }
+			OR = {
+				statesman = 5
+				AND = {
+					statesman = 3
+					dip_power = 150
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { statesman = 5 } }
+				add_dip_power = -150
+			}
+			country_event = { id = khadisrapur.22 }
+		}
+	}
+
+	R11_adventurers_pilgrims = {
+		icon = mam_recruit_the_mamluks
+		position = 10
+		required_missions = {
+			R11_heroes_plaza
+			R11_casteless
+		}
+		provinces_to_highlight = {  }
+
+		trigger = {
+			OR = {
+				full_idea_group = mercenary_ideas
+				mil_power = 200
+			}
+			4507 = {
+				has_production_manufactory_or_gold_trigger = yes
+				has_building = soldier_households
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						capital_scope = { region = rakhadesh_region }
+						NOT = {
+							is_rival = ROOT
+							is_enemy = ROOT
+							is_subject_of = ROOT
+							overlord_of = ROOT
+						}
+					}
+				}
+				any_known_country = {
+					capital_scope = { region = rakhadesh_region }
+					alliance_with = ROOT
+				}
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						capital_scope = { region = dhujat_region }
+						NOT = {
+							is_rival = ROOT
+							is_enemy = ROOT
+							is_subject_of = ROOT
+							overlord_of = ROOT
+						}
+					}
+				}
+				any_known_country = {
+					capital_scope = { region = dhujat_region }
+					alliance_with = ROOT
+				}
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						capital_scope = { region = rahen_coast_region }
+						NOT = {
+							is_rival = ROOT
+							is_enemy = ROOT
+							is_subject_of = ROOT
+							overlord_of = ROOT
+						}
+					}
+				}
+				any_known_country = {
+					capital_scope = { region = rahen_coast_region }
+					alliance_with = ROOT
+				}
+			}
+		}
+
+		effect = { 4507 = { province_event = { id = khadisrapur.26 } } }
+	}
+
+	R11_vote_confidence = {
+		icon = mission_monarch_diplomacy
+		position = 12
+		required_missions = {
+			R11_golden_age
+			R11_adventurers_pilgrims
+			R11_proof_concept
+		}
+		provinces_to_highlight = { area = khadisrapur_area }
+
+		trigger = {
+			reform_level = 6
+			monthly_adm = 12
+			stability = 3
+			NOT = { estate_influence = { estate = estate_uppercastes influence = 90 } }
+			development_in_provinces = {
+				value = 90
+				area = khadisrapur_area
+			}
+		}
+
+		effect = { country_event = { id = khadisrapur.33 } }
+	}
+
+	R11_embassies_guild = {
+		icon = mission_elf_smiling
+		position = 13
+		required_missions = { R11_vote_confidence }
+		provinces_to_highlight = {
+			owner = {
+				capital_scope = { superregion = rahen_superregion }
+				has_opinion_modifier = { who = ROOT modifier = aggressive_expansion }
+				NOT = { has_opinion = { who = ROOT value = 0 } }
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = R11_embassies_guild_trigger_tt
+				has_country_flag = khadisrapur_appoint_guild_ambassadors_completed_flag
+			}
+			all_known_country = {
+				OR = {
+					capital_scope = { NOT = { superregion = rahen_superregion } }
+					NOT = { has_opinion_modifier = { who = ROOT modifier = aggressive_expansion } }
+					has_opinion = { who = ROOT value = 0 }
+				}
+			}
+			diplomatic_reputation = 4
+			estate_territory = {
+				estate = estate_adventurers
+				territory = 15
+			}
+		}
+
+		effect = {
+			custom_tooltip = R11_embassies_guild_effect_tt
+			4465 = {
+				remove_province_modifier = khadisrapur_heroes_guildhouse
+				add_permanent_province_modifier = { name = khadisrapur_heroes_guildhouse_upgraded duration = -1 }
+			}
+		}
+	}
+
+	R11_age_heroes = {
+		icon = mission_new_dawn
+		position = 15
+		required_missions = {
+			R11_unification
+			R11_embassies_guild
+			R11_sophisticated_system
+		}
+
+		trigger = {
+			government_rank = 3
+			all_subject_country = { NOT = { liberty_desire = 50 } }
+			OR = {
+				in_golden_age = yes
+				has_had_golden_age = yes
+			}
+		}
+
+		effect = { country_event = { id = khadisrapur.37 } }
+	}
+}
+R11_post_victory_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } has_country_flag = khadisrapur_post_victory_unlock }
+
+	R11_orc_mines = {
+		icon = mission_mechanical_mining
+		position = 7
+		required_missions = { R11_heroic_victory }
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4532 #Kradhungur
+				province_id = 4538 #Tamvihar
+				province_id = 4541 #Tapamadh
+			}
+			NOT = {
+				AND = {
+					base_production = 8
+					num_of_units_in_province = { who = ROOT amount = 5 }
+				}
+			}
+		}
+
+		trigger = {
+			government = monarchy
+			reform_level = 3
+			4532 = {
+				base_production = 8
+				num_of_units_in_province = { who = ROOT amount = 5 }
+			}
+			4538 = {
+				base_production = 8
+				num_of_units_in_province = { who = ROOT amount = 5 }
+			}
+			4541 = {
+				base_production = 8
+				num_of_units_in_province = { who = ROOT amount = 5 }
+			}
+		}
+
+		effect = {
+			4532 = { kill_units = { who = ROOT amount = 5 } }
+			4538 = { kill_units = { who = ROOT amount = 5 } }
+			4541 = { kill_units = { who = ROOT amount = 5 } }
+			add_government_reform = khadisrapur_t3_reform
+			add_government_power = { mechanic_type = khadisrapur_industry_mechanic power_type = industrial_capacity value = 10 }
+			hidden_effect = {
+				country_event = { id = khadisrapur.100 }
+				country_event = { id = khadisrapur.16 days = 1825 }
+				random_owned_province = {
+					limit = {
+						has_small_half_orcish_minority_trigger = yes
+						OR = {
+							is_prosperous = yes
+							development = 20
+						}
+					}
+					province_event = { id = racial_pop_events_half_orcish.4 days = 365 random = 730 }
+				}
+			}
+		}
+	}
+
+	R11_labor_loyalty = {
+		icon = mission_orc_chillin
+		position = 8
+		required_missions = { R11_orc_mines }
+		provinces_to_highlight = {
+			owned_by = ROOT
+			culture = brown_orc
+			OR = {
+				has_owner_religion = no
+				NOT = { development = 10 }
+			}
+		}
+
+		trigger = {
+			has_government_power = { mechanic_type = khadisrapur_industry_mechanic power_type = industrial_capacity value = 30 }
+			custom_trigger_tooltip = {
+				tooltip = R11_labor_loyalty_trigger_tt
+				NOT = {
+					any_owned_province = {
+						culture = brown_orc
+						OR = {
+							has_owner_religion = no
+							NOT = { development = 10 }
+						}
+					}
+				}
+			}
+			employed_advisor = { culture = brown_orc }
+			estate_loyalty = { estate = all loyalty = 50 }
+		}
+
+		effect = {
+			add_race_to_caste = { race = orcish caste = lower }
+			temple_province_group = {
+				limit = { owned_by = ROOT }
+				generic_add_race_minority_size_effect = { race = orcish }
+			}
+			custom_tooltip = khadisrapur_generic_improve_gov_bar_effect_tt
+
+			simple_dynamic_effect_without_alternative = {
+				first_custom_tooltip = integrated_orcish_people_tooltip
+				first_limit = "high_tolerance_orcish_race_trigger = yes"
+				first_effect = "
+					add_adm_power = 50
+					add_dip_power = 50
+					add_mil_power = 50
+				"
+				second_custom_tooltip = mission_alternatively_tt
+				second_limit = "high_tolerance_orcish_race_trigger = no"
+				second_effect = "generic_increase_of_racial_tolerance_effect = { race = orcish largest = yes }"
+			}
+			hidden_effect = {
+				random_owned_province = {
+					limit = {
+						has_small_half_orcish_minority_trigger = yes
+						OR = {
+							is_prosperous = yes
+							development = 20
+						}
+					}
+					province_event = { id = racial_pop_events_half_orcish.4 days = 365 random = 730 }
+				}
+			}
+		}
+	}
+
+	R11_casteless = {
+		icon = mission_bijapur_karnatak
+		position = 9
+		required_missions = { R11_labor_loyalty }
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 2
+				has_large_half_orcish_minority_trigger = yes
+			}
+			NOT = { unrest = -4 }
+			estate_influence = { estate = estate_middlecastes influence = 50 }
+			estate_influence = { estate = estate_lowercastes influence = 50 }
+		}
+
+		effect = { country_event = { id = khadisrapur.24 } }
+	}
+
+	R11_halforc_arms = {
+		icon = mission_smith
+		position = 10
+		required_missions = { R11_casteless }
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				AND = {
+					OR = {
+						culture = brown_orc
+						has_large_half_orcish_minority_trigger = yes
+					}
+					NOT = {
+						AND = {
+							has_manufactory_trigger = yes
+							development = 15
+						}
+					}
+				}
+				AND = {
+					province_id = 4538 #Tamvihar
+					NOT = {
+						num_of_times_expanded_infrastructure = 2
+						has_building = university
+					}
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = R11_halforc_arms_trigger_tt
+				NOT = {
+					any_owned_province = {
+						OR = {
+							culture = brown_orc
+							has_large_half_orcish_minority_trigger = yes
+						}
+						NOT = {
+							AND = {
+								has_manufactory_trigger = yes
+								development = 15
+							}
+						}
+					}
+				}
+			}
+			4538 = {
+				OR = {
+					num_of_times_expanded_infrastructure = 2
+					has_building = university
+				}
+			}
+		}
+
+		effect = { country_event = { id = khadisrapur.27 } }
+	}
+
+	R11_proof_concept = {
+		icon = mission_industrialize_bengal
+		position = 11
+		required_missions = { R11_halforc_arms }
+		provinces_to_highlight = {
+			OR = {
+				owned_by = R74
+				AND = {
+					NOT = { exists = R74 }
+					owner = { primary_culture = ghankedhen }
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { exists = R74 }
+				R74 = {
+					has_opinion = { who = ROOT value = 100 }
+					alliance_with = ROOT
+					subsidised_percent_amount = { value = 0.35 }
+				}
+			}
+			else_if = {
+				limit = {
+					calc_true_if = {
+						amount = 2
+						all_known_country = {
+							primary_culture = ghankedhen
+							OR = {
+								iron = 1
+								copper = 1
+								coal = 1
+								gold = 1
+							}
+						}
+					}
+				}
+				calc_true_if = {
+					amount = 2
+					all_known_country = {
+						primary_culture = ghankedhen
+						has_opinion = { who = ROOT value = 150 }
+						subsidised_percent_amount = { value = 0.5 }
+						OR = {
+							iron = 1
+							copper = 1
+							coal = 1
+							gold = 1
+						}
+					}
+				}
+			}
+			else = {
+				is_ahead_of_time_in_technology = { tech = adm }
+				has_global_modifier_value = { which = production_efficiency value = 0.4 }
+			}
+		}
+
+		effect = {
+			custom_tooltip = khadisrapur_generic_improve_gov_bar_effect_tt
+			if = {
+				limit = { exists = R74 }
+				add_historical_friend = R74
+				R74 = { add_historical_friend = ROOT }
+			}
+			add_country_modifier = { name = khadisrapur_mutual_aid duration = 3650 }
+			every_known_country = {
+				limit = {
+					culture = ghankedhen
+					has_opinion = { who = ROOT value = 100 }
+				}
+				add_country_modifier = { name = khadisrapur_mutual_aid duration = 3650 }
+			}
+			4534 = {
+				if = {
+					limit = { has_production_manufactory_or_gold_trigger = yes }
+					set_province_flag = production_manufactory_flag
+				}
+				change_trade_goods = iron
+				if = {
+					limit = { has_province_flag = production_manufactory_flag }
+					clr_province_flag = production_manufactory_flag
+					add_building = weapons
+				}
+			}
+			4530 = {
+				if = {
+					limit = { has_production_manufactory_or_gold_trigger = yes }
+					set_province_flag = production_manufactory_flag
+				}
+				change_trade_goods = iron
+				if = {
+					limit = { has_province_flag = production_manufactory_flag }
+					clr_province_flag = production_manufactory_flag
+					add_building = weapons
+				}
+			}
+			4539 = {
+				if = {
+					limit = { has_production_manufactory_or_gold_trigger = yes }
+					set_province_flag = production_manufactory_flag
+				}
+				change_trade_goods = copper
+				if = {
+					limit = { has_province_flag = production_manufactory_flag }
+					clr_province_flag = production_manufactory_flag
+					add_building = weapons
+				}
+			}
+		}
+	}
+
+	R11_raheni_coal = {
+		icon = mission_rb_prospect_for_coal
+		position = 13
+		required_missions = { R11_vote_confidence }
+		provinces_to_highlight = {
+			owned_by = ROOT
+			region = shamakhad_region
+			OR = {
+				trade_goods = copper
+				trade_goods = iron
+				trade_goods = coal
+			}
+			NOT = {
+				AND = {
+					base_production = 6
+					has_production_building_trigger = yes
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = R11_raheni_coal_trigger_2_tt
+				has_country_flag = khadisrapur_mining_extraction_quests_unlock_flag
+			}
+			custom_trigger_tooltip = {
+				tooltip = R11_raheni_coal_trigger_tt
+				NOT = {
+					any_owned_province = {
+						region = shamakhad_region
+						OR = {
+							trade_goods = copper
+							trade_goods = iron
+							trade_goods = coal
+						}
+						NOT = {
+							AND = {
+								base_production = 6
+								has_production_building_trigger = yes
+							}
+						}
+					}
+				}
+			}
+			weapons = 5
+			NOT = { governing_capacity_percentage = 1 }
+			has_government_power = { mechanic_type = khadisrapur_industry_mechanic power_type = industrial_capacity value = 90 }
+			OR = {
+				natural_scientist = 5
+				AND = {
+					natural_scientist = 3
+					adm_power = 100
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { natural_scientist = 5 } }
+				add_adm_power = -100
+			}
+			custom_tooltip = khadisrapur_generic_improve_gov_bar_effect_tt
+			simple_dynamic_effect = {
+				first_custom_tooltip = R11_raheni_coal_effect_req_tt
+				first_limit = "has_institution = enlightenment"
+				first_effect = "add_country_modifier = { name = khadisrapur_coal_power duration = 9125 }"
+				second_limit = "NOT = { has_institution = enlightenment }"
+				second_effect = "4532 = { change_trade_goods = coal add_province_modifier = { name = khadisrapur_early_coal_power duration = -1 desc = until_enlightenment } }"
+			}
+		}
+	}
+
+	R11_sophisticated_system = {
+		icon = industrialized_rhineland
+		position = 14
+		required_missions = {
+			R11_raheni_coal
+			R11_god_hope
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			region = shamakhad_region
+			OR = {
+				trade_goods = copper
+				trade_goods = iron
+				trade_goods = coal
+			}
+			NOT = { base_production = 9 }
+		}
+
+		trigger = {
+			NOT = {
+				any_owned_province = {
+					region = shamakhad_region
+					OR = {
+						trade_goods = copper
+						trade_goods = iron
+						trade_goods = coal
+					}
+					NOT = { base_production = 9 }
+				}
+			}
+			OR = {
+				medium_tolerance_hobgoblin_race_trigger = yes
+				high_tolerance_hobgoblin_race_trigger = yes
+			}
+			high_tolerance_goblin_race_trigger = yes
+			high_tolerance_orcish_race_trigger = yes
+			high_tolerance_half_orcish_race_trigger = yes
+			OR = {
+				reform_level = 8
+				government_reform_progress = 250
+			}
+			has_government_power = { mechanic_type = khadisrapur_industry_mechanic power_type = industrial_capacity value = 100 }
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { reform_level = 8 } }
+				change_government_reform_progress = -250
+			}
+			remove_country_modifier = khadisrapur_arms_mod_2
+			add_country_modifier = { name = khadisrapur_arms_mod_3 duration = -1 }
+			custom_tooltip = R11_sophisticated_system_effect_tt
+			if = {
+				limit = { has_country_modifier = khadisrapur_harsh_quotas_mod }
+				remove_country_modifier = khadisrapur_harsh_quotas_mod
+			}
+		}
+	}
+}
+
+R11_post_victory_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { is_or_was_tag = { tag = R11 } has_country_flag = khadisrapur_post_victory_unlock }
+
+	R11_chaos_caverns = {
+		icon = mission_underground_cave
+		position = 8
+		required_missions = { R11_orc_mines }
+		provinces_to_highlight = { province_id = 4311 } #Gronstunad
+
+		trigger = {
+			OR = {
+				exists = R81
+				AND = {
+					owns_core_province = 4311
+					4311 = { num_of_units_in_province = { who = ROOT amount = 25 } }
+				}
+			}
+		}
+
+		effect = {
+			simple_dynamic_effect_without_alternative = {
+				first_custom_tooltip = R11_chaos_caverns_effect_req_tt
+				first_limit = "exists = R81"
+				first_effect = "jade_mines_region = { discover_country = ROOT }"
+				second_custom_tooltip = mission_alternatively_tt
+				second_limit = "NOT = { exists = R81 }"
+				second_effect = "country_event = { id = khadisrapur.20 }"
+			}
+		}
+	}
+
+	R11_eradication_command = {
+		icon = mission_fire_judgement
+		position = 9
+		required_missions = { R11_chaos_caverns }
+		provinces_to_highlight = {
+			OR = {
+				is_core = R65 #Blackstep
+				is_core = R66 #Stolen Gem
+				owned_by = R81 #Jade March
+				owned_by = R62 #The Command
+				owned_by = R94 #Boar Command
+				owned_by = R95 #Lion Command
+				owned_by = R96 #Wolf Command
+			}
+		}
+
+		trigger = {
+			NOT = {
+				exists = R62
+				exists = R94
+				exists = R95
+				exists = R96
+			}
+			if = {
+				limit = { exists = R81 }
+				R81 = {
+					OR = {
+						is_subject_of = ROOT
+						is_subject = no
+					}
+					has_75_opinion_improved_relation = { target = ROOT }
+				}
+			}
+			else = {
+				R65 = {
+					OR = {
+						is_subject_of = ROOT
+						is_subject = no
+					}
+					has_75_opinion_improved_relation = { target = ROOT }
+				}
+				R66 = {
+					OR = {
+						is_subject_of = ROOT
+						is_subject = no
+					}
+					has_75_opinion_improved_relation = { target = ROOT }
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { exists = R81 }
+				if = {
+					limit = { R81 = { is_subject = no } }
+					vassalize = R81
+				}
+			}
+			else = {
+				if = {
+					limit = { R65 = { is_subject = no } }
+					vassalize = R65
+				}
+				if = {
+					limit = { R66 = { is_subject = no } }
+					vassalize = R66
+				}
+				custom_tooltip = R11_eradication_command_effect_tt
+				set_country_flag = eligible_for_jade_rivalry_events
+				hidden_effect = {
+					if = {
+						limit = { employed_advisor = { category = ADM skill = 5 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 5 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = ADM skill = 4 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 4 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = ADM skill = 3 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 3 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = ADM skill = 2 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 2 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = ADM skill = 1 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 1 } }
+					}
+
+					if = {
+						limit = { employed_advisor = { category = DIP skill = 5 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 5 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = DIP skill = 4 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 4 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = DIP skill = 3 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 3 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = DIP skill = 2 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 2 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = DIP skill = 1 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 1 } }
+					}
+
+					if = {
+						limit = { employed_advisor = { category = MIL skill = 5 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 5 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = MIL skill = 4 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 4 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = MIL skill = 3 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 3 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = MIL skill = 2 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 2 } }
+					}
+					else_if = {
+						limit = { employed_advisor = { category = MIL skill = 1 } }
+						4311 = { subtract_variable = { command_jade_mines_tension = 1 } }
+					}
+				}
+			}
+			add_country_modifier = { name = khadisrapur_eradicate_tyranny duration = 18250 }
+		}
+	}
+
+	R11_bruised_beaten = {
+		icon = mission_se_birdmen
+		position = 10
+		required_missions = { R11_eradication_command }
+		provinces_to_highlight = {
+			region = jade_mines_region
+			OR = {
+				AND = {
+					owned_by = ROOT
+					has_terrain = dwarven_hold
+					devastation = 0.01
+				}
+				devastation = 20
+			}
+		}
+
+		trigger = {
+			OR = {
+				medium_tolerance_goblin_race_trigger = yes
+				high_tolerance_goblin_race_trigger = yes
+			}
+			has_country_modifier = racial_focus_goblin
+			NOT = {
+				any_owned_province = {
+					region = jade_mines_region
+					has_terrain = dwarven_hold
+					devastation = 0.01
+				}
+			}
+			jade_mines_region = {
+				type = all
+				NOT = { devastation = 20 }
+			}
+			4311 = { NOT = { check_variable = { which = command_jade_mines_tension value = 1 } } }
+		}
+
+		effect = {
+			custom_tooltip = khadisrapur_generic_improve_gov_bar_effect_tt
+			if = {
+				limit = { NOT = { exists = R81 } }
+				R65 = { inherit = R66 }
+				jade_mines_region = {
+					limit = {
+						OR = {
+							owned_by = ROOT
+							owner = {
+								is_subject_of = ROOT
+								NOT = { tag = R65 }
+							}
+						}
+					}
+					remove_core = owner
+					cede_province = R65
+					add_core = R65
+				}
+				R65 = { change_tag = R81 }
+			}
+			vassalize = R81
+			R81 = { add_country_modifier = { name = khadisrapur_reforming_government duration = -1 desc = until_god_hope } }
+			custom_tooltip = R11_bruised_beaten_effect_tt
+			tooltip = {
+				generic_add_race_minority_size_effect = { race = hobgoblin }
+				change_trade_goods = slaves
+			}
+			hidden_effect = {
+				jade_mines_region = {
+					type = random
+					amount = 5
+					limit = {
+						OR = {
+							trade_goods = wool
+							trade_goods = livestock
+							trade_goods = serpentbloom
+						}
+					}
+					generic_add_race_minority_size_effect = { race = hobgoblin }
+					change_trade_goods = slaves
+				}
+				clr_country_flag = eligible_for_jade_rivalry_events
+			}
+		}
+	}
+
+	R11_civilizing_rabble = {
+		icon = mission_swear_fealty_knight
+		position = 11
+		required_missions = { R11_bruised_beaten }
+		provinces_to_highlight = {
+			region = jade_mines_region
+			OR = {
+				AND = {
+					has_manufactory_trigger = no
+					OR = {
+						province_id = 4337 #Tuwad-Dhumankon
+						province_id = 4311 #Gronstunad
+						province_id = 4313 #Vurdriz-Andriz
+						province_id = 4323 #Verkal Dromak
+					}
+				}
+				AND = {
+					has_production_building_trigger = no
+					NOT = {
+						calc_true_if = {
+							amount = 15
+							jade_mines_region = {
+								type = all
+								has_production_building_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			4337 = { has_manufactory_trigger = yes }
+			4311 = { has_manufactory_trigger = yes }
+			4313 = { has_manufactory_trigger = yes }
+			4323 = { has_manufactory_trigger = yes }
+			calc_true_if = {
+				amount = 15
+				jade_mines_region = {
+					type = all
+					has_production_building_trigger = yes
+				}
+			}
+			R81 = { religion = ROOT }
+		}
+
+		effect = {
+			custom_tooltip = khadisrapur_generic_improve_gov_bar_effect_tt
+			create_march = R81
+			add_historical_friend = R81
+			R81 = {
+				add_historical_friend = ROOT
+				khadisrapur_become_free_company_effect = yes
+				tooltip = {
+					if = {
+						limit = { NOT = { government = monarchy } }
+						change_government = monarchy
+					}
+					add_government_reform = heroic_realm_free_company
+				}
+				add_liberty_desire = -50
+			}
+		}
+	}
+
+	R11_laws_indenturement = {
+		icon = mission_mnd_khm_protect_the_cham
+		position = 12
+		required_missions = { R11_civilizing_rabble }
+		provinces_to_highlight = {
+			region = jade_mines_region
+			NOT = { religion = ROOT }
+		}
+
+		trigger = {
+			OR = {
+				has_institution = global_trade
+				dip_power = 250
+			}
+			R81 = { NOT = { liberty_desire = 50 } }
+			calc_true_if = {
+				amount = 30
+				jade_mines_region = {
+					type = all
+					religion = ROOT
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { has_unembraced_institution = global_trade }
+				add_dip_power = -250
+			}
+			custom_tooltip = khadisrapur_generic_improve_gov_bar_effect_tt
+			R81 = {
+				if = {
+					limit = { has_country_modifier = monstrous_nation }
+					set_country_flag = removing_monstrous
+					set_country_flag = semi_monstrous
+					country_event = { id = monstrous.2 }
+				}
+				set_estate_privilege = estate_adventurers_monopoly_of_slaves
+			}
+			custom_tooltip = R11_laws_indenturement_effect_tt
+			set_global_flag = adventurers_remove_slaves
+			4465 = { generic_add_race_minority_size_effect = { race = goblin } }
+			4630 = { generic_add_race_minority_size_effect = { race = goblin } }
+			4633 = { generic_add_race_minority_size_effect = { race = goblin } }
+		}
+	}
+
+	R11_god_hope = {
+		icon = mission_patronize_local_gods
+		position = 13
+		required_missions = { R11_laws_indenturement }
+		provinces_to_highlight = {
+			region = jade_mines_region
+			OR = {
+				NOT = { religion = ROOT }
+				AND = {
+					has_manpower_building_trigger = no
+					NOT = {
+						calc_true_if = {
+							amount = 20
+							jade_mines_region = {
+								type = all
+								has_manpower_building_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			NOT = { has_country_modifier = khadisrapur_eradicate_tyranny }
+			has_country_modifier = racial_focus_hobgoblin
+			OR = {
+				statesman = 3
+				army_reformer = 3
+				commandant = 3
+			}
+			jade_mines_region = {
+				type = all
+				religion = ROOT
+			}
+			calc_true_if = {
+				amount = 20
+				jade_mines_region = {
+					type = all
+					has_manpower_building_trigger = yes
+				}
+			}
+		}
+
+		effect = { country_event = { id = khadisrapur.35 } }
+	}
+}

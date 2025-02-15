@@ -1,0 +1,1583 @@
+namespace = escanni_wars
+
+# Trigger the escanni wars
+country_event = {
+	id = escanni_wars.1
+	title = "escanni_wars.1.t"
+	picture = {	
+		trigger = {
+			has_dlc = "Emperor"
+		}
+		picture = ITALIAN_wars_eventPicture
+	}
+	picture = {	
+		trigger = {
+			NOT = { has_dlc = "Emperor" }
+		}
+		picture = MILITARY_CAMP_eventPicture
+	}
+	desc = "escanni_wars.1.d"
+	
+	major = yes
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		current_age = age_of_absolutism
+		NOT = { has_global_flag = escanni_wars_bypass }
+	
+		escanni_wars_can_trigger = yes
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = escanni_wars_global_flag
+		}
+	}
+
+	option = {
+		name = escanni_wars.1.a
+		
+		# Join the wars
+		set_country_flag = joined_escanni_wars
+		
+		# Active the wars
+		custom_tooltip = escanni_wars_tt
+		hidden_effect = {
+			every_country = {
+				limit = {
+					country_can_participate_in_escanni_wars = yes
+				}
+				set_country_flag = joined_escanni_wars
+				country_event = { id = escanni_wars.100 }
+			}
+		}
+	}
+}
+
+# End of the Escanni Wars of Consolidation
+country_event = {
+	id = escanni_wars.2
+	title = "escanni_wars.2.t"
+	picture = {	
+		trigger = {
+			has_dlc = "Emperor"
+		}
+		picture = ITALIAN_wars_eventPicture
+	}
+	picture = {	
+		trigger = {
+			NOT = { has_dlc = "Emperor" }
+		}
+		picture = MILITARY_CAMP_eventPicture
+	}
+	desc = {
+		trigger = {
+			has_saved_event_target = escanni_wars_victor
+			has_country_flag = escanni_wars_complete_control
+		}
+		desc = escanni_wars.2.dcontrol
+	}
+	desc = {
+		trigger = { has_saved_event_target = escanni_wars_victor }
+		desc = escanni_wars.2.d
+	}
+	desc = {
+		trigger = { NOT = { has_saved_event_target = escanni_wars_victor } }
+		desc = escanni_wars.2.dunclear
+	}
+	
+	major = yes
+	fire_only_once = yes
+
+	trigger = {
+		OR = {
+			has_country_flag = ended_escanni_wars # Bypass for the decision
+			
+			AND = {
+				has_global_flag = escanni_wars_global_flag
+				# trigger after 50 years so players can't delay it
+				had_global_flag = {
+					flag = escanni_wars_global_flag
+					days = 18250
+				}
+				country_can_participate_in_escanni_wars = yes
+				OR = {
+					has_won_escanni_wars = yes
+					NOT = {
+						any_country = {
+							has_won_escanni_wars = yes
+						}
+					}
+				}
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		months = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = ended_escanni_wars
+			if = {
+				limit = {
+					owns_all_escanni_wars_regions = yes
+				}
+				set_country_flag = escanni_wars_complete_control
+				save_event_target_as = escanni_wars_victor
+			}
+			else_if = {
+				limit = {
+					has_won_escanni_wars = yes
+				}
+				save_event_target_as = escanni_wars_victor
+			}
+			else = {
+				random_country = {
+					limit = {
+						country_can_participate_in_escanni_wars = yes
+						has_won_escanni_wars = yes
+					}
+					save_event_target_as = escanni_wars_victor
+				}
+			}
+		}
+	}
+
+	after = {
+		clr_country_flag = escanni_wars_complete_control
+	}
+
+	option = {
+		name = escanni_wars.2.a
+		
+		custom_tooltip = escanni_wars_end_tt
+		clr_global_flag = escanni_wars_global_flag
+		set_global_flag = escanni_wars_end_global_flag
+		
+		if = {
+			limit = {
+				has_saved_event_target = escanni_wars_victor
+			}
+			event_target:escanni_wars_victor = {
+				country_event = { id = escanni_wars.10 days = 1 }
+			}
+		}
+	}
+}
+
+#Escanni Wars Early Bypass
+country_event = {
+	id = escanni_wars.3
+	title = "escanni_wars.3.t"
+	picture = {	
+		trigger = {
+			has_dlc = "Emperor"
+		}
+		picture = ITALIAN_wars_eventPicture
+	}
+	picture = {	
+		trigger = {
+			NOT = { has_dlc = "Emperor" }
+		}
+		picture = MILITARY_CAMP_eventPicture
+	}
+	desc = "escanni_wars.3.d"
+
+	major = yes
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			#Flag from decision
+			has_country_flag = bypassed_escanni_wars
+
+			#late bypass if the decision is ignored, or someone becomes eligible late, after eliminating any other contenders
+			AND = {
+				current_age = age_of_absolutism
+				
+				# Can trigger if the wars have not begun and the wars have not ended
+				NOT = { has_global_flag = escanni_wars_global_flag }
+				NOT = { has_global_flag = escanni_wars_end_global_flag }
+			
+				# and this country can participate in the escanni wars
+				country_can_participate_in_escanni_wars = yes
+				
+				# but no other country can
+				NOT = { 
+					any_known_country = {
+						country_can_participate_in_escanni_wars = yes
+					}
+				}
+			}
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			#Flag the global wars as having been bypassed
+			set_global_flag = escanni_wars_bypass
+		}
+	}
+
+	option = {
+		name = escanni_wars.3.a
+		
+		#Immediately set this country as having won the war
+		country_event = { id = escanni_wars.10 days = 1 }
+	}
+
+	after = {
+		#Clears flag since it's no longer being used
+		clr_country_flag = bypassed_escanni_wars
+	}
+}
+
+#AI free cores
+country_event = {
+    id = escanni_wars.4
+    title = escanni_wars.4.t
+    desc = escanni_wars.4.d
+    picture = NAVAL_MILITARY_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+    trigger = {
+		has_global_flag = escanni_wars_global_flag
+        country_can_participate_in_escanni_wars = yes
+        any_owned_province = {
+            province_is_valid_for_escanni_wars = yes
+            NOT = { is_core = ROOT }
+        }
+		ai = yes
+    }
+
+    option = {
+        name = escanni_wars.4.a
+		ai_chance = { factor = 100 }
+        every_owned_province = {
+            limit = {
+                province_is_valid_for_escanni_wars = yes
+                NOT = { is_core = ROOT }
+            }
+            ROOT = { add_core = PREV }
+        }
+    }
+}
+
+# Escanni Wars winner reward
+country_event = {
+	id = escanni_wars.10
+	title = "escanni_wars.10.t"
+	picture = {	
+		trigger = {
+			has_dlc = "Emperor"
+		}
+		picture = ITALIAN_wars_eventPicture
+	}
+	picture = {	
+		trigger = {
+			NOT = { has_dlc = "Emperor" }
+		}
+		picture = MILITARY_CAMP_eventPicture
+	}
+	desc = {
+		trigger = { NOT = { has_global_flag = escanni_wars_bypass } }
+		desc = escanni_wars.10.d
+	}
+	desc = {
+		trigger = { has_global_flag = escanni_wars_bypass }
+		desc = escanni_wars.10.dbypass
+	}
+
+	major = yes
+	is_triggered_only = yes
+
+	option = { #Empire of Anbennar: 11-19
+		name = escanni_wars.10.a
+		trigger = {
+			religion_group = cannorian
+			government = monarchy
+			hre_size = 1
+			is_emperor = no
+			NOT = { tag = B37 } #Rogieria has its own reward
+			NOT = {
+				culture_group = orcish
+				culture_group = goblin
+			}
+		}
+		ai_chance = {
+			factor = 0
+		}
+		if = {
+			limit = { tag = B50 }
+			set_country_flag = newshire_won_consolidation
+			custom_tooltip = newshire_won_consolidation_tooltip
+		}
+		
+		custom_tooltip = usurp_emperorship_choice_tt
+		set_country_flag = escanni_wars_usurp_emperorship
+	}
+
+	option = { #Castanor: 20-29
+		name = escanni_wars.10.b
+		trigger = {
+			has_estate = estate_castonath_patricians
+			OR = {
+				culture_group = escanni
+				culture_group = dostanorian_g
+				culture = marrodic
+			}
+			NOT = { has_country_flag = formed_castanor_flag }
+			NOT = { has_country_flag = destroyed_the_trialmount }
+			NOT = { has_adventurer_reform = yes }
+			NOT = { exists = B32 } #Castanor doesn't exist
+			#NOT = { exists = Z34 } #Black Castanor doesn't exist
+			#NOT = { tag = B33 } #Blademarches hate Castanor
+			NOT = { tag = Z34 }	#Black Castanor cannot into Castanor
+			NOT = { tag = B95 } #Uanced can't do that
+			NOT = {
+				culture_group = orcish
+				culture_group = goblin
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = { tag = B33 }
+			custom_tooltip = no_more_blademarches_blade_tt
+		}
+		if = {
+			limit = { tag = B50 }
+			set_country_flag = newshire_won_consolidation
+			custom_tooltip = newshire_won_consolidation_tooltip
+		}
+		country_event = { id = escanni_wars.20 days = 30 }
+	}
+
+	#option = { #Infernal Court: 30-39
+	#	name = escanni_wars.10.c
+	#	trigger = {
+	#		always = no	#temporary disabled, remove this when Moredhal is ready
+	#		has_reform = secret_societies_inf
+	#	}
+	#	set_country_flag = form_moredhal
+	#	custom_tooltip = moredhal_decision_tt
+	#}
+
+	option = { #Black Demesne: 40-49
+		name = escanni_wars.10.e
+		trigger = {
+			OR = {
+				tag = B54 #Esthil
+				tag = Z37 #Covenblad
+				tag = B53 #Nurcestir
+				tag = B39 #Wyvernheart
+				has_ruler_modifier = witch_king_modifier
+			}
+			NOT = { exists = Z99 }
+			NOT = { tag = B95 } #Uanced can't do that
+			NOT = {
+				culture_group = orcish
+				culture_group = goblin
+			}
+		}
+		ai_chance = {
+			factor = 100
+		}
+		if = {
+			limit = { tag = B50 }
+			set_country_flag = newshire_won_consolidation
+			custom_tooltip = newshire_won_consolidation_tooltip
+		}
+		# country_event = { id = escanni_wars.40 }
+		custom_tooltip = escanni_wars_black_demesne_tooltip
+		hidden_effect = { set_country_flag = can_form_bd }
+	}
+
+	option = { # Holy Empire of Corinsfall
+		name = escanni_wars.10.f
+		ai_chance = { factor = 1000 } # if by some unholy miracle ai corintar makes it here...
+		trigger = {
+			religion = corinite
+			# despite the tooltip, consolidation reward only requires the last corintar mission
+			# to be available, not necessarily taken (we show mercy if they forgot to click the
+			# button, or if the escanni wars are bypassed entirely)
+			mission_completed = corintar_escann_restored
+			mission_completed = corintar_the_reconciliation
+			mission_completed = corintar_escann_defended
+		}
+		ai_chance = {
+			factor = 1000
+		}
+
+		# Name change
+		override_country_name = CORINTAR_HOLY_EMPIRE
+
+		# Add modifier
+		hidden_effect = { remove_country_modifier = corintar_holy_empire_i }
+		add_country_modifier = {
+			name = corintar_holy_empire_ii
+			duration = -1
+		}
+	}
+
+	option = { #Rogieria Bypass
+		name = escanni_wars.10.h
+		trigger = {
+			tag = B37 #Rogieria
+			hre_size = 1
+		}
+		ai_chance = {
+			factor = 1000
+		}
+		
+		custom_tooltip = rogieria_escanni_wars_bypass
+		set_country_flag = rogieria_escanni_wars_bypass_flag
+	}
+	
+	option = { #Generic Conquest
+		name = escanni_wars.10.y
+		
+		add_country_modifier = {
+			name = escanni_wars_escanni_imperialism
+			duration = -1
+		}
+		ai_chance = {
+			factor = 1
+		}
+		if = {
+			limit = { tag = B50 }
+			set_country_flag = newshire_won_consolidation
+			custom_tooltip = newshire_won_consolidation_tooltip
+		}
+	}
+	
+	option = { #Generic Peace
+		name = escanni_wars.10.z
+		
+		add_country_modifier = {
+			name = escanni_wars_escanni_peace
+			duration = -1
+		}
+		ai_chance = {
+			factor = 1
+		}
+		if = {
+			limit = { tag = B50 }
+			set_country_flag = newshire_won_consolidation
+			custom_tooltip = newshire_won_consolidation_tooltip
+		}
+	}
+
+	after = { #Fire Unified Market after 60 days with up to 60 additional days
+		hidden_effect = { country_event = { id = escanni_wars.307 days = 60 random = 60 } }
+	}
+}
+
+# Empire of Anbennar: 11-19 #
+# Emperorship Usurped
+country_event = {
+	id = escanni_wars.11
+	title = "escanni_wars.11.t"
+	picture = HRE_eventPicture
+	desc = "escanni_wars.11.d"
+	
+	major = yes
+	is_triggered_only = yes
+	
+	# immediate = {
+		# hidden_effect = { make_emperor = yes } #For some reason having it in immediate sometimes causes the EoA to be disbanded when fired by the peace treaty but not by console when fired in the same situation
+	# }
+	
+	option = {
+		name = escanni_wars.11.a
+		
+		#make_emperor = yes
+		set_emperor = yes
+		if = {
+			limit = { NOT = { hre_reform_passed = emperor_erbkaisertum } }
+			hre_inheritable = yes
+			set_country_flag = usurp_emperorship_hereditary_flag
+		}
+		add_imperial_influence = 100
+		add_country_modifier = {
+			name = escanni_wars_escanni_emperor
+			duration = -1
+		}
+	}
+}
+
+# Electors called into war
+country_event = {
+	id = escanni_wars.12
+	title = "escanni_wars.12.t"
+	picture = HRE_eventPicture
+	desc = "escanni_wars.12.d"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = escanni_wars.12.a
+		ai_chance = { factor = 100 }
+		
+		add_prestige = 25
+		join_all_defensive_wars_of = Emperor
+	}
+	
+	option = {
+		name = escanni_wars.12.b
+		ai_chance = { factor = 0 }
+		
+		add_prestige = -25
+		add_legitimacy = -25
+	}
+}
+
+# Castanor: 20-29 #
+# A walk through Pantheonway + reflections on history of Castanor
+country_event = {
+	id = escanni_wars.20
+	title = escanni_wars.20.t
+	picture = 10_Jain_Estate_eventPicture
+	desc = {
+		trigger = { NOT = { has_global_flag = escanni_wars_bypass } }
+		desc = escanni_wars.20.descWar
+	}
+	desc = {
+		trigger = { has_global_flag = escanni_wars_bypass }
+		desc = escanni_wars.20.descBypass
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = escanni_wars.20.a
+		add_country_modifier = {
+			name = escanni_wars_reflecting_on_past_castans
+			duration = -1
+		}
+		country_event = {
+			id = escanni_wars.21
+			days = 180
+			random = 60
+		}
+	}
+}
+# Discovery that the Trials are still legit - pay some money and time to restore Trialmount so that the Trials can be taken again
+country_event = {
+	id = escanni_wars.21
+	title = escanni_wars.21.t
+	picture = COMET_SIGHTED_eventPicture
+	desc = escanni_wars.21.desc
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = escanni_wars.21.a
+		country_event = {
+			id = escanni_wars.22
+			days = 365
+			random = 365
+		}
+		add_years_of_income = -0.5
+	}
+}
+# Patricians object to your intentions to take the trials - this sets up later disaster
+country_event = {
+	id = escanni_wars.22
+	title = escanni_wars.22.t
+	picture = OPRICHINA_eventPicture
+	desc = escanni_wars.22.desc
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = escanni_wars.22.a
+		add_estate_loyalty = {
+			estate = estate_castonath_patricians
+			loyalty = -5
+		}
+		set_country_flag = escanni_wars_castanor_option_unlocked
+		set_country_flag = first_time_trying_trials
+		custom_tooltip = escanni_wars_form_castanor_unlocked_tt
+		remove_country_modifier = escanni_wars_reflecting_on_past_castans
+	}
+}
+# Infernal Court: 30-39 #
+country_event = {
+	id = escanni_wars.30
+	title = escanni_wars.30.t
+	picture = 10_Jain_Estate_eventPicture
+	desc = escanni_wars.30.d
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = escanni_wars.30.a
+		remove_government_reform = secret_societies_inf
+		change_tag = B62
+		add_government_reform = mystery_societies_inf
+		hidden_effect = { restore_country_name = yes }
+		custom_tooltip = tooltip_moredhalic_culture_provinces
+		clr_country_flag = castonath_patricians_curtailing_relationship
+		clr_country_flag = castonath_patricians_autonomous
+		clr_country_flag = castonath_patricians_reinstated
+		country_event = {
+			id = castonath_patricians_events.69
+			days = 7
+		}
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					has_owner_culture = yes
+					owner = {
+						culture_is_human = yes
+					}
+				}
+				change_culture = moredhalic
+			}
+		}
+		831 = {
+			if =  { 
+				limit = { owned_by = ROOT }
+				remove_province_modifier = castonath_patrician_influence_full
+				remove_province_modifier = castonath_patrician_influence_significant
+				remove_province_modifier = castonath_patrician_influence_considerable
+				remove_province_modifier = castonath_patrician_influence_some
+				add_devastation = 50
+			}
+		}
+		832 = {
+			if =  { 
+				limit = { owned_by = ROOT }
+				remove_province_modifier = castonath_patrician_influence_full
+				remove_province_modifier = castonath_patrician_influence_significant
+				remove_province_modifier = castonath_patrician_influence_considerable
+				remove_province_modifier = castonath_patrician_influence_some
+				add_devastation = 50
+			}
+		}
+		833 = {
+			if =  { 
+				limit = { owned_by = ROOT }
+				remove_province_modifier = castonath_patrician_influence_full
+				remove_province_modifier = castonath_patrician_influence_significant
+				remove_province_modifier = castonath_patrician_influence_considerable
+				remove_province_modifier = castonath_patrician_influence_some
+				add_devastation = 50
+			}
+		}
+		primary_and_ruler_culture_change = { race = human new_culture = moredhalic }
+		remove_non_electors_emperors_from_empire_effect = yes
+		swap_non_generic_missions = yes
+		clr_country_flag = castonath_patricians_reinstated
+		if = {
+			limit = {
+				NOT = { government_rank = 3 }
+			}
+			set_government_rank = 3
+		}
+		if = {
+			limit = { has_custom_ideas = no }
+			country_event = { id = ideagroups.1 } #Swap Ideas
+		}
+	}
+}
+# Black Demesne: 40-49 #
+
+
+#Escann notification
+country_event = {
+	id = escanni_wars.100
+	title = "escanni_wars.1.t"
+	picture = {	
+		trigger = {
+			has_dlc = "Emperor"
+		}
+		picture = ITALIAN_wars_eventPicture
+	}
+	picture = {	
+		trigger = {
+			NOT = { has_dlc = "Emperor" }
+		}
+		picture = MILITARY_CAMP_eventPicture
+	}
+	desc = "escanni_wars.1.d"
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = escanni_wars.1.a
+		
+		custom_tooltip = escanni_wars_tt
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					any_owned_province = {
+						province_is_valid_for_escanni_wars = yes
+					}
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = opinion_warhawks # -100 opinion
+					years = 50
+				}
+			}
+		}
+	}
+}
+
+# Joined Escanni wars
+country_event = {
+	id = escanni_wars.200
+	title = "escanni_wars.200.t"
+	picture = {	
+		trigger = {
+			has_dlc = "Emperor"
+		}
+		picture = ITALIAN_wars_eventPicture
+	}
+	picture = {	
+		trigger = {
+			NOT = { has_dlc = "Emperor" }
+		}
+		picture = MILITARY_CAMP_eventPicture
+	}
+	desc = "escanni_wars.200.d"
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		#If the wars are active
+		has_global_flag = escanni_wars_global_flag
+		
+		# and you can participate
+		country_can_participate_in_escanni_wars = yes
+		
+		# And you've not already joined the wars
+		NOT = { has_country_flag = joined_escanni_wars }
+	}
+	
+	option = {
+		name = escanni_wars.200.a
+		
+		set_country_flag = joined_escanni_wars
+		
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					any_owned_province = {
+						province_is_valid_for_escanni_wars = yes
+					}
+					NOT = { has_opinion_modifier = { who = ROOT modifier = opinion_warhawks } }
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = opinion_warhawks # -100 opinion
+					years = 50
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = opinion_warhawks # -100 opinion
+					years = 50
+				}
+			}
+		}
+	}
+}
+
+# The following events, 300-310, happen during the EWoC
+
+  #Refugees Flee Our Country
+  province_event = {
+	id = escanni_wars.300
+	title = "escanni_wars.300.t"
+	picture = {
+		trigger = {
+			has_dlc = "Art of War"
+		}
+		picture = REFUGEES_ESCAPING_eventPicture
+	}
+
+	picture = {
+		trigger = {
+			NOT = {has_dlc = "Art of War"}
+		}
+		picture = FARMING_eventPicture
+	}
+	desc = "escanni_wars.300.d"
+
+	is_triggered_only = yes
+
+	option = { #Let refugees flee
+		name = escanni_wars.300.a
+		owner = {
+			add_prestige = -5
+		}
+		add_base_tax = -2
+		add_base_production = -2
+		add_base_manpower = -2
+
+		random_province = {
+			limit = {
+				region = trollsbay_region
+				NOT = { devastation = 0.01 }
+			}
+			add_base_tax = 2
+			add_base_production = 2
+			add_base_manpower = 2
+		}
+	}
+
+	option = { #Attempt to stop them from fleeing
+		name = escanni_wars.300.b
+		random_list = {
+			75 = {
+				add_province_modifier = {
+					name = escanni_wars_emigration_disallowed
+					duration = 3650
+				}
+				spawn_rebels = {
+					type = anti_tax_rebels
+					size = 3
+				}
+			}
+			25 = {
+				owner = {
+					add_prestige = -10
+				}
+				add_base_tax = -2
+				add_base_production = -2
+				add_base_manpower = -2
+
+				random_province = {
+					limit = {
+						region = trollsbay_region
+						NOT = { devastation = 0.01 }
+					}
+					add_base_tax = 2
+					add_base_production = 2
+					add_base_manpower = 2
+				}
+			}
+		}
+	}
+  }
+
+  # Escanni Slaughter
+  province_event = {
+	id = escanni_wars.301
+	title = "escanni_wars.301.t"
+	picture = IMPALED_SOLDIERS_eventPicture
+	desc = "escanni_wars.301.d"
+
+	is_triggered_only = yes
+	# On_action event
+
+	option = { #Massacre
+		name = escanni_wars.301.a
+		add_base_tax = -3
+		add_base_production = -3
+		add_base_manpower = -3
+
+		add_province_modifier = {
+			name = escanni_wars_massacred_province
+			duration = 7300
+		}
+		owner = {
+			set_country_flag = escanni_wars_slaughter
+		}
+	}
+
+	option = { #Raise as undead
+		name = escanni_wars.301.b
+		trigger = {
+			owner = {
+				has_country_modifier = undead_military
+			}
+		}
+
+		highlight = yes
+
+		add_base_tax = -3
+		add_base_production = -3
+		add_base_manpower = -3
+
+		add_province_modifier = {
+			name = escanni_wars_massacred_province
+			duration = 7300
+		}
+
+		owner = {
+			add_manpower = 10
+			capital_scope = {
+				infantry = root
+				infantry = root
+				infantry = root
+				infantry = root
+				infantry = root
+				infantry = root
+				infantry = root
+				infantry = root
+				infantry = root
+				infantry = root
+			}
+		}
+		owner = {
+			set_country_flag = escanni_wars_slaughter
+		}
+	}
+	
+  }
+
+  # Great Escanni Famine
+  country_event = {
+	id = escanni_wars.302
+	title = "escanni_wars.302.t"
+	picture = FAMINE_eventPicture
+	desc = "escanni_wars.302.d"
+
+	is_triggered_only = yes
+
+	option = { #Unabated Famine
+		name = escanni_wars.302.a
+
+		set_country_flag = escanni_wars_famine_suffered
+
+		add_country_modifier = {
+			name = escanni_wars_escanni_famine
+			duration = 3650
+			desc = desc_escanni_wars_escanni_famine
+		}
+
+		select_highest_dev_province_with_limit = {
+			limit = "province_is_valid_for_escanni_wars = yes"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "province_is_valid_for_escanni_wars = yes"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "province_is_valid_for_escanni_wars = yes"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "province_is_valid_for_escanni_wars = yes"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "province_is_valid_for_escanni_wars = yes"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+
+		random_owned_province = {
+			spawn_rebels = {
+				type = anti_tax_rebels
+				size = 3
+			}
+		}
+		random_owned_province = {
+			spawn_rebels = {
+				type = anti_tax_rebels
+				size = 3
+			}
+		}
+		random_owned_province = {
+			spawn_rebels = {
+				type = anti_tax_rebels
+				size = 3
+			}
+		}
+	}
+
+	option = { #Abated Famine
+		name = escanni_wars.302.b
+
+		add_years_of_income = -2
+
+		set_country_flag = escanni_wars_famine_suffered
+
+		add_country_modifier = {
+			name = escanni_wars_lessened_escanni_famine
+			duration = 3650
+			desc = desc_escanni_wars_lessened_escanni_famine
+		}
+
+		select_highest_dev_province_with_limit = {
+			limit = "province_is_valid_for_escanni_wars = yes"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "province_is_valid_for_escanni_wars = yes"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "province_is_valid_for_escanni_wars = yes"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		select_highest_dev_province_with_limit = {
+			limit = "OR = {trade_goods = grain
+			trade_goods = livestock
+			trade_goods = fish}"
+			effect = "add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1"
+		}
+		random_owned_province = {
+			spawn_rebels = {
+				type = particularist_rebels
+				size = 1
+			}
+		}
+		random_owned_province = {
+			spawn_rebels = {
+				type = particularist_rebels
+				size = 1
+			}
+		}
+	}
+  }
+
+  #Western War Expert
+  country_event = {
+	id = escanni_wars.303
+	title = "escanni_wars.303.t"
+	picture = ADVISOR_eventPicture
+	desc = "escanni_wars.303.d"
+
+	is_triggered_only = yes
+
+	option = { #Make a general
+		name = escanni_wars.303.a
+
+		set_country_flag = escanni_wars_war_expert
+
+		create_general = {
+			tradition = 60
+		}
+	}
+
+	option = { #Make an advisor from a Western culture (Lorentish, Alenic, Anbennarian, Dostanorian, Businori)
+		name = escanni_wars.303.b
+
+		set_country_flag = escanni_wars_war_expert
+
+		random_list = {
+			33 = {
+				define_advisor = {
+					type = commandant
+					skill = 3
+					discount = yes
+					culture = gawedi
+				}
+			}
+			33 = {
+				define_advisor = {
+					type = army_reformer
+					skill = 3
+					discount = yes
+					culture = vernman
+				}
+			}
+			34 = {
+				define_advisor = {
+					type = quartermaster
+					skill = 3
+					discount = yes
+					culture = busilari
+				}
+			}
+		}
+	}
+  }
+
+  #Veterans Enter Our Ranks
+  country_event = {
+	id = escanni_wars.304
+	title = "escanni_wars.304.t"
+	picture = LAND_MILITARY_eventPicture
+	desc = "escanni_wars.304.d"
+
+	is_triggered_only = yes
+
+	option = { #Mercs
+		name = escanni_wars.304.a
+
+		set_country_flag = escanni_wars_veterans_enter
+
+		add_country_modifier = {
+			name = escanni_wars_mercs
+			duration = 3650
+			desc = desc_escanni_wars_mercs
+		}
+	}
+
+	option = { #Train generals
+		name = escanni_wars.304.b
+
+		set_country_flag = escanni_wars_veterans_enter
+
+		add_army_tradition = 20
+		add_years_of_income = -0.25
+	}
+  }
+
+  #Orcish Union
+  country_event = {
+	id = escanni_wars.305
+	title = "escanni_wars.305.t"
+	picture = ORC_WITH_AXE_eventPicture
+	desc = "escanni_wars.305.d"
+
+	is_triggered_only = yes
+
+	option = { #Accept union
+		name = escanni_wars.305.a
+		ai_chance = { factor = 20 }
+		create_union = event_target:junior_orc
+		add_liberty_desire = -30
+		set_country_flag = accepted_orcish_union
+	}
+
+	option = { #Reject union
+		name = escanni_wars.305.b
+		ai_chance = { factor =  80 }
+		add_prestige = 10
+		reverse_add_opinion = {
+			who = event_target:junior_orc
+			modifier = insulted
+		}
+	}
+  }
+
+  #A Request For Protection
+  country_event = {
+	id = escanni_wars.306
+	title = "escanni_wars.306.t"
+	picture = CONQUEST_eventPicture
+	desc = "escanni_wars.306.d"
+
+	is_triggered_only = yes
+
+	option = { #Make the target country a vassal
+		name = escanni_wars.306.a
+		ai_chance = { factor = 20 }
+		add_years_of_income = -2
+		add_manpower = -10
+		add_country_modifier = {
+			name = escanni_wars_vassal_garrison
+			duration = 10
+			desc = desc_escanni_wars_vassal_garrison
+		}
+		vassalize = event_target:protection_requested
+		set_country_flag = accepted_escanni_vassalization
+	}
+	option = { #Refuse to vassalize the target country
+		name = escanni_wars.306.b
+		ai_chance = { factor =  80 }
+	}
+  }
+
+  #Unified Market
+  country_event = {
+	id = escanni_wars.307
+	title = "escanni_wars.307.t"
+	picture = ARTWORK_eventPicture
+	desc = "escanni_wars.307.d"
+
+	is_triggered_only = yes
+
+	option = { #More money
+		name = escanni_wars.307.a
+		add_years_of_trade_income = {
+			years = 1
+		}
+		add_country_modifier = {
+			name = escanni_wars_unified_market
+			duration = 3650
+			desc = desc_escanni_wars_unified_market
+		}
+		add_mercantilism = 3
+		if = {
+			limit = {
+				exists = Z50
+				NOT = {
+					historical_friend_with = Z50
+				}
+			}
+			add_historical_rival = Z50
+			if = {
+				limit = {
+					has_country_flag = escanni_wars_usurp_emperorship
+				}
+				add_historical_rival = emperor
+			}
+		}
+	}
+
+	option = { #Bigger army
+		name = escanni_wars.307.b
+		add_years_of_owned_provinces_manpower = {
+			years = 1
+			trigger =  { province_is_valid_for_escanni_wars = yes }
+		}
+		add_country_modifier = {
+			name = escanni_wars_bankrolled_army
+			duration = 3650
+			desc = desc_escanni_wars_bankrolled_army
+		}
+		#Add the rivalries and embargoes from top option
+		if = {
+			limit = {
+				exists = Z50
+				NOT = {
+					historical_friend_with = Z50
+				}
+			}
+			add_historical_rival = Z50
+			if = {
+				limit = {
+					has_country_flag = escanni_wars_usurp_emperorship
+				}
+				add_historical_rival = emperor
+			}
+		}
+	}
+
+	option = { #More Development
+		name = escanni_wars.307.c
+		add_country_modifier = {
+			name = escanni_wars_developing_escann
+			duration = 3650
+			desc = desc_escanni_wars_developing_escann
+		}
+		#Add the rivalries and embargoes
+		if = {
+			limit = {
+				exists = Z50
+				NOT = {
+					historical_friend_with = Z50
+				}
+			}
+			add_historical_rival = Z50
+			if = {
+				limit = {
+					has_country_flag = escanni_wars_usurp_emperorship
+				}
+				add_historical_rival = emperor
+			}
+		}
+	}
+  }
+
+  country_event = {	#Escanni Wars Event Handler
+	id = escanni_wars.308
+	title = escanni_wars.301.t
+	desc = escanni_wars.301.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		has_global_flag = escanni_wars_global_flag
+		NOT = { has_global_flag = escanni_wars_end_global_flag }
+		country_can_participate_in_escanni_wars = yes
+	}
+
+	option = {
+		name = escanni_wars.308.a
+		random_list = {
+			1 = {	}
+			1 = { #Refugees Flee Province
+				trigger = {
+					any_owned_province = {
+							devastation = 25
+							NOT = { fort_level = 1 }
+					}
+				}
+				
+				random_owned_province = {
+					limit = {
+						devastation = 25
+						NOT = { fort_level = 1 }
+					}
+					province_event = { id = escanni_wars.300 }
+				}
+			}
+			1 = { #Great Escanni Famine
+				trigger = {
+					NOT = { has_country_flag = escanni_wars_famine_suffered }
+					calc_true_if = {
+						amount = 10
+						escann_superregion = {
+							type = all
+							devastation = 25
+							OR = {
+								trade_goods = grain
+								trade_goods = fish
+								trade_goods = livestock
+							}
+						}
+					}
+				}
+				country_event = { id = escanni_wars.302 }
+			}
+			1 = { #Western War Experts
+				trigger = {
+					NOT = { has_country_flag = escanni_wars_war_expert }
+					is_at_war = yes
+					NOT = {
+						OR = {
+							culture_group = orcish
+							culture_group = goblin
+						}
+					}
+				}
+				country_event = { id = escanni_wars.303 }
+			}
+			1 = { #Veterans Enter Our Ranks
+				trigger = {
+					NOT = {
+						OR = {
+							tag = B34
+							tag = B39
+							tag = B54
+							culture_group = orcish
+							culture_group = goblin
+						}
+					}
+					NOT = { has_country_flag = escanni_wars_veterans_enter }
+					is_at_war = yes
+				}
+				country_event = { id = escanni_wars.304 }
+			}
+			1 = { #Orcish Union
+				trigger = {
+					culture = green_orc
+					is_subject = no
+					is_at_war = no
+					total_development = 400
+					NOT = { has_country_flag = accepted_orcish_union }
+					any_neighbor_country = {
+						culture = green_orc
+						is_subject = no
+						is_at_war = no
+						ai = yes
+						has_opinion = {
+							who = ROOT
+							value = 0
+						}
+						NOT = {
+							total_development = ROOT
+							land_forcelimit = ROOT
+						}
+						NOT = { has_country_flag = attempted_orcish_union }
+					}
+				}
+				random_neighbor_country = {
+					limit = {
+						culture = green_orc
+						is_subject = no
+						is_at_war = no
+						ai = yes
+						has_opinion = {
+							who = ROOT
+							value = 0
+						}
+						NOT = {
+							total_development = ROOT
+							land_forcelimit = ROOT
+						}
+						NOT = { has_country_flag = attempted_orcish_union }
+					}
+					save_event_target_as = junior_orc
+					set_country_flag = attempted_orcish_union
+				}
+				country_event = { id = escanni_wars.305 }
+			}
+			1 = { #Request For Protection
+				trigger = {
+					NOT = {
+						tag = Z45 #They don't really count as Escanni for the purposes of the EWoC
+						has_country_flag = accepted_escanni_vassalization
+					}
+		
+					OR = {
+						culture_group = escanni
+						culture = marrodic
+						culture = iron_dwarf
+						culture = stone_dwarf
+						culture = newfoot_halfling
+					}
+
+					total_development = 400
+
+					any_neighbor_country = {
+						OR = {
+							culture_group = escanni
+							culture = marrodic
+							culture = iron_dwarf
+							culture = stone_dwarf
+							culture = newfoot_halfling
+						}
+						NOT = { total_development = 100 }
+						NOT = { has_country_flag = sent_protection_request }
+					}
+				}
+				random_neighbor_country = {
+					limit = {
+						OR = {
+							culture_group = escanni
+							culture = marrodic
+							culture = iron_dwarf
+							culture = stone_dwarf
+							culture = newfoot_halfling
+						}
+		
+						NOT = { total_development = 100 }
+						NOT = { has_country_flag = sent_protection_request }
+					}
+					save_event_target_as = protection_requested
+					set_country_flag = sent_protection_request
+				}
+				country_event = { id = escanni_wars.306 }
+			}
+		}
+	}
+}
