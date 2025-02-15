@@ -238,6 +238,78 @@ estate_lowercastes_organization_caste_bhuvauri = {
 		factor = 0
 	}
 }
+estate_lowercastes_organization_caste_khadisrapur = {
+	icon = privilege_promote_maratha_nobility
+	max_absolutism = 0
+	loyalty = 0.05
+	land_share = 0
+	influence = 0.1
+	is_valid = {
+		has_estate_privilege = estate_lowercastes_organization_caste_khadisrapur
+	}
+	can_select = {
+		always = no
+	}
+	can_revoke = {
+		always = no
+	}
+	on_granted = {
+		custom_tooltip = caste_races_lowercastes_khadisrapur_tt
+	}
+	on_revoked = {
+		custom_tooltip = caste_races_lowercastes_khadisrapur_tt
+	}
+	
+	conditional_modifier = { # Only Harimari
+		trigger = {
+			has_country_flag = harimari_in_lowercastes
+			NOT = { has_country_flag = lowercastes_is_shared }
+		}
+		modifier = {
+			development_cost = -0.10 #Full modifier, harimari are alone in the caste
+		}
+	}
+	conditional_modifier = { # Half Harimari
+		trigger = {
+			has_country_flag = harimari_in_lowercastes
+			has_country_flag = lowercastes_is_shared
+		}
+		modifier = {
+			development_cost = -0.05 #Half modifier, harimari share in the caste
+		}
+	}
+	conditional_modifier = { # Only Humans
+		trigger = {
+			has_country_flag = human_in_lowercastes
+			NOT = { has_country_flag = lowercastes_is_shared }
+		}
+		modifier = {
+			production_efficiency = 0.10 #Full modifier, humans are alone in the caste
+		}
+	}
+	conditional_modifier = { # Half Humans
+		trigger = {
+			has_country_flag = human_in_lowercastes
+			has_country_flag = lowercastes_is_shared
+		}
+		modifier = {
+			production_efficiency = 0.05 #Half modifier, humans share the caste
+		}
+	}
+	conditional_modifier = { # Half Orc (not half-orc, half of orc)
+		trigger = {
+			has_country_flag = orcish_in_lowercastes
+			has_country_flag = lowercastes_is_shared
+		}
+		modifier = {
+			global_manpower_modifier = 0.075
+		}
+	}
+	
+	ai_will_do = {
+		factor = 0
+	}
+}
 estate_lowercastes_organization_reformed = {
 	icon = privilege_promote_maratha_nobility
 	max_absolutism = 0
@@ -1328,4 +1400,57 @@ estate_lowercastes_elevated_sailors = {
 	
 	on_revoked = { remove_country_modifier = sanghariyar_marine_frontline }
 	on_invalid = { remove_country_modifier = sanghariyar_marine_frontline }
+}
+
+estate_lowercastes_khedarid_architecture = {
+	icon = privilege_dev_cost_forest
+	influence = 0.05
+
+	is_valid = { mission_completed = R11_temple_crowd }
+
+	can_select = {
+		NOT = {
+			has_estate_privilege = estate_uppercastes_khedarid_architecture
+			has_estate_privilege = estate_middlecastes_khedarid_architecture
+		}
+	}
+
+	on_granted = {
+		custom_tooltip = estate_lowercastes_khedarid_architecture_gt_1
+		tooltip = { add_province_modifier = { name = lowercastes_khedarid_architecture_mod_1 duration = -1 } }
+		custom_tooltip = estate_lowercastes_khedarid_architecture_gt_2
+		tooltip = { add_province_modifier = { name = lowercastes_khedarid_architecture_mod_2 duration = -1 } }
+	}
+
+	on_granted_province = {
+		if = {
+			limit = { region = shamakhad_region }
+			if = {
+				limit = { province_group = temple_province_group }
+				add_province_modifier = { name = lowercastes_khedarid_architecture_mod_1 duration = -1 }
+			}
+			if = {
+				limit = {
+					OR = {
+						development = 30
+						has_terrain = city_terrain
+					}
+				}
+				add_province_modifier = { name = lowercastes_khedarid_architecture_mod_2 duration = -1 }
+			}
+		}
+	}
+
+	can_revoke = { dip_power = 50 }
+	on_revoked = {
+		custom_tooltip = estate_lowercastes_khedarid_architecture_rt
+		add_dip_power = -50
+		add_estate_loyalty = { estate = estate_lowercastes loyalty = 20 }
+	}
+	on_revoked_province = {
+		remove_province_modifier = lowercastes_khedarid_architecture_mod_1
+		remove_province_modifier = lowercastes_khedarid_architecture_mod_2
+	}
+
+	ai_will_do = { factor = 100 }
 }

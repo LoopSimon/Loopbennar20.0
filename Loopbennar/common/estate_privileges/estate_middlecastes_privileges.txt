@@ -1464,3 +1464,67 @@ estate_middlecastes_merchant_elite = {
 		global_trade_power = 0.1
 	}
 }
+
+estate_middlecastes_khedarid_architecture = {
+	icon = privilege_dev_cost_desert
+	influence = 0.05
+
+	is_valid = { mission_completed = R11_four_season }
+
+	can_select = {
+		NOT = {
+			has_estate_privilege = estate_uppercastes_khedarid_architecture
+			has_estate_privilege = estate_lowercastes_khedarid_architecture
+		}
+	}
+
+	on_granted = {
+		custom_tooltip = estate_middlecastes_khedarid_architecture_gt_1
+		tooltip = { add_province_modifier = { name = middlecastes_khedarid_architecture_mod_1 duration = -1 } }
+		custom_tooltip = estate_middlecastes_khedarid_architecture_gt_2
+		tooltip = { add_province_modifier = { name = middlecastes_khedarid_architecture_mod_2 duration = -1 } }
+		custom_tooltip = estate_middlecastes_khedarid_architecture_gt_3
+		tooltip = { add_province_modifier = { name = middlecastes_khedarid_architecture_mod_3 duration = -1 } }
+	}
+
+	on_granted_province = {
+		if = {
+			limit = { region = shamakhad_region }
+			if = {
+				limit = { has_terrain = desert }
+				add_province_modifier = { name = middlecastes_khedarid_architecture_mod_2 duration = -1 }
+			}
+			else_if = {
+				limit = { has_winter = mild_winter }
+				add_province_modifier = { name = middlecastes_khedarid_architecture_mod_1 duration = -1 }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						has_terrain = farmlands
+						has_terrain = grasslands
+						has_terrain = drylands
+						has_terrain = savannah
+						has_terrain = steppe
+						has_terrain = dwarven_road
+					}
+				}
+				add_province_modifier = { name = middlecastes_khedarid_architecture_mod_3 duration = -1 }
+			}
+		}
+	}
+
+	can_revoke = { dip_power = 50 }
+	on_revoked = {
+		custom_tooltip = estate_middlecastes_khedarid_architecture_rt
+		add_dip_power = -50
+		add_estate_loyalty = { estate = estate_middlecastes loyalty = 20 }
+	}
+	on_revoked_province = {
+		remove_province_modifier = middlecastes_khedarid_architecture_mod_1
+		remove_province_modifier = middlecastes_khedarid_architecture_mod_2
+		remove_province_modifier = middlecastes_khedarid_architecture_mod_3
+	}
+
+	ai_will_do = { factor = 100 }
+}

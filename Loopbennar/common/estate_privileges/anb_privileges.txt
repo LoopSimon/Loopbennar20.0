@@ -1167,7 +1167,13 @@ estate_mages_form_iii = {
 	influence = 0.05
 
 	is_valid = {
-		tag = A77
+		OR = {
+			tag = A77
+			AND = {
+				tag = Z97
+				was_tag = A77
+			}
+		}
 		mission_completed = forms_eight_to_three 
 		NOT = {
 			has_estate_privilege = estate_mages_form_i
@@ -1192,7 +1198,13 @@ estate_mages_form_i = {
 	influence = 0.20
 
 	is_valid = {
-		tag = A77
+		OR = {
+			tag = A77
+			AND = {
+				tag = Z97
+				was_tag = A77
+			}
+		}
 		mission_completed = forms_eight_to_three 
 		NOT = {
 			has_estate_privilege = estate_mages_form_iii
@@ -1780,6 +1792,37 @@ estate_adventurers_organization_exploration_society = {
 	ai_will_do = { factor = 1 }
 }
 
+estate_adventurers_organization_heroes_guild = {
+	icon = privilege_promote_maratha_nobility
+	loyalty = 0.1
+	influence = 0.1
+	max_absolutism = -10
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	is_valid = {
+		OR = {
+			has_estate_privilege = estate_adventurers_organization_heroes_guild
+			AND = {
+				is_subject = yes
+				overlord = { has_estate_privilege = estate_adventurers_organization_heroes_guild }
+			}
+		}
+	}
+	can_revoke = { always = no }
+	on_granted = {
+		clear_adventurers_organization_effect = yes
+		custom_tooltip = heroes_guild_subjects_tt
+		enable_estate_action = { estate_action = RECRUIT_ADDITIONAL_HEROES_ADVENTURERS }
+	}
+	on_revoked = { disable_estate_action = { estate_action = RECRUIT_ADDITIONAL_HEROES_ADVENTURERS } }
+	on_invalid = { disable_estate_action = { estate_action = RECRUIT_ADDITIONAL_HEROES_ADVENTURERS } }
+	benefits = {
+		land_morale = 0.05
+		monthly_reform_progress = 0.1
+	}
+
+	ai_will_do = { factor = 1 }
+}
+
 estate_adventurers_free_company_rosters = {
 	icon = privilege_demand_more_troops
 	max_absolutism = -5
@@ -1933,26 +1976,27 @@ estate_adventurers_heroes_in_the_army = {
 	on_granted = {
 		add_army_tradition = -30
 	}
-	penalties = {
-		yearly_army_professionalism = -0.01 #this is easily offset by hiring a general
-		#drill_decay_modifier = 0.33
-	}
 	benefits = {
 		leader_land_manuever = 1
 		land_morale = 0.1
+	}
+	penalties = {
 		general_cost = 0.25
 	}
-	conditional_modifier = {		#this is so xia tags that choose the adventurer path in their mt can gain professionalism for the chi path without having to spend ungodly amounts of mil on generals
+	conditional_modifier = { #Put triggers here to EXEMPT people from the prof drawback
 		trigger = {
-			OR = {
+			NOT = {
 				has_country_modifier = xia_inviting_wandering_warriors
 				has_country_flag = covenblad_darkness_banished
-				has_reform = heroic_realm_reform
+				has_government_attribute = is_heroic_realm
+				mission_completed = legacy_of_the_wvyern
+				has_country_flag = S53_husbands_in_the_army_flag
 			}
 		}
 		modifier = {
-			yearly_army_professionalism = 0.01
+			yearly_army_professionalism = -0.01
 		}
+		is_bad = yes
 	}
 	conditional_modifier = {		#part of xia mission tree
 		trigger = {
@@ -1968,7 +2012,6 @@ estate_adventurers_heroes_in_the_army = {
 		}
 		modifier = {
 			adventurers_loyalty_modifier = 0.2
-			yearly_army_professionalism = 0.01
 		}
 	}
 	conditional_modifier = {
@@ -1976,9 +2019,16 @@ estate_adventurers_heroes_in_the_army = {
 			has_country_flag = S53_husbands_in_the_army_flag
 		}
 		modifier = {
-			yearly_army_professionalism = 0.01
 			adventurers_loyalty_modifier = 0.1
 			general_cost = 0.25
+		}
+	}
+	conditional_modifier = {
+		trigger = { mission_completed = R11_heroes_army }
+		modifier = {
+			adventurers_loyalty_modifier = 0.1
+			global_manpower_modifier = 0.1
+			mercenary_manpower = 0.1
 		}
 	}
 	ai_will_do = {
@@ -2179,10 +2229,13 @@ estate_adventurers_advisors = {
 	icon = privilege_empty_throne
 	max_absolutism = -10
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	conditional_modifier = { trigger = { has_country_flag = khadisrapur_appoint_guild_ambassadors_completed_flag } modifier = { max_absolutism = 10 } }
 	influence = 0.1
 	loyalty = 0.05
-	penalties = {
-		stability_cost_modifier = 0.25
+	conditional_modifier = {
+		trigger = { NOT = { has_country_flag = khadisrapur_appoint_guild_ambassadors_completed_flag } }
+		modifier = { stability_cost_modifier = 0.25 }
+		is_bad = yes
 	}
 	benefits = {
 		advisor_cost = -0.1
@@ -2231,9 +2284,7 @@ estate_adventurers_monopoly_of_slaves = {
 	loyalty = 0.1
 	is_valid = {
 		has_dlc = "Emperor"
-		any_owned_province = {
-			trade_goods = slaves
-		}
+		slaves = 1
 		NOT = {
 			has_country_flag = no_longer_monstrous
 			tag = R38
@@ -2260,6 +2311,7 @@ estate_adventurers_monopoly_of_slaves = {
 			# }
 		}
 	}
+	can_revoke = { hidden_trigger = { NOT = { has_global_flag = adventurers_remove_slaves } } }
 	on_granted = {
 		add_mercantilism = 1
 		add_years_of_owned_provinces_production_income = {
@@ -3416,21 +3468,20 @@ estate_church_guaranteed_autonomy = {
 	}
 	on_granted_province = {
 		if = {
-			limit = { owner = { has_country_flag = rending_started_country } }
-			if = {
-				limit = { OR = { religion = accretive_path religion = transmutative_path } }
-				add_province_modifier = { name = estate_church_guaranteed_autonomy_mod duration = -1 }
-			}
-		}
-		else_if = {
 			limit = {
 				OR = {
 					religion = accretive_path
 					religion = transmutative_path
-					religion = mystic_accord
+					AND = {
+						religion = mystic_accord
+						NOT = { owner = { has_country_flag = rending_started_country } }
+					}
 				}
 			}
 			add_province_modifier = { name = estate_church_guaranteed_autonomy_mod duration = -1 }
+		}
+		else = {
+			remove_province_modifier = estate_church_guaranteed_autonomy_mod
 		}
 	}
 	on_revoked = {
@@ -5630,7 +5681,7 @@ estate_adventurers_temple_quest_licenses = {
 	penalties = {
 	}
 	benefits = {
-		global_tax_modifier = -0.1		#The adventurers are paying you for Temple Quest Licenses
+		global_tax_modifier = 0.1		#The adventurers are paying you for Temple Quest Licenses
 	}
 	conditional_modifier = {
 		trigger = {
@@ -5750,27 +5801,35 @@ estate_mages_temple_desecrators = {
 		has_country_flag = devouring_temple_secrets
 	}
 	can_select = {
+		treasury = 100
+		adm_power = 50
+		dip_power = 50
+		mil_power = 50
 		any_owned_province = {
 			province_group = temple_province_group
-			NOT = {
-				has_province_modifier = corrupted_temple_complex
-				has_province_modifier = corrupted_temple_complex_inactive
+			OR = {
+				has_province_modifier = temple_complex 
+				has_province_modifier = damaged_temple_complex 
+				has_province_modifier = derelict_temple_complex 
 			}
+			hidden_trigger = { NOT = { has_province_modifier = temple_heart_discovered } }
+			is_core = ROOT
 		}
 	}
 	on_granted = {
-		hidden_effect = {
-			set_country_flag = first_temple_quest
-			country_event = { id = spirits.500 }
-		}
-		custom_tooltip = will_begin_temple_quest_preparations_tooltip
+		add_treasury = -100
+		add_adm_power = -50
+		add_dip_power = -50
+		add_mil_power = -50
+		custom_tooltip = estate_khelorvalshi_temple_desecrators_granted_tooltip
+		hidden_effect = { country_event = { id = spirits.640 } }
 	}
 	penalties = {
 		global_tax_modifier = -0.1
 	}
 	benefits = {
 	}
-	cooldown_years = 10
+	cooldown_years = 5
 	ai_will_do = {
 		factor = 15
 	}
@@ -7780,7 +7839,7 @@ estate_mages_zamukaras_focus_carpets = {
 		always = yes
 	}
 	on_granted = {
-		custom_tooltip = zamukaras_forcelimit_tt
+		custom_tooltip = zamukaras_totaldev_tt
 		add_country_modifier = {
 			name = zamukaras_focus_carpets_modifier
 			duration = -1
@@ -7796,7 +7855,7 @@ estate_mages_zamukaras_focus_carpets = {
 
 	conditional_modifier = {
 		trigger = { 
-			NOT = { land_forcelimit = 100 }
+			NOT = { total_development = 400 }
 		}
 		modifier = { 
 			amount_of_hussars = 2
@@ -7805,8 +7864,8 @@ estate_mages_zamukaras_focus_carpets = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 150
-			NOT = { land_forcelimit = 200 }
+			total_development = 400
+			NOT = { total_development = 600 }
 		}
 		modifier = { 
 			amount_of_hussars = 3
@@ -7815,8 +7874,8 @@ estate_mages_zamukaras_focus_carpets = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 200
-			NOT = { land_forcelimit = 250 }
+			total_development = 600
+			NOT = { total_development = 800 }
 		}
 		modifier = { 
 			amount_of_hussars = 4
@@ -7825,8 +7884,8 @@ estate_mages_zamukaras_focus_carpets = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 250
-			NOT = { land_forcelimit = 300 }
+			total_development = 800
+			NOT = { total_development = 1000 }
 		}
 		modifier = { 
 			amount_of_hussars = 5
@@ -7835,8 +7894,8 @@ estate_mages_zamukaras_focus_carpets = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 300
-			NOT = { land_forcelimit = 350 }
+			total_development = 1000
+			NOT = { total_development = 1200 }
 		}
 		modifier = { 
 			amount_of_hussars = 6
@@ -7845,8 +7904,8 @@ estate_mages_zamukaras_focus_carpets = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 350
-			NOT = { land_forcelimit = 400 }
+			total_development = 1200
+			NOT = { total_development = 1400 }
 		}
 		modifier = { 
 			amount_of_hussars = 7
@@ -7855,7 +7914,7 @@ estate_mages_zamukaras_focus_carpets = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 400
+			total_development = 1400
 		}
 		modifier = { 
 			amount_of_hussars = 8
@@ -7882,7 +7941,7 @@ estate_mages_zamukaras_focus_platforms = {
 		always = yes
 	}
 	on_granted = {
-		custom_tooltip = zamukaras_forcelimit_tt
+		custom_tooltip = zamukaras_totaldev_tt
 		add_country_modifier = {
 			name = zamukaras_focus_platforms_modifier
 			duration = -1
@@ -7898,7 +7957,7 @@ estate_mages_zamukaras_focus_platforms = {
 
 	conditional_modifier = {
 		trigger = { 
-			NOT = { land_forcelimit = 100 }
+			NOT = { total_development = 400 }
 		}
 		modifier = { 
 			amount_of_hussars = 2
@@ -7907,8 +7966,8 @@ estate_mages_zamukaras_focus_platforms = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 150
-			NOT = { land_forcelimit = 200 }
+			total_development = 400
+			NOT = { total_development = 600 }
 		}
 		modifier = { 
 			amount_of_hussars = 3
@@ -7917,8 +7976,8 @@ estate_mages_zamukaras_focus_platforms = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 200
-			NOT = { land_forcelimit = 250 }
+			total_development = 600
+			NOT = { total_development = 800 }
 		}
 		modifier = { 
 			amount_of_hussars = 4
@@ -7927,8 +7986,8 @@ estate_mages_zamukaras_focus_platforms = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 250
-			NOT = { land_forcelimit = 300 }
+			total_development = 800
+			NOT = { total_development = 1000 }
 		}
 		modifier = { 
 			amount_of_hussars = 5
@@ -7937,8 +7996,8 @@ estate_mages_zamukaras_focus_platforms = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 300
-			NOT = { land_forcelimit = 350 }
+			total_development = 1000
+			NOT = { total_development = 1200 }
 		}
 		modifier = { 
 			amount_of_hussars = 6
@@ -7947,8 +8006,8 @@ estate_mages_zamukaras_focus_platforms = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 350
-			NOT = { land_forcelimit = 400 }
+			total_development = 1200
+			NOT = { total_development = 1400 }
 		}
 		modifier = { 
 			amount_of_hussars = 7
@@ -7957,7 +8016,7 @@ estate_mages_zamukaras_focus_platforms = {
 
 	conditional_modifier = {
 		trigger = { 
-			land_forcelimit = 400
+			total_development = 1400
 		}
 		modifier = { 
 			amount_of_hussars = 8
@@ -11567,7 +11626,13 @@ estate_mages_archaic_traditions = {
 	loyalty = 0.10
 	influence = 0.15
 	is_valid = {
-		tag = A77
+		OR = {
+			tag = A77
+			AND = {
+				tag = Z97
+				was_tag = A77
+			}
+		}
 		NOT = { mission_completed =  guardians_of_the_empire }
 	}
 	can_revoke = {
@@ -12283,7 +12348,13 @@ estate_nobles_factionalist_commanders = {
 	max_absolutism = -30
 
 	is_valid = {
-		tag = A77
+		OR = {
+			tag = A77
+			AND = {
+				tag = Z97
+				was_tag = A77
+			}
+		}
 		NOT = {
 			mission_completed = old_ways_and_the_new
 		}
@@ -12307,7 +12378,13 @@ estate_nobles_knighthood_of_the_spares = {
 	max_absolutism = -10
 
 	is_valid = {
-		tag = A77
+		OR = {
+			tag = A77
+			AND = {
+				tag = Z97
+				was_tag = A77
+			}
+		}
 	}
 
 	can_revoke = {
@@ -12330,7 +12407,13 @@ estate_nobles_lead_from_the_front = {
 	max_absolutism = -10
 
 	is_valid = {
-		tag = A77
+		OR = {
+			tag = A77
+			AND = {
+				tag = Z97
+				was_tag = A77
+			}
+		}
 	}
 
 	can_revoke = {
@@ -12429,6 +12512,49 @@ estate_adventurers_heroic_realm = {
 	benefits = {
 	}
 
+
+	ai_will_do = {
+		factor = 100
+	}
+}
+
+estate_adventurers_escort_missions = {
+	icon = qizlbash_cavalry #pdx typo for qizilbash_cavalry
+	influence = 0.05
+
+	is_valid = { mission_completed = R11_four_season }
+
+	on_granted = {
+		custom_tooltip = estate_adventurers_escort_missions_gt
+		tooltip = { add_province_modifier = { name = trade_escort_missions_mod duration = -1 } }
+	}
+	on_granted_province = {
+		if = {
+			limit = { province_has_center_of_trade_of_level = 1 }
+			add_province_modifier = { name = trade_escort_missions_mod duration = -1 }
+		}
+	}
+
+	on_revoked = { custom_tooltip = estate_adventurers_escort_missions_rt }
+	on_revoked_province = { remove_province_modifier = trade_escort_missions_mod }
+	
+	ai_will_do = {
+		factor = 100
+	}
+}
+
+estate_adventurers_mining_quests = {
+	icon = privilege_development_efficiency
+	loyalty = 0.1
+	influence = 0.1
+	land_share = 10
+
+	is_valid = { has_country_flag = khadisrapur_mining_extraction_quests_completed_flag }
+
+	modifier_by_land_ownership = {
+		shock_damage = 0.1
+		development_cost_in_primary_culture = -0.1
+	}
 
 	ai_will_do = {
 		factor = 100
@@ -14853,7 +14979,7 @@ estate_nobles_rosande_competent_slaveowners = {
 	loyalty = 0.05
 	influence = 0.1
 	land_share = 0
-	max_absolutism = -10
+	max_absolutism = 0
 
 	can_select = {
 		has_country_flag = unlocked_estate_rosande_slaveowners_2
@@ -14897,7 +15023,7 @@ estate_nobles_rosande_noble_slaveowners = {
 	loyalty = 0
 	influence = 0.1
 	land_share = 0
-	max_absolutism = 0
+	max_absolutism = -10
 
 	can_select = {
 		has_country_flag = unlocked_estate_rosande_slaveowners
@@ -15027,6 +15153,42 @@ estate_nobility_S53_tanizu_tradition_covenant = {
 		church_loyalty_modifier = 0.05
 		nobles_privilege_slots = 1
 	}
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+#the hunt
+estate_church_the_hunt_tolerance = {
+	icon = privilege_freedom_of_religion #PLACEHOLDER
+	loyalty = 0.10
+	influence = 0.10
+	
+	is_valid = { 
+		religion = the_hunt
+		NOT = { has_estate_privilege = estate_burghers_enforced_interfaith_dialogue }
+	}
+	can_select = { religion = the_hunt }
+
+	on_granted = {
+		custom_tooltip = estate_church_the_hunt_tolerance_tt
+	}
+	
+	on_revoked = {
+		add_stability = -2
+	}
+	
+	on_invalid = {
+		add_stability = -2
+	}
+
+	penalties = {
+	}
+
+	benefits = {
+		tolerance_heathen = 4
+	}
+
 	ai_will_do = {
 		factor = 1000
 	}

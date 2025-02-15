@@ -3,7 +3,7 @@
 ## IMPORTANT ##
 # When adding a new expedition:
 #	be sure to include its flags in the anb_scripted_triggers_nomsyulhan_gateway.txt file
-#	be sure to include its flags in the rondom_list below marked "### EXPEDITIONS ###"
+#	be sure to include its flags in the random_list below marked "### EXPEDITIONS ###"
 # Each expedition's flag should follow this pattern: 
 #	DESCRIPTOR_expedition 				(this flag gives access to the expedition)
 #	DESCRIPTOR_expedition_complete		(this flag marks an expedition as successfully completed)
@@ -86,4 +86,46 @@ nomsyulhan_expedition_success = {
 # As a result, you can put expedition-failure "on_actions" here
 nomsyulhan_expedition_failure = {
 	change_variable = { which = nomsyulhan_gateway_expedition_failure_count value = 1 }
+}
+
+## DEBUG EFFECTS
+# Don't call these unless you know what you're doing
+
+# Gateway reset 
+nomsyulhan_gateway_reset = {
+	every_country = {
+		clr_country_flag = nomsyulhan_on_expedition
+		set_variable = { which = nomsyulhan_gateway_expedition_total_count value = 0 }
+		set_variable = { which = nomsyulhan_gateway_expedition_success_count value = 0 }
+		set_variable = { which = nomsyulhan_gateway_expedition_failure_count value = 0 }
+	}
+	6838 = {
+		remove_province_modifier = nomsyulhan_incomplete_gateway
+		remove_province_modifier = nomsyulhan_unpowered_gateway
+		remove_province_modifier = nomsyulhan_active_gateway
+		remove_province_modifier = nomsyulhan_permanent_gateway
+		decolonize = THIS
+	}
+}
+
+# Gateway always powered
+nomsyulhan_gateway_permanent_power = {
+	if = {
+		limit = { 6838 = { is_city = yes } }
+		6838 = {
+			cede_province = ROOT
+		}
+	}
+	else = {
+		6838 = {
+			create_colony = 1000
+		}
+	}
+	remove_province_modifier = nomsyulhan_incomplete_gateway
+	remove_province_modifier = nomsyulhan_unpowered_gateway
+	remove_province_modifier = nomsyulhan_active_gateway
+	add_province_modifier = {
+		name = nomsyulhan_permanent_gateway
+		duration = -1
+	}
 }

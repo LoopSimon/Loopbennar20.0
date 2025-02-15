@@ -1,0 +1,105 @@
+sedentarization_country_can_place_outpost = {
+	treasury = 50
+	custom_trigger_tooltip = {
+		tooltip = sed_outpost_usage_out_of_cap
+		NOT = {
+			check_variable = {
+				which = sed_outpost_cap_usage
+				which = sed_outpost_cap
+			}
+		}
+	}
+}
+
+sedentarization_province_can_recieve_outpost = {
+	hidden_trigger = {
+		has_province_modifier = sed_forbidden
+		NOT = { has_province_modifier = sed_system_completed }
+	}
+	area_for_scope_province = {
+		type = all
+		owned_by = $owner_scope$
+		# Custom tooltip because auto-tooltip for "<scripted_trigger> = no" is bad.
+		custom_trigger_tooltip = {
+			tooltip = "Do NOT have an outpost"
+			sedentarization_province_has_outpost = no
+		}
+	}
+}
+
+# In case we change the way to check for an Outpost (has happened in early development), use this scripted trigger instead of the flag
+sedentarization_province_has_outpost = {
+	custom_trigger_tooltip = {
+		tooltip = "Has an outpost"
+		has_province_flag = sed_province_has_outpost
+	}
+}
+
+sedentarization_province_valid_for_centaur_friendly_options = {
+	NOT = { has_province_flag = sed_semi_complete_sedentarization }
+	owner = {
+		NOT = {
+			has_country_modifier = racial_pop_centaur_expulsion
+			has_country_modifier = racial_pop_centaur_purge
+		}
+	}
+}
+
+sedentarization_phase_one_events_can_fire = {
+	OR = {
+		NOT = { has_province_flag = sed_contact_complete }
+		sedentarization_raid_events_can_fire = yes
+	}
+}
+
+sedentarization_raid_events_can_fire = {
+	has_province_flag = sed_raid_events_unlocked
+	NOT = {
+		has_province_flag = sed_local_mounted_guards
+		owner = { has_country_flag = sed_established_special_mounted_guards }
+	}
+}
+
+sedentarization_phase_two_events_can_fire = {
+	# No need for "sedentarization_trade_goods_events_can_fire" yet, since trade goods events are the only random Phase Two events
+	has_province_flag = sed_trade_goods_upgrade_events_unlocked
+	area_for_scope_province = {
+		owned_by = event_target:sed_outpost_owner
+		OR = {
+			trade_goods = wool
+			trade_goods = livestock
+		}
+	}
+}
+
+sedentarization_country_can_have_special_mounted_guards = {
+	custom_trigger_tooltip = {
+		tooltip = "We already have specialized fighters suitable for this land"
+		OR = {
+			# TODO: place countries that should have access to this option.
+			# The design doc gave "desert legions, bird riders" as examples.
+			always = no	# REMOVE THIS LINE once countries are added.
+		}
+	}
+}
+
+sedentarization_phase_two_nomadic_control_is_valid = {
+	# The triggers MUST match the ones in "sedentarization_phase_two_nomadic_base_culture_effect"
+	owner = {
+		OR = {
+			culture_group = triunic
+			# TODO: culture not implemented yet; uncomment when implemented
+			# primary_culture = fathide_ogre
+			# primary_culture = wild_ogre
+			AND = {
+				OR = {
+					primary_culture = sun_elf
+					primary_culture = desert_elf
+					culture_group = bulwari
+				}
+				any_owned_province = { culture = masnsih }
+			}
+			primary_culture = plateau_runsukhi	# AKA "Rukunai"
+		}
+	}
+}

@@ -1,0 +1,276 @@
+khadisrapur_industry_mechanic = {
+	alert_icon_gfx = GFX_alerticons_government_mechanics
+	alert_icon_index = 4
+
+	powers = {
+		industrial_capacity = {
+			max = 100
+			min = 0
+			default = 0
+			reset_on_new_ruler = no
+			show_before_interactions = yes
+			reset_on_new_ruler = no
+			scaled_modifier = {
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.05
+					global_trade_goods_size_modifier = 0.05
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_labor_loyalty }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_casteless }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_halforc_arms }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_bruised_beaten }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_organize_companies }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_proof_concept }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_civilizing_rabble }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_laws_indenturement }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_raheni_coal }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_god_hope }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					land_forcelimit_modifier = 0.01
+					global_trade_goods_size_modifier = 0.01
+				}
+			}
+			scaled_modifier = {
+				trigger = { mission_completed = R11_sophisticated_system }
+				start_value = 0
+				end_value = 100
+				modifier = {
+					artillery_cost = -0.2
+				}
+			}
+			on_min_reached = {
+				hidden_effect = {
+					remove_country_modifier = khadisrapur_distribute_abundance_mod
+					remove_country_modifier = khadisrapur_empower_merchants_mod
+					remove_country_modifier = khadisrapur_mobilization_mod
+				}
+			}
+			is_good = yes
+		}
+	}
+	interactions = {
+		khadisrapur_workers_button = {
+			icon = GFX_collect_tax_on_art
+			trigger = {
+				if = {
+					limit = {
+						mission_completed = R11_sophisticated_system
+						NOT = { has_country_modifier = khadisrapur_distribute_abundance_mod }
+					}
+					has_government_power = { mechanic_type = khadisrapur_industry_mechanic power_type = industrial_capacity value = 2 }
+				}
+			}
+			effect = {
+				if = {
+					limit = { mission_completed = R11_sophisticated_system }
+					if = {
+						limit = { has_country_modifier = khadisrapur_distribute_abundance_mod }
+						remove_country_modifier = khadisrapur_distribute_abundance_mod
+					}
+					else = {
+						add_country_modifier = { name = khadisrapur_distribute_abundance_mod duration = -1 desc = while_policy_active }
+						custom_tooltip = khadisrapur_distribute_abundance_subjects_tt
+					}
+				}
+				else_if = {
+					limit = { has_country_modifier = khadisrapur_harsh_quotas_mod }
+					remove_country_modifier = khadisrapur_harsh_quotas_mod
+				}
+				else = { add_country_modifier = { name = khadisrapur_harsh_quotas_mod duration = -1 desc = while_policy_active } }
+			}
+			ai_chance = {
+				factor = 100
+				modifier = {
+					factor = 0
+					OR = {
+						has_country_modifier = khadisrapur_harsh_quotas_mod
+						AND = {
+							has_country_modifier = khadisrapur_distribute_abundance_mod
+							has_government_power = {
+								mechanic_type = khadisrapur_industry_mechanic
+								power_type = industrial_capacity
+								value = 1
+							}
+						}
+						NOT = {
+							has_country_modifier = khadisrapur_distribute_abundance_mod
+							has_government_power = {
+								mechanic_type = khadisrapur_industry_mechanic
+								power_type = industrial_capacity
+								value = 99
+							}
+						}
+					}
+				}
+			}
+		}
+		khadisrapur_empower_merchants_button = {
+			icon = GFX_promote_good_reputation
+			trigger = {
+				if = {
+					limit = { NOT = { has_country_modifier = khadisrapur_empower_merchants_mod } }
+					has_government_power = { mechanic_type = khadisrapur_industry_mechanic power_type = industrial_capacity value = 2 }
+				}
+			}
+			effect = {
+				if = {
+					limit = { has_country_modifier = khadisrapur_empower_merchants_mod }
+					remove_country_modifier = khadisrapur_empower_merchants_mod
+				}
+				else = {
+					add_country_modifier = { name = khadisrapur_empower_merchants_mod duration = -1 desc = while_policy_active }
+					if = {
+						limit = { mission_completed = R11_golden_age }
+						custom_tooltip = R11_golden_age_effect_2_tt
+					}
+					if = {
+						limit = { mission_completed = R11_embassies_guild }
+						custom_tooltip = R11_embassies_guild_effect_2_tt
+					}
+				}
+			}
+			ai_chance = {
+				factor = 100
+				modifier = {
+					factor = 0
+					OR = {
+						AND = {
+							has_country_modifier = khadisrapur_empower_merchants_mod
+							has_government_power = {
+								mechanic_type = khadisrapur_industry_mechanic
+								power_type = industrial_capacity
+								value = 1
+							}
+						}
+						NOT = {
+							has_country_modifier = khadisrapur_empower_merchants_mod
+							has_government_power = {
+								mechanic_type = khadisrapur_industry_mechanic
+								power_type = industrial_capacity
+								value = 99
+							}
+						}
+					}
+				}
+			}
+		}
+		khadisrapur_mobilization_button = {
+			icon = GFX_conscript_enthusiasts
+			trigger = {
+				if = {
+					limit = { NOT = { has_country_modifier = khadisrapur_mobilization_mod } }
+					has_government_power = { mechanic_type = khadisrapur_industry_mechanic power_type = industrial_capacity value = 2 }
+				}
+			}
+			effect = {
+				if = {
+					limit = { has_country_modifier = khadisrapur_mobilization_mod }
+					remove_country_modifier = khadisrapur_mobilization_mod
+				}
+				else = { add_country_modifier = { name = khadisrapur_mobilization_mod duration = -1 desc = while_policy_active } }
+			}
+			ai_chance = {
+				factor = 100
+				modifier = {
+					factor = 0
+					OR = {
+						AND = {
+							has_country_modifier = khadisrapur_mobilization_mod
+							has_government_power = {
+								mechanic_type = khadisrapur_industry_mechanic
+								power_type = industrial_capacity
+								value = 1
+							}
+						}
+						NOT = {
+							has_country_modifier = khadisrapur_mobilization_mod
+							has_government_power = {
+								mechanic_type = khadisrapur_industry_mechanic
+								power_type = industrial_capacity
+								value = 99
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -953,7 +953,7 @@ raj_calc_max_allowed_senaptia = {
 					country_event = { id = rahenraj.7 days = 1 }	#info event "a senapti rank is available"
 				}
 				else = {
-					event_target:next_ai_senapti = {	#The n°1 ai candidate will become senapti in 150 days if the raja is ai
+					event_target:next_ai_senapti = {	#The nï¿½1 ai candidate will become senapti in 150 days if the raja is ai
 						overlord = { country_event = { id = rahenraj.4 days = 150 } }
 					}
 				}
@@ -1061,7 +1061,6 @@ raj_calc_vizier_shortlist = {
 		event_target:shortlisted_vizier_1 = {
 			capital_scope = { save_event_target_as = shortlisted_vizier_1_capital }
 			clr_country_flag = raj_not_sorted
-			set_variable = { which = vizierScore value = 0 }
 		}
 		
 		random_subject_country = { 
@@ -1078,7 +1077,6 @@ raj_calc_vizier_shortlist = {
 		event_target:shortlisted_vizier_2 = {
 			capital_scope = { save_event_target_as = shortlisted_vizier_2_capital }
 			clr_country_flag = raj_not_sorted
-			set_variable = { which = vizierScore value = 0 }
 		}
 		
 		random_subject_country = { 
@@ -1095,7 +1093,6 @@ raj_calc_vizier_shortlist = {
 		event_target:shortlisted_vizier_3 = {
 			capital_scope = { save_event_target_as = shortlisted_vizier_3_capital }
 			clr_country_flag = raj_not_sorted
-			set_variable = { which = vizierScore value = 0 }
 		}
 		
 		random_subject_country = { 
@@ -1112,7 +1109,6 @@ raj_calc_vizier_shortlist = {
 		event_target:shortlisted_vizier_4 = {
 			capital_scope = { save_event_target_as = shortlisted_vizier_4_capital }
 			clr_country_flag = raj_not_sorted
-			set_variable = { which = vizierScore value = 0 }
 		}
 		
 		random_subject_country = { 
@@ -1129,7 +1125,6 @@ raj_calc_vizier_shortlist = {
 		event_target:shortlisted_vizier_5 = {
 			capital_scope = { save_event_target_as = shortlisted_vizier_5_capital }
 			clr_country_flag = raj_not_sorted
-			set_variable = { which = vizierScore value = 0 }
 		}
 		
 		random_subject_country = { 
@@ -1146,7 +1141,6 @@ raj_calc_vizier_shortlist = {
 		event_target:shortlisted_vizier_6 = {
 			capital_scope = { save_event_target_as = shortlisted_vizier_6_capital }
 			clr_country_flag = raj_not_sorted
-			set_variable = { which = vizierScore value = 0 }
 		}
 		
 		random_subject_country = { 
@@ -1163,7 +1157,6 @@ raj_calc_vizier_shortlist = {
 		event_target:shortlisted_vizier_7 = {
 			capital_scope = { save_event_target_as = shortlisted_vizier_7_capital }
 			clr_country_flag = raj_not_sorted
-			set_variable = { which = vizierScore value = 0 }
 		}
 		
 		every_subject_country = {
@@ -1579,6 +1572,7 @@ check_if_caste_is_shared = {
 }
 
 add_race_to_caste = {
+	custom_tooltip = add_$race$_to_$caste$castes_tt
 	set_country_flag = $race$_in_$caste$castes
 	if = {
 		limit = { NOT = { has_country_flag = $caste$castes_is_shared } }
@@ -1587,6 +1581,7 @@ add_race_to_caste = {
 }
 
 remove_race_from_caste = {
+	custom_tooltip = remove_$race$_from_$caste$castes_tt
 	clr_country_flag = $race$_in_$caste$castes
 	if = {
 		limit = { has_country_flag = $caste$castes_is_shared }
@@ -2230,6 +2225,11 @@ blood_lotus_sympathizers_spreads = {
 }
 
 #------# The Command #------#
+
+command_take_strongest_sir_revolt_effect = {
+	custom_tooltip = R62_strongest_sir_revolt_tt
+	hidden_effect = { R62 = { set_country_flag = take_strongest_sir_revolt } }
+}
 command_new_ruler_effect = {
 	add_ruler_modifier = {
 		name = command_rule_of_the_$command$
@@ -3972,19 +3972,17 @@ command_siege_won_effect = {
 	}
 	if = {
 		limit = { #Command is winning a war against a great power
-			has_country_flag = absolute_domination_cb_unlocked_flag
+			mission_completed = R62_one_great_command
 			FROM = {
 				owner = {
-					ROOT = {
-						NOT = { has_country_flag = command_leadership_flag_@PREV }
-					}
+					is_great_power = yes
+					ROOT = { NOT = { has_country_flag = command_leadership_flag_@PREV } }
 				}
 			}
 			FROM = {
 				owner = {
 					ROOT = {
 						is_in_war = {
-							casus_belli = cb_absolute_domination
 							attacker_leader = ROOT
 							defender_leader = PREV
 							war_score = 80
@@ -3999,6 +3997,138 @@ command_siege_won_effect = {
 					set_country_flag = command_leadership_flag_@PREV
 				}
 			}
+		}
+	}
+	if = {
+		limit = {
+			R62 = { has_disaster = command_rise_of_the_shamans }
+			FROM = { owned_by = V98 province_group = temple_province_group }
+		}
+		R62 = { country_event = { id = the_command.83 } }
+	}
+}
+command_spawn_troops_for_shamans_effect = {
+	capital_scope = {
+		spawn_units_for = { amount = 22 type = infantry who = V98 }
+		spawn_units_for = { amount = 4 type = cavalry who = V98 }
+		if = {
+			limit = { ROOT = { mil_tech = 13 } }
+			spawn_units_for = { amount = 8 type = artillery who = V98 }
+		}
+	}
+	export_to_variable = {
+		which = troop_amount
+		value = trigger_value:total_own_and_non_tributary_subject_development
+		who = R62
+	}
+	if = {
+		limit = { V98 = { has_country_modifier = undead_military } }
+		divide_variable = {
+			which = troop_amount
+			value = 400
+		}
+	}
+	else = {
+		divide_variable = {
+			which = troop_amount
+			value = 800
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {
+				which = troop_amount
+				value = 1
+			}
+		}
+		for_variable_amount = {
+			variable = troop_amount
+			effect = "
+				random_owned_province = {
+					spawn_units_for = { amount = 22 type = infantry who = V98 }
+					spawn_units_for = { amount = 4 type = cavalry who = V98 }
+					if = {
+						limit = { ROOT = { mil_tech = 13 } }
+						spawn_units_for = { amount = 8 type = artillery who = V98 }
+					}
+				}
+			"
+		}
+	}
+	set_variable = { which = troop_amount value = 0 }
+}
+temple_area_joins_shaman_revolt = {
+	if = {
+		limit = { owned_by = R63 }
+		R62 = {
+			random_owned_area = {
+				limit = {
+					area_for_scope_province = {
+						type = all
+						owned_by = R62
+						is_capital = no
+						NOT = { province_group = temple_province_group }
+					}
+				}
+				save_event_target_as = command_move_target_candidate_1
+				set_province_flag = command_move_target_candidate_1
+			}
+		}
+		command_move_orc_slave_state = {
+			tag = R63
+			target = command_move_target_candidate_1
+		}
+	}
+	if = {
+		limit = { owned_by = R64 }
+		R62 = {
+			random_owned_area = {
+				limit = {
+					area_for_scope_province = {
+						type = all
+						owned_by = R62
+						is_capital = no
+						NOT = { province_group = temple_province_group }
+					}
+				}
+				save_event_target_as = command_move_target_candidate_1
+				set_province_flag = command_move_target_candidate_1
+			}
+		}
+		command_move_orc_slave_state = {
+			tag = R64
+			target = command_move_target_candidate_1
+		}
+	}
+	area = {
+		limit = { owner = { OR = { tag = R62 is_subject_of = R62 ai = yes } } }
+		if = {
+			limit = { is_capital_of = R62 }
+			set_province_flag = command_previous_capital
+		}
+		cede_province = V98
+		add_core = V98
+	}
+	add_latest_building = { fort = yes builder = V98 }
+	add_province_modifier = { name = mage_rebel_temple_mod duration = -1 }
+	add_province_modifier = { name = command_temporary_garrison_growth duration = 31 }
+	set_province_flag = command_has_had_shaman_uprising_flag
+	spawn_units_for = {
+		amount = 22
+		type = infantry
+		who = V98
+	}
+	spawn_units_for = {
+		amount = 4
+		type = cavalry
+		who = V98
+	}
+	if = {
+		limit = { R62 = { mil_tech = 13 } }
+		spawn_units_for = {
+			amount = 10
+			type = artillery
+			who = V98
 		}
 	}
 }
@@ -4073,6 +4203,66 @@ command_siege_lost_effect = {
 		}
 		FROM = { province_event = { id = the_command.159 } }
 	}
+}
+command_dewuhyunization_effect = {
+	if = {
+		limit = {
+			OR = {
+				check_variable = {
+					which = original_wuhyun_culture
+					value = 1
+				}
+				check_variable = {
+					which = original_wuhyun_religion
+					value = 1
+				}
+			}
+		}
+		
+		if = {
+			limit = { owner = { NOT = { has_country_flag = decided_wuhyunization_policy } } }
+			owner = { country_event = { id = the_command.5 } }
+		}
+		else_if = {
+			limit = { owner = { has_country_flag = reverse_wuhyunization } }
+			command_dewuhyunization_subeffect = yes
+		}
+	}
+}
+command_dewuhyunization_subeffect = {
+	if = {
+		limit = {
+			owner = {
+				NOT = {
+					tag = Y86 #Azkare
+					tag = Y00 #Sunrise Empire
+				}
+			}
+		}
+		remove_random_development = yes
+	}
+
+	if = {
+		limit = {
+			check_variable = {
+				which = original_wuhyun_religion
+				value = 1
+			} #uninitialised = 0 = no religion	
+		}
+		change_religion = variable:original_wuhyun_religion
+		set_variable = { which = original_wuhyun_religion value = 0 }
+	} # only do this if religion changed - doing it blindly = no religion
+
+	if = {
+		limit = {
+			check_variable = {
+				which = original_wuhyun_culture
+				value = 1
+			} #uninitialised = 0 = no culture
+		}
+		change_culture = variable:original_wuhyun_culture
+		set_variable = { which = original_wuhyun_culture value = 0 }
+	} # only do this if culture changed
 }
 
 ########################

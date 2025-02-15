@@ -144,7 +144,7 @@ temple = {
 	cost = 100
 	time = 12
 	modifier = {
-		local_tax_modifier = 0.6
+		local_tax_modifier = 0.4
 	}
 	on_built = {
 		on_built_tax_building_effect = yes
@@ -416,7 +416,6 @@ fort_15th = {
 	time = 30
 	modifier = {
 		fort_level = 2
-		supply_limit = 1.5
 	}
 
 	build_trigger = {
@@ -834,7 +833,7 @@ regimental_camp = {
 	cost = 200
 	time = 12
 	modifier = {
-		land_forcelimit = 0.5
+		land_forcelimit = 1
 	}
 
 	on_built = {
@@ -890,7 +889,6 @@ fort_16th = {
 	make_obsolete = fort_15th
 	modifier = {
 		fort_level = 4
-		supply_limit = 2.5
 	}
 
 	build_trigger = {
@@ -1087,7 +1085,7 @@ cathedral = {
 	time = 12
 	modifier = {
 		local_missionary_strength = 0.03
-		local_tax_modifier = 0.9
+		local_tax_modifier = 0.6
 	}
 	on_built = {
 		on_built_tax_building_effect = yes
@@ -1461,10 +1459,23 @@ training_fields = {
 		owner = { accretive_path_jiangyang_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 3 }
+		
+		if = { #Taychendi Empire
+			limit = { FROM =  { has_country_flag = J84_training_fields_flag } }
+			add_province_modifier = {
+				name = J84_training_fields_buff
+				duration = -1
+			}
+		}
 	}
 	on_destroyed = {
 		update_improved_military_buildings_modifier = { #1.35
 			building = training_fields
+		}
+		#Anbennar
+		if = { #Taychendi Empire
+			limit = { FROM =  { has_country_flag = J84_training_fields_flag } }
+			remove_province_modifier = J84_training_fields_buff
 		}
 		# if = {
 			# limit = {
@@ -1498,7 +1509,6 @@ fort_17th = {
 
 	modifier = {
 		fort_level = 6
-		supply_limit = 5
 	}
 
 	build_trigger = {
@@ -1929,7 +1939,7 @@ conscription_center = {
 	# THIS = Province, FROM = Builder(not nessecairly owner, can be overlord)
 
 	modifier = {
-		land_forcelimit = 1
+		land_forcelimit = 2
 	}
 	on_built = {
 		add_development_from_upgrading_or_building = {
@@ -1991,7 +2001,6 @@ fort_18th = {
 
 	modifier = {
 		fort_level = 8
-		supply_limit = 10
 	}
 
 	build_trigger = {
@@ -2131,7 +2140,7 @@ manufactory = {
 	cost = 500
 	time = 60
 	modifier = {
-		trade_goods_size = 0.7
+		trade_goods_size = 1.0
 	}
 }
 
@@ -2654,6 +2663,29 @@ farm_estate = {
 				FROM = { calc_sanguosynthesis_modifier = yes }
 			}
 		}
+		if = {
+			limit = { 
+				FROM = { has_estate_privilege = estate_nobles_rosande_noble_slaveowners } 
+				has_province_modifier = Z35_orcish_workforce
+			}
+			add_province_modifier = {
+				name = Z35_noble_slaveowners
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				FROM = { has_estate_privilege = estate_nobles_rosande_competent_slaveowners } 
+				OR = {
+					has_province_modifier = Z35_orcish_workforce
+					has_province_modifier = Z35_grand_orcish_workforce
+				}
+			}
+			add_province_modifier = {
+				name = Z35_noble_slaveowners_2
+				duration = -1
+			}
+		}
 	}
 
 	on_destroyed = {
@@ -2688,6 +2720,23 @@ farm_estate = {
 				limit = { FROM = { has_country_flag = J84_sanguosynthesis_enabled_flag } }
 				FROM = { calc_sanguosynthesis_modifier = yes }
 			}
+		}
+		if = {
+			limit = { 
+				FROM = { has_estate_privilege = estate_nobles_rosande_noble_slaveowners } 
+				has_province_modifier = Z35_orcish_workforce
+			}
+			remove_province_modifier = Z35_noble_slaveowners
+		}
+		if = {
+			limit = {
+				FROM = { has_estate_privilege = estate_nobles_rosande_competent_slaveowners } 
+				OR = {
+					has_province_modifier = Z35_orcish_workforce
+					has_province_modifier = Z35_grand_orcish_workforce
+				}
+			}
+			remove_province_modifier = Z35_noble_slaveowners_2
 		}
 	}
 	on_obsolete = {
@@ -3024,14 +3073,6 @@ soldier_households = {
 			limit = { FROM = { has_country_flag = rakkaz_soldiers_households_bonus } }
 			rakkaz_soldier_household_buffs = yes
 		}
-
-		if = { #Taychendi Empire
-			limit = { FROM =  { has_country_flag = J84_soldiers_households_buff_flag } }
-			add_province_modifier = {
-				name = J84_soldiers_households_buff
-				duration = -1
-			}
-		}
 	}
 
 	on_destroyed = {
@@ -3071,10 +3112,6 @@ soldier_households = {
             limit = { has_province_modifier = rakkaz_soldier_households_3 }
             remove_province_modifier = rakkaz_soldier_households_3
         }
-		if = { #Taychendi Empire
-			limit = { FROM =  { has_country_flag = J84_soldiers_households_buff_flag } }
-			remove_province_modifier = J84_soldiers_households_buff
-		}
 	}
 	on_obsolete = {
 	}
@@ -3992,7 +4029,7 @@ railway_work = {
 					}
 					if = {
 						limit = { 
-							NOT = { has_country_modifier = no_event_notif_for_5_years }
+							FROM = { NOT = { has_country_modifier = no_event_notif_for_5_years } }
 						}
 						FROM = { country_event = { id = diggy.760 } }
 					}
@@ -4034,7 +4071,7 @@ railway_work = {
 					}
 					if = {
 						limit = { 
-							NOT = { has_country_modifier = no_event_notif_for_5_years }
+							FROM = { NOT = { has_country_modifier = no_event_notif_for_5_years } }
 						}
 						FROM = { country_event = { id = diggy.760 } }
 					}
@@ -4076,7 +4113,7 @@ railway_work = {
 					}
 					if = {
 						limit = { 
-							NOT = { has_country_modifier = no_event_notif_for_5_years }
+							FROM = { NOT = { has_country_modifier = no_event_notif_for_5_years } }
 						}
 						FROM = { country_event = { id = diggy.760 } }
 					} 
@@ -4574,22 +4611,6 @@ phoenix_empire_palace_build = {
 			}
 		}
     }
-
-	ai_will_do = {
-		factor = 0
-	}
-}
-
-xhazobkult_pyre = {
-	cost = 10
-	time = 1
-
-	build_trigger = {
-		owner = { religion = xhazobkult }
-	}
-
-	modifier = {
-	}
 
 	ai_will_do = {
 		factor = 0

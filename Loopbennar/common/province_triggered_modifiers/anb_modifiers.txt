@@ -11,9 +11,6 @@
 
 
 no_subterannean_race = {
-	potential = {
-		always = yes
-	}
 
 	trigger = {
 		custom_trigger_tooltip = {
@@ -34,9 +31,6 @@ no_subterannean_race = {
 }
 
 dwarf_birthplace = {
-	potential = {
-		province_id = 4269
-	}
 
 	trigger = {
 		religion_group = dwarven
@@ -52,63 +46,11 @@ dwarf_birthplace = {
 	}
 }
 
-
-flooded_province = {
-	potential = {
-		always = yes
-	}
-
-	trigger = {
-		NOT = {
-			AND = {
-				culture = mossmouth_ogre
-				owner = { primary_culture = mossmouth_ogre }
-			}
-		}
-	}
-
-	picture = "flooded_province"
-	local_development_cost = 0.5
-	local_state_maintenance_modifier = 0.2
-	trade_goods_size = -2
-
-	on_activation = {
-	}
-
-	on_deactivation = {
-	}
-}
-
-efficient_irrigation = {
-	potential = {
-		always = yes
-	}
-
-	trigger = {
-		trade_goods = grain
-	}
-	picture = "efficient_irrigation"
-	trade_goods_size = 1
-	local_development_cost = -0.1
-
-	on_activation = {
-	}
-
-	on_deactivation = {
-	}
-}
-
 harpy_roost = {
 	picture = "harpy_roost"
-	potential = {
-		OR = { has_terrain = mountain has_terrain = highlands has_terrain = hills }
-	}
 
 	trigger = {
-		OR = {
-					fort_level = 1
-					building = courthouse
-			}
+		fort_level = 1
 		culture_group = harpy
 		controller = {
 			has_country_modifier = harpy_administration
@@ -310,6 +252,10 @@ federation_cohesion_triggers = {
 
 	trigger = {
 		has_global_flag = lake_cohesion_1
+		OR = {
+			NOT = { has_global_flag = federation_crisis }
+			has_global_flag = federation_crisis_splintering
+		}
 	}
 
 	#Province scope
@@ -6253,11 +6199,7 @@ mb_ap_flight_kalas = {
 	}
 
 	on_deactivation = {
-		province_event = {
-			id = flavour_maskedbutcher.45
-			days = 30
-			random = 30
-		}
+		remove_province_triggered_modifier = mb_ap_flight_kalas
 	}
 }
 
@@ -6523,4 +6465,46 @@ yanification_ptm = { #For correct randomness
 	}
 
 	on_deactivation = {}
+}
+
+khadisrapur_bloodsong_check = {
+	potential = { exists = R64 }
+
+	trigger = { R64 = { any_owned_province = { controlled_by = R64 } } }
+
+	hidden = yes
+
+	on_deactivation = {
+		R11 = { country_event = { id = khadisrapur.14 } }
+		remove_province_triggered_modifier = khadisrapur_bloodsong_check
+	}
+}
+khadisrapur_alliance_ptm = {
+	trigger = { owner = { culture_group = upper_raheni } }
+	
+	land_morale = 0.05
+}
+khadisrapur_monsters_ptm = {
+	trigger = { owner = { culture_group = upper_raheni } }
+
+	land_morale = 0.05
+	shock_damage = 0.1
+}
+khadisrapur_unraveling_ptm = {
+	trigger = { owner = { culture_group = upper_raheni } }
+
+	land_morale = 0.05
+	tolerance_own = 2
+}
+khadisrapur_witch_kings_ptm = {
+	trigger = { owner = { culture_group = upper_raheni } }
+
+	land_morale = 0.05
+	reinforce_speed = 0.33
+}
+khadisrapur_artificers_ptm = {
+	trigger = { owner = { culture_group = upper_raheni } }
+
+	land_morale = 0.05
+	fire_damage = 0.1
 }
