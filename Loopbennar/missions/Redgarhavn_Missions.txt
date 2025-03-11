@@ -11,7 +11,22 @@ redgarhavn_2_missions = {
 		required_missions = { } 
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {  
+			is_rival = Z09
+			Z09 = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = scornfully_insulted
+				}
+			}
+		} 
+		effect = {
+			add_casus_belli = {
+				target = Z09
+				type = cb_vassalize_mission
+				months = 120
+			}
+		}
 	}
 }
 redgarhavn_3_missions = {
@@ -46,7 +61,73 @@ redgarhavn_3_missions = {
 		required_missions = { Z13_placeholder1 Z13_placeholder2 Z13_placeholder3 } 
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {  
+			Z09 = {
+				is_subject_of = ROOT
+				has_opinion = {
+					who = ROOT
+					value = 150
+				}
+				NOT = { liberty_desire = 50 }
+			}
+			Z14 = {
+				is_subject_of = ROOT
+				has_opinion = {
+					who = ROOT
+					value = 150
+				}
+				NOT = { liberty_desire = 50 }
+			}
+		} 
+		effect = {
+			hidden_effect = {
+				olavlund_region = {
+					limit = {
+						OWNER = {
+							is_subject_of = ROOT
+							NOT = { liberty_desire = 50 }
+							OR = {
+								tag = Z09
+								tag = Z14
+							}
+						}
+					}
+					add_core = ROOT
+					cede_province = ROOT
+					ROOT = {
+						export_to_variable = {
+							which = currentScopeDevelopment
+							value = development
+							who = PREV
+						}
+						for_variable_amount = {
+							variable = currentScopeDevelopment
+							effect = "
+								add_dip_power = -4
+							"
+						}
+					}
+				}
+			}
+			change_tag = Z16
+			hidden_effect = { restore_country_name = yes }
+			swap_non_generic_missions = yes 
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			add_prestige = 25
+			olavlund_region = {
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = {
+					has_custom_ideas = no
+				}
+				country_event = { id = ideagroups.1 } #Swap Ideas
+			}
+			custom_tooltip = olavlund_nation_effect_tt
+		}
 	}
 	
 }
