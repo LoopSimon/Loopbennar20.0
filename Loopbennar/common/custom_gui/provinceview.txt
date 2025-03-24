@@ -1,91 +1,4 @@
-custom_button = {
-    name = dig_deeper_capital
-    potential = {
-		OR = {
-			has_terrain = dwarven_hold
-			has_terrain = dwarven_hold_surface
-		}
-		#Owner needs to be you, and also not be native/horde since raze/settle buttons get in the way.
-		owner = {
-			tag = FROM
-			NOT = {
-				government = native
-				is_nomad = yes
-			}
-		}
-		#Blorcs can't repair non-capital holds
-		OR = {
-			is_capital = yes
-			NOT = { owner = { dwarovar_orc_culture_primary = yes } }
-		}
-	}
-	trigger = {
-		#Can use button to repair non-capital holds, but not dig non-capital holds without centralizing hold operations
-		if = {
-			limit = {
-				NOT = {
-					is_capital = yes
-					has_province_modifier = ruined_hold
-					has_province_modifier = partially_ruined_hold
-					has_province_modifier = damaged_hold
-					has_province_modifier = infested_hold
-				}
-			}
-			custom_trigger_tooltip = {
-				tooltip = has_centralized_hold_operations_tt
-				owner = { has_country_flag = hold_operation }
-			}
-		}
-	}
-	effect = {
-		hidden_effect = {
-			if = {
-				limit = { NOT = { has_province_flag = diggy_diggy_estimate_flag } }
-				#Open digging menu
-				set_province_flag = diggy_diggy_estimate_flag
-				#Set up the digging preview cost and time.
-				if = {
-					limit = {
-						OR = {
-							has_province_modifier = ruined_hold
-							has_province_modifier = partially_ruined_hold
-							has_province_modifier = damaged_hold
-						}
-					}
-					owner = {
-						PREV = {
-							setup_restoration_speed = yes
-						}
-					}
-				}
-				else = {
-					if = {
-						limit = { is_capital = yes }
-						owner = {
-							PREV = {
-								setup_digging_deeper_capital = yes
-							}
-						}
-					}
-					else = {
-						owner = {
-							PREV = {
-								setup_digging_deeper_non_capital = yes
-							}
-						}
-					}
-				}
-			}
-		
-			else = {
-				clr_province_flag = diggy_diggy_estimate_flag
-			}
-		}
-
-	}
-	tooltip = dig_hold_button_tt
-}
-
+### Diggy System Stuff
 custom_icon = {
     name = diggy_diggy_estimate
     potential = {
@@ -539,4 +452,338 @@ custom_icon = {
 		}
 	}
 	tooltip = diggy_hole_progress_tt
+}
+
+### PROVINCE UI GLOBAL
+# to add a button here you need to add three versions, _closed for when the province UI is closed, _no_monument for province without monument
+# and _with_monument for when there is a monument.
+# otherwise these behave like decisions
+# after that you need to add them in provinceview.gui, in three spots, do it like it's already done there to find the places CTRL+F 'province button UI' in the gui file
+
+#generic assets
+custom_button = { #Button for the UI when building UI is closed
+	name = province_button_button
+	tooltip = ""
+	potential = {
+		owner = {
+			OR = {
+				tag = FROM
+				is_subject_of = FROM
+			}
+			FROM = {
+				NOT = { has_country_flag = province_button_UI_opened }
+			}
+		}
+	}
+	trigger = { }
+	effect = { FROM = { set_country_flag = province_button_UI_opened } }
+}
+custom_button = { #Button to close the UI when building UI is closed
+	name = province_button_close_button
+	tooltip = ""
+	potential = { }
+	trigger = { }
+	effect = { FROM = { clr_country_flag = province_button_UI_opened } }
+}
+custom_window = { #Window for the UI when building UI is closed
+    name = province_button_window_closed
+    potential = {
+        owner = {
+            OR = {
+                tag = FROM
+                is_subject_of = FROM
+            }
+            FROM = {
+                has_country_flag = province_button_UI_opened
+            }
+        }
+    }
+}
+custom_window = { #Window for the UI when building UI is open and no monument
+    name = province_button_window_no_monument
+    potential = {
+		owner = {
+			OR = {
+				tag = FROM
+				is_subject_of = FROM
+			}
+		}
+    }
+}
+custom_window = { #Window for the UI when building UI is open and there is a monument
+    name = province_button_window_with_monument
+    potential = {
+		has_great_project = {
+			type = any
+			tier = 0
+		}
+		owner = {
+			OR = {
+				tag = FROM
+				is_subject_of = FROM
+			}
+		}
+    }
+}
+
+#Slot 1 - Continent wide button
+custom_button = { #Dummy closed
+	name = GFX_province_button_dummy_1_closed
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_continent_button_tt
+}
+custom_button = { #Dummy no monument
+	name = GFX_province_button_dummy_1_no_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_continent_button_tt
+}
+custom_button = { #Dummy with monument
+	name = GFX_province_button_dummy_1_with_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_continent_button_tt
+}
+custom_button = { #Sedentarization closed
+	name = sedentarization_make_outpost_closed
+	tooltip = sed_establish_outpost_button
+	potential = {
+		sedentarization_button_scripted_potential = yes
+	}
+	trigger = {
+		sedentarization_button_scripted_trigger = yes
+	}
+	effect = {
+		sedentarization_button_scripted_effect = yes
+	}
+}
+custom_button = { #Sedentarization no monument
+	name = sedentarization_make_outpost_no_monument
+	tooltip = sed_establish_outpost_button
+	potential = {
+		sedentarization_button_scripted_potential = yes
+	}
+	trigger = {
+		sedentarization_button_scripted_trigger = yes
+	}
+	effect = {
+		sedentarization_button_scripted_effect = yes
+	}
+}
+custom_button = { #Sedentarization with monument
+	name = sedentarization_make_outpost_with_monument
+	tooltip = sed_establish_outpost_button
+	potential = {
+		sedentarization_button_scripted_potential = yes
+	}
+	trigger = {
+		sedentarization_button_scripted_trigger = yes
+	}
+	effect = {
+		sedentarization_button_scripted_effect = yes
+	}
+}
+
+#Slot 2 - Province type button
+custom_button = { #Dummy closed
+	name = GFX_province_button_dummy_2_closed
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_province_specific_button_tt
+}
+custom_button = { #Dummy no monument
+	name = GFX_province_button_dummy_2_no_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_province_specific_button_tt
+}
+custom_button = { #Dummy with monument
+	name = GFX_province_button_dummy_2_with_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_province_specific_button_tt
+}
+custom_button = { #Diggy with ui closed
+	name = dig_deeper_capital_closed
+    potential = {
+		dig_deeper_button_scripted_potential = yes
+	}
+	trigger = {
+		dig_deeper_button_scripted_trigger = yes
+	}
+	effect = {
+		dig_deeper_button_scripted_effect = yes
+	}
+	tooltip = dig_hold_button_tt
+}
+custom_button = { #Diggy no monument ui open
+	name = dig_deeper_capital_no_monument
+    potential = {
+		dig_deeper_button_scripted_potential = yes
+	}
+	trigger = {
+		dig_deeper_button_scripted_trigger = yes
+	}
+	effect = {
+		dig_deeper_button_scripted_effect = yes
+	}
+	tooltip = dig_hold_button_tt
+}
+custom_button = { #Diggy with monument ui open
+	name = dig_deeper_capital_with_monument
+    potential = {
+		dig_deeper_button_scripted_potential = yes
+	}
+	trigger = {
+		dig_deeper_button_scripted_trigger = yes
+	}
+	effect = {
+		dig_deeper_button_scripted_effect = yes
+	}
+	tooltip = dig_hold_button_tt
+}
+
+#Slot 3 - Religion specific button
+custom_button = { #Dummy closed
+	name = GFX_province_button_dummy_3_closed
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_religion_button_tt
+}
+custom_button = { #Dummy no monument
+	name = GFX_province_button_dummy_3_no_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_religion_button_tt
+}
+custom_button = { #Dummy with monument
+	name = GFX_province_button_dummy_3_with_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_religion_button_tt
+}
+custom_button = { #Transmutative Path UI closed
+	name = transmutative_path_infuse_chi_button_closed
+	potential = {
+		transmutative_path_button_scripted_potential = yes
+	}
+	trigger = {
+		transmutative_path_button_scripted_trigger = yes
+	}
+	effect = {
+		transmutative_path_button_scripted_effect = yes
+	}
+	tooltip = infuse_chi_button_tt
+}
+custom_button = { #Transmutative Path no monument ui open
+	name = transmutative_path_infuse_chi_button_no_monument
+	potential = {
+		transmutative_path_button_scripted_potential = yes
+	}
+	trigger = {
+		transmutative_path_button_scripted_trigger = yes
+	}
+	effect = {
+		transmutative_path_button_scripted_effect = yes
+	}
+	tooltip = infuse_chi_button_tt
+}
+custom_button = { #Transmutative Path with monument ui open
+	name = transmutative_path_infuse_chi_button_with_monument
+	potential = {
+		transmutative_path_button_scripted_potential = yes
+	}
+	trigger = {
+		transmutative_path_button_scripted_trigger = yes
+	}
+	effect = {
+		transmutative_path_button_scripted_effect = yes
+	}
+	tooltip = infuse_chi_button_tt
+}
+
+#Slot 4 - Culture specific button
+custom_button = { #Dummy closed
+	name = GFX_province_button_dummy_4_closed
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_culture_button_tt
+}
+custom_button = { #Dummy no monument
+	name = GFX_province_button_dummy_4_no_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_culture_button_tt
+}
+custom_button = { #Dummy with monument
+	name = GFX_province_button_dummy_4_with_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_culture_button_tt
+}
+
+#Slot 5 - Tag specific button
+custom_button = { #Dummy closed
+	name = GFX_province_button_dummy_5_closed
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_tag_button_tt
+}
+custom_button = { #Dummy no monument
+	name = GFX_province_button_dummy_5_no_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_tag_button_tt
+}
+custom_button = { #Dummy with monument
+	name = GFX_province_button_dummy_5_with_monument
+	potential = { }
+	trigger = {
+		always = no
+	}
+	effect = { }
+	tooltip = unified_province_ui_no_tag_button_tt
 }

@@ -343,6 +343,209 @@ heros_gate = {
 	}
 }
 
+#Jorkad Dam
+jorkad_dam = {
+	start = 676 #Firanyalen
+
+	date = 1.1.1
+
+	time = { months = 12 }
+
+	build_cost = 1
+
+	can_be_moved = no
+
+	starting_tier = 0
+
+	type = monument
+
+	on_built = {}
+
+	on_destroyed = {}
+
+	build_trigger = {
+		if = {
+			limit = { NOT = { owner = { has_country_flag = allow_jorkad_dam_building } } } #Karakhanbar MT flag that allows it to build the Dam
+            owner = {
+                OR = {
+                    culture_group = dwarven
+                    culture_group = kobold
+                    culture_group = goblin
+                }
+                2963 = { owned_by = ROOT } #Hul-Jorkad
+                capital_scope = { continent = serpentspine }
+                if = {
+                    limit = {
+                        has_global_flag = dd_dimlherd
+                        any_owned_province = { has_great_project = { type = dd_dimlherd tier = 3 } }
+                    }
+                    adm_tech = 12
+                }
+                else = {
+                    adm_tech = 16
+                }
+            }
+        }
+	}
+
+	can_use_modifiers_trigger = {
+		if = {
+			limit = { NOT = { owner = { has_country_flag = allow_jorkad_dam_building } } } #Karakhanbar MT flag that allows it to build the Dam
+            owner = {
+                OR = {
+                    culture_group = dwarven
+                    culture_group = kobold
+                    culture_group = goblin
+                }
+                2963 = { owned_by = ROOT } #Hul-Jorkad
+                capital_scope = { continent = serpentspine }
+                if = {
+                    limit = {
+                        has_global_flag = dd_dimlherd
+                        any_owned_province = { has_great_project = { type = dd_dimlherd tier = 3 } }
+                    }
+                    adm_tech = 12
+                }
+                else = {
+                    adm_tech = 16
+                }
+            }
+        }
+	}
+
+	can_upgrade_trigger = {
+		has_production_building_trigger = yes
+		province_has_current_tech_fort_trigger = yes
+		if = {
+			limit = {
+				has_great_project = { type = jorkad_dam tier = 0 }
+				NOT = { has_great_project = { type = jorkad_dam tier = 1 } }
+			}
+			development = 10
+		}
+		else_if = {
+			limit = {
+				has_great_project = { type = jorkad_dam tier = 1 }
+				NOT = { has_great_project = { type = jorkad_dam tier = 2 } }
+			}
+			province_has_current_tech_trade_trigger = yes
+			development = 20
+		}
+		else_if = {
+			limit = {
+				has_great_project = { type = jorkad_dam tier = 2 }
+			}
+			province_has_current_tech_trade_trigger = yes
+			has_manufactory_trigger = yes
+			province_has_center_of_trade_of_level = 3
+			development = 30
+		}
+		if = {
+			limit = {
+				has_global_flag = dd_dimlherd
+				owner = { any_owned_province = { has_great_project = { type = dd_dimlherd tier = 3 } } }
+			}
+			owner = { adm_tech = 12 }
+		}
+		else = {
+			owner = { adm_tech = 16 }
+		}
+	}
+
+	keep_trigger = { always = yes }
+
+	tier_0 = {
+		upgrade_time = { months = 0 }
+
+		cost_to_upgrade = { factor = 0 }
+
+		province_modifiers = {}
+
+		area_modifier = {}
+
+		country_modifiers = {}
+
+		on_upgraded = {}
+	}
+
+	tier_1 = {
+		upgrade_time = { months = 150 } 
+
+		cost_to_upgrade = {factor = 5000 }
+
+		province_modifiers = { 
+			local_garrison_size = 0.1
+			local_production_efficiency = 0.2
+		}
+
+		area_modifier = {
+			local_development_cost = -0.15
+			trade_goods_size_modifier = 0.15
+		}
+
+		country_modifiers = {}
+
+		on_upgraded = {
+			owner = {
+				add_prestige = 25
+				add_splendor = 100
+			}
+		}
+	}
+
+	tier_2 = {
+		upgrade_time = { months = 150 }
+
+		cost_to_upgrade = {factor = 7500 }
+
+		province_modifiers = { 
+			local_garrison_size = 0.25
+			local_production_efficiency = 0.25			
+		}
+
+		area_modifier = {
+			local_development_cost = -0.2
+			trade_goods_size_modifier = 0.2
+		}
+
+		country_modifiers = {}
+
+		on_upgraded = {
+			owner = {
+				add_prestige = 25
+				add_splendor = 100
+			}
+		}
+	}
+
+	tier_3 = {
+		upgrade_time = { months = 150 }
+
+		cost_to_upgrade = {factor = 10000 }
+
+		province_modifiers = { 
+			local_garrison_size = 0.5
+			local_production_efficiency = 0.50			
+		}
+
+		area_modifier = {
+			local_development_cost = -0.25
+			trade_goods_size_modifier = 0.25
+		}
+
+		country_modifiers = {
+			prestige = 1
+		}
+
+		on_upgraded = {
+			owner = {
+				add_prestige = 25
+				add_splendor = 100
+			}
+			custom_tooltip = jorkad_passive_digging
+		}
+	}
+}
 
 #skewered drake MT
 queens_throne_skewered_drake = {
@@ -826,7 +1029,7 @@ dd_frogarsalforn = {
 	}
 }
 
-#Stunveigryôrth, petrified forest
+#Stunveigryï¿½rth, petrified forest
 dd_stunveigryorth = {
 	#start = 2864
 
@@ -1184,7 +1387,6 @@ dd_dimlherd = {
 		country_modifiers = {}
 
 		on_upgraded = {
-			custom_tooltip = dd_dimlherd_t2_tooltip
 			hidden_effect = { clr_province_flag = floor_explored }
 		}
 	}
@@ -1209,10 +1411,10 @@ dd_dimlherd = {
 
 		country_modifiers = {
 			build_time = -0.1
+			great_project_upgrade_time = -0.2
 		}
 		
 		on_upgraded = {
-			custom_tooltip = dd_dimlherd_t2_tooltip
 			custom_tooltip = dd_dimlherd_t3_tooltip
 			hidden_effect = {
 				clr_province_flag = floor_explored
@@ -1222,7 +1424,7 @@ dd_dimlherd = {
 	}
 }
 
-#Grumhardhûm, Great Forge
+#Grumhardhï¿½m, Great Forge
 dd_grumhardhum = {
 	#start = 2864
 
@@ -1367,7 +1569,7 @@ dd_grumhardhum = {
 	}
 }
 
-#Leforn Vâmbrèthar, Abandoned Workshop
+#Leforn Vï¿½mbrï¿½thar, Abandoned Workshop
 dd_leforn = {
 	#start = 2864
 
@@ -1500,7 +1702,7 @@ dd_leforn = {
 	}
 }
 
-#Rizvâmbrèthar, Forbidden Rune Workshop
+#Rizvï¿½mbrï¿½thar, Forbidden Rune Workshop
 dd_rizvambrethar = {
 	#start = 2864
 
@@ -1628,7 +1830,7 @@ dd_rizvambrethar = {
 	}
 }
 
-#Ôfralglârf, Trecherous Chasm
+#ï¿½fralglï¿½rf, Trecherous Chasm
 dd_ofralglarf = {
 	#start = 2864
 

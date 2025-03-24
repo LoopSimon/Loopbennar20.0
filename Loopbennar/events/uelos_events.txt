@@ -1,0 +1,340 @@
+namespace = uelos_events
+
+#The First Step
+province_event = {
+	id = uelos_events.1
+	title = uelos_events.1.t
+	desc = uelos_events.1.d
+	picture = HARBOUR_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			change_religion = uelos_cult
+		}
+	}
+
+	option = {
+		name = uelos_events.1.a
+		ai_chance = { factor = 2 }
+		add_unrest = 3
+		owner = { add_treasury = -100 }
+	}
+	option = {
+		name = uelos_events.1.b
+		ai_chance = { factor = 1 }
+		custom_tooltip = uelos_cult_growth_tt
+		hidden_effect = {
+			if = {
+				limit = { owner = { NOT = { has_country_flag = dealing_with_uelos_cult } } }
+				owner = {
+					country_event = {
+						id = uelos_events.2
+						days = 150
+					}
+					set_country_flag = dealing_with_uelos_cult
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = uelos_events.2
+	title = uelos_events.2.t
+	desc = uelos_events.2.d
+	picture = NAVAL_MILITARY_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_variable = {
+				which = uelos_province_amount
+				value = 0
+			}
+			every_owned_province = {
+				limit = { religion = uelos_cult }
+				ROOT = {
+					change_variable = {
+						which = uelos_province_amount
+						value = 1
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = uelos_events.2.a
+		ai_chance = { factor = 1 }
+		if = {
+			limit = {
+				check_variable = { which = uelos_province_amount value = 1 }
+			}
+			if = {
+				limit = { 
+					NOT = { check_variable = { which = uelos_province_amount value = 2 } }
+				 }
+				 add_treasury = -100
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = uelos_province_amount value = 3 } }
+				}
+				add_treasury = -200
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = uelos_province_amount value = 4 } }
+				}
+				add_treasury = -300
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = uelos_province_amount value = 5 } }
+				 }
+				 add_treasury = -400
+			}
+			else = {
+				 add_treasury = -500
+			}
+		}
+		every_owned_province = {
+			limit = { religion = uelos_cult }
+			change_religion = ROOT
+			add_unrest = 10
+		}
+		set_country_flag = stopped_uelos_cult
+	}
+
+	option = {
+		name = uelos_events.2.b
+		ai_chance = { factor = 1 }
+		for = {
+			amount = 6
+			effect = "
+			random_owned_province = { 
+				limit = { NOT = { religion = uelos_cult } is_overseas = yes } 
+				change_religion = uelos_cult
+				}"
+		}
+		
+		custom_tooltip = uelos_cult_growth_tt
+		hidden_effect = {
+			country_event = {
+				id = uelos_events.3
+				days = 450
+			}
+		}
+	}
+}
+
+country_event = {
+	id = uelos_events.3
+	title = uelos_events.3.t
+	desc = uelos_events.3.d
+	picture = PRAYING_eventPicture
+
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = {
+			set_variable = {
+				which = uelos_province_amount
+				value = 0
+			}
+			every_owned_province = {
+				if = {
+					limit = { 
+						religion = uelos_cult 
+					}
+					ROOT = {
+						change_variable = {
+							which = uelos_province_amount
+							value = 1
+						}
+					}
+				}
+			}
+			divide_variable = {
+				which = uelos_province_amount
+				value = 2
+			}
+		}
+	}
+
+	option = {
+		name = uelos_events.3.a
+		ai_chance = { factor = 1 }
+		if = {
+			limit = {
+				check_variable = { which = uelos_province_amount value = 1 }
+			}
+			if = {
+				limit = { 
+					NOT = { check_variable = { which = uelos_province_amount value = 2 } }
+				 }
+				 add_treasury = -200
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = uelos_province_amount value = 3 } }
+				}
+				add_treasury = -400
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = uelos_province_amount value = 4 } }
+				}
+				add_treasury = -600
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = uelos_province_amount value = 5 } }
+				 }
+				 add_treasury = -800
+			}
+			else = {
+				 add_treasury = -1000
+			}
+		}
+		every_owned_province = {
+			limit = { religion = uelos_cult }
+			change_religion = ROOT
+			add_unrest = 10
+		}
+		set_country_flag = stopped_uelos_cult
+		capital_scope = {
+			spawn_rebels = {
+				size = 1.5
+				type = uelos_cult_rebels
+				female = yes
+
+			}
+		}
+	}
+	option = {
+		name = uelos_events.3.b
+		ai_chance = { factor = 3 }
+		random_owned_province = {
+			limit = { 
+				has_port = yes
+				is_in_capital_area = yes
+			 }
+			 change_religion = uelos_cult
+		}
+		if = {
+			limit = { has_estate = estate_church }
+			set_country_flag = tolerates_cult
+			set_estate_privilege = estate_church_uelos_cult_guaranteed_autonomy
+		}
+	}
+	option = {
+		name = uelos_events.3.c
+		ai_chance = { factor = 1 }
+		random_owned_province = {
+			limit = { 
+				has_port = yes
+				is_in_capital_area = yes
+			 }
+			 change_religion = uelos_cult
+		}
+		
+		custom_tooltip = uelos_cult_growth_tt
+		hidden_effect = {
+			country_event = {
+				id = uelos_events.4
+				days = 200
+			}
+		}
+	}
+}
+
+country_event = {
+	id = uelos_events.4
+	title = uelos_events.4.t
+	desc = uelos_events.4.d
+	picture = RELIGIOUS_CONVERSION_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_variable = {
+				which = uelos_province_amount
+				value = 0
+			}
+			every_owned_province = {
+				if = {
+					limit = { 
+						religion = uelos_cult 
+						is_in_capital_area = yes
+					}
+					ROOT = {
+						change_variable = {
+							which = uelos_province_amount
+							value = 1
+						}
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = uelos_events.4.a
+		ai_chance = { factor = 2 }
+		if = {
+			limit = {
+				check_variable = { which = uelos_province_amount value = 1 }
+			}
+			if = {
+				limit = { 
+					NOT = { check_variable = { which = uelos_province_amount value = 2 } }
+				 }
+				 add_treasury = -250
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = uelos_province_amount value = 3 } }
+				}
+				add_treasury = -500
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = uelos_province_amount value = 4 } }
+				}
+				add_treasury = -750
+			}
+			else_if = {
+				limit = {
+					NOT = { check_variable = { which = uelos_province_amount value = 5 } }
+				 }
+				 add_treasury = -1000
+			}
+			else = {
+				 add_treasury = -1500
+			}
+		}
+		every_owned_province = {
+			limit = { religion = uelos_cult is_in_capital_area = yes }
+			change_religion = ROOT
+			add_unrest = 10
+		}
+		capital_scope = {
+			spawn_rebels = {
+				size = 2.5
+				type = uelos_cult_rebels
+			}
+		}
+		set_country_flag = stopped_uelos_cult
+	}
+
+	option = {
+		name = uelos_events.4.b
+		ai_chance = { factor = 1 }
+		add_stability = -3
+		change_religion = uelos_cult
+	}
+}

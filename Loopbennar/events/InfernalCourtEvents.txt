@@ -27,7 +27,7 @@ country_event = {
 	option = {
 		name = infernal_events.0.a
 		ai_chance = { factor = 100 }
-		trigger = { has_personal_deity = hedine }
+		trigger = { has_infernal_deity = { deity = hedine } }
 		
 		random_list = {
 			1 = {} #Fallback
@@ -54,7 +54,7 @@ country_event = {
 	option = {
 		name = infernal_events.0.a
 		ai_chance = { factor = 100 }
-		trigger = { has_personal_deity = canturian }
+		trigger = { has_infernal_deity = { deity = canturian } }
 		
 		random_list = {
 			1 = {} #Fallback
@@ -92,7 +92,7 @@ country_event = {
 	option = {
 		name = infernal_events.0.a
 		ai_chance = { factor = 100 }
-		trigger = { has_personal_deity = forsara }
+		trigger = { has_infernal_deity = { deity = forsara } }
 		
 		random_list = {
 			1 = {} #Fallback
@@ -128,7 +128,7 @@ country_event = {
 	option = {
 		name = infernal_events.0.a
 		ai_chance = { factor = 100 }
-		trigger = { has_personal_deity = mesner }
+		trigger = { has_infernal_deity = { deity = mesner } }
 		
 		random_list = {
 			1 = {} #Fallback
@@ -160,7 +160,7 @@ country_event = {
 	option = {
 		name = infernal_events.0.a
 		ai_chance = { factor = 100 }
-		trigger = { has_personal_deity = hedine }
+		trigger = { has_infernal_deity = { deity = hedine } }
 		
 		random_list = {
 			1 = {} #Fallback
@@ -181,7 +181,7 @@ country_event = {
 	option = {
 		name = infernal_events.0.a
 		ai_chance = { factor = 100 }
-		trigger = { has_personal_deity = ildran }
+		trigger = { has_infernal_deity = { deity = ildran } }
 		
 		random_list = {
 			1 = {} #Fallback
@@ -213,7 +213,7 @@ country_event = {
 	option = {
 		name = infernal_events.0.a
 		ai_chance = { factor = 100 }
-		trigger = { has_personal_deity = kazraiel }
+		trigger = { has_infernal_deity = { deity = kazraiel } }
 		
 		random_list = {
 			1 = {} #Fallback
@@ -245,7 +245,7 @@ country_event = {
 	option = {
 		name = infernal_events.0.a
 		ai_chance = { factor = 100 }
-		trigger = { has_personal_deity = ibberal }
+		trigger = { has_infernal_deity = { deity = ibberal } }
 		
 		random_list = {
 			1 = {} #Fallback
@@ -574,6 +574,66 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			set_country_flag = infernal_court_menu_open
+			every_owned_province = {
+				limit = { NOT = { is_capital_of = ROOT } }
+				random = {
+					chance = 5
+					set_province_flag = infernal_rebellion
+				}
+			}
+			random_owned_province = {
+				limit = {
+					has_province_flag = infernal_rebellion
+				}
+				save_event_target_as = event_target_1
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_1 }
+				random_owned_province = {
+					limit = {
+						has_province_flag = infernal_rebellion
+						NOT = { province_id = event_target:event_target_1 }
+					}
+					save_event_target_as = event_target_2
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_2 }
+				random_owned_province = {
+					limit = {
+						has_province_flag = infernal_rebellion
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+					}
+					save_event_target_as = event_target_3
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_3 }
+				random_owned_province = {
+					limit = {
+						has_province_flag = infernal_rebellion
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+						NOT = { province_id = event_target:event_target_3 }
+					}
+					save_event_target_as = event_target_4
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_4 }
+				random_owned_province = {
+					limit = {
+						has_province_flag = infernal_rebellion
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+						NOT = { province_id = event_target:event_target_3 }
+						NOT = { province_id = event_target:event_target_4 }
+					}
+					save_event_target_as = event_target_5
+				}
+			}
+			every_owned_province = { clr_province_flag = infernal_rebellion }
 		}
 	}
 
@@ -582,6 +642,7 @@ country_event = {
 		highlight = yes
 		trigger = {
 		}
+		hidden_effect = { set_country_flag = no_infernal_rebellion }
 	}
 	
 	#kazraiel base
@@ -594,6 +655,7 @@ country_event = {
 					ruler_has_personality = cruel_personality
 				}
 			}
+			NOT = { has_infernal_deity = { deity = kazraiel } }
 		}
 		ai_chance = {
 			factor = 1
@@ -615,7 +677,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = kazraiel
+		change_infernal_deity = { deity = kazraiel }
+		custom_tooltip = change_deity_rebels_tt
 	}
 	
 	#kazraiel favorable
@@ -627,6 +690,7 @@ country_event = {
 				ruler_has_personality = malevolent_personality
 				ruler_has_personality = cruel_personality
 			}
+			NOT = { has_infernal_deity = { deity = kazraiel } }
 		}
 		ai_chance = {
 			factor = 1
@@ -648,7 +712,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = kazraiel
+		change_infernal_deity = { deity = kazraiel }
+		custom_tooltip = change_deity_rebels_tt
 	}
 
 	#hedine base
@@ -658,6 +723,7 @@ country_event = {
 			NOT = {
 				ruler_has_personality = infertile_personality
 			}
+			NOT = { has_infernal_deity = { deity = hedine } }
 		}
 		ai_chance = {
 			factor = 1
@@ -679,7 +745,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = hedine
+		change_infernal_deity = { deity = hedine }
+		custom_tooltip = change_deity_rebels_tt
 	}
 	
 	#hedine favorable
@@ -688,6 +755,7 @@ country_event = {
 		highlight = yes
 		trigger = {
 			ruler_has_personality = infertile_personality
+			NOT = { has_infernal_deity = { deity = hedine } }
 		}
 		ai_chance = {
 			factor = 1
@@ -709,7 +777,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = hedine
+		change_infernal_deity = { deity = hedine }
+		custom_tooltip = change_deity_rebels_tt
 	}
 
 	#canturian base
@@ -719,6 +788,7 @@ country_event = {
 			NOT = {
 				ruler_has_personality = craven_personality
 			}
+			NOT = { has_infernal_deity = { deity = canturian } }
 		}
 		ai_chance = {
 			factor = 1
@@ -740,7 +810,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = canturian
+		change_infernal_deity = { deity = canturian }
+		custom_tooltip = change_deity_rebels_tt
 	}
 	
 	#canturian favorable
@@ -749,6 +820,7 @@ country_event = {
 		highlight = yes
 		trigger = {
 			ruler_has_personality = craven_personality
+			NOT = { has_infernal_deity = { deity = canturian } }
 		}
 		ai_chance = {
 			factor = 1
@@ -770,7 +842,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = canturian
+		change_infernal_deity = { deity = canturian }
+		custom_tooltip = change_deity_rebels_tt
 	}
 
 	#mesner base
@@ -780,6 +853,7 @@ country_event = {
 			NOT = {
 				ruler_has_personality = babbling_buffoon_personality
 			}
+			NOT = { has_infernal_deity = { deity = mesner } }
 		}
 		ai_chance = {
 			factor = 1
@@ -801,7 +875,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = mesner
+		change_infernal_deity = { deity = mesner }
+		custom_tooltip = change_deity_rebels_tt
 	}
 	
 	#mesner favorable
@@ -810,6 +885,7 @@ country_event = {
 		highlight = yes
 		trigger = {
 			ruler_has_personality = babbling_buffoon_personality
+			NOT = { has_infernal_deity = { deity = mesner } }
 		}
 		ai_chance = {
 			factor = 1
@@ -831,7 +907,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = mesner
+		change_infernal_deity = { deity = mesner }
+		custom_tooltip = change_deity_rebels_tt
 	}
 
 	#ibberal base
@@ -844,6 +921,7 @@ country_event = {
 					ruler_has_personality = loose_lips_personality
 				}
 			}
+			NOT = { has_infernal_deity = { deity = ibberal } }
 		}
 		ai_chance = {
 			factor = 1
@@ -865,7 +943,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = ibberal
+		change_infernal_deity = { deity = ibberal }
+		custom_tooltip = change_deity_rebels_tt
 	}
 	
 	#ibberal favorable
@@ -877,6 +956,7 @@ country_event = {
 				ruler_has_personality = drunkard_personality
 				ruler_has_personality = loose_lips_personality
 			}
+			NOT = { has_infernal_deity = { deity = ibberal } }
 		}
 		ai_chance = {
 			factor = 1
@@ -898,7 +978,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = ibberal
+		change_infernal_deity = { deity = ibberal }
+		custom_tooltip = change_deity_rebels_tt
 	}
 
 	#ildran base
@@ -911,6 +992,7 @@ country_event = {
 					ruler_has_personality = naive_personality
 				}
 			}
+			NOT = { has_infernal_deity = { deity = ildran } }
 		}
 		ai_chance = {
 			factor = 1
@@ -932,7 +1014,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = ildran
+		change_infernal_deity = { deity = ildran }
+		custom_tooltip = change_deity_rebels_tt
 	}
 	
 	#ildran favorable
@@ -944,6 +1027,7 @@ country_event = {
 				ruler_has_personality = obsessive_perfectionist_personality
 				ruler_has_personality = naive_personality
 			}
+			NOT = { has_infernal_deity = { deity = ildran } }
 		}
 		ai_chance = {
 			factor = 1
@@ -965,7 +1049,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = ildran
+		change_infernal_deity = { deity = ildran }
+		custom_tooltip = change_deity_rebels_tt
 	}
 
 	#forsara base
@@ -978,6 +1063,7 @@ country_event = {
 					ruler_has_personality = embezzler_personality
 				}
 			}
+			NOT = { has_infernal_deity = { deity = forsara } }
 		}
 		ai_chance = {
 			factor = 1
@@ -999,7 +1085,8 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = forsara
+		change_infernal_deity = { deity = forsara }
+		custom_tooltip = change_deity_rebels_tt
 	}
 	
 	#forsara favorable
@@ -1011,6 +1098,7 @@ country_event = {
 				ruler_has_personality = greedy_personality
 				ruler_has_personality = embezzler_personality
 			}
+			NOT = { has_infernal_deity = { deity = forsara } }
 		}
 		ai_chance = {
 			factor = 1
@@ -1032,9 +1120,226 @@ country_event = {
 			}
 		}
 		set_country_flag = infernal_court_deity_switch_cooldown
-		change_personal_deity = forsara
+		change_infernal_deity = { deity = forsara }
+		custom_tooltip = change_deity_rebels_tt
 	}
 
+	after = {
+		hidden_effect = {
+			clr_country_flag = infernal_court_menu_open
+			if = {
+				limit = { has_country_flag = no_infernal_rebellion }
+				clr_country_flag = no_infernal_rebellion
+			}
+			else = {
+				set_variable = {
+					which = infernal_toll_timer value = 0
+				}
+				capital_scope = {
+					spawn_rebels = {
+						type = infernal_cultist_rebels
+						size = 2
+					}
+				}
+				if = {
+					limit = { has_saved_event_target = event_target_1 }
+					event_target:event_target_1 = {
+						spawn_rebels = {
+							type = infernal_cultist_rebels
+							size = 1
+						}
+					}
+				}
+				if = {
+					limit = { has_saved_event_target = event_target_2 }
+					event_target:event_target_2 = {
+						spawn_rebels = {
+							type = infernal_cultist_rebels
+							size = 1
+						}
+					}
+				}
+				if = {
+					limit = { has_saved_event_target = event_target_3 }
+					event_target:event_target_3 = {
+						spawn_rebels = {
+							type = infernal_cultist_rebels
+							size = 1
+						}
+					}
+				}
+				if = {
+					limit = { has_saved_event_target = event_target_4 }
+					event_target:event_target_4 = {
+						spawn_rebels = {
+							type = infernal_cultist_rebels
+							size = 1
+						}
+					}
+				}
+				if = {
+					limit = { has_saved_event_target = event_target_5 }
+					event_target:event_target_5 = {
+						spawn_rebels = {
+							type = infernal_cultist_rebels
+							size = 1
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #hidden upgrade event
+	id = infernal_events.18
+	title = infernal_events.18.t
+	desc = infernal_events.18.d
+	picture = DIPLOMACY_eventPicture
+	
+	hidden = yes
+
+	is_triggered_only = yes
+	
+	option = {
+		name = infernal_events.18.a
+		infernal_court_gain_upgrade_2 = { deity = kazraiel }
+		infernal_court_gain_upgrade_2 = { deity = mesner }
+		infernal_court_gain_upgrade_2 = { deity = ildran }
+		infernal_court_gain_upgrade_2 = { deity = hedine }
+		infernal_court_gain_upgrade_2 = { deity = ibberal }
+		infernal_court_gain_upgrade_2 = { deity = canturian }
+		infernal_court_gain_upgrade_2 = { deity = forsara }
+	}
+}
+
+country_event = { #Celebration of the Usurper's death
+	id = infernal_events.19
+	title = infernal_events.19.t
+	desc = infernal_events.19.d
+	picture = DIPLOMACY_eventPicture
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			infernal_court_conversion_pick_targets = { deity = kazraiel }
+			infernal_court_conversion_pick_targets = { deity = mesner }
+			infernal_court_conversion_pick_targets = { deity = ildran }
+			infernal_court_conversion_pick_targets = { deity = hedine }
+			infernal_court_conversion_pick_targets = { deity = ibberal }
+			infernal_court_conversion_pick_targets = { deity = canturian }
+			infernal_court_conversion_pick_targets = { deity = forsara }
+			set_country_flag = infernal_court_menu_open #blocks changing deity while event is active
+		}
+	}
+	
+	option = {
+		name = infernal_events.19.a
+		ai_chance = { factor = 0 }
+		trigger = {
+			hidden_trigger = { ai = no }
+		}
+		add_dip_power = -50
+		add_years_of_income = -0.2
+		if = {
+			limit = { has_saved_event_target = event_target_1 }
+			event_target:event_target_1 = {
+				change_religion = infernal_court
+				add_reform_center = infernal_court
+				add_permanent_province_modifier = {
+					name = "religious_zeal_at_conv"
+					duration = 7300
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_2 }
+			event_target:event_target_2 = {
+				change_religion = infernal_court
+				add_permanent_province_modifier = {
+					name = "religious_zeal_at_conv"
+					duration = 7300
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_3 }
+			event_target:event_target_3 = {
+				change_religion = infernal_court
+				add_permanent_province_modifier = {
+					name = "religious_zeal_at_conv"
+					duration = 7300
+				}
+			}
+		}
+		infernal_court_conversion_ae = { deity = kazraiel }
+		infernal_court_conversion_ae = { deity = mesner }
+		infernal_court_conversion_ae = { deity = ildran }
+		infernal_court_conversion_ae = { deity = hedine }
+		infernal_court_conversion_ae = { deity = ibberal }
+		infernal_court_conversion_ae = { deity = canturian }
+		infernal_court_conversion_ae = { deity = forsara }
+		custom_tooltip = " "
+		add_country_modifier = {
+			name = IC_happy_cultists
+			duration = 5475
+		}
+	}
+	
+	option = {
+		name = infernal_events.19.b
+		ai_chance = { factor = 1 }
+		add_dip_power = -25
+		add_years_of_income = -0.1
+		if = {
+			limit = { has_saved_event_target = event_target_1 }
+			event_target:event_target_1 = {
+				change_religion = infernal_court
+				add_permanent_province_modifier = {
+					name = "religious_zeal_at_conv"
+					duration = 7300
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_2 }
+			event_target:event_target_2 = {
+				change_religion = infernal_court
+				add_permanent_province_modifier = {
+					name = "religious_zeal_at_conv"
+					duration = 7300
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_3 }
+			event_target:event_target_3 = {
+				change_religion = infernal_court
+				add_permanent_province_modifier = {
+					name = "religious_zeal_at_conv"
+					duration = 7300
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = infernal_events.19.c
+		ai_chance = { factor = 1 }
+		infernal_court_restrain_cultists = { deity = kazraiel }
+		infernal_court_restrain_cultists = { deity = mesner }
+		infernal_court_restrain_cultists = { deity = ildran }
+		infernal_court_restrain_cultists = { deity = hedine }
+		infernal_court_restrain_cultists = { deity = ibberal }
+		infernal_court_restrain_cultists = { deity = canturian }
+		infernal_court_restrain_cultists = { deity = forsara }
+		add_country_modifier = {
+			name = IC_hidden_cultists
+			duration = 5475
+		}
+	}
+	
 	after = {
 		hidden_effect = {
 			clr_country_flag = infernal_court_menu_open
@@ -1531,3 +1836,1109 @@ country_event = { #step 3
 		}
 	}
 }
+
+#################
+###TOLL EVENTS###
+#################
+
+country_event = { #event manager
+	id = infernal_events.200
+	title = infernal_events.200.t
+	desc = infernal_events.200.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = infernal_events.200.a
+		if = {
+			limit = { has_personal_deity = kazraiel }
+			country_event = { id = infernal_events.201 }
+		}
+		if = {
+			limit = { has_personal_deity = kazraiel_upgrade }
+			country_event = { id = infernal_events.202 }
+		}
+		if = {
+			limit = { has_personal_deity = mesner }
+			country_event = { id = infernal_events.203 }
+		}
+		if = {
+			limit = { has_personal_deity = mesner_upgrade }
+			country_event = { id = infernal_events.204 }
+		}
+		if = {
+			limit = { has_personal_deity = ildran }
+			country_event = { id = infernal_events.205 }
+		}
+		if = {
+			limit = { has_personal_deity = ildran_upgrade }
+			country_event = { id = infernal_events.206 }
+		}
+		if = {
+			limit = { has_personal_deity = hedine }
+			country_event = { id = infernal_events.207 }
+		}
+		if = {
+			limit = { has_personal_deity = hedine_upgrade }
+			country_event = { id = infernal_events.208 }
+		}
+		if = {
+			limit = { has_personal_deity = ibberal }
+			country_event = { id = infernal_events.209 }
+		}
+		if = {
+			limit = { has_personal_deity = ibberal_upgrade }
+			country_event = { id = infernal_events.210 }
+		}
+		if = {
+			limit = { has_personal_deity = canturian }
+			country_event = { id = infernal_events.211 }
+		}
+		if = {
+			limit = { has_personal_deity = canturian_upgrade }
+			country_event = { id = infernal_events.212 }
+		}
+		if = {
+			limit = { has_personal_deity = forsara }
+			country_event = { id = infernal_events.213 }
+		}
+		if = {
+			limit = { has_personal_deity = forsara_upgrade }
+			country_event = { id = infernal_events.214 }
+		}
+	}
+}
+
+country_event = { #Kazraiel
+	id = infernal_events.201
+	title = infernal_events.201.t
+	desc = infernal_events.201.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Tribute
+		name = infernal_events.201.a
+		add_yearly_manpower = -0.33
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.201.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_2 = { personality1 = malevolent personality2 = cruel } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = kazraiel }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.201.c
+		add_country_modifier = {
+			name = IC_refuse_kazraiel
+			duration = 1825
+		}
+	}
+}
+
+country_event = { #Kazraiel upgraded
+	id = infernal_events.202
+	title = infernal_events.202.t
+	desc = infernal_events.202.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Tribute
+		name = infernal_events.202.a
+		add_yearly_manpower = -1
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.202.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_2 = { personality1 = malevolent personality2 = cruel } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = kazraiel }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.202.c
+		add_country_modifier = {
+			name = IC_refuse_kazraiel_upgrade
+			duration = 1825
+		}
+	}
+}
+
+country_event = { #Mesner
+	id = infernal_events.203
+	title = infernal_events.203.t
+	desc = infernal_events.203.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { NOT = { is_capital_of = ROOT } }
+				save_event_target_as = event_target_1
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_1 }
+				random_owned_province = {
+					limit = { 
+						NOT = {
+							is_capital_of = ROOT
+							province_id = event_target:event_target_1
+						}
+					}
+					save_event_target_as = event_target_2
+				}
+			}
+		}
+	}
+	
+	option = { #Tribute
+		name = infernal_events.203.a
+		capital_scope = {
+			add_province_modifier = {
+				name = IC_tribute_mesner
+				duration = 1825
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_1 }
+			event_target:event_target_1 = {
+				add_province_modifier = {
+					name = IC_tribute_mesner
+					duration = 1825
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_2 }
+			event_target:event_target_2 = {
+				add_province_modifier = {
+					name = IC_tribute_mesner
+					duration = 1825
+				}
+			}
+		}
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.203.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_1 = { personality = babbling_buffoon } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = mesner }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.203.c
+		random_list = {
+			1 = {
+				add_adm_power = -100
+			}
+			1 = {
+				add_dip_power = -100
+			}
+			1 = {
+				add_mil_power = -100
+			}
+		}
+		custom_tooltip = " " #empty line for tooltip clarity
+		random = {
+			chance = 10
+			random_list = {
+				1 = {
+					if = {
+						limit = { adm = 1 }
+						change_adm = -1
+					}
+					else = {
+						add_adm_power = -100
+					}
+				}
+				1 = {
+					if = {
+						limit = { dip = 1 }
+						change_dip = -1
+					}
+					else = {
+						add_dip_power = -100
+					}
+				}
+				1 = {
+					if = {
+						limit = { mil = 1 }
+						change_mil = -1
+					}
+					else = {
+						add_mil_power = -100
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Mesner upgraded
+	id = infernal_events.204
+	title = infernal_events.204.t
+	desc = infernal_events.204.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			capital_scope = { save_event_target_as = event_target_capital }
+			random_owned_province = {
+				limit = {
+					area_for_scope_province = {
+						type = all
+						NOT = {
+							is_capital_of = ROOT
+						}
+					}
+				}
+				save_event_target_as = event_target_1
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_1 }
+				random_owned_province = {
+					limit = {
+						area_for_scope_province = {
+							type = all
+							NOT = { province_id = event_target:event_target_1 }
+						}
+						area_for_scope_province = {
+							type = all
+							NOT = { is_capital_of = ROOT }
+						}
+					}
+					save_event_target_as = event_target_2
+				}
+			}
+		}
+	}
+	
+	option = { #Tribute
+		name = infernal_events.204.a
+		event_target:event_target_capital = {
+			area = {
+				limit = { owned_by = ROOT }
+				add_province_modifier = {
+					name = IC_tribute_mesner
+					duration = 1825
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_1 }
+			event_target:event_target_1 = {
+				area = {
+					limit = { owned_by = ROOT }
+					add_province_modifier = {
+						name = IC_tribute_mesner
+						duration = 1825
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_2 }
+			event_target:event_target_2 = {
+				area = {
+					limit = { owned_by = ROOT }
+					add_province_modifier = {
+						name = IC_tribute_mesner
+						duration = 1825
+					}
+				}
+			}
+		}
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.204.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_1 = { personality = babbling_buffoon } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = mesner }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.204.c
+		random_list = {
+			30 = {
+				if = {
+					limit = { adm = 1 }
+					change_adm = -1
+				}
+				else = {
+					add_adm_power = -200
+				}
+			}
+			30 = {
+				if = {
+					limit = { dip = 1 }
+					change_dip = -1
+				}
+				else = {
+					add_dip_power = -200
+				}
+			}
+			30 = {
+				if = {
+					limit = { mil = 1 }
+					change_mil = -1
+				}
+				else = {
+					add_mil_power = -200
+				}
+			}
+			10 = {
+				if = {
+					limit = { adm = 1 }
+					change_adm = -1
+				}
+				else = {
+					add_adm_power = -200
+				}
+				if = {
+					limit = { dip = 1 }
+					change_dip = -1
+				}
+				else = {
+					add_dip_power = -200
+				}
+				if = {
+					limit = { mil = 1 }
+					change_mil = -1
+				}
+				else = {
+					add_mil_power = -200
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Ildran
+	id = infernal_events.205
+	title = infernal_events.205.t
+	desc = infernal_events.205.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Tribute
+		name = infernal_events.205.a
+		change_government_reform_progress = -100
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.205.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_2 = { personality1 = obsessive_perfectionist personality2 = naive } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = ildran }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.205.c
+		add_country_modifier = {
+			name = IC_refuse_ildran
+			duration = 3650
+		}
+	}
+}
+
+country_event = { #Ildran upgraded
+	id = infernal_events.206
+	title = infernal_events.206.t
+	desc = infernal_events.206.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Tribute
+		name = infernal_events.206.a
+		change_government_reform_progress = -250
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.206.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_2 = { personality1 = obsessive_perfectionist personality2 = naive } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = ildran }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.206.c
+		add_country_modifier = {
+			name = IC_refuse_ildran_upgrade
+			duration = 3650
+		}
+	}
+}
+
+country_event = { #Hedine
+	id = infernal_events.207
+	title = infernal_events.207.t
+	desc = infernal_events.207.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Tribute
+		name = infernal_events.207.a
+		add_legitimacy_equivalent = { amount = -10 republican_tradition = -5 }
+		add_prestige = -15
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.207.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_1 = { personality = infertile } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = hedine }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.207.c
+		trigger = {
+			has_government_attribute = heir
+			OR = {
+				heir_adm = 3
+				heir_dip = 3
+				heir_mil = 3
+				has_heir = no
+			}
+		}
+		define_heir = {
+			dynasty = ROOT
+			max_random_adm = 2
+			max_random_dip = 2
+			max_random_mil = 2
+		}
+	}
+}
+
+country_event = { #Hedine upgraded
+	id = infernal_events.208
+	title = infernal_events.208.t
+	desc = infernal_events.208.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Tribute
+		name = infernal_events.208.a
+		add_legitimacy_equivalent = { amount = -25 republican_tradition = -12 }
+		add_prestige = -30
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.208.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_1 = { personality = infertile } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = hedine }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.208.c
+		trigger = {
+			has_government_attribute = heir
+			OR = {
+				heir_adm = 3
+				heir_dip = 3
+				heir_mil = 3
+				has_heir = no
+			}
+		}
+		define_heir = {
+			dynasty = ROOT
+			max_random_adm = 2
+			max_random_dip = 2
+			max_random_mil = 2
+			block_disinherit = yes
+		}
+	}
+}
+
+country_event = { #Ibberal
+	id = infernal_events.209
+	title = infernal_events.209.t
+	desc = infernal_events.209.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = { save_event_target_as = event_target_1 }
+			if = {
+				limit = { has_saved_event_target = event_target_1 }
+				random_owned_province = {
+					limit = { 
+						NOT = {
+							province_id = event_target:event_target_1
+						}
+					}
+					save_event_target_as = event_target_2
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_2 }
+				random_owned_province = {
+					limit = { 
+						NOT = {
+							province_id = event_target:event_target_1
+							province_id = event_target:event_target_2
+						}
+					}
+					save_event_target_as = event_target_3
+				}
+			}
+			
+			random_owned_province = {
+				limit = {
+					has_production_building_trigger = yes
+				}
+				save_event_target_as = event_target_4
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_4 }
+				random_owned_province = {
+					limit = { 
+						NOT = { province_id = event_target:event_target_4 }
+						has_production_building_trigger = yes
+					}
+					save_event_target_as = event_target_5
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_5 }
+				random_owned_province = {
+					limit = { 
+						NOT = { province_id = event_target:event_target_4 }
+						NOT = { province_id = event_target:event_target_5 }
+						has_production_building_trigger = yes
+					}
+					save_event_target_as = event_target_6
+				}
+			}
+		}
+	}
+	
+	option = { #Tribute
+		name = infernal_events.209.a
+		event_target:event_target_1 = {
+			remove_random_development = yes
+			add_devastation = 25
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_2 }
+			event_target:event_target_2 = {
+				remove_random_development = yes
+				add_devastation = 25
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_3 }
+			event_target:event_target_3 = {
+				remove_random_development = yes
+				add_devastation = 25
+			}
+		}
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.209.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_2 = { personality1 = drunkard personality2 = loose_lips } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = ibberal }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.209.c
+		trigger = {
+			any_owned_province = {
+				has_production_building_trigger = yes
+			}
+		}
+		event_target:event_target_4 = {
+			if = { 
+				limit = { has_building = workshop }
+				remove_building = workshop
+			}
+			if = { 
+				limit = { has_building = counting_house }
+				remove_building = counting_house
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_5 }
+			event_target:event_target_5 = {
+				if = { 
+					limit = { has_building = workshop }
+					remove_building = workshop
+				}
+				if = { 
+					limit = { has_building = counting_house }
+					remove_building = counting_house
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_6 }
+			event_target:event_target_6 = {
+				if = { 
+					limit = { has_building = workshop }
+					remove_building = workshop
+				}
+				if = { 
+					limit = { has_building = counting_house }
+					remove_building = counting_house
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Ibberal upgraded
+	id = infernal_events.210
+	title = infernal_events.210.t
+	desc = infernal_events.210.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_manufactory_trigger = yes
+				}
+				save_event_target_as = event_target_1
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_1 }
+				random_owned_province = {
+					limit = { 
+						NOT = { province_id = event_target:event_target_1 }
+						has_manufactory_trigger = yes
+					}
+					save_event_target_as = event_target_2
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_2 }
+				random_owned_province = {
+					limit = { 
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+						has_manufactory_trigger = yes
+					}
+					save_event_target_as = event_target_3
+				}
+			}
+		}
+	}
+	
+	option = { #Tribute
+		name = infernal_events.210.a
+		capital_scope = {
+			area = {
+				limit = { owned_by = ROOT }
+				add_base_tax = -1
+				add_base_production = -1
+				add_base_manpower = -1
+				add_devastation = 50
+			}
+		}
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.210.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_2 = { personality1 = drunkard personality2 = loose_lips } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = ibberal }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.210.c
+		trigger = {
+			any_owned_province = {
+				has_manufactory_trigger = yes
+			}
+		}
+		event_target:event_target_1 = {
+			remove_random_manufactory = yes
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_2 }
+			event_target:event_target_2 = {
+				remove_random_manufactory = yes
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_3 }
+			event_target:event_target_3 = {
+				remove_random_manufactory = yes
+			}
+		}
+	}
+}
+
+country_event = { #Canturian
+	id = infernal_events.211
+	title = infernal_events.211.t
+	desc = infernal_events.211.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					IC_has_long_lived_minority_canturian = yes
+				}
+				save_event_target_as = event_target_1
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_1 }
+				random_owned_province = {
+					limit = {
+						NOT = { province_id = event_target:event_target_1 }
+						IC_has_long_lived_minority_canturian = yes
+					}
+					save_event_target_as = event_target_2
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_2 }
+				random_owned_province = {
+					limit = {
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+						IC_has_long_lived_minority_canturian = yes
+					}
+					save_event_target_as = event_target_3
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_3 }
+				random_owned_province = {
+					limit = {
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+						NOT = { province_id = event_target:event_target_3 }
+						IC_has_long_lived_minority_canturian = yes
+					}
+					save_event_target_as = event_target_4
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_4 }
+				random_owned_province = {
+					limit = {
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+						NOT = { province_id = event_target:event_target_3 }
+						NOT = { province_id = event_target:event_target_4 }
+						IC_has_long_lived_minority_canturian = yes
+					}
+					save_event_target_as = event_target_5
+				}
+			}
+		}
+	}
+	
+	option = { #Tribute
+		name = infernal_events.211.a
+		large_decrease_of_elven_tolerance_effect = yes
+		large_decrease_of_half_elven_tolerance_effect = yes
+		large_decrease_of_dwarven_tolerance_effect = yes
+		large_decrease_of_gnomish_tolerance_effect = yes
+		add_country_modifier = {
+			name = IC_tribute_canturian
+			duration = 1825
+		}
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.211.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_1 = { personality = craven } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = canturian }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.211.c
+		trigger = {
+			any_owned_province = {
+				IC_has_long_lived_minority_canturian = yes
+			}
+		}	
+		event_target:event_target_1 = {
+			spawn_rebels = {
+				type = particularist_rebels
+				size = 1.5
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_2 }
+			event_target:event_target_2 = {
+				spawn_rebels = {
+					type = particularist_rebels
+					size = 1.5
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_3 }
+			event_target:event_target_3 = {
+				spawn_rebels = {
+					type = particularist_rebels
+					size = 1.5
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_4 }
+			event_target:event_target_4 = {
+				spawn_rebels = {
+					type = particularist_rebels
+					size = 1.5
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_5 }
+			event_target:event_target_5 = {
+				spawn_rebels = {
+					type = particularist_rebels
+					size = 1.5
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Canturian upgraded
+	id = infernal_events.212
+	title = infernal_events.212.t
+	desc = infernal_events.212.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					IC_has_long_lived_minority_canturian = yes
+				}
+				save_event_target_as = event_target_1
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_1 }
+				random_owned_province = {
+					limit = {
+						NOT = { province_id = event_target:event_target_1 }
+						IC_has_long_lived_minority_canturian = yes
+					}
+					save_event_target_as = event_target_2
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_2 }
+				random_owned_province = {
+					limit = {
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+						IC_has_long_lived_minority_canturian = yes
+					}
+					save_event_target_as = event_target_3
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_3 }
+				random_owned_province = {
+					limit = {
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+						NOT = { province_id = event_target:event_target_3 }
+						IC_has_long_lived_minority_canturian = yes
+					}
+					save_event_target_as = event_target_4
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = event_target_4 }
+				random_owned_province = {
+					limit = {
+						NOT = { province_id = event_target:event_target_1 }
+						NOT = { province_id = event_target:event_target_2 }
+						NOT = { province_id = event_target:event_target_3 }
+						NOT = { province_id = event_target:event_target_4 }
+						IC_has_long_lived_minority_canturian = yes
+					}
+					save_event_target_as = event_target_5
+				}
+			}
+		}
+	}
+	
+	option = { #Tribute
+		name = infernal_events.212.a
+		large_decrease_of_elven_tolerance_effect = yes
+		large_decrease_of_half_elven_tolerance_effect = yes
+		large_decrease_of_dwarven_tolerance_effect = yes
+		large_decrease_of_gnomish_tolerance_effect = yes
+		add_country_modifier = {
+			name = IC_tribute_canturian_upgrade
+			duration = 3650
+		}
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.212.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_1 = { personality = craven } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = canturian }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.212.c
+		trigger = {
+			any_owned_province = {
+				IC_has_long_lived_minority_canturian = yes
+			}
+		}	
+		event_target:event_target_1 = {
+			spawn_rebels = {
+				type = particularist_rebels
+				size = 2.5
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_2 }
+			event_target:event_target_2 = {
+				spawn_rebels = {
+					type = particularist_rebels
+					size = 2.5
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_3 }
+			event_target:event_target_3 = {
+				spawn_rebels = {
+					type = particularist_rebels
+					size = 2.5
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_4 }
+			event_target:event_target_4 = {
+				spawn_rebels = {
+					type = particularist_rebels
+					size = 2.5
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = event_target_5 }
+			event_target:event_target_5 = {
+				spawn_rebels = {
+					type = particularist_rebels
+					size = 2.5
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Forsara
+	id = infernal_events.213
+	title = infernal_events.213.t
+	desc = infernal_events.213.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Tribute
+		name = infernal_events.213.a
+		random_list = {
+			1 = { add_corruption = 1 }
+			1 = { add_corruption = 2 }
+			1 = { add_corruption = 3 }
+		}
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.213.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_2 = { personality1 = greedy personality2 = embezzler } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = forsara }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.213.c
+		add_country_modifier = {
+			name = IC_refuse_forsara
+			duration = 3650
+		}
+	}
+}
+
+country_event = { #Forsara upgraded
+	id = infernal_events.214
+	title = infernal_events.214.t
+	desc = infernal_events.214.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Tribute
+		name = infernal_events.214.a
+		random_list = {
+			1 = { add_corruption = 3 }
+			1 = { add_corruption = 4 }
+			1 = { add_corruption = 5 }
+		}
+	}
+	
+	option = { #Corrupt your soul
+		name = infernal_events.214.b
+		trigger = {
+			hidden_trigger = { infernal_court_check_personalities_2 = { personality1 = greedy personality2 = embezzler } }
+		}
+		infernal_court_add_bad_personality_effect = { deity = forsara }
+	}
+	
+	option = { #Refuse Tribute
+		name = infernal_events.214.c
+		add_country_modifier = {
+			name = IC_refuse_forsara_upgrade
+			duration = 3650
+		}
+	}
+}
+

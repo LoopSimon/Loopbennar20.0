@@ -1,0 +1,1239 @@
+clouded_eye_1_missions = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B24
+	}
+
+	ce_orcs_with_a_heart = {
+		icon = mission_monarch_diplomacy
+		position = 4
+
+		provinces_to_highlight = {
+			owned_by = B21
+		}
+
+		required_missions = {
+			ce_lothanes_letters
+		}
+
+		trigger = {
+			if = {
+				limit = {
+					exists = B21
+				}
+				B21 = {
+					has_50_opinion_improved_relation = { target = ROOT }
+				}
+				prestige = 20
+			}
+			else = {
+				calc_true_if = {
+					all_known_country = {
+						primary_culture = green_orc
+						has_100_opinion_improved_relation = { target = ROOT }
+					}
+					amount = 2
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					has_ruler_flag = arosha_oakbreaker
+					exists = B21
+				}
+				country_event = {
+					id = flavor_clouded_eye.5
+				}
+			}
+			else = {
+				add_prestige = 10
+				add_dip_power = 50
+			}
+		}
+	}
+
+	ce_pen_and_axe = {
+		icon = mission_dual_diplomacy
+		position = 5
+
+		provinces_to_highlight = {
+			province_id = 865
+		}
+
+		required_missions = {
+			ce_orcs_with_a_heart
+		}
+
+		trigger = {
+			865 = {
+				has_building = native_ceremonial_fire_pit
+			}
+			OR = {
+				alliance_with = B21
+				AND = {
+					NOT = {
+						exists = B21
+					}
+					num_of_allies = 2
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = pen_mightier_than_axe
+				duration = -1
+			}
+			hidden_effect = {
+				start_demonsterization_effect = yes #Early Demonsterization
+			}
+			
+		}
+	}
+
+	ce_the_esshyl_deal = {
+		icon = mission_missive
+		position = 6
+
+		provinces_to_highlight = {
+			area = esshyl_area
+			NOT = { owned_by = ROOT }
+		}
+
+		required_missions = {
+			ce_pen_and_axe
+		}
+
+		trigger = {
+			if = {
+				limit = {
+					exists = B21
+				}
+				B21 = {
+					has_100_opinion_improved_relation = { target = ROOT }
+				}
+				any_ally = {
+					tag = B21
+				}
+				treasury = 150
+			}
+			else_if = {
+				limit = {
+					884 = {
+						owned_by = ROOT
+					}
+				}
+			}
+			else = {
+				884 = { #Owner of Farhyl insulted
+					owner = {
+						has_been_insulted_by_root = yes
+					}
+				}
+			}			
+		}
+
+		effect = {
+			B21 = {
+				esshyl_area = {
+					limit = { owned_by = B21 }
+					cede_province = ROOT
+					ROOT = {
+						add_treasury = -50
+					}
+					PREV = {
+						add_treasury = 50
+					}
+			   	}
+				esshyl_area = {
+					limit = { tribal_land_of = PREV }
+					change_tribal_land = ROOT
+					ROOT = {
+						add_treasury = -20
+					}
+					PREV = {
+						add_treasury = 20
+					}
+				}
+			  	esshyl_area = {
+					limit = { NOT = { owned_by = B21 tribal_land_of = PREV } }
+					add_permanent_claim = ROOT
+			   	}
+			}
+		}
+	}
+
+	ce_southern_bulwark = {
+		icon = mission_ne_palisades
+		position = 7
+
+		provinces_to_highlight = {
+			area = esshyl_area
+			NOT = {
+    			AND = {
+        			owned_by = ROOT
+        			has_building = native_earthwork
+    			}
+			}
+		}
+
+		required_missions = {
+			ce_the_esshyl_deal
+			ce_the_remnant
+		}
+
+		trigger = {
+			esshyl_area = {
+				type = all
+				owned_by = root
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				area = esshyl_area
+				has_building = native_earthwork
+			}
+		}
+
+		effect = {
+			esshyl_area = {
+                limit = { has_building = native_earthwork }
+                add_province_modifier = {
+                    name = anti_marrodic_fortifications
+                    duration = 18250
+                }
+            }
+		}
+	}
+	
+	ce_codified_warrior_tradition = {
+		icon = mission_ynnic_knights
+		position = 8
+
+		provinces_to_highlight = {
+			province_id = 865
+			865 = {
+				NOT = {
+					num_of_units_in_province = {
+						type = cavalry
+						amount = 5
+					}
+				}
+			}		
+		}
+
+		required_missions = {
+			ce_southern_bulwark
+		}
+
+		trigger = {
+			OR = {
+				army_tradition = 40
+				army_professionalism = 0.1
+			}
+			#must have 25+ battles won
+			num_of_battles = { amount = 25 }
+			865 = {
+				num_of_units_in_province = {
+					type = cavalry
+					amount = 5
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { has_ruler_flag = arosha_oakbreaker }
+				
+				country_event = {
+					id = flavor_clouded_eye.16
+				}
+			}
+			else = {
+				add_mil_power = 50
+				add_prestige = 10
+				add_country_modifier = {
+					name = orcish_knights
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+clouded_eye_2_missions = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B24
+	}
+
+	ce_the_ruined_city = {
+		icon = mission_ghost_town
+		position = 4
+
+		provinces_to_highlight = {
+			area = ardent_glade_area
+		}
+
+		required_missions = {
+			ce_lothanes_letters
+		}
+
+		trigger = {
+			ardent_glade_area = {
+				type = all
+				OR = {
+					owned_by = root
+					tribal_land_of = ROOT
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					865 = {
+						tribal_land_of = ROOT
+					}
+				}
+				865 = {
+					settle_province = ROOT
+				}
+			}
+			865 = {
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+			}
+			ardent_glade_area = {
+				change_trade_goods = grain
+				change_religion = old_dookan
+			}
+
+			add_casus_belli = {
+				type = cb_vassalize_mission
+				target = B25
+				months = 300
+			}
+		}
+	}
+
+	ce_justice_for_lothane = {
+		icon = mission_murder
+		position = 5
+
+		provinces_to_highlight = {
+			OR = {
+				area = steelhyl_area
+				area = coalwoud_area
+				area = serpentsmarck_area
+				owned_by = B25
+			}
+			NOT = { owned_by = ROOT }
+		}
+
+		required_missions = {
+			ce_the_ruined_city
+		}
+
+		trigger = {
+			OR = {
+				B25 = {
+					is_subject_of = ROOT
+				}
+				AND = {
+					steelhyl_area = {
+						type = all
+						owned_by = ROOT
+					}
+					coalwoud_area = {
+						type = all
+						owned_by = ROOT
+					}
+					serpentsmarck_area = {
+						type = all
+						owned_by = ROOT
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					has_ruler_flag = arosha_oakbreaker
+					B25 = {
+						is_subject_of = ROOT
+					}
+				}
+				country_event = {
+					id = flavor_clouded_eye.8
+				}
+			}
+			else_if = {
+				limit = { 
+					B25 = {
+						is_subject_of = ROOT
+					}
+				 }
+				 remove_historical_rival = B25
+				 B25 = {
+					remove_historical_rival = ROOT
+					add_liberty_desire = -25
+				 }
+			}
+			else = {
+				steelhyl_area = {
+					add_nationalism = -25
+				}
+				coalwoud_area = {
+					add_nationalism = -25
+				}
+				serpentsmarck_area = {
+					add_nationalism = -25
+				}
+			}
+		}
+	}
+
+	ce_the_remnant = {
+		icon = mission_burning_castle
+		position = 6
+
+		provinces_to_highlight = {
+			OR = {
+				area = oldhaven_area
+				owned_by = B55
+			}
+		}
+
+		required_missions = {
+			ce_pen_and_axe
+			ce_justice_for_lothane
+			ce_our_first_city
+		}
+
+		trigger = {
+			OR = {
+				B55 = {
+					is_subject_of = root
+				}
+				oldhaven_area = {
+					type = all
+					owned_by = root
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					B55 = { is_subject_of = root }
+				}
+				country_event = {
+					id = flavor_clouded_eye.11
+				}
+			}
+			else = {
+				oldhaven_area = {
+					add_nationalism = -25
+					spawn_rebels = {
+						type = nationalist_rebels
+						size = 3
+					}
+				}
+			}
+		}
+	}
+
+	ce_a_new_people = {
+		icon = mission_orc_chillin
+		position = 7
+
+		provinces_to_highlight = {
+			owned_by = root
+			has_human_majority_trigger = yes
+			NOT = {
+				grown_by_development = 2
+			}
+		}
+
+		required_missions = {
+			ce_the_remnant
+			ce_children_of_greentide
+		}
+
+		trigger = {
+			accepted_culture = castellyrian
+			num_of_owned_provinces_with = {
+				value = 2
+				has_human_majority_trigger = yes
+				grown_by_development = 2
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { has_ruler_flag = arosha_oakbreaker }
+				country_event = {
+					id = flavor_clouded_eye.13
+				}
+			}
+			else = {
+				oldhaven_area = {
+					change_culture = half_orc
+				}
+			}
+		}
+	}
+}
+
+clouded_eye_3_missions = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B24
+	}
+
+	ce_gramas_last_conquest = {
+		icon = mission_duel_snow
+		position = 1
+
+		provinces_to_highlight = {
+			area = sarwood_area
+		}
+
+		trigger = {
+			sarwood_area = {
+				type = all
+				OR = {
+					owned_by = root
+					tribal_land_of = ROOT
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = orc_increased_conscription
+				duration = 9125
+			}
+			ardent_glade_area = {
+				limit = { 
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			esshyl_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			oldhaven_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	ce_gramas_last_speech = {
+		icon = mission_discussion_arch
+		position = 2
+
+		required_missions = {
+			ce_gramas_last_conquest
+		}
+
+		trigger = {
+			OR = {
+				NOT = {
+					has_ruler = "Grama"
+				}
+				is_year = 1448
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavor_clouded_eye.1
+			}
+		}
+	}
+
+	ce_lothanes_letters = {
+		icon = mission_diplomacy_missive
+		position = 3
+
+		provinces_to_highlight = {
+			owned_by = B02
+		}
+
+		required_missions = {
+			ce_gramas_last_speech
+		}
+
+		trigger = {
+			adm_power = 100
+			dip_power = 100
+			mil_power = 100
+
+			OR = {
+				has_adm_advisor = yes
+				has_dip_advisor = yes
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					has_ruler_flag = arosha_oakbreaker
+				}
+				country_event = {
+					id = flavor_clouded_eye.3
+				}
+			}
+			else = {
+				add_adm_power = 100
+				add_dip_power = 100
+				add_mil_power = 100
+
+				add_prestige = 10
+			}
+		}
+	}
+
+	ce_coins_with_orcish_face = {
+		icon = mission_war_chest
+		position = 4
+
+		required_missions = {
+			ce_lothanes_letters
+		}
+
+		trigger = {
+			871 = { #Gulenhyl
+				owned_by = ROOT
+				base_production = 3
+				has_building = native_three_sisters_field
+			}
+		}
+
+		effect = {
+			871 = {
+				add_province_modifier = {
+					name = the_first_coins
+					duration = -1
+				}
+			}
+			if = {
+				limit = {
+					has_ruler_flag = arosha_oakbreaker
+				}
+				country_event = {
+					id = flavor_clouded_eye.4
+				}
+			}
+		}
+	}
+
+	ce_our_first_city = {
+		icon = mission_guarded_market
+		position = 5
+
+		provinces_to_highlight = {
+			province_id = 865
+		}
+
+		required_missions = {
+			ce_coins_with_orcish_face
+			ce_the_ruined_city
+		}
+
+		trigger = {
+			865 = {
+				num_of_units_in_province =  {
+					who = ROOT
+					amount = 5
+				}
+			}
+			treasury = 100
+		}
+
+		effect = {
+			add_treasury = -100
+			865 = {
+				kill_units = {
+					who = owner
+					#type = infantry
+					amount = 5
+				}
+			}
+			if = {
+				limit = { has_ruler_flag = arosha_oakbreaker }
+				country_event = {
+					id = flavor_clouded_eye.9
+				}
+			}
+			else = {
+				set_capital = 865
+				oldhaven_area = {
+					add_permanent_claim = root
+				}
+			}
+		}
+	}
+	
+	ce_children_of_greentide = {
+		icon = mission_greentide
+		position = 6
+
+		required_missions = {
+			ce_our_first_city
+		}
+
+		trigger = { #Either orc province with large human minority/half-orc or former Count's League or Marrhold province with large orc minority/half-orc
+			any_owned_province = {
+				OR = {
+					AND = {
+						culture = green_orc
+						OR = {
+							has_large_human_minority_trigger = yes
+							has_large_half_orcish_minority_trigger = yes
+						}
+					}
+					AND = {
+						OR = {
+							culture = castellyrian
+							culture = marrodic
+						}
+						OR = {
+							has_large_orcish_minority_trigger = yes
+							has_large_half_orcish_minority_trigger = yes
+						}
+					}
+				}
+			}
+			
+		}
+
+		effect = {
+			if = {
+				limit = { has_ruler_flag = arosha_oakbreaker }
+				random_owned_province = {
+					limit = { 
+						OR = {
+							AND = {
+								culture = green_orc
+								OR = {
+									has_large_human_minority_trigger = yes
+									has_large_half_orcish_minority_trigger = yes
+								}
+							}
+							AND = {
+								OR = {
+									culture = castellyrian
+									culture = marrodic
+								}
+								OR = {
+									has_large_orcish_minority_trigger = yes
+									has_large_half_orcish_minority_trigger = yes
+								}
+							}
+						}
+					}
+					save_event_target_as = first_half_orc_province
+				}
+				country_event = {
+					id = flavor_clouded_eye.12
+				}
+			}
+			else = {
+				random_owned_province = {
+					limit = { 
+						OR = {
+							AND = {
+								culture = green_orc
+								OR = {
+									has_large_human_minority_trigger = yes
+									has_large_half_orcish_minority_trigger = yes
+								}
+							}
+							AND = {
+								OR = {
+									culture = castellyrian
+									culture = marrodic
+								}
+								OR = {
+									has_large_orcish_minority_trigger = yes
+									has_large_half_orcish_minority_trigger = yes
+								}
+							}
+						}
+					}
+					change_culture = half_orc
+				}
+			}
+			hidden_effect = {
+				set_country_flag = clouded_eye_unguldavor
+			}
+		}
+	}
+
+	ce_green_city = {
+		icon = mission_city_prosperity
+		position = 7
+
+		provinces_to_highlight = {
+			province_id = 865
+			NOT = { development = 20 }
+		}
+
+		required_missions = {
+			ce_children_of_greentide
+		}
+
+		trigger = {
+			865 = {
+				development = 20
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { has_ruler_flag = arosha_oakbreaker }
+				country_event = {
+					id = flavor_clouded_eye.14
+				}
+			}
+			else = {
+				865 = {
+					change_trade_goods = paper
+				}
+			}
+		}
+	}
+
+	ce_fortifying_white_walls = {
+		icon = mission_mountain_castle
+		position = 8
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 860
+				province_id = 865
+			}
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					OR = {
+						has_building = native_palisade
+						has_building = fort_15th
+					}
+				}
+			}	
+		}
+
+		required_missions = {
+			ce_a_new_people
+			ce_green_city
+			ce_dargom_ascendant
+		}
+
+		trigger = {
+			860 = {
+				owned_by = ROOT
+				OR = {
+					has_building = native_palisade
+					has_building = fort_15th
+				}
+			}
+			865 = {
+				owned_by = ROOT
+				OR = {
+					has_building = native_palisade
+					has_building = fort_15th
+				}
+			}
+		}
+
+		effect = {
+			874 = {
+				add_base_tax = 1
+				add_base_manpower = 3
+			}
+			865 = {
+				add_base_tax = 1
+				add_base_manpower = 3
+			}
+			860 = {
+				add_base_tax = 1
+				add_base_manpower = 3
+			}
+		}
+	}
+
+	ce_last_letter_from_queen_arosha = {
+		icon = mission_female_throne
+		position = 9
+
+		provinces_to_highlight = {
+			OR = {
+				area = nortessord_area
+				area = clouded_wood_area
+				area = sarwood_area
+				area = oldhaven_area
+				area = ardent_glade_area
+				area = coalwoud_area
+				area = steelhyl_area
+				area = serpentsmarck_area
+				area = esshyl_area
+			}
+			NOT = { owned_by = root }
+		}
+
+		required_missions = {
+			ce_codified_warrior_tradition
+			ce_fortifying_white_walls
+			ce_first_orc_kingdom
+		}
+
+		trigger = {
+			is_year = 1494
+			has_institution = feudalism
+			has_institution = renaissance
+
+			nortessord_area = {
+				type = all
+				owned_by = ROOT
+			}
+			clouded_wood_area = {
+				type = all
+				owned_by = ROOT
+			}
+			sarwood_area = {
+				type = all
+				owned_by = ROOT
+			}
+			oldhaven_area = {
+				type = all
+				owned_by = ROOT
+			}
+			ardent_glade_area = {
+				type = all
+				owned_by = ROOT
+			}
+			coalwoud_area = {
+				type = all
+				owned_by = ROOT
+			}
+			steelhyl_area = {
+				type = all
+				owned_by = ROOT
+			}
+			serpentsmarck_area = {
+				type = all
+				owned_by = ROOT
+			}
+			esshyl_area = {
+				type = all
+				owned_by = ROOT
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { has_ruler_flag = arosha_oakbreaker }
+				country_event = { id = flavor_clouded_eye.18 }
+			}
+			else = {
+				hidden_effect = { set_country_flag = orc_path_to_civil }
+			}
+		}
+	}
+}
+
+
+clouded_eye_4_missions = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B24
+	}
+
+	ce_no_more_raids = {
+		icon = mission_feast
+		position = 4
+
+		provinces_to_highlight = {
+			owned_by = B28
+		}
+
+		required_missions = {
+			ce_lothanes_letters
+		}
+
+		trigger = {
+			NOT = {
+				exists = B28
+			}
+			NOT = { average_unrest = 1 }
+			NOT = {
+				any_owned_province = {
+					devastation = 1
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavor_clouded_eye.7
+			}
+		}
+
+	}
+	
+	ce_fields_of_green = {
+		icon = mission_rice_field
+		position = 6
+
+		provinces_to_highlight = {
+			OR = {
+				owned_by = root
+				tribal_land_of = ROOT
+			}
+			trade_goods = grain
+			NOT = {
+				has_building = native_three_sisters_field
+			}
+		}
+
+		required_missions = {
+			ce_our_first_city
+			ce_no_more_raids
+			ce_standardize_ungulan_dialect
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				trade_goods = grain
+				has_building = native_three_sisters_field
+				value = 3
+			}
+		}
+
+		effect = {
+			every_owned_province = {
+				limit = { trade_goods = grain }
+				add_base_production = 1
+				add_base_manpower = 1
+			}
+			add_country_modifier = {
+				name = food_for_our_troops
+				duration = 7300
+			}
+		}
+	}
+
+	ce_dargom_ascendant = {
+		icon = mission_colonial
+		position = 7
+
+		provinces_to_highlight = {
+			owned_by = root
+			NOT = { development = 10 }
+		}
+
+		required_missions = {
+			ce_fields_of_green
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 5
+				development = 10
+			}
+		}
+
+		effect = {
+			add_treasury = 500
+			for = {
+				amount = 5
+				effect = "
+					random_owned_province = {
+						limit = {
+							development = 10
+						}
+						add_base_production = 2
+						spawn_rebels = {
+							type = particularist_rebels
+							size = 1
+						}
+					}
+					"
+				}
+			
+		}
+	}
+}
+
+clouded_eye_5_missions = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B24
+	}
+
+	ce_standardize_ungulan_dialect = {
+		icon = mission_princess_writing
+		position = 5
+
+		provinces_to_highlight = {
+			province_id = 865
+		}
+
+		required_missions = {
+			ce_no_more_raids
+		}
+
+		trigger = {
+			owns = 865
+			adm_tech = 3
+			dip_tech = 3
+			mil_tech = 3
+		}
+
+		effect = {
+			if = {
+				limit = { has_ruler_flag = arosha_oakbreaker }
+				country_event = {
+					id = flavor_clouded_eye.10
+				}
+			}
+			else = {
+				865 = {
+					add_institution_embracement = {
+						which = feudalism
+						value = 25
+					}
+				}
+			}
+		}
+	}
+
+	ce_grama_academy = {
+		icon = mission_magic_tower
+		position = 6
+
+		provinces_to_highlight = {
+			province_id = 870
+		}
+
+		required_missions = {
+			ce_standardize_ungulan_dialect
+		}
+
+		trigger = {
+			treasury = 200
+			870 = {
+				development = 10
+			}
+		}
+
+		effect = {
+			add_treasury = -200
+			870 = {
+				add_building_construction = {
+					building = mage_tower
+					cost = 0
+				}
+			}
+		}
+	}
+
+	ce_utilizing_clouded_eye = {
+		icon = mission_empowerment
+		position = 7
+
+		provinces_to_highlight = {
+			province_id = 870
+		}
+
+		required_missions = {
+			ce_grama_academy
+		}
+
+		trigger = {
+			treasury = 200
+			870 = {
+				has_building = mage_tower
+			}
+			OR = {
+				has_adm_advisor_2 = yes
+				court_mage = 1
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavor_clouded_eye.15
+			}
+		}
+	}
+
+	ce_first_orc_kingdom = {
+		icon = mission_female_throne
+		position = 8
+
+		required_missions = {
+			ce_dargom_ascendant
+			ce_utilizing_clouded_eye
+		}
+
+		trigger = {
+			OR = {
+				AND = {
+					#is_tribal = yes
+					has_reform = greentide_horde
+					reform_level = 5
+					government_reform_progress = 50
+				}
+				NOT = { has_reform = greentide_horde }
+			}
+			has_country_modifier = orcish_knights
+		}
+
+		effect = {
+			if = {
+				limit = { has_ruler_flag = arosha_oakbreaker }
+				country_event = {
+					id = flavor_clouded_eye.17
+				}
+			}
+			else_if = {
+				limit = { has_reform = greentide_horde }
+				change_government_to_monarchy = yes
+				
+				add_government_reform = orcish_kingdom_reform
+			}
+			else = {
+				add_stability = 1
+			}
+		}
+	}
+}

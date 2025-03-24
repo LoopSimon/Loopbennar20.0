@@ -1,34 +1,291 @@
 
 namespace = monstrous
 
-#Give half monstrous opinion
+###FILE ORGANIZATION###
+#0: global handler
+#1-99: background and utility events
+#100-199: generic handler + events
+#200-299: Lizardfolk handler + events
+#Each race gets space for 100 events, following the order of implementation.
+
+##################################
+##### Global Handler
+##################################
+
+country_event = {
+	id = monstrous.0
+	title = monstrous.0.t
+	desc = monstrous.0.d
+	picture = WESTERNISATION_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	trigger = {
+		has_country_modifier = monstrous_nation
+		has_country_flag = removing_monstrous
+	}
+	
+	option = { #generic events
+		name = monstrous.0.a
+		if = { #Lizardfolk handler
+			limit  {
+				culture_group = lizardfolk
+				NOT = { primary_culture = ashhana_lizardfolk }
+				NOT = { tag = S34 } #Cunning River Eel
+			}
+			random_list = { #change this if/when the global handler is put in another pulse. It is intended here to be 1 event every 3 years
+				1 = { country_event = { id = monstrous.200 } }
+				2 = { }
+			}
+		}
+		else = { #Generic handler, always at the end of the if/else_if chain
+			country_event = { id = monstrous.100 }
+		}
+	}
+}
+
+##################################
+##### Background & utility events
+##################################
+
+#Setup monstrous opinion
+#Event effect doesn't work within a scripted effect
+#Use this event after the 'clear_monstrous_opinion_effect = yes' script to refresh monstrous opinions for a country
 country_event = {
 	id = monstrous.1
 	title = monstrous.1.t
 	desc = monstrous.1.d
-	picture = WESTERNISATION_eventPicture
+	picture = REFORM_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
 	
 	trigger = {
-		has_country_modifier = monstrous_nation
-		has_country_flag = removing_monstrous
-		NOT = { has_country_flag = semi_monstrous }
-		NOT = { check_variable = { monstrousPoints = 50 } }
-	}
-	
-	mean_time_to_happen = {
-		months = 6
+		NOT = { has_country_modifier = setup_monstrous_opinion }
 	}
 	
 	immediate = {
 		hidden_effect = {
-			set_country_flag = semi_monstrous
+			add_country_modifier = {
+				name = setup_monstrous_opinion
+				duration = -1
+				hidden = yes
+			}
+		}
+		# must be a modifier and not a flag so it disappears if the nation is annexed and released again
+	}
+	
+	#Do it
+	option = {
+		name = monstrous.1.a
+		ai_chance = { factor = 10 }
+		if = {
+			limit = {
+				has_country_modifier = monstrous_nation
+				is_colonial_nation = yes
+				colonial_parent = { NOT = { has_country_modifier = monstrous_nation } }
+			}
+			set_country_flag = no_longer_monstrous
+			remove_country_modifier = monstrous_nation
+		}
+		if = {
+			limit = { has_country_modifier = monstrous_nation }
+			# set opinions of the new monstrous nation
+			every_country = {
+				limit = { NOT = { tag = ROOT } } # do not set against yourself or error log is sad
+				if = {
+					limit = { has_country_modifier = monstrous_nation }
+					add_opinion = { who = ROOT modifier = both_monstrous }
+					reverse_add_opinion = { who = ROOT modifier = both_monstrous }
+				}
+				else_if = {
+					limit = { ROOT = { has_country_flag = semi_monstrous } }
+					add_opinion = { who = ROOT modifier = semi_monstrous }
+					reverse_add_opinion = { who = ROOT modifier = semi_monstrous }
+				}
+				else = {
+					add_opinion = { who = ROOT modifier = root_monstrous }
+					reverse_add_opinion = { who = ROOT modifier = root_monstrous }
+				}
+			}
+		}
+		else = {
+			# set opinions against other monstrous nations
+			every_country = {
+				limit = { 
+					NOT = { tag = ROOT } # do not set against yourself or error log is sad
+					has_country_modifier = monstrous_nation
+				}
+				if = {
+					limit = { has_country_flag = semi_monstrous }
+					add_opinion = { who = ROOT modifier = semi_monstrous }
+					reverse_add_opinion = { who = ROOT modifier = semi_monstrous }
+				}
+				else = {
+					add_opinion = { who = ROOT modifier = root_monstrous }
+					reverse_add_opinion = { who = ROOT modifier = root_monstrous }
+				}
+			}
+		}
+	}
+}
+
+#Monstrous Opinion Update when culture swap
+country_event = {
+	id = monstrous.2
+	title = monstrous.2.t
+	desc = monstrous.2.d
+	picture = ADVISOR_eventPicture
+	
+	trigger = {
+		always = yes
+	}
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = monstrous.2.a
+		ai_chance = { factor = 100 }
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						NOT = { monstrous_culture = yes }
+						has_country_modifier = monstrous_nation
+					}
+					AND = {
+						monstrous_culture = yes
+						is_subject = yes
+						OR = {
+							is_colonial_nation = yes
+							overlord = { primary_culture = ROOT }
+						}
+						overlord = { NOT = { has_country_modifier = monstrous_nation } }
+					}
+				}
+			}
+			remove_country_modifier = monstrous_nation
+			clr_country_flag = removing_monstrous
+			if = { limit = { is_subject = yes } set_country_flag = no_longer_monstrous clr_country_flag = semi_monstrous }
+			clear_monstrous_opinion_effect = yes
+			country_event = { id = monstrous.1 } #opinion setup
+		}
+		else_if = {
+			limit = {
+				monstrous_culture = yes
+				NOT = { has_country_modifier = monstrous_nation }
+				NOT = { has_country_flag = no_longer_monstrous }
+			}
+			add_country_modifier = { name = monstrous_nation duration = -1 }
+			if = {
+				limit = {
+					is_subject = yes
+					OR = {
+						is_colonial_nation = yes
+						overlord = { primary_culture = ROOT }
+					}
+					overlord = { has_country_flag = semi_monstrous }
+				}
+				set_country_flag = semi_monstrous
+			}
+			clear_monstrous_opinion_effect = yes
+			country_event = { id = monstrous.1 } #opinion setup
+		}
+	}
+}
+
+#Give half monstrous opinion - Demonsterization middle
+country_event = {
+	id = monstrous.3
+	title = monstrous.3.t
+	desc = monstrous.3.d
+	picture = WESTERNISATION_eventPicture
+	
+	is_triggered_only = yes
+	#triggered ONLY by the decrease_monstrous scripted effects
+	
+	trigger = {
+		NOT = { has_country_flag = semi_monstrous }
+		NOT = { check_variable = { monstrousPoints = 50 } }
+	}
+	
+	option = {
+		name = monstrous.3.a
+		ai_chance = { factor = 100 }
+		monstrous_to_semi_monstrous_effect = yes
+	}
+}
+
+#Remove Monstrous Opinion - Demonsterization end
+country_event = {
+	id = monstrous.4
+	title = monstrous.4.t
+	desc = monstrous.4.d
+	picture = WESTERNISATION_eventPicture
+	
+	is_triggered_only = yes
+	#triggered ONLY by monstrous.7 event
+	
+	major = yes
+	
+	option = {
+		name = monstrous.4.a
+		ai_chance = { factor = 100 }
+		finish_demonsterization_effect = yes
+	}
+}
+
+#End the events if you don't demonsterize and just take the good options
+country_event = {
+	id = monstrous.5
+	title = monstrous.5.t
+	desc = monstrous.5.d
+	picture = WESTERNISATION_eventPicture
+	
+	is_triggered_only = yes
+	#triggered ONLY by the increase_monstrous scripted effects
+	
+	trigger = {
+		ai = no
+		has_country_modifier = monstrous_nation
+		has_country_flag = removing_monstrous
+		OR = {
+			check_variable = { monstrousPoints = 110 }
+			AND = {
+				check_variable = { monstrousPoints = 60 }
+				has_country_flag = semi_monstrous
+			}
 		}
 	}
 	
 	option = {
-		name = monstrous.1.a
-		ai_chance = { factor = 100 }
-		custom_tooltip = semi_monstrous_tooltip
+		name = monstrous.5.a
+		ai_chance = { factor = 1 }
+		clr_country_flag = removing_monstrous
+		#clr_country_flag = semi_monstrous #clearing that flag would make historically semi_monstrous countries become full-monstrous
+		add_dip_power = -300
+		if = {
+			limit = {
+				NOT = { has_government_attribute = embrace_new_thoughts_reform_effect }
+			}
+			reduce_stability_or_adm_power = yes
+		}
+	}
+}
+
+country_event = { #update opinion when becoming semi-monstrous
+	id = monstrous.6
+	title = monstrous.6.t
+	desc = monstrous.6.d
+	picture = WESTERNISATION_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	#triggered ONLY by the monstrous_to_semi_monstrous_effect scripted effect because setting event effect doesn't work within the scripted effect
+	
+	option = {
+		name = monstrous.6.A
 		hidden_effect = {
 			every_country = {
 				limit = { has_opinion_modifier = { who = ROOT modifier = root_monstrous } }
@@ -41,100 +298,504 @@ country_event = {
 	}
 }
 
-#Remove Monstrous Opinion
-country_event = {
-	id = monstrous.2
-	title = monstrous.2.t
-	desc = monstrous.2.d
+country_event = { #Selects the event to end demonsterization
+	id = monstrous.7
+	title = monstrous.7.t
+	desc = monstrous.7.d
 	picture = WESTERNISATION_eventPicture
 	
+	hidden = yes
+	is_triggered_only = yes
+	#triggered ONLY by the decrease_monstrous scripted effect
+	
 	trigger = {
-		has_country_modifier = monstrous_nation
-		has_country_flag = removing_monstrous
 		has_country_flag = semi_monstrous
 		NOT = { has_country_flag = no_longer_monstrous }
 		NOT = { check_variable = { monstrousPoints = 1 } }
 	}
 	
-	major = yes
-	
-	mean_time_to_happen = {
-		months = 6
-	}
-	
-	immediate = {
-		hidden_effect = {
-			set_country_flag = no_longer_monstrous
-		}
-	}
-	
 	option = {
-		name = monstrous.2.a
-		ai_chance = { factor = 100 }
-		custom_tooltip = no_longer_monstrous_tooltip
-		remove_country_modifier = monstrous_nation
-		hidden_effect = {
-			every_country = {
-				limit = { has_opinion_modifier = { who = ROOT modifier = semi_monstrous } }
-				remove_opinion = { who = ROOT modifier = semi_monstrous }
-				reverse_remove_opinion = { who = ROOT modifier = semi_monstrous }
+		if = {
+			limit = { #Lizardfolk
+				culture_group = lizardfolk
+				NOT = { primary_culture = ashhana_lizardfolk }
+				NOT = { tag = S34 }
 			}
-			every_country = {
-				limit = { has_opinion_modifier = { who = ROOT modifier = both_monstrous } }
-				remove_opinion = { who = ROOT modifier = both_monstrous }
-				reverse_remove_opinion = { who = ROOT modifier = both_monstrous }
-			}
-			every_subject_country = {
-				limit = { is_colonial_nation = yes NOT = { has_country_flag = no_longer_monstrous } }
-				set_country_flag = no_longer_monstrous
-				clr_country_flag = removing_monstrous
-				remove_country_modifier = monstrous_nation
-				every_country = {
-					limit = { has_opinion_modifier = { who = ROOT modifier = root_monstrous } }
-					remove_opinion = { who = ROOT modifier = root_monstrous }
-					reverse_remove_opinion = { who = ROOT modifier = root_monstrous }
-				}
-				every_country = {
-					limit = { has_opinion_modifier = { who = ROOT modifier = semi_monstrous } }
-					remove_opinion = { who = ROOT modifier = semi_monstrous }
-					reverse_remove_opinion = { who = ROOT modifier = semi_monstrous }
-				}
-				every_country = {
-					limit = { has_opinion_modifier = { who = ROOT modifier = both_monstrous } }
-					remove_opinion = { who = ROOT modifier = both_monstrous }
-					reverse_remove_opinion = { who = ROOT modifier = both_monstrous }
-				}
-			}
-			clr_country_flag = removing_monstrous
+			country_event = { id = monstrous.216 }
+		}
+		else = { #Generic
+			country_event = { id = monstrous.4 }
 		}
 	}
 }
+		
 
-#Random on_action event
+##################################
+##### Generic Events
+##################################
+
+#Monstrous event Command Center
+country_event = {
+	id = monstrous.100
+	title = monstrous.100.t
+	desc = monstrous.100.d
+	picture = ECONOMY_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		
+	}
+
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 500 } #used to be 100*5
+		trigger = {
+			is_at_war = yes
+			NOT = { has_country_modifier = monstrous_unleash_the_beast }
+			NOT = { has_country_modifier = monstrous_beast_muzzled }
+		}
+		country_event = { id = monstrous.101 }
+	}
+
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			any_neighbor_country = {
+				NOT = { has_country_modifier = monstrous_nation }
+				any_owned_province = {
+					is_claim = ROOT
+					NOT = { is_permanent_claim = ROOT }
+				}
+				NOT = { war_with = ROOT }
+			}
+		}
+		country_event = { id = monstrous.102 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			any_neighbor_country = {
+				NOT = { has_country_modifier = monstrous_nation }
+				NOT = { is_rival = ROOT }
+				NOT = { war_with = ROOT }
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = improved_relation_monstrous
+					}
+				}
+			}
+		}
+		country_event = { id = monstrous.103 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			NOT = { has_country_modifier = monstrous_protocols_of_conquest }
+		}
+		country_event = { id = monstrous.104 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			NOT = { has_country_modifier = monstrous_newfound_decorum }
+		}
+		country_event = { id = monstrous.105 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			NOT = { has_country_modifier = monstrous_societal_reforms }
+		}
+		country_event = { id = monstrous.106 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			home_trade_node = {
+				any_trade_node_member_country = { NOT = { has_country_modifier = monstrous_nation } }
+				NOT = { 
+					has_trade_modifier = {
+						who = ROOT
+						key = MONSTROUS_TRADE
+					}
+				}
+			}
+		}
+		country_event = { id = monstrous.107 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			any_neighbor_country = {
+				NOT = { has_country_modifier = monstrous_nation }
+				NOT = { is_rival = ROOT }
+				NOT = { war_with = ROOT }
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = decreased_relation_monstrous
+					}
+				}
+			}
+		}
+		country_event = { id = monstrous.108 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			NOT = {
+				tag = S70	#Yezel Mora
+				tag = I46	#Tugund-Darakh
+				tag = F66	#Konolkatep
+				religion = xhazobkult #Has it's own event for changing religion
+				has_ruler_flag = xhazob_patron	#Great Xhaz
+			}
+			any_neighbor_country = {
+				NOT = { has_country_modifier = monstrous_nation }
+				NOT = { is_rival = ROOT }
+				NOT = { war_with = ROOT }
+				OR = {
+					religion = ravelian
+					religion = the_jadd
+					religion = corinite
+					religion = kalyin_worshippers
+					AND = {
+						religion = the_thought
+						ROOT = {
+							OR = {
+								culture_group = goblin
+								culture_group = kobold
+							}
+						}
+					}
+					AND = {
+						religion = kvangahga
+						ROOT = { culture_group = gnollish }
+					}
+					AND = {
+						religion = rinta_seekers
+						NOT = { ROOT = { culture_group = lizardfolk } }
+					}
+				}
+			}
+			any_owned_province = {
+				NOT = {
+					religion = ravelian
+					religion = the_jadd
+					religion = corinite
+					religion = kalyin_worshippers
+					religion = the_thought
+					religion = kvangahga
+					religion = rinta_seekers
+					religion = bulgu_orazan	#Currently the only exempted faith that isn't also one of the faiths you can convert to
+				}
+			}
+		}
+		country_event = { id = monstrous.109 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			OR = {
+				NOT = { has_country_flag = monstrous_famous_adventuring_band }
+				had_country_flag = {
+					flag = monstrous_famous_adventuring_band
+					days = 3650
+				}
+			}
+		}
+		country_event = { id = monstrous.110 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			army_tradition = 20
+			OR = {
+				NOT = { has_country_flag = monstrous_new_model_army }
+				had_country_flag = {
+					flag = monstrous_new_model_army
+					days = 3650
+				}
+			}
+		}
+		country_event = { id = monstrous.111 }
+	}
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			OR = {
+				NOT = { has_country_flag = monstrous_language_lessons }
+				had_country_flag = {
+					flag = monstrous_language_lessons
+					days = 3650
+				}
+			}
+		}
+		country_event = { id = monstrous.112 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			OR = {
+				ruler_has_personality = babbling_buffoon_personality
+				ruler_has_personality = cruel_personality
+				ruler_has_personality = malevolent_personality
+				ruler_has_personality = zealot_personality
+				ruler_has_personality = expansionist_personality
+				ruler_has_personality = conqueror_personality
+			}
+			OR = {
+				NOT = { has_ruler_flag = monstrous_backward_ruler }
+				had_ruler_flag = {
+					flag = monstrous_backward_ruler
+					days = 730
+				}
+			}
+		}
+		country_event = { id = monstrous.113 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			OR = {
+				ruler_has_personality = tolerant_personality
+				ruler_has_personality = kind_hearted_personality
+				ruler_has_personality = free_thinker_personality
+				ruler_has_personality = lawgiver_personality
+				ruler_has_personality = just_personality
+				ruler_has_personality = well_advised_personality
+			}
+			OR = {
+				NOT = { has_ruler_flag = monstrous_progressive_ruler }
+				had_ruler_flag = {
+					flag = monstrous_progressive_ruler
+					days = 730
+				}
+			}
+		}
+		country_event = { id = monstrous.114 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = semi_monstrous
+			is_at_war = no
+		}
+		country_event = { id = monstrous.115 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = semi_monstrous
+			any_neighbor_country = {
+				NOT = { has_country_modifier = monstrous_nation }
+				NOT = { is_rival = ROOT }
+				NOT = { war_with = ROOT }
+			}
+			OR = {
+				NOT = { has_country_flag = monstrous_non_monstrous_advisor }
+				had_country_flag = {
+					flag = monstrous_non_monstrous_advisor
+					days = 3650
+				}
+			}
+		}
+		country_event = { id = monstrous.116 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = semi_monstrous
+			OR = {
+				NOT = { has_country_flag = monstrous_reformist_administrator }
+				had_country_flag = {
+					flag = monstrous_reformist_administrator
+					days = 3650
+				}
+			}
+		}
+		country_event = { id = monstrous.117 }
+	}
+	
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = semi_monstrous
+			NOT = { has_country_modifier = monstrous_interest }
+		}
+		country_event = { id = monstrous.118 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = semi_monstrous
+			stability = 0
+			is_at_war = no
+			is_subject = no
+			NOT = { has_ruler_flag = monstrous_proposed_conversion }
+			NOT = { has_country_flag = monstrous_converted_religion }
+			NOT = {
+				tag = S70	#Yezel Mora
+				tag = I46	#Tugund-Darakh
+				tag = F66	#Konolkatep
+				religion = xhazobkult
+				has_ruler_flag = xhazob_patron	#Great Xhaz
+			}
+			NOT = {
+				religion = ravelian
+				religion = the_jadd
+				religion = corinite
+				religion = kalyin_worshippers
+				religion = the_thought
+				religion = kvangahga
+				religion = rinta_seekers
+				religion = bulgu_orazan	#Currently the only exempted faith that isn't also one of the faiths you can convert to
+			}
+			OR = {
+				any_neighbor_country = {
+					NOT = { has_country_modifier = monstrous_nation }
+					NOT = { is_rival = ROOT }
+					NOT = { war_with = ROOT }
+					OR = {
+						religion = ravelian
+						religion = the_jadd
+						religion = corinite
+						religion = kalyin_worshippers
+						AND = {
+							religion = the_thought
+							ROOT = {
+								OR = {
+									culture_group = goblin
+									culture_group = kobold
+								}
+							}
+						}
+						AND = {
+							religion = kvangahga
+							ROOT = { culture_group = gnollish }
+						}
+						AND = {
+							religion = rinta_seekers
+							NOT = { ROOT = { culture_group = lizardfolk } }
+						}
+					}
+				}
+				any_owned_province = {
+					OR = {
+						religion = ravelian
+						religion = the_jadd
+						religion = corinite
+						religion = kalyin_worshippers
+						AND = {
+							religion = the_thought
+							ROOT = {
+								OR = {
+									culture_group = goblin
+									culture_group = kobold
+								}
+							}
+						}
+						AND = {
+							religion = kvangahga
+							ROOT = { culture_group = gnollish }
+						}
+						AND = {
+							religion = rinta_seekers
+							NOT = { ROOT = { culture_group = lizardfolk } }
+						}
+					}
+				}
+			}
+		}
+		country_event = { id = monstrous.119 }
+	}
+	
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			has_country_flag = semi_monstrous
+			has_heir = yes
+			NOT = { has_heir_flag = monstrous_foreign_education }
+		}
+		country_event = { id = monstrous.120 }
+	}
+
+	option = {
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			stability = 0
+			religion = xhazobkult
+			NOT = { has_country_flag = xhazobkult_rejected_conversion }
+			NOT = { has_country_flag = F71_demon_missions }
+			NOT = { has_country_flag = xhazobkult_rejected_conversion }
+		}
+		country_event = { id = xhazobkult_events.2 }
+	}
+	
+	option = { #failsafe option in case no other one is available
+		name = monstrous.100.a
+		ai_chance = { factor = 100 }
+		trigger = {
+			
+		}
+	}
+
+}
+
+
 #Muzzled the Beast
 country_event = {
-	id = monstrous.3
-	title = monstrous.3.t
-	desc = monstrous.3.d
+	id = monstrous.101
+	title = monstrous.101.t
+	desc = monstrous.101.d
 	picture = BATTLE_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-		
-		modifier = {
-			factor = 5
-			is_at_war = yes
-		}
-	}
 	
 	trigger = {
 		always = yes
 	}
 	
 	option = {
-		name = monstrous.3.a
+		name = monstrous.101.a
 		ai_chance = { factor = 1 }
 		add_country_modifier = {
 			name = monstrous_beast_muzzled
@@ -144,7 +805,7 @@ country_event = {
 	}
 	
 	option = {
-		name = monstrous.3.b
+		name = monstrous.101.b
 		ai_chance = { 
 			factor = 100
 			
@@ -162,16 +823,12 @@ country_event = {
 }
 #Claim events
 country_event = {
-	id = monstrous.4
-	title = monstrous.4.t
-	desc = monstrous.4.d
+	id = monstrous.102
+	title = monstrous.102.t
+	desc = monstrous.102.d
 	picture = BORDER_TENSION_eventPicture
 	goto = province
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -181,13 +838,19 @@ country_event = {
 		hidden_effect = {
 			random_neighbor_country = {
 				limit = { 
-					any_owned_province = { is_claim = ROOT }
+					any_owned_province = {
+						is_claim = ROOT 
+						NOT = { is_permanent_claim = ROOT }
+					}
 					NOT = { has_country_modifier = monstrous_nation }
 					NOT = { war_with = ROOT }
 				}
 				save_event_target_as = country
 				random_owned_province = {
-					limit = { is_claim = ROOT }
+					limit = { 
+						is_claim = ROOT 
+						NOT = { is_permanent_claim = ROOT }
+					}
 					save_event_target_as = province
 				}
 			}
@@ -195,7 +858,7 @@ country_event = {
 	}
 	#Remove Claim
 	option = {
-		name = monstrous.4.a
+		name = monstrous.102.a
 		ai_chance = {
 			factor = 1
 			
@@ -212,7 +875,7 @@ country_event = {
 	}
 	#Keep claim
 	option = {
-		name = monstrous.4.b
+		name = monstrous.102.b
 		ai_chance = { 
 			factor = 100
 			
@@ -228,16 +891,12 @@ country_event = {
 
 #Relation event
 country_event = {
-	id = monstrous.5
-	title = monstrous.5.t
-	desc = monstrous.5.d
+	id = monstrous.103
+	title = monstrous.103.t
+	desc = monstrous.103.d
 	picture = CONQUEST_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -263,7 +922,7 @@ country_event = {
 	}
 	#Improve Relation
 	option = {
-		name = monstrous.5.a
+		name = monstrous.103.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_2 = yes
 		add_dip_power = -25
@@ -281,7 +940,7 @@ country_event = {
 	}
 	#Fuck dem
 	option = {
-		name = monstrous.5.b
+		name = monstrous.103.b
 		ai_chance = { 
 			factor = 100
 			
@@ -297,16 +956,12 @@ country_event = {
 
 #Protocol of Conquest
 country_event = {
-	id = monstrous.6
-	title = monstrous.6.t
-	desc = monstrous.6.d
+	id = monstrous.104
+	title = monstrous.104.t
+	desc = monstrous.104.d
 	picture = CIVIL_WAR_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -314,7 +969,7 @@ country_event = {
 	
 	#Do it
 	option = {
-		name = monstrous.6.a
+		name = monstrous.104.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_2 = yes
 		add_mil_power = -25
@@ -326,7 +981,7 @@ country_event = {
 	}
 	#Fuck dem
 	option = {
-		name = monstrous.6.b
+		name = monstrous.104.b
 		ai_chance = { 
 			factor = 100
 			
@@ -342,16 +997,12 @@ country_event = {
 
 #Newfound Decorum
 country_event = {
-	id = monstrous.7
-	title = monstrous.7.t
-	desc = monstrous.7.d
+	id = monstrous.105
+	title = monstrous.105.t
+	desc = monstrous.105.d
 	picture = ADVISOR_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -359,7 +1010,7 @@ country_event = {
 	
 	#Do it
 	option = {
-		name = monstrous.7.a
+		name = monstrous.105.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_3 = yes
 		add_years_of_income = -0.25
@@ -371,7 +1022,7 @@ country_event = {
 	}
 	#Fuck dem
 	option = {
-		name = monstrous.7.b
+		name = monstrous.105.b
 		ai_chance = { 
 			factor = 100
 			
@@ -388,16 +1039,12 @@ country_event = {
 
 #Reform Society
 country_event = {
-	id = monstrous.8
-	title = monstrous.8.t
-	desc = monstrous.8.d
+	id = monstrous.106
+	title = monstrous.106.t
+	desc = monstrous.106.d
 	picture = REFORM_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -405,7 +1052,7 @@ country_event = {
 	
 	#Do it
 	option = {
-		name = monstrous.8.a
+		name = monstrous.106.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_2 = yes
 		if = {
@@ -425,7 +1072,7 @@ country_event = {
 	}
 	#Fuck dem
 	option = {
-		name = monstrous.8.b
+		name = monstrous.106.b
 		ai_chance = { 
 			factor = 100
 			
@@ -439,18 +1086,14 @@ country_event = {
 	}
 }
 
-#Give trade shit - getting cucked over
+#Give trade benefit
 country_event = {
-	id = monstrous.9
-	title = monstrous.9.t
-	desc = monstrous.9.d
+	id = monstrous.107
+	title = monstrous.107.t
+	desc = monstrous.107.d
 	picture = BENIN_TRADING_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -469,7 +1112,7 @@ country_event = {
 	
 	#Do it
 	option = {
-		name = monstrous.9.a
+		name = monstrous.107.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_1 = yes
 		add_mercantilism = -2
@@ -491,7 +1134,7 @@ country_event = {
 	}
 	#Fuck dem
 	option = {
-		name = monstrous.9.b
+		name = monstrous.107.b
 		ai_chance = { 
 			factor = 100
 			
@@ -505,18 +1148,14 @@ country_event = {
 }
 
 
-#Diplomatic Faux Pas - You do some stupid shit in a meeting
+#Diplomatic Faux Pas
 country_event = {
-	id = monstrous.10
-	title = monstrous.10.t
-	desc = monstrous.10.d
+	id = monstrous.108
+	title = monstrous.108.t
+	desc = monstrous.108.d
 	picture = ACCUSATION_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -543,14 +1182,14 @@ country_event = {
 	
 	#Try to make amend
 	option = {
-		name = monstrous.10.a
+		name = monstrous.108.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_2 = yes
 		add_dip_power = -15
 	}
 	#Fuck dem
 	option = {
-		name = monstrous.10.b
+		name = monstrous.108.b
 		ai_chance = { 
 			factor = 100
 			
@@ -575,16 +1214,12 @@ country_event = {
 
 #Foreign Missionaries on Province - neighbouring country missionaries (maybe only missionary religions like ravelian, jadd? etc)
 country_event = {
-	id = monstrous.11
-	title = monstrous.11.t
-	desc = monstrous.11.d
+	id = monstrous.109
+	title = monstrous.109.t
+	desc = monstrous.109.d
 	picture = RELIGIOUS_CONVERSION_eventPicture
 	goto = province
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	immediate = {
 		hidden_effect = {
@@ -594,6 +1229,7 @@ country_event = {
 						religion = ravelian
 						religion = the_jadd
 						religion = corinite
+						religion = kalyin_worshippers
 						religion = the_thought
 						religion = kvangahga
 						religion = rinta_seekers
@@ -612,6 +1248,7 @@ country_event = {
 						religion = ravelian
 						religion = the_jadd
 						religion = corinite
+						religion = kalyin_worshippers
 						AND = {
 							religion = the_thought
 							ROOT = {
@@ -638,7 +1275,7 @@ country_event = {
 	
 	#Convert province
 	option = {
-		name = monstrous.11.a
+		name = monstrous.109.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_2 = yes
 		event_target:province = { 
@@ -649,7 +1286,7 @@ country_event = {
 	}
 	#Nah
 	option = {
-		name = monstrous.11.b
+		name = monstrous.109.b
 		ai_chance = { 
 			factor = 100
 			
@@ -666,16 +1303,12 @@ country_event = {
 
 #Famous Adventuring Band Captured
 country_event = {
-	id = monstrous.12
-	title = monstrous.12.t
-	desc = monstrous.12.d
+	id = monstrous.110
+	title = monstrous.110.t
+	desc = monstrous.110.d
 	picture = EXPLORERS_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -689,7 +1322,7 @@ country_event = {
 	
 	#Release them
 	option = {
-		name = monstrous.12.a
+		name = monstrous.110.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_3 = yes
 		if = {
@@ -712,7 +1345,7 @@ country_event = {
 	}
 	#Nah
 	option = {
-		name = monstrous.12.b
+		name = monstrous.110.b
 		ai_chance = { 
 			factor = 100
 			
@@ -727,71 +1360,15 @@ country_event = {
 	}
 }
 
-#This event does not work
-#Reduce Building Progress - essentially trying to rebuild it to look more proper
-#country_event = {
-#	id = monstrous.13
-#	title = monstrous.13.t
-#	desc = monstrous.13.d
-#	picture = CITY_DEVELOPMENT_eventPicture
-#	goto = province
-#	is_triggered_only = yes
-#	
-#	mean_time_to_happen = {
-#		days = 1
-#	}
-#	
-#	trigger = {
-#		always = yes
-#	}
-#	
-#	immediate = {
-#		hidden_effect = {
-#			random_owned_province = {
-#				limit = { has_construction = building }
-#				save_event_target_as = province
-#			}
-#		}
-#	}
-#	
-#	#Alright reduce
-#	option = {
-#		name = monstrous.13.a
-#		ai_chance = { factor = 1 }
-#		decrease_monstrous_1 = yes
-#		event_target:province = {
-#			add_construction_progress = -0.75
-#		}
-#		
-#	}
-#	#kill dem
-#	option = {
-#		name = monstrous.13.b
-#		ai_chance = { 
-#			factor = 100
-#			
-#			modifier = {
-#				factor = 0
-#				want_to_decrease_monstrous = yes
-#			}
-#		}
-#		increase_monstrous_1 = yes
-#		add_prestige = 2
-#	}
-#}
 
 #New Model Army - reforming army essentially
 country_event = {
-	id = monstrous.14
-	title = monstrous.14.t
-	desc = monstrous.14.d
+	id = monstrous.111
+	title = monstrous.111.t
+	desc = monstrous.111.d
 	picture = LAND_MILITARY_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -805,7 +1382,7 @@ country_event = {
 	
 	#Reform army
 	option = {
-		name = monstrous.14.a
+		name = monstrous.111.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_2 = yes
 		add_army_tradition = -15
@@ -814,7 +1391,7 @@ country_event = {
 	}
 	#kill dem
 	option = {
-		name = monstrous.14.b
+		name = monstrous.111.b
 		ai_chance = { 
 			factor = 100
 			
@@ -830,16 +1407,12 @@ country_event = {
 
 #Language Lessons - learning other language
 country_event = {
-	id = monstrous.15
-	title = monstrous.15.t
-	desc = monstrous.15.d
+	id = monstrous.112
+	title = monstrous.112.t
+	desc = monstrous.112.d
 	picture = OVEREXTENSION_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -853,7 +1426,7 @@ country_event = {
 	
 	#Ye go on then
 	option = {
-		name = monstrous.15.a
+		name = monstrous.112.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_3 = yes
 		add_dip_power = -50
@@ -862,7 +1435,7 @@ country_event = {
 	}
 	#kill dem
 	option = {
-		name = monstrous.15.b
+		name = monstrous.112.b
 		ai_chance = { 
 			factor = 100
 			
@@ -876,18 +1449,14 @@ country_event = {
 	}
 }
 
-#Dickhead Backward Ruler (ruler with X personality goes against reform)
+#Backward Ruler (ruler with X personality goes against reform)
 country_event = {
-	id = monstrous.16
-	title = monstrous.16.t
-	desc = monstrous.16.d
+	id = monstrous.113
+	title = monstrous.113.t
+	desc = monstrous.113.d
 	picture = BAD_WITH_MONARCH_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -901,7 +1470,7 @@ country_event = {
 	
 	#A ok
 	option = {
-		name = monstrous.16.a
+		name = monstrous.113.a
 		ai_chance = { factor = 1 }
 		increase_monstrous_2 = yes
 	}
@@ -909,16 +1478,12 @@ country_event = {
 
 #Progressive Ruler (ruler with X personality pushes reform)
 country_event = {
-	id = monstrous.17
-	title = monstrous.17.t
-	desc = monstrous.17.d
+	id = monstrous.114
+	title = monstrous.114.t
+	desc = monstrous.114.d
 	picture = GOOD_WITH_MONARCH_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -932,7 +1497,7 @@ country_event = {
 	
 	#A ok
 	option = {
-		name = monstrous.17.a
+		name = monstrous.114.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_2 = yes
 	}
@@ -940,16 +1505,12 @@ country_event = {
 
 #External investors in province
 country_event = {
-	id = monstrous.18
-	title = monstrous.18.t
-	desc = monstrous.18.d
+	id = monstrous.115
+	title = monstrous.115.t
+	desc = monstrous.115.d
 	picture = UNIVERSITY_eventPicture
 	goto = province
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -965,7 +1526,7 @@ country_event = {
 	
 	#Get devlopment
 	option = {
-		name = monstrous.18.a
+		name = monstrous.115.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_1 = yes
 		add_prestige = -5
@@ -980,7 +1541,7 @@ country_event = {
 	}
 	#kill dem
 	option = {
-		name = monstrous.18.b
+		name = monstrous.115.b
 		ai_chance = { 
 			factor = 100
 			
@@ -996,16 +1557,12 @@ country_event = {
 
 #Non Monstrous Advisor (just make em a non monstrous neighbour country culture I guess)
 country_event = {
-	id = monstrous.19
-	title = monstrous.19.t
-	desc = monstrous.19.d
+	id = monstrous.116
+	title = monstrous.116.t
+	desc = monstrous.116.d
 	picture = ADVISOR_eventPicture
 	goto = province
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -1036,7 +1593,7 @@ country_event = {
 	
 	#Accept advisor
 	option = {
-		name = monstrous.19.a
+		name = monstrous.116.a
 		ai_chance = { factor = 1 }
 		if = {
 			limit = { has_country_flag = monstrous_is_female }
@@ -1073,7 +1630,7 @@ country_event = {
 	}
 	#fuck him
 	option = {
-		name = monstrous.19.b
+		name = monstrous.116.b
 		ai_chance = { 
 			factor = 100
 			
@@ -1089,16 +1646,12 @@ country_event = {
 
 #Reformist Administrator does some corruption - cos reforming means bureaucracy
 country_event = {
-	id = monstrous.20
-	title = monstrous.20.t
-	desc = monstrous.20.d
+	id = monstrous.117
+	title = monstrous.117.t
+	desc = monstrous.117.d
 	picture = BANKRUPTCY_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -1112,7 +1665,7 @@ country_event = {
 	
 	#Thats how governments work, right?
 	option = {
-		name = monstrous.20.a
+		name = monstrous.117.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_2 = yes
 		add_corruption = 2
@@ -1120,7 +1673,7 @@ country_event = {
 	}
 	#fuck him
 	option = {
-		name = monstrous.20.b
+		name = monstrous.117.b
 		ai_chance = { 
 			factor = 100
 			
@@ -1135,16 +1688,12 @@ country_event = {
 
 #Get some interest
 country_event = {
-	id = monstrous.21
-	title = monstrous.21.t
-	desc = monstrous.21.d
+	id = monstrous.118
+	title = monstrous.118.t
+	desc = monstrous.118.d
 	picture = ECONOMY_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -1155,7 +1704,7 @@ country_event = {
 	
 	#Why not
 	option = {
-		name = monstrous.21.a
+		name = monstrous.118.a
 		ai_chance = { factor = 1 }
 		decrease_monstrous_1 = yes
 		add_country_modifier = {
@@ -1167,7 +1716,7 @@ country_event = {
 	}
 	#fuck him
 	option = {
-		name = monstrous.21.b
+		name = monstrous.118.b
 		ai_chance = { 
 			factor = 100
 			
@@ -1183,16 +1732,12 @@ country_event = {
 
 #Country Conversion to Neighbouring Religion
 country_event = {
-	id = monstrous.22
-	title = monstrous.22.t
-	desc = monstrous.22.d
+	id = monstrous.119
+	title = monstrous.119.t
+	desc = monstrous.119.d
 	picture = RELIGIOUS_CONVERSION_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	immediate = {
 		hidden_effect = {
@@ -1206,6 +1751,7 @@ country_event = {
 							religion = ravelian
 							religion = the_jadd
 							religion = corinite
+							religion = kalyin_worshippers
 							AND = {
 								religion = the_thought
 								ROOT = {
@@ -1235,6 +1781,7 @@ country_event = {
 							religion = ravelian
 							religion = the_jadd
 							religion = corinite
+							religion = kalyin_worshippers
 							AND = {
 								religion = the_thought
 								ROOT = {
@@ -1264,6 +1811,7 @@ country_event = {
 							religion = ravelian
 							religion = the_jadd
 							religion = corinite
+							religion = kalyin_worshippers
 							AND = {
 								religion = the_thought
 								ROOT = {
@@ -1292,7 +1840,7 @@ country_event = {
 	
 	#Let's convert
 	option = {
-		name = monstrous.22.a
+		name = monstrous.119.a
 		ai_chance = {
 			factor = 1
 			modifier = {
@@ -1326,7 +1874,7 @@ country_event = {
 	}
 	#fuck dat
 	option = {
-		name = monstrous.22.b
+		name = monstrous.119.b
 		ai_chance = { 
 			factor = 100
 			
@@ -1343,16 +1891,12 @@ country_event = {
 
 #Foreign Education for our Heir?
 country_event = {
-	id = monstrous.23
-	title = monstrous.23.t
-	desc = monstrous.23.d
+	id = monstrous.120
+	title = monstrous.120.t
+	desc = monstrous.120.d
 	picture = MONARCH_CHILD_WITH_REGENT_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		always = yes
@@ -1363,7 +1907,7 @@ country_event = {
 	
 	#Let's go
 	option = {
-		name = monstrous.23.a
+		name = monstrous.120.a
 		ai_chance = { 
 			factor = 20
 			
@@ -1380,12 +1924,12 @@ country_event = {
 		decrease_monstrous_2 = yes
 		add_years_of_income = -0.5
 		change_government_reform_progress = 10
-		country_event = { id = monstrous.24 days = 1095 random = 90 }
+		country_event = { id = monstrous.121 days = 1095 random = 90 }
 		hidden_effect = { set_heir_flag = monstrous_foreign_education }
 	}
 	#Nah
 	option = {
-		name = monstrous.23.b
+		name = monstrous.120.b
 		ai_chance = { 
 			factor = 100
 			
@@ -1403,27 +1947,23 @@ country_event = {
 
 #Result of foreign education
 country_event = {
-	id = monstrous.24
-	title = monstrous.24.t
+	id = monstrous.121
+	title = monstrous.121.t
 	desc = {
 		trigger = { has_country_flag = good_education }
-		desc = monstrous.24.da
+		desc = monstrous.121.da
 	}
 	desc = {
 		trigger = { has_country_flag = great_education }
-		desc = monstrous.24.db
+		desc = monstrous.121.db
 	}
 	desc = {
 		trigger = { has_country_flag = incredible_education }
-		desc = monstrous.24.dc
+		desc = monstrous.121.dc
 	}
 	picture = MONARCH_CHILD_WITH_REGENT_eventPicture
 	
 	is_triggered_only = yes
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	trigger = {
 		has_heir_flag = monstrous_foreign_education
@@ -1449,7 +1989,7 @@ country_event = {
 	
 	#Let's go
 	option = {
-		name = monstrous.24.a
+		name = monstrous.121.a
 		ai_chance = {  factor = 20 }
 		trigger_switch = {
 			on_trigger = has_country_flag
@@ -1508,9 +2048,9 @@ country_event = {
 
 #Hero Party kill our Ruler
 country_event = {
-	id = monstrous.25
-	title = monstrous.25.t
-	desc = monstrous.25.d
+	id = monstrous.122
+	title = monstrous.122.t
+	desc = monstrous.122.d
 	picture = MONARCH_CHILD_WITH_REGENT_eventPicture
 	
 	mean_time_to_happen = {
@@ -1547,7 +2087,7 @@ country_event = {
 	
 	#Let's go
 	option = {
-		name = monstrous.25.a
+		name = monstrous.122.a
 		ai_chance = { factor = 20 }
 		#if = {
 		#	limit = { has_ruler_modifier = lich_ruler }
@@ -1609,878 +2149,864 @@ country_event = {
 
 }
 
-#End the events if you don't demonsterize and just take the good options
-country_event = {
-	id = monstrous.26
-	title = monstrous.26.t
-	desc = monstrous.26.d
-	picture = WESTERNISATION_eventPicture
-	
-	trigger = {
-		ai = no
-		has_country_modifier = monstrous_nation
-		has_country_flag = removing_monstrous
-		OR = {
-			check_variable = { monstrousPoints = 110 }
-			AND = {
-				check_variable = { monstrousPoints = 60 }
-				has_country_flag = semi_monstrous
-			}
-		}
-	}
-	
-	mean_time_to_happen = {
-		months = 6
-	}
-	
-	option = {
-		name = monstrous.26.a
-		ai_chance = { factor = 1 }
-		clr_country_flag = removing_monstrous
-		clr_country_flag = semi_monstrous
-		add_dip_power = -300
-		if = {
-			limit = {
-				NOT = { has_government_attribute = embrace_new_thoughts_reform_effect }
-			}
-			reduce_stability_or_adm_power = yes
-		}
-		hidden_effect = { country_event = { id = monstrous.102 } }
-	}
-}
 
 ##################################
-##### Background & debug events
+##### Lizardfolk Events
 ##################################
 
-#Setup opinion
-country_event = {
-	id = monstrous.100
-	title = monstrous.100.t
-	desc = monstrous.100.d
-	picture = REFORM_eventPicture
-	
-	is_triggered_only = yes
-	hidden = yes
-	
-	trigger = {
-		NOT = { has_country_modifier = setup_monstrous_opinion }
-		#NOT = {
-		#	any_country = {
-		#		has_opinion_modifier = {
-		#			who = ROOT
-		#			modifier = root_monstrous
-		#		}
-		#	}
-		#}
-		# has_country_flag = removing_monstrous
-	}
-	
-	immediate = {
-		hidden_effect = {
-			add_country_modifier = {
-				name = setup_monstrous_opinion
-				duration = -1
-				hidden = yes
-			}
-			# must be a modifier and not a flag so it disappears if the nation is annexed and released again
-		}
-	}
-	
-	#Do it
-	option = {
-		name = monstrous.101.a
-		ai_chance = { factor = 10 }
-		if = {
-			limit = { has_country_modifier = monstrous_nation }
-			if = {
-				limit = {
-					is_colonial_nation = yes
-					colonial_parent = { NOT = { has_country_modifier = monstrous_nation } }
-				}
-				# parent is demonsterized, so now we are demonsterised too - set opinion like a non-monstrous nation
-				set_country_flag = no_longer_monstrous
-				every_country = {
-					limit = { NOT = { tag = ROOT } } # do not set against yourself or error log is sad
-					if = {
-						limit = { has_country_modifier = monstrous_nation }
-						
-						if = {
-							limit = { has_country_flag = semi_monstrous }
-	
-							add_opinion = { who = ROOT modifier = semi_monstrous }
-							reverse_add_opinion = { who = ROOT modifier = semi_monstrous }
-						}
-						else = {
-							add_opinion = { who = ROOT modifier = root_monstrous }
-							reverse_add_opinion = { who = ROOT modifier = root_monstrous }
-						}
-					}
-				}
-			}
-			else = {
-				# set opinions of the new monstrous nation
-				every_country = {
-					limit = { NOT = { tag = ROOT } } # do not set against yourself or error log is sad
-					
-					if = {
-						limit = { has_country_modifier = monstrous_nation }
-						
-						add_opinion = { who = ROOT modifier = both_monstrous }
-						reverse_add_opinion = { who = ROOT modifier = both_monstrous }
-					}
-					else = {
-						if = {
-							limit = { ROOT = { has_country_flag = semi_monstrous } }
+#Note : the Lizardfolk handler for now is only for non-Ashhana, non-S34 Lizardfolk. When those events are made, they should go in the Lizardfolk handler too
 
-							add_opinion = { who = ROOT modifier = semi_monstrous }
-							reverse_add_opinion = { who = ROOT modifier = semi_monstrous }
-						}
-						else = {
-							add_opinion = { who = ROOT modifier = root_monstrous }
-							reverse_add_opinion = { who = ROOT modifier = root_monstrous }
-						}
-						
-					}
-				}
-			}
-		}
-		else = {
-			# set opinions against other monstrous nations
-			every_country = {
-				limit = { NOT = { tag = ROOT } } # do not set against yourself or error log is sad
-				if = {
-					limit = { has_country_modifier = monstrous_nation }
-					
-					if = {
-						limit = { has_country_flag = semi_monstrous }
-
-						add_opinion = { who = ROOT modifier = semi_monstrous }
-						reverse_add_opinion = { who = ROOT modifier = semi_monstrous }
-					}
-					else = {
-						add_opinion = { who = ROOT modifier = root_monstrous }
-						reverse_add_opinion = { who = ROOT modifier = root_monstrous }
-					}
-				}
-			}
-		}
-	}
-}
-
-#Monstrous Opinion Update when culture swap
-country_event = {
-	id = monstrous.102
-	title = monstrous.102.t
-	desc = monstrous.102.d
-	picture = ADVISOR_eventPicture
-	
-	trigger = {
-		always = yes
-	}
-	
-	hidden = yes
-	is_triggered_only = yes
-	
-	option = {
-		name = monstrous.102.a
-		ai_chance = { factor = 100 }
-		hidden_effect = {
-			if = {
-				limit = {
-					NOT = { monstrous_culture = yes }
-					has_country_modifier = monstrous_nation
-				}
-				remove_country_modifier = monstrous_nation
-				every_country = {
-					if = { limit = { has_opinion_modifier = { who = ROOT modifier = root_monstrous } }
-						remove_opinion = { who = ROOT modifier = root_monstrous }
-						reverse_remove_opinion = { who = ROOT modifier = root_monstrous }
-					}
-					else_if = { limit = { has_opinion_modifier = { who = ROOT modifier = semi_monstrous } }
-						remove_opinion = { who = ROOT modifier = semi_monstrous }
-						reverse_remove_opinion = { who = ROOT modifier = semi_monstrous }
-					}
-					else_if = { limit = { has_opinion_modifier = { who = ROOT modifier = both_monstrous } }
-						remove_opinion = { who = ROOT modifier = both_monstrous }
-						reverse_remove_opinion = { who = ROOT modifier = both_monstrous }
-					}
-					
-					if = { limit = { has_country_modifier = monstrous_nation }
-						if = { limit = { has_country_flag = semi_monstrous }
-							add_opinion = { who = ROOT modifier = semi_monstrous }
-							reverse_add_opinion = { who = ROOT modifier = semi_monstrous }
-						}
-						else = {
-							add_opinion = { who = ROOT modifier = root_monstrous }
-							reverse_add_opinion = { who = ROOT modifier = root_monstrous }
-						}
-					}
-				}
-				if = {
-					limit = {
-						NOT = { has_country_flag = setup_monstrous_opinion }
-					}
-					set_country_flag = setup_monstrous_opinion
-				}
-			}
-			else_if = {
-				limit = {
-					monstrous_culture = yes
-					NOT = { has_country_modifier = monstrous_nation }
-					NOT = { has_country_flag = no_longer_monstrous }
-				}
-				add_country_modifier = { name = monstrous_nation duration = -1 }
-				every_country = {
-					limit = { NOT = { tag = ROOT } }
-					if = { limit = { has_opinion_modifier = { who = ROOT modifier = root_monstrous } }
-						remove_opinion = { who = ROOT modifier = root_monstrous }
-						reverse_remove_opinion = { who = ROOT modifier = root_monstrous }
-					}
-					else_if = { limit = { has_opinion_modifier = { who = ROOT modifier = semi_monstrous } }
-						remove_opinion = { who = ROOT modifier = semi_monstrous }
-						reverse_remove_opinion = { who = ROOT modifier = semi_monstrous }
-					}
-					else_if = { limit = { has_opinion_modifier = { who = ROOT modifier = both_monstrous } }
-						remove_opinion = { who = ROOT modifier = both_monstrous }
-						reverse_remove_opinion = { who = ROOT modifier = both_monstrous }
-					}
-					
-					if = { limit = { has_country_modifier = monstrous_nation }
-						add_opinion = { who = ROOT modifier = both_monstrous }
-						reverse_add_opinion = { who = ROOT modifier = both_monstrous }
-					}
-					else = {
-						if = { limit = { ROOT = { has_country_flag = semi_monstrous } }
-							add_opinion = { who = ROOT modifier = semi_monstrous }
-							reverse_add_opinion = { who = ROOT modifier = semi_monstrous }
-						}
-						else = {
-							add_opinion = { who = ROOT modifier = root_monstrous }
-							reverse_add_opinion = { who = ROOT modifier = root_monstrous }
-						}
-					}
-				}
-				if = {
-					limit = {
-						NOT = { has_country_flag = setup_monstrous_opinion }
-					}
-					set_country_flag = setup_monstrous_opinion
-				}
-			}
-			else_if = {
-				limit = { has_country_modifier = monstrous_nation has_country_flag = semi_monstrous }
-				every_country = {
-					limit = { has_opinion_modifier = { who = ROOT modifier = root_monstrous } }
-					remove_opinion = { who = ROOT modifier = root_monstrous }
-					reverse_remove_opinion = { who = ROOT modifier = root_monstrous }
-				}
-				every_country = {
-					limit = { has_opinion_modifier = { who = ROOT modifier = semi_monstrous } }
-					remove_opinion = { who = ROOT modifier = semi_monstrous }
-					reverse_remove_opinion = { who = ROOT modifier = semi_monstrous }
-				}
-				every_country = {
-					limit = { has_opinion_modifier = { who = ROOT modifier = both_monstrous } }
-					remove_opinion = { who = ROOT modifier = both_monstrous }
-					reverse_remove_opinion = { who = ROOT modifier = both_monstrous }
-				}
-				every_country = {
-					limit = { has_country_modifier = monstrous_nation NOT = { tag = ROOT } }
-					add_opinion = { who = ROOT modifier = both_monstrous }
-					reverse_add_opinion = { who = ROOT modifier = both_monstrous }
-				}
-				every_country = {
-					limit = { NOT = { has_country_modifier = monstrous_nation } }
-					add_opinion = { who = ROOT modifier = semi_monstrous }
-					reverse_add_opinion = { who = ROOT modifier = semi_monstrous }
-				}
-				if = {
-					limit = {
-						NOT = { has_country_flag = setup_monstrous_opinion }
-					}
-					set_country_flag = setup_monstrous_opinion
-				}
-			}
-		}
-	}
-}
-
-#Monstrous CB increase monstrous
-country_event = {
-	id = monstrous.103
-	title = monstrous.103.t
-	desc = monstrous.103.d
-	picture = ECONOMY_eventPicture
-	
-	is_triggered_only = yes
-	hidden = yes
-	
-	trigger = {
-		is_in_war = {
-			attacker_leader = FROM
-			casus_belli = cb_monster_vs_civ
-		}
-	}
-
-	option = {
-		name = monstrous.103.b
-		ai_chance = { factor = 100 }
-		FROM = { increase_monstrous_1 = yes }
-	}
-}
-
-#For being culture converted by monstrous overlord
+#Lizardfolk Handler
 country_event = {
 	id = monstrous.200
 	title = monstrous.200.t
 	desc = monstrous.200.d
 	picture = WESTERNISATION_eventPicture
 	
-	hidden = yes
-	trigger = {
-		always = yes
-	}
 	is_triggered_only = yes
+	hidden = yes
 	
 	option = {
 		name = monstrous.200.a
-		trigger = {
-			overlord = {
-				NOT = { has_country_modifier = monstrous_nation }
-			}
-		}
-		ai_chance = { factor = 1 }
-		every_country = {
-			limit = { has_opinion_modifier = { who = ROOT modifier = root_monstrous } }
-			remove_opinion = { who = ROOT modifier = root_monstrous }
-			reverse_remove_opinion = { who = ROOT modifier = root_monstrous }
-		}
-		every_country = {
-			limit = { has_opinion_modifier = { who = ROOT modifier = semi_monstrous } }
-			remove_opinion = { who = ROOT modifier = semi_monstrous }
-			reverse_remove_opinion = { who = ROOT modifier = semi_monstrous }
-		}
-		every_country = {
-			limit = { has_opinion_modifier = { who = ROOT modifier = both_monstrous } }
-			remove_opinion = { who = ROOT modifier = both_monstrous }
-			reverse_remove_opinion = { who = ROOT modifier = both_monstrous }
-		}
-		remove_country_modifier = monstrous_nation
-		set_country_flag = no_longer_monstrous
-	}
-
-	option = {
-		name = monstrous.200.b
-		trigger = {
-			overlord = {
-				has_country_modifier = monstrous_nation
-			}
-		}
-		ai_chance = { factor = 1 }
-		add_country_modifier = { name = monstrous_nation duration = -1 }
 		if = {
 			limit = {
-				overlord = {
-					has_country_flag = semi_monstrous
-				}
+				NOT = { primary_culture = ashhana_lizardfolk tag = S34 }
 			}
-			set_country_flag = semi_monstrous
-		}
-		every_country = {
-			limit = { has_opinion_modifier = { who = ROOT modifier = root_monstrous } }
-			remove_opinion = { who = ROOT modifier = root_monstrous }
-			reverse_remove_opinion = { who = ROOT modifier = root_monstrous }
-		}
-		every_country = {
-			limit = { has_opinion_modifier = { who = ROOT modifier = semi_monstrous } }
-			remove_opinion = { who = ROOT modifier = semi_monstrous }
-			reverse_remove_opinion = { who = ROOT modifier = semi_monstrous }
-		}
-		every_country = {
-			limit = { NOT = { tag = PREV } } # not the same nation
-			if = {
-				limit = { NOT = { has_country_modifier = monstrous_nation } }
-				if = {
-					limit = { PREV = { has_country_flag = semi_monstrous } }
-					add_opinion = { who = PREV modifier = semi_monstrous }
-					reverse_add_opinion = { who = PREV modifier = semi_monstrous }
+			random_list = {
+				100 = { #The Light of Taneyas
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_201 } }
+					country_event = { id = monstrous.201 }
+					set_country_flag = lizardfolk_monstrous_event_happened_201
 				}
-				else = {
-					add_opinion = { who = PREV modifier = root_monstrous }
-					reverse_add_opinion = { who = PREV modifier = root_monstrous }
+				100 = { #Comparative Politics
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_202 } }
+					country_event = { id = monstrous.202 }
+					set_country_flag = lizardfolk_monstrous_event_happened_202
 				}
-			}
-			else = {
-				add_opinion = { who = PREV modifier = both_monstrous }
-				reverse_add_opinion = { who = PREV modifier = both_monstrous }
+				100 = { #Recognise Outsider Envoys
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_203_yes has_country_flag = lizardfolk_monstrous_event_happened_203_no } }
+					country_event = { id = monstrous.203 }
+				}
+				100 = { #Mutual Deference Amnesty
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_204 } }
+					country_event = { id = monstrous.204 }
+					set_country_flag = lizardfolk_monstrous_event_happened_204
+				}
+				100 = { #Reexamine the Histories
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_205 } }
+					country_event = { id = monstrous.205 }
+					set_country_flag = lizardfolk_monstrous_event_happened_205
+				}
+				100 = { #Rule One
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_206 } }
+					country_event = { id = monstrous.206 }
+					set_country_flag = lizardfolk_monstrous_event_happened_206
+				}
+				100 = { #Linguistic Mutation
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_207 } }
+					country_event = { id = monstrous.207 }
+					set_country_flag = lizardfolk_monstrous_event_happened_207
+				}
+				100 = { #Equivalent Majesty
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_208 } has_country_flag = lizardfolk_monstrous_event_happened_203_yes }
+					country_event = { id = monstrous.208 }
+					set_country_flag = lizardfolk_monstrous_event_happened_208
+				}
+				100 = { #The Halfling Exception
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_209 has_country_modifier = racial_pop_halfling_purge has_country_modifier = racial_pop_halfling_expulsion } }
+					country_event = { id = monstrous.209 }
+					set_country_flag = lizardfolk_monstrous_event_happened_209
+				}
+				100 = { #Unique Among Sentients
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_210 } }
+					country_event = { id = monstrous.210 }
+					set_country_flag = lizardfolk_monstrous_event_happened_210
+				}
+				100 = { #Legacy of Karassk
+					trigger = { NOT = { has_country_flag = lizardfolk_monstrous_event_happened_211 } }
+					country_event = { id = monstrous.211 }
+					set_country_flag = lizardfolk_monstrous_event_happened_211
+				}
+				1 = { #Technology Fair (repeatable)
+					country_event = { id = monstrous.212 }
+				}
+				1 = { #Our Favourite Foreigner (repeatable)
+					trigger = { any_known_country = { NOT = { culture_group = lizardfolk } } }
+					country_event = { id = monstrous.213 }
+				}
+				1 = { #Formal Diplomatic Recognition (repeatable)
+					trigger = { any_known_country = { NOT = { culture_group = lizardfolk } total_development = 100 } }
+					country_event = { id = monstrous.214 }
+				}
 			}
 		}
 	}
 }
 
-#Monstrous event Command Center
-country_event = {
-	id = monstrous.1000
-	title = monstrous.1000.t
-	desc = monstrous.1000.d
-	picture = ECONOMY_eventPicture
-	hidden = yes
+country_event = { #The Light of Taneyas
+	id = monstrous.201
+	title = monstrous.201.t
+	desc = monstrous.201.d
+	picture = BIG_BOOK_eventPicture
 	
-	mean_time_to_happen = {
-		months = 1
+	is_triggered_only = yes
+	
+	option = { #Nothing is worth adulterating the classics
+		name = monstrous.201.a
+		increase_monstrous_5 = yes
+		add_prestige = 15
+		add_country_modifier = {
+			name = monstrous_vibrant_inks
+			duration = 3650
+		}
 	}
 	
-	trigger = {
-		has_country_flag = removing_monstrous
-		has_country_modifier = monstrous_nation
-		OR = {
-			NOT = { has_country_flag = monstrous_event_happened }
-			had_country_flag = {
-				flag = monstrous_event_happened
-				days = 365
+	option = { #Even humans can use annotations, right?
+		name = monstrous.201.b
+		decrease_monstrous_5 = yes
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -15
 			}
 		}
-		NOT = { tag = F66 }
+		if = {
+			limit = { has_estate = estate_monstrous_tribes }
+			add_estate_loyalty = {
+				estate = estate_monstrous_tribes
+				loyalty = -15
+			}
+		}
 	}
+	
+	option = { #Use alternate colours visible to non-lizardfolk
+		name = monstrous.201.c
+		decrease_monstrous_5 = yes
+		add_adm_power = 75
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -5
+			}
+		}
+		if = {
+			limit = { has_estate = estate_monstrous_tribes }
+			add_estate_loyalty = {
+				estate = estate_monstrous_tribes
+				loyalty = -5
+			}
+		}
+		add_years_of_income = -1
+	}
+}
+
+
+country_event = { #Comparative Politics
+	id = monstrous.202
+	title = monstrous.202.t
+	desc = monstrous.202.d
+	picture = PARLIAMENT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Publish and distribute the comparisons
+		name = monstrous.202.a
+		decrease_monstrous_5 = yes
+		add_country_modifier = {
+			name = monstrous_comparative_politics
+			duration = 1825
+		}
+		add_years_of_income = -0.5
+	}
+	
+	option = { #Sponsor a new generation of scholars
+		name = monstrous.202.b
+		decrease_monstrous_5 = yes
+		define_advisor = {
+			type = philosopher
+			skill = 1
+			cost_multiplier = -0.75
+		}
+		add_years_of_income = -1
+	}
+	
+	option = { #Do we really have to spell it out for them?
+		name = monstrous.202.c
+		increase_monstrous_5 = yes
+	}
+}
+
+
+country_event = { #Recognise Outsider Envoys
+	id = monstrous.203
+	title = monstrous.203.t
+	desc = monstrous.203.d
+	picture = muslimgfx_OVEREXTENSION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Fine, they can bring their little letters
+		name = monstrous.203.a
+		decrease_monstrous_5 = yes
+		add_country_modifier = {
+			name = monstrous_outsider_envoys
+			duration = 3650
+		}
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -10
+			}
+		}
+		if = {
+			limit = { has_estate = estate_monstrous_tribes }
+			add_estate_loyalty = {
+				estate = estate_monstrous_tribes
+				loyalty = -10
+			}
+		}
+		hidden_effect = { set_country_flag = lizardfolk_monstrous_event_happened_203_yes }
+	}
+	
+	option = { #Envoys represent proper states only
+		name = monstrous.203.b
+		increase_monstrous_5 = yes
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 10
+			}
+		}
+		if = {
+			limit = { has_estate = estate_monstrous_tribes }
+			add_estate_loyalty = {
+				estate = estate_monstrous_tribes
+				loyalty = 10
+			}
+		}
+		hidden_effect = { set_country_flag = lizardfolk_monstrous_event_happened_203_no }
+	}
+}
+
+
+country_event = { #Mutual Deference Amnesty
+	id = monstrous.204
+	title = monstrous.204.t
+	desc = monstrous.204.d
+	picture = northamericagfx_BAD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #They need not bang their heads on the ground
+		name = monstrous.204.a
+		decrease_monstrous_5 = yes
+		add_dip_power = -50
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -10
+			}
+		}
+		if = {
+			limit = { has_estate = estate_monstrous_tribes }
+			add_estate_loyalty = {
+				estate = estate_monstrous_tribes
+				loyalty = -10
+			}
+		}
+	}
+	
+	option = { #We will preserve our self-respect
+		name = monstrous.204.b
+		increase_monstrous_5 = yes
+		add_dip_power = 50
+	}
+	
+	option = { #A new inter-species handshake, maybe?
+		name = monstrous.204.c
+		trigger = {
+			OR = {
+				ruler_has_personality = free_thinker_personality
+				ruler_has_personality = charismatic_negotiator_personality
+			}
+		}
+		highlight = yes
+		decrease_monstrous_5 = yes
+		add_dip_power = -10
+	}
+}
+
+
+country_event = { #Reexamine the Histories
+	id = monstrous.205
+	title = monstrous.205.t
+	desc = monstrous.205.d
+	picture = muslimgfx_BIG_BOOK_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Commission the study
+		name = monstrous.205.a
+		decrease_monstrous_5 = yes
+		add_adm_power = -50
+		define_advisor = {
+			type = statesman
+			skill = 1
+			cost_multiplier = -0.25
+		}
+	}
+	
+	option = { #What is right requires not the approval of the dead
+		name = monstrous.205.b
+		trigger = {
+			OR = {
+				NOT = { religion = anzalkatsa }
+				ruler_has_personality = reformist_personality
+				ruler_has_personality = lawgiver_personality
+			}
+		}
+		highlight = yes
+		decrease_monstrous_5 = yes
+		change_government_reform_progress = 25
+	}
+	
+	option = { #A waste of time
+		name = monstrous.205.c
+		#Nothing happens
+	}
+}
+
+
+country_event = { #Rule One
+	id = monstrous.206
+	title = monstrous.206.t
+	desc = monstrous.206.d
+	picture = indiangfx_ACCUSATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #We can still say the words at home, at least
+		name = monstrous.206.a
+		decrease_monstrous_5 = yes
+		add_country_modifier = {
+			name = monstrous_uphold_rule_one
+			duration = 3650
+		}
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -10
+			}
+		}
+		if = {
+			limit = { has_estate = estate_monstrous_tribes }
+			add_estate_loyalty = {
+				estate = estate_monstrous_tribes
+				loyalty = -10
+			}
+		}
+	}
+	
+	option = { #We could institute some kind of swear jar
+		name = monstrous.206.b
+		trigger = {
+			OR = {
+				ruler_has_personality = benevolent_personality
+				ruler_has_personality = greedy_personality
+				ruler_has_personality = strict_personality
+			}
+		}
+		highlight = yes
+		decrease_monstrous_5 = yes
+		add_country_modifier = {
+			name = monstrous_uphold_rule_one
+			duration = 3650
+		}
+		add_years_of_income = 0.5
+	}
+	
+	option = { #An outright ban is the only option
+		name = monstrous.206.c
+		trigger = {
+			OR = {
+				ruler_has_personality = lawgiver_personality
+				ruler_has_personality = reformist_personality
+				ruler_has_personality = strict_personality
+			}
+		}
+		highlight = yes
+		decrease_monstrous_8 = yes
+		add_country_modifier = {
+			name = monstrous_uphold_rule_one
+			duration = 3650
+		}
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -20
+			}
+		}
+		if = {
+			limit = { has_estate = estate_monstrous_tribes }
+			add_estate_loyalty = {
+				estate = estate_monstrous_tribes
+				loyalty = -20
+			}
+		}
+	}
+	
+	option = { #But their flesh does wobble
+		name = monstrous.206.e
+		increase_monstrous_5 = yes
+		add_country_modifier = {
+			name = monstrous_ignore_rule_one
+			duration = 3650
+		}
+	}
+}
+
+
+country_event = { #Linguistic Mutation
+	id = monstrous.207
+	title = monstrous.207.t
+	desc = monstrous.207.d
+	picture = NOTHING_FOUND_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #These throat-lipped lizards are useful, if a little repulsive
+		name = monstrous.207.a
+		decrease_monstrous_8 = yes
+		add_years_of_income = -1
+		add_adm_power = -50
+	}
+	
+	option = { #Build them their own quarter in the capital
+		name = monstrous.207.b
+		decrease_monstrous_8 = yes
+		capital_scope = {
+			add_province_modifier = {
+				name = monstrous_throat_lipped_compound
+				duration = 18250
+			}
+		}
+		add_years_of_income = -1.5
+		add_adm_power = -50
+	}
+	
+	option = { #Foreigners can learn our language
+		name = monstrous.207.c
+		increase_monstrous_5 = yes
+		add_country_modifier = {
+			name = monstrous_linguistic_isolation
+			duration = 7300
+		}
+	}
+}
+
+
+country_event = { #Equivalent Majesty
+	id = monstrous.208
+	title = monstrous.208.t
+	desc = monstrous.208.d
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Each can be said to rule their own sphere
+		name = monstrous.208.a
+		decrease_monstrous_8 = yes
+		reduce_stability_or_adm_power = yes
+	}
+	
+	option = { #Lizardfolk rule is world-historically exceptional
+		name = monstrous.208.b
+		increase_monstrous_8 = yes
+		add_stability_or_adm_power = yes
+	}
+}
+
+
+country_event = { #The Halfling Exception
+	id = monstrous.209
+	title = monstrous.209.t
+	desc = monstrous.209.d
+	picture = northamericagfx_SHIP_SAILING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Formalise their favoured status
+		name = monstrous.209.a
+		decrease_monstrous_8 = yes
+		large_increase_of_halfling_tolerance_effect = yes
+		custom_tooltip = monstrous_vyzemby_diplomacy_tooltip
+		hidden_effect = {
+			every_known_country = {
+				limit = { is_vyzemby_primary_culture = yes }
+				add_opinion = {
+					who = ROOT
+					modifier = monstrous_favoured_halflings
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = monstrous_favoured_halflings
+				}
+			}
+		}
+		add_years_of_income = -1
+		add_adm_power = -75
+	}
+	
+	option = { #I suppose they don’t smell as much as humans
+		name = monstrous.209.b
+		#Nothing happens
+	}
+}
+
+
+country_event = { #Unique Among Sentients
+	id = monstrous.210
+	title = monstrous.210.t
+	desc = monstrous.210.d
+	picture = NUSANTARA_THRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #A salient compromise
+		name = monstrous.210.a
+		decrease_monstrous_5 = yes
+		add_adm_power = -50
+		add_country_modifier = {
+			name = monstrous_sentient_potential
+			duration = 3650
+		}
+	}
+	
+	option = { #Will we pat them on the head next?
+		name = monstrous.210.b
+		increase_monstrous_5 = yes
+	}
+}
+
+
+country_event = { #Legacy of Karassk
+	id = monstrous.211
+	title = monstrous.211.t
+	desc = monstrous.211.d
+	picture = VILLAGE_BURNING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Oh, throw them a bone
+		name = monstrous.211.a
+		trigger = { hidden_trigger = { NOT = { tag = L68 } } }
+		decrease_monstrous_5 = yes
+		medium_increase_of_human_tolerance_effect = yes
+		custom_tooltip = monstrous_human_diplomacy_1_tooltip
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					OR = {
+						culture_group = baashidi
+						capital_scope = { region = horashesh_region }
+					}
+					NOT = { culture_group = lizardfolk }
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = monstrous_historic_reconciliation_1
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = monstrous_historic_reconciliation_1
+				}
+			}
+		}
+		add_dip_power = -50
+		add_prestige = -15
+	}
+	
+	option = { #Don’t be so cynical; let’s heal the wound
+		name = monstrous.211.b
+		trigger = {
+			hidden_trigger = { NOT = { tag = L68 } }
+			OR = {
+				ruler_has_personality = naive_personality
+				ruler_has_personality = reformist_personality
+				ruler_has_personality = kind_hearted_personality
+			}
+		}
+		highlight = yes
+		decrease_monstrous_5 = yes
+		large_increase_of_human_tolerance_effect = yes
+		custom_tooltip = monstrous_human_diplomacy_2_tooltip
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					OR = {
+						culture_group = baashidi
+						capital_scope = { region = horashesh_region }
+					}
+					NOT = { culture_group = lizardfolk }
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = monstrous_historic_reconciliation_2
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = monstrous_historic_reconciliation_2
+				}
+			}
+		}
+		add_prestige = -20
+	}
+	
+	option = { #We do not apologise
+		name = monstrous.211.c
+		trigger = { hidden_trigger = { NOT = { tag = L68 } } }
+		increase_monstrous_8 = yes
+	}
+	
+	option = { #Our ancestors were 70% correct, 30% mistaken
+		name = monstrous.211.e
+		trigger = { hidden_trigger = { tag = L68 } }
+		decrease_monstrous_8 = yes
+		medium_increase_of_human_tolerance_effect = yes
+		custom_tooltip = monstrous_human_diplomacy_1_tooltip
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					OR = {
+						culture_group = baashidi
+						capital_scope = { region = horashesh_region }
+					}
+					NOT = { culture_group = lizardfolk }
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = monstrous_historic_reconciliation_1
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = monstrous_historic_reconciliation_1
+				}
+			}
+		}
+		add_dip_power = -75
+		add_prestige = -20
+	}
+	
+	option = { #Repudiate our ancestors
+		name = monstrous.211.f
+		trigger = {
+			hidden_trigger = { tag = L68 }
+			OR = {
+				ruler_has_personality = naive_personality
+				ruler_has_personality = reformist_personality
+				ruler_has_personality = kind_hearted_personality
+			}
+		}
+		highlight = yes
+		decrease_monstrous_8 = yes
+		large_increase_of_human_tolerance_effect = yes
+		custom_tooltip = monstrous_human_diplomacy_2_tooltip
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					OR = {
+						culture_group = baashidi
+						capital_scope = { region = horashesh_region }
+					}
+					NOT = { culture_group = lizardfolk }
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = monstrous_historic_reconciliation_2
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = monstrous_historic_reconciliation_2
+				}
+			}
+		}
+		add_prestige = -30
+	}
+	
+	option = { #We do not apologise
+		name = monstrous.211.g
+		trigger = { hidden_trigger = { tag = L68 } }
+		increase_monstrous_8 = yes
+		add_country_modifier = {
+			name = monstrous_karassk_militarism
+			duration = 18250
+		}
+	}
+}
+
+
+country_event = { #Technology Fair (repeatable)
+	id = monstrous.212
+	title = monstrous.212.t
+	desc = monstrous.212.d
+	picture = INVENTION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Make it so
+		name = monstrous.212.a
+		decrease_monstrous_5 = yes
+		add_country_modifier = {
+			name = monstrous_technology_fair
+			duration = 1825
+		}
+		add_years_of_income = -0.5
+	}
+	
+	option = { #Why is it spinning..?
+		name = monstrous.212.b
+		#Nothing happens
+	}
+}
+
+
+country_event = { #Our Favourite Foreigner (repeatable)
+	id = monstrous.213
+	title = monstrous.213.t
+	desc = monstrous.213.d
+	picture = ADVISOR_eventPicture
+	
+	is_triggered_only = yes
 	
 	immediate = {
-		set_country_flag = monstrous_event_happened
+		hidden_effect  {
+			random_known_country = {
+				limit = { NOT = { culture_group = lizardfolk } }
+				save_event_target_as = target_country
+			}
+		}
 	}
+	
+	option = { #Bring them into our sphere
+		name = monstrous.213.a
+		decrease_monstrous_5 = yes
+		add_dip_power = -50
+		define_advisor = {
+			type = artist
+			skill = 1
+			culture = event_target:target_country
+			religion = event_target:target_country
+			cost_multiplier = -0.25
+		}
+	}
+	
+	option = { #I prefer a good Yayat, myself
+		name = monstrous.213.b
+		#Nothing happens
+	}
+}
 
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			is_at_war = yes
-			NOT = { has_country_modifier = monstrous_unleash_the_beast }
-			NOT = { has_country_modifier = monstrous_beast_muzzled }
-		}
-		country_event = { id = monstrous.3 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			any_neighbor_country = {
-				NOT = { has_country_modifier = monstrous_nation }
-				any_owned_province = { is_claim = ROOT }
-				NOT = { war_with = ROOT }
-			}
-		}
-		country_event = { id = monstrous.4 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			any_neighbor_country = {
-				NOT = { has_country_modifier = monstrous_nation }
-				NOT = { is_rival = ROOT }
-				NOT = { war_with = ROOT }
-				NOT = {
-					has_opinion_modifier = {
-						who = ROOT
-						modifier = improved_relation_monstrous
-					}
-				}
-			}
-		}
-		country_event = { id = monstrous.5 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			NOT = { has_country_modifier = monstrous_protocols_of_conquest }
-		}
-		country_event = { id = monstrous.6 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			NOT = { has_country_modifier = monstrous_newfound_decorum }
-		}
-		country_event = { id = monstrous.7 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			NOT = { has_country_modifier = monstrous_societal_reforms }
-		}
-		country_event = { id = monstrous.8 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			home_trade_node = {
-				any_trade_node_member_country = { NOT = { has_country_modifier = monstrous_nation } }
-				NOT = { 
-					has_trade_modifier = {
-						who = ROOT
-						key = MONSTROUS_TRADE
-					}
-				}
-			}
-		}
-		country_event = { id = monstrous.9 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			any_neighbor_country = {
-				NOT = { has_country_modifier = monstrous_nation }
-				NOT = { is_rival = ROOT }
-				NOT = { war_with = ROOT }
-				NOT = {
-					has_opinion_modifier = {
-						who = ROOT
-						modifier = decreased_relation_monstrous
-					}
-				}
-			}
-		}
-		country_event = { id = monstrous.10 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			NOT = {
-				tag = S70	#Yezel Mora
-				tag = I46	#Tugund-Darakh
-				religion = xhazobkult #Has it's own event for changing religion
-				has_ruler_flag = xhazob_patron	#Great Xhaz
-			}
-			any_neighbor_country = {
-				NOT = { has_country_modifier = monstrous_nation }
-				NOT = { is_rival = ROOT }
-				NOT = { war_with = ROOT }
-				OR = {
-					religion = ravelian
-					religion = the_jadd
-					religion = corinite
-					AND = {
-						religion = the_thought
-						ROOT = {
-							OR = {
-								culture_group = goblin
-								culture_group = kobold
-							}
-						}
-					}
-					AND = {
-						religion = kvangahga
-						ROOT = { culture_group = gnollish }
-					}
-					AND = {
-						religion = rinta_seekers
-						NOT = { ROOT = { culture_group = lizardfolk } }
-					}
-				}
-			}
-			any_owned_province = {
-				NOT = {
-					religion = ravelian
-					religion = the_jadd
-					religion = corinite
-					religion = the_thought
-					religion = kvangahga
-					religion = rinta_seekers
-					religion = bulgu_orazan	#Currently the only exempted faith that isn't also one of the faiths you can convert to
-				}
-			}
-		}
-		country_event = { id = monstrous.11 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			OR = {
-				NOT = { has_country_flag = monstrous_famous_adventuring_band }
-				had_country_flag = {
-					flag = monstrous_famous_adventuring_band
-					days = 3650
-				}
-			}
-		}
-		country_event = { id = monstrous.12 }
-	}
-	
-	#This event does not work
-	#option = {
-	#	name = monstrous.1000.a
-	#	ai_chance = { factor = 100 }
-	#	trigger = {
-	#		any_owned_province = {
-	#			has_construction = building
-	#		}
-	#	}
-	#	country_event = { id = monstrous.13 }
-	#}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			army_tradition = 20
-			OR = {
-				NOT = { has_country_flag = monstrous_new_model_army }
-				had_country_flag = {
-					flag = monstrous_new_model_army
-					days = 3650
-				}
-			}
-		}
-		country_event = { id = monstrous.14 }
-	}
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			OR = {
-				NOT = { has_country_flag = monstrous_language_lessons }
-				had_country_flag = {
-					flag = monstrous_language_lessons
-					days = 3650
-				}
-			}
-		}
-		country_event = { id = monstrous.15 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			OR = {
-				ruler_has_personality = babbling_buffoon_personality
-				ruler_has_personality = cruel_personality
-				ruler_has_personality = malevolent_personality
-				ruler_has_personality = zealot_personality
-				ruler_has_personality = expansionist_personality
-				ruler_has_personality = conqueror_personality
-			}
-			OR = {
-				NOT = { has_ruler_flag = monstrous_backward_ruler }
-				had_ruler_flag = {
-					flag = monstrous_backward_ruler
-					days = 730
-				}
-			}
-		}
-		country_event = { id = monstrous.16 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			has_country_modifier = monstrous_nation
-			has_country_flag = removing_monstrous
-			is_at_war = yes
-			NOT = { has_country_modifier = monstrous_unleash_the_beast }
-			NOT = { has_country_modifier = monstrous_beast_muzzled }
-		}
-		country_event = { id = monstrous.3 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			OR = {
-				ruler_has_personality = tolerant_personality
-				ruler_has_personality = kind_hearted_personality
-				ruler_has_personality = free_thinker_personality
-				ruler_has_personality = lawgiver_personality
-				ruler_has_personality = just_personality
-				ruler_has_personality = well_advised_personality
-			}
-			OR = {
-				NOT = { has_ruler_flag = monstrous_progressive_ruler }
-				had_ruler_flag = {
-					flag = monstrous_progressive_ruler
-					days = 730
-				}
-			}
-		}
-		country_event = { id = monstrous.17 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			has_country_flag = semi_monstrous
-			is_at_war = no
-		}
-		country_event = { id = monstrous.18 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			has_country_flag = semi_monstrous
-			any_neighbor_country = {
-				NOT = { has_country_modifier = monstrous_nation }
-				NOT = { is_rival = ROOT }
-				NOT = { war_with = ROOT }
-			}
-			OR = {
-				NOT = { has_country_flag = monstrous_non_monstrous_advisor }
-				had_country_flag = {
-					flag = monstrous_non_monstrous_advisor
-					days = 3650
-				}
-			}
-		}
-		country_event = { id = monstrous.19 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			has_country_flag = semi_monstrous
-			OR = {
-				NOT = { has_country_flag = monstrous_reformist_administrator }
-				had_country_flag = {
-					flag = monstrous_reformist_administrator
-					days = 3650
-				}
-			}
-		}
-		country_event = { id = monstrous.20 }
-	}
-	
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			has_country_flag = semi_monstrous
-			NOT = { has_country_modifier = monstrous_interest }
-		}
-		country_event = { id = monstrous.21 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			has_country_flag = semi_monstrous
-			stability = 0
-			is_at_war = no
-			is_subject = no
-			NOT = { has_ruler_flag = monstrous_proposed_conversion }
-			NOT = { has_country_flag = monstrous_converted_religion }
-			NOT = {
-				tag = S70	#Yezel Mora
-				tag = I46	#Tugund-Darakh
-				religion = xhazobkult
-				has_ruler_flag = xhazob_patron	#Great Xhaz
-			}
-			NOT = {
-				religion = ravelian
-				religion = the_jadd
-				religion = corinite
-				religion = the_thought
-				religion = kvangahga
-				religion = rinta_seekers
-				religion = bulgu_orazan	#Currently the only exempted faith that isn't also one of the faiths you can convert to
-			}
-			OR = {
-				any_neighbor_country = {
-					NOT = { has_country_modifier = monstrous_nation }
-					NOT = { is_rival = ROOT }
-					NOT = { war_with = ROOT }
-					OR = {
-						religion = ravelian
-						religion = the_jadd
-						religion = corinite
-						AND = {
-							religion = the_thought
-							ROOT = {
-								OR = {
-									culture_group = goblin
-									culture_group = kobold
-								}
-							}
-						}
-						AND = {
-							religion = kvangahga
-							ROOT = { culture_group = gnollish }
-						}
-						AND = {
-							religion = rinta_seekers
-							NOT = { ROOT = { culture_group = lizardfolk } }
-						}
-					}
-				}
-				any_owned_province = {
-					OR = {
-						religion = ravelian
-						religion = the_jadd
-						religion = corinite
-						AND = {
-							religion = the_thought
-							ROOT = {
-								OR = {
-									culture_group = goblin
-									culture_group = kobold
-								}
-							}
-						}
-						AND = {
-							religion = kvangahga
-							ROOT = { culture_group = gnollish }
-						}
-						AND = {
-							religion = rinta_seekers
-							NOT = { ROOT = { culture_group = lizardfolk } }
-						}
-					}
-				}
-			}
-		}
-		country_event = { id = monstrous.22 }
-	}
-	
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			has_country_flag = semi_monstrous
-			has_heir = yes
-			NOT = { has_heir_flag = monstrous_foreign_education }
-		}
-		country_event = { id = monstrous.23 }
-	}
 
-	option = {
-		name = monstrous.1000.a
-		ai_chance = { factor = 100 }
-		trigger = {
-			stability = 0
-			religion = xhazobkult
-			NOT = { has_country_flag = xhazobkult_rejected_conversion }
+country_event = { #Formal Diplomatic Recognition (repeatable)
+	id = monstrous.214
+	title = monstrous.214.t
+	desc = monstrous.214.d
+	picture = FORTIFIED_CITY_WITH_CARAVAN_OUTSIDE_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect  {
+			random_known_country = {
+				limit = { NOT = { culture_group = lizardfolk } total_development = 100 }
+				save_event_target_as = target_country
+			}
 		}
-		country_event = { id = xhazobkult_events.2 }
+	}
+	
+	option = { #As long as the embassy isn’t near the bathhouse
+		name = monstrous.214.a
+		decrease_monstrous_5 = yes
+		if = {
+			limit = { has_estate = estate_nobles }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = -10
+			}
+		}
+		if = {
+			limit = { has_estate = estate_monstrous_tribes }
+			add_estate_loyalty = {
+				estate = estate_monstrous_tribes
+				loyalty = -10
+			}
+		}
+	}
+	
+	option = { #They do not merit our consideration
+		name = monstrous.214.b
+		#Nothing happens
+	}
+}
+
+country_event = { #Monstrous Stupidity (Starting Event)
+	id = monstrous.215
+	title = monstrous.215.t
+	desc = monstrous.215.d
+	picture = 1_Brahmin_Estate__eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Our civilising mission begins
+		name = monstrous.215.a
+		#Nothing happens
+	}
+}
+
+country_event = { #Alike in Dignity (demonsterization complete)
+	id = monstrous.216
+	title = monstrous.216.t
+	desc = monstrous.216.d
+	picture = muslimgfx_GREAT_BUILDING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #The rest of the world has been civilised
+		name = monstrous.216.a
+		finish_demonsterization_effect = yes
+		if = {
+			limit = { NOT = { has_global_flag = lizardfolk_demonsterization_finished } }
+			capital_scope = {
+				add_permanent_province_modifier = {
+					name = monstrous_window_to_taneyas
+					duration = -1
+				}
+			}
+			set_global_flag = lizardfolk_demonsterization_finished
+		}
+		else = {
+			change_government_reform_progress = 100
+		}
+		hidden_effect = {
+			clr_country_flag = lizardfolk_monstrous_event_happened_201
+			clr_country_flag = lizardfolk_monstrous_event_happened_202
+			clr_country_flag = lizardfolk_monstrous_event_happened_203_yes
+			clr_country_flag = lizardfolk_monstrous_event_happened_203_no
+			clr_country_flag = lizardfolk_monstrous_event_happened_204
+			clr_country_flag = lizardfolk_monstrous_event_happened_205
+			clr_country_flag = lizardfolk_monstrous_event_happened_206
+			clr_country_flag = lizardfolk_monstrous_event_happened_207
+			clr_country_flag = lizardfolk_monstrous_event_happened_208
+			clr_country_flag = lizardfolk_monstrous_event_happened_209
+			clr_country_flag = lizardfolk_monstrous_event_happened_210
+			clr_country_flag = lizardfolk_monstrous_event_happened_211
+		}
 	}
 }

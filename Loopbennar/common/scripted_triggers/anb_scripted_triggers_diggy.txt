@@ -509,7 +509,8 @@ dwarovar_orc_culture_accepted = {
 owns_jorkad_dam = {
 	custom_trigger_tooltip = {
 		tooltip = owns_built_jorkad_dam_tt
-		676 = { has_province_modifier = the_jorkad_dam owned_by = owner }
+		owns = 676
+		676 = { has_great_project = { type = jorkad_dam tier = 3 } }
 	}
 }
 
@@ -831,6 +832,7 @@ can_dig_hold_alert = {
 	}
 	NOT = {
 		has_construction = any
+		has_province_modifier = developing_advanced_infrastructure
 		has_province_modifier = ruined_hold
 		has_province_modifier = infested_hold
 		has_province_modifier = incomplete_hold
@@ -950,7 +952,48 @@ hold_condition = {
 	]
 }
 
+dig_deeper_button_scripted_potential = {
+	OR = {
+		has_terrain = dwarven_hold
+		has_terrain = dwarven_hold_surface
+	}
+	#Owner needs to be you, and also not be native/horde since raze/settle buttons get in the way.
+	owner = {
+		tag = FROM
+	}
+	#Blorcs can't repair non-capital holds
+	OR = {
+		is_capital = yes
+		NOT = { owner = { dwarovar_orc_culture_primary = yes } }
+	}
+}
 
+dig_deeper_button_scripted_trigger = {
+	#Can use button to repair non-capital holds, but not dig non-capital holds without centralizing hold operations
+	if = {
+		limit = {
+			NOT = {
+				is_capital = yes
+				has_province_modifier = ruined_hold
+				has_province_modifier = partially_ruined_hold
+				has_province_modifier = damaged_hold
+				has_province_modifier = infested_hold
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = has_centralized_hold_operations_tt
+			owner = { has_country_flag = hold_operation }
+		}
+	}
+	if = {
+		limit = { owner = { is_nomad = yes } }
+		owner = { NOT = { is_nomad = yes } }
+	}
+	if = {
+		limit = { owner = { government = native } }
+		owner = { NOT = { government = native } }
+	}
+}
 
 ################################
 ### Expeditions and Dungeons ###

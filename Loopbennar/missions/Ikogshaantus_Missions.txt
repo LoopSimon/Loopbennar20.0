@@ -256,8 +256,20 @@ J52_1_middle_missions = {
 		}
 
 		provinces_to_highlight = {
-			region = khaashalg_region
-			NOT = { owned_by = ROOT }
+			OR = {
+				AND = {
+					region = khaashalg_region
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					OR = {
+						area = rushing_river_area
+						area = chaneuusk_area
+						area = yulunshoon_area
+					}
+					has_any_ongoing_construction = yes
+				}
+			}
 		}
 
 		trigger = {
@@ -269,9 +281,9 @@ J52_1_middle_missions = {
 				type = all
 				owned_by = ROOT
 			}
-			rushing_river_area = { type = all NOT = { has_construction = any } }
-			chaneuusk_area = { type = all NOT = { has_construction = any } }
-			yulunshoon_area = { type = all NOT = { has_construction = any } }
+			rushing_river_area = { type = all has_any_ongoing_construction = no }
+			chaneuusk_area = { type = all has_any_ongoing_construction = no }
+			yulunshoon_area = { type = all has_any_ongoing_construction = no }
 		}
 
 		effect = {
@@ -1667,15 +1679,14 @@ J52_3_middle_missions = {
 					}
 				}
 				AND = {
-					culture_group = khantaar
-					NOT = { is_state_core = ROOT }
-				}
-				AND = {
 					region = khaashalg_region
 					NOT = {
-						area_for_scope_province = {
-							has_tax_building_trigger = yes
-							has_courthouse_building_trigger = yes
+						AND = {
+							is_state_core = yes
+							area_for_scope_province = {
+								has_tax_building_trigger = yes
+								has_courthouse_building_trigger = yes
+							}
 						}
 					}
 				}
@@ -1696,6 +1707,7 @@ J52_3_middle_missions = {
 			chaneuusk_area = { 
 				type = all 
 				culture = khamgunai 
+				has_state_edict = edict_encourage_development
 				has_production_or_gold_building_trigger = yes
 				OR = {
 					religion = enuuk_followers 
@@ -1705,6 +1717,7 @@ J52_3_middle_missions = {
 			yulunshoon_area = { 
 				type = all 
 				culture = khamgunai 
+				has_state_edict = edict_encourage_development
 				has_production_or_gold_building_trigger = yes
 				OR = {
 					religion = enuuk_followers 
@@ -1713,6 +1726,7 @@ J52_3_middle_missions = {
 			}
 			khaashalg_region = {
 				type = all
+				is_state_core = yes
 				area_for_scope_province = {
 					has_tax_building_trigger = yes
 					has_courthouse_building_trigger = yes
@@ -1929,19 +1943,28 @@ J52_3_end_missions = {
 				type = all
 				development = 30
 				num_of_times_expanded_infrastructure = 2
-				num_of_buildings_in_province = 10
+				custom_trigger_tooltip = {
+					tooltip = J52_has_ten_buildings_tt
+					num_of_buildings_in_province = 10	
+				}
 			}
 			chaneuusk_area = {
 				type = all
 				development = 30
 				num_of_times_expanded_infrastructure = 2
-				num_of_buildings_in_province = 10
+				custom_trigger_tooltip = {
+					tooltip = J52_has_ten_buildings_tt
+					num_of_buildings_in_province = 10	
+				}
 			}
 			yulunshoon_area = {
 				type = all
 				development = 30
 				num_of_times_expanded_infrastructure = 2
-				num_of_buildings_in_province = 10
+				custom_trigger_tooltip = {
+					tooltip = J52_has_ten_buildings_tt
+					num_of_buildings_in_province = 10	
+				}
 			}
 		}
 
@@ -1980,65 +2003,87 @@ J52_3_end_missions = {
 
 		provinces_to_highlight = {  
 			OR = {
-				region = north_yarikhoi_region
-				region = nuzurbokh_region
-				region = khaashalg_region
-				region = moduk_region
-				region = nomsyulhan_region
-			}
-			J52_is_random_consecrate_province = yes
-			owned_by = ROOT
-			NOT = {
-				province_id = 6838 #Rift Bearer
 				AND = {
-					has_province_modifier = J52_consecrated_industry
-					development = 12
+					OR = {
+						region = north_yarikhoi_region
+						region = nuzurbokh_region
+						region = khaashalg_region
+						region = moduk_region
+						region = nomsyulhan_region
+					}
+					J52_is_random_consecrate_province = yes
+					owned_by = ROOT
+					NOT = {
+						has_province_modifier = J52_rights_guaranteed
+						province_id = 6838 #Rift Bearer
+						AND = {
+							has_province_modifier = J52_consecrated_industry
+							development = 12
+						}
+					}
+				}
+				AND = {
+					culture_group = khantaar
+					NOT = { is_state_core = ROOT }
 				}
 			}
 		}
 
 		trigger = {
 			is_hegemon = yes
+			custom_trigger_tooltip = {
+				tooltip = J52_khantaar_owned_tt
+				gozengun_superregion = {
+					type = all
+					OR = {
+						NOT = { culture_group = khantaar }
+						is_state_core = ROOT
+					}
+				}
+			}
 			north_yarikhoi_region = {
 				type = all
+				development = 12
 				OR = { 
 					has_province_modifier = J52_consecrated_industry
-					NOT = { J52_is_random_consecrate_province = yes }
+					J52_cant_consecratable_province = yes
 				}
-				development = 12
 			}
 			nuzurbokh_region = {
 				type = all
+				development = 12
 				OR = { 
 					has_province_modifier = J52_consecrated_industry
-					NOT = { J52_is_random_consecrate_province = yes }
+					J52_cant_consecratable_province = yes
+					has_province_modifier = J52_rights_guaranteed
 				}
-				development = 12
 			}
 			khaashalg_region = {
 				type = all
+				development = 12
 				OR = { 
 					has_province_modifier = J52_consecrated_industry
-					NOT = { J52_is_random_consecrate_province = yes }
+					J52_cant_consecratable_province = yes
+					has_province_modifier = J52_rights_guaranteed
 				}
-				development = 12
 			}
 			moduk_region = {
 				type = all
+				development = 12
 				OR = { 
 					has_province_modifier = J52_consecrated_industry
-					NOT = { J52_is_random_consecrate_province = yes }
+					J52_cant_consecratable_province = yes
+					has_province_modifier = J52_rights_guaranteed
 				}
-				development = 12
 			}
 			nomsyulhan_region = {
 				type = all
-				OR = {
+				development = 12
+				OR = { 
+					has_province_modifier = J52_consecrated_industry
+					J52_cant_consecratable_province = yes
+					has_province_modifier = J52_rights_guaranteed
 					province_id = 6838 #Rift Bearer
-					AND = {
-						has_province_modifier = J52_consecrated_industry
-						development = 12
-					}
 				}
 			}
 		}
@@ -2263,6 +2308,7 @@ J52_4_start_missions = {
 				AND = {
 					owned_by = ROOT
 					has_terrain = grasslands
+					has_farm_trade_goods = yes
 					NOT = { has_building = farm_estate }
 					ROOT = {
 						NOT = {
@@ -2292,11 +2338,27 @@ J52_4_start_missions = {
 				value = 20
 				region = nuzurbokh_region
 			}
-			num_of_owned_provinces_with = {
-				value = 5
-				region = nuzurbokh_region
-				has_terrain = grasslands
-				has_building = farm_estate
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 5
+					region = nuzurbokh_region
+					has_terrain = grasslands
+					has_building = farm_estate
+				}
+				custom_trigger_tooltip = {
+					tooltip = J52_can_have_farm_estate_tt
+					nuzurbokh_region = {
+						type = all
+						OR = {
+							NOT = { has_terrain = grasslands }
+							has_farm_trade_goods = no
+							AND = {
+								has_building = farm_estate
+								owned_by = ROOT
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -2496,6 +2558,10 @@ J52_4_end_missions = {
 		}
 
 		trigger = {
+			development_in_provinces = {
+				value = 300
+				culture_group = khudi
+			}
 			gozengun_superregion = {
 				type = all
 				OR = {
@@ -2622,10 +2688,10 @@ J52_4_end_missions = {
 							has_province_modifier = J52_consecrated_industry
 							base_production = 7
 							has_production_manufactory_or_gold_trigger = yes
-							NOT = { has_province_modifier = J52_mandate_restoration_of_khantaar_urban_centers_good_mod }
+							NOT = { has_province_modifier = J52_conglomerate_people_into_cities_good_mod }
 						}
 						add_province_modifier = {
-							name = J52_mandate_restoration_of_khantaar_urban_centers_good_mod
+							name = J52_conglomerate_people_into_cities_good_mod
 							duration = -1
 						}
 					}"
@@ -2904,6 +2970,10 @@ J52_5_middle_missions = {
 				value = 200
 				region = moduk_region
 			}
+			development_in_provinces = {
+				value = 300
+				culture = urmanki
+			}
 			num_of_owned_provinces_with = {
 				value = 7
 				region = moduk_region
@@ -2918,7 +2988,7 @@ J52_5_middle_missions = {
 			tooltip = {
 				change_trade_goods = cloth
 				add_random_development = 4
-				change_religion = ROOT
+				custom_tooltip = J52_convert_province_religion_tt
 				change_culture = urmanki
 			}
 			hidden_effect = {
@@ -2934,7 +3004,7 @@ J52_5_middle_missions = {
 						}
 						change_trade_goods = cloth
 						add_random_development = 4
-						change_religion = ROOT
+						change_religion = enuuk_followers
 						change_culture = urmanki
 					}"
 				}
@@ -3147,7 +3217,7 @@ J52_5_end_missions = {
 			capital_scope = { development = 50 }
 			all_owned_province = {
 				OR = {
-					NOT = { J52_is_luxuries_and_crafts_province = yes }
+					J52_not_luxuries_and_crafts_province = yes
 					AND = {
 						development = 30
 						num_of_times_expanded_infrastructure = 1

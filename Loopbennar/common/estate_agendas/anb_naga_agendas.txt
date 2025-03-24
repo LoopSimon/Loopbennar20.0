@@ -1,0 +1,5899 @@
+#Naga Agendas
+
+estate_church_naga_build_fort1 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_anzalkatsa_naga = yes
+        NOT = { has_country_flag = naga_difficulty_2 }
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 }
+        any_owned_province = {
+            is_state_core = ROOT
+            province_has_current_tech_fort_trigger = no
+        }
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT  # The province must be a core of the country
+                province_has_current_tech_fort_trigger = no
+            }
+            save_event_target_as = agenda_province   # Save the selected province as an event target
+        }
+    }
+    provinces_to_highlight = {
+        province_id = event_target:agenda_province
+    }
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:agenda_province = {
+                province_has_current_tech_fort_trigger = yes
+            } 
+        }
+
+    }
+    #Conditions for completing the task successfully
+    task_completed_effect = {
+
+        set_country_flag = naga_difficulty_2
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.1
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { mil = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_mil = 1   # Raise military skill to 4
+        }
+        else = {
+            add_mil_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+        
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 1                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+    fail_if = {
+        event_target:agenda_province = {
+            NOT = { owned_by = ROOT }
+        }
+    }
+}
+
+
+
+
+
+
+estate_church_naga_dev_port_3_4 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        OR = {
+            has_country_flag = naga_difficulty_3
+            has_country_flag = naga_difficulty_4
+        }
+        has_anzalkatsa_naga = yes
+        any_owned_province = {
+            is_state_core = ROOT
+            NOT = {development = 20}
+            province_has_center_of_trade_of_level = 1
+        }
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        random_owned_province = {
+            limit = {
+                NOT = {development = 20}
+                province_has_center_of_trade_of_level = 1
+                is_state_core = ROOT
+            }
+            save_event_target_as = agenda_province
+        }
+        event_target:agenda_province = {
+            if = {
+				limit = {
+					check_variable = {
+						which = province_dip_var
+						value = 1
+					}
+				}
+				set_variable = {
+					which = province_dip_var
+					value = 0
+				}
+            }
+            export_to_variable = {
+                which = province_dip_var
+                value = trigger_value:base_production
+            }
+            if = {
+                limit = {
+                    ROOT = { has_country_flag = naga_difficulty_3 }
+                }
+                change_variable = {
+                    which = province_dip_var
+                    value = 4
+                }
+            }
+            else = {
+                change_variable = {
+                    which = province_dip_var
+                    value = 6
+                }
+            }
+        
+        }
+    }
+    provinces_to_highlight = {
+        province_id = event_target:agenda_province
+    }
+    
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:agenda_province = {
+                base_production = "province_dip_var"
+            }
+        }
+    }
+    task_completed_effect = {
+        if ={
+            limit = {
+                has_country_flag = naga_difficulty_3
+            }
+            clr_country_flag = naga_difficulty_3
+            set_country_flag = naga_difficulty_4
+        }
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.5
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { dip = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_dip = 1   # Raise military skill to 4
+        }
+        else = {
+            add_dip_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_4
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+        else = {
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+    fail_if = {
+        event_target:agenda_province = {
+                NOT = { owned_by = ROOT }
+        }
+    }
+}
+estate_church_naga_build_manufacturies3 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_country_flag = naga_difficulty_3
+        has_anzalkatsa_naga = yes
+        num_of_owned_provinces_with = {
+            value = 4
+            is_state_core = ROOT
+            root_can_build_manufactory_here_trigger = yes
+        }
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        random_owned_province = {
+            limit = { NOT = { root_can_build_manufactory_here_trigger = no } 
+                is_state_core = ROOT
+            }
+            save_event_target_as = agenda_province1
+        }
+        random_owned_province = {
+            limit = { NOT = { root_can_build_manufactory_here_trigger = no  province_id = event_target:agenda_province1 } 
+                is_state_core = ROOT
+            }
+            save_event_target_as = agenda_province2
+        }
+        random_owned_province = {
+            limit = { NOT = { root_can_build_manufactory_here_trigger = no  province_id = event_target:agenda_province1 province_id = event_target:agenda_province2 } 
+                is_state_core = ROOT
+            }
+            save_event_target_as = agenda_province3
+        }
+        random_owned_province = {
+            limit = { NOT = { root_can_build_manufactory_here_trigger = no  province_id = event_target:agenda_province1 province_id = event_target:agenda_province2 province_id = event_target:agenda_province3 } 
+                is_state_core = ROOT
+            }
+            save_event_target_as = agenda_province4
+        }
+    }
+    provinces_to_highlight = {
+        OR = {
+            AND = {
+                province_id = event_target:agenda_province1
+                NOT = { event_target:agenda_province1 = { has_manufactory_trigger = no } }
+            }
+            AND = {
+                province_id = event_target:agenda_province2
+                NOT = { event_target:agenda_province2 = { has_manufactory_trigger = no } }
+            }
+            AND = {
+                province_id = event_target:agenda_province3
+                NOT = { event_target:agenda_province3 = { has_manufactory_trigger = no } }
+            }
+            AND = {
+                province_id = event_target:agenda_province3
+                NOT = { event_target:agenda_province4 = { has_manufactory_trigger = no } }
+            }
+        }
+    }
+
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:agenda_province1 = { has_manufactory_trigger = yes }
+            event_target:agenda_province2 = { has_manufactory_trigger = yes }
+            event_target:agenda_province3 = { has_manufactory_trigger = yes }
+            event_target:agenda_province4 = { has_manufactory_trigger = yes }
+        }
+    }
+    #Conditions for completing the task successfully
+    task_completed_effect = {
+        clr_country_flag = naga_difficulty_3
+        set_country_flag = naga_difficulty_4
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            # If the ruler has a bad trait, remove it and add a more positive trait
+            country_event = { 
+                id = church_naga_estate_events.5
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { dip = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_dip = 1   # Raise military skill to 4
+        }
+        else = {
+            add_dip_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+    fail_if = {
+            OR = {
+            event_target:agenda_province1 = {
+                NOT = { owned_by = ROOT }
+        }
+            event_target:agenda_province2 = {
+                NOT = { owned_by = ROOT }
+        }
+            event_target:agenda_province3 = {
+                NOT = { owned_by = ROOT }
+        }
+        
+    }
+    }
+}
+
+estate_church_naga_build_barrack_1_2 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 }
+        has_anzalkatsa_naga = yes
+        mil_tech = 6
+        if = {
+            limit = {
+                has_country_flag=naga_difficulty_2
+            }
+            num_of_owned_provinces_with = {
+                value = 3
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = barracks }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = training_fields }
+                        ROOT = { mil_tech = 16 }
+                        OR = {
+                            has_building = barracks
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+        }
+        else = {
+            any_owned_province = {
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = barracks }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = training_fields }
+                        ROOT = { mil_tech = 16 }
+                        OR = {
+                            has_building = barracks
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        set_variable = {
+            which = estate_church_naga_build_barrack_1_2_var1
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_barrack_1_2_var2
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_barrack_1_2_var3
+            value = 0
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = barracks }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = training_fields }
+                        ROOT = { mil_tech = 16 }
+                        OR = {
+                            has_building = barracks
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province1
+        }
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            random_owned_province = {
+                limit = {
+                    is_state_core = ROOT
+                    NOT = {province_id = event_target:agenda_province1}
+                    OR = {
+                        AND = {
+                            NOT = { has_building = barracks }
+                            num_free_building_slots = 1
+                        }
+                        AND = {
+                            NOT = { has_building = training_fields }
+                            ROOT = { mil_tech = 16 }
+                            OR = {
+                                has_building = barracks
+                                num_free_building_slots = 1
+                            }
+                        }
+                    }
+                }
+                save_event_target_as = agenda_province2
+            }
+            random_owned_province = {
+                limit = {
+                    is_state_core = ROOT
+                    NOT = {province_id = event_target:agenda_province1}
+                    NOT = {province_id = event_target:agenda_province2}
+                    OR = {
+                        AND = {
+                            NOT = { has_building = barracks }
+                            num_free_building_slots = 1
+                        }
+                        AND = {
+                            NOT = { has_building = training_fields }
+                            ROOT = { mil_tech = 16 }
+                            OR = {
+                                has_building = barracks
+                                num_free_building_slots = 1
+                            }
+                        }
+                    }
+                }
+                save_event_target_as = agenda_province3
+            }
+            event_target:agenda_province2 = {
+                if = {
+                    limit = {
+                        NOT = { has_building = training_fields }
+                        ROOT = { mil_tech = 16 }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = barracks
+                        }
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_barrack_1_2_var2
+                            value = 2
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        NOT = { has_building = barracks }
+                        NOT = { has_building = training_fields }
+                        num_free_building_slots = 1
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_barrack_1_2_var2
+                            value = 1
+                        }
+                    }
+                }
+            }
+            event_target:agenda_province3 = {
+                if = {
+                    limit = {
+                        NOT = { has_building = training_fields }
+                        ROOT = { mil_tech = 16 }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = barracks
+                        }
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_barrack_1_2_var3
+                            value = 2
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        NOT = { has_building = barracks }
+                        NOT = { has_building = training_fields }
+                        num_free_building_slots = 1
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_barrack_1_2_var3
+                            value = 1
+                        }
+                    }
+                }
+            }
+        }
+        event_target:agenda_province1 = {
+            if = {
+                limit = {
+                    NOT = { has_building = training_fields }
+                    ROOT = { mil_tech = 16 }
+                    OR = {
+                        num_free_building_slots = 1
+                        has_building = barracks
+                    }
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_barrack_1_2_var1
+                        value = 2
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    NOT = { has_building = barracks }
+                    NOT = { has_building = training_fields }
+                    num_free_building_slots = 1
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_barrack_1_2_var1
+                        value = 1
+                    }
+                }
+            }
+        }
+    }
+    provinces_to_highlight = {
+        OR = {
+            AND = {
+                province_id = event_target:agenda_province1
+                NOT = {
+                    AND = {
+                        has_building = barracks
+                        NOT = { ROOT = { check_variable = { which = estate_church_naga_build_barrack_1_2_var1 value = 2 } } }
+                    }
+                    has_building = training_fields
+                }
+            }
+            AND = {
+                ROOT = { has_country_flag = naga_difficulty_2 }
+                OR = {
+                    AND = {
+                        province_id = event_target:agenda_province2
+                        NOT = {
+                            AND = {
+                                has_building = barracks
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_barrack_1_2_var2 value = 2 } } }
+                            }
+                            has_building = training_fields
+                        }
+                    }
+                    AND = {
+                        province_id = event_target:agenda_province3
+                        NOT = {
+                            AND = {
+                                has_building = barracks
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_barrack_1_2_var3 value = 2 } } }
+                            }
+                            has_building = training_fields
+                        }
+                    }
+                }
+            }
+        }
+    }
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_barrack_1_2_var1
+                        value = 2
+                    }
+                }
+                event_target:agenda_province1 = {
+                    has_building = training_fields
+                }
+            }
+            else = {
+                event_target:agenda_province1 = {
+                    OR = {
+                    has_building = barracks
+                    has_building = training_fields
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = naga_difficulty_2
+                }
+                if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_barrack_1_2_var2
+                            value = 2
+                        }
+                    }
+                    event_target:agenda_province2 = {
+                        has_building = training_fields
+                    }
+                }
+                else = {
+                    event_target:agenda_province2 = {
+                        OR = {
+                        has_building = barracks
+                        has_building = training_fields
+                        }
+                    }
+                }
+                
+                if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_barrack_1_2_var3
+                            value = 2
+                        }
+                    }
+                    event_target:agenda_province3 = {
+                        has_building = training_fields
+                    }
+                }
+                else = {
+                    event_target:agenda_province3 = {
+                        OR = {
+                        has_building = barracks
+                        has_building = training_fields
+                        }
+                    }
+                }
+            }
+        }
+    }
+    task_completed_effect = {
+        if = {
+            limit = {
+                has_country_flag=naga_difficulty_2
+            }
+            clr_country_flag = naga_difficulty_2
+            set_country_flag = naga_difficulty_3
+        }
+        else = {
+            set_country_flag = naga_difficulty_2
+        }
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes 
+            }
+                # If the ruler has a bad trait, remove it and add a more positive trait
+            country_event = { 
+                id = church_naga_estate_events.1
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { mil = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_mil = 1   # Raise military skill to 4
+        }
+        else = {
+            add_mil_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+        else = {
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 1                 # Size of the rebel stack (1 stack)
+                }
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+    fail_if = {
+        if = {
+            limit = { has_country_flag = naga_difficulty_2 }
+            OR = {
+                event_target:agenda_province1 = {
+                    NOT = { owned_by = ROOT }
+                }
+                event_target:agenda_province2 = {
+                    NOT = { owned_by = ROOT }
+                }
+                event_target:agenda_province3 = {
+                    NOT = { owned_by = ROOT }
+                }
+            }
+        }
+        else = {
+            event_target:agenda_province1 = {
+                NOT = { owned_by = ROOT }
+            }
+        }
+    }
+}
+
+
+
+
+
+estate_church_naga_build_marketplace_1_2 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        NOT = { has_country_flag=naga_difficulty_3 }
+        NOT = { has_country_flag=naga_difficulty_4 }
+        dip_tech = 4
+        has_anzalkatsa_naga = yes
+        if = {
+            limit = {
+                has_country_flag=naga_difficulty_2
+            }
+            num_of_owned_provinces_with = {
+                value = 3
+                is_state_core = ROOT
+                NOT = { has_building = stock_exchange }
+                OR = {
+                    AND = {
+                        NOT = { has_building = marketplace }
+                        NOT = { has_building = trade_depot }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        ROOT = { dip_tech = 17 }
+                        NOT = { has_building = trade_depot }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = marketplace
+                        }
+                    }
+                    AND = {
+                        ROOT = { dip_tech = 22 }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = trade_depot
+                        }
+                    }
+                }
+            }
+        }
+        else = {
+            any_owned_province = {
+                is_state_core = ROOT
+                NOT = { has_building = stock_exchange }
+                OR = {
+                    AND = {
+                        NOT = { has_building = marketplace }
+                        NOT = { has_building = trade_depot }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        ROOT = { dip_tech = 17 }
+                        NOT = { has_building = trade_depot }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = marketplace
+                        }
+                    }
+                    AND = {
+                        ROOT = { dip_tech = 22 }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = trade_depot
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        set_variable = {
+            which = estate_church_naga_build_marketplace_1_2_var1
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_marketplace_1_2_var2
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_marketplace_1_2_var3
+            value = 0
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                NOT = { has_building = stock_exchange }
+                OR = {
+                    AND = {
+                        NOT = { has_building = marketplace }
+                        NOT = { has_building = trade_depot }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        ROOT = { dip_tech = 17 }
+                        NOT = { has_building = trade_depot }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = marketplace
+                        }
+                    }
+                    AND = {
+                        ROOT = { dip_tech = 22 }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = trade_depot
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province1
+        }
+        event_target:agenda_province1 = {
+            if = {
+                limit = {
+                    has_building = trade_depot
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_marketplace_1_2_var1
+                        value = 3
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    has_building = marketplace
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_marketplace_1_2_var1
+                        value = 2
+                    }
+                }
+            }
+            else = {
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_marketplace_1_2_var1
+                        value = 1
+                    }
+                }
+            }
+        }
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            random_owned_province = {
+                limit = {
+                    is_state_core = ROOT
+                    NOT = { has_building = stock_exchange }
+                    OR = {
+                        AND = {
+                            NOT = { has_building = marketplace }
+                            NOT = { has_building = trade_depot }
+                            num_free_building_slots = 1
+                        }
+                        AND = {
+                            ROOT = { dip_tech = 17 }
+                            NOT = { has_building = trade_depot }
+                            OR = {
+                                num_free_building_slots = 1
+                                has_building = marketplace
+                            }
+                        }
+                        AND = {
+                            ROOT = { dip_tech = 22 }
+                            OR = {
+                                num_free_building_slots = 1
+                                has_building = trade_depot
+                            }
+                        }
+                    }
+                }
+                save_event_target_as = agenda_province2
+            }
+            event_target:agenda_province2 = {
+                if = {
+                    limit = {
+                        has_building = trade_depot
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var2
+                            value = 3
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        has_building = marketplace
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var2
+                            value = 2
+                        }
+                    }
+                }
+                else = {
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var2
+                            value = 1
+                        }
+                    }
+                }
+            }
+            random_owned_province = {
+                limit = {
+                    is_state_core = ROOT
+                    NOT = { has_building = stock_exchange }
+                    OR = {
+                        AND = {
+                            NOT = { has_building = marketplace }
+                            NOT = { has_building = trade_depot }
+                            num_free_building_slots = 1
+                        }
+                        AND = {
+                            ROOT = { dip_tech = 17 }
+                            NOT = { has_building = trade_depot }
+                            OR = {
+                                num_free_building_slots = 1
+                                has_building = marketplace
+                            }
+                        }
+                        AND = {
+                            ROOT = { dip_tech = 22 }
+                            OR = {
+                                num_free_building_slots = 1
+                                has_building = trade_depot
+                            }
+                        }
+                    }
+                }
+                save_event_target_as = agenda_province3
+            }
+            event_target:agenda_province3 = {
+                if = {
+                    limit = {
+                        has_building = trade_depot
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var3
+                            value = 3
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        has_building = marketplace
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var3
+                            value = 2
+                        }
+                    }
+                }
+                else = {
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var3
+                            value = 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+    provinces_to_highlight = {
+        OR = {
+            AND = {
+                province_id = event_target:agenda_province1
+                NOT = {
+                    AND = {
+                        has_building = marketplace
+                        NOT = { ROOT = { check_variable = { which = estate_church_naga_build_marketplace_1_2_var3 value = 2 } } }
+                    }
+                    AND = {
+                        has_building = trade_depot
+                        NOT = { ROOT = { check_variable = { which = estate_church_naga_build_marketplace_1_2_var3 value = 3 } } }
+                    }
+                    has_building = stock_exchange
+                }
+            }
+            AND = {
+                ROOT = { has_country_flag = naga_difficulty_2 }
+                OR = {
+                    AND = {
+                        province_id = event_target:agenda_province2
+                        NOT = {
+                            AND = {
+                                has_building = marketplace
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_marketplace_1_2_var3 value = 2 } } }
+                            }
+                            AND = {
+                                has_building = trade_depot
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_marketplace_1_2_var3 value = 3 } } }
+                            }
+                            has_building = stock_exchange
+                        }
+                    }
+                    AND = {
+                        province_id = event_target:agenda_province3
+                        NOT = {
+                            AND = {
+                                has_building = marketplace
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_marketplace_1_2_var3 value = 2 } } }
+                            }
+                            AND = {
+                                has_building = trade_depot
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_marketplace_1_2_var3 value = 3 } } }
+                            }
+                            has_building = stock_exchange
+                        }
+                    }
+                }
+            }
+        }
+    }
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_marketplace_1_2_var1
+                        value = 3
+                    }
+                }
+                event_target:agenda_province1 = {
+                    has_building = stock_exchange
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_marketplace_1_2_var1
+                        value = 2
+                    }
+                }
+                event_target:agenda_province1 = {
+                    OR = {
+                        has_building = trade_depot
+                        has_building = stock_exchange
+                    }
+                }
+            }
+            else = {
+                event_target:agenda_province1 = {
+                    OR = {
+                        has_building = marketplace
+                        has_building = trade_depot
+                        has_building = stock_exchange
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag=naga_difficulty_2
+                }
+                if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var2
+                            value = 3
+                        }
+                    }
+                    event_target:agenda_province2 = {
+                        has_building = stock_exchange
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var2
+                            value = 2
+                        }
+                    }
+                    event_target:agenda_province2 = {
+                        OR = {
+                            has_building = trade_depot
+                            has_building = stock_exchange
+                        }
+                    }
+                }
+                else = {
+                    event_target:agenda_province2 = {
+                        OR = {
+                            has_building = marketplace
+                            has_building = trade_depot
+                            has_building = stock_exchange
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var3
+                            value = 3
+                        }
+                    }
+                    event_target:agenda_province3 = {
+                        has_building = stock_exchange
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_marketplace_1_2_var3
+                            value = 2
+                        }
+                    }
+                    event_target:agenda_province3 = {
+                        OR = {
+                            has_building = trade_depot
+                            has_building = stock_exchange
+                        }
+                    }
+                }
+                else = {
+                    event_target:agenda_province3 = {
+                        OR = {
+                            has_building = marketplace
+                            has_building = trade_depot
+                            has_building = stock_exchange
+                        }
+                    }
+                }
+            }
+        }
+    }
+    task_completed_effect = {
+        if = {
+            limit = {
+                has_country_flag=naga_difficulty_2
+            }
+            clr_country_flag = naga_difficulty_2
+            set_country_flag = naga_difficulty_3
+        }
+        else = {
+            set_country_flag = naga_difficulty_2
+        }
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.5
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { dip = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_dip = 1   # Raise military skill to 4
+        }
+        else = {
+            add_dip_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+        else = {
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 1                 # Size of the rebel stack (1 stack)
+                }
+            }
+        }
+            on_failed_agenda_effect = yes
+            clr_auto_complete_flag = yes
+    }
+    fail_if = {
+        if = {
+            limit = { has_country_flag = naga_difficulty_2 }
+            OR = {
+                event_target:agenda_province1 = {
+                    NOT = { owned_by = ROOT }
+                }
+                event_target:agenda_province2 = {
+                    NOT = { owned_by = ROOT }
+                }
+                event_target:agenda_province3 = {
+                    NOT = { owned_by = ROOT }
+                }
+            }
+        }
+        else = {
+            event_target:agenda_province1 = {
+                NOT = { owned_by = ROOT }
+            }
+        }
+    }
+}
+estate_church_naga_build_temple_1_2 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 }
+        adm_tech = 4
+        has_anzalkatsa_naga = yes
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            num_of_owned_provinces_with = {
+                value = 3
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = temple }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = cathedral }
+                        ROOT = { adm_tech = 19 }
+                        OR = {
+                            has_building = temple
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+        }
+        else = {
+            any_owned_province = {
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = temple }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = cathedral }
+                        ROOT = { adm_tech = 19 }
+                        OR = {
+                            has_building = temple
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        set_variable = {
+            which = estate_church_naga_build_temple_1_2_var1
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_temple_1_2_var2
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_temple_1_2_var3
+            value = 0
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = temple }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = cathedral }
+                        ROOT = { adm_tech = 19 }
+                        OR = {
+                            has_building = temple
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province1
+        }
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            random_owned_province = {
+                limit = {
+                    is_state_core = ROOT
+                    NOT = {province_id = event_target:agenda_province1}
+                    OR = {
+                        AND = {
+                            NOT = { has_building = temple }
+                            num_free_building_slots = 1
+                        }
+                        AND = {
+                            NOT = { has_building = cathedral }
+                            ROOT = { adm_tech = 19 }
+                            OR = {
+                                has_building = temple
+                                num_free_building_slots = 1
+                            }
+                        }
+                    }
+                }
+                save_event_target_as = agenda_province2
+            }
+            random_owned_province = {
+                limit = {
+                    is_state_core = ROOT
+                    NOT = {province_id = event_target:agenda_province1}
+                    NOT = {province_id = event_target:agenda_province2}
+                    OR = {
+                        AND = {
+                            NOT = { has_building = temple }
+                            num_free_building_slots = 1
+                        }
+                        AND = {
+                            NOT = { has_building = cathedral }
+                            ROOT = { adm_tech = 19 }
+                            OR = {
+                                has_building = temple
+                                num_free_building_slots = 1
+                            }
+                        }
+                    }
+                }
+                save_event_target_as = agenda_province3
+            }
+            event_target:agenda_province2 = {
+                if = {
+                    limit = {
+                        NOT = { has_building = cathedral }
+                        ROOT = { adm_tech = 19 }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = temple
+                        }
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_temple_1_2_var2
+                            value = 2
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        NOT = { has_building = temple }
+                        NOT = { has_building = cathedral }
+                        num_free_building_slots = 1
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_temple_1_2_var2
+                            value = 1
+                        }
+                    }
+                }
+            }
+            event_target:agenda_province3 = {
+                if = {
+                    limit = {
+                        NOT = { has_building = cathedral }
+                        ROOT = { adm_tech = 19 }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = temple
+                        }
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_temple_1_2_var3
+                            value = 2
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        NOT = { has_building = temple }
+                        NOT = { has_building = cathedral }
+                        num_free_building_slots = 1
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_temple_1_2_var3
+                            value = 1
+                        }
+                    }
+                }
+            }
+        }
+        event_target:agenda_province1 = {
+            if = {
+                limit = {
+                    NOT = { has_building = cathedral }
+                    ROOT = { adm_tech = 19 }
+                    OR = {
+                        num_free_building_slots = 1
+                        has_building = temple
+                    }
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_temple_1_2_var1
+                        value = 2
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    NOT = { has_building = temple }
+                    NOT = { has_building = cathedral }
+                    num_free_building_slots = 1
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_temple_1_2_var1
+                        value = 1
+                    }
+                }
+            }
+        }
+    }
+    provinces_to_highlight = {
+        OR = {
+            AND = {
+                province_id = event_target:agenda_province1
+                NOT = {
+                    AND = {
+                        has_building = temple
+                        NOT = { ROOT = { check_variable = { which = estate_church_naga_build_temple_1_2_var1 value = 2 } } }
+                    }
+                    has_building = cathedral
+                }
+            }
+            AND = {
+                ROOT = { has_country_flag = naga_difficulty_2 }
+                OR = {
+                    AND = {
+                        province_id = event_target:agenda_province2
+                        NOT = {
+                            AND = {
+                                has_building = temple
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_temple_1_2_var2 value = 2 } } }
+                            }
+                            has_building = cathedral
+                        }
+                    }
+                    AND = {
+                        province_id = event_target:agenda_province3
+                        NOT = {
+                            AND = {
+                                has_building = temple
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_temple_1_2_var3 value = 2 } } }
+                            }
+                            has_building = cathedral
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_temple_1_2_var1
+                        value = 2
+                    }
+                }
+                event_target:agenda_province1 = {
+                    has_building = cathedral
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {
+                    which = estate_church_naga_build_temple_1_2_var1
+                    value = 1
+                }
+                }
+                event_target:agenda_province1 = {
+                    OR = {
+                    has_building = temple
+                    has_building = cathedral
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = naga_difficulty_2
+                }
+                if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_temple_1_2_var2
+                            value = 2
+                        }
+                    }
+                    event_target:agenda_province2 = {
+                        has_building = cathedral
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_temple_1_2_var2
+                            value = 1
+                        }
+                    }
+                    event_target:agenda_province2 = {
+                        OR = {
+                            has_building = temple
+                            has_building = cathedral
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_temple_1_2_var3
+                            value = 2
+                        }
+                    }
+                    event_target:agenda_province3 = {
+                        has_building = cathedral
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_temple_1_2_var3
+                            value = 1
+                        }
+                    }
+                    event_target:agenda_province3 = {
+                        OR = {
+                            has_building = temple
+                            has_building = cathedral
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #Conditions for completing the task successfully
+    task_completed_effect = {
+        if = {
+            limit = {
+                has_country_flag=naga_difficulty_2
+            }
+            clr_country_flag = naga_difficulty_2
+            set_country_flag = naga_difficulty_3
+        }
+        else = {
+            set_country_flag = naga_difficulty_2
+        }
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.7
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { adm = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_adm = 1   # Raise military skill to 4
+        }
+        else = {
+            add_adm_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+        else = {
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 1                 # Size of the rebel stack (1 stack)
+                }
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+    fail_if = {
+        if = {
+            limit = { has_country_flag = naga_difficulty_2 }
+            OR = {
+                event_target:agenda_province1 = {
+                    NOT = { owned_by = ROOT }
+                }
+                event_target:agenda_province2 = {
+                    NOT = { owned_by = ROOT }
+                }
+                event_target:agenda_province3 = {
+                    NOT = { owned_by = ROOT }
+                }
+            }
+        }
+        else = {
+            event_target:agenda_province1 = {
+                NOT = { owned_by = ROOT }
+            }
+        }
+    }
+}
+estate_church_naga_build_regimentcamp_1_2 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 }
+        has_anzalkatsa_naga = yes
+        mil_tech = 8
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            num_of_owned_provinces_with = {
+                value = 3
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = regimental_camp }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = conscription_center }
+                        ROOT = { mil_tech = 22 }
+                        OR = {
+                            has_building = regimental_camp
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+        }
+        else = {
+            any_owned_province = {
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = regimental_camp }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = conscription_center }
+                        ROOT = { mil_tech = 22 }
+                        OR = {
+                            has_building = regimental_camp
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        set_variable = {
+            which = estate_church_naga_build_regimentcamp_1_2_var1
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_regimentcamp_1_2_var2
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_regimentcamp_1_2_var3
+            value = 0
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = regimental_camp }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = conscription_center }
+                        ROOT = { mil_tech = 22 }
+                        OR = {
+                            has_building = regimental_camp
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province1
+        }
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            random_owned_province = {
+                limit = {
+                    is_state_core = ROOT
+                    NOT = {province_id = event_target:agenda_province1}
+                    OR = {
+                        AND = {
+                            NOT = { has_building = regimental_camp }
+                            num_free_building_slots = 1
+                        }
+                        AND = {
+                            NOT = { has_building = conscription_center }
+                            ROOT = { mil_tech = 22 }
+                            OR = {
+                                has_building = regimental_camp
+                                num_free_building_slots = 1
+                            }
+                        }
+                    }
+                }
+                save_event_target_as = agenda_province2
+            }
+            random_owned_province = {
+                limit = {
+                    is_state_core = ROOT
+                    NOT = {province_id = event_target:agenda_province1}
+                    NOT = {province_id = event_target:agenda_province2}
+                    OR = {
+                        AND = {
+                            NOT = { has_building = regimental_camp }
+                            num_free_building_slots = 1
+                        }
+                        AND = {
+                            NOT = { has_building = conscription_center }
+                            ROOT = { mil_tech = 22 }
+                            OR = {
+                                has_building = regimental_camp
+                                num_free_building_slots = 1
+                            }
+                        }
+                    }
+                }
+                save_event_target_as = agenda_province3
+            }
+            event_target:agenda_province2 = {
+                if = {
+                    limit = {
+                        NOT = { has_building = conscription_center }
+                        ROOT = { mil_tech = 22 }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = regimental_camp
+                        }
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_regimentcamp_1_2_var2
+                            value = 2
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        NOT = { has_building = regimental_camp }
+                        NOT = { has_building = conscription_center }
+                        num_free_building_slots = 1
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_regimentcamp_1_2_var2
+                            value = 1
+                        }
+                    }
+                }
+            }
+            event_target:agenda_province3 = {
+                if = {
+                    limit = {
+                        NOT = { has_building = conscription_center }
+                        ROOT = { mil_tech = 22 }
+                        OR = {
+                            num_free_building_slots = 1
+                            has_building = regimental_camp
+                        }
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_regimentcamp_1_2_var3
+                            value = 2
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        NOT = { has_building = regimental_camp }
+                        NOT = { has_building = conscription_center }
+                        num_free_building_slots = 1
+                    }
+                    ROOT = {
+                        set_variable = {
+                            which = estate_church_naga_build_regimentcamp_1_2_var3
+                            value = 1
+                        }
+                    }
+                }
+            }
+        }
+        event_target:agenda_province1 = {
+            if = {
+                limit = {
+                    NOT = { has_building = conscription_center }
+                    ROOT = { mil_tech = 22 }
+                    OR = {
+                        num_free_building_slots = 1
+                        has_building = regimental_camp
+                    }
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_regimentcamp_1_2_var1
+                        value = 2
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    NOT = { has_building = regimental_camp }
+                    NOT = { has_building = conscription_center }
+                    num_free_building_slots = 1
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_regimentcamp_1_2_var1
+                        value = 1
+                    }
+                }
+            }
+        }
+    }
+    provinces_to_highlight = {
+        OR = {
+            AND = {
+                province_id = event_target:agenda_province1
+                NOT = {
+                    AND = {
+                        has_building = regimental_camp
+                        NOT = { ROOT = { check_variable = { which = estate_church_naga_build_regimentcamp_1_2_var1 value = 2 } } }
+                    }
+                    has_building = conscription_center
+                }
+            }
+            AND = {
+                ROOT = { has_country_flag = naga_difficulty_2 }
+                OR = {
+                    AND = {
+                        province_id = event_target:agenda_province2
+                        NOT = {
+                            AND = {
+                                has_building = regimental_camp
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_regimentcamp_1_2_var2 value = 2 } } }
+                            }
+                            has_building = conscription_center
+                        }
+                    }
+                    AND = {
+                        province_id = event_target:agenda_province3
+                        NOT = {
+                            AND = {
+                                has_building = regimental_camp
+                                NOT = { ROOT = { check_variable = { which = estate_church_naga_build_regimentcamp_1_2_var3 value = 2 } } }
+                            }
+                            has_building = conscription_center
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_regimentcamp_1_2_var1
+                        value = 2
+                    }
+                }
+                event_target:agenda_province1 = {
+                    has_building = conscription_center
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {
+                    which = estate_church_naga_build_regimentcamp_1_2_var1
+                    value = 1
+                }
+                }
+                event_target:agenda_province1 = {
+                    OR = {
+                    has_building = regimental_camp
+                    has_building = conscription_center
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag=naga_difficulty_2
+                }
+                if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_regimentcamp_1_2_var2
+                            value = 2
+                        }
+                    }
+                    event_target:agenda_province2 = {
+                        has_building = conscription_center
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_regimentcamp_1_2_var2
+                            value = 1
+                        }
+                    }
+                    event_target:agenda_province2 = {
+                        OR = {
+                            has_building = regimental_camp
+                            has_building = conscription_center
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_regimentcamp_1_2_var3
+                            value = 2
+                        }
+                    }
+                    event_target:agenda_province3 = {
+                        has_building = conscription_center
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {
+                            which = estate_church_naga_build_regimentcamp_1_2_var3
+                            value = 1
+                        }
+                    }
+                    event_target:agenda_province3 = {
+                        OR = {
+                            has_building = regimental_camp
+                            has_building = conscription_center
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #Conditions for completing the task successfully
+    task_completed_effect = {
+        if = {
+            limit = {
+                has_country_flag=naga_difficulty_2
+            }
+            clr_country_flag = naga_difficulty_2
+            set_country_flag = naga_difficulty_3
+        }
+        else = {
+            set_country_flag = naga_difficulty_2
+        }
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes 
+            }
+            # If the ruler has a bad trait, remove it and add a more positive trait
+            country_event = { 
+                id = church_naga_estate_events.1
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { mil = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_mil = 1   # Raise military skill to 4
+        }
+        else = {
+            add_mil_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_2
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+        else = {
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 1                 # Size of the rebel stack (1 stack)
+                }
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+    fail_if = {
+        if = {
+            limit = { has_country_flag = naga_difficulty_2 }
+            OR = {
+                event_target:agenda_province1 = {
+                    NOT = { owned_by = ROOT }
+                }
+                event_target:agenda_province2 = {
+                    NOT = { owned_by = ROOT }
+                }
+                event_target:agenda_province3 = {
+                    NOT = { owned_by = ROOT }
+                }
+            }
+        }
+        else = {
+            event_target:agenda_province1 = {
+                NOT = { owned_by = ROOT }
+            }
+        }
+    }
+}
+
+
+estate_church_naga_build_courthouse2 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_country_flag = naga_difficulty_2
+        has_anzalkatsa_naga = yes
+        adm_tech = 8
+        num_of_owned_provinces_with = {
+            value = 3
+            is_state_core = ROOT
+            OR = {
+                AND = {
+                    NOT = { has_building = courthouse }
+                    num_free_building_slots = 1
+                }
+                AND = {
+                    NOT = { has_building = town_hall }
+                    ROOT = { adm_tech = 22 }
+                    OR = {
+                        has_building = courthouse
+                        num_free_building_slots = 1
+                    }
+                }
+            }
+        }
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        set_variable = {
+            which = estate_church_naga_build_courthouse2_var1
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_courthouse2_var2
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_courthouse2_var3
+            value = 0
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                OR = {
+                    AND = {
+                        NOT = { has_building = courthouse }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = town_hall }
+                        ROOT = { adm_tech = 22 }
+                        OR = {
+                            has_building = courthouse
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province1
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                NOT = {province_id = event_target:agenda_province1}
+                OR = {
+                    AND = {
+                        NOT = { has_building = courthouse }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = town_hall }
+                        ROOT = { adm_tech = 22 }
+                        OR = {
+                            has_building = courthouse
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province2
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                NOT = {province_id = event_target:agenda_province1}
+                NOT = {province_id = event_target:agenda_province2}
+                OR = {
+                    AND = {
+                        NOT = { has_building = courthouse }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = town_hall }
+                        ROOT = { adm_tech = 22 }
+                        OR = {
+                            has_building = courthouse
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province3
+        }
+        event_target:agenda_province1 = {
+            if = {
+                limit = {
+                    NOT = { has_building = town_hall }
+                    ROOT = { adm_tech = 22 }
+                    OR = {
+                        num_free_building_slots = 1
+                        has_building = courthouse
+                    }
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_courthouse2_var1
+                        value = 2
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    NOT = { has_building = courthouse }
+                    NOT = { has_building = town_hall }
+                    num_free_building_slots = 1
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_courthouse2_var1
+                        value = 1
+                    }
+                }
+            }
+        }
+        event_target:agenda_province2 = {
+            if = {
+                limit = {
+                    NOT = { has_building = town_hall }
+                    ROOT = { adm_tech = 22 }
+                    OR = {
+                        num_free_building_slots = 1
+                        has_building = courthouse
+                    }
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_courthouse2_var2
+                        value = 2
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    NOT = { has_building = courthouse }
+                    NOT = { has_building = town_hall }
+                    num_free_building_slots = 1
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_courthouse2_var2
+                        value = 1
+                    }
+                }
+            }
+        }
+        event_target:agenda_province3 = {
+            if = {
+                limit = {
+                    NOT = { has_building = town_hall }
+                    ROOT = { adm_tech = 22 }
+                    OR = {
+                        num_free_building_slots = 1
+                        has_building = courthouse
+                    }
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_courthouse2_var3
+                        value = 2
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    NOT = { has_building = courthouse }
+                    NOT = { has_building = town_hall }
+                    num_free_building_slots = 1
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_courthouse2_var3
+                        value = 1
+                    }
+                }
+            }
+        }
+    }
+    provinces_to_highlight = {
+        OR = {
+             AND = {
+                province_id = event_target:agenda_province1
+                NOT = {
+                    AND = {
+                        has_building = courthouse
+                        NOT = { check_variable = { which = estate_church_naga_build_courthouse2_var1 value = 2 } }
+                    }
+                    has_building = town_hall
+                }
+            }
+            AND = {
+                province_id = event_target:agenda_province2
+                NOT = {
+                    AND = {
+                        has_building = courthouse
+                        NOT = { check_variable = { which = estate_church_naga_build_courthouse2_var2 value = 2 } }
+                    }
+                    has_building = town_hall
+                }
+            }
+            AND = {
+                province_id = event_target:agenda_province3
+                NOT = {
+                    AND = {
+                        has_building = courthouse
+                        NOT = { check_variable = { which = estate_church_naga_build_courthouse2_var3 value = 2 } }
+                    }
+                    has_building = town_hall
+                }
+            }
+        }
+    }
+
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_courthouse2_var1
+                        value = 2
+                    }
+                }
+                event_target:agenda_province1 = {
+                    has_building = town_hall
+                }
+                }
+            else_if = {
+                limit = {
+                    check_variable = {
+                    which = estate_church_naga_build_courthouse2_var1
+                    value = 1
+                }
+                }
+                event_target:agenda_province1 = {
+                    OR = {
+                    has_building = courthouse
+                    has_building = town_hall
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_courthouse2_var2
+                        value = 2
+                    }
+                }
+                event_target:agenda_province2 = {
+                    has_building = town_hall
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_courthouse2_var2
+                        value = 1
+                    }
+                }
+                event_target:agenda_province2 = {
+                    OR = {
+                        has_building = courthouse
+                        has_building = town_hall
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_courthouse2_var3
+                        value = 2
+                    }
+                }
+                event_target:agenda_province3 = {
+                    has_building = town_hall
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_courthouse2_var3
+                        value = 1
+                    }
+                }
+                event_target:agenda_province3 = {
+                    OR = {
+                        has_building = courthouse
+                        has_building = town_hall
+                    }
+                }
+            }
+        }
+    }
+    #Conditions for completing the task successfully
+    task_completed_effect = {
+        clr_country_flag = naga_difficulty_2
+        set_country_flag = naga_difficulty_3
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.7
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { adm = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_adm = 1   # Raise military skill to 4
+        }
+        else = {
+            add_adm_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 2                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 2                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+    fail_if = {
+        OR = {
+            event_target:agenda_province1 = {
+                NOT = { owned_by = ROOT }
+        }
+            event_target:agenda_province2 = {
+                NOT = { owned_by = ROOT }
+        }
+            event_target:agenda_province3 = {
+                NOT = { owned_by = ROOT }
+        }
+        
+    }
+    }
+}
+
+estate_church_naga_save_brethren3 = {
+ 	max_days_active = 1825 						#Lets you override the default of 20 years for an agenda
+ 	can_select = {
+        has_country_flag = naga_difficulty_3
+        has_anzalkatsa_naga = yes
+		is_free_or_tributary_trigger = yes
+		is_at_war = no
+		any_owned_province = {
+			any_neighbor_province = {
+				NOT = { owned_by = ROOT }
+				is_city = yes
+				religion = ROOT
+				has_discovered = ROOT
+				owner = {
+					is_free_or_tributary_trigger = yes
+					NOT = { religion = ROOT }
+                    total_development = 100
+					NOT = { religion = the_thought }
+					NOT = { is_subject_of = ROOT }
+					NOT = { overlord_of = ROOT }
+					NOT = { alliance_with = ROOT }
+					NOT = { ROOT = { truce_with = prev } }
+				}
+				NOT = { religion = secondary }
+			}
+		}
+	}
+	selection_weight = {
+		factor = 1
+	}
+	pre_effect = {
+		random_owned_province = {
+			limit = {
+				any_neighbor_province = {
+					NOT = { owned_by = ROOT }
+					is_city = yes
+					religion = ROOT
+					has_discovered = ROOT
+					owner = {
+						is_free_or_tributary_trigger = yes
+                        total_development = 100
+						NOT = { religion = ROOT }
+						NOT = { religion = the_thought }
+						NOT = { is_subject_of = ROOT }
+						NOT = { overlord_of = ROOT }
+						NOT = { alliance_with = ROOT }
+						NOT = { ROOT = { truce_with = prev } }
+					}
+					NOT = { religion = secondary }
+				}
+			}
+			random_neighbor_province = {
+				limit = {
+					NOT = { owned_by = ROOT }
+					is_city = yes
+					religion = ROOT
+					has_discovered = ROOT
+					owner = {
+						is_free_or_tributary_trigger = yes
+                        total_development = 100
+						NOT = { religion = ROOT }
+						NOT = { religion = the_thought }
+						NOT = { is_subject_of = ROOT }
+						NOT = { overlord_of = ROOT }
+						NOT = { alliance_with = ROOT }
+						NOT = { ROOT = { truce_with = prev } }
+					}
+					NOT = { religion = secondary }
+				}
+				save_event_target_as = agenda_province
+				owner = { save_event_target_as = agenda_country }
+			}
+		}
+	}
+	immediate_effect = {
+		if = {
+			limit = {
+				event_target:agenda_province = {
+					OR = {
+						AND = {
+							NOT = { is_claim = ROOT }
+							NOT = { is_core = ROOT }
+						}
+						any_neighbor_province = {
+							owned_by = event_target:agenda_country
+							NOT = { is_claim = ROOT }
+							NOT = { is_core = ROOT }
+							religion = ROOT
+						}
+					}
+				}
+			}
+			event_target:agenda_province = {
+				if = {
+					limit = {
+						NOT = { is_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_claim = ROOT
+				}
+				every_neighbor_province = {
+					limit = {
+						owned_by = event_target:agenda_country
+						NOT = { is_claim = ROOT }
+						NOT = { is_core = ROOT }
+						religion = ROOT
+					}
+					add_claim = ROOT
+				}
+			}
+		}
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_province
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {  
+            event_target:agenda_province = {
+                custom_trigger_tooltip = {
+                    tooltip = owned_by_country_of_ROOT_religion
+                    owner = {
+                        religion = ROOT
+                    }
+                }
+                hidden_trigger = { religion = ROOT }
+            }
+	    }
+    }
+	fail_if = {
+		event_target:agenda_province = {
+			NOT = { religion = ROOT }
+		}
+	}
+	task_completed_effect = {
+		clr_country_flag = naga_difficulty_3
+        set_country_flag = naga_difficulty_4
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.1
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { mil = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_mil = 1   # Raise military skill to 4
+        }
+        else = {
+            add_mil_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+	}
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    failing_effect = {
+		on_failed_agenda_effect = yes
+		clr_auto_complete_flag = yes
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+		event_target:agenda_province = {
+			if = {
+				limit = {
+					is_claim = ROOT
+					NOT = { is_permanent_claim = ROOT }
+				}
+				remove_claim = ROOT
+			}
+			every_neighbor_province = {
+				if = {
+					limit = {
+						owned_by = event_target:agenda_country
+						is_claim = ROOT
+						NOT = { is_permanent_claim = ROOT }
+					}
+					remove_claim = ROOT
+				}
+			}
+		}
+    }
+}
+
+
+estate_church_naga_build_shipyard2 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_country_flag = naga_difficulty_2
+        has_anzalkatsa_naga = yes
+        dip_tech = 8
+        num_of_owned_provinces_with = {
+            value = 3
+            is_state_core = ROOT
+            has_port = yes
+            OR = {
+                AND = {
+                    NOT = { has_building = shipyard }
+                    num_free_building_slots = 1
+                }
+                AND = {
+                    NOT = { has_building = grand_shipyard }
+                    ROOT = { dip_tech = 24 }
+                    OR = {
+                        has_building = shipyard
+                        num_free_building_slots = 1
+                    }
+                }
+            }
+        }
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        set_variable = {
+            which = estate_church_naga_build_shipyard2_var1
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_shipyard2_var2
+            value = 0
+        }
+        set_variable = {
+            which = estate_church_naga_build_shipyard2_var3
+            value = 0
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                has_port = yes
+                OR = {
+                    AND = {
+                        NOT = { has_building = shipyard }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = grand_shipyard }
+                        ROOT = { dip_tech = 24 }
+                        OR = {
+                            has_building = shipyard
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province1
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                has_port = yes
+                NOT = {province_id = event_target:agenda_province1}
+                OR = {
+                    AND = {
+                        NOT = { has_building = shipyard }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = grand_shipyard }
+                        ROOT = { dip_tech = 24 }
+                        OR = {
+                            has_building = shipyard
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province2
+        }
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                has_port = yes
+                NOT = {province_id = event_target:agenda_province1}
+                NOT = {province_id = event_target:agenda_province2}
+                OR = {
+                    AND = {
+                        NOT = { has_building = shipyard }
+                        num_free_building_slots = 1
+                    }
+                    AND = {
+                        NOT = { has_building = grand_shipyard }
+                        ROOT = { dip_tech = 24 }
+                        OR = {
+                            has_building = shipyard
+                            num_free_building_slots = 1
+                        }
+                    }
+                }
+            }
+            save_event_target_as = agenda_province3
+        }
+        event_target:agenda_province1 = {
+            if = {
+                limit = {
+                    NOT = { has_building = grand_shipyard }
+                    ROOT = { dip_tech = 24 }
+                    OR = {
+                        num_free_building_slots = 1
+                        has_building = shipyard
+                    }
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_shipyard2_var1
+                        value = 2
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    NOT = { has_building = shipyard }
+                    NOT = { has_building = grand_shipyard }
+                    num_free_building_slots = 1
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_shipyard2_var1
+                        value = 1
+                    }
+                }
+            }
+        }
+        event_target:agenda_province2 = {
+            if = {
+                limit = {
+                    NOT = { has_building = grand_shipyard }
+                    ROOT = { dip_tech = 24 }
+                    OR = {
+                        num_free_building_slots = 1
+                        has_building = shipyard
+                    }
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_shipyard2_var2
+                        value = 2
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    NOT = { has_building = shipyard }
+                    NOT = { has_building = grand_shipyard }
+                    num_free_building_slots = 1
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_shipyard2_var2
+                        value = 1
+                    }
+                }
+            }
+        }
+        event_target:agenda_province3 = {
+            if = {
+                limit = {
+                    NOT = { has_building = grand_shipyard }
+                    ROOT = { dip_tech = 24 }
+                    OR = {
+                        num_free_building_slots = 1
+                        has_building = shipyard
+                    }
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_shipyard2_var3
+                        value = 2
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    NOT = { has_building = shipyard }
+                    NOT = { has_building = grand_shipyard }
+                    num_free_building_slots = 1
+                }
+                ROOT = {
+                    set_variable = {
+                        which = estate_church_naga_build_shipyard2_var3
+                        value = 1
+                    }
+                }
+            }
+        }
+    }
+    provinces_to_highlight = {
+        OR = {
+             AND = {
+                province_id = event_target:agenda_province1
+                NOT = {
+                    AND = {
+                        has_building = shipyard
+                        NOT = { check_variable = { which = estate_church_naga_build_shipyard2_var1 value = 2 } }
+                    }
+                    has_building = grand_shipyard
+                }
+            }
+            AND = {
+                province_id = event_target:agenda_province2
+                NOT = {
+                    AND = {
+                        has_building = shipyard
+                        NOT = { check_variable = { which = estate_church_naga_build_shipyard2_var2 value = 2 } }
+                    }
+                    has_building = grand_shipyard
+                }
+            }
+            AND = {
+                province_id = event_target:agenda_province3
+                NOT = {
+                    AND = {
+                        has_building = shipyard
+                        NOT = { check_variable = { which = estate_church_naga_build_shipyard2_var3 value = 2 } }
+                    }
+                    has_building = grand_shipyard
+                }
+            }
+        }
+    }
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_shipyard2_var1
+                        value = 2
+                    }
+                }
+                event_target:agenda_province1 = {
+                    has_building = grand_shipyard
+                }
+                }
+            else_if = {
+                limit = {
+                    check_variable = {
+                    which = estate_church_naga_build_shipyard2_var1
+                    value = 1
+                }
+                }
+                event_target:agenda_province1 = {
+                    OR = {
+                    has_building = shipyard
+                    has_building = grand_shipyard
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_shipyard2_var2
+                        value = 2
+                    }
+                }
+                event_target:agenda_province2 = {
+                    has_building = grand_shipyard
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_shipyard2_var2
+                        value = 1
+                    }
+                }
+                event_target:agenda_province2 = {
+                    OR = {
+                        has_building = shipyard
+                        has_building = grand_shipyard
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_shipyard2_var3
+                        value = 2
+                    }
+                }
+                event_target:agenda_province3 = {
+                    has_building = grand_shipyard
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_shipyard2_var3
+                        value = 1
+                    }
+                }
+                event_target:agenda_province3 = {
+                    OR = {
+                        has_building = shipyard
+                        has_building = grand_shipyard
+                    }
+                }
+            }
+        }
+    }
+    #Conditions for completing the task successfully
+    task_completed_effect = {
+        clr_country_flag = naga_difficulty_2
+        set_country_flag = naga_difficulty_3
+        
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.1
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { mil = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_mil = 1   # Raise military skill to 4
+        }
+        else = {
+            add_mil_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 2                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 2                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+    fail_if = {
+        OR = {
+            event_target:agenda_province1 = {
+                NOT = { owned_by = ROOT }
+        }
+            event_target:agenda_province2 = {
+                NOT = { owned_by = ROOT }
+        }
+            event_target:agenda_province3 = {
+                NOT = { owned_by = ROOT }
+        }
+        
+    }
+    }
+}
+estate_church_naga_build_relation_3_4 = {
+	can_select = {
+        OR = {
+            has_country_flag = naga_difficulty_4
+            has_country_flag = naga_difficulty_3
+        }
+        has_anzalkatsa_naga = yes
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_4
+            }
+            calc_true_if = {
+                all_known_country = {
+                    NOT = { is_rival = ROOT }
+                    ROOT = { NOT = { is_rival = prev } }
+                    OR = {
+                        is_free_or_tributary_trigger = yes
+                        is_subject_of = ROOT
+                    }
+                    NOT = { culture_group = ROOT }
+                    NOT = { war_with = ROOT }
+                    NOT = { has_opinion = { who = ROOT value = 50 } }
+                    NOT = {
+                        any_owned_province = {
+                            is_core = ROOT
+                        }
+                    }
+                }
+                amount = 6
+            }
+        }
+        else = {
+            calc_true_if = {
+                all_known_country = {
+                    NOT = { is_rival = ROOT }
+                    ROOT = { NOT = { is_rival = prev } }
+                    OR = {
+                        is_free_or_tributary_trigger = yes
+                        is_subject_of = ROOT
+                    }
+                    NOT = { culture_group = ROOT }
+                    NOT = { war_with = ROOT }
+                    NOT = { has_opinion = { who = ROOT value = 50 } }
+                    NOT = {
+                        any_owned_province = {
+                            is_core = ROOT
+                        }
+                    }
+                }
+                amount = 4
+            }
+        }
+	}
+	selection_weight = {
+		factor = 1
+	}
+	fail_if = {
+		OR = {
+            event_target:agenda_country1 = {
+                OR = {
+                    NOT = { num_of_cities = 1 }
+                    war_with = ROOT
+                    NOT = { has_opinion = { who = ROOT value = -100 } }
+                }
+		    }
+            event_target:agenda_country2 = {
+                OR = {
+                    NOT = { num_of_cities = 1 }
+                    war_with = ROOT
+                    NOT = { has_opinion = { who = ROOT value = -100 } }
+                }
+		    }
+            event_target:agenda_country3 = {
+                OR = {
+                    NOT = { num_of_cities = 1 }
+                    war_with = ROOT
+                    NOT = { has_opinion = { who = ROOT value = -100 } }
+                }
+		    }
+            event_target:agenda_country4 = {
+                OR = {
+                    NOT = { num_of_cities = 1 }
+                    war_with = ROOT
+                    NOT = { has_opinion = { who = ROOT value = -100 } }
+                }
+		    }
+            if = {
+                limit = {
+                    has_country_flag=naga_difficulty_4
+                }
+                OR = {
+                    event_target:agenda_country5 = {
+                        OR = {
+                            NOT = { num_of_cities = 1 }
+                            war_with = ROOT
+                            NOT = { has_opinion = { who = ROOT value = -100 } }
+                        }
+                    }
+                    event_target:agenda_country6 = {
+                        OR = {
+                            NOT = { num_of_cities = 1 }
+                            war_with = ROOT
+                            NOT = { has_opinion = { who = ROOT value = -100 } }
+                        }
+                    }
+                }
+            }
+            else = {
+                hidden_trigger = { always = no }
+            }
+        }  
+	}
+	pre_effect = {
+		random_known_country = {
+			limit = {
+				NOT = { is_rival = ROOT }
+				ROOT = { NOT = { is_rival = prev } }
+				OR = {
+					is_free_or_tributary_trigger = yes
+					is_subject_of = ROOT
+				}
+                NOT = { culture_group = ROOT }
+				NOT = { war_with = ROOT }
+				NOT = { has_opinion = { who = ROOT value = 50 } }
+				NOT = {
+					any_owned_province = {
+						is_core = ROOT
+					}
+				}
+			}
+			save_event_target_as = agenda_country1
+		}
+        random_known_country = {
+			limit = {
+				NOT = { is_rival = ROOT }
+				ROOT = { NOT = { is_rival = prev } }
+				OR = {
+					is_free_or_tributary_trigger = yes
+					is_subject_of = ROOT
+				}
+                NOT = { culture_group = ROOT }
+                NOT = { tag = event_target:agenda_country1 }
+				NOT = { war_with = ROOT }
+				NOT = { has_opinion = { who = ROOT value = 50 } }
+				NOT = {
+					any_owned_province = {
+						is_core = ROOT
+					}
+				}
+				NOT = {
+					border_distance = {
+						who = ROOT
+						distance = 200
+					}
+				}
+			}
+			save_event_target_as = agenda_country2
+		}
+        random_known_country = {
+			limit = {
+				NOT = { is_rival = ROOT }
+				ROOT = { NOT = { is_rival = prev } }
+				OR = {
+					is_free_or_tributary_trigger = yes
+					is_subject_of = ROOT
+				}
+                NOT = { culture_group = ROOT}
+                NOT = { tag = event_target:agenda_country1 }
+                NOT = { tag = event_target:agenda_country2 }
+				NOT = { war_with = ROOT }
+				NOT = { has_opinion = { who = ROOT value = 50 } }
+				NOT = {
+					any_owned_province = {
+						is_core = ROOT
+					}
+				}
+				NOT = {
+					border_distance = {
+						who = ROOT
+						distance = 200
+					}
+				}
+			}
+			save_event_target_as = agenda_country3
+		}
+        random_known_country = {
+			limit = {
+				NOT = { is_rival = ROOT }
+				ROOT = { NOT = { is_rival = prev } }
+				OR = {
+					is_free_or_tributary_trigger = yes
+					is_subject_of = ROOT
+				}
+                NOT = { culture_group = ROOT}
+                NOT = { tag = event_target:agenda_country1 }
+                NOT = { tag = event_target:agenda_country2 }
+                NOT = { tag = event_target:agenda_country3 }
+				NOT = { war_with = ROOT }
+				NOT = { has_opinion = { who = ROOT value = 50 } }
+				NOT = {
+					any_owned_province = {
+						is_core = ROOT
+					}
+				}
+				NOT = {
+					border_distance = {
+						who = ROOT
+						distance = 200
+					}
+				}
+			}
+			save_event_target_as = agenda_country4
+		}
+        if = {
+            limit = {
+                has_country_flag=naga_difficulty_4
+            } 
+            random_known_country = {
+                limit = {
+                    NOT = { is_rival = ROOT }
+                    ROOT = { NOT = { is_rival = prev } }
+                    OR = {
+                        is_free_or_tributary_trigger = yes
+                        is_subject_of = ROOT
+                    }
+                    NOT = { culture_group = ROOT }
+                    NOT = { tag =event_target:agenda_country1 }
+                    NOT = { tag =event_target:agenda_country2 }
+                    NOT = { tag = event_target:agenda_country3 }
+                    NOT = { tag = event_target:agenda_country4 }
+                    NOT = { war_with = ROOT }
+                    NOT = { has_opinion = { who = ROOT value = 50 } }
+                    NOT = {
+                        any_owned_province = {
+                            is_core = ROOT
+                        }
+                    }
+                    NOT = {
+                        border_distance = {
+                            who = ROOT
+                            distance = 200
+                        }
+                    }
+                }
+                save_event_target_as = agenda_country5
+            }
+            random_known_country = {
+                limit = {
+                    NOT = { is_rival = ROOT }
+                    ROOT = { NOT = { is_rival = prev } }
+                    OR = {
+                        is_free_or_tributary_trigger = yes
+                        is_subject_of = ROOT
+                    }
+                    NOT = { culture_group = ROOT }
+                    NOT = { tag =event_target:agenda_country1 }
+                    NOT = { tag =event_target:agenda_country2 }
+                    NOT = { tag = event_target:agenda_country3 }
+                    NOT = { tag = event_target:agenda_country4 }
+                    NOT = { tag = event_target:agenda_country5 }
+                    NOT = { war_with = ROOT }
+                    NOT = { has_opinion = { who = ROOT value = 50 } }
+                    NOT = {
+                        any_owned_province = {
+                            is_core = ROOT
+                        }
+                    }
+                    NOT = {
+                        border_distance = {
+                            who = ROOT
+                            distance = 200
+                        }
+                    }
+                }
+                save_event_target_as = agenda_country6
+            }
+        }
+	}
+	provinces_to_highlight = {
+        OR = {
+            AND = {
+                is_capital_of = event_target:agenda_country1
+                NOT = {
+                    event_target:agenda_country1 = {
+                        OR = {
+                            has_opinion = {
+                                who = ROOT
+                                value = 100
+                            }
+                            AND = {
+                                has_90_opinion_improved_relation = {target = ROOT}
+                                has_25_opinion_sent_gift = {target = ROOT}
+                            }
+                        }
+                    }
+                }
+                }
+            AND = {
+                is_capital_of = event_target:agenda_country2
+                NOT = {
+                    event_target:agenda_country2 = {
+                        OR = {
+                            has_opinion = {
+                                who = ROOT
+                                value = 100
+                            }
+                            AND = {
+                                has_90_opinion_improved_relation = {target = ROOT}
+                                has_25_opinion_sent_gift = {target = ROOT}
+                            }
+                        }
+                    }
+                }
+                }
+            AND = {
+                is_capital_of = event_target:agenda_country3
+                NOT = {
+                    event_target:agenda_country3 = {
+                        OR = {
+                            has_opinion = {
+                                who = ROOT
+                                value = 100
+                            }
+                            AND = {
+                                has_90_opinion_improved_relation = {target = ROOT}
+                                has_25_opinion_sent_gift = {target = ROOT}
+                            }
+                        }
+                    }
+                }
+                }
+            AND = {
+                is_capital_of = event_target:agenda_country4
+                NOT = {
+                    event_target:agenda_country4 = {
+                        OR = {
+                            has_opinion = {
+                                who = ROOT
+                                value = 100
+                            }
+                            AND = {
+                                has_90_opinion_improved_relation = {target = ROOT}
+                                has_25_opinion_sent_gift = {target = ROOT}
+                            }
+                        }
+                    }
+                }
+                }
+            AND = {
+                ROOT = { has_country_flag = naga_difficulty_4 }
+                OR = {
+                    AND = {
+                        is_capital_of = event_target:agenda_country5
+                        NOT = {
+                            event_target:agenda_country5 = {
+                                OR = {
+                                    has_opinion = {
+                                        who = ROOT
+                                        value = 100
+                                    }
+                                    AND = {
+                                        has_90_opinion_improved_relation = {target = ROOT}
+                                        has_25_opinion_sent_gift = {target = ROOT}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    AND = {
+                        is_capital_of = event_target:agenda_country6
+                        NOT = {
+                            event_target:agenda_country6 = {
+                                OR = {
+                                    has_opinion = {
+                                        who = ROOT
+                                        value = 100
+                                    }
+                                    AND = {
+                                        has_90_opinion_improved_relation = {target = ROOT}
+                                        has_25_opinion_sent_gift = {target = ROOT}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+	task_requirements = {
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:agenda_country1 = {
+                OR = {
+                    has_opinion = {
+                    who = ROOT
+                    value = 100
+                }
+                    AND = {
+                        has_90_opinion_improved_relation = {target = ROOT}
+                        has_25_opinion_sent_gift = {target = ROOT}
+                    }
+                }
+            }
+            event_target:agenda_country2 = {
+                OR = {
+                    has_opinion = {
+                    who = ROOT
+                    value = 100
+                }
+                    AND = {
+                        has_90_opinion_improved_relation = {target = ROOT}
+                        has_25_opinion_sent_gift = {target = ROOT}
+                    }
+                }
+            }
+            event_target:agenda_country3 = {
+                OR = {
+                    has_opinion = {
+                    who = ROOT
+                    value = 100
+                }
+                    AND = {
+                        has_90_opinion_improved_relation = {target = ROOT}
+                        has_25_opinion_sent_gift = {target = ROOT}
+                    }
+                }
+            }
+            event_target:agenda_country4 = {
+                OR = {
+                    has_opinion = {
+                    who = ROOT
+                    value = 100
+                }
+                    AND = {
+                        has_90_opinion_improved_relation = {target = ROOT}
+                        has_25_opinion_sent_gift = {target = ROOT}
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = naga_difficulty_4
+                }
+                event_target:agenda_country5 = {
+                    OR = {
+                        has_opinion = {
+                        who = ROOT
+                        value = 100
+                    }
+                        AND = {
+                            has_90_opinion_improved_relation = {target = ROOT}
+                            has_25_opinion_sent_gift = {target = ROOT}
+                        }
+                    }
+                }
+                event_target:agenda_country6 = {
+                    OR = {
+                        has_opinion = {
+                        who = ROOT
+                        value = 100
+                    }
+                        AND = {
+                            has_90_opinion_improved_relation = {target = ROOT}
+                            has_25_opinion_sent_gift = {target = ROOT}
+                        }
+                    }
+                }
+            }
+        }
+    }
+    task_completed_effect = {
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_3
+            }
+            clr_country_flag = naga_difficulty_3
+            set_country_flag = naga_difficulty_4
+        }
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.3
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { dip = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_dip = 1   # Raise military skill to 4
+        }
+        else = {
+            add_dip_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+	}
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    failing_effect = {
+		on_failed_agenda_effect = yes
+		clr_auto_complete_flag = yes
+        if = {
+            limit = {
+                has_country_flag = naga_difficulty_4
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+        else = {
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+    }
+}
+
+
+
+estate_church_naga_build_marketchurch2 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_country_flag = naga_difficulty_2
+        has_anzalkatsa_naga = yes
+        dip_tech = 4
+        adm_tech = 4
+        num_of_owned_provinces_with = {
+            value = 2
+            is_state_core = ROOT
+            NOT = { has_trade_building_trigger = yes }
+            NOT = { has_tax_building_trigger = yes }
+        }
+    }
+
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                NOT = { has_trade_building_trigger = yes }
+                NOT = { has_tax_building_trigger = yes }
+            }
+            save_event_target_as = agenda_province1
+        }
+
+        random_owned_province = {
+            limit = {
+                is_state_core = ROOT
+                NOT = { has_trade_building_trigger = yes }
+                NOT = { has_tax_building_trigger = yes }
+            }
+            save_event_target_as = agenda_province2
+        }
+    }
+    provinces_to_highlight = {
+        OR = {
+            AND = {
+                province_id = event_target:agenda_province1
+                NOT = {
+                    AND = { 
+                        has_trade_building_trigger = yes
+                        has_tax_building_trigger = yes
+                    }
+                }
+            }
+            AND = {
+                province_id = event_target:agenda_province2
+                NOT = {
+                    AND = { 
+                        has_trade_building_trigger = yes
+                        has_tax_building_trigger = yes
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:agenda_province1 = {
+                has_trade_building_trigger = yes 
+                has_tax_building_trigger = yes 
+            }
+
+            event_target:agenda_province2 = {
+                has_trade_building_trigger = yes
+                has_tax_building_trigger = yes 
+            }
+        }
+    }
+    task_completed_effect = {
+        clr_country_flag = naga_difficulty_2
+        set_country_flag = naga_difficulty_3
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.5
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { dip = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_dip = 1   # Raise military skill to 4
+        }
+        else = {
+            add_dip_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 2                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 2                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+        }
+    fail_if = {
+        OR = {
+            event_target:agenda_province1 = {
+                NOT = { owned_by = ROOT }
+            }
+            event_target:agenda_province2 = {
+                NOT = { owned_by = ROOT }
+            }
+        }
+    }
+}
+
+
+
+estate_church_naga_build_army2 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_country_flag = naga_difficulty_2
+        has_anzalkatsa_naga = yes
+        ROOT = {
+            NOT = {army_size_percentage = 0.9 }
+        }
+    }
+
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        
+    }
+    provinces_to_highlight = {
+       
+    }
+    
+    
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            army_size_percentage = 0.9
+            army_tradition = 40
+        }
+    }
+    task_completed_effect = {
+        clr_country_flag = naga_difficulty_2
+        set_country_flag = naga_difficulty_3
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes 
+            }
+            # If the ruler has a bad trait, remove it and add a more positive trait
+            country_event = { 
+                id = church_naga_estate_events.1
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { mil = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_mil = 1   # Raise military skill to 4
+        }
+        else = {
+            add_mil_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = { 
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 2                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 2                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+}
+
+
+estate_church_naga_build_relationschool1 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_anzalkatsa_naga = yes
+        NOT = { has_country_flag = naga_difficulty_2 }
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 }
+        any_known_country = {
+			NOT = { is_rival = ROOT }
+			ROOT = { NOT = { is_rival = prev } }
+			is_free_or_tributary_trigger = yes
+            religion = anzalkatsa
+            anb_same_religious_school_trigger_lizardfolk_agenda = { who = ROOT }
+			NOT = { war_with = ROOT }
+			NOT = {alliance_with = ROOT}
+			NOT = {
+				any_owned_province = {
+					is_core = ROOT
+				}
+			}
+		}
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        random_known_country = {
+            limit = {
+                NOT = { is_rival = ROOT }
+                ROOT = { NOT = { is_rival = prev } }
+                is_free_or_tributary_trigger = yes
+                religion = anzalkatsa
+                anb_same_religious_school_trigger_lizardfolk_agenda = { who = ROOT }
+                NOT = { war_with = ROOT }
+                NOT = {alliance_with = ROOT}
+                NOT = {
+                    any_owned_province = {
+                        is_core = ROOT
+				}
+			    }
+            }
+            save_event_target_as = agenda_country1
+        }
+    }
+    provinces_to_highlight = {
+       is_capital_of = event_target:agenda_country1
+    }
+    task_requirements = {
+        if = {
+            limit = {
+                has_estate_agenda_auto_completion = {
+                    estate = estate_church
+                }
+            }
+            has_estate_agenda_auto_completion = {
+                estate = estate_church
+            }
+            }
+        else = {
+            ROOT = {
+                alliance_with = event_target:agenda_country1
+            }
+        }
+    }
+    task_completed_effect = {
+        set_country_flag = naga_difficulty_2
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.3
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { dip = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_dip = 1   # Raise military skill to 4
+        }
+        else = {
+            add_dip_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+        
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  
+                size = 1                 
+                    
+            }
+        }
+            on_failed_agenda_effect = yes
+            clr_auto_complete_flag = yes
+    }
+    fail_if = {
+        event_target:agenda_country1 = {
+            OR = {exists = no
+            is_vassal = yes
+            }
+        }
+    }
+}
+
+estate_church_naga_build_insultschool1 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_anzalkatsa_naga = yes
+        NOT = { has_country_flag = naga_difficulty_2 }
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 } 
+        any_known_country = {
+			NOT = { anb_same_religious_school_trigger_lizardfolk_agenda = { who = ROOT } }
+			is_free_or_tributary_trigger = yes
+            religion = anzalkatsa
+			NOT = { war_with = ROOT }
+			NOT = {alliance_with = ROOT}
+		}
+    }
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        random_known_country = {
+            limit = {
+                NOT = { anb_same_religious_school_trigger_lizardfolk_agenda = { who = ROOT } }
+                is_free_or_tributary_trigger = yes
+                religion = anzalkatsa
+                NOT = { war_with = ROOT }
+                NOT = {alliance_with = ROOT}
+            }
+            save_event_target_as = agenda_country1
+        }
+    }
+    provinces_to_highlight = {
+       is_capital_of = event_target:agenda_country1
+    }
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:agenda_country1 = {
+                has_been_insulted_by_root = yes
+            }
+        }
+    }
+    task_completed_effect = {
+        
+        set_country_flag = naga_difficulty_2
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes 
+            }
+            # If the ruler has a bad trait, remove it and add a more positive trait
+            country_event = { 
+                id = church_naga_estate_events.1
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { mil = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_mil = 1   # Raise military skill to 4
+        }
+        else = {
+            add_mil_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+        
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  
+                size = 1                 
+                
+            }
+        }
+            on_failed_agenda_effect = yes
+            clr_auto_complete_flag = yes
+        }
+    fail_if = {
+        event_target:agenda_country1 = {
+        exists = no
+        }
+    }
+}
+
+
+estate_church_naga_build_gainprestige2 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_country_flag = naga_difficulty_2
+        has_anzalkatsa_naga = yes
+        NOT = {prestige = 50}
+    }
+
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+    }
+    provinces_to_highlight = {
+    }
+    
+    
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            ROOT = {
+                prestige = 50
+            }
+        }
+    }
+    task_completed_effect = {
+        clr_country_flag = naga_difficulty_2
+        set_country_flag = naga_difficulty_3
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.7
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { adm = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_adm = 1   # Raise military skill to 4
+        }
+        else = {
+            add_adm_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  
+                size = 2                 
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  
+                size = 2                 
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+}
+
+
+estate_church_naga_build_Stability1 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_anzalkatsa_naga = yes
+        NOT = {stability = 0}
+        NOT = { has_country_flag = naga_difficulty_2 }
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 }
+    }
+
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        export_to_variable = {
+            which = stability_needed
+            value = stability
+            who = ROOT
+        }
+    }
+    provinces_to_highlight = {
+    }
+    
+    
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else_if= {
+            limit = {
+            check_variable = {
+                which = stability_needed
+                value = -1
+            }
+            }
+            ROOT = {
+                stability = 0
+            }
+        }
+        else_if= {
+            limit = {
+            check_variable = {
+                which = stability_needed
+                value = -2
+            }
+            }
+            ROOT = {
+                stability = -1
+            }
+        }
+        else_if= {
+            limit = {
+            check_variable = {
+                which = stability_needed
+                value = -3
+            }
+            }
+            ROOT = {
+                stability = -2
+            }
+        }
+    }
+    task_completed_effect = {
+        
+        set_country_flag = naga_difficulty_2
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.7
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { adm = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_adm = 1   # Raise military skill to 4
+        }
+        else = {
+            add_adm_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+        
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  
+                size = 1                 
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+}
+
+
+estate_church_naga_recruit_advisorAdm1 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_anzalkatsa_naga = yes
+        NOT = { has_country_flag = naga_difficulty_2 }
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 }
+        NOT = {
+			employed_advisor = {
+				category = ADM
+			}
+		}
+    }
+
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        if = {
+            limit = {
+                total_development = 500
+            }
+            set_variable = {
+                which = advisorLevel
+                value = 3
+            }
+        }
+        else = {
+            set_variable = {
+                which = advisorLevel
+                value = 2
+            }
+        }
+
+    }
+    provinces_to_highlight = {
+    }  
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else_if = {
+            limit = {
+                check_variable = {
+                    which = advisorLevel
+                    value = 3
+                }
+            }
+            has_adm_advisor_3 = yes
+        }
+        else = {
+            has_adm_advisor_2 = yes
+        }
+    }
+    task_completed_effect = {
+        
+        set_country_flag = naga_difficulty_2
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.7
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { adm = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_adm = 1   # Raise military skill to 4
+        }
+        else = {
+            add_adm_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+        
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  
+                size = 1                 
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+}
+
+estate_church_naga_recruit_advisorDip1 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_anzalkatsa_naga = yes
+        NOT = { has_country_flag = naga_difficulty_2 }
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 }
+        NOT = {
+			employed_advisor = {
+				category = DIP
+			}
+		}
+    }
+
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        if = {
+            limit = {
+                ROOT = {
+                    total_development = 500
+                }
+            }
+            set_variable = {
+                which = advisorLevel
+                value = 3
+            }
+        }
+        else = {
+            set_variable = {
+                which = advisorLevel
+                value = 2
+            }
+        }
+    }
+    provinces_to_highlight = {
+    }  
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else_if = {
+            limit = {
+                check_variable = {
+                    which = advisorLevel
+                    value = 3
+                }
+            }
+            has_dip_advisor_3 = yes
+        }
+        else = {
+            has_dip_advisor_2 = yes
+        }
+    }
+    
+    task_completed_effect = {
+        
+        set_country_flag = naga_difficulty_2
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.7
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { adm = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_adm = 1   # Raise military skill to 4
+        }
+        else = {
+            add_adm_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+        
+    }
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    #Effects executed when the agenda is successfully completed
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  
+                size = 1                 
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+}
+
+estate_church_naga_recruit_advisorMil1 = {
+    max_days_active = 1825 		#Lets you override the default of 20 years for an agenda
+    can_select = {
+        has_anzalkatsa_naga = yes
+        NOT = { has_country_flag = naga_difficulty_2 }
+        NOT = { has_country_flag = naga_difficulty_3 }
+        NOT = { has_country_flag = naga_difficulty_4 }
+        NOT = {
+			employed_advisor = {
+				category = MIL
+			}
+		}
+    }
+
+    selection_weight = {
+        factor = 1
+    }
+    pre_effect = {
+        if = {
+            limit = {
+                ROOT = {
+                    total_development = 500
+                }
+            }
+            set_variable = {
+                which = advisorLevel
+                value = 3
+            }
+        }
+        else = {
+            set_variable = {
+                which = advisorLevel
+                value = 2
+            }
+        }
+
+        }
+
+    
+    provinces_to_highlight = {
+    }
+    
+    
+    task_requirements = {
+        if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else_if = {
+            limit = {
+                check_variable = {
+                    which = advisorLevel
+                    value = 3
+                }
+            }
+            has_mil_advisor_3 = yes
+
+        }
+        else = {
+            has_mil_advisor_2 = yes
+        }
+    }
+    
+    task_completed_effect = {
+        
+        set_country_flag = naga_difficulty_2
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.7
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { adm = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_adm = 1   # Raise military skill to 4
+        }
+        else = {
+            add_adm_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+        
+    }
+    #Effects executed when the agenda is successfully completed
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    failing_effect = {
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  
+                size = 1                 
+                
+            }
+        }
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+    }
+}
+
+
+estate_church_naga_fight_school3 = {
+ 	max_days_active = 1825 						
+ 	can_select = {
+        has_country_flag = naga_difficulty_3
+        has_anzalkatsa_naga = yes
+		is_free_or_tributary_trigger = yes
+		is_at_war = no
+        any_owned_province = {
+			any_neighbor_province = {
+				NOT = { owned_by = ROOT }
+				is_city = yes
+				religion = anzalkatsa
+				has_discovered = ROOT
+				owner = {
+					NOT = { anb_same_religious_school_trigger_lizardfolk_agenda = { who = ROOT} }
+                    is_free_or_tributary_trigger = yes
+					religion = anzalkatsa
+                    total_development = 100
+					NOT = { is_subject_of = ROOT }
+					NOT = { overlord_of = ROOT }
+					NOT = { alliance_with = ROOT }
+					NOT = { ROOT = { truce_with = prev } }
+				}
+			}
+		}
+	}
+	selection_weight = {
+		factor = 1
+	}
+	pre_effect = {
+		random_owned_province = {
+			limit = {
+				any_neighbor_province = {
+					NOT = { owned_by = ROOT }
+					is_city = yes
+					religion = anzalkatsa
+					has_discovered = ROOT
+					owner = {
+                        is_free_or_tributary_trigger = yes
+                        total_development = 100
+                        religion = anzalkatsa
+                        NOT = { anb_same_religious_school_trigger_lizardfolk_agenda = { who = ROOT} }
+                        NOT = { is_subject_of = root }
+                        NOT = { overlord_of = root }
+                        NOT = { alliance_with = root }
+                        NOT = { ROOT = { truce_with = prev } }
+					}
+				}
+			}
+			random_neighbor_province = {
+				limit = {
+					NOT = { owned_by = ROOT }
+					is_city = yes
+					religion = anzalkatsa
+					has_discovered = ROOT
+					owner = {
+                        NOT = { anb_same_religious_school_trigger_lizardfolk_agenda = { who = ROOT} }
+						is_free_or_tributary_trigger = yes
+                        religion = anzalkatsa
+                        total_development = 100
+                        NOT = { is_subject_of = root }
+                        NOT = { overlord_of = root }
+                        NOT = { alliance_with = root }
+                        NOT = { ROOT = { truce_with = prev } }
+					}
+				}
+				save_event_target_as = agenda_province
+				owner = { save_event_target_as = agenda_country }
+			}
+		}
+	}
+	immediate_effect = {
+		if = {
+			limit = {
+				event_target:agenda_province = {
+					OR = {
+						AND = {
+							NOT = { is_claim = ROOT }
+							NOT = { is_core = ROOT }
+						}
+						any_neighbor_province = {
+							owned_by = event_target:agenda_country
+							NOT = { is_claim = ROOT }
+							NOT = { is_core = ROOT }
+							religion = ROOT
+						}
+					}
+				}
+			}
+			event_target:agenda_province = {
+				if = {
+					limit = {
+						NOT = { is_claim = ROOT }
+						NOT = { is_core = ROOT }
+					}
+					add_claim = ROOT
+				}
+				every_neighbor_province = {
+					limit = {
+						owned_by = event_target:agenda_country
+						NOT = { is_claim = ROOT }
+						NOT = { is_core = ROOT }
+						religion = ROOT
+					}
+					add_claim = ROOT
+				}
+			}
+		}
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_province
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:agenda_province = {
+                owned_by = ROOT
+            }
+        }
+	}
+	task_completed_effect = {
+		clr_country_flag = naga_difficulty_3
+        set_country_flag = naga_difficulty_4
+            if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            # If the ruler has a bad trait, remove it and add a more positive trait
+            country_event = { 
+                id = church_naga_estate_events.1
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+                limit = {
+                    Not = { mil = 4 }   # Check if the military skill is below 4
+                }
+                # Improve the ruler's military skill
+                change_mil = 1   # Raise military skill to 4
+        }
+        else = {
+            add_mil_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+	}
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+        event_target:agenda_province = {
+			if = {
+				limit = {
+					is_claim = ROOT
+					NOT = { is_permanent_claim = ROOT }
+				}
+				remove_claim = ROOT
+			}
+			every_neighbor_province = {
+				if = {
+					limit = {
+						owned_by = event_target:agenda_country
+						is_claim = ROOT
+						NOT = { is_permanent_claim = ROOT }
+					}
+					remove_claim = ROOT
+				}
+			}
+		}
+    }
+    failing_effect = {
+		on_failed_agenda_effect = yes
+		clr_auto_complete_flag = yes
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+		event_target:agenda_province = {
+			if = {
+				limit = {
+					is_claim = ROOT
+					NOT = { is_permanent_claim = ROOT }
+				}
+				remove_claim = ROOT
+			}
+			every_neighbor_province = {
+				if = {
+					limit = {
+						owned_by = event_target:agenda_country
+						is_claim = ROOT
+						NOT = { is_permanent_claim = ROOT }
+					}
+					remove_claim = ROOT
+				}
+			}
+		}
+    }
+}
+
+estate_church_naga_Trade_fight3 = {
+ 	max_days_active = 1825 						#Lets you override the default of 20 years for an agenda
+ 	can_select = {
+        has_country_flag = naga_difficulty_3
+        has_anzalkatsa_naga = yes
+		is_free_or_tributary_trigger = yes
+		is_at_war = no
+		any_active_trade_node = {
+            trade_share = {
+                country = ROOT
+                share = 5
+            }
+            NOT = {trade_share = {
+                country = ROOT
+                share = 30
+            }
+            }
+        }
+	}
+	selection_weight = {
+		factor = 1
+	}
+	pre_effect = {
+		random_active_trade_node = {
+            limit = {
+                trade_share = {
+                    country = ROOT
+                    share = 5
+            }
+                NOT = {trade_share = {
+                    country = ROOT
+                    share = 30
+                    }
+                }
+            }
+            save_event_target_as = Node
+        }
+	}
+	immediate_effect = {
+        event_target:Node = {
+            every_trade_node_member_country = {
+                reverse_add_casus_belli = {
+                    target = ROOT
+                    type = cb_trade_conflict
+                    months = 60
+                }
+            }
+        }
+	}
+	provinces_to_highlight = {
+		province_id = event_target:Node
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:Node = {
+                trade_share = {
+                    country = ROOT
+                    share = 30
+                }
+            }
+	    }
+    }
+	task_completed_effect = {
+		clr_country_flag = naga_difficulty_3
+        set_country_flag = naga_difficulty_4
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.5
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { dip = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_dip = 1   # Raise military skill to 4
+        }
+        else = {
+            add_dip_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+	}
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+        event_target:Node = {
+            
+            every_trade_node_member_country = {
+                reverse_remove_casus_belli = {
+                    target = ROOT
+                    type = cb_trade_conflict
+                }
+            }
+        }
+    }
+    failing_effect = {
+		on_failed_agenda_effect = yes
+		clr_auto_complete_flag = yes
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        
+    }
+}
+
+estate_church_naga_build_cash4 = {
+ 	max_days_active = 1825 						#Lets you override the default of 20 years for an agenda
+ 	can_select = {
+        has_country_flag = naga_difficulty_4
+        has_anzalkatsa_naga = yes
+		NOT = {treasury = 1000}
+	}
+	selection_weight = {
+		factor = 1
+	}
+	pre_effect = {
+        export_to_variable = {
+            which = DevTotal
+            value = total_development
+        }
+	}
+	immediate_effect = {
+	}
+	provinces_to_highlight = {
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else_if = {
+            limit = {
+                check_variable = {
+                    DevTotal = 500
+                }
+            }
+            treasury = 5000
+	    }
+        else_if = {
+            limit = {
+                check_variable = {
+                    DevTotal = 250
+                }
+            }
+            treasury = 2500
+	    }
+        else = {
+            treasury = 1000
+        }
+    }
+	task_completed_effect = {
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.5
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { adm = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_adm = 1   # Raise military skill to 4
+        }
+        else = {
+            add_adm_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+	}
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    failing_effect = {
+		on_failed_agenda_effect = yes
+		clr_auto_complete_flag = yes
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+        random_owned_province = {
+            spawn_rebels = {
+                type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                size = 3                 # Size of the rebel stack (1 stack)
+                
+            }
+        }
+    }
+}
+estate_church_naga_humiliaterival_2_4 = {
+ 	max_days_active = 1825 						#Lets you override the default of 20 years for an agenda
+ 	can_select = {
+        OR = {
+            has_country_flag = naga_difficulty_4
+            has_country_flag = naga_difficulty_2
+        }
+		is_free_or_tributary_trigger = yes
+		is_at_war = no
+        has_anzalkatsa_naga = yes
+		if = {
+            limit = { has_country_flag = naga_difficulty_4 }
+            any_rival_country = {
+                total_development = 250
+                NOT = {alliance_with = ROOT}
+                NOT = { is_subject_of = ROOT }
+                NOT = { overlord_of = ROOT }
+                NOT = { truce_with = ROOT }
+            }
+        }
+        else = {
+            any_rival_country = {
+                total_development = 100
+                NOT = {alliance_with = ROOT}
+                NOT = { is_subject_of = ROOT }
+                NOT = { overlord_of = ROOT }
+                NOT = { truce_with = ROOT }
+                NOT = {total_development = 250}
+		    }
+        }
+	}
+	selection_weight = {
+		factor = 1
+	}
+	pre_effect = {
+        if = {
+            limit = { has_country_flag = naga_difficulty_4 }
+            random_rival_country = {
+                limit = {
+                    total_development = 250
+                    NOT = {alliance_with = ROOT}
+                    NOT = { is_subject_of = ROOT }
+                    NOT = { overlord_of = ROOT }
+                    NOT = { truce_with = ROOT }
+                }
+                save_event_target_as = agenda_country
+            }
+        }
+        else = {
+            random_rival_country = {
+                limit = {
+                    total_development = 100
+                    NOT = {alliance_with = ROOT}
+                    NOT = { is_subject_of = ROOT }
+                    NOT = { overlord_of = ROOT }
+                    NOT = { truce_with = ROOT }
+                    NOT = {total_development = 250}
+                }
+                save_event_target_as = agenda_country
+            }
+        }
+	}
+	provinces_to_highlight = {
+		province_id = event_target:agenda_country
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:agenda_country = {
+                humiliated_by = ROOT
+            }
+	    }
+    }
+	task_completed_effect = {
+        if = {
+            limit = { has_country_flag = naga_difficulty_2 }
+            clr_country_flag = naga_difficulty_2
+            set_country_flag = naga_difficulty_3
+        }
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.1
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { mil = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_mil = 1   # Raise military skill to 4
+        }
+        else = {
+            add_mil_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+	}
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+    }
+    failing_effect = {
+		on_failed_agenda_effect = yes
+		clr_auto_complete_flag = yes
+        if = {
+            limit = { has_country_flag = naga_difficulty_4 }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+        else = {
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                        
+                    }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                    
+                }
+            }
+        }
+    }
+}
+estate_church_naga_free_rivalvassal_2_3_4 = {
+ 	max_days_active = 1825 						#Lets you override the default of 20 years for an agenda
+ 	can_select = {
+        OR = {
+            has_country_flag = naga_difficulty_4
+            has_country_flag = naga_difficulty_3
+            has_country_flag = naga_difficulty_2
+        }
+        has_anzalkatsa_naga = yes 
+		is_free_or_tributary_trigger = yes
+		is_at_war = no
+        if = {
+            limit = { has_country_flag = naga_difficulty_4 }
+            any_rival_country = {
+                NOT = { ROOT = { truce_with = prev } }
+                total_development = 250
+                any_subject_country = {
+                    is_subject_other_than_tributary_trigger = yes
+                }
+            }
+        }
+        else_if = {
+            limit = { has_country_flag = naga_difficulty_3 }
+            any_rival_country = {
+                NOT = { ROOT = { truce_with = prev } }
+                NOT = { total_development = 250 }
+                total_development = 100
+                any_subject_country = {
+                    is_subject_other_than_tributary_trigger = yes
+                }
+            }
+        }
+        else = {
+            any_rival_country = {
+                NOT = { ROOT = { truce_with = prev } }
+                NOT = {total_development = 100}
+                any_subject_country = {
+                    is_subject_other_than_tributary_trigger = yes
+                }
+            }
+        }
+    }
+	selection_weight = {
+		factor = 1
+	}
+	pre_effect = {
+        if = {
+            limit = { has_country_flag = naga_difficulty_4 }
+            random_rival_country = {
+                limit = {
+                    NOT = { ROOT = { truce_with = prev } }
+                    total_development = 250
+                    any_subject_country = {
+                        is_subject_other_than_tributary_trigger = yes
+
+                    }
+                }
+                save_event_target_as = agenda_rival_country
+                random_subject_country = {
+                    limit = {
+                        is_subject_other_than_tributary_trigger = yes
+                    }
+                    save_event_target_as = agenda_country
+                }
+            }
+        }
+        else_if = {
+            limit = { has_country_flag = naga_difficulty_3 }
+            random_rival_country = {
+                limit = {
+                    NOT = { ROOT = { truce_with = prev } }
+                    NOT = {total_development = 250}
+                    total_development = 100
+                    any_subject_country = {
+                        is_subject_other_than_tributary_trigger = yes
+
+                    }
+                }
+                save_event_target_as = agenda_rival_country
+                random_subject_country = {
+                    limit = {
+                        is_subject_other_than_tributary_trigger = yes
+                    }
+                    save_event_target_as = agenda_country
+                }
+		    }
+        }
+        else = {
+            random_rival_country = {
+                limit = {
+                    NOT = { ROOT = { truce_with = prev } }
+                    NOT = {total_development = 100}
+                    any_subject_country = {
+                        is_subject_other_than_tributary_trigger = yes
+
+                    }
+                }
+                save_event_target_as = agenda_rival_country
+                random_subject_country = {
+                    limit = {
+                        is_subject_other_than_tributary_trigger = yes
+                    }
+                    save_event_target_as = agenda_country
+                }
+		    }
+        }
+    }
+	immediate_effect = {
+        event_target:agenda_rival_country = {
+            reverse_add_casus_belli = {
+                target = ROOT
+                type = cb_liberation
+                months = 60
+            }
+	    }
+    }
+	provinces_to_highlight = {
+		is_capital_of = event_target:agenda_country
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+        else = {
+            event_target:agenda_rival_country = {
+                is_free_or_tributary_trigger = yes
+            }
+        }
+	}
+	fail_if = {
+        event_target:agenda_country = {
+            exists = no
+        }
+	}
+	task_completed_effect = {
+        if = {
+            limit = { has_country_flag = naga_difficulty_3 }
+            clr_country_flag = naga_difficulty_3
+            set_country_flag = naga_difficulty_4
+        }
+        else_if = {
+            limit = { has_country_flag = naga_difficulty_2 }
+            clr_country_flag = naga_difficulty_2
+            set_country_flag = naga_difficulty_3
+        }
+        if = {
+            limit = {
+                ruler_has_bad_personality = yes   # Replace "cruel" with the bad trait you want to check for
+            }
+            country_event = { 
+                id = church_naga_estate_events.3
+            }
+        }
+        else_if = { # If the ruler doesn't have a bad trait, check if the military stat is below 4 
+            limit = {
+                Not = { dip = 4 }   # Check if the military skill is below 4
+            }
+            # Improve the ruler's military skill
+            change_dip = 1   # Raise military skill to 4
+        }
+        else = {
+            add_dip_power = 100
+
+        }
+        add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+		}
+        add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+	}
+    invalid_trigger = {
+        has_country_flag = Invalidate_NagaAgenda
+    }
+    on_invalid = {
+        clr_country_flag = Invalidate_NagaAgenda
+        event_target:agenda_rival_country = {
+            reverse_remove_casus_belli = {
+                target = ROOT
+                type = cb_liberation
+            }
+        }
+    }
+    failing_effect = {
+        on_failed_agenda_effect = yes
+        clr_auto_complete_flag = yes
+        event_target:agenda_rival_country = {
+            reverse_remove_casus_belli = {
+                target = ROOT
+                type = cb_liberation
+            }
+        }
+        if = {
+            limit = { has_country_flag = naga_difficulty_3 }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                        
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                        
+                }
+
+            }
+        }
+        else_if = {
+            limit = { has_country_flag = naga_difficulty_2 }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                        
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 2                 # Size of the rebel stack (1 stack)
+                        
+                }
+            }
+        }
+        else = {
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                        
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                        
+                }
+            }
+            random_owned_province = {
+                spawn_rebels = {
+                    type = pretender_rebels  # Specify the rebel type (pretender rebels)
+                    size = 3                 # Size of the rebel stack (1 stack)
+                        
+                }
+            }
+        }
+    }
+}

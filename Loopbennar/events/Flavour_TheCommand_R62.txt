@@ -4310,7 +4310,7 @@ country_event = { #Mage Revolt Leader Start (this is what shows up on-screen)
 						add_ruler_personality = obsessive_perfectionist_personality
 						define_ruler_to_general = {
 							fire = 3
-							shock = 8
+							shock = 11
 							manuever = 4
 							siege = 7
 							trait = war_wizard_personality
@@ -4366,7 +4366,7 @@ country_event = { #Mage Revolt Leader Start (this is what shows up on-screen)
 						add_ruler_personality = zealot_personality
 						define_ruler_to_general = {
 							fire = 3
-							shock = 8
+							shock = 11
 							manuever = 4
 							siege = 7
 							trait = war_wizard_personality
@@ -4422,7 +4422,7 @@ country_event = { #Mage Revolt Leader Start (this is what shows up on-screen)
 						add_ruler_personality = strict_personality
 						define_ruler_to_general = {
 							fire = 3
-							shock = 8
+							shock = 11
 							manuever = 4
 							siege = 7
 							trait = war_wizard_personality
@@ -4572,13 +4572,28 @@ country_event = { #More Mage rebels
 		}
 	}
 
-	immediate = { V98 = { command_spawn_troops_for_shamans_effect = yes } }
+	immediate = {
+		hidden_effect = {
+			V98 = { command_spawn_troops_for_shamans_effect = yes }
+			random_owned_province = {
+				limit = { controlled_by = ROOT }
+				save_event_target_as = shaman_control_province
+			}
+		}
+	}
 
 	option = {
 		name = the_command.85.a
 		ai_chance = { factor = 1 }
 		
 		custom_tooltip = command_85_effect_tt
+		event_target:shaman_control_province = {
+			change_controller = V98
+			hidden_effect = {
+				spawn_units_for = { amount = 20 type = infantry who = V98 }
+				spawn_units_for = { amount = 4 type = cavalry who = V98 }
+			}
+		}
 	}
 }
 
@@ -4957,7 +4972,7 @@ country_event = { #The Betrayal of the Oni!
 				add_ruler_personality = zealot_personality
 				define_ruler_to_general = {
 					fire = 3
-					shock = 8
+					shock = 11
 					manuever = 4
 					siege = 7
 					trait = war_wizard_personality
@@ -5010,7 +5025,7 @@ country_event = { #The Betrayal of the Oni!
 				add_ruler_personality = cruel_personality
 				define_ruler_to_general = {
 					fire = 3
-					shock = 8
+					shock = 11
 					manuever = 4
 					siege = 7
 					trait = war_wizard_personality
@@ -5843,7 +5858,7 @@ country_event = { #Growing Concerns
 	option = {
 		name = the_command.111.a
 		ai_chance = {
-			factor = 100
+			factor = 10
 		}
 		custom_tooltip = command_sir_revolt_difficulty_warning_tt
 		custom_tooltip = command_sir_revolt_rewards_hint_tt
@@ -5853,7 +5868,7 @@ country_event = { #Growing Concerns
 	option = {
 		name = the_command.111.b
 		ai_chance = {
-			factor = 0
+			factor = 10
 			modifier = {
 				factor = 0
 				has_country_flag = take_strongest_sir_revolt
@@ -5867,7 +5882,7 @@ country_event = { #Growing Concerns
 	option = {
 		name = the_command.111.c
 		ai_chance = {
-			factor = 0
+			factor = 30
 			modifier = {
 				factor = 0
 				has_country_flag = take_strongest_sir_revolt
@@ -5881,7 +5896,7 @@ country_event = { #Growing Concerns
 	option = {
 		name = the_command.111.d
 		ai_chance = {
-			factor = 0
+			factor = 30
 			modifier = {
 				factor = 0
 				has_country_flag = take_strongest_sir_revolt
@@ -5895,7 +5910,7 @@ country_event = { #Growing Concerns
 	option = {
 		name = the_command.111.e
 		ai_chance = {
-			factor = 0
+			factor = 20
 			modifier = {
 				factor = 0
 				has_country_flag = take_strongest_sir_revolt
@@ -17258,6 +17273,93 @@ country_event = { #AI Command cedes Serpentspine to Jade March
 		east_serpentspine_superregion = {
 			limit = { owned_by = ROOT }
 			cede_province = R81
+		}
+	}
+}
+#The Command meets Eagle Command
+country_event = { 
+	id = the_command.4001
+	title = the_command.4001.t
+	desc = the_command.4001.d
+	picture = ONI_THINK_HOBGOBLIN_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			every_country = {
+				limit = {
+					primary_culture = eagle_command
+					religion = eagle_worship
+				}
+				country_event = { id = the_command.4002 }
+				}
+			}
+		}
+
+	option = {
+		name = the_command.4001.a
+		custom_tooltip = command_rivalry_eagle
+		add_country_modifier = {
+			name = command_shamanic_paranoia
+			duration = 7300
+		}
+		custom_tooltip = command_claim_eagle
+		hidden_effect = {
+			every_province = {
+				limit = {
+					culture = eagle_command
+					religion = eagle_worship
+				}
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+	option = {
+		name = the_command.4001.b
+		custom_tooltip = command_rivalry_eagle
+		add_country_modifier = {
+			name = command_shamanic_paranoia
+			duration = 7300
+		}
+		add_country_modifier = {
+			name = command_preparing_confrontation
+			duration = 3600
+		}
+	}
+}
+
+#Eagle Command met The Command
+country_event = { 
+	id = the_command.4002
+	title = the_command.4002.t
+	desc = the_command.4002.d
+	picture = ONI_FORTRESS_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			R62 = {
+				add_historical_rival = ROOT
+				add_opinion = {
+				who = ROOT
+				modifier = hobgoblin_first_contact
+				}
+			}
+		}
+	}
+	option = {
+		name = the_command.4002.a
+		add_historical_rival = R62
+		add_opinion = {
+			who = R62
+			modifier = hobgoblin_first_contact
+		}
+		add_country_modifier = {
+			name = command_the_righteous_army
+			duration = 7300
 		}
 	}
 }

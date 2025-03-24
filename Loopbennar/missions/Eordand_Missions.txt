@@ -479,8 +479,17 @@ eordand_1 = {
 		required_missions = { eord_1_bloodstained_altars eord_2_promises_prosperity }
 		
 		provinces_to_highlight = {
-			area = mykx_isles_area
-			NOT = { owned_by = ROOT }
+			OR = {
+				AND = {
+					area = mykx_isles_area
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 1075 #Graxarr
+					has_fort_building_trigger = yes
+					has_any_ongoing_construction = yes
+				}
+			}
 		}
 		
 		trigger = {
@@ -488,16 +497,20 @@ eordand_1 = {
 				owned_by = ROOT
 				type = all
 			}
+			if = {
+				limit = { 1075 = { has_fort_building_trigger = yes } } #Graxarr
+				1075 = { has_any_ongoing_construction = no } #Graxarr
+			}
 		}
 		
 		effect = {
 			if = {
 				limit = {
-					1075 = {
+					1075 = { #Graxarr
 						has_fort_building_trigger = yes
 					}
 				}
-				1075 = {
+				1075 = { #Graxarr
 					add_building_construction = {
 						building = naval_battery
 						speed = 0.5
@@ -1720,9 +1733,18 @@ eordand_3 = {
                 }
                 add_treasury = -2000
             }
-			add_country_modifier = {
-				name = eord_break_copperlords
-				duration = -1
+			if = {
+				limit = { NOT = { has_reform = copperlord_reform } }
+				add_country_modifier = {
+					name = eord_break_copperlords
+					duration = -1
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = eord_break_rival_copperlord
+					duration = -1
+				}
 			}
 		}
 	}
@@ -1830,6 +1852,7 @@ eordand_spring_3 = {
 				AND = {
 					is_core = ROOT
 					development = 40
+					has_any_ongoing_construction = no
 				}
 			}
 		}
@@ -1841,6 +1864,7 @@ eordand_spring_3 = {
 			2007 = {
 				is_core = ROOT
 				development = 40
+				has_any_ongoing_construction = no
 			}
 		}
 		
@@ -4468,10 +4492,20 @@ eordand_5_2 = {
 		
 		provinces_to_highlight = {
 			OR = {
-				province_id = 1202
-				province_id = 1201
+				AND = {
+					province_id = 1202
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+				AND = {
+					province_id = 1201
+					NOT = { 
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT 
+							has_any_ongoing_construction = no
+						}
+					}
+				}
 			}
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		
 		trigger = {
@@ -4482,7 +4516,7 @@ eordand_5_2 = {
 				value = 10
 			}
 			1201 = {
-				NOT = { has_construction = any }
+				has_any_ongoing_construction = no
 			}
 		}
 		

@@ -1,2773 +1,2402 @@
-# 
-rezankand_1_a = {
+# Original Mission Tree made by Hehodas. Reworked Mission Tree made by Gilly.
+# Reviewed by Blaziy, Magnive, Astera
+# Approved during the Leadership of Ditto I.
+# Written by Takasaki and Jeck
+# Coded by Mike@butek69
+# Special thanks to Takasaki and River Doge.
+
+rezankand_1_1_missions = {
 	slot = 1
 	generic = no
 	ai = yes
 	has_country_shield = yes
-	
 	potential = {
-		tag = H66
+		OR = {
+			tag = H66 #Jaherian Exemplars
+			tag = H67 #Rezankand
+		}
 	}
-	
-	H67_prepare_the_army = {
-		icon = mission_defeat_muscovy
+
+	rezankand_arrival_at_taychend = {
+		icon = mission_aelantir
 		position = 1
-		
+		provinces_to_highlight = { province_id = 6758 } 
+
 		trigger = {
-			ai = no
-			capital_scope = { region = dry_coast_region }
-			NOT = {
-				num_of_owned_provinces_with = {
-					value = 2
-					owned_by = ROOT
-				}
-			}
+			army_size_percentage = 0.9
 			OR = {
-				army_size = 20
-				mil_power = 100
-			}
-		}
-		
-		effect = {
-			custom_tooltip = rezankand_cortez_tooltip
-			if = { 
-				limit = { NOT = { army_size = 20 } }
-				add_mil_power = -100
-			}
-			add_country_modifier = {
-				name = rezankand_migration
-				duration = 7300
-			}
-		}
-	}
-	
-	H67_cortez_arrival = {
-		icon = mission_conquer_romania
-		position = 2
-		required_missions = {
-			H67_prepare_the_army
-		}
-		
-		trigger = {
-			capital_scope = { region = dry_coast_region }
-			NOT = { 
-				num_of_owned_provinces_with = {
-					value = 2
-					owned_by = ROOT
+				alliance_with = J79
+				J79 = { has_100_opinion_improved_relation = { target = ROOT }  } 
+				6758 = {
+					controlled_by = ROOT
 				}
 			}
-			mil_power = 75
-			dip_power = 75
 		}
-		
-		effect = {
-			add_mil_power = -75
-			add_dip_power = -75
-			add_manpower = 15
-			add_treasury = 500
-			define_conquistador = {
-				name = "Kortazel"
-				fire = 5
-				shock = 9
-				manuever = 4
-				siege = 5
-			}
-			taychend_superregion = {
+
+		effect = { 
+			country_event = { id = flavor_rezankand.1 }  #The Darkness Of Taychend
+
+			custom_tooltip = rezankand_arrival_at_taychend_insight_alliance_tt
+			if = {
 				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_claim = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+					alliance_with = J79
 				}
-				add_claim = ROOT
+				custom_tooltip = BONUS_REWARD_YES
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			tooltip = {
+				J79 = {
+					country_event = { id = flavor_rezankand.100 days = 10 }
+				}
+				nsc_update_incident_value = {
+					increase = yes
+					incident = incident_trapped_in_shadows
+				}
+			}
+
+			custom_tooltip = rezankand_arrival_at_taychend_insight_relations_tt
+			if = {
+				limit = {
+					J79 = { #Katelperai
+						has_100_opinion_improved_relation = { target = H66 } #Jaherian Exemplars
+					}
+				}
+				custom_tooltip = BONUS_REWARD_YES
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			tooltip = {
+				add_casus_belli = {
+					target = J79 #Katelperai
+					type = cb_vassalize_mission
+					months = 120
+				}
+			}
+
+			custom_tooltip = rezankand_arrival_at_taychend_insight_conquest_tt
+			if = {
+				limit = {
+					6758 = { 
+						OR = {
+							owned_by = ROOT 
+							controlled_by = ROOT
+						}
+					}
+				}
+				custom_tooltip = BONUS_REWARD_YES
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			tooltip = {
+				6758 = { change_religion = bulwari_sun_cult }
+				add_mil_power = 100
+				nsc_update_incident_value = {
+					decrease = yes
+					incident = incident_trapped_in_shadows
+				}
 			}
 		}
-	}
-	
-	H67_the_first_expedition = {
-		icon = mission_levantine_restoration
-		position = 3
-		required_missions = {
-			H67_cortez_arrival
+	}   
+
+	rezankand_jahers_duty = {
+		icon = mission_arise_ashes
+		position = 2
+		required_missions = { rezankand_arrival_at_taychend } 
+		provinces_to_highlight = {
+			region = kalavend_region
+			NOT = { owned_by = ROOT } 
 		}
-		
+
 		trigger = {
-			capital_scope = { region = dry_coast_region }
-			NOT = { 
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = rezankand_jahers_duty_tooltip
+					check_variable = {
+						which = RezankandJahersDuty
+						value = 20
+					}
+				}
 				num_of_owned_provinces_with = {
-					value = 2
-					owned_by = ROOT
+					value = 15
+					region = kalavend_region
 				}
 			}
-			at_war_with_religious_enemy = yes
 		}
-		
+
 		effect = {
 			add_country_modifier = {
-				name = rezankand_first_expedition
+				name = "rezankand_jahers_duty_modifier"
 				duration = 3650
 			}
-			add_manpower = 15
-			add_mil_power = 200
 		}
 	}
-	
-	H67_fill_the_wagon = {
-		icon = mission_dominate_persian_gulf
-		position = 4
-		required_missions = {
-			H67_the_first_expedition
-		}
-		
+
+	rezankand_first_clash = {
+		icon = mission_kheionai_laskaris
+		position = 3
+		required_missions = { rezankand_jahers_duty } 
 		provinces_to_highlight = {
-			superregion = taychend_superregion
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			is_at_war = no
-			dip_power = 400
-			mil_power = 400
-			adm_power = 400
-			capital_scope = {
-				region = dry_coast_region
-			}
-			num_of_owned_provinces_with = {
-				value = 10
+			OR = {
 				superregion = taychend_superregion
+				superregion = kheionai_superregion
+			}
+			owned_by = G52
+		}
+
+		trigger = {
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = rezankand_first_clash_tooltip
+					check_variable = {
+						which = RezankandFirstClash
+						value = 5
+					}
+				}
+				taychend_superregion = {
+					type = all
+					NOT = { owned_by = G52 } 
+				}
+				G52 = { exists = no } 
 			}
 		}
-		
+
 		effect = {
-			add_dip_power = -400
-			add_adm_power = -400
-			add_mil_power = -400
-			add_prestige = 75
-			custom_tooltip = rezankand_conquest_tooltip
-			hidden_effect = {
-				set_country_flag = rezankand_cortez_conquest
-				while = {
-					limit = {
-						any_owned_province = {
-							superregion = taychend_superregion
-							NOT = { has_province_modifier = rezankand_pillaged_province }
-						}
-					}
-					random_owned_province = {
-						limit = { 
-							superregion = taychend_superregion 
-							NOT = { has_province_modifier = rezankand_pillaged_province }
-						}
-						add_permanent_province_modifier = {
-							name = rezankand_pillaged_province
-							duration = 14600
-						}
-						remove_core = ROOT
-						cede_province = previous_owner
-						# change_religion = previous_owner
-						save_event_target_as = this_province
-						owner = { change_religion = event_target:this_province }
-						add_next_institution_embracement = 25
-						add_devastation = 50
-					}
-					add_treasury = 100
-					add_prestige = 2
-					capital_scope = {
-						change_trade_goods = silk
-						add_prosperity = 100
-						add_permanent_province_modifier = {
-							name = rezankand_cortez_legacy
-							duration = 36500
-						}
-					}
-					if = {
-						limit = { NOT = { capital_scope = { development = 40 } } }
-						random = {
-							chance = 50
-							capital_scope = { add_base_production = 1 }
-						}
-						random = {
-							chance = 50
-							capital_scope = { add_base_tax = 1 }
-						}
-						random = {
-							chance = 50
-							capital_scope = { add_base_manpower = 1 }
-						}
-					}
-					else_if = {
-						limit = { NOT = { capital_scope = { development = 65 } } }
-						random = {
-							chance = 33
-							capital_scope = { add_base_production = 1 }
-						}
-						random = {
-							chance = 33
-							capital_scope = { add_base_tax = 1 }
-						}
-						random = {
-							chance = 33
-							capital_scope = { add_base_manpower = 1 }
-						}
-						add_treasury = 50
-					}
-					else_if = {
-						limit = { NOT = { capital_scope = { development = 85 } } }
-						random = {
-							chance = 20
-							capital_scope = { add_base_production = 1 }
-						}
-						random = {
-							chance = 20
-							capital_scope = { add_base_tax = 1 }
-						}
-						random = {
-							chance = 20
-							capital_scope = { add_base_manpower = 1 }
-						}
-						add_treasury = 75
-					}
-					else_if = {
-						limit = { NOT = { capital_scope = { development = 120 } } }
-						random = {
-							chance = 10
-							capital_scope = { add_base_production = 1 }
-						}
-						random = {
-							chance = 10
-							capital_scope = { add_base_tax = 1 }
-						}
-						random = {
-							chance = 10
-							capital_scope = { add_base_manpower = 1 }
-						}
-						add_treasury = 100
-					}
-					else = {
-						add_treasury = 125
+			add_prestige = 10
+			custom_tooltip = rezankand_first_clash_manpower_tt
+			if = {
+				limit = {
+					check_variable = {
+						which = RezankandFirstClash
+						value = 5
 					}
 				}
-				every_country = {
-					limit = { capital_scope = { superregion = taychend_superregion } }
-					add_historical_rival = H66
-					add_historical_rival = H67
-					add_trust = {
-						who = H66
-						value = -25
+				hidden_effect = {
+					add_manpower = 5
+				}
+				custom_tooltip = BONUS_REWARD_YES
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			tooltip = { add_manpower = 5 } 
+			
+			custom_tooltip = rezankand_first_clash_modifier_tt
+			if = {
+				limit = {
+					check_variable = {
+						which = RezankandFirstClash
+						value = 10
 					}
-					add_trust = {
-						who = H67
-						value = -25
+				}
+				hidden_effect = {
+					add_country_modifier = {
+						name = rezankand_first_clash_modifier
+						duration = 5475 #15 years
 					}
+				}
+				custom_tooltip = BONUS_REWARD_YES
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			tooltip = {
+				add_country_modifier = {
+					name = rezankand_first_clash_modifier
+					duration = 5475
 				}
 			}
-			remove_country_modifier = rezankand_migration
+
+			custom_tooltip = rezankand_first_clash_battles_tt
+			if = {
+				limit = {
+					check_variable = {
+						which = RezankandFirstClash
+						value = 15
+					}
+				}
+				orenkoraim_area = { set_province_flag = rezankand_first_clash_flag } 
+				royakottar_area = { set_province_flag = rezankand_first_clash_flag } 
+				uesrennu_area = { set_province_flag = rezankand_first_clash_flag } 
+				custom_tooltip = BONUS_REWARD_YES
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			custom_tooltip = rezankand_first_clash_reward_tt
+
+			custom_tooltip = rezankand_first_clash_ameion_defeat_tt
+			if = {
+				limit = {
+					OR = {
+						check_variable = {
+							which = RezankandFirstClash
+							value = 20
+						}
+						AND = {
+							NOT = {
+								taychend_superregion = {
+									owned_by = G52 #Ameion
+								}
+							}
+							check_variable = {
+								which = RezankandFirstClash
+								value = 1
+							}
+						}
+					}
+				}
+				custom_tooltip = BONUS_REWARD_YES
+				sibisimra_area = { set_province_flag = rezankand_first_clash_flag } 
+				vuls_tenvach_area = { set_province_flag = rezankand_first_clash_flag } 
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			custom_tooltip = rezankand_first_clash_ameion_reward
 		}
 	}
 }
-
-rezankand_1_b = {
-	slot = 1
-	generic = no
-	ai = yes
-	has_country_shield = yes
-	potential = {
-		tag = H67
-	}
-	
-	H67_build_the_sunny_road = {
-		icon = mission_arabian_fort
-		position = 1
-		
-		provinces_to_highlight = {
-			OR = {
-				province_id = 2336
-				province_id = 2335
-				province_id = 2333
-				province_id = 2332
-				province_id = 2331
-				province_id = 2308
-				province_id = 2307
-				province_id = 2306
-				province_id = 2305
-				province_id = 2304
-				province_id = 2302
-			}
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			owns = 2336
-			owns = 2335
-			owns = 2333
-			owns = 2332
-			owns = 2331
-			owns = 2308
-			owns = 2307
-			owns = 2306
-			owns = 2305
-			owns = 2304
-			owns = 2302
-			treasury = 1250
-			manpower = 10
-		}
-		
-		effect = {
-			add_treasury = -1250
-			add_manpower = -10
-			custom_tooltip = rezankand_more_immigration_tooltip
-			2336 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2335 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2333 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2332 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2331 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2308 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2307 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2306 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2305 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2304 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-			2302 = {
-				add_permanent_province_modifier = {
-					name = rezankand_sunny_road
-					duration = -1
-				}
-			}
-		}
-	}
-	
-	H67_exploit_the_jungle = {
-		icon = mission_iberian_conquistador
-		position = 2
-		
-		provinces_to_highlight = {
-			has_discovered = ROOT
-			trade_goods = tropical_wood
-			NOT = { owned_by = ROOT }
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 7
-				trade_goods = tropical_wood
-			}
-		}
-		
-		effect = {
-			add_country_modifier = {
-				name = rezankand_build_boat
-				duration = 18250
-			}
-		}
-	}
-	
-	H67_golden_armada = {
-		icon = mission_spanish_armada
-		position = 2
-		required_missions = {
-			H67_exploit_the_jungle
-		}
-		
-		trigger = {
-			num_of_heavy_ship = 30
-		}
-		
-		effect = {
-			define_admiral = {
-				name = "Filarion"
-				shock = 3
-				fire = 6
-				manuever = 5
-				siege = 3
-			}
-			add_country_modifier = {
-				name = rezankand_golden_armada
-				duration = 10950
-			}
-		}
-	}
-	
-	H67_militarize_capital = {
-		icon = mission_invade_gujarat
-		position = 6
-		required_missions = {
-			H67_develop_capital
-		}
-		
-		trigger = {
-			stability = 3
-			mil_power = 200
-		}
-		
-		effect = {
-			custom_tooltip = rezankand_militarize_capital_tooltip
-			add_mil_power = -200
-			hidden_effect = { set_country_flag = rezankand_militarize_capital }
-		}
-	}
-	
-	H67_improve_administration = {
-		icon = mission_asian_trader
-		position = 7
-		required_missions = {
-			H67_militarize_capital
-		}
-		
-		trigger = {
-			adm_power = 100
-			stability = 3
-			custom_trigger_tooltip = {
-				tooltip = capital_militarized_tooltip
-				capital_scope = {
-					has_province_modifier = rezankand_militarize_census
-					has_province_modifier = rezankand_militarize_wall
-					has_province_modifier = rezankand_officier_academy
-				}
-			}
-		}
-		
-		effect = {
-			remove_country_modifier = legacy_of_adventurers_modifier
-			add_adm_power = -100
-			if = {
-				limit = { NOT = { has_country_modifier = legacy_of_adventurers_modifier } }
-				define_advisor = {
-					type = inquisitor
-					skill = 3
-					name = "Naeryndam Venquinal"
-					discount = yes
-				}
-			}
-		}
-	}
-	
-	H67_indivisible_people = {
-		icon = mission_scholar_officials
-		position = 8
-		
-		trigger = {
-			if = {
-				limit = { government = monarchy ai = no }
-				legitimacy = 95
-			}
-			stability = 3
-			religious_unity = 0.85
-			adm_power = 100
-		}
-		
-		effect = {
-			add_adm_power = -100
-			add_country_modifier = {
-				name = rezankand_indivisible_people
-				duration = 18250
-			}
-			country_event = { id = rezankand.2 days = 720 random = 360 }
-		}
-	}
-	
-	H67_embrace_our_destiny = {
-		icon = mission_new_dawn
-		position = 9
-		
-		required_missions = {
-			H67_indivisible_people
-		}
-		
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = rezankand_dawn_elf_tooltip
-				has_country_flag = rezankand_dawn_elf
-			}
-			adm_power = 100
-			dip_power = 100
-			mil_power = 100
-		}
-		
-		effect = {
-			add_adm_power = -100
-			add_mil_power = -100
-			add_dip_power = -100
-			country_event = { id = rezankand.3 }
-			set_country_flag = no_formable_culture_shift
-		}
-	}
-	
-	H67_burn_them_all = {
-		icon = mission_rb_control_state_religion
-		position = 11
-		
-		required_missions = {
-			H67_embrace_our_destiny
-			H67_the_burning_expedition
-		}
-		
-		provinces_to_highlight = {
-			superregion = taychend_superregion
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 60
-				superregion = taychend_superregion
-			}
-			capital_scope = { region = dry_coast_region }
-		}
-		
-		effect = {
-			taychend_superregion = {
-				limit = { owned_by = ROOT }
-				add_base_manpower = -1
-				add_base_production = -1
-				add_base_tax = -1
-				add_permanent_province_modifier = {
-					name = rezankand_consecrated_land
-					duration = 29200
-				}
-			}
-			capital_scope = {
-				add_base_manpower = 1
-				add_base_tax = 1
-				add_base_production = 1
-				region = {
-					add_base_manpower = 2
-					add_base_tax = 2
-					add_base_production = 2
-				}
-				add_permanent_province_modifier = {
-					name = rezankand_taychend_riches
-					duration = -1
-				}
-			}
-		}
-	}
-	
-	H67_in_the_name_of_the_fallen = {
-		icon = mission_burning_castle
-		position = 15
-		required_missions = {
-			H67_burn_them_all
-			H67_hot_knife_through_butter
-		}
-		
-		provinces_to_highlight = {
-			OR = {
-				region = andic_reach_region
-				region = devand_region
-				region = mteibas_valley_region
-			}
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 90
-				OR = {
-					region = andic_reach_region
-					region = devand_region
-					region = mteibas_valley_region
-				}
-			}
-			capital_scope = { region = dry_coast_region }
-		}
-		
-		effect = {
-			andic_reach_region = {
-				limit = { owned_by = ROOT }
-				add_base_manpower = -1
-				add_base_production = -1
-				add_base_tax = -1
-				add_permanent_province_modifier = {
-					name = rezankand_consecrated_land
-					duration = 29200
-				}
-			}
-			devand_region = {
-				limit = { owned_by = ROOT }
-				add_base_manpower = -1
-				add_base_production = -1
-				add_base_tax = -1
-				add_permanent_province_modifier = {
-					name = rezankand_consecrated_land
-					duration = 29200
-				}
-			}
-			mteibas_valley_region = {
-				limit = { owned_by = ROOT }
-				add_base_manpower = -1
-				add_base_production = -1
-				add_base_tax = -1
-				add_permanent_province_modifier = {
-					name = rezankand_consecrated_land
-					duration = 29200
-				}
-			}
-			capital_scope = {
-				add_base_manpower = 2
-				add_base_tax = 2
-				add_base_production = 2
-				region = {
-					add_base_manpower = 3
-					add_base_tax = 3
-					add_base_production = 3
-				}
-				add_permanent_province_modifier = {
-					name = rezankand_kheionia_riches
-					duration = -1
-				}
-			}
-		}
-	}
-	
-	H67_arise_from_the_ashes = {
-		icon = mission_arise_ashes
-		position = 16
-		required_missions = {
-			H67_in_the_name_of_the_fallen
-		}
-		
-		provinces_to_highlight = {
-			OR = {
-				superregion = taychend_superregion
-				region = chendhya_region
-			}
-			OR = {
-				NOT = { owned_by = ROOT }
-				NOT = { has_owner_religion = yes }
-			}
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 115
-				OR = {
-					superregion = taychend_superregion
-					region = chendhya_region
-				}
-				has_owner_religion = yes
-			}
-			religion = bulwari_sun_cult
-		}
-		
-		effect = {
-			country_event = { id = rezankand.4 }
-		}
-	}
-}
-
-rezankand_2_a = {
+rezankand_2_1_missions = {
 	slot = 2
 	generic = no
 	ai = yes
 	has_country_shield = yes
 	potential = {
 		OR = {
-			tag = H66
-			tag = H67
+			tag = H66 #Jaherian Exemplars
+			tag = H67 #Rezankand
 		}
 	}
-	
-	H67_expand_capital = {
-		icon = mission_early_game_buildings
+
+	rezankand_secrets_of_the_sundancer = {
+		icon = mission_taychend_nanru_nakar_city
+		position = 2
+		required_missions = { rezankand_arrival_at_taychend } 
+		provinces_to_highlight = { area = nanru_nakar_area } 
+
+		trigger = {
+			OR = {
+				nanru_nakar_area = { owner = { alliance_with = ROOT }  } 
+				nanru_nakar_area = { owned_by = ROOT } 
+				AND = {
+					nanru_nakar_area = {
+						num_of_units_in_province = {
+							who = ROOT
+							amount = 10
+						}
+					}
+					dip_power = 250
+				}
+			}
+		}
+
+		effect = { country_event = { id = flavor_rezankand.3 }  } #Secrets of the Sundancer
+	}
+
+	rezankand_precursor_treasures = {
+		icon = mission_crystal_focus
+		position = 3
+		required_missions = { rezankand_secrets_of_the_sundancer } 
+		provinces_to_highlight = {
+			superregion = taychend_superregion
+			trade_goods = precursor_relics
+			NOT = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 5
+				}
+			}
+		}
+
+		trigger = {
+			2302 = { #Rezankaz
+				is_city = yes
+				owned_by = ROOT
+			}
+			calc_true_if = {
+				amount = 3
+				taychend_superregion = {
+					type = all
+					trade_goods = precursor_relics
+					num_of_units_in_province = {
+						who = ROOT
+						amount = 5
+					}
+				}
+			}
+		}
+
+		effect = {
+			2302 = { add_or_upgrade_shipyard_building = yes } #Rezankaz
+			add_country_modifier = {
+				name = "rezankand_precursor_treasures_modifier"
+				duration = -1
+			}
+		}
+	}
+
+	rezankand_dispel_the_dark = {
+		icon = mission_new_dawn
 		position = 4
 		required_missions = {
-			H67_establish_spearhead
+			rezankand_first_clash
+			rezankand_precursor_treasures
 		}
-		
 		provinces_to_highlight = {
-			is_capital_of = ROOT
-			NOT = { development = 15 }
+			superregion = taychend_superregion
+			NOT = { owned_by = ROOT }
+			trade_goods = slaves 
 		}
-		
-		trigger = {
-			if = {
-				limit = { ai = yes }
-				years_of_income = 0.5
-				adm_power = 50
-				dip_power = 75
-			}
-			else = {
-				capital_scope = { development = 15 }
-			}
-		}
-		
-		effect = {
-			if = {
-				limit = { ai = yes }
-				capital_scope = {
-					add_base_manpower = 3
-					add_base_production = 3
-					add_base_tax = 3
-				}
-			}
-			capital_scope = {
-				add_province_modifier = {
-					name = rezankand_growing_capital
-					duration = 3650
-				}
-			}
-		}
-	}
-	
-	H67_develop_capital = {
-		icon = mission_found_havana
-		position = 5
-		required_missions = {
-			H67_expand_capital
-			H67_create_immigration_office
-		}
-		
-		provinces_to_highlight = {
-			is_capital_of = ROOT
-			NOT = { development = 30 }
-		}
-		
-		trigger = {
-			if = {
-				limit = { ai = yes }
-				dip_power = 100
-				mil_power = 100
-				adm_power = 100
-			}
-			else = {
-				capital_scope = { development = 30 }
-			}
-		}
-		
-		effect = {
-			if = {
-				limit = { NOT = { capital_scope = { province_has_center_of_trade_of_level = 1 } } }
-				capital_scope = { center_of_trade = 1 }
-			}
-			else_if = {
-				limit = { NOT = { capital_scope = { province_has_center_of_trade_of_level = 3 } } }
-				capital_scope = { add_center_of_trade_level = 1 }
-			}
-			else = {
-				capital_scope = {
-					add_base_manpower = 1
-					add_base_production = 1
-					add_base_tax = 1
-				}				
-			}
-			capital_scope = {
-				add_base_manpower = 1
-				add_base_production = 1
-				add_base_tax = 1
-			}
-			if = {
-				limit = { ai = yes }
-				capital_scope = {
-					add_base_manpower = 3
-					add_base_production = 3
-					add_base_tax = 3
-				}
-			}
-		}
-	}
-}
 
-rezankand_2_b = {
-	slot = 2
-	generic = no
-	ai = yes
-	has_country_shield = yes
-	potential = {
-		tag = H67
-	}
-	
-	H67_elven_sea = {
-		icon = mission_aragonese_navy
-		position = 6
-		required_missions = {
-			H67_expand_territory
-		}
-		
-		provinces_to_highlight = {
-			region = severed_coast_region
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 4
-				region = severed_coast_region
-			}
-		}
-		
-		effect = {
-			severed_coast_region  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	H67_united_coast = {
-		icon = mission_rb_take_gibraltar
-		position = 7
-		required_missions = {
-			H67_elven_sea
-		}
-		
-		provinces_to_highlight = {
-			region = severed_coast_region
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 14
-				region = severed_coast_region
-			}
-		}
-		
-		effect = {
-			add_stability_or_adm_power = yes
-			add_dip_power = 150
-			add_prestige = 15
-		}
-	}
-	
-	H67_azka_traz = {
-		icon = mission_golden_century
-		position = 8
-		required_missions = {
-			H67_taychend_path
-		}
-		
-		provinces_to_highlight = {
-			province_id = 2507
-			OR = {
-				NOT = { owned_by = ROOT }
-				NOT = { has_fort_building_trigger = yes }
-			}
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			2507 = {
-				owned_by = ROOT
-				has_fort_building_trigger = yes
-			}
-		}
-		
-		effect = {
-			2507 = {
-				add_permanent_province_modifier = {
-					name = rezankand_azka_traz
-					duration = 36500
-				}
-			}
-			vettakaramai_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			nanru_nakar_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			varamraya_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			uesrennu_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	H67_first_taychend_step = {
-		icon = mission_humiliate_provence
-		position = 9
-		required_missions = {
-			H67_azka_traz
-		}
-		
-		provinces_to_highlight = {
-			superregion = taychend_superregion
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 10
-				superregion = taychend_superregion
-			}
-		}
-		
-		effect = {
-			add_prestige = 10
-			taychend_superregion = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	H67_the_burning_expedition = {
-		icon = mission_protect_albania
-		position = 10
-		required_missions = {
-			H67_first_taychend_step
-		}
-		
-		provinces_to_highlight = {
-			superregion = taychend_superregion
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 40
-				superregion = taychend_superregion
-			}
-		}
-		
-		effect = {
-			add_prestige = 15
-			add_years_of_income = 0.5
-			larankarha_highlands_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	H67_conquer_larankarha = {
-		icon = mission_steppe_warriors
-		position = 11
-		required_missions = {
-			H67_the_burning_expedition
-		}
-		
-		provinces_to_highlight = {
-			region = larankarha_highlands_region
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
 		trigger = {
 			num_of_owned_provinces_with = {
 				value = 20
-				region = larankarha_highlands_region
-			}
-		}
-		
-		effect = {
-			add_prestige = 10
-			add_years_of_income = 0.5
-			chendhya_region  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	H67_taychend_charter = {
-		icon = mission_trade_company_region_abroad
-		position = 12
-		required_missions = {
-			H67_conquer_larankarha
-		}
-		
-		provinces_to_highlight = {
-			OR = {
 				superregion = taychend_superregion
-				region = chendhya_region
 			}
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 100
-				OR = {
+			if = {
+				limit = {
+					NOT = {
+						calc_true_if = {
+							amount = 3
+							taychend_superregion = {
+								type = all
+								trade_goods = slaves
+							}
+						}
+					}
+				}
+				num_of_owned_provinces_with = {
+					value = 3
 					superregion = taychend_superregion
-					region = chendhya_region
-				}
-			}
-		}
-		
-		effect = {
-			add_stability_or_adm_power = yes
-			add_prestige = 25
-			add_years_of_income = 1.5
-		}
-	}
-	
-	H67_the_ruan_expedition = {
-		icon = mission_non-western_cavalry_raid
-		position = 13
-		required_missions = {
-			H67_taychend_charter
-		}
-		
-		trigger = {
-			if = {
-				limit = { ai = no }
-				OR = {
-					army_size = 200
-					army_size_percentage = 0.95
-				}
-				mil_power = 100
-			}
-			else = { army_size = 100 }
-		}
-		
-		effect = {
-			if = {
-				limit = { ai = no }
-				add_mil_power = -100
-			}
-			add_country_modifier = {
-				name = rezankand_ruan_expedition
-				duration = 7300
-			}
-			colonial_kheionai  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	H67_hot_knife_through_butter = {
-		icon = mission_marathi_fiefs
-		position = 14
-		required_missions = {
-			H67_the_ruan_expedition
-		}
-		
-		provinces_to_highlight = {
-			OR = {
-				region = andic_reach_region
-				region = mteibas_valley_region
-				region = devand_region
-			}
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 50
-				OR = {
-					region = andic_reach_region
-					region = mteibas_valley_region
-					region = devand_region
-				}
-			}
-		}
-		
-		effect = {
-			add_prestige = 10
-			add_dip_power = 100
-			add_mil_power = 100
-			add_adm_power = 100
-			add_country_modifier = {
-				name = rezankand_kheionia_trade
-				duration = 10950
-			}
-		}
-	}
-	
-	H67_way_of_the_desert = {
-		icon = mission_conquer_air
-		position = 17
-		required_missions = {
-			H67_the_great_expedition
-		}
-		
-		provinces_to_highlight = {
-			OR = {
-				area = west_vanburia_area
-				area = north_vanburia_area
-				area = east_vanburia_area
-			}
-			NOT = { country_or_subject_holds = ROOT }
-		}
-		
-		trigger = {
-			west_vanburia_area = {
-				type = all
-				country_or_subject_holds = ROOT
-			}
-			north_vanburia_area = {
-				type = all
-				country_or_subject_holds = ROOT
-			}
-			east_vanburia_area = {
-				type = all
-				country_or_subject_holds = ROOT
-			}
-		}
-		
-		effect = {
-			add_prestige = 10
-			country_event = { id = rezankand.5 }
-			if = {
-				limit = {
-					any_subject_country = {
-						capital_scope = { colonial_region = colonial_haraf }
-					}
-				}
-				random_subject_country = {
-					limit = { capital_scope = { colonial_region = colonial_haraf } }
-					colonial_haraf  = {
-						limit = {
-							NOT = { is_core = PREV }
-							NOT = { is_permanent_claim = PREV }
-						}
-						add_permanent_claim = PREV
-					}
+					religion = oren_nayiru
 				}
 			}
 			else = {
-				colonial_haraf  = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-						NOT = { is_claim = ROOT }
-					}
-					add_claim = ROOT
+				num_of_owned_provinces_with = {
+					value = 3
+					superregion = taychend_superregion
+					trade_goods = slaves
 				}
 			}
 		}
-	}
-	
-	H67_through_jungle_and_desert = {
-		icon = mission_raid_on_genoa
-		position = 18
-		required_missions = {
-			H67_way_of_the_desert
-		}
-		
-		provinces_to_highlight = {
-			colonial_region = colonial_haraf
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 45
-				colonial_region = colonial_haraf
-			}
-		}
-		
+
 		effect = {
-			add_prestige = 20
-			add_mil_power = 100
-			add_dip_power = 100
-			if = {
-				limit = {
-					any_subject_country = {
-						capital_scope = { superregion = eordand_superregion }
+			hidden_effect = {
+				taychend_superregion = {
+					limit = {
+						owned_by = ROOT
+						trade_goods = slaves
 					}
-				}
-				random_subject_country = {
-					limit = { capital_scope = { superregion = eordand_superregion } }
-					eordand_superregion  = {
-						limit = {
-							NOT = { is_core = PREV }
-							NOT = { is_permanent_claim = PREV }
+					ROOT = {
+						change_variable = {
+							which = rezankand_slave_provinces
+							value = 1
 						}
-						add_permanent_claim = PREV
 					}
 				}
-			}
-			else = {
-				eordand_superregion  = {
+				if = {
 					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-						NOT = { is_claim = ROOT }
+						NOT = {
+							calc_true_if = {
+								amount = 3
+								taychend_superregion = {
+									type = all
+									trade_goods = slaves
+								}
+							}
+						}
 					}
-					add_claim = ROOT
+					set_country_flag = rezankand_not_enough_slaves
+				}
+				taychend_superregion = {
+					if = {
+						limit = {
+							owned_by = ROOT
+							trade_goods = slaves
+						}
+						custom_tooltip = removes_slaves_tooltip
+						change_trade_goods = unknown
+					}
+					if = {
+						limit = {
+							owned_by = ROOT
+							NOT = { has_province_flag = rezankand_first_clash_flag } 
+							NOT = { area = katelperai_area } 
+						}
+						remove_core = ROOT
+						cede_province = previous_owner
+					}
+				}
+				if = {
+					limit = { 
+						J79 = { is_subject_of = ROOT }
+					}
+					J79 = {
+						every_owned_province = {
+							limit = {
+								NOT = { has_province_flag = rezankand_first_clash_flag } 
+								NOT = { area = katelperai_area }
+								NOT = { previous_owner = ROOT }
+							}
+							cede_province = previous_owner
+						}
+					}
+				}
+				every_subject_country = {
+					limit = {
+						NOT = { tag = J79 }
+					}
+					grant_independence = yes 
 				}
 			}
-		}
-	}
-	
-	H67_the_riches_of_eordand = {
-		icon = mission_conquer_alexandria
-		position = 19
-		required_missions = {
-			H67_through_jungle_and_desert
-		}
-		
-		provinces_to_highlight = {
-			superregion = eordand_superregion
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 60
-				superregion = eordand_superregion
-			}
-		}
-		
-		effect = {
-			add_prestige = 20
-			add_mil_power = 100
-			add_dip_power = 100
-			add_years_of_income = 1
-			capital_scope = {
-				add_province_modifier = {
-					name = rezankand_eordand_riches
-					duration = -1
-				}
-			}
+			custom_tooltip = rezankand_dispel_the_dark_tt
+			country_event = { id = flavor_rezankand.6 } #Dispel The Dark
 		}
 	}
 }
-
-rezankand_3_a = {
+rezankand_3_1_missions = {
 	slot = 3
 	generic = no
 	ai = yes
 	has_country_shield = yes
 	potential = {
 		OR = {
-			tag = H66
-			tag = H67
+			tag = H66 #Jaherian Exemplars
+			tag = H67 #Rezankand
 		}
 	}
-	
-	H67_prepare_expeditionary_forces = {
-		icon = mission_italian_condottiere
+
+	rezankand_homecoming = {
+		icon = mission_fleet_arrival
 		position = 1
-		
+		provinces_to_highlight = { province_id = 2333 } #Jaherdin
+
 		trigger = {
-			army_size = 10
-			NOT = { has_country_modifier = rezankand_migration }
-		}
-		
-		effect = {
-			define_conquistador = {
-				name = "Qildor Keazorwyn"
-				shock = 5
-				fire = 1
-				manuever = 5
-				siege = 2
+			2333 = { #Jaherdin
+				owned_by = ROOT
+				OR = {
+					is_city = yes
+					is_colony = yes
+				}
 			}
-			add_prestige = 15
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = rezankand_homecoming_modifier
+				duration = 36500 #100 years
+			}
 		}
 	}
-	
-	H67_map_the_terrain = {
-		icon = mission_retake_ceuta
+
+	rezankand_founding_of_jaherdin = {
+		icon = mission_sunset_alternative
 		position = 2
-		required_missions = {
-			H67_prepare_expeditionary_forces
-		}
-		
-		trigger = {
-			dry_coast_region = {
-				type = all
-				has_discovered = ROOT
-			}
-		}
-		
-		effect = {
-			add_prestige = 15
-			add_splendor = 200
-			add_dip_power = 75
-			add_adm_power = 75
-		}
-	}
-	
-	H67_establish_spearhead = {
-		icon = mission_galleys_in_port
-		position = 3
-		required_missions = {
-			H67_map_the_terrain
-		}
-		
+		required_missions = { rezankand_homecoming } 
 		provinces_to_highlight = {
-			area_for_scope_province = {
-				is_capital_of = ROOT
+			province_id = 2333
+			OR = {
+				has_tax_building_trigger = no
+				has_production_or_gold_building_trigger = no
+				has_trade_building_trigger = no
 			}
-			NOT = { owned_by = ROOT }
 		}
-		
+
 		trigger = {
-			capital_scope = {
-				area_for_scope_province = {
-					type = all
-					owned_by = ROOT
-				}
+			2333 = { #Jaherdin
+				has_tax_building_trigger = yes
+				has_production_or_gold_building_trigger = yes
+				has_trade_building_trigger = yes
 			}
 		}
-		
+
 		effect = {
-			add_prestige = 10
-			capital_scope = {
-				area = {
-					add_base_tax = 1
-					add_base_manpower = 1
-					add_base_production = 1
-				}
-			}
-		}
-	}
-	
-	H67_create_immigration_office = {
-		icon = mission_sea_battles
-		position = 4
-		required_missions = {
-			H67_establish_spearhead
-		}
-		
-		trigger = {
-			dip_power = 150
-			adm_power = 50
-		}
-		
-		effect = {
-			add_dip_power = -150
-			add_adm_power = -50
-			capital_scope = {
+			2333 = { #Jaherdin
 				add_permanent_province_modifier = {
-					name = rezankand_immigration_office
-					duration = 36500
+					name = rezankand_founding_of_jaherdin_modifier
+					duration = -1
 				}
 			}
 		}
 	}
-	
-	H67_expand_territory = {
-		icon = mission_unite_home_region
-		position = 5
-		required_missions = {
-			H67_create_immigration_office
-		}
-		
-		trigger = {
-			total_development = 100
-		}
-		
-		effect = {
-			dry_coast_region  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-			add_stability_or_adm_power = yes
-		}
-	}
-}
 
-rezankand_3_b = {
-	slot = 3
-	generic = no
-	ai = yes
-	has_country_shield = yes
-	potential = {
-		tag = H67
-	}
-	
-	H67_elven_coast = {
-		icon = mission_rb_conquer_brittany
-		position = 6
-		required_missions = {
-			H67_expand_territory
-		}
-
+	rezankand_dry_coast_league = {
+		icon = mission_monarch_diplomacy
+		position = 4
+		required_missions = { rezankand_founding_of_jaherdin } 
 		provinces_to_highlight = {
 			region = dry_coast_region
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
+			OR = {
+				NOT = { owned_by = ROOT } 
+				NOT = { development = 10 } 
+			}
 		}
-		
+
 		trigger = {
 			num_of_owned_provinces_with = {
 				value = 15
 				region = dry_coast_region
 			}
-		}
-		
-		effect = {
-			add_adm_power = 150
-			dry_coast_region  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
+			num_of_owned_provinces_with = {
+				value = 10
+				region = dry_coast_region
+				development = 10
 			}
-			
-			east_effelai_region  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-			
-			junglemouth_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	H67_taychend_path = {
-		icon = mission_rb_rein_in_the_highland_clans
-		position = 7
-		required_missions = {
-			H67_elven_coast
 		}
 
-		provinces_to_highlight = {
-			area = junglemouth_area
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			junglemouth_area = {
-				type = all
-				owned_by = ROOT
-			}
-		}
-		
 		effect = {
-			central_effelai_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+			country_event = { id = flavor_rezankand.5 } #The Dry Coast League
+			add_prestige = 20
+			custom_tooltip = rezankand_dry_coast_tt
+			hidden_effect = {
+				dry_coast_region = {
+					limit = { owned_by = ROOT } 
+					if = {
+						limit = { is_prosperous = yes } 
+						add_base_tax = 2
+					}
+					else = { add_base_tax = 1 } 
 				}
-				add_permanent_claim = ROOT
 			}
 		}
 	}
-	
-	H67_effelai_heart = {
-		icon = mission_clear_the_delta
-		position = 9
+
+	rezankand_land_of_sunlight = {
+		icon = mission_sun_temple
+		position = 5
 		required_missions = {
-			H67_taychend_path
+			rezankand_dispel_the_dark
+			rezankand_dry_coast_league
+			rezankand_new_exemplars
+		}
+		provinces_to_highlight = {
+			region = dry_coast_region
+			NOT = { owned_by = ROOT } 
 		}
 
-		provinces_to_highlight = {
-			OR = {
-				area = central_effelai_area
-			}
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
 		trigger = {
-			central_effelai_area = {
+			dry_coast_region = {
 				type = all
 				owned_by = ROOT
 			}
 		}
-		
-		effect = {
-			rockfall_jungle_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			mistwood_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	H67_leaf_path = {
-		icon = mission_conquer_malwa_bah
-		position = 10
-		required_missions = {
-			H67_effelai_heart
-		}
-		
-		provinces_to_highlight = {
-			region = south_effelai_region
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			south_effelai_region = {
-				type = all
-				owned_by = ROOT
-			}
-			treasury = 2000
-			manpower = 10
-			adm_power = 100
-		}
-		
-		effect = {
-			add_adm_power = -100
-			add_treasury = -2000
-			add_manpower = -10
-			add_prestige = 10
-			add_stability_or_adm_power = yes
-			country_event = { id = rezankand.6 } # Leaf path event
-			oomu_nelir_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-			culefchas_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-			siquoomul_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-			chaiwafmul_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-		}
-	}
-	
-	H67_amadia_way = {
-		icon = mission_advance_to_the_arabian_sea
-		position = 11
-		
-		required_missions = {
-			H67_leaf_path
-		}
-		
-		provinces_to_highlight = {
-			region = amadia_region
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 8
-				region = amadia_region
-			}
-		}
-		
-		effect = {
-			amadia_region  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-		}
-	}
-	
-	H67_amadia_exploitation = {
-		icon = mission_end_arakan_piracy
-		position = 12
-		required_missions = {
-			H67_amadia_way
-		}
-		
-		provinces_to_highlight = {
-			region = amadia_region
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 50
-				region = amadia_region
-			}
-		}
-		
-		effect = {
-			add_prestige = 20
-			capital_scope = {
-				area = {
-					add_base_tax = 1
-					add_base_manpower = 1
-					add_base_production = 1
-				}
-			}
-		}
-	}
-	
-	H67_prepare_the_fleet = {
-		icon = mission_rb_a_mighty_fleet
-		position = 15
-		required_missions = {
-			H67_amadia_exploitation
-			H67_hot_knife_through_butter
-			H67_northern_logistic_base
-		}
-		
-		trigger = {
-			if = {
-				limit = { ai = no }
-				OR = {
-					navy_size_percentage = 0.95
-					num_of_heavy_ship = 50
-				}
-			}
-			else = {
-				navy_size_percentage = 0.2
-			}
-			dip_power = 200
-		}
-		
-		effect = {
-			add_dip_power = -200
-			country_event = { id = rezankand.7 days = 360 random = 200 }
-			add_prestige = 10
-		}
-	}
-	
-	H67_the_great_expedition = {
-		icon = mission_prepare_an_invasion_force
-		position = 16
-		required_missions = {
-			H67_prepare_the_fleet
-		}
-		
-		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = rezankand_expedition_tooltip
-				has_country_flag = rezankand_expedition_ready
-			}
-			prestige = 90
-			has_legitimacy_equivalent = { VAL=90 }
-		}
-		
-		effect = {
-			west_vanburia_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-			north_vanburia_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-			east_vanburia_area  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-			colonial_isles  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			ravenous_isle_region  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-			reapers_coast_region  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-					NOT = { is_claim = ROOT }
-				}
-				add_claim = ROOT
-			}
-		}
-	}
-	
-	H67_land_on_the_beach = {
-		icon = mission_fortify_mandu
-		position = 17
-		required_missions = {
-			H67_the_great_expedition		
-		}	
-		
-		provinces_to_highlight = {
-			region = reapers_coast_region
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 12
-				region = reapers_coast_region
-			}
-		}
-		
-		effect = {
-			add_prestige = 20
-			add_mil_power = 100
-			add_dip_power = 100
-			if = {
-				limit = {
-					any_subject_country = {
-						capital_scope = { colonial_region = colonial_noruin }
-					}
-				}
-				random_subject_country = {
-					limit = { capital_scope = { colonial_region = colonial_noruin } }
-					colonial_noruin  = {
-						limit = {
-							NOT = { is_core = PREV }
-							NOT = { is_permanent_claim = PREV }
-						}
-						add_permanent_claim = PREV
-					}
-				}
-			}
-			else = {
-				colonial_noruin  = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-						NOT = { is_claim = ROOT }
-					}
-					add_claim = ROOT
-				}
-			}
-		}
-	}
-	
-	H67_the_trollsbay = {
-		icon = mission_trollsbay
-		position = 18
-		required_missions = {
-			H67_land_on_the_beach		
-		}	
-		
-		provinces_to_highlight = {
-			region = trollsbay_region
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 50
-				region = trollsbay_region
-			}
-		}
-		
-		effect = {
-			add_prestige = 20
-			add_mil_power = 100
-			add_dip_power = 100
-			if = {
-				limit = {
-					any_subject_country = {
-						capital_scope = { colonial_region = colonial_noruin }
-					}
-				}
-				random_subject_country = {
-					limit = { capital_scope = { colonial_region = colonial_noruin } }
-					colonial_noruin  = {
-						limit = {
-							NOT = { is_core = PREV }
-							NOT = { is_permanent_claim = PREV }
-						}
-						add_permanent_claim = PREV
-					}
-				}
-			}
-			else = {
-				colonial_noruin  = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-						NOT = { is_claim = ROOT }
-					}
-					add_claim = ROOT
-				}
-			}
-		}
-	}
-	
-	H67_storm_noruin = {
-		icon = mission_invade_island
-		position = 19
-		required_missions = {
-			H67_the_trollsbay
-		}
-		
-		provinces_to_highlight = {
-			colonial_region = colonial_noruin
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 90
-				colonial_region = colonial_noruin
-			}
-		}
-		
-		effect = {
-			add_prestige = 25
-			add_mil_power = 150
-			add_dip_power = 150
-			add_years_of_income = 2
-		}
-	}
-	
-	H67_the_last_expedition = {
-		icon = mission_have_two_subjects
-		position = 20
-		required_missions = {
-			H67_storm_noruin
-			H67_the_riches_of_eordand
-			H67_endralliande
-		}	
-		
-		trigger = {
-			OR = {
-				army_size_percentage = 1
-				army_size = 200
-			}
-		}
-		
-		effect = {
-			if = {
-				limit = {
-					any_subject_country = {
-						capital_scope = { superregion = ynn_superregion }
-					}
-				}
-				random_subject_country = {
-					limit = { capital_scope = { superregion = ynn_superregion  } }
-					ynn_superregion  = {
-						limit = {
-							NOT = { is_core = PREV }
-							NOT = { is_permanent_claim = PREV }
-						}
-						add_permanent_claim = PREV
-					}
-				}
-			}
-			else = {
-				ynn_superregion  = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-						NOT = { is_claim = ROOT }
-					}
-					add_claim = ROOT
-				}
-			}
-		}
-	}
-	
-	H67_the_submission_of_a_civilization = {
-		icon = mission_impaled_soldies
-		position = 21
-		required_missions = {
-			H67_the_last_expedition
-		}	
-		
-		provinces_to_highlight = {
-			superregion = ynn_superregion
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			ynn_superregion = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		
-		effect = {
-			add_stability = 2
-			add_prestige = 50
-			add_country_modifier = {
-				name = rezankand_ynn_grain
-				duration = -1
-			}
-		}
-	}
-	
-	H67_a_sunny_day = {
-		icon = mission_reconquer_vologda
-		position = 22
-		required_missions = {
-			H67_the_submission_of_a_civilization
-		}	
-		
-		trigger = {
-			stability = 3
-			has_legitimacy_equivalent = { VAL=100 }
-		}
-		
-		effect = {
-			country_event = { id = rezankand.8 }
-		}
+
+		effect = { country_event = { id = flavor_rezankand.8 } } #Cult Of Exemplary
 	}
 }
-
-rezankand_4_a = {
-	slot = 4
-	generic = no
-	ai = yes
-	has_country_shield = yes
-	potential = {
-		tag = H67
-	}
-	
-	H67_military_reform = {
-		icon = mission_cannons_firing
-		position = 2
-		required_missions = {
-			H67_a_crown_to_govern_them_all
-		}
-		
-		trigger = {
-			mil_power = 200
-			army_size = 130
-		}
-		
-		effect = {
-			add_mil_power = -200
-			add_country_modifier = {
-				name = rezankand_military_reform
-				duration = 7300
-			}
-		}
-	}
-	
-	H67_militarize_society = {
-		icon = kingdom_of_heaven
-		position = 3
-		required_missions = {
-			H67_military_reform
-		}
-		
-		trigger = {
-			mil_power = 200
-			mil_tech = 16
-			has_professionalism_equivalent = { VAL=0.8 }
-		}
-		
-		effect = {
-			add_mil_power = -200
-			unlock_merc_company = {
-				merc_company = merc_rezankand_var_kultoz
-				free_merc = yes
-			}
-		}
-	}
-}
-
-rezankand_4_b = {
+rezankand_4_1_missions = {
 	slot = 4
 	generic = no
 	ai = yes
 	has_country_shield = yes
 	potential = {
 		OR = {
-			tag = H67
-			tag = H66
+			tag = H66 #Jaherian Exemplars
+			tag = H67 #Rezankand
 		}
 	}
-	
-	H67_create_colonial_office = {
-		icon = mission_settlers_north_america
-		position = 4
-		required_missions = {
-			H67_establish_spearhead
-		}
-		
-		trigger = {
-			adm_power = 200
-			dip_power = 200
-		}
-		
-		effect = {
-			add_adm_power = -200
-			add_dip_power = -200
-			add_country_modifier = {
-				name = rezankand_colonial_office
-				duration = 36500
-			}
-		}
-	}
-	
-	H67_settlement_edicts = {
-		icon = mission_hanseatic_city
-		position = 5
-		required_missions = {
-			H67_create_colonial_office
-			H67_create_immigration_office
-		}
-		
-		trigger = {
-			dip_power = 150
-		}
-		
-		effect = {
-			add_dip_power = -150
-			add_country_modifier = {
-				name = rezankand_settlements_edicts
-				duration = 27375
-			}
-		}
-	}
-}
 
-rezankand_4_c = {
-	slot = 4
-	generic = no
-	ai = yes
-	has_country_shield = yes
-	potential = {
-		tag = H67
-	}
-	
-	H67_jungle_colonial_technique = {
-		icon = mission_steer_trade_to_bengal
-		position = 6
-		required_missions = {
-			H67_expand_territory
-		}
-		
+	rezankand_sixth_age_of_the_sea = {
+		icon = mission_galleys_in_port
+		position = 2
+		required_missions = { rezankand_homecoming } 
+		provinces_to_highlight = { province_id = 6761 } 
+
 		trigger = {
-			years_of_income = 1.5
-			adm_power = 100
+			6761 = { owner = { has_100_opinion_improved_relation = { target = ROOT }  }  } #Annailsub
+			treasury = 250
 			dip_power = 100
 		}
-		
+
 		effect = {
-			custom_tooltip = rezankand_jungle_tooltip
-			add_years_of_income = -1.5
-			add_adm_power = -100
-			add_dip_power = -100
-			hidden_effect = {
-				set_country_flag = rezankand_jungle_research #Allow special event to boost jungle colonial province <- It's Done
-			}
+			country_event = { id = flavor_rezankand.4 } #The Sixth Age of the Sea
+			custom_tooltip = rezankand_sixth_age_of_the_sea_tt
 		}
 	}
-	
-	H67_through_the_jungle = {
-		icon = mission_rein_in_the_velamas
-		position = 7
-		required_missions = {
-			H67_elven_coast
-		}
-		
+
+	rezankand_city_of_light = {
+		icon = mission_market
+		position = 3
+		required_missions = { rezankand_founding_of_jaherdin } 
 		provinces_to_highlight = {
-			region = east_effelai_region
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				region = east_effelai_region
-				value = 8
-			}
-		}
-		
-		effect = {
-			east_effelai_region  = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	H67_tamed_jungle = {
-		icon = mission_secure_khandesh
-		position = 8
-		required_missions = {
-			H67_through_the_jungle
-		}
-		
-		provinces_to_highlight = {
-			region = east_effelai_region
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				region = east_effelai_region
-				value = 30
-			}
-		}
-		
-		effect = {
-			add_adm_power = 100
-			add_dip_power = 100
-			add_prestige = 15
-			add_stability_or_adm_power = yes
-		}
-	}
-	
-	H67_marsh_logistic = {
-		icon = mission_collect_yasak
-		position = 10
-		required_missions = {
-			H67_tamed_jungle
-			H67_effelai_heart
-		}
-		
-		trigger = {
-			if = {
-				limit = { ai = no }
-				army_size = 30
-			}
-			else = {
-				army_size = 20
-			}
-			mil_power = 200
-			adm_power = 100
-		}
-		
-		effect = {
-			add_adm_power = -100
-			add_mil_power = -200
-			colonial_leechden  = {
-				limit = { NOT = { country_or_subject_holds = ROOT } }
-				add_claim = ROOT
-			}
-			define_conquistador = {
-				name = "Ariel"
-				shock = 3
-				fire = 5
-				manuever = 6
-				siege = 1
-			}
-		}
-	}
-	
-	H67_silvers_mountains = {
-		icon = mission_invade_island
-		position = 12
-		required_missions = {
-			H67_amadia_way
-		}
-		
-		provinces_to_highlight = {
-			region = amadia_region
-			has_terrain = mountain
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 1
-				trade_goods = gold
-				region = amadia_region
-				has_terrain = mountain
-			}
-		}
-		
-		effect = {
-			custom_tooltip = rezankand_silver_mine_tooltip
-			add_prestige = 25
-			add_stability_or_adm_power = yes
-			add_dip_power = 125
-			amadia_region = {
-				limit = {
-					trade_goods = gold
-					has_terrain = mountain
-					country_or_subject_holds = ROOT
-				}
-				add_province_modifier = {
-					name = rezankand_silver_mine
-					duration = 36500
-				}
-			}
-		}
-	}
-	
-	H67_coinage = {
-		icon = mission_establish_mint_towns
-		position = 13
-		required_missions = {
-			H67_silvers_mountains
-		}
-		
-		trigger = {
-			adm_power = 250
-		}
-		
-		effect = {
-			add_adm_power = -250
-			add_years_of_income = 6
-			add_inflation = 20
-			add_country_modifier = {
-				name = rezankand_coinage
-				duration = 3650
-			}
-		}
-	}
-	
-	H67_northern_logistic_base = {
-		icon = mission_raid_christian_trade
-		position = 14
-		required_missions = {
-			H67_rush_the_north
-		}
-		
-		trigger = {
-			any_owned_province = {
-				region = soruin_region
-				development = 20
-				is_city = yes
-				has_port = yes
-			}
-		}
-		
-		effect = {
-			custom_tooltip = H67_northern_logistic_base_tt
-			hidden_effect = {
-				random_owned_province = {
-					limit = {
-						region = soruin_region
-						development = 20
-						is_city = yes
-						has_port = yes
-					}
-					add_base_manpower = 5
-					add_base_tax = 2
-					add_province_modifier = {
-						name = rezankand_logistic_port
-						duration = -1
-					}
-					change_trade_goods = naval_supplies
-					set_province_flag = damestear_no_spawn
-					set_province_flag = relics_no_spawn
-				}
-			}
-		}
-	}
-	
-	H67_the_ravenous_jungle = {
-		icon = mission_junnagadh_fort
-		position = 17
-		
-		required_missions = {
-			H67_the_great_expedition
-		}
-		
-		provinces_to_highlight = {
-			region = ravenous_isle_region
-			NOT = { country_or_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			ravenous_isle_region = {
-				type = all
-				country_or_subject_holds = ROOT
-			}
-		}
-		
-		effect = {
-			add_prestige = 20
-			add_mil_power = 50
-			add_dip_power = 125
-		}
-	}
-	
-	H67_our_ruined_sea = {
-		icon = mission_conquer_malwa_guj
-		position = 18
-		required_missions = {
-			H67_the_ravenous_jungle
-		}
-		
-		provinces_to_highlight = {
-			colonial_region = colonial_isles
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 20
-				colonial_region = colonial_isles
-			}
-		}
-		
-		effect = {
-			add_prestige = 20
-			add_mil_power = 50
-			add_dip_power = 125
-			if = {
-				limit = { any_subject_country = { capital_scope = { colonial_region = colonial_endralliande } } }
-				random_subject_country = {
-					limit = { capital_scope = { colonial_region = colonial_endralliande } }
-					colonial_endralliande  = {
-						limit = {
-							NOT = { is_core = PREV }
-							NOT = { is_permanent_claim = PREV }
-						}
-						add_permanent_claim = PREV
-					}
-				}
-			}
-			else = {
-				colonial_endralliande  = {
-					limit = {
-						NOT = { is_core = ROOT }
-						NOT = { is_permanent_claim = ROOT }
-						NOT = { is_claim = ROOT }
-					}
-					add_claim = ROOT
-				}
-			}
-		}
-	}
-	
-	H67_endralliande = {
-		icon = mission_rb_conquer_the_isles
-		position = 19
-		required_missions = {
-			H67_our_ruined_sea
-		}
-		
-		provinces_to_highlight = {
+			province_id = 2302 #Rezankaz
 			OR = {
-				area = northern_bluff_area
-				area = hibiscus_vale_area
-				area = cape_of_endral_area
-				area = seaway_corridor_area
-				area = red_harbor_area
-				area = endralvar_area
+				has_tax_building_trigger = no
+				has_production_or_gold_building_trigger = no
+				has_trade_building_trigger = no
+				has_manpower_building_trigger = no
+				NOT = { development = 20 }
 			}
-			NOT = { country_or_subject_holds = ROOT }
-			has_discovered = ROOT
 		}
-		
+
 		trigger = {
-			northern_bluff_area = {
-				type = all
-				country_or_subject_holds = ROOT
-			}
-			hibiscus_vale_area = {
-				type = all
-				country_or_subject_holds = ROOT
-			}
-			cape_of_endral_area = {
-				type = all
-				country_or_subject_holds = ROOT
-			}
-			silent_fields_area = {
-				type = all
-				owned_by = ROOT
-			}
-			hazelands_area = {
-				type = all
-				owned_by = ROOT
-			}
-			seaway_corridor_area = {
-				type = all
-				country_or_subject_holds = ROOT
-			}
-			red_harbor_area = {
-				type = all
-				country_or_subject_holds = ROOT
-			}
-			endralvar_area = {
-				type = all
-				country_or_subject_holds = ROOT
+			treasury = 300
+			2302 = { #Rezankaz
+				development = 20
+				has_tax_building_trigger = yes
+				has_production_or_gold_building_trigger = yes
+				has_trade_building_trigger = yes
+				has_manpower_building_trigger = yes
 			}
 		}
-		
+
 		effect = {
-			add_prestige = 50
+			add_treasury = -300
+			set_capital = 2302 #Rezankaz
+			2302 = {
+				add_or_upgrade_tax_building = yes
+				add_or_upgrade_trade_building = yes
+				add_center_of_trade_level = 1
+			}
+		}
+	}
+
+	rezankand_new_exemplars = {
+		icon = mission_swear_fealty_knight
+		position = 4
+		required_missions = {
+			rezankand_city_of_light
+			rezankand_troll_elves
+		}
+		provinces_to_highlight = {
+			region = dry_coast_region
+			NOT = { holy_order = order_of_exemplars_order } 
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 10
+				region = dry_coast_region
+				holy_order = order_of_exemplars_order
+			}
+			dip_power = 100
+		}
+
+		effect = {
+			add_dip_power = -100
+			set_country_flag = rezankand_new_exemplars_flag
+			add_country_modifier = {
+				name = rezankand_new_exemplars_modifier
+				duration = -1
+			}
+			custom_tooltip = rezankand_new_exemplars_tt
 		}
 	}
 }
-
-rezankand_5 = {
+rezankand_5_1_missions = {
 	slot = 5
 	generic = no
 	ai = yes
 	has_country_shield = yes
 	potential = {
-		tag = H67
+		OR = {
+			tag = H66 #Jaherian Exemplars
+			tag = H67 #Rezankand
+		}
 	}
-	
-	H67_a_crown_to_govern_them_all = { #Dazinchosen
-		icon = mission_a_crown
+
+	rezankand_our_long_lost_brothers = {
+		icon = mission_kwineh
 		position = 1
-		
+		provinces_to_highlight = {
+			region = dry_coast_region
+			culture = oonoi
+			NOT = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 1
+				}
+			}
+		}
+
 		trigger = {
-			primary_culture = dawn_elf
+			OR = {
+				statesman = 2
+				diplomat = 2
+			}
+			if = {
+				limit = {
+					NOT = {
+						calc_true_if = {
+							amount = 5
+							dry_coast_region = {
+								type = all
+								culture = oonoi
+							}
+						}
+					}
+				}
+				calc_true_if = {
+					amount = 5
+					dry_coast_region = {
+						type = all
+						OR = {
+							culture = oonoi
+							culture = vaikazelhi
+						}
+						num_of_units_in_province = {
+							who = ROOT
+							amount = 1
+						}
+					}
+				}
+			}
+			else = {
+				calc_true_if = {
+					amount = 5
+					dry_coast_region = {
+						type = all
+						culture = oonoi
+						num_of_units_in_province = {
+							who = ROOT
+							amount = 1
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_rezankand.2 } #Our Long Lost Brothers
+			custom_tooltip = rezankand_our_long_lost_brothers_tt
+		}
+	}
+
+	rezankand_troll_elves = {
+		icon = mission_jungle
+		position = 3
+		required_missions = { rezankand_our_long_lost_brothers } 
+		provinces_to_highlight = {
+			province_id = 2345 #Slebahain
+			OR = {
+				NOT = { owned_by = ROOT } 
+				NOT = { base_manpower = 6 } 
+				has_fort_building_trigger = no
+				has_manpower_building_trigger = no
+			}
+		}
+
+		trigger = {
+			2345 = {
+				owned_by = ROOT
+				base_manpower = 6
+				has_fort_building_trigger = yes
+				has_manpower_building_trigger = yes
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { 2345 = { culture = sun_elf }  } #Slebahain
+				2345 = { change_culture = laii } 
+			}
+			custom_tooltip = rezankand_troll_elves_tt
+			hidden_effect = {
+				junglemouth_area = {
+					add_siberian_construction = 300
+					change_culture = laii
+				}
+			}
+			create_general = {
+				tradition = 60
+				culture = laii
+			}
+		}
+	}
+}
+rezankand_1_2_missions = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = H67 #Rezankand
+	}
+
+	rezankand_a_severed_coast = {
+		icon = mission_arise_ashes
+		position = 6
+		required_missions = { rezankand_land_of_sunlight } 
+		provinces_to_highlight = {
 			OR = {
 				AND = {
-					dip = 5
-					mil = 5
-					adm = 5
-				}
-				ruler_has_mage_personality = yes
-			}
-		}
-		
-		effect = {
-			add_stability_or_adm_power = yes
-			country_event = { id = rezankand.13 }
-		}
-	}
-	
-	H67_a_sword_to_conquer_them_all = { #Dazinbringer
-		icon = mission_swear_fealty_knight
-		position = 2
-		required_missions = {
-			H67_a_crown_to_govern_them_all
-		}
-		
-		trigger = {
-			always = yes
-			custom_trigger_tooltip = {
-				tooltip = dazinare_tooltip
-				has_country_flag = rezankand_sword_done
-			}
-			#Unlock this by doing a decision to forge the sword at the sun temple
-		}
-		
-		effect = {
-			add_stability_or_adm_power = yes
-			add_country_modifier = {
-				name = rezankand_dazinbringer
-				duration = -1
-			}
-		}
-	}
-	
-	H67_a_city_to_sublimated_them_all = { #Dazinare
-		icon = mission_rb_scottish_conquer_london
-		position = 3
-		required_missions = {
-			H67_a_sword_to_conquer_them_all
-		}
-		
-		trigger = {
-			if = {
-				limit = { ai = no }
-				manpower = 40
-				treasury = 4000
-			}
-			else = {
-				treasury = 500
-			}
-		}
-		
-		effect = {
-			if = {
-				limit = { ai = no }
-				add_manpower = -40
-				add_treasury = -4000
-			}
-			else = {
-				add_treasury = -500
-			}
-			capital_scope = {
-				if = {
-					limit = {
-						NOT = { trade_goods = gold }
-						NOT = { trade_goods = damestear }
-						NOT = { trade_goods = silk }
-						NOT = { trade_goods = precursor_relics }
+					area = rezailan_area
+					OR = {
+						NOT = { owned_by = ROOT } 
+						NOT = { development = 10 } 
 					}
-					change_trade_goods = gems
 				}
-				add_base_manpower = 5
-				add_base_production = 5
-				add_base_tax = 5
-				add_center_of_trade_level = 1
-				change_province_name = "Dazinare"
-				rename_capital = "Dazinare"
+				AND = {
+					province_id = 2328
+					OR = {
+						has_trade_building_trigger = no
+						has_tax_building_trigger = no
+						has_shipyard_building_trigger = no
+						has_dock_building_trigger = no
+					}
+				}
 			}
 		}
-	}
-	
-	H67_consecrated_people = { 
-		icon = mission_imperial_spain
-		position = 7
-		
-		provinces_to_highlight = {
-			owned_by = ROOT
-			NOT = { religion = bulwari_sun_cult }
-		}
-		
+
 		trigger = {
-			num_of_owned_provinces_with = {
-				religion = bulwari_sun_cult
-				value = 100
+			rezailan_area = {
+				type = all
+				owned_by = ROOT
+				development = 10
+			}
+			2328 = {
+				has_trade_building_trigger = yes
+				has_tax_building_trigger = yes
+				has_shipyard_building_trigger = yes
+				has_dock_building_trigger = yes
 			}
 		}
-		
+
 		effect = {
-			add_stability = 2
+			severed_coast_region = { add_permanent_claim = ROOT } 
+			add_country_modifier = {
+				name = rezankand_a_severed_coast_modifier
+				duration = 7300
+			}
 		}
 	}
-	
-	H67_sun_temple = { 
-		icon = mission_rb_trinity_college_dublin
+
+	rezankand_vigil = {
+		icon = mission_arise_ashes
+		position = 7
+		required_missions = { rezankand_a_severed_coast } 
+		provinces_to_highlight = {
+			region = severed_coast_region
+			OR = {
+				NOT = {
+					num_of_units_in_province = {
+						who = ROOT
+						amount = 2
+					}
+				}
+				AND = {
+					has_terrain = woods
+					NOT = { owned_by = ROOT } 
+				}
+			}
+		}
+
+		trigger = {
+			severed_coast_region = {
+				type = all
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 2
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 4
+				region = severed_coast_region
+				has_terrain = woods
+			}
+			OR = {
+				army_professionalism = 0.4
+				army_tradition = 60
+			}
+		}
+
+		effect = { country_event = { id = flavor_rezankand.10 }  } 
+	}
+
+	rezankand_memory_of_the_paragons = {
+		icon = mission_arise_ashes
 		position = 8
 		required_missions = {
-			H67_consecrated_people
+			rezankand_vigil
+			rezankand_dazinare
 		}
-		
-		provinces_to_highlight = {
-			province_id = 2378
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
+		provinces_to_highlight = {  } 
+
 		trigger = {
-			owns = 2378
-			if = {
-				limit = { ai = no }
-				manpower = 30
-				treasury = 3000
+			custom_trigger_tooltip = {
+				tooltip = diranhria_stationed_in_severed_coast_tt
+				has_country_flag = diranhria_in_dry_severed
 			}
-			else = {
-				treasury = 500
+			OR = {
+				mil = 6
+				has_mil_advisor_3 = yes 
 			}
+			num_of_regiments_at_full_drill = 50
 		}
-		
+
 		effect = {
-			if = {
-				limit = { ai = no }
-				add_manpower = -30
-				add_treasury = -3000
-			}
-			else = {
-				add_treasury = -500
-			}
-			country_event = { id = rezankand.10 }
-		}
-	}
-	
-	H67_sura_el_inquisition = {
-		icon = mission_mayan_conquest
-		position = 9
-		required_missions = {
-			H67_sun_temple
-		}
-		
-		provinces_to_highlight = {
-			province_id = 2378
-			NOT = { owned_by = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			owns = 2378
-			mil_power = 200
-			adm_power = 200
-		}
-		
-		effect = {
-			custom_tooltip = rezankand_will_gain_casus_belli
-			add_mil_power = -200
-			add_adm_power = -200
-			hidden_effect = { set_country_flag = rezankand_subjugation }
 			add_country_modifier = {
-				name = rezankand_inquisition
-				duration = 73000
+				name = rezankand_memory_of_the_paragons_modifier
+				duration = -1
+			}
+			if = {
+				limit = { NOT = { isolationism = 5 }  } 
+				increase_nsc_isolation_level = yes
+			}
+			else = {
+				add_adm_power = 100
+				add_dip_power = 100
+				add_mil_power = 100
 			}
 		}
 	}
-	
-	H67_the_gar_expedition = {
-		icon = mission_expel_the_moriscos
+
+	rezankand_exemplars_charge = {
+		icon = mission_arise_ashes
+		position = 9
+		required_missions = { rezankand_choosing_sides } 
+		provinces_to_highlight = {  
+			province_id = 2467
+			NOT = { owned_by = ROOT }
+		} 
+
+		trigger = {  
+			2487 = { #Urvand
+				owned_by = ROOT
+			}
+			NOT = {
+				any_known_country = {
+					capital_scope = { 
+						region = larankarha_highlands_region
+					}
+					total_development = 200
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = flavor_rezankand.19 #Exemplars' Charge
+			}
+		} 
+	}
+
+	rezankand_the_infinite_cycle = {
+		icon = mission_arise_ashes
+		position = 10
+		required_missions = { rezankand_exemplars_charge } 
+		provinces_to_highlight = {  
+			superregion = taychend_superregion
+			NOT = { owned_by = ROOT }
+		} 
+
+		trigger = {  
+			taychend_superregion = {
+				type = all
+				OR = {
+					is_city = no
+					owned_by = ROOT
+				}
+			}
+			OR = {
+				kamryakvals_war_is_ended = yes
+				custom_trigger_tooltip = {
+					tooltip = rezankand_sided_with_on_tt
+					has_country_flag = rezankand_supported_on
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = rezankand_supported_on
+				}
+				taychend_superregion = {
+					type = all
+					OR = {
+						religion = ROOT
+						religion = oren_nayiru
+					}
+				}
+			}
+			else = {
+				taychend_superregion = {
+					type = all
+					religion = ROOT
+				}
+			}
+		} 
+
+		effect = {  
+			if = {
+				limit = {
+					NOT = { incident_variable_value = { incident = incident_one_sun value = -1 } }
+				}
+				increase_nsc_isolation_level = yes
+			}
+			else_if = {
+				limit = {
+					incident_variable_value = { incident = incident_one_sun value = 2 }
+				}
+				decrease_nsc_isolation_level = yes
+			}
+			end_incident = incident_one_sun
+			add_country_modifier = {
+				name = rezankand_end_of_warlordism_cycle
+				duration = -1
+			}
+			anb_aelantir_cultural_union = { taychendi = yes }
+			if = {
+				limit = { has_country_flag = rezankand_supported_on }
+				custom_tooltip = rezankand_sided_with_on_reward_tt
+				hidden_effect = {
+					taychend_superregion = {
+						limit = {
+							religion = oren_nayiru
+						}
+						change_religion = ROOT
+					}
+				}
+			}
+			set_global_flag = kamrayakvals_war_end
+			clr_country_flag = active_nsc_incident_flag
+			clr_country_flag = rezankand_supported_on
+		} 
+	}
+}
+rezankand_2_2_missions = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = H67 }
+
+	rezankand_dazinare = {
+		icon = mission_arise_ashes
+		position = 7
+		required_missions = { rezankand_a_severed_coast } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = severed_coast_region
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 2322 #Gladeshire
+					OR = {
+						has_tax_building_trigger = no
+						has_trade_building_trigger = no
+						has_production_or_gold_building_trigger = no
+						NOT = { development = 15 } 
+					}
+				}
+			} 
+		}
+
+		trigger = {
+			severed_coast_region = {
+				type = all
+				owned_by = ROOT
+			}
+			2322 = { #Gladeshire
+				has_tax_building_trigger = yes
+				has_trade_building_trigger = yes
+				has_production_or_gold_building_trigger = yes
+				development = 15
+			}
+		}
+
+		effect = {
+			2322 = { #Gladeshire
+				change_province_name = "Dazinare"
+				rename_capital = "Dazinare"
+				change_trade_goods = precursor_relics
+				center_of_trade = 1
+				add_permanent_province_modifier = {
+					name = rezankand_dazinare_modifier
+					duration = -1
+				}
+			}
+		}
+	}
+
+	rezankand_choosing_sides = {
+		icon = mission_arise_ashes
+		position = 8
+		required_missions = { rezankand_the_exemplars_return } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			OR = {  
+				num_of_owned_provinces_with = {
+					religion = oren_nayiru
+					value = 20
+				}
+				taychend_superregion = {
+					type = all
+					OR = {
+						is_city = no
+						NOT = { religion = oren_nayiru }
+					}
+				}
+			}
+			OR = {
+				advisor = theologian
+				advisor = inquisitor
+			}
+		} 
+
+		effect = {
+			set_country_flag = rezankand_one_sun_ready
+			hidden_effect = { refresh_nsc_incidents_ui = yes }  
+			country_event = { 
+				id = flavor_rezankand.13
+				days = 1
+			}
+		} 
+	}
+
+	rezankand_marching_west = {
+		icon = mission_arise_ashes
+		position = 9
+		required_missions = { rezankand_choosing_sides } 
+		provinces_to_highlight = {  
+			OR = {
+				AND = {
+					area = ameion_area
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 2620
+					NOT = {
+						num_of_units_in_province = {
+							who = ROOT
+							amount = 40
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {  
+			custom_trigger_tooltip = {
+				tooltip = rezankand_marching_west_battle_tt
+				check_variable = {
+					which = RezankandMarchingWest
+					value = 20 
+				}
+			}
+			G52 = { exists = no }
+			ameion_area = {
+				type = all
+				owned_by = ROOT
+				rezankand_has_sundancers_order = yes
+			}
+			2620 = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 40
+				}
+			}
+		} 
+
+		effect = {  
+			2620 = {
+				add_province_modifier = {
+					name = rezankand_western_headquarters
+					duration = 18250 #50 years
+				}
+			}
+			add_country_modifier = {
+				name = rezankand_marching_west
+				duration = 9125 #25 years
+			}
+			andic_reach_region = {
+				add_permanent_claim = ROOT
+			}
+			devand_region = { 
+				add_permanent_claim = ROOT
+			}
+			mteibas_valley_region = {
+				add_permanent_claim = ROOT
+			}
+			chendhya_region = {
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+
+	rezankand_selfish_reasons = {
+		icon = mission_arise_ashes
+		position = 10
+		required_missions = { rezankand_marching_west } 
+		provinces_to_highlight = {  
+			region = devand_region
+			trade_goods = slaves
+		} 
+
+		trigger = {  
+			accepted_culture = mteibhar
+			accepted_culture = chendhyan
+			high_tolerance_ruinborn_race_trigger = yes
+			NOT = {
+				devand_region = {
+					trade_goods = slaves
+				}
+			}
+			num_of_owned_provinces_with = {
+				has_building = mage_tower
+				culture = mteibhar
+				value = 3
+			}
+			num_of_owned_provinces_with = {
+				has_building = mage_tower
+				culture = chendhyan
+				value = 3
+			}
+		} 
+
+		effect = {  
+			anb_aelantir_cultural_union = { devand = yes }
+			set_country_flag = unlocked_artifice_invention_light_matrix_logistic
+			custom_tooltip = rezankand_unlock_light_matrix_logistic_tt
+			tooltip = {
+				set_estate_privilege = artifice_invention_light_matrix_logistic
+			}
+		} 
+	}
+
+	rezankand_salvation = {
+		icon = mission_arise_ashes
 		position = 11
 		required_missions = {
-			H67_marsh_logistic
+			rezankand_selfish_reasons
+			rezankand_diranhria_degarikes
+			rezankand_the_infinite_cycle
 		}
-		
 		provinces_to_highlight = {
-			colonial_region = colonial_leechden
-			NOT = { country_or_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
-		trigger = {
-			colonial_leechden = {	
-				type = all
-				country_or_subject_holds = ROOT
-			}
-		}
-		
-		effect = {
-			add_prestige = 15
-			add_dip_power = 100
-			add_mil_power = 100
-			add_adm_power = 100
-			soruin_region = {
-				limit = {
-					NOT = { country_or_subject_holds = ROOT }
+			OR = {
+				AND = {
+					region = alecand_region 
+					NOT = { owned_by = ROOT }
 				}
-				add_claim = ROOT
+				AND = {
+					OR = {
+						superregion = taychend_superregion
+						superregion = kheionai_superregion
+					}
+					trade_goods = slaves
+				}
 			}
-		}
-	}
-	
-	H67_rush_the_north = {
-		icon = mission_turning_the_tables
-		position = 13
-		required_missions = {
-			H67_the_gar_expedition
-		}
-		
-		provinces_to_highlight = {
-			region = soruin_region
-			NOT = { country_or_subject_holds = ROOT }
-			has_discovered = ROOT
-		}
-		
+
+		} 
+
 		trigger = {
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+			alecand_region = {
+				type = all
+				owned_by = ROOT
+			}  
+			taychend_superregion = {
+				type = all
+				NOT = { trade_goods = slaves }
+			}
+			kheionai_superregion = {
+				type = all
+				NOT = { trade_goods = slaves }
+			}
+		} 
+
+		effect = {  
+			anb_aelantir_cultural_union = { kheionai = yes }
+			remove_country_modifier = rezankand_end_of_warlordism_cycle
+			add_country_modifier = {
+				name = rezankand_salvation_mod
+				duration = -1
+			}
+		} 
+	}
+}
+rezankand_2_3_missions = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = H67 } 
+
+	rezankand_the_exemplars_return = {
+		icon = mission_arise_ashes
+		position = 7
+		required_missions = { rezankand_land_of_sunlight } 
+		provinces_to_highlight = {  
+			OR = {
+				region = kalavend_region
+				area = nanru_nakar_area
+			}
+			NOT = { owned_by = ROOT }
+		} 
+
+		trigger = {  
+			num_of_owned_provinces_with = {
+				region = kalavend_region
 				value = 20
-				region = soruin_region
+			}
+			nanru_nakar_area = {
+				type = all
+				owned_by = ROOT
+			}
+		} 
+
+		effect = {  
+			country_event = { id = flavor_rezankand.11 }
+		} 
+	}
+
+	rezankand_unsealing_the_past = {
+		icon = mission_arise_ashes
+		position = 8
+		required_missions = { rezankand_the_exemplars_return } 
+		provinces_to_highlight = {  
+			superregion = taychend_superregion
+			trade_goods = precursor_relics
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { base_production = 5 }
+			}
+		} 
+
+		trigger = {  
+			taychend_superregion = {
+				type = all
+				OR = {
+					NOT = { trade_goods = precursor_relics }
+					AND = {
+						owned_by = ROOT 
+						base_production = 5
+					}
+				}
+				
+			}
+			court_mage = 3
+		} 
+
+		effect = {  
+			country_event = {
+				id = flavor_rezankand.17 #Unsealing The Past
+			}
+		} 
+	}
+
+	rezankand_the_herald_of_legacy = {
+		icon = mission_arise_ashes
+		position = 9
+		required_missions = { rezankand_unsealing_the_past } 
+		provinces_to_highlight = {  } 
+
+		trigger = {  
+			num_artifice_inventions_discovered = { VAL = 5 }
+			num_of_owned_provinces_with = {
+				has_shipyard_building_trigger = yes
+				value = 5
+			}
+			num_of_light_ship = 50
+			custom_trigger_tooltip = {
+				tooltip = diranhria_stationed_in_taychend_tt
+				has_country_flag = diranhria_in_taychend
+			}
+		} 
+
+		effect = {  
+			custom_tooltip = rezankand_unlock_sundancers_order_tt
+			custom_tooltip = rezankand_unlock_sundancers_candidate_tt
+			set_country_flag = rezankand_unlocked_sundancers
+			add_country_modifier = {
+				name = rezankand_sundancers_country_mod
+				duration = 7300 #20 years
+			}
+			remove_country_modifier = rezankand_precursor_treasures_modifier
+			add_country_modifier = {
+				name = rezankand_golden_armada
+				duration = -1
+			}
+		} 
+	}
+
+	rezankand_diranhria_degarikes = {
+		icon = mission_arise_ashes
+		position = 10
+		required_missions = {
+			rezankand_the_herald_of_legacy
+			rezankand_marching_west
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {  
+					OR = {
+						province_id = 2680
+						province_id = 2677
+						province_id = 2674
+						province_id = 2669
+						province_id = 2595
+						province_id = 2684
+						province_id = 2625
+						province_id = 2717
+					}
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 2717
+					OR = {
+						has_dock_building_trigger = no
+						has_shipyard_building_trigger = no
+						NOT = { development = 25 }
+					} 
+				}
+			}
+		} 
+
+		trigger = {  
+			2717 = { #Anisikheion
+				owned_by = ROOT 
+				has_dock_building_trigger = yes
+				has_shipyard_building_trigger = yes
+				development = 25
+			} 
+			calc_true_if = {
+				2680 = { owned_by = ROOT } #Apikoxhi
+				2677 = { owned_by = ROOT } #Besolaki
+				2674 = { owned_by = ROOT } #Eneion
+				2669 = { owned_by = ROOT } #Keyolion
+				2595 = { owned_by = ROOT } #Empkeios
+				2684 = { owned_by = ROOT } #Amgremos
+				2625 = { owned_by = ROOT } #Deyeion
+				amount = 5
+			}
+			num_of_owned_provinces_with = {
+				region = andic_reach_region
+				value = 30
+			}
+			num_of_owned_provinces_with = {
+				has_shipyard_building_trigger = yes
+				value = 20
+			}
+		} 
+
+		effect = {
+			hidden_effect = { enable_degarikes = yes }  #So that the degarikes country mod shows in the tt
+			country_event = {
+				id = flavor_rezankand.24 #Diranhria Degarikes
+				days = 1
+			}
+		} 
+	}
+}
+rezankand_2_4_missions = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = H67 } 
+
+	rezankand_architects_of_the_future = {
+		icon = mission_arise_ashes
+		position = 6
+		required_missions = { rezankand_land_of_sunlight } 
+		provinces_to_highlight = {  
+			OR = {
+				AND = {
+					province_id = 2500
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					trade_goods = glass
+					NOT = { base_production = 5 }
+					owned_by = ROOT
+				}
+				AND = {
+					trade_goods = iron
+					NOT = { base_production = 5 }
+					owned_by = ROOT
+				}
+			}
+		} 
+
+		trigger = {  
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 60
+			}
+			2500 = { owned_by = ROOT }
+			num_of_owned_provinces_with = {
+				trade_goods = glass
+				base_production = 5
+				value = 2
+			}
+			num_of_owned_provinces_with = {
+				trade_goods = iron
+				base_production = 5
+				value = 2
+			}
+			num_of_owned_provinces_with = {
+				has_manufactory_trigger = yes
+				value = 5
+			}
+		} 
+
+		effect = {  
+			custom_tooltip = supporting_artificers_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = artificery_unlocked }
+					}
+					country_event = {
+						id = magic_artificery_setup.1
+						days = 1
+					}
+				}
+			}
+			add_country_modifier = {
+				name = rezankand_architects_of_the_future_mod
+				duration = 7300 #20 years
+			}
+			custom_tooltip = rezankand_mage_tower_tt
+			tooltip = {
+				add_permanent_province_modifier = {
+					name = rezankand_light_matrix
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						has_building = mage_tower
+					}
+					add_permanent_province_modifier = {
+						name = rezankand_light_matrix
+						duration = -1
+					}
+				}
+			}
+		} 
+	}
+
+	rezankand_whispers_of_doom = {
+		icon = mission_arise_ashes
+		position = 8
+		required_missions = { rezankand_the_exemplars_return } 
+		provinces_to_highlight = {  
+			NOT = { region = dry_coast_region }
+			NOT = { region = severed_coast_region }
+			superregion = effelai_superregion
+			owned_by = ROOT
+			NOT = { development = 10 }
+		} 
+
+		trigger = {  
+			num_of_owned_provinces_with = {
+				NOT = { region = dry_coast_region }
+				NOT = { region = severed_coast_region }
+				superregion = effelai_superregion
+				value = 10
+			}
+			num_of_owned_provinces_with = {
+				NOT = { region = dry_coast_region }
+				NOT = { region = severed_coast_region }
+				superregion = effelai_superregion
+				development = 10
+				value = 3
+			}
+			if = {
+				limit = {
+					calc_true_if = {
+						west_effelai_region = {
+							type = all
+							is_city = no
+						}
+						leechdens_region = {
+							type = all
+							is_city = no
+						}
+						south_effelai_region = {
+							type = all
+							is_city = no
+						}
+						amount = 4
+					}
+				}
+				calc_true_if = {
+					effelai_superregion = {
+						type = all
+						num_of_units_in_province = {
+							who = ROOT
+							type = infantry
+							amount = 5
+						}
+						is_city = no
+					}
+					amount = 4
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = flavor_rezankand.18 #whispers of doom
+				days = 3650 #10 years
+			}
+			custom_tooltip = rezankand_unlock_firebringers_candidate_tt
+			set_country_flag = rezankand_unlocked_firebringers
+		} 
+	}
+
+	rezankand_an_elf_of_extremes = {
+		icon = mission_arise_ashes
+		position = 9
+		required_missions = { rezankand_whispers_of_doom } 
+		provinces_to_highlight = {  
+			OR = {
+				AND = {
+					OR = {
+						culture = laii
+						culture = vaikazelhi
+					}
+					region = south_effelai_region
+					owned_by = ROOT
+					NOT = { base_manpower = 6 }
+				}
+				AND = {
+					province_id = 2345 #Tsksí'voi
+					OR = {
+						has_fort_building_trigger = no
+						has_manpower_building_trigger = no
+					}
+				}
+			}
+		} 
+
+		trigger = { 
+			num_of_owned_provinces_with = {
+				region = south_effelai_region
+				value = 10
+			}
+			num_of_owned_provinces_with = {
+				region = south_effelai_region
+				OR = {
+					culture = laii
+					culture = vaikazelhi
+				}
+				base_manpower = 6
+				value = 4
+			}
+			2345 = { #Tsksí'voi
+				has_fort_building_trigger = yes
+				has_manpower_building_trigger = yes
+			}
+		} 
+
+		effect = {  
+			define_general = {
+				name = "Idras Tenkaed"
+				fire = 3
+				shock = 4
+				manuever = 5
+				siege = 2
+			}
+			custom_tooltip = rezankand_unlock_avengers_order_tt
+			custom_tooltip = rezankand_unlock_avengers_candidate_tt
+			set_country_flag = rezankand_unlocked_avengers
+			add_country_modifier = {
+				name = rezankand_avengers_country_mod 
+				duration = 7300 #20 years
+			}
+			custom_tooltip = rezankand_free_avengers_ho_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						borand_area = {
+							type = all
+							owned_by = ROOT
+						}
+					}
+					borand_area = { holy_order = avengers_order }
+				}
+				if = {
+					limit = {
+						junglemouth_area = {
+							type = all
+							owned_by = ROOT
+						}
+					}
+					junglemouth_area = { holy_order = avengers_order }
+				}
+				if = {
+					limit = {
+						central_effelai_area = {
+							type = all
+							owned_by = ROOT
+						}
+					}
+					central_effelai_area = { holy_order = avengers_order }
+				}
+			}
+		} 
+	}
+
+	rezankand_purification = {
+		icon = mission_arise_ashes
+		position = 11
+		required_missions = {
+			rezankand_an_elf_of_extremes
+			rezankand_in_utter_darkness
+		}
+		provinces_to_highlight = {  
+			OR = {
+				AND = {
+					superregion = effelai_superregion
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 2378 #Andwohii
+					NOT = {
+						num_of_units_in_province = {
+							who = ROOT
+							amount = 50
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {  
+			effelai_superregion = {
+				type = all
+				owned_by = ROOT
+			}
+			2378 = { #Andwohii
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 50
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = flavor_rezankand.22 #Purification
+			}
+			if = {
+				limit = { mission_completed = rezankand_salvation }
+				country_event = {
+					id = flavor_rezankand.23 #Echoes Of The Future
+					days = 1825 #5 years
+				}
+			}
+			else = {
+				country_event = {
+					id = flavor_rezankand.23 #Echoes Of The Future
+					days = 3650 #10 years
+				}
+			}
+		} 
+	}
+}
+rezankand_2_5_missions = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = H67 } 
+
+	rezankand_aim_for_the_sun = {
+		icon = mission_arise_ashes
+		position = 6
+		required_missions = { rezankand_land_of_sunlight } 
+		provinces_to_highlight = {  
+			province_id = 2333
+			NOT = { development = 25 }
+		} 
+
+		trigger = {  
+			2333 = { #Jaherdin
+				development = 25
+			}
+			treasury = 250
+			adm_power = 20
+			dip_power = 20
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = rezankand_is_employing_karodir_tt
+					employed_advisor = {
+						name = "Karodir I Varamzuir"
+						skill = 3
+						type = court_mage
+					}
+				}
+				court_mage = 3
+			}
+			estate_influence = {
+				estate = estate_mages
+				influence = 50
+			}
+		} 
+
+		effect = {  
+			add_treasury = -250
+			add_adm_power = -20
+			add_dip_power = -20
+			2333 = { #Jaherdin
+				add_building = university
+				add_province_modifier = {
+					name = rezankand_house_of_wisdom
+					duration = -1
+				}
+			}
+		} 
+	}
+
+	rezankand_a_matter_of_perspective = {
+		icon = mission_arise_ashes
+		position = 7
+		required_missions = {
+			rezankand_aim_for_the_sun
+			rezankand_architects_of_the_future
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {  
+			estate_loyalty = {
+				estate = estate_artificers
+				loyalty = 60
+			}
+			is_not_researching_invention = yes
+			has_ruinborn_advisor_of_skill_category = { category = ADM skill = 3 }
+			has_ruinborn_advisor_of_skill_category = { category = DIP skill = 3 }
+			has_ruinborn_advisor_of_skill_category = { category = MIL skill = 3 }
+			has_zamukaras = yes
+		} 
+
+		effect = {
+			block_artifice_research = {
+				years = 5
+				duration = 1825
+			}
+			custom_tooltip = rezankand_zamukaras_invention_tt  
+			tooltip = {
+				set_estate_privilege = artifice_invention_rezankand_phoenix
+			}
+			hidden_effect = {
+				country_event = {
+					id = flavor_rezankand.1002
+					days = 1825 #5 years
+				}
+			}
+		} 
+	}
+
+	rezankand_the_growing_shadow = {
+		icon = mission_arise_ashes
+		position = 9
+		required_missions = { rezankand_whispers_of_doom } 
+		provinces_to_highlight = {  
+			owned_by = ROOT
+			is_effelai_network_hub = yes 
+			NOT = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 25
+				}
+			}
+		} 
+
+		trigger = {  
+			effelai_ongoing_blooming = yes
+			custom_trigger_tooltip = {
+				tooltip = rezankand_hubs_burned_tt
+				check_variable = {
+					which = RezankandHubsBurned
+					value = 3
+				}
+			}
+			army_size_percentage = 0.9
+			any_owned_province = {
+				is_effelai_network_hub = yes
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 25
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = flavor_rezankand.20
+			}
+			custom_tooltip = rezankand_unlock_light_matrix_supply_tt
+			tooltip = {
+				set_estate_privilege = artifice_invention_light_matrix_supply
+			}
+			set_country_flag = unlocked_artifice_invention_light_matrix_supply
+		} 
+	}
+
+	rezankand_in_utter_darkness = {
+		icon = mission_arise_ashes
+		position = 10
+		required_missions = { rezankand_the_growing_shadow } 
+		provinces_to_highlight = {  
+			owned_by = G20
+			OR = {
+				has_province_modifier = effelai_hub_attuned
+				has_province_modifier = effelai_hub_blooming
+				has_province_modifier = effelai_hub_dormant
+			}
+			NOT = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 5
+				}
+			}
+		} 
+
+		trigger = {
+			OR = {
+				AND = {
+					war_score_against = {
+						who = G20 #Araya
+						value = 75
+					}
+					has_leader = "Ecaris Ecarizuir"
+				}
+				war_score_against = {
+					who = G20 #Araya
+					value = 90
+				}
+				G20 = {	NOT = { army_size = 1 } }
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = flavor_rezankand.21 #Alone
+			}
+			custom_tooltip = rezankand_in_utter_darkness_bonus_tt
+			if = {
+				limit = {
+					G20 = {
+						all_owned_province = {
+							OR = {
+								NOT = {
+									has_province_modifier = effelai_hub_attuned 
+									has_province_modifier = effelai_hub_blooming 
+									has_province_modifier = effelai_hub_dormant
+								} 
+								num_of_units_in_province = {
+									who = ROOT
+									amount = 5
+								}
+							}
+						}
+					}
+				}
+				custom_tooltip = BONUS_REWARD_YES
+				hidden_effect = {
+					add_country_modifier = {
+						name = rezankand_a_flame_never_extinguished
+						duration = -1
+					}
+				}
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			tooltip = {
+				add_country_modifier = {
+					name = rezankand_a_flame_never_extinguished
+					duration = -1
+				}
+			}
+		} 
+	}
+}
+rezankand_3_2_missions = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = H67
+		has_country_flag = rezankand_final_stretch  
+	}
+
+	rezankand_spirit_mind_and_body = {
+		icon = mission_arise_ashes
+		position = 13
+		required_missions = { rezankand_the_tower } 
+		provinces_to_highlight = {  
+			superregion = amadia_region
+			OR = {
+				trade_goods = precursor_relics
+				trade_goods = damestear
+				trade_goods = gold
+			}
+			NOT = { owned_by = ROOT }
+		} 
+
+		trigger = {  
+			amadia_region = {
+				type = all
+				OR = {
+					NOT = {
+						trade_goods = precursor_relics
+						trade_goods = damestear
+						trade_goods = gold
+					}
+					owned_by = ROOT
+				}
+			}
+			amadia_region = {
+				type = all
+				NOT = { trade_goods = slaves }
+			}
+			estate_loyalty = {
+				estate = estate_artificers
+				loyalty = 60
+			}
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 60
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = flavor_rezankand.25 #Spirit, Mind and Body
+			}
+		} 
+	}
+
+	rezankand_a_shattered_home = {
+		icon = mission_arise_ashes
+		position = 15
+		required_missions = { rezankand_one_form_of_justice } 
+		provinces_to_highlight = {
+			OR = {
+				continent = south_america
+				continent = north_america
+			}
+			if = { #If Eordand Deepwoods is closed region is excluded
+				limit =  { domandrod_gate_is_opened = no }
+				NOT = { region = domandrod_region }
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { religion = ROOT }
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = rezankand_shattered_home_na_tt  
+				north_america = {
+					type = all
+					OR = {
+						is_sea = yes
+						is_wasteland = yes
+						AND = { #If Eordand Deepwoods is available
+							domandrod_gate_is_opened = no
+							region = domandrod_region
+						}
+						AND = {
+							owned_by = ROOT
+							religion = ROOT
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = rezankand_shattered_home_sa_tt
+				south_america = {
+					type = all
+					OR = {
+						is_sea = yes
+						is_wasteland = yes
+						AND = {
+							owned_by = ROOT
+							religion = ROOT
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {  
+			override_country_name = "AELREZAN"
+			anb_aelantir_cultural_union = {
+				north = yes
+				south = yes
+				ynnic = yes
+				eordan = yes
+				harafic = yes
+				effelai = yes
+				degenerate = yes
+			}
+		} 
+	}
+}
+rezankand_3_3_missions = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = H67
+		has_country_flag = rezankand_final_stretch 
+	} 
+
+	rezankand_the_tower = {
+		icon = mission_arise_ashes
+		position = 12
+		required_missions = {
+			rezankand_purification
+			rezankand_salvation
+		}
+		provinces_to_highlight = {  
+			province_id = 2378
+			OR = {
+				NOT = { development = 30 }
+				NOT = { has_building = mage_tower }
+				has_tax_building_trigger = no
+			}
+		} 
+
+		trigger = {  
+			2378 = { #Andwohii
+				development = 30
+				has_building = mage_tower
+				has_tax_building_trigger = yes
+			}
+			treasury = 5000
+		} 
+
+		effect = {  
+			add_treasury = -5000
+			2378 = {
+				add_province_modifier = {
+					name = rezankand_eduz_mod
+					duration = -1
+				}
+				change_trade_goods = precursor_relics
+			}
+			mission_reward_artifice_points_20 = yes
+			artifice_unlock_random_invention_effect = yes
+		} 
+	}
+
+	rezankand_one_form_of_justice = {
+		icon = mission_arise_ashes
+		position = 14
+		required_missions = {
+			rezankand_faster_than_thought
+			rezankand_spirit_mind_and_body
+		}
+		provinces_to_highlight = {  
+			OR = {
+				AND = {
+					owned_by = ROOT
+					OR = {
+						trade_goods = precursor_relics
+						trade_goods = damestear
+					}
+					NOT = { base_production = 10 }
+				}
+				AND = {
+					continent = south_america
+					NOT = { owned_by = ROOT }
+				}
+			}
+		} 
+
+		trigger = {  
+			num_of_owned_provinces_with = {
+				OR = {
+					trade_goods = damestear
+					trade_goods = precursor_relics
+				}
+				base_production = 10
+				value = 10
+			}
+			south_america = {
+				type = all
+				OR = {
+					is_sea = yes
+					is_wasteland = yes
+					owned_by = ROOT
+				}
 			}
 		}
-		
-		effect = {
-			add_prestige = 30
-			add_dip_power = 100
-			add_mil_power = 100
+
+		effect = {  
+			country_event = {
+				id = flavor_rezankand.26 #Justice For Our Bretheren
+			}
+		} 
+	}
+
+	rezankand_an_oath_fulfilled = {
+		icon = mission_arise_ashes
+		position = 16
+		required_missions = {
+			rezankand_a_shattered_home
+			rezankand_toward_the_center
 		}
+		provinces_to_highlight = {  
+			superregion = bulwar_superregion
+			NOT = { owned_by = F52 }
+		} 
+
+		trigger = {  
+			bulwar_superregion = {
+				type = all
+				owned_by = F52 #Surakes
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = flavor_rezankand.27 #An Oath Fulfilled
+			}
+		} 
+	}
+}
+rezankand_3_4_missions = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = H67
+		has_country_flag = rezankand_final_stretch  
+	} 
+
+	rezankand_faster_than_thought = {
+		icon = mission_arise_ashes
+		position = 13
+		required_missions = { rezankand_the_tower } 
+		provinces_to_highlight = {  
+			owned_by = ROOT
+			NOT = { superregion = ruin_proper_superregion }
+			NOT = { region = tor_nayyi_region }
+			continent = south_america
+			NOT = {
+				has_building = mage_tower
+				any_neighbor_province = {
+					owned_by = ROOT 
+					has_building = mage_tower
+				}
+			}
+		} 
+
+		trigger = {
+			#These do not include the ruin islands, 145 mage towers in total
+			num_of_owned_provinces_with = {
+				superregion = taychend_superregion
+				has_building = mage_tower
+				value = 35
+			}
+			num_of_owned_provinces_with = { #Includes turtleback isle and severed coast
+				superregion = effelai_superregion
+				has_building = mage_tower
+				value = 45
+			}
+			num_of_owned_provinces_with = {
+				superregion = kheionai_superregion
+				has_building = mage_tower
+				value = 25
+			}
+			num_of_owned_provinces_with = { #A bit arbitary cause Amadia is just one big blob
+				region = amadia_region
+				has_building = mage_tower
+				value = 15
+			}
+			OR = {
+				OR = {
+					court_mage = 3
+					ruler_has_mage_personality = yes
+				}
+				estate_loyalty = {
+					estate = estate_artificers
+					loyalty = 60
+				}
+			}
+		} 
+
+		effect = {  
+			custom_tooltip = rezankand_light_matrix_mod_buffed_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						has_province_modifier = rezankand_light_matrix
+					}
+					remove_province_modifier = rezankand_light_matrix
+					add_permanent_province_modifier = {
+						name = rezankand_light_matrix_upgraded
+						duration = -1
+					}
+				}
+			}
+			custom_tooltip = rezankand_faster_than_thought_reward_tt
+			if = {
+				limit = {
+					NOT = {
+						south_america = {
+							is_wasteland = no
+							is_sea = no 
+							NOT = { region = tor_nayyi_region }
+							NOT = { superregion = ruin_proper_superregion }
+							NOT = {
+								has_building = mage_tower
+								any_neighbor_province = {
+									owned_by = ROOT
+									has_building = mage_tower
+								}
+							}
+						}
+					}
+				}
+				custom_tooltip = BONUS_REWARD_YES
+				set_country_flag = rezankand_matrix_invention_upgraded
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			custom_tooltip = rezankand_light_matrix_invention_buffed_tt
+		} 
+	}
+
+	rezankand_toward_the_center = {
+		icon = mission_arise_ashes
+		position = 15
+		required_missions = { rezankand_one_form_of_justice } 
+		provinces_to_highlight = {  
+			superregion = bulwar_superregion
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		} 
+
+		trigger = {  
+			calc_true_if = {
+				bulwar_superregion = {
+					type = all
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+				amount = 10
+			}
+			OR = {
+				F52 = { is_subject_of = ROOT }
+				F52 = { exists = no }
+			}
+		} 
+
+		effect = {
+			if = {
+				limit = { F52 = { exists = no } }
+				bulwar_superregion = {
+					limit = { country_or_non_sovereign_subject_holds = ROOT }
+					add_core = F52 #Surakes
+					cede_province = F52 #Surakes
+				}
+				hidden_effect = {
+					bulwar_superregion = {
+						remove_core = ROOT
+					}
+					F52 = {
+						change_religion = ROOT
+					}
+				}
+				vassalize = F52 #Surakes
+			}
+			else = {
+				bulwar_superregion = {
+					limit = { country_or_non_sovereign_subject_holds = ROOT }
+					cede_province = F52 #Surakes
+				}
+			}
+			bulwar_superregion = {
+				add_permanent_claim = F52 #Surakes
+			}
+		} 
 	}
 }

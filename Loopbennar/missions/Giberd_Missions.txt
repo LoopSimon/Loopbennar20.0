@@ -911,7 +911,7 @@ giberd_konwell_conquest = {
 			}
 			260 = {
 				base_production = 14
-				has_building = textile
+				has_production_manufactory_or_gold_trigger = yes
 				has_state_edict = edict_centralization_effort
 			}
 			OR = {
@@ -1096,12 +1096,9 @@ giberd_konwell_conquest = {
 				name = artificers_busy_120
 				duration = 3650
 			}
-			custom_tooltip = giberd_unable_to_research_10
-			hidden_effect = {
-				add_country_modifier = {
-					name = artifice_research_temporarily_disabled
-					duration = 3650
-				}
+			block_artifice_research = {
+				years = 10
+				duration = 3650
 			}
 			random_owned_province = {
 				limit = {
@@ -1773,7 +1770,15 @@ giberd_ryalanar_conquest = {
 		}
 		trigger = {
 			mission_completed = giberd_to_strike_an_anvil
-			has_flagship = yes
+			if = {
+				limit = {
+					has_dlc = "Golden Century"
+				}
+				has_flagship = yes
+			}
+			else = {
+				navy_tradition = 50
+			}
 			OR = {
 				has_personal_deity = minara
 				97 = {
@@ -2027,12 +2032,9 @@ giberd_mercantile_shipping = {
 			}
 		}
 		effect = {
-			custom_tooltip = giberd_unable_to_research_10
-			hidden_effect = {
-				add_country_modifier = {
-					name = artifice_research_temporarily_disabled
-					duration = 3650
-				}
+			block_artifice_research = {
+				years = 10
+				duration = 3650
 			}
 			custom_tooltip = giberd_after_5_years_tt
 			tooltip = {
@@ -2442,11 +2444,11 @@ giberd_mercantile_shipping = {
 			}
 		}
 		effect = {
+			add_country_modifier = {
+				name = giberd_the_gg
+				duration = -1
+			}
 			267 = {
-				add_province_modifier = {
-					name = giberd_the_gg
-					duration = -1
-				}
 				add_building = naval_battery
 			}
 		}
@@ -2750,7 +2752,15 @@ giberd_artificer = {
 					hre_leagues_enabled = yes
 				}
 			}
-			innovativeness = 60
+			if = {
+				limit = {
+					has_dlc = "Rule Britannia"
+				}
+				innovativeness = 60
+			}
+			else = {
+				full_idea_group = innovativeness_ideas
+			}
 			OR = {
 				religion = ravelian
 				AND = {
@@ -2763,7 +2773,9 @@ giberd_artificer = {
 				}
 				AND = {
 					religion = infernal_court
-					has_personal_deity = ildran
+					has_infernal_deity = {
+						deity = ildran
+					}
 				}
 			}
 			275 = {
@@ -2954,9 +2966,20 @@ giberd_artificer = {
 			}
 		}
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = H33_god_fragment_found_tt
-				has_global_flag = god_fragment_found
+			if = {
+				limit = {
+					has_dlc = "El Dorado"
+					NOT = {
+						is_year = 1620
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = H33_god_fragment_found_tt
+					has_global_flag = god_fragment_found
+				}
+			}
+			else = {
+				is_year = 1620
 			}
 			898 = {
 				OR = {
@@ -2987,11 +3010,15 @@ giberd_artificer = {
 			}
 		}
 		effect = {
+			add_country_modifier = {
+				name = giberd_ravelians_send_finest
+				duration = 7300
+			}
+			add_country_modifier = {
+				name = giberd_factions_united
+				duration = -1
+			}
 			271 = {
-				add_province_modifier = {
-					name = giberd_ravelians_send_finest
-					duration = 7300
-				}
 				add_cardinal = yes
 				custom_tooltip = H33_permanent_veridical_tt
 				hidden_effect = {
@@ -3005,30 +3032,24 @@ giberd_artificer = {
 					add_province_triggered_modifier = giberd_permanent_veridical
 				}
 			}
-			add_country_modifier = {
-				name = giberd_factions_united
-				duration = -1
-			}
 			complex_dynamic_effect_without_alternative = {
-				first_custom_tooltip = giberd_understanding_the_fragment_effect_not_yet_tt
-				first_limit = "NOT = { has_global_flag = ravelianism_can_be_founded }"
-				first_effect = "add_prestige = 10"
-				second_custom_tooltip = giberd_understanding_the_fragment_effect_yes_tt
-				second_limit = "NOT = { exists = Z97 }
-								has_global_flag = ravelianism_can_be_founded"
-				second_effect = "set_global_flag = allow_non_ideal_rectorate_candidate
-								 country_event = { id = ravelian.4 }
-			add_or_extend_country_modifier = {
-				name = artificers_busy_all
-				duration = 3650
-			}"
-				third_custom_tooltip = giberd_understanding_the_fragment_effect_no_tt
-				third_limit = "exists = Z97"
-				third_effect = "transfer_papal_controller = ROOT
-			add_or_extend_country_modifier = {
-				name = artificers_busy_all
-				duration = 3650
-			}"
+				first_custom_tooltip = giberd_understanding_the_fragment_limit_early_tt
+				first_limit = "NOT = { is_religion_enabled = ravelian }"
+				first_effect = "custom_tooltip = giberd_understanding_the_fragment_effect_early_tt
+					hidden_effect = {
+						8 = {
+							province_event = { id = ravelian.1001 }
+							province_event = { id = ravelian.10 days = 1 }
+						}
+					}
+					add_or_extend_country_modifier = {
+						name = artificers_busy_all
+						duration = 3650
+					}
+				"
+				second_custom_tooltip = giberd_understanding_the_fragment_limit_late_tt
+				second_limit = "is_religion_enabled = ravelian"
+				second_effect = "add_prestige = 20"
 			}
 		}
 	}

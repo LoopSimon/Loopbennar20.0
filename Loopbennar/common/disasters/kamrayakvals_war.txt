@@ -23,6 +23,18 @@ kamrayakvals_war = {
 			religion = kheionism
 			religion = bulwari_sun_cult
 		}
+		if = {
+			limit = {
+				OR = {
+					tag = H66 #JE 
+					tag = H67 #Rezankand
+				}
+			}
+			OR = {
+				has_country_flag = rezankand_supported_on
+				has_country_flag = rezankand_stomping_on
+			}
+		}
 	}
 
 	can_start = {
@@ -30,10 +42,82 @@ kamrayakvals_war = {
 			tooltip = kamrayakvals_war_reqs_tt
 			has_country_flag = kamrayakvals_war_starting
 		}
+		if = {
+			limit = {
+				OR = { #AI, Rezankand, and JE check this. Other players bypass it
+					ai = yes
+					tag = H67
+					tag = H66
+				}
+			}
+			if = {
+				limit = {
+					H67 = {
+						exists = yes
+						ai = no 
+						NOT = { has_country_flag = rezankand_stomping_on }
+					}
+				}
+				H67 = { #Disaster will only tick for everybody if its below 3
+					hidden_trigger = { has_country_flag = rezankand_supported_on }
+					custom_trigger_tooltip = {
+						tooltip = rezankand_on_disaster_happy_start_req_tt
+						NOT = {
+							check_variable = {
+								which = on_happy
+								value = 3
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					H66 = {
+						exists = yes
+						ai = no
+					}
+				}
+				always = no #Won't start until rezankand
+			}
+		}
 	}
 	
 	can_stop = {
-        always = no
+		if = {
+			limit = {
+				OR = { #AI, Rezankand, and JE check this. Other players bypass it
+					ai = yes
+					tag = H67
+					tag = H66
+				}
+			}
+			if = {
+				limit = {
+					H67 = {
+						exists = yes
+						ai = no 
+						NOT = { has_country_flag = rezankand_stomping_on }
+					}
+				}
+				H67 = { #Disaster can stop for everybody if its 3 or more
+					hidden_trigger = { has_country_flag = rezankand_supported_on }
+					custom_trigger_tooltip = {
+						tooltip = rezankand_on_disaster_happy_stop_req_tt
+						check_variable = {
+							which = on_happy
+							value = 3
+						}
+					}
+				}
+			}
+			else = {
+				always = no
+			}
+		}
+		else = {
+			always = no
+		}
 	}
 	
 	progress = {

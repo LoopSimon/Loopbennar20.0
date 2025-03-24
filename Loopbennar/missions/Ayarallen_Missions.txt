@@ -23,16 +23,13 @@ Ayarallen_Far_Left = {
 		}
 
 		trigger = {
-			calc_true_if = {
-				amount = 3
-				harpy_hills_region = {
-					type = all
-					owned_by = ROOT
-					culture = firanyan_harpy
-					NOT = { trade_goods = gold }
-					NOT = { trade_goods = iron }
-					base_production = 5
-				}
+			num_of_owned_provinces_with = {
+				value = 3
+				region = harpy_hills_region
+				culture = firanyan_harpy
+				NOT = { trade_goods = gold }
+				NOT = { trade_goods = iron }
+				base_production = 5
 			}
 			treasury = 250
 		}
@@ -47,15 +44,13 @@ Ayarallen_Far_Left = {
 			hidden_effect = {
 				if = {
 					limit = {
-						calc_true_if = {
-							amount = 3
-							all_owned_province = {
-								region = harpy_hills_region
-								culture = firanyan_harpy
-								NOT = { trade_goods = gold }
-								NOT = { trade_goods = iron }
-								base_production = 10
-							}
+						num_of_owned_provinces_with = {
+							value = 3
+							region = harpy_hills_region
+							culture = firanyan_harpy
+							NOT = { trade_goods = gold }
+							NOT = { trade_goods = iron }
+							base_production = 10
 						}
 					}
 					random_owned_province = {
@@ -76,13 +71,41 @@ Ayarallen_Far_Left = {
 					}
 					for = {
 						amount = 2
-						effect = "random_owned_province = { limit = { NOT = { has_province_flag = F27_reward } region = harpy_hills_region culture = firanyan_harpy OR = { NOT = { trade_goods = gold } NOT = { trade_goods = iron } } base_production = 10 } change_trade_goods = iron set_province_flag = F27_reward }"
+						effect = "
+							random_owned_province = { 
+								limit = { 
+									NOT = { has_province_flag = F27_reward } 
+									region = harpy_hills_region 
+									culture = firanyan_harpy 
+									OR = { 
+										NOT = { trade_goods = gold } 
+										NOT = { trade_goods = iron } 
+									} 
+									base_production = 10 
+								} 
+								change_trade_goods = iron 
+								set_province_flag = F27_reward 
+							}"
 					}
 				}
 				else = {
 					for = {
 						amount = 3
-						effect =  "random_owned_province = { limit = { NOT = { has_province_flag = F27_reward } region = harpy_hills_region culture = firanyan_harpy OR = { NOT = { trade_goods = gold } NOT = { trade_goods = iron } } base_production = 5 } change_trade_goods = iron set_province_flag = F27_reward }"
+						effect =  "
+							random_owned_province = { 
+								limit = { 
+									NOT = { has_province_flag = F27_reward } 
+									region = harpy_hills_region 
+									culture = firanyan_harpy 
+									OR = { 
+										NOT = { trade_goods = gold } 
+										NOT = { trade_goods = iron } 
+									} 
+									base_production = 5 
+								} 
+								change_trade_goods = iron 
+								set_province_flag = F27_reward 
+							}"
 					}
 				}
 				every_owned_province = {
@@ -99,19 +122,17 @@ Ayarallen_Far_Left = {
 		provinces_to_highlight = {
 			AND = {
 				culture = gelkar
-				NOT = { has_building = workshop }
+				has_production_building_trigger = no
 				NOT = { has_state_edict = edict_defensive_edict }
 			}
 		}
 
 		trigger = {
 			treasury = 500
-			calc_true_if = {
-				amount = 5
-				all_owned_province = {
-					culture = gelkar
-					has_building = workshop
-				}
+			num_of_owned_provinces_with = {
+				value = 5
+				culture = gelkar
+				has_production_building_trigger = yes
 			}
 			custom_trigger_tooltip = {
 				tooltip = f27_humans_of_the_harpy_hills_trigger_tt
@@ -133,7 +154,18 @@ Ayarallen_Far_Left = {
 			hidden_effect = {
 				for = {
 					amount = 5
-					effect = "random_owned_province = { limit = { culture = gelkar has_building = workshop NOT = { has_province_modifier = f27_humans_of_the_harpy_hills } } add_permanent_province_modifier = { name = f27_humans_of_the_harpy_hills duration = -1 } }"
+					effect = "
+						random_owned_province = { 
+							limit = { 
+								culture = gelkar 
+								has_production_building_trigger = yes
+								NOT = { has_province_modifier = f27_humans_of_the_harpy_hills } 
+							} 
+							add_permanent_province_modifier = { 
+								name = f27_humans_of_the_harpy_hills 
+								duration = -1 
+							} 
+						}"
 				}
 			}
 		} 
@@ -253,7 +285,10 @@ Ayarallen_Far_Left = {
 		provinces_to_highlight = {
 			AND = {
 				culture = sandfang_gnoll
-				devastation = 0.1
+				OR = {
+					devastation = 0.1
+					has_any_ongoing_construction = yes
+				}
 				country_or_non_sovereign_subject_holds = ROOT
 			}
 		} 
@@ -281,19 +316,20 @@ Ayarallen_Far_Left = {
 				}
 			}
 			OR = {
-				calc_true_if = {
-					amount = 5
-					all_owned_province = {
-						culture = sandfang_gnoll
-						has_building = courthouse
-					}
+				num_of_owned_provinces_with = {
+					value = 5
+					culture = sandfang_gnoll
+					has_courthouse_building_trigger = yes
 				}
 				treasury = 500
 			}
 			all_owned_province = {
-				if = {
-					limit = { culture = sandfang_gnoll }
-					NOT = { devastation = 0.1 }
+				OR = {
+					NOT = { culture = sandfang_gnoll }
+					AND = {
+						NOT = { devastation = 0.1 }
+						has_any_ongoing_construction = no
+					}
 				}
 			}
 		}
@@ -307,28 +343,57 @@ Ayarallen_Far_Left = {
 			hidden_effect = {
 				for = {
 					amount = 5
-					effect = "random_owned_province = { limit = { culture = sandfang_gnoll NOT = { has_province_modifier = f27_healing_wounds } } add_permanent_province_modifier = { name = f27_healing_wounds duration = -1 } }"
+					effect = "
+						random_owned_province = { 
+							limit = { 
+								culture = sandfang_gnoll 
+								NOT = { has_province_modifier = f27_healing_wounds } 
+							} 
+							add_permanent_province_modifier = { 
+								name = f27_healing_wounds 
+								duration = -1 
+							} 
+						}"
 				}
 				for = {
 					amount = 5
-					effect = "random_owned_province = { limit = { culture = sadnatu NOT = { has_province_modifier = f27_healing_wounds } } add_permanent_province_modifier = { name = f27_healing_wounds duration = -1 } }"
+					effect = "
+						random_owned_province = { 
+							limit = { 
+								culture = sadnatu 
+								NOT = { has_province_modifier = f27_healing_wounds } 
+							} 
+							add_permanent_province_modifier = { 
+								name = f27_healing_wounds 
+								duration = -1 
+							} 
+						}"
 				}
 				if = {
 					limit = {
-						calc_true_if = {
-							amount = 5
-							all_owned_province = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 5
 								culture = sandfang_gnoll
-								has_building = courthouse
+								has_courthouse_building_trigger = yes
 							}
 						}
 					}
-				}
-				else = {
 					add_treasury = -500
 					for = {
 						amount = 5
-						effect = "random_owned_province = { limit = { culture = sandfang_gnoll NOT = { has_building = courthouse } } add_building_construction = { building = courthouse speed = 1 cost = 0 } }"
+						effect = "
+							random_owned_province = { 
+								limit = { 
+									culture = sandfang_gnoll 
+									has_courthouse_building_trigger = no
+								} 
+								add_building_construction = { 
+									building = courthouse 
+									speed = 1 
+									cost = 0 
+								} 
+							}"
 					}
 				}
 			}
@@ -540,41 +605,35 @@ Ayarallen_Left = {
 				tooltip = f27_bahar_melting_pot_trigger_tt
 				OR = {
 					AND = {
-						calc_true_if = {
-							amount = 2
-							all_owned_province = {
-								culture = bahari
-								num_of_times_improved = 2
-								has_building = courthouse
-							}
+						num_of_owned_provinces_with = {
+							value = 2
+							culture = bahari
+							num_of_times_improved = 2
+							has_courthouse_building_trigger = yes
 						}
-						calc_true_if = {
-							amount = 2
-							all_owned_province = {
-								culture = exodus_goblin
-								num_of_times_improved = 2
-								has_building = courthouse
-							}
+						num_of_owned_provinces_with = {
+							value = 2
+							culture = exodus_goblin
+							num_of_times_improved = 2
+							has_courthouse_building_trigger = yes
 						}
 						536 = {
 							country_or_non_sovereign_subject_holds = ROOT
-							has_building = courthouse
+							has_courthouse_building_trigger = yes
 						}
 					}
 					AND = {
-						calc_true_if = {
-							amount = 2
-							all_owned_province = {
-								culture = bahari
-								num_of_times_improved = 2
-							}
+						num_of_owned_provinces_with = {
+							value = 2
+							culture = bahari
+							num_of_times_improved = 2
+							has_any_ongoing_construction = no
 						}
-						calc_true_if = {
-							amount = 2
-							all_owned_province = {
-								culture = exodus_goblin
-								num_of_times_improved = 2
-							}
+						num_of_owned_provinces_with = {
+							value = 2
+							culture = exodus_goblin
+							num_of_times_improved = 2
+							has_any_ongoing_construction = no
 						}
 						536 = {
 							country_or_non_sovereign_subject_holds = ROOT
@@ -594,38 +653,59 @@ Ayarallen_Left = {
 			hidden_effect = {
 				if = {
 					limit = {
-						calc_true_if = {
-							amount = 2
-							all_owned_province = {
-								culture = bahari
-								num_of_times_improved = 2
-								NOT = { has_building = courthouse }
-							}
+						num_of_owned_provinces_with = {
+							value = 2
+							culture = bahari
+							num_of_times_improved = 2
+							has_courthouse_building_trigger = no
 						}
-						calc_true_if = {
-							amount = 2
-							all_owned_province = {
-								culture = exodus_goblin
-								num_of_times_improved = 2
-								NOT = { has_building = courthouse }
-							}
+						num_of_owned_provinces_with = {
+							value = 2
+							culture = exodus_goblin
+							num_of_times_improved = 2
+							has_courthouse_building_trigger = no
 						}
 						536 = {
 							country_or_non_sovereign_subject_holds = ROOT
-							NOT = { has_building = courthouse }
+							has_courthouse_building_trigger = no
 						}
 					}
 					add_treasury = -600
 					for = {
 						amount = 2
-						effect = "random_owned_province = { limit = { culture = exodus_goblin num_of_times_improved = 2 NOT = { has_building = courthouse } } add_building_construction = { building = courthouse speed = 1 cost = 0 } } random_owned_province = { limit = { culture = bahari num_of_times_improved = 2 NOT = { has_building = courthouse } } add_building_construction = { building = courthouse speed = 1 cost = 0 } }"
+						effect = "
+							random_owned_province = { 
+								limit = { 
+									culture = exodus_goblin 
+									num_of_times_improved = 2 
+									has_courthouse_building_trigger = no
+								} 
+								add_building_construction = { 
+									building = courthouse 
+									speed = 1 
+									cost = 0 
+								} 
+							}"
+					}
+					for = {
+						amount = 2
+						effect = "
+							random_owned_province = { 
+								limit = { 
+									culture = bahari 
+									num_of_times_improved = 2 
+									has_courthouse_building_trigger = no
+								} 
+								add_building_construction = { 
+									building = courthouse 
+									speed = 1 
+									cost = 0 
+								} 
+							}"
 					}
 				}
-				every_owned_province = {
-					limit = {
-						region = bahar_region
-						NOT = { culture_group = harpy }
-					}
+				bahar_region = {
+					limit = { NOT = { culture_group = harpy } }
 					add_permanent_province_modifier = {
 						name = f27_melting_pot_modifier
 						duration = -1
@@ -1707,7 +1787,10 @@ Ayarallen_Far_Right = {
 				}
 				AND = {
 					province_id = 536
-					has_manufactory_no_custom_tooltip_trigger = no
+					OR = {
+						has_manufactory_no_custom_tooltip_trigger = no
+						has_any_ongoing_construction = yes
+					}
 				}
 			}
 		}
@@ -1727,7 +1810,11 @@ Ayarallen_Far_Right = {
 					trade_goods = gold
 				}
 			}
-			536 = { country_or_non_sovereign_subject_holds = ROOT has_manufactory_trigger = yes }
+			536 = { 
+				country_or_non_sovereign_subject_holds = ROOT 
+				has_manufactory_trigger = yes 
+				has_any_ongoing_construction = no
+			}
 			calc_true_if = {
 				amount = 2
 				high_tolerance_centaur_race_trigger = yes

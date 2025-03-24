@@ -114,7 +114,10 @@ country_event = { #Southern Comrades
 		name = khadisrapur.4.a
 		ai_chance = { factor = 1 }
 
-		R12 = { add_country_modifier = { name = khadisrapur_supporting_independence duration = 7300 } }
+		if = {
+			limit = { NOT = { overlord_of = R12 } }
+			R12 = { add_country_modifier = { name = khadisrapur_supporting_independence duration = 7300 } }
+		}
 		set_country_flag = voice_tilathi_flag
 		swap_non_generic_missions = yes
 		hidden_effect = { country_event = { id = khadisrapur.5 days = 20 random = 20 } }
@@ -694,7 +697,9 @@ country_event = { #Treaty of Pirvand
 				duration = 7300
 			}
 			set_country_flag = formed_nadimraj_flag
+			add_historical_friend = ROOT
 		}
+		add_historical_friend = R73
 		hidden_effect = { R73 = { save_global_event_target_as = rajnadhaga_or_was_rajnadhaga_target } }
 	}
 }
@@ -715,7 +720,12 @@ country_event = { #The Opening Ceremony
 		custom_tooltip = khadisrapur_invite_other_countries_tt
 		hidden_effect = {
 			every_known_country = {
-				limit = { capital_scope = { superregion = rahen_superregion } }
+				limit = {
+					capital_scope = { superregion = rahen_superregion }
+					has_opinion = { who = ROOT value = 25 }
+					has_estate = estate_adventurers
+					NOT = { has_estate_privilege = estate_adventurers_organization_heroes_guild }
+				}
 				country_event = { id = khadisrapur.23 }
 			}
 		}
@@ -729,10 +739,6 @@ country_event = { #Join the Heroes' Guild?
 	picture = ELEPHANT_KING_eventPicture
 
 	is_triggered_only = yes
-	trigger = {
-		has_estate = estate_adventurers
-		NOT = { has_estate_privilege = estate_adventurers_organization_heroes_guild }
-	}
 
 	option = {
 		name = khadisrapur.23.a
@@ -930,6 +936,13 @@ country_event = { #Rajkevir of Piranpur
 			cost_multiplier = 0.33
 		}
 		custom_tooltip = R11_golden_age_effect_tt
+		custom_tooltip = R11_golden_age_effect_2_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { has_owner_culture = yes }
+				change_culture = shamakhadi
+			}
+		}
 	}
 }
 
@@ -1443,7 +1456,7 @@ country_event = { #Hidden Nonsense
 		}
 
 		if = {
-			limit = { mission_completed = R11_golden_age }
+			limit = { has_country_modifier = khadisrapur_empower_merchants_mod }
 			random = {
 				chance = 20
 				asia = {

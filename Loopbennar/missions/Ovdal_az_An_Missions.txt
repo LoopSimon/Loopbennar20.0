@@ -1,0 +1,1852 @@
+# MT Design + Some Coding done by: Everest
+# Most (~90% or more) of MT Coding done by: Magnive
+# The fashionably late cavalry: Bonbonny
+# Make your checks payable to the next homeless person you see
+# MT Released on Steam with the 1.37 'Inca' (Winds of Change DLC) update and '[Redacted]''
+
+# Ovdal-az-An: The Gods are testing us, and we will never falter!
+
+az_an_1_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+	}
+	has_country_shield = yes
+
+	az_an_detestable_creatures = {
+		icon = mission_globlin
+		position = 1
+		
+		provinces_to_highlight = {
+			owned_by = ROOT
+			NOT = { culture = granite_dwarf }
+		}
+		
+		trigger = {
+			dominant_culture = granite_dwarf
+		}
+
+		effect = {
+			generic_start_purge = { 
+				race = goblin 
+				free = yes 
+			}
+			add_country_modifier = {
+				name = az_an_granite_rebuttal
+				duration = 9125
+			}
+		}
+	}
+
+	az_an_teachings_goblinsbane = {
+		icon = polish_diplomacy
+		position = 2
+		required_missions = {
+            az_an_detestable_creatures
+        }
+		
+		trigger = {
+			army_tradition = 40
+			has_mil_advisor_2 = yes
+		}
+
+		effect = {
+			hidden_effect = {
+				add_country_modifier = {
+					name = az_an_two_shock_advisor
+					duration = -1
+				}
+			}
+			custom_tooltip = az_an_teachings_goblinsbane_effect_tt
+			if = {
+				limit = {
+					has_leader = "Goblinsbane"
+				}
+				add_yearly_manpower = 3
+			}
+		}
+	}
+}
+
+az_an_1_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+	}
+	has_country_shield = yes
+
+	az_an_remnants_ancestors = {
+		icon = polish_diplomacy
+		position = 2
+		
+		provinces_to_highlight = { province_id = 4247 } #Ovdal Kanzad
+		
+		trigger = {
+			owns_core_province = 4247 #Ovdal Kanzad
+			4247 = {
+				hold_condition = { Repaired = yes }
+			}
+			num_of_artillery = 4
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = az_an_copper_siphoning
+				duration = 9125
+			}
+		}
+	}
+}
+
+az_an_1_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+	}
+	has_country_shield = yes
+
+	az_an_clear_our_home = {
+		icon = polish_diplomacy
+		position = 1
+		
+		provinces_to_highlight = { province_id = 4284 } #Ovdal-az-An
+		
+		trigger = {
+			4284 = { #Ovdal-az-An Hold
+				hold_condition = { Repaired = yes }
+				has_dwarven_hold_2 = yes
+				NOT = { devastation = 0.01 }
+			}
+		}
+
+		effect = {
+			generate_scaled_advisor_of_type_and_cost_effect = {
+                type = natural_scientist
+                cost_multiplier = 0.5
+            }
+			add_prestige = 15
+		}
+	}
+
+	az_an_granite_retellings = {
+		icon = polish_diplomacy
+		position = 2
+		required_missions = {
+            az_an_clear_our_home
+        }
+		
+		provinces_to_highlight = { province_id = 4284 } #Ovdal-az-An
+		
+		trigger = {
+				total_development = 150
+			4284 = {
+				num_of_buildings_in_province = 5
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.11 }
+		}
+	}
+
+	az_an_old_pantheon = {
+		icon = polish_diplomacy
+		position = 3
+		required_missions = {
+            az_an_granite_retellings
+        }
+		
+		trigger = {
+			religion = dwarven_pantheon
+			has_any_disaster = no
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.12 }
+			swap_non_generic_missions = yes
+		}
+	}
+}
+
+az_an_1_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+	}
+	has_country_shield = yes
+
+	az_an_secure_surroundings = {
+		icon = polish_diplomacy
+		position = 2
+		required_missions = {
+            az_an_clear_our_home
+			az_an_these_ancient_caverns
+        }
+		
+		provinces_to_highlight = {
+			OR = {
+				area = ovdal_az_an_area
+				area = dwarovrod_51_53_area
+				area = dwarovrod_57_59_area
+				area = the_kariats_area
+				area = ibran_pass_area
+			}
+			OR = {
+				AND = {
+					is_city = no
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 12
+						is_city = yes
+								OR = {
+									area = ovdal_az_an_area
+									area = dwarovrod_51_53_area
+									area = dwarovrod_57_59_area
+									area = the_kariats_area
+									area = ibran_pass_area
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					NOT = {
+						fort_level = 2
+						province_id = 4284
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 2
+								fort_level = 2
+								OR = {
+									area = ovdal_az_an_area
+									area = dwarovrod_51_53_area
+									area = dwarovrod_57_59_area
+									area = the_kariats_area
+									area = ibran_pass_area
+								}
+								NOT = { province_id = 4284 }
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 12
+						is_city = yes
+				OR = {
+					area = ovdal_az_an_area
+					area = dwarovrod_51_53_area
+					area = dwarovrod_57_59_area
+					area = the_kariats_area
+					area = ibran_pass_area
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				fort_level = 2
+				NOT = { province_id = 4284 }
+				OR = {
+					area = ovdal_az_an_area
+					area = dwarovrod_51_53_area
+					area = dwarovrod_57_59_area
+					area = the_kariats_area
+					area = ibran_pass_area
+				}
+			}
+			have_cast_broad_ward = yes
+		}
+
+		effect = {
+			custom_tooltip = az_an_secure_surroundings_effect_tt
+			hidden_effect = {
+				random_owned_province = {
+					limit = {
+						fort_level = 2
+						OR = {
+							area = ovdal_az_an_area
+							area = dwarovrod_51_53_area
+							area = dwarovrod_57_59_area
+							area = the_kariats_area
+							area = ibran_pass_area
+						}
+						NOT = { 
+							province_id = 4284 
+						}
+					}
+					add_permanent_province_modifier = {
+						name = az_an_amateur_runework
+						duration = -1
+					}
+				}
+				random_owned_province = {
+					limit = {
+						fort_level = 2
+						OR = {
+							area = ovdal_az_an_area
+							area = dwarovrod_51_53_area
+							area = dwarovrod_57_59_area
+							area = the_kariats_area
+							area = ibran_pass_area
+						}
+						NOT = { 
+							province_id = 4284
+							has_province_modifier = az_an_amateur_runework
+						}
+					}
+					add_permanent_province_modifier = {
+						name = az_an_amateur_runework
+						duration = -1
+					}
+				}
+			}
+		}
+	}
+}
+
+az_an_1_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+	}
+	has_country_shield = yes
+
+	az_an_these_ancient_caverns = {
+		icon = polish_diplomacy
+		position = 1
+		
+		trigger = {
+			stability = 1
+			estate_loyalty = {
+				estate = estate_adventurers
+				loyalty = 60
+			}
+			has_estate_privilege = estate_adventurers_cavern_exploration_initiative
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = az_an_migration_memories
+				duration = 14600
+			}
+			custom_tooltip = az_an_ancient_caverns_effect_tt
+		}
+	}
+}
+
+az_an_2_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_2
+	}
+	has_country_shield = yes
+
+	az_an_restore_undergrowth = {
+		icon = polish_diplomacy
+		position = 3
+		required_missions = {
+			az_an_teachings_goblinsbane
+			az_an_remnants_ancestors
+		}
+		
+		provinces_to_highlight = {
+			OR = {
+				area = anduz_area
+				area = earthseed_area
+				area = ambermine_alley_area
+			}
+			OR = {
+				NOT = {
+					AND = {
+						is_core = ROOT
+						culture_group = dwarven
+					}
+				}
+				NOT = {
+					AND = {
+						has_manpower_building_trigger = yes
+						infantry_in_province = ROOT
+					}
+					ROOT = {
+						num_of_owned_provinces_with = {
+							value = 5 
+							OR = { area = anduz_area area = earthseed_area area = ambermine_alley_area }
+							has_manpower_building_trigger = yes
+							infantry_in_province = ROOT
+						}
+					}
+				}
+			}
+		}
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = az_an_restore_undergrowth_trigger_tt
+				anduz_area = 			{ type = all is_core = ROOT culture_group = dwarven }
+				earthseed_area = 		{ type = all is_core = ROOT culture_group = dwarven }
+				ambermine_alley_area = 	{ type = all is_core = ROOT culture_group = dwarven }
+			}
+			num_of_owned_provinces_with = {
+				value = 5 
+				OR = { area = anduz_area area = earthseed_area area = ambermine_alley_area }
+				has_manpower_building_trigger = yes
+				infantry_in_province = ROOT
+			}
+		}
+
+		effect = {
+			4269 = { add_base_tax = 2 add_base_production = 2 add_base_manpower = 2 }
+			custom_tooltip = az_an_restore_undergrowth_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						OR = { 
+								area = anduz_area
+								area = earthseed_area
+								area = ambermine_alley_area
+						}
+						infantry_in_province = ROOT
+						has_manpower_building_trigger = yes
+					}
+					add_base_manpower = 1
+					ROOT = { add_mil_power = 10 }
+					kill_units = { who = ROOT type = infantry amount = 1 }
+				}
+			}
+		}
+	}
+
+	az_an_meaning_of_granite = {
+		icon = polish_diplomacy
+		position = 4
+		required_missions = {
+			az_an_restore_undergrowth
+		}
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			has_tax_building_trigger = no
+		}
+		
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 20
+				has_tax_building_trigger = yes
+			}
+			religious_unity = 1
+		}
+
+		effect = {
+			custom_tooltip = az_an_tt_meaning_granite_reward
+			hidden_effect = { set_country_flag = az_an_meaning_granite_reward }
+			dwarven_pantheon_unlock_random_deity = { minor = yes }
+		}
+	}
+
+	az_an_halannas_chambers = {
+		icon = polish_diplomacy
+		position = 5
+		required_missions = {
+			az_an_meaning_of_granite
+		}
+
+		provinces_to_highlight = { province_id = 4269 } #Earthseed
+		
+		trigger = {
+			4269 = {
+				religion = ROOT
+				has_tax_building_trigger = yes
+				OR = {
+					has_fort_building_trigger = yes
+					any_neighbor_province = { has_fort_building_trigger = yes }
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = az_an_halannas_chambers_trigger_tt
+				calc_true_if = {
+					has_country_flag = dwarven_pantheon_knows_dagrin
+					has_country_flag = dwarven_pantheon_knows_anvelind
+					has_country_flag = dwarven_pantheon_knows_durvorazir
+					has_country_flag = dwarven_pantheon_knows_margurz
+					has_country_flag = dwarven_pantheon_knows_miradeth
+					has_country_flag = dwarven_pantheon_knows_azmirethazin
+					has_country_flag = dwarven_pantheon_knows_argezenna
+					has_country_flag = dwarven_pantheon_knows_auirikus
+					has_country_flag = dwarven_pantheon_knows_urisazirn
+					has_country_flag = dwarven_pantheon_knows_dolurazan
+					has_country_flag = dwarven_pantheon_knows_derzobrazan
+					has_country_flag = dwarven_pantheon_knows_bervinazan
+					has_country_flag = dwarven_pantheon_knows_karazlov
+					has_country_flag = dwarven_pantheon_knows_grimthar
+					has_country_flag = dwarven_pantheon_knows_verdrik
+					has_country_flag = dwarven_pantheon_knows_thyrfen
+					has_country_flag = dwarven_pantheon_knows_werdun
+					has_country_flag = dwarven_pantheon_knows_lorgrim
+					has_country_flag = dwarven_pantheon_knows_lorgram
+					has_country_flag = dwarven_pantheon_knows_grobilazk
+					amount = 12
+				}
+
+			}
+			has_global_modifier_value = {
+				which = devotion
+				value = 2
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.21 }
+			4269 = { set_province_flag = az_an_shrine_province 	add_permanent_province_modifier = { name = az_an_shrine_of_dagrin_inactive duration = -1  } }
+			4311 = { set_province_flag = az_an_shrine_province 	add_permanent_province_modifier = { name = az_an_shrine_of_anvelind_inactive duration = -1  } }
+			4350 = { set_province_flag = az_an_shrine_province 	add_permanent_province_modifier = { name = az_an_shrine_of_durvorazir_inactive duration = -1  } }
+			4266 = { set_province_flag = az_an_shrine_province 	add_permanent_province_modifier = { name = az_an_shrine_of_margurz_inactive duration = -1  } }
+			4313 = { set_province_flag = az_an_shrine_province 	add_permanent_province_modifier = { name = az_an_shrine_of_miradeth_inactive duration = -1  } }
+			4247 = { set_province_flag = az_an_shrine_province 	add_permanent_province_modifier = { name = az_an_shrine_of_azmirethazin_inactive duration = -1  } }
+			4284 = { set_province_flag = az_an_shrine_province 	add_permanent_province_modifier = { name = az_an_shrine_of_argezenna_inactive duration = -1  } }
+			4265 = { set_province_flag = az_an_shrine_province 	add_permanent_province_modifier = { name = az_an_shrine_of_auirikus_inactive duration = -1  } }
+			4323 = { set_province_flag = az_an_shrine_province 	add_permanent_province_modifier = { name = az_an_shrine_of_urisazirn_inactive duration = -1  } }
+		}
+	}
+}
+
+az_an_2_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_2
+	}
+	has_country_shield = yes
+
+	az_an_open_air = {
+		icon = polish_diplomacy
+		position = 4
+		required_missions = {
+			az_an_remnants_ancestors
+			az_an_old_pantheon
+		}
+
+		provinces_to_highlight = { province_id = 4265 } #Grozumdihr
+		
+		trigger = {
+			4265 = { owned_by = ROOT hold_condition = { Repaired = yes } development = 40 }
+			if = { #For my Witch-King Enjoyers out there.  Credit to Howe for reminding me that WK will cause a soft-lock here
+				limit = {
+					has_ruler_modifier = witch_king_modifier
+				}
+				OR = { #This will have to change post-magic rework.
+					has_ruler_flag = enchantment_2
+					has_country_modifier = magic_estate_magnificent_feast_2
+					has_country_modifier = magic_estate_magnificent_feast_3
+				}
+			}
+			else = {
+				diplomatic_reputation = 3
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.22 } # Not done yet.
+			custom_tooltip = az_an_open_air_tt
+			hidden_effect = {
+				every_country = {
+					limit = {
+						capital_scope = {
+							superregion = rahen_superregion
+						}
+						NOT = { tag = R62 }
+					}
+					tree_of_stone_region = {
+						discover_country = PREV
+					}
+				}
+			}
+		}
+	}
+
+	az_an_closed_doors = {
+		icon = polish_diplomacy
+		position = 6
+		required_missions = {
+			az_an_halannas_chambers
+			az_an_open_air
+			az_an_lesson_in_heresy
+		}
+
+		provinces_to_highlight = {
+			province_group = hold_province
+			region = tree_of_stone_region
+		}
+		
+		trigger = {
+			4284 = { owned_by = ROOT }
+			4247 = { owned_by = ROOT }
+			4265 = { owned_by = ROOT }
+			4266 = { owned_by = ROOT }
+			development_in_provinces = {
+				value = 200
+				OR = {
+					province_id = 4284
+					province_id = 4247
+					province_id = 4265
+					province_id = 4266
+				}
+			}
+			all_ally = {
+				religion = dwarven_pantheon
+			}
+		}
+
+		effect = {
+			4284 = { add_prosperity = 100 }
+			4247 = { add_prosperity = 100 }
+			4265 = { add_prosperity = 100 }
+			4266 = { add_prosperity = 100 }
+			set_country_flag = can_use_propagate_religion
+		}
+	}
+
+	az_an_beauty_of_isolation = { #more like beauty of annihilation
+		icon = polish_diplomacy
+		position = 7
+		required_missions = {
+			az_an_closed_doors
+			az_an_argrastuns_secret
+		}
+
+		provinces_to_highlight = { province_id = 4284 } #Ovdal-az-An
+		
+		trigger = {
+			has_estate_privilege = estate_church_az_an_reclusive_tranquility
+			4284 = { has_dwarven_hold_7 = yes }
+			if = {
+				limit = { num_of_subjects = 4 }
+				NOT = { num_of_diplomatic_relations = 5 }
+			}
+			else_if = {
+				limit = { num_of_subjects = 3 }
+				NOT = { num_of_diplomatic_relations = 4 }
+			}
+			else_if = {
+				limit = { num_of_subjects = 2 }
+				NOT = { num_of_diplomatic_relations = 3 }
+			}
+			else_if = {
+				limit = { num_of_subjects = 1 }
+				NOT = { num_of_diplomatic_relations = 2 }
+			}
+			else = { NOT = { num_of_diplomatic_relations = 1 } }
+		}
+
+		effect = {
+			custom_tooltip = az_an_beauty_of_isolation_tt_granite_isolation_unlock
+		}
+	}
+
+	az_an_one_grand_lonely_hold = { 
+		icon = polish_diplomacy
+		position = 8
+		required_missions = {
+			az_an_beauty_of_isolation
+		}
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = az_an_one_grand_lonely_hold_trigger_tt
+				has_country_flag = az_an_flag_vurodrmonir_has_cast_final_isolation
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					R62 = {
+						num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+							value = 1
+							region = jade_mines_region
+						}
+					}
+				}
+				country_event = { id = flavor_ovdal_az_an.23 } # Command has land/subject in Jade Mines
+			}
+			else = {
+			country_event = { id = flavor_ovdal_az_an.24 } # Command doesn't have land/subject in Jade Mines
+			}
+		}
+	}
+}
+
+az_an_2_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_2
+	}
+	has_country_shield = yes
+	
+	az_an_monumental_legacy = {
+		icon = polish_diplomacy
+		position = 4
+		required_missions = {
+			az_an_old_pantheon
+		}
+		
+		provinces_to_highlight = { province_id = 4284 } #Ovdal-az-An
+		
+		trigger = {
+			4284 = { 
+				has_dwarven_hold_5 = yes
+				base_production = 25
+			}
+			check_variable = { which = expeditions_completed_var value = 5 }
+		}
+
+		effect = {
+			if = { limit = { capital_scope = { has_improved_hold_infrastructure = yes } }
+				custom_tooltip = az_an_monumental_legacy_improved_yes
+				add_adm_power = 50
+				add_dip_power = 50
+				add_mil_power = 50
+			}
+			else = {
+				custom_tooltip = az_an_monumental_legacy_improved_no
+				hidden_effect = { set_country_flag = az_an_cheaper_infrastructure_upgrade }
+				tooltip = {
+					add_adm_power = 50
+					add_dip_power = 50
+					add_mil_power = 50
+				}
+			}
+		}
+	}
+
+	az_an_lesson_in_heresy = {
+		icon = polish_diplomacy
+		position = 5
+		required_missions = {
+			az_an_monumental_legacy
+		}
+		
+		trigger = {
+			is_ahead_of_time_in_technology = { tech = adm }
+			treasury = 1000
+			custom_trigger_tooltip = { 
+				tooltip = az_an_tt_lesson_in_heresy_trigger 
+				employed_advisor = { category = adm skill = 3 }
+				employed_advisor = { category = dip skill = 3 }
+				employed_advisor = { category = mil skill = 3 }
+			}
+			is_in_deficit = no
+		}
+
+		effect = {
+			add_treasury = -1000
+			add_country_modifier = { name = az_an_fledging_school_of_dagrin duration = -1 }
+			random_list = {
+				50 = { dwarven_pantheon_unlock_random_deity = { major = yes } }
+				50 = { dwarven_pantheon_unlock_random_deity = { minor = yes } }
+			}
+		}
+	}
+
+	az_an_argrastuns_secret = {
+		icon = polish_diplomacy
+		position = 6
+		required_missions = {
+			az_an_devotion_under_pantheon
+			az_an_twinned_tributes
+		}
+		
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				AND = {
+					province_id = 4284 #Ovdal-az-An
+					has_construction = any
+				}
+				is_colony = yes
+			}
+		}
+		
+		trigger = {
+			4284 = { NOT = { has_construction = any } } # Magnive note: putting this in for now, because the trigger in the draft seems a bit odd to me.
+			NOT = { num_of_colonies = 1 }                             # Everest Reply: Ah, that was confusingly worded.  It was meant as a 'drop everythign your doing' thematic trigger, so no converting, nor colonizing.  But forcing all that is really jarring, so I'll just add that you cant be colonzing and leave it there.
+			estate_loyalty = { estate = estate_church 	loyalty = 60 }
+			estate_loyalty = { estate = estate_mages 	loyalty = 60 }
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.25 }
+		}
+	}
+}
+
+az_an_2_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_2
+	}
+	has_country_shield = yes
+
+	az_an_seat_of_power = {
+		icon = polish_diplomacy
+		position = 3
+		required_missions = {
+			az_an_granite_retellings
+		}
+		
+		provinces_to_highlight = { province_id = 4284 } #Ovdal-az-An
+		
+		trigger = {
+			monthly_adm = 10
+			4284 = { has_tax_building_trigger = yes NOT = { has_construction = building } }
+			devotion = 90
+			treasury = 400
+		}
+
+		effect = {
+			add_treasury = -400
+			4284 = {
+				if = {
+					limit = { NOT = { has_building = cathedral } }
+				add_building_construction = {
+					building = cathedral
+					speed = 0.5
+					cost = 0
+				}
+				}
+				add_province_modifier = { name = az_an_argrastun_cathedral duration = -1 }
+			}
+		}
+	}
+
+	az_an_devotion_under_pantheon = {
+		icon = polish_diplomacy
+		position = 5
+		required_missions = {
+			az_an_seat_of_power
+		}
+		
+		trigger = {
+			has_estate_privilege = estate_church_religious_state
+			NOT = { unrest = 0 }
+			custom_trigger_tooltip = { # Magnive note: Is this not just a straight-up timegate? # Everest Reply: It's thematic, and I'll tone it down if its too annoying.
+				tooltip = az_an_devotion_under_pantheon_trigger_tt
+				check_variable = { which = az_an_var_rituals_completed value = 5 } 
+			}
+		}
+
+		effect = {
+			clear_mages_organization_effect = yes
+			hidden_effect = { set_country_flag = az_an_religious_mages_yes }
+			set_estate_privilege = estate_mages_organization_religious
+			if = { limit = { full_idea_group = religious_ideas }
+				custom_tooltip = az_an_devotion_under_pantheon_religious_ideas_yes
+				add_country_modifier = { name = az_an_measured_by_worship duration = -1 }
+			}
+			else = {
+				custom_tooltip = az_an_devotion_under_pantheon_religious_ideas_no
+				add_country_modifier = { name = az_an_measured_by_worship duration = 7300 }
+			}
+		}
+	}
+}
+
+az_an_2_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_2
+	}
+	has_country_shield = yes
+
+	az_an_hjals_healthly_hold_hogs = {
+		icon = polish_diplomacy
+		position = 3
+		required_missions = {
+			az_an_secure_surroundings
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				area = ibran_pass_area
+				area = sulimak_area
+			}
+			NOT = { owned_by = ROOT }
+		}
+		
+		trigger = {
+			ibran_pass_area = { type = all owned_by = ROOT }
+			sulimak_area = { type = all owned_by = ROOT }
+			estate_loyalty = { estate = estate_nobles loyalty = 50 } 
+			dip_power = 100
+		}
+
+		effect = {
+			add_dip_power = -100
+			if = {
+				limit = {
+					NOT = {
+						num_of_owned_provinces_with = {
+							value = 5
+							trade_goods = livestock
+						}
+					}
+				}
+				custom_tooltip = az_an_hjals_healthly_hold_hogs_tt_1
+				hidden_effect = {
+					ibran_pass_area = {
+						limit = { OR = { trade_goods = fungi trade_goods = serpentbloom trade_goods = wine } }
+						change_trade_goods = livestock
+					}
+					sulimak_area = {
+						limit = { OR = { trade_goods = fungi trade_goods = serpentbloom trade_goods = wine } }
+						change_trade_goods = livestock
+					}
+				}
+			}
+			hidden_effect = { set_country_flag = monopoly_of_livestock_upgrade_3_years_extra_income }
+			custom_tooltip = az_an_hjals_healthly_hold_hogs_tt_2
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_knows_durvorazir } } 
+				country_event = { id = dwarven_pantheon.32 }
+			}
+			if = { limit = { has_country_flag = dwarven_pantheon_ritual_durvorazir_done }
+				custom_tooltip = az_an_faith_ale_durvorazir_yes
+				hidden_effect = { 
+					every_owned_province = { limit = { trade_goods = livestock } 
+						add_base_production = 2
+					}
+				}
+			}
+			else = {
+				custom_tooltip = az_an_faith_ale_durvorazir_no
+			}
+		}
+	}
+
+	az_an_faith_ale = {
+		icon = polish_diplomacy
+		position = 4
+		required_missions = {
+			az_an_hjals_healthly_hold_hogs
+		}
+		
+		provinces_to_highlight = { province_id = 4266 } #Hul-az-Krak
+		
+		trigger = {
+			4266 = { hold_condition = { Repaired = yes } base_production = 12 }
+			OR = { 
+				has_country_flag = dwarven_pantheon_knows_margurz
+				has_global_modifier_value = { which = tolerance_own value = 7 }
+			}
+		}
+
+		effect = {
+			4266 = { add_province_modifier = { name = az_an_better_with_a_brew duration = 9125 } }
+			custom_tooltip = az_an_faith_ale_tt_1
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_knows_margurz } } 
+				country_event = { id = dwarven_pantheon.33 }
+			}
+			if = { limit = { has_country_flag = dwarven_pantheon_ritual_margurz_done }
+				custom_tooltip = az_an_faith_ale_margurz_yes
+				increase_ruler_dip_effect = yes
+			}
+			else = {
+				custom_tooltip = az_an_faith_ale_margurz_no
+				tooltip = {
+					increase_ruler_dip_effect = yes
+				}
+			}
+		}
+	}
+
+	az_an_twinned_tributes = {
+		icon = polish_diplomacy
+		position = 5
+		required_missions = {
+			az_an_faith_ale
+		}
+		
+		provinces_to_highlight = {
+			OR = {
+				area = the_kariats_area
+				area = ovdal_az_an_area
+				area = ibran_pass_area
+				area = sulimak_area
+				area = hovezan_pass_area
+				area = dwarovrod_57_59_area
+				area = hul_az_krakazol_area
+				area = drunken_pass_area
+				area = dwarovrod_63_65_area
+			}
+			NOT = { owned_by = ROOT }
+		}
+		
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 25 
+				OR = {
+					area = the_kariats_area
+					area = ovdal_az_an_area
+					area = ibran_pass_area
+					area = sulimak_area
+					area = hovezan_pass_area
+					area = dwarovrod_57_59_area
+					area = hul_az_krakazol_area
+					area = drunken_pass_area
+					area = dwarovrod_63_65_area
+				} 
+			}
+			OR = {
+				has_church_aspect = lorgrim_dip_aspect
+				has_church_aspect = lorgrim_mil_aspect
+			}
+			OR = {
+				has_church_aspect = lorgram_adm_aspect
+				has_church_aspect = lorgram_dip_aspect
+			}
+			custom_trigger_tooltip = {
+				tooltip = az_an_twinned_tributes_trigger_tt
+				NOT = {
+					has_leader_with = {
+						general = yes
+						shock = 10
+						fire = 6
+						manuever = 8
+						siege = 6
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.27 }
+			if = {
+				limit = {
+					the_kariats_area = {
+						type = all
+						owned_by = ROOT
+					}
+					ovdal_az_an_area = {
+						type = all
+						owned_by = ROOT
+					}
+					ibran_pass_area = {
+						type = all
+						owned_by = ROOT
+					}
+					sulimak_area = {
+						type = all
+						owned_by = ROOT
+					}
+					hovezan_pass_area = {
+						type = all
+						owned_by = ROOT
+					}
+					dwarovrod_57_59_area = {
+						type = all
+						owned_by = ROOT
+					}
+					hul_az_krakazol_area = {
+						type = all
+						owned_by = ROOT
+					}
+					drunken_pass_area = {
+						type = all
+						owned_by = ROOT
+					}
+					dwarovrod_63_65_area = {
+						type = all
+						owned_by = ROOT
+					}
+				}
+				custom_tooltip = az_an_twinned_tributes_all_east_yes
+				add_adm_power = 100
+				add_dip_power = 100
+				add_mil_power = 100
+			}
+			else = {
+				custom_tooltip = az_an_twinned_tributes_all_east_no
+				tooltip = {
+					add_adm_power = 100
+					add_dip_power = 100
+					add_mil_power = 100
+				}
+			}
+		}
+	}
+
+	az_an_more_then_grudge = {
+		icon = polish_diplomacy
+		position = 7
+		required_missions = {
+			az_an_argrastuns_secret
+			az_an_twinned_tributes
+		}
+		
+		provinces_to_highlight = {
+			OR = {
+				owned_by = R62
+				AND = {
+					R62 = { exists = no }
+					province_id = 4350 #Tuwad-Dhumankhon
+				}
+			}
+		}
+		
+		trigger = {
+			has_country_flag = az_an_flag_vurodrmonir_has_cast_moonseal
+			if = { limit = { NOT = { exists = R62 } }
+				4350 = {
+					owned_by = ROOT
+					hold_condition = { Repaired = yes }
+				}
+			}
+		}
+
+		effect = {
+			# It's ugly but it works. Capping at 20 rituals completed. 
+			dwarven_pantheon_unlock_random_deity = { major = yes }
+			custom_tooltip = az_an_more_then_grudge_tt
+			if = 		{ limit = { check_variable = { which = az_an_var_rituals_completed value = 20 } } add_manpower = 50 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 19 } } add_manpower = 47.5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 18 } } add_manpower = 45 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 17 } } add_manpower = 42.5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 16 } } add_manpower = 40 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 15 } } add_manpower = 37.5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 14 } } add_manpower = 35 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 13 } } add_manpower = 32.5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 12 } } add_manpower = 30 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 11 } } add_manpower = 27.5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value = 10 } } add_manpower = 25 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value =  9 } } add_manpower = 22.5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value =  8 } } add_manpower = 20 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value =  7 } } add_manpower = 17.5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value =  6 } } add_manpower = 15 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value =  5 } } add_manpower = 12.5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value =  4 } } add_manpower = 10 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value =  3 } } add_manpower =  7.5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value =  2 } } add_manpower =  5 }
+			else_if = 	{ limit = { check_variable = { which = az_an_var_rituals_completed value =  1 } } add_manpower =  2.5 }
+		}
+	}
+}
+
+az_an_3_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_3
+	}
+
+	az_an_proper_education = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_closed_doors }
+		position = 7
+
+		provinces_to_highlight = { province_id = 4265 } #Grozumdihr
+
+		trigger = {
+			4265 = { development = 60 } # Grozumdihr
+			custom_trigger_tooltip = {
+				tooltip = az_an_proper_education_trigger_tt
+				has_country_flag = hold_operation
+			}
+			innovativeness = 35
+		}
+
+		effect = {
+			remove_country_modifier = az_an_fledging_school_of_dagrin
+			add_country_modifier = { name = az_an_hul_az_dagrin duration = -1 }
+			dwarven_pantheon_unlock_random_deity = { major = yes }
+		}
+	}
+	
+	az_an_our_own_achievement = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_proper_education }
+		position = 8
+
+		provinces_to_highlight = { province_id = 4284 } #Ovdal-az-An
+
+		trigger = {
+			if = { limit = { has_dlc = "Leviathan" }
+				4284 = { num_of_times_expanded_infrastructure = 5 }
+			}
+			treasury = 5000
+		}
+
+		effect = {
+			add_treasury = -5000
+			4284 = { add_province_modifier = { name = az_an_the_moons_hand duration = -1 } }
+			update_magic_study_experience_modifier = { value = 25 }
+			custom_tooltip = az_an_our_own_achievement_tt
+		}
+	}
+	
+	az_an_manipulators_of_magic = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_our_own_achievement az_an_veneration }
+		position = 11
+
+		trigger = {
+			NOT = {
+				has_global_modifier_value = {
+					which = all_power_cost
+					value = -0.199
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = az_an_manipulators_of_magic_tt 
+			tooltip = { set_estate_privilege = estate_mages_az_an_land_reallocation }
+		}
+	}
+	
+}
+
+az_an_3_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_3
+	}
+
+	az_an_lets_lament = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_one_grand_lonely_hold }
+		position = 9
+
+		trigger = {
+			has_country_flag = dwarven_pantheon_ritual_dagrin_done
+			has_country_flag = dwarven_pantheon_ritual_anvelind_done
+			has_country_flag = dwarven_pantheon_ritual_durvorazir_done
+			has_country_flag = dwarven_pantheon_ritual_margurz_done
+			has_country_flag = dwarven_pantheon_ritual_miradeth_done
+			has_country_flag = dwarven_pantheon_ritual_azmirethazin_done
+			has_country_flag = dwarven_pantheon_ritual_argezenna_done
+			has_country_flag = dwarven_pantheon_ritual_auirikus_done
+			has_country_flag = dwarven_pantheon_ritual_urisazirn_done
+		}
+
+		effect = {
+			custom_tooltip = az_an_lets_lament_tt
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_dolurazan_done } } 		custom_tooltip = az_an_lets_lament_tt_dolurazan 	}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_derzobrazan_done } } 	custom_tooltip = az_an_lets_lament_tt_derzobrazan 	}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_bervinazan_done } } 	custom_tooltip = az_an_lets_lament_tt_bervinazan 	}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_karazlov_done } } 		custom_tooltip = az_an_lets_lament_tt_karazlov 		}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_grimthar_done } } 		custom_tooltip = az_an_lets_lament_tt_grimthar 		}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_verdrik_done } } 		custom_tooltip = az_an_lets_lament_tt_verdrik 		}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_thyrfen_done } } 		custom_tooltip = az_an_lets_lament_tt_thyrfen 		}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_werdun_done } } 		custom_tooltip = az_an_lets_lament_tt_werdun 		}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_lorgrim_done } } 		custom_tooltip = az_an_lets_lament_tt_lorgrim 		}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_lorgram_done } } 		custom_tooltip = az_an_lets_lament_tt_lorgram 		}
+			if = { limit = { NOT = { has_country_flag = dwarven_pantheon_ritual_grobilazk_done } } 		custom_tooltip = az_an_lets_lament_tt_grobilazk 	}				
+		}
+	}
+	
+	az_an_veneration = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_lets_lament }
+		position = 10
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = az_an_veneration_trigger_tt
+				calc_true_if = {
+					has_country_flag = az_an_flag_vurodrmonir_has_cast_gravitas
+					has_country_flag = az_an_flag_vurodrmonir_has_cast_curse_of_avarice
+					has_country_flag = az_an_flag_vurodrmonir_has_cast_halannas_exhale
+					has_country_flag = az_an_flag_vurodrmonir_has_cast_infinite_visions
+					has_country_flag = az_an_flag_vurodrmonir_has_cast_eclipse_of_the_dwarovar
+					has_country_flag = az_an_flag_vurodrmonir_has_cast_moonseal
+					has_country_flag = az_an_flag_vurodrmonir_has_cast_final_isolation
+					amount = 3
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = az_an_veneration_tt
+		}
+	}
+	
+	az_an_revered_respected_revival = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_veneration az_an_righting_two_wrongs }
+		position = 11
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4284
+					OR = {
+						AND = {
+							has_dlc = "Dharma"
+							NOT = { province_has_center_of_trade_of_level = 3 }
+						}
+						AND = {
+							has_dlc = "Leviathan"
+							NOT = { num_of_times_expanded_infrastructure = 2 }
+						}
+						NOT = {
+							has_dlc = "Leviathan"
+							development = 100
+						}
+					}
+				}
+				AND = {
+					superregion = east_serpentspine_superregion
+					devastation = 1
+				}
+			}
+		}
+
+		trigger = {
+			4284 = { 
+				num_of_buildings_in_province = 10
+				if = { limit = { has_dlc = "Dharma" } 
+					province_has_center_of_trade_of_level = 3
+				}
+				if = { limit = { has_dlc = "Leviathan" }
+					num_of_times_expanded_infrastructure = 7 
+				}
+				else = {
+					development = 100
+				}
+			}
+			east_serpentspine_superregion = {
+				type = all
+				NOT = { devastation = 1 }
+			}
+			custom_trigger_tooltip = {
+				tooltip = az_an_revered_respected_revival_trigger_tt
+				has_country_flag = az_an_shrines_activated_dagrin
+				has_country_flag = az_an_shrines_activated_anvelind
+				has_country_flag = az_an_shrines_activated_durvorazir
+				has_country_flag = az_an_shrines_activated_margurz
+				has_country_flag = az_an_shrines_activated_miradeth
+				has_country_flag = az_an_shrines_activated_azmirethazin
+				has_country_flag = az_an_shrines_activated_argezenna
+				has_country_flag = az_an_shrines_activated_auirikus
+				has_country_flag = az_an_shrines_activated_urisazirn
+			}
+		}
+
+		effect = {
+			if = { limit = { has_dlc = "Mandate of Heaven" }				
+				if = {
+					limit = {
+						east_serpentspine_superregion = {
+							type = all
+							is_prosperous = yes
+						}
+					}
+					custom_tooltip = az_an_revered_respected_revival_prosperity_yes
+					add_adm_tech = 1
+					add_dip_tech = 1
+					add_mil_tech = 1
+				}
+				else = {
+					custom_tooltip = az_an_revered_respected_revival_prosperity_no
+					tooltip = {
+						add_adm_tech = 1
+						add_dip_tech = 1
+						add_mil_tech = 1
+					}
+				}
+				east_serpentspine_superregion = {
+					add_prosperity = 100
+				}
+			}
+			else = {
+				add_adm_power = 200
+				add_dip_power = 200
+				add_mil_power = 200
+			}
+		}
+	}
+}
+az_an_3_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_3
+	}
+
+	az_an_freeing_our_bretheren = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_more_then_grudge }
+		position = 8
+
+		provinces_to_highlight = {
+			region = jade_mines_region
+			NOT = { owned_by = ROOT }
+		}
+
+		trigger = {
+			num_of_owned_provinces_with	= { value = 20 region = jade_mines_region }
+			stability = 2
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.31 }
+		}
+	}
+	
+	az_an_righting_two_wrongs = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_freeing_our_bretheren az_an_its_called_the_dwarovar }
+		position = 10
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4311 #Gronstunad
+				province_id = 4313 #Vurdriz-Andriz
+				province_id = 4323 #Verkal Dromak
+				province_id = 4350 #Tuwad-Dhumankhon
+			}
+			NOT = {
+				AND = {
+					hold_condition = { Repaired = yes }
+					has_dwarven_hold_3 = yes
+				}
+			}
+		}
+
+		trigger = {
+			4311 = { hold_condition = { Repaired = yes } has_dwarven_hold_3 = yes }
+			4313 = { hold_condition = { Repaired = yes } has_dwarven_hold_3 = yes }
+			4323 = { hold_condition = { Repaired = yes } has_dwarven_hold_3 = yes }
+			4350 = { hold_condition = { Repaired = yes } has_dwarven_hold_3 = yes }
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.32 }
+		}
+	}
+	
+	az_an_the_holy_east = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_righting_two_wrongs }
+		position = 11
+
+		provinces_to_highlight = {
+			superregion = east_serpentspine_superregion
+		}
+
+		trigger = {
+			east_serpentspine_superregion = { type = all owned_by = ROOT }
+			development_in_provinces = { value = 1000 superregion = east_serpentspine_superregion }
+			num_of_owned_provinces_with	= { value = 100 has_tax_building_trigger = yes }
+			religious_unity = 1
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.33 }
+		}
+	}
+	
+	az_an_an_an_anda = {
+		icon = mission_alone_in_the_wood
+		required_missions = { 
+			az_an_manipulators_of_magic 
+			az_an_revered_respected_revival
+			az_an_the_holy_east
+			az_an_undeserving_of_us
+			az_an_forward_base	
+		}
+		position = 12
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4284 #Ovdal-az-An
+					has_dwarven_hold_9 = no
+				}
+				AND = {
+					has_dwarven_hold_6 = no
+					OR = {
+						province_id = 4247 #Ovdal Kanzad
+						province_id = 4265 #Grozumdihr
+						province_id = 4266 #Hul-az-Krakazol
+					}
+				}
+			}
+		}
+
+		trigger = {
+			4284 = { has_dwarven_hold_9 = yes }
+			4247 = { has_dwarven_hold_6 = yes }
+			4265 = { has_dwarven_hold_6 = yes }
+			4266 = { has_dwarven_hold_6 = yes }
+			has_country_flag = az_an_flag_vurodrmonir_has_cast_gravitas
+			has_country_flag = az_an_flag_vurodrmonir_has_cast_curse_of_avarice
+			has_country_flag = az_an_flag_vurodrmonir_has_cast_halannas_exhale
+			has_country_flag = az_an_flag_vurodrmonir_has_cast_infinite_visions
+			has_country_flag = az_an_flag_vurodrmonir_has_cast_eclipse_of_the_dwarovar
+			has_country_flag = az_an_flag_vurodrmonir_has_cast_moonseal
+			has_country_flag = az_an_flag_vurodrmonir_has_cast_final_isolation
+			if = { limit = { has_dlc = "Domination" }
+				is_hegemon = yes
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.35 }
+		}
+	}
+}
+az_an_3_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_3
+	}
+
+	az_an_its_called_the_dwarovar = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_freeing_our_bretheren }
+		position = 9
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4311
+				province_id = 4313
+				province_id = 4323
+				province_id = 4350
+			}
+			NOT = { num_of_units_in_province = { who = ROOT type = infantry amount = 30 } }
+		}
+
+		trigger = {
+			4311 = { num_of_units_in_province = { who = ROOT type = infantry amount = 30 } }
+			4313 = { num_of_units_in_province = { who = ROOT type = infantry amount = 30 } }
+			4323 = { num_of_units_in_province = { who = ROOT type = infantry amount = 30 } }
+			4350 = { num_of_units_in_province = { who = ROOT type = infantry amount = 30 } }
+			OR = {
+				has_country_modifier = racial_pop_goblin_purge
+				has_country_modifier = racial_pop_goblin_expulsion
+			}
+			OR = {
+				has_country_modifier = racial_pop_hobgoblin_expulsion
+				has_country_modifier = racial_pop_hobgoblin_purge
+			}
+		}
+
+		effect = {
+			custom_tooltip = az_an_its_called_the_dwarovar_tt_1
+			hidden_effect = {
+				set_country_flag = mission_faster_goblin_expulsion
+				set_country_flag = mission_faster_goblin_purging
+				set_country_flag = mission_faster_hobgoblin_expulsion
+				set_country_flag = mission_faster_hobgoblin_purging
+			}
+			custom_tooltip = az_an_its_called_the_dwarovar_tt_2
+			hidden_effect = {
+				jade_mines_region = {
+					if = { limit = { culture_group = dwarven }
+						ROOT = { add_dip_power = 5 }
+					}
+				}
+			}
+		}
+	}
+	
+	az_an_we_will_not_fail_again = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_how_war_is_won }
+		position = 10
+
+		provinces_to_highlight = {
+			has_province_modifier = az_an_amateur_runework
+			NOT = { province_has_current_tech_fort_trigger = yes }
+		}
+
+		trigger = {
+			all_owned_province = { 
+				OR = {
+					NOT = { has_province_modifier = az_an_amateur_runework }
+					province_has_current_tech_fort_trigger = yes
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				has_building = ramparts
+				province_has_current_tech_fort_trigger = yes
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_ovdal_az_an.34 }
+		}
+	}
+	
+	az_an_undeserving_of_us = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_we_will_not_fail_again }
+		position = 11
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4265
+				province_id = 4273
+				province_id = 4266
+			}
+			NOT = {
+				AND = {
+					province_has_current_tech_fort_trigger = yes
+					has_building = ramparts
+				}
+			}
+		}
+
+		trigger = {
+			4265 = { province_has_current_tech_fort_trigger = yes has_building = ramparts }
+			4273 = { province_has_current_tech_fort_trigger = yes has_building = ramparts }
+			4266 = { province_has_current_tech_fort_trigger = yes has_building = ramparts }
+			custom_trigger_tooltip = {
+				tooltip = az_an_undeserving_of_us_trigger_tt_1
+				has_country_modifier = az_an_granite_isolation_0
+			}
+			custom_trigger_tooltip = {
+				tooltip = az_an_undeserving_of_us_trigger_tt_2
+				capital_scope = { has_province_modifier = magic_estate_broad_ward_3 }
+			}
+		}
+
+		effect = {
+			if = { limit = { has_country_flag = az_an_flag_refined_runework } 
+				4265 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+				4273 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+				4266 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+			}
+			else = {
+				4265 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+				4273 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+				4266 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+			}
+			if = { limit = { jade_mines_region = { type = all owned_by = ROOT } }
+				custom_tooltip = az_an_undeserving_of_us_jade_mines_yes
+				if = { limit = { has_country_flag = az_an_flag_refined_runework } 
+					4352 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+					4360 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+					4345 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+					4342 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+					4323 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+				}
+				else = {
+					4352 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+					4360 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+					4345 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+					4342 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+					4323 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+				}
+			}
+			else = {
+				custom_tooltip = az_an_undeserving_of_us_jade_mines_no
+				tooltip = {
+					if = { limit = { has_country_flag = az_an_flag_refined_runework } 
+						4352 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+						4360 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+						4345 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+						4342 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+						4323 = { add_province_modifier = { name = az_an_refined_runework duration = -1 } }
+					}
+					else = {
+						4352 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+						4360 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+						4345 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+						4342 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+						4323 = { add_province_modifier = { name = az_an_amateur_runework duration = -1 } }
+					}
+				}
+			}
+
+		}
+	}
+	
+}
+az_an_3_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+
+	potential = {
+		tag = I19
+		has_country_flag = az_an_mt_section_3
+	}
+
+	az_an_how_war_is_won = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_more_then_grudge }
+		position = 9
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4266 #Hul-az-Krakazol
+					NOT = { development = 60 }
+				}
+				AND = {
+					owned_by = ROOT
+					trade_goods = livestock
+					NOT = {
+						AND = {
+							has_building = farm_estate
+							base_production = 6
+						}
+					}
+				}
+				AND = {
+					has_province_modifier = dwarovar_rail
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 15
+								OR = {
+									has_province_modifier = restored_rail
+									has_province_modifier = advanced_rail
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			4266 = { development = 60 }
+			num_of_owned_provinces_with = {
+				value = 5
+				trade_goods = livestock
+				has_building = farm_estate
+			}
+			num_of_owned_provinces_with = {
+				value = 15
+				OR = {
+					has_province_modifier = restored_rail
+					has_province_modifier = advanced_rail
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = az_an_enhanced_logistics duration = -1 }
+			add_years_of_owned_provinces_production_income = { 
+				years = 8 
+				trigger = { 
+					trade_goods = wine
+					trade_goods = livestock
+					trade_goods = salt
+					trade_goods = serpentbloom
+					trade_goods = fungi
+				}
+				custom_tooltip = az_an_how_war_is_won_tt_1
+			}
+			custom_tooltip = az_an_how_war_is_won_tt_2
+			hidden_effect = {
+				every_owned_province = { limit = { base_production = 6 trade_goods = livestock }
+					add_province_modifier = { name = az_an_heaps_of_hold_hogs duration = -1 }
+				}
+			}
+		}
+	}
+	
+	az_an_veterans_of_the_onslaught = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_how_war_is_won }
+		position = 10
+
+		provinces_to_highlight = {
+		}
+
+		trigger = {
+			OR = {
+				army_professionalism = 0.4
+				army_tradition = 0.8
+			}
+			has_commanding_three_star = yes # Magnive note: I don't think it's possible to check for having multiple of these? 
+                                            # Everest note:  I believe your right.  This is fine for now.
+		}
+
+		effect = {
+			add_country_modifier = { name = az_an_veterans_teaching_active duration = -1 }
+			custom_tooltip = az_an_veterans_of_the_onslaught_tt
+		}
+	}
+	
+	az_an_forward_base = {
+		icon = mission_alone_in_the_wood
+		required_missions = { az_an_veterans_of_the_onslaught }
+		position = 11
+
+		provinces_to_highlight = {
+			area = ozumbrog_area
+			OR = {
+				NOT = { owned_by = ROOT }
+				AND = {
+					province_id = 4218 #Gor Ozumbrog
+					NOT = {
+						AND = {
+							hold_condition = { Repaired = yes }
+							has_dwarven_hold_3 = yes
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			ozumbrog_area = { type = all country_or_non_sovereign_subject_holds = ROOT }
+			4218 = { owned_by = ROOT hold_condition = { Repaired = yes } has_dwarven_hold_3 = yes }
+		}
+
+		effect = {
+			add_country_modifier = { name = az_an_overshadowing_the_segbandel_1 duration = -1 }
+			custom_tooltip = az_an_forward_base_tt
+		}
+	}
+}
