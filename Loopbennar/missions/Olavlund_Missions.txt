@@ -191,15 +191,15 @@ olavlund_1_missions = {
 			}
 		} 
 
-		effect = {  
+		effect = { 
+			custom_tooltip = olavlund_increased_levies_sailor_tt
+			set_country_flag = olavlund_increased_levies_sailor 
 			add_estate_loyalty_modifier = {
 				estate = estate_nobles
 				desc = olavlund_enforce_impressment_loyalty_decrease
 				loyalty = -10
 				duration = -1
 			}
-			custom_tooltip = olavlund_increased_levies_sailor_tt
-			set_country_flag = olavlund_increased_levies_sailor
 			hidden_effect = {
 				remove_estate_privilege = estate_nobles_levies
 				set_estate_privilege = estate_nobles_levies_olavlund
@@ -616,7 +616,7 @@ olavlund_2_missions = {
 
 		effect = {  
 			set_country_flag = sailors_when_slacken
-			custom_tooltip = sailors_when_slacken.tt
+			custom_tooltip = olavlund_sailors_when_slacken.tt
 		} 
 	}
 
@@ -719,9 +719,23 @@ olavlund_2_missions = {
 		} 
 
 		effect = {
-			custom_tooltip = olavlund_dalaire_tt
+			custom_tooltip = olavlund_dalaire_crown_colony_tt
 			custom_tooltip = olavlund_admirals_tt
-			hidden_effect = { set_country_flag = olavlund_admirals_prof }
+			hidden_effect = { 
+				set_country_flag = olavlund_admirals_prof 
+				every_subject_country = {
+					limit = {
+						capital_scope = {
+							colonial_region = colonial_dalaire
+						}
+					}
+					add_country_modifier = {
+						name = olavlund_dalaire_crown_colony
+						duration = -1
+						hidden = yes
+					}
+				}
+			}
 		} 
 	}
 
@@ -735,9 +749,7 @@ olavlund_2_missions = {
 			dalaire_region = {
 				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
 					value = 30			
-					OR = { 
-						has_province_modifier = logging_camp_5
-					}
+					has_province_modifier = logging_camp_5
 				}
 			}
 			adm_power = 100
@@ -745,7 +757,9 @@ olavlund_2_missions = {
 			mil_power = 100
 		} 
 
-		effect = { #Needs Rework
+		effect = { 
+			custom_tooltip = olavlund_wood_shipments_2_unlocked_tt
+			set_country_flag = olavlund_wood_shipments_2_unlocked
 			add_adm_power = -100
 			add_dip_power = -100
 			add_mil_power = -100
@@ -811,14 +825,14 @@ olavlund_3_missions = {
 		} 
 
 		effect = {  
+			add_country_modifier = {
+				name = olavlund_keeping_the_dragon_tame_reward
+				duration = -1
+			}
 			add_estate_loyalty_modifier = {
 				estate = estate_church
 				desc = olavlund_keeping_dragon_tame_church_tt
 				loyalty = 10
-				duration = -1
-			}
-			add_country_modifier = {
-				name = olavlund_keeping_the_dragon_tame_reward
 				duration = -1
 			}
 		} 
@@ -1168,6 +1182,7 @@ olavlund_3_missions = {
 		} 
 
 		effect = {  
+			custom_tooltip = olavlund_logging_camp_arctic_reward_tt
 			every_province = {
 				limit = {
 					OR = { 
@@ -1228,6 +1243,7 @@ olavlund_4_missions = {
 		provinces_to_highlight = {  } 
 
 		trigger = {  
+			OR = {
 				AND = {
 					Z88  = { NOT = { total_development = 50 } }
 					Z88 = { has_opinion = { who = ROOT value = 200 } }
@@ -1235,13 +1251,69 @@ olavlund_4_missions = {
 						who = Z88
 						value = 2
 					}
+					NOT = {
+						Z88 = {
+							is_subject_of = Z16
+						}
+					}
 				}
+				Z88 = {
+					is_subject_of = Z16
+					NOT = {
+						liberty_desire = 50
+					}
+				}
+				Z88 = {
+					exists = no
+				}
+			}
 		} 
 
 		effect = { 
-			add_dip_power = -200
-			vassalize = Z88
-			largest_increase_of_harpy_tolerance_effect = yes
+			complex_dynamic_effect = {
+				first_custom_tooltip = olavlund_harpies_1_tt #todo
+				first_limit = "
+					Z88  = { NOT = { total_development = 50 } }
+					Z88 = { has_opinion = { who = ROOT value = 200 } }
+					army_strength = {
+						who = Z88
+						value = 2
+					}
+					NOT = {
+						Z88 = {
+							is_subject_of = Z16
+						}
+					}
+				"
+				first_effect = "
+					add_dip_power = -100
+					vassalize = Z88
+					largest_increase_of_harpy_tolerance_effect = yes
+				"
+				second_custom_tooltip = olavlund_harpies_2_tt #todo
+				second_limit = "
+					Z88 = {
+						is_subject_of = Z16
+						NOT = {
+							liberty_desire = 50
+						}
+					}
+				"
+				second_effect = "
+					add_dip_power = 150
+					largest_increase_of_harpy_tolerance_effect = yes
+				"
+				third_custom_tooltip = olavlund_harpies_3_tt
+				third_limit = "
+					Z88 = {
+					exists = no
+					}
+				"
+				third_effect = "
+					add_adm_power = 75
+					add_mil_power = 75
+				"
+			}
 		} 
 	}
 
@@ -1559,27 +1631,12 @@ olavlund_4_missions = {
 					liberty_desire = 25
 				}
 			}
+			has_had_golden_age = yes
 		} 
 
 		effect = {
-			custom_tooltip = olavlund_gilded_age_tt  
-			if = {
-				limit = { has_had_golden_age = yes } 
-				reset_golden_age = yes 
-			}
-			else_if = {
-				limit = { in_golden_age = yes } 
-				extend_golden_age = 600
-			}
-			every_subject_country = {
-				limit = {
-					capital_scope = {
-						OR = {
-							continent = north_america
-							continent = south_america
-						}
-					}
-				}
+			custom_tooltip = olavlund_gilded_age_tt
+			hidden_effect = {
 				if = {
 					limit = { has_had_golden_age = yes } 
 					reset_golden_age = yes 
@@ -1587,6 +1644,24 @@ olavlund_4_missions = {
 				else_if = {
 					limit = { in_golden_age = yes } 
 					extend_golden_age = 600
+				}
+				every_subject_country = {
+					limit = {
+						capital_scope = {
+							OR = {
+								continent = north_america
+								continent = south_america
+							}
+							}
+					}
+					if = {
+						limit = { has_had_golden_age = yes } 
+						reset_golden_age = yes 
+					}
+					else_if = {
+						limit = { in_golden_age = yes } 
+						extend_golden_age = 600
+					}
 				}
 			}
 		} 
@@ -1788,7 +1863,7 @@ olavlund_5_missions = {
 				name = olavlund_marines_2
 				duration = -1
 			}
-			custom_tooltip = olavlund_naval_reformer_tt #TODO
+			custom_tooltip = olavlund_naval_reformer_tt 
 			set_country_flag = olavlund_naval_reformer
 		} 
 	}
@@ -1817,7 +1892,7 @@ olavlund_5_missions = {
 				name = olavlund_marines_3
 				duration = -1
 			}
-			custom_tooltip = olavlund_halved_naval_hegemony_requirements_tt #TODO
+			custom_tooltip = olavlund_halved_naval_hegemony_requirements_tt 
 			set_country_flag = olavlund_halved_naval_hegemony_requirements
 		} 
 	}
