@@ -138,6 +138,7 @@ on_startup = {
 		flavor_averilibet.6 #averilibet start event 
 		flavour_arawkelin.16 #Arawkelins Starting Event
 		flavor_clouded_eye.23 #Clouded Eye Starting Event
+		hisost.100 #hisost variable set
 
 		#Silver Families
 		silver_families.1		#Silmuna
@@ -194,6 +195,10 @@ on_startup = {
 		
 		#the hunt
 		the_hunt_events.0
+
+		#binsplosion!!!!
+		binsplosion_events.1
+		binsplosion_events.24 #maikirow event
 
 		anb_settings.1			#Settings - /!\ keep it at the bottom of the list
 	}
@@ -1773,6 +1778,31 @@ on_war_won = {
 		remove_country_modifier = khadisrapur_supporting_independence
 	}
 
+	if = { #hisost yamok
+		limit = {
+			tag = S23
+			has_country_flag = s23_caste_breaker
+			FROM = {
+				OR = {
+					has_estate = estate_uppercastes
+					has_estate = estate_lowercastes
+					has_estate = estate_middlecastes
+				}
+				
+			}
+		}
+		country_event = {
+			id = hisost.31
+		}
+		FROM = {
+			caste_fluidity_increase_huge = yes
+			caste_fluidity_increase_huge = yes
+			caste_fluidity_increase_huge = yes
+			caste_fluidity_increase_huge = yes
+			caste_fluidity_increase_huge = yes
+			add_stability = -2
+		}
+	}
 	update_artifice_points = yes #needs to be last
 }
 
@@ -2693,6 +2723,24 @@ on_siege_won_province = {
 			}
 		}
 	}
+	if = { #hisost yamok
+		limit = {
+			province_id = 5504
+			controller = {
+				tag = S23
+			}
+			NOT = {
+				S23 = {
+					has_country_flag = S23_biribitid_burned
+				}
+			}
+		}
+		S23 = {
+			country_event = {
+				id = hisost.2
+			}
+		}
+	}
 }
 
 # province
@@ -2975,6 +3023,10 @@ on_new_monarch = {
 		flavour_wyvernheart.501 #Wyvernheart school roll
 
 		the_hunt_events.0 #the hunt setup - picking a doctrine for if you don't have an heir doctrine
+
+		
+		hisost.99 #hisost yamok modifier application
+		hisost.98 #hisost yamok new heirs
 		
 	}
 
@@ -3250,6 +3302,8 @@ on_monarch_death = {
 		spirits.604				#Clearing all the Devouring Path aspects
 		flavour_corinsfield.90 #corinsfield peasants theocracy election
 		larankar_events.112 #Sibling War Ends - No One Won
+		hisost.34 #Seble death hisost yamok
+		hisost.35 #regency end hisost yamok
 	}
 	if = {
 		limit = { has_government_attribute = no_stability_loss_on_monarch_death }
@@ -3679,6 +3733,7 @@ on_diplomatic_annex = {
 on_heir_death = {
 	events = {
 		flavor_duwarkani.4 #Duwarkani failsafe
+		hisost.98 #hisost new heir
 	}
 	if = { #Delayed because elective heirs doesn't show up immediatly
 		limit = { has_reform = magisterium_reform }
@@ -6122,6 +6177,15 @@ on_yearly_pulse = {
 		ikogshaantus_events.29 #Ikogshaantus Eagle Hobgoblin Event
 		ikogshaantus_events.30 #Ikogshaantus Soulseeker Ogre Event
 		flavor_ovdal_az_an.100 # Ovdal Az An yearly checks.
+
+		#BINSPLOSION
+		binsplosion_events.4
+		binsplosion_events.6
+		binsplosion_events.8
+		binsplosion_events.9
+		binsplosion_events.10
+
+		hisost.103 # hisost yamok privilege edgecase catcher
 	}
 	if = {
 		limit = { tag = R62 }
@@ -9341,6 +9405,8 @@ on_four_year_pulse_3 = {
 		200 = sky_domain.22
 		200 = sky_domain.23
 		200 = sky_domain.24
+		200 = sky_domain.25
+		200 = sky_domain.26
 		200 = mengi_flavor_events.1 #hidden shadow worshippers
 		200 = mengi_flavor_events.2 #lions and tigers and hyeans oh my
 		200 = mengi_flavor_events.3 #slave rember rabbel revolt 
@@ -12356,6 +12422,32 @@ on_province_owner_change = {
 		}
 		province_event = { id = spirit_forts.04 }
 	}
+
+	#hisost yamok
+	if = {
+		limit = {
+			owner = {
+				tag = S23
+			}
+			religion = kvangahga
+			NOT = {
+				has_estate_privilege = estate_church_kvan_sync
+			}
+			NOT = {
+				has_estate_privilege = estate_church_anti_kvan_sync
+			}
+		}
+		add_province_modifier = {
+			name = s23_kvan_no 
+			duration = -1
+		}
+		owner = {
+			country_event = {
+				id = hisost.97 #kvangagha devout
+			}
+		}
+	}
+	
 }
 
 # country 1.35
@@ -13530,7 +13622,42 @@ on_culture_demoted = {
 		remove_accepted_culture = kano_kelino
 		remove_accepted_culture = gataw
 	}
-
+	if = {
+		limit = {
+			has_country_modifier = s23_happy_hobgobs
+			OR = {
+				NOT = { accepted_culture = swallow_command }
+				NOT = { accepted_culture = wolf_command }
+				NOT = { accepted_culture = lion_command }
+				NOT = { accepted_culture = boar_command }
+				NOT = { accepted_culture = dragon_command }
+				NOT = { accepted_culture = tiger_command }
+				NOT = { accepted_culture = elephant_command }
+				NOT = { accepted_culture = ghavaanaj }
+				NOT = { accepted_culture = rajnadhid }
+				NOT = { accepted_culture = shandibad }
+				NOT = { accepted_culture = sobhagand }
+				NOT = { accepted_culture = khedarid }
+				NOT = { accepted_culture = kamtarhid }
+				NOT = { accepted_culture = shamadhan }
+			}
+		}
+		remove_country_modifier = s23_happy_hobgobs
+		remove_accepted_culture = swallow_command
+		remove_accepted_culture = wolf_command
+		remove_accepted_culture = lion_command
+		remove_accepted_culture = boar_command
+		remove_accepted_culture = dragon_command
+		remove_accepted_culture = tiger_command
+		remove_accepted_culture = elephant_command
+		remove_accepted_culture = ghavaanaj
+		remove_accepted_culture = rajnadhid
+		remove_accepted_culture = shandibad
+		remove_accepted_culture = sobhagand
+		remove_accepted_culture = khedarid
+		remove_accepted_culture = kamtarhid
+		remove_accepted_culture = shamadhan
+	}
 }
 
 # ROOT = country
@@ -17100,6 +17227,21 @@ on_adm_exploited = {
 		}
 		add_construction_progress = 0.33
 	}
+
+	#hisostyamok flags
+	if = {
+		limit = {
+			owner = {
+				tag = S23
+			}
+			OR = {
+				area = avhavubhiya_area
+				area = sarkhashabid_area
+				area = ascension_cape_area
+			}
+		}
+		set_province_flag = s23_exploited_dev
+	}
 }
 
 on_dip_exploited = {
@@ -17170,6 +17312,21 @@ on_dip_exploited = {
 		}
 		add_construction_progress = 0.33
 	}
+
+	#hisostyamok flags
+	if = {
+		limit = {
+			owner = {
+				tag = S23
+			}
+			OR = {
+				area = avhavubhiya_area
+				area = sarkhashabid_area
+				area = ascension_cape_area
+			}
+		}
+		set_province_flag = s23_exploited_dev
+	}
 }
 
 on_mil_exploited = {
@@ -17239,6 +17396,21 @@ on_mil_exploited = {
 			has_construction = culture
 		}
 		add_construction_progress = 0.33
+	}
+
+	#hisostyamok flags
+	if = {
+		limit = {
+			owner = {
+				tag = S23
+			}
+			OR = {
+				area = avhavubhiya_area
+				area = sarkhashabid_area
+				area = ascension_cape_area
+			}
+		}
+		set_province_flag = s23_exploited_dev
 	}
 }
 

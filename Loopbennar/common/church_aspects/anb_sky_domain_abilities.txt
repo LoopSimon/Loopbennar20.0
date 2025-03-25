@@ -50,18 +50,40 @@ repel_interlopers = {
 	cost = 50
 	
 	trigger = {
-		any_neighbor_country = {
-			NOT = { religion = sky_domain }
-			NOT = { culture_group = mengi }
-			NOT = { alliance_with = ROOT }
-			any_owned_province = {
-				OR = {
-					region = telekenid_region
-					region = yetefesefi_region
-					region = denibari_region
+		if = {
+			limit = {
+				has_country_flag = s23_upgrade_repel #hisost yamok
+			}
+			any_neighbor_country = {
+				NOT = { religion = sky_domain }
+				NOT = { culture_group = mengi }
+				NOT = { alliance_with = ROOT }
+				any_owned_province = {
+					OR = {
+						region = telekenid_region
+						region = yetefesefi_region
+						region = denibari_region
+						region = dreksaret_region
+					}
+					NOT = { is_core = ROOT }
+					culture_group = mengi
 				}
-				NOT = { is_core = ROOT }
-				culture_group = mengi
+			}
+		}
+		else = {
+			any_neighbor_country = {
+				NOT = { religion = sky_domain }
+				NOT = { culture_group = mengi }
+				NOT = { alliance_with = ROOT }
+				any_owned_province = {
+					OR = {
+						region = telekenid_region
+						region = yetefesefi_region
+						region = denibari_region
+					}
+					NOT = { is_core = ROOT }
+					culture_group = mengi
+				}
 			}
 		}
 	}
@@ -101,10 +123,13 @@ construct_a_great_temple = {
 	cost = 200
 	
 	trigger = {
-		custom_trigger_tooltip = {
-			tooltip = great_prayer_5_year_wait_trigger_tt
-			NOT = {
-				has_country_modifier = mengi_aspect_construct_a_great_temple_wait
+		if = {
+			limit = { NOT = { has_country_flag = s23_temple_upgrade } }
+			custom_trigger_tooltip = {
+				tooltip = great_prayer_5_year_wait_trigger_tt
+				NOT = {
+					has_country_modifier = mengi_aspect_construct_a_great_temple_wait
+				}
 			}
 		}
 		stability = 2
@@ -248,9 +273,13 @@ expand_the_holy_realm = {
 	cost = 200
 	
 	potential = {
-		ROOT = {
-			tag = L65 
+		OR = {
+			ROOT = {
+				tag = L65 
+			}
+			has_country_flag = s23_expand_holy_realm
 		}
+		
 	}
 
 	trigger = {
@@ -314,29 +343,20 @@ enforce_amilaks_supremacy = {
 }
 
 #naleni conversion aspects retained from the hunt
-naleni_seek_powerful_egg_aspect = { 
-	sprite = "GFX_birth_new_daughter"
-	cost = 100
+naleni_seek_prosperity = {
+	sprite = "GFX_gather_breeding_mates"
+	cost = 200
 	
 	trigger = {
-		custom_trigger_tooltip = {
-			tooltip = harpy_egg_cooldown_tt
-			NOT = { has_country_flag = open_harpy_egg_menu }
-			NOT = { has_country_flag = harpy_egg_ongoing }
-		}	
 	}
 
 	potential = {
 		tag = L55
 		has_country_flag = L55_converted
 	}
-	
+
 	effect = {
-		tooltip = { country_event = { id = the_hunt_events.4 } }
-		hidden_effect = {
-			country_event = { id = the_hunt_events.5 }
-			set_country_flag = open_harpy_egg_menu
-		}
+		country_event = { id = the_hunt_events.3 } 
 	}
 	
 	ai_will_do = {
@@ -344,9 +364,12 @@ naleni_seek_powerful_egg_aspect = {
 	}
 }
 
-naleni_fair_winds_aspect = {
+naleni_seek_conflict = {
 	sprite = "GFX_invoke_the_winds"
-	cost = 100
+	cost = 200
+	
+	trigger = {
+	}
 	
 	potential = {
 		tag = L55
@@ -354,15 +377,11 @@ naleni_fair_winds_aspect = {
 	}
 
 	effect = {
-		country_event = { id = the_hunt_events.1 }
+		country_event = { id = the_hunt_events.2 }
 	}
 	
 	ai_will_do = {
-		factor = 1000
-		modifier = {
-			factor = 0
-			is_at_war = no
-		}
+		factor = 10
 	}
 }
 
@@ -452,3 +471,67 @@ S53_marriage_of_many_aspect = {
 	}
 }
 
+#hisost yamok
+s23_ancestral_armaments_aspect = {
+	sprite = "GFX_ancestral_armaments"
+	cost = 200
+
+	potential = {
+		has_country_flag = S23_ancestral_armaments
+	}
+
+	trigger = {
+		NOT = { has_country_modifier = ancestral_armaments }  	
+	}
+	
+	effect = {
+		custom_tooltip = ancestral_armaments_aspect_tt
+		country_event = { id = kvangahga_events.1 }
+	}
+	
+	ai_will_do = {
+		factor = 1
+		modifier = {
+			factor = 5
+			num_of_generals = 2
+		}
+	}
+}
+
+s23_recycled_jewellery_aspect = {
+	sprite = "GFX_recycled_jewellery"
+	cost = 100
+
+
+	potential = {
+		has_country_flag = s23_recycling_rules
+	}
+	trigger = {
+		NOT = { has_country_modifier = recycled_jewellery }
+		NOT = {
+			treasury = 1000000
+		}
+	}
+	effect = {
+		custom_tooltip = recycled_jewellery_aspect_tt
+		country_event = { id = kvangahga_events.5 }
+	}
+}
+
+s23_forgiveness_aspect = {
+	sprite = "GFX_sky_domain_amilak_supremacy"
+	cost = 200
+
+
+	potential = {
+		has_country_flag = s23_forgiven
+	}
+	trigger = {
+		NOT = { has_country_modifier = s23_forgiveness }
+	}
+
+	effect = {
+		custom_tooltip = s23_forgiveness_tt
+		country_event = { id = hisost.104 }
+	}
+}
