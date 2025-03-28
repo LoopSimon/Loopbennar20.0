@@ -1,6 +1,6 @@
 olavlund_wood_mechanic = {
 	alert_icon_gfx = GFX_alerticons_government_mechanics
-	alert_icon_index = 4
+	alert_icon_index = 27
 	available = {
 		tag = Z16
 	}
@@ -20,83 +20,112 @@ olavlund_wood_mechanic = {
 			cost = 4
 			trigger = {
 				has_country_flag = olavlund_streamlining_ebonsteel_reward
+				NOT = {
+					has_country_modifier = olavlund_button_1_cooldown
+				}
 			}
 			effect = {
-				custom_tooltip = create_ebonsteel_forge_effect_tt
-				hidden_effect = {
-					if = {
-						limit = {
-							has_country_flag = olavlund_higher_chance_ebonsteel_unlocked
-						}
-						random_list = {
-							34 = {
-								random_owned_province = {
-									limit = {
-										OR = {
-											NOT = { has_province_modifier = small_ebonsteel_forge }
-											NOT = { has_province_modifier = medium_ebonsteel_forge }
-											NOT = { has_province_modifier = urviksten_ebonforge }
-											NOT = { has_province_modifier = isolation_ebonsteel }
-										}
-									}
-									add_province_modifier = {
-										name = small_ebonsteel_forge
-										duration = -1
-									}
-								}
-							}
-							66 = {
-								random_owned_province = {
-									limit = {
-										OR = {
-											NOT = { has_province_modifier = small_ebonsteel_forge }
-											NOT = { has_province_modifier = medium_ebonsteel_forge }
-											NOT = { has_province_modifier = urviksten_ebonforge }
-											NOT = { has_province_modifier = isolation_ebonsteel }
-										}
-									}
-									add_province_modifier = {
-										name = medium_ebonsteel_forge
-										duration = -1
-									}
-								}
+				if = {
+					limit = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 12
+								has_province_flag = olavlund_ebonsteel_forge_counter
 							}
 						}
 					}
-					else = {
+					custom_tooltip = create_ebonsteel_forge_effect_tt
+					hidden_effect = {
 						random_list = {
-							66 = {
+							50 = {
 								random_owned_province = {
 									limit = {
-										OR = {
-											NOT = { has_province_modifier = small_ebonsteel_forge }
-											NOT = { has_province_modifier = medium_ebonsteel_forge }
-											NOT = { has_province_modifier = urviksten_ebonforge }
-											NOT = { has_province_modifier = isolation_ebonsteel }
+										AND = {
+											superregion = gerudia_superregion
+											NOT = { has_climate = arctic }
+											NOT = { has_province_flag = olavlund_ebonsteel_forge }
+											NOT = { has_province_flag = olavlund_ebonsteel_forge_counter }
 										}
 									}
 									add_province_modifier = {
 										name = small_ebonsteel_forge
 										duration = -1
 									}
+									add_province_triggered_modifier = mage_tower_ebonforge
+									if = {
+										limit = { NOT = { culture = root } }
+										change_culture = root
+									}
+									if = {
+										limit = { NOT = { religion = root } }
+										change_religion = root
+									}
+									set_province_flag = olavlund_ebonsteel_forge_counter
 								}
 							}
-							34 = {
+							50 = {
 								random_owned_province = {
 									limit = {
-										OR = {
-											NOT = { has_province_modifier = small_ebonsteel_forge }
-											NOT = { has_province_modifier = medium_ebonsteel_forge }
-											NOT = { has_province_modifier = urviksten_ebonforge }
-											NOT = { has_province_modifier = isolation_ebonsteel }
+										AND = {
+											superregion = gerudia_superregion
+											NOT = { has_climate = arctic }
+											NOT = { has_province_flag = olavlund_ebonsteel_forge }
+											NOT = { has_province_flag = olavlund_ebonsteel_forge_counter }
 										}
 									}
 									add_province_modifier = {
 										name = medium_ebonsteel_forge
 										duration = -1
 									}
+									add_province_triggered_modifier = mage_tower_ebonforge
+									if = {
+										limit = { NOT = { culture = root } }
+										change_culture = root
+									}
+									if = {
+										limit = { NOT = { religion = root } }
+										change_religion = root
+									}
+									set_province_flag = olavlund_ebonsteel_forge_counter
 								}
 							}
+						}
+						add_country_modifier = {
+							name = olavlund_button_1_cooldown
+							duration = 3
+							hidden = yes
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						NOT = { has_country_modifier = olavlund_blast_the_forges }
+					}
+					add_country_modifier = {
+						name = olavlund_blast_the_forges
+						duration = 3650
+					}
+					hidden_effect = {
+						add_country_modifier = {
+							name = olavlund_button_1_cooldown
+							duration = 3
+							hidden = yes
+						}
+					}
+				}
+				else = {
+					add_army_tradition = 10
+					add_navy_tradition = 10
+					add_government_power = {
+						mechanic_type = olavlund_wood_mechanic
+						power_type = olavlund_wood
+						value = 2
+					}
+					hidden_effect = {
+						add_country_modifier = {
+							name = olavlund_button_1_cooldown
+							duration = 30
+							hidden = yes
 						}
 					}
 				}
@@ -109,7 +138,7 @@ olavlund_wood_mechanic = {
 		invest_into_infrastructure = {
 			icon = GFX_promote_good_reputation
 			cost_type = olavlund_wood
-			cost = 1
+			cost = 2
 			trigger = {
 				has_country_flag = olavlund_wood_abilities_unlocked
 			}
@@ -127,18 +156,38 @@ olavlund_wood_mechanic = {
 		upgrade_heavy_ship_hullsize = {
 			icon = GFX_conscript_enthusiasts
 			cost_type = olavlund_wood
-			cost = 1
+			cost = 2
 			trigger = {
-				heavy_ship_fraction = 0.2
 				has_country_flag = olavlund_wood_abilities_unlocked
+				NOT = { has_country_modifier = olavlund_button_3_cooldown }
 			}
 			effect = {
-				add_country_modifier = {
-					name = olavlund_upgrade_heavy_ship_hullsize
-					duration = 3650
+				if = {
+					limit = { has_country_modifier = olavlund_upgrade_heavy_ship_hullsize }
+					add_yearly_sailors = 0.5
+					hidden_effect = {
+						add_country_modifier = {
+							name = olavlund_button_3_cooldown
+							duration = 90
+							hidden = yes
+						}
+					}
+				}
+				else = {
+					add_country_modifier = {
+						name = olavlund_upgrade_heavy_ship_hullsize
+						duration = 3650
+					}
+					hidden_effect = {
+						add_country_modifier = {
+							name = olavlund_button_3_cooldown
+							duration = 3
+							hidden = yes
+						}
+					}
 				}
 			}
-			cooldown_years = 10
+			cooldown_years = 0
 			ai_chance = {
 				factor = 1
 			}
