@@ -1554,3 +1554,177 @@ estate_church_relations_with_dotf = {
         }
     }
 }
+
+estate_church_luna_appease_the_temple = {
+	max_days_active = 3650
+	can_select = {
+		NOT = { has_anzalkatsa_naga = yes }
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		OR = {
+			AND = {
+				exists = A10
+				A10 = {
+					NOT = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+			AND = {
+				exists = A41
+				A41 = {
+					NOT = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+			AND = {
+				exists = A43
+				A43 = {
+					NOT = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+			AND = {
+				exists = A53
+				A53 = {
+					NOT = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+		}
+	}
+	pre_effect = {
+		random_known_country = {
+			limit = {
+				NOT = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+				OR = {
+					tag = A10
+					tag = A41
+					tag = A43
+					tag = A53
+				}
+			}
+			save_event_target_as = agenda_country
+		}
+	}
+	provinces_to_highlight = {
+	   	owned_by = event_target:agenda_country
+	}
+	selection_weight = {
+		factor = 50
+	}
+	task_requirements = {
+		event_target:agenda_country = {
+			has_opinion = {
+				who = ROOT
+				value = 100
+			}
+			if = {
+				limit = { tag = A10 }
+				ROOT = { has_personal_deity = minara }
+			}
+			else_if = {
+				limit = { tag = A41 }
+				ROOT = { has_personal_deity = the_dame }
+			}
+			else_if = {
+				limit = { tag = A43 }
+				ROOT = { has_personal_deity = ryala }
+			}
+			else_if = {
+				limit = { tag = A53 }
+				ROOT = { has_personal_deity = ara }
+			}
+		}
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		clergy_sway_agenda = yes
+		event_target:agenda_country = { sway_target = yes }
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_church
+		}
+		trigger_switch = {
+			on_trigger = has_personal_deity
+			minara = { A10 = { add_devotion = 10 add_prestige = 10 } }
+			the_dame = { A41 = { add_devotion = 10 add_prestige = 10 } }
+			ryala = { A43 = { add_devotion = 10 add_prestige = 10 } }
+			ara = { A53 = { add_devotion = 10 add_prestige = 10 } }
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}
+
+estate_church_luna_fight_heresy = {
+	max_days_active = 3650
+	can_select = {
+		NOT = { has_anzalkatsa_naga = yes }
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		NOT = { has_idea_group = humanist_ideas }
+		emperor = { has_matching_religion = ROOT }
+		is_religion_enabled = corinite
+	}
+	provinces_to_highlight = {
+	   	owner = {
+			NOT = { has_matching_religion = ROOT }
+		}
+	}
+	selection_weight = {
+		factor = 50
+	}
+	task_requirements = {
+		at_war_with_religious_enemy = yes
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		clergy_sway_agenda = yes
+		emperor = { sway_target = yes }
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_church
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}

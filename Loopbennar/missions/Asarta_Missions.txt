@@ -1,0 +1,1013 @@
+
+asarta_missions_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L96 }
+
+	L96_retake_our_spire = {
+		icon = mission_son_back_to_the_roots
+		required_missions = {
+			L96_end_the_ikilshebe
+		}
+		position = 3
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = zuvaziva_area
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+						}
+					}
+				}
+				AND = {
+					province_id = 5863
+					NOT = {
+						AND = {
+							culture_group = lizardfolk
+							has_great_project = { type = kuiika_gamyi tier = 1 }
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			zuvaziva_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+			}
+			5863 = {
+				culture_group = lizardfolk
+				has_great_project = { type = kuiika_gamyi tier = 1 }
+			}
+		}
+		effect = {
+			horashesh_region = {
+				add_permanent_claim = ROOT
+			}
+			zuvaziva_area = {
+				add_province_modifier = {
+					name = L96_rebirth_of_irikin
+					duration = 3650
+				}
+			}
+		}
+	}
+
+	L96_revive_irikin_culture = {
+		icon = mission_nomad
+		required_missions = {
+			L96_retake_our_spire L96_scaled_seas
+		}
+		position = 5
+
+		provinces_to_highlight = {
+			region = horashesh_region
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { culture_group = lizardfolk }
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				region = horashesh_region
+				value = 30
+			}
+			num_of_owned_provinces_with = {
+				region = horashesh_region
+				culture_group = lizardfolk
+				value = 10
+			}
+			capital = 5863
+		}
+		effect = {
+			change_primary_culture = irikin_lizardfolk
+			set_ruler_culture = irikin_lizardfolk
+			set_heir_culture = irikin_lizardfolk
+			horashesh_region = {
+				limit = {
+					culture_group = lizardfolk
+				}
+				change_culture = irikin_lizardfolk
+			}
+			custom_tooltip = revive_irikin_culture_tt
+			hidden_effect = {
+				for = {
+					amount = 10
+					effect = "
+						random_owned_province = {
+							limit = {
+								region = horashesh_region
+								owned_by = ROOT
+								NOT = { culture_group = lizardfolk }
+							}
+							change_culture = irikin_lizardfolk
+							change_religion = ROOT
+							add_devastation = 25
+						}
+					"
+				}
+			}
+		}
+	}
+}
+
+asarta_missions_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L96 }
+
+	L96_end_the_ikilshebe = {
+		icon = mission_impaled_soldies
+		required_missions = {
+			L96_the_rival_city
+		}
+		position = 2
+
+		provinces_to_highlight = {
+			culture = ikilshebe
+		}
+
+		trigger = {
+			has_country_modifier = racial_pop_human_purge
+			NOT = { exists = L03 }
+			custom_trigger_tooltip = {
+				tooltip = asarta_end_the_ikilshebe.2_tt
+				NOT = {
+					L03 = {
+						any_core_province = {
+							NOT = { owned_by = ROOT }
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = L96_end_the_ikilshebe_tt
+				NOT = {
+                    calc_true_if = {
+                        africa = {
+                            type = all
+                            culture = ikilshebe
+                        }
+                        amount = 4
+                    }
+                }
+			}
+		}
+		effect = {
+			zuvaziva_area = { add_permanent_claim = ROOT }
+			custom_tooltip = asarta_end_the_ikilshebe_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = { 
+						is_core = L03
+						culture_group = lizardfolk
+					}
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1 				
+				}
+			}
+		}
+	}
+
+	L96_proper_lumber = {
+		icon = mission_junk_boat
+		required_missions = {
+			L96_riverboats_on_the_sea
+		}
+		position = 3
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 5898
+					NOT = { has_dock_building_trigger = yes }
+				}
+				AND = {
+					continent = africa
+					trade_goods = tropical_wood
+					OR = {
+						NOT = { has_production_building_trigger = yes }
+						NOT = { owned_by = ROOT }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				AND = {
+					trade_goods = tropical_wood
+					has_production_building_trigger = yes
+				}
+				value = 3
+			}
+			5898 = {
+				has_dock_building_trigger = yes
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = L96_merchant_ships
+				duration = -1
+			}
+		}
+	}
+
+	L96_scaled_seas = {
+		icon = mission_fleet_arrival
+		required_missions = {
+			L96_proper_lumber L96_the_besieged_tribe
+		}
+		position = 4
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			trade_goods = naval_supplies
+			NOT = {
+				OR = {
+					base_production = 10
+					AND = {
+						has_production_building_trigger = yes
+						base_production = 6
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				trade_goods = naval_supplies
+				OR = {
+					AND = {
+						has_production_building_trigger = yes
+						base_production = 6
+					}
+					base_production = 10
+				}
+				value = 4
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = L96_narazjar
+				duration = -1
+			}
+		}
+	}
+
+	L96_the_irikin_planes = {
+		icon = mission_green_village
+		required_missions = {
+			L96_revive_irikin_culture L96_merfolk_magic_warfare
+		}
+		position = 6
+
+		provinces_to_highlight = {
+			region = horashesh_region
+			OR = {
+				AND = {
+					culture = irikin_lizardfolk
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_has_center_of_trade_of_level = 1
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							province_has_center_of_trade_of_level = 2
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				region = horashesh_region
+				province_has_center_of_trade_of_level = 2
+				value = 4
+			}
+			num_of_owned_provinces_with = {
+				region = horashesh_region
+				culture = irikin_lizardfolk
+				value = 40
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = L96_reborn
+				duration = -1
+			}
+		}
+	}
+}
+
+asarta_missions_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L96 }
+
+	L96_the_rival_city = {
+		icon = mission_haasa
+		required_missions = {}
+		position = 1
+
+		provinces_to_highlight = { 
+			province_id = 5898
+			NOT = {
+				AND = {
+					is_core = ROOT
+					owned_by = ROOT 
+				}
+			}
+		}
+
+		trigger = {
+			owns_core_province = 5898
+			is_at_war = no
+		}
+		effect = {
+			hidden_effect = {
+				every_province = {
+					limit = { culture = ikilshebe }
+					add_permanent_claim = ROOT
+				}
+			}
+			custom_tooltip = rival_city_tt
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 30
+			}
+		}
+	}
+
+	L96_riverboats_on_the_sea = {
+		icon = mission_stormy_seas
+		required_missions = {
+			L96_the_rival_city
+		}
+		position = 2
+
+		provinces_to_highlight = { 
+			province_id = 3090
+		}
+
+		trigger = {
+			num_of_admirals = 1
+
+			3090 = {
+				transports_in_province = 10
+				hidden_trigger = {
+					transports_in_province = ROOT
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = L96_tame_sea
+				duration = 7300
+			}
+			country_event = {
+				id = asarta.1
+			}
+			country_event = {
+				id = asarta.2 days = 365 random = 1460
+			}
+		}
+	}
+
+	L96_the_besieged_tribe = {
+		icon = mission_rb_cod_wars
+		required_missions = {
+			L96_riverboats_on_the_sea
+		}
+		position = 3
+
+		provinces_to_highlight = { 
+			province_id = 3258
+		}
+
+		trigger = {
+			any_owned_province = {
+				OR = {
+					has_province_modifier = offcoast_merfolk_neutral
+					has_province_modifier = offcoast_merfolk_allied
+				}
+			}
+			3258 = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 10
+				}
+			}
+		}
+		effect = {
+			if = {
+				limit = { 3258 = { is_city = yes NOT = { owned_by = ROOT } } }
+				3258 = { add_permanent_claim = ROOT }
+			}
+			else_if = {
+				limit = { 3258 = { is_empty = yes } }
+				3258 = {
+					add_siberian_construction = 333
+				}
+			}
+			else_if = {
+				limit = { 3258 = { is_colony = yes } }
+				3258 = { add_colonysize = 500 }
+			}
+			else_if = {
+				limit = { 3258 = { is_city = yes owned_by = ROOT } }
+				3258 = {
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1
+				}
+			}
+		}
+	}
+
+	L96_underwater_conflict = {
+		icon = mission_ne_great_lakes_conquest
+		required_missions = {
+			L96_the_besieged_tribe
+			L96_khateshala_answers
+		}
+		position = 4
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 3258
+					NOT = {
+						AND = {
+							owned_by = ROOT 
+							has_fort_building_trigger = yes
+							num_of_units_in_province = {
+								who = ROOT
+								amount = 10
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 1625
+					NOT = {
+						AND = {
+							transports_in_province = 10
+							galleys_in_province = 10
+						}
+					}		
+				}
+			}
+		}
+
+		trigger = {
+			3258 = {
+				 owned_by = ROOT 
+				 has_fort_building_trigger = yes
+				 num_of_units_in_province = {
+					who = ROOT
+					amount = 10
+				}
+			}
+
+			1625 = {
+				transports_in_province = 10
+				galleys_in_province = 10
+				hidden_trigger = {
+					transports_in_province = ROOT
+					galleys_in_province = ROOT
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = akhaxpa_3_tt
+				check_variable = {
+					which = akhaxpa_count
+					value = 3
+				}
+			}
+		}
+		effect = {
+			country_event = {
+				id = asarta.4
+			}
+		}
+	}
+
+	L96_merfolk_magic_warfare = {
+		icon = mission_sea_battles
+		required_missions = {
+			L96_scaled_seas
+			L96_underwater_conflict
+			L96_the_court_of_change
+		}
+		position = 5
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			has_port = yes
+			NOT = { has_dock_building_trigger = yes }
+			NOT = {
+				ROOT = {
+					num_of_owned_provinces_with = {
+						has_dock_building_trigger = yes
+						value = 5
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				has_dock_building_trigger = yes
+				value = 5
+			}
+			custom_trigger_tooltip = {
+				tooltip = L96_merfolk_magic_warfare_tt
+				has_country_flag = merfolk_opinion_allied
+			}
+			custom_trigger_tooltip = {
+				tooltip = akhaxpa_6_tt
+				check_variable = {
+					which = akhaxpa_count
+					value = 6
+				}
+			}
+		}
+		effect = {
+			throden_gokad_region = {
+				add_permanent_claim = ROOT
+			}
+			qasri_abeesooyinka_area = { add_permanent_claim = ROOT }
+			6004 = { add_permanent_claim = ROOT }
+			6007 = { add_permanent_claim = ROOT }
+			add_country_modifier = {
+				name = L96_magic_cannons
+				duration = -1
+			}
+		}
+	}
+
+	L96_eawuba_kayba_reef = {
+		icon = mission_russian_navy
+		required_missions = {
+			L96_merfolk_magic_warfare
+		}
+		position = 6
+
+		provinces_to_highlight = {
+			OR = {
+				has_province_modifier = offcoast_merfolk_neutral
+				has_province_modifier = offcoast_merfolk_isolated
+				# has_province_modifier = offcoast_merfolk_angered
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 6
+				has_province_modifier = offcoast_merfolk_allied
+			}
+			custom_trigger_tooltip = {
+				tooltip = akhaxpa_10_tt
+				check_variable = {
+					which = akhaxpa_count
+					value = 10
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = L96_irikin_expansion
+				duration = 18250
+			}
+		}
+	}
+
+	L96_the_herald_of_change = {
+		icon = mission_herald_of_change
+		required_missions = {
+			L96_eawuba_kayba_reef
+			L96_inscribe_our_legend
+			L96_the_irikin_planes
+		}
+		position = 7
+
+		provinces_to_highlight = {
+			OR = {
+				area = daagalkauva_area
+				area = muudeyneen_heartlands_area
+				area = new_armanhal_area
+			}
+		}
+
+		trigger = {
+			any_owned_province = {
+				OR = {
+					area = daagalkauva_area
+					area = muudeyneen_heartlands_area
+					area = new_armanhal_area
+				}
+				has_province_modifier = offcoast_merfolk_allied
+			}
+		}
+		effect = {
+			country_event = {
+				id = asarta.8
+			}
+		}
+	}
+}
+
+asarta_missions_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L96 }
+
+	L96_correct_the_naga = {
+		icon = mission_diplomacy_missive
+		required_missions = {
+			L96_the_rival_city
+		}
+		position = 2
+
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				religion = anzalkatsa
+				NOT = { tag = ROOT }
+			}
+		}
+
+		trigger = {
+			calc_true_if = {
+				custom_trigger_tooltip = {
+					tooltip = asarta_any_ally_tt
+					all_ally = {
+						religion = anzalkatsa
+					}
+				}
+				amount = 3
+			}
+			calc_true_if = {
+				all_known_country = {
+					custom_trigger_tooltip = {
+						tooltip = religion_is_anzalkatsa_tt
+						religion = anzalkatsa
+					}
+					has_spy_network_from = {
+						who = ROOT
+						value = 20
+					}
+				}	
+				amount = 2
+			}
+		}
+		effect = {
+			S15 = {
+				every_owned_province = {
+					add_claim = ROOT
+				}
+			}
+			country_event = {
+				id = asarta.10
+			}
+		}
+	}
+
+	L96_khateshala_answers = {
+		icon = mission_forest_shrine
+		required_missions = {
+			L96_correct_the_naga L96_riverboats_on_the_sea
+		}
+		position = 3
+
+		trigger = {
+			has_estate_privilege = estate_church_khateshala_mutation
+		}
+		effect = {
+			country_event = {
+				id = asarta.11
+			}
+		}
+	}
+
+	L96_the_court_of_change = {
+		icon = mission_alone_in_the_forest
+		required_missions = {
+			L96_khateshala_answers L96_the_greater_riverclaw
+		}
+		position = 4
+
+		provinces_to_highlight = {
+			region = throden_gokad_region
+			trade_goods = incense
+			NOT = { development = 15 }
+		}
+
+		trigger = {
+			if = {
+				limit = { has_estate = estate_mages }
+				has_estate_privilege = estate_mages_patronage_of_the_magical_arts
+				estate_loyalty = {
+					estate = estate_mages
+					loyalty = 50
+				}
+			}
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 50
+			}
+			any_owned_province = {
+				region = throden_gokad_region
+				trade_goods = incense
+				development = 15
+			}
+		}
+		effect = {
+			noor_zerat_area = {
+				add_permanent_claim = ROOT
+			}
+			rakirap_srap_area = {
+				add_permanent_claim = ROOT
+			}
+			pshorkitsa_area = {
+				add_permanent_claim = ROOT
+			}
+			rakshas_area = {
+				add_permanent_claim = ROOT
+			}
+			custom_tooltip = asarta_all_provinces_tt
+			tooltip = {
+				add_province_modifier = {
+					name = L96_sahra_glades
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						region = throden_gokad_region
+						trade_goods = incense
+						development = 15
+					}
+					add_province_modifier = {
+						name = L96_sahra_glades
+						duration = -1
+					}
+				}
+			}
+		}
+	}
+
+	L96_claim_the_prophecy = {
+		icon = mission_333
+		required_missions = {
+			L96_the_court_of_change L96_quash_all_rayaz_loyalist
+		}
+		position = 5
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = katala_raz_region
+					owned_by = S70
+				}
+				AND = {
+					province_id = 5921
+					NOT = {
+						AND = {
+							development = 25
+							has_tax_building_trigger = yes
+							NOT = { devastation = 1 }
+							owned_by = ROOT
+							is_core = ROOT
+						} 
+					}
+				}
+			}
+		}
+
+		trigger = {
+			5921 = { #Zerat
+				owned_by = ROOT
+				is_core = ROOT
+				development = 25
+				has_tax_building_trigger = yes
+				NOT = { devastation = 1 }
+			}
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 60
+			}
+			S70 = {
+				NOT = {
+					any_owned_province = {
+						region = katala_raz_region
+					}
+				}
+			}
+		}
+		effect = {
+			add_country_modifier = {
+				name = L96_the_stars_align
+				duration = -1
+			}
+			katala_raz_region = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	L96_inscribe_our_legend = {
+		icon = mission_writing_book
+		required_missions = {
+			L96_claim_the_prophecy L96_merfolk_magic_warfare
+		}
+		position = 6
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				trade_goods = dyes
+				trade_goods = paper
+			}
+			NOT = {
+				AND = {
+					has_tax_building_trigger = yes
+					development = 20
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				trade_goods = paper
+				development = 20
+				has_tax_building_trigger = yes
+				value = 3
+			}
+			num_of_owned_provinces_with = {
+				trade_goods = dyes
+				development = 20
+				has_tax_building_trigger = yes
+				value = 3
+			}
+			custom_trigger_tooltip = {
+				tooltip = tolerance_of_true_faith_11_tt
+				has_global_modifier_value = { which = tolerance_own value = 10 }
+			}
+			
+		}
+		effect = {
+			country_event = {
+				id = asarta.12
+			}
+		}
+	}
+}
+
+asarta_missions_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L96 }
+
+	L96_the_greater_riverclaw = {
+		icon = mission_sykar_riverclaw
+		required_missions = {
+			L96_correct_the_naga
+		}
+		position = 3
+
+		provinces_to_highlight = {
+			owned_by = L95
+		}
+
+		trigger = {
+			OR = {
+				L95 = {
+					OR = {
+						NOT = { exists = yes }
+						humiliated_by = ROOT
+					}
+				}
+				AND = {
+					NOT = { is_rival = L95 }
+					is_in_war = {
+						attacker_leader = ROOT 
+						defender_leader = L95
+						war_score = 95
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = L96_the_greater_riverclaw_tt
+			hidden_effect = {
+				L95 = {
+					every_owned_province = {
+						add_permanent_claim = ROOT
+					}
+				}
+			}
+			add_ruler_modifier = {
+				name = L96_choosen_one
+				duration = 9125
+			}
+			custom_tooltip = no_stablity_cost_on_naga_tt
+			hidden_effect = {
+				set_country_flag = naga_no_stability_cost	
+			}
+		}
+	}
+
+	L96_quash_all_rayaz_loyalist = {
+		icon = mission_control_unrest
+		required_missions = {
+			L96_the_greater_riverclaw
+		}
+		position = 4
+
+		provinces_to_highlight = {
+			owned_by = L96
+			is_core = L95
+			NOT = { has_state_edict = edict_centralization_effort }
+		}
+
+		trigger = {
+			army_size = 40
+			OR = {
+				AND = {
+					num_of_owned_provinces_with = {
+						is_core = L95
+						value = 15
+					}
+					all_owned_province = {
+						custom_trigger_tooltip = {
+							tooltip = L96_quash_all_rayaz_loyalist_tt
+							OR = {
+								NOT = { is_core = L95 }
+								has_state_edict = edict_centralization_effort
+							}
+						}
+					}
+				}
+				NOT = { exists = L95 }
+			}
+		}
+		effect = {
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = -30
+			}
+			custom_tooltip = L96_quash_all_rayaz_loyalist2_tt
+			hidden_effect = {
+				random_owned_province = {
+					limit = {
+						is_core = L95
+					}
+					spawn_rebels = {
+						type = nationalist_rebels
+						size = 0.5
+					} 
+				}
+				every_owned_province = {
+					limit = {
+						is_core = L95
+					}
+					random_list = {
+						4 = {}
+						1 = { 
+							spawn_rebels = {
+								type = nationalist_rebels
+								size = 1
+							} 
+						}
+					}
+				}
+				set_country_flag = asarta_remove_sep
+			}
+		}
+	}
+}

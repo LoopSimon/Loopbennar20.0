@@ -1,0 +1,2711 @@
+# Designer: Aardvark
+# Coder: Dadevo
+
+A49_1_pre = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = A49 } 
+
+	A49_gather_a_garrison = {
+		icon = claim_the_borderlands
+		position = 2
+		required_missions = { A49_vie_the_vrestukex } 
+		provinces_to_highlight = {
+			province_id = 377 #Akaz Lokkex
+			OR = {
+				NOT = { development = 10 }
+				has_no_ongoing_construction = no
+			}
+		} 
+
+		trigger = {
+			treasury = 100
+			377 = { #Akaz Lokkex (Capital)
+				development = 10
+				has_no_ongoing_construction = yes
+			}
+		} 
+
+		effect = {
+			add_treasury = -100
+			377 = { #Akaz Lokkex (Capital)
+				add_building_construction = {
+					building = fort_15th
+					speed = 0.5
+					cost = 0
+				}
+			}
+		}
+	}
+
+	A49_the_last_clutch = {
+		icon = mission_dalaskogen
+		position = 4
+		required_missions = { A49_the_brainmarrow_pact } 
+		provinces_to_highlight = {
+			province_id = 6513 #Hogzhaad
+		} 
+
+		trigger = {
+			6513 = { #Hogzhaad
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 15
+				}
+				has_ruler_leader_from = ROOT
+				NOT = { unrest = 0 } 
+			}
+		}
+
+		effect = {
+			6513 = { #Hogzhaad
+				if = {
+					limit = {
+						num_of_units_in_province = {
+							who = ROOT
+							type = infantry
+							amount = 5
+						}
+					}
+					kill_units = {
+						who = A49
+						type = infantry
+						amount = 5
+					}
+				}
+				else = {
+					kill_units = {
+						who = A49
+						amount = 5
+					}
+				}
+			}
+			country_event = { id = flavour_xanzerbexis.3 } #The Last Clutch
+		} 
+	}
+
+	A49_protect_the_clutch = {
+		icon = protectors_of_christendom
+		position = 5
+		required_missions = { A49_the_last_clutch } 
+		provinces_to_highlight = {
+			province_id = 6513 #Hogzhaad
+		}
+
+		trigger = {
+			if = {
+				limit = { has_dlc = "Leviathan" has_dlc = "Mandate of Heaven" }
+				6513 = { #Hogzhaad
+					num_of_times_expanded_infrastructure = 1
+					has_production_building_trigger = yes
+					has_state_edict = edict_defensive_edict
+				}
+			}
+			else = {
+				6513 = { #Hogzhaad
+					has_production_building_trigger = yes
+					development = 15
+				}
+			}
+		}
+
+		effect = {
+			6513 = { #Hogzhaad
+				remove_province_modifier = A49_depletion_of_khenak_wyvern
+				add_province_modifier = {
+					name = A49_makeshift_hatchery
+					duration = -1
+				}
+			}
+		} 
+	}
+}
+A49_1_post_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_formed_igraxraak
+	} 
+
+	A49_further_preparations = {
+		icon = mission_early_game_buildings
+		position = 6
+		required_missions = { A49_protect_the_clutch } 
+		provinces_to_highlight = { 
+			province_id = 6513 #Hogzhaad
+		} 
+
+		trigger = {
+			if = {
+				limit = { has_dlc = "Mandate of Heaven" }
+				6513 = { #Hogzhaad
+					has_state_edict = edict_promote_military_recruitment
+					base_manpower = 10
+				}
+			}
+			else = {
+				6513 = { #Hogzhaad
+					has_tax_building_trigger = yes
+					base_manpower = 10
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = A49_incubating_eggs
+				duration = 5475
+			}
+			hidden_effect = {
+				country_event = {
+					id = flavour_xanzerbexis.8 #The First Hatchling
+					days = 5475
+				}
+			}
+		}
+	}
+
+	A49_factional_cooperation = {
+		icon = mission_diplomatic_relation
+		position = 8
+		required_missions = {
+			A49_further_preparations
+			A49_the_copper_hills_renaissance
+		}
+		provinces_to_highlight = {
+			province_id = 6513 #Hogzhaad
+		}
+
+		trigger = {
+			if = {
+				limit = { has_dlc = "Leviathan" }
+				6513 = { #Hogzhaad
+					has_multiple_manufactory_trigger = { VAL = 2 } 
+					development = 30
+				}
+			}
+			else = {
+				6513 = { #Hogzhaad
+					has_manufactory_trigger = yes
+					development = 30
+				}
+			}
+			any_hired_mercenary_company = {
+				template = merc_brass_gnolls
+				location = { province_id = 6513 } #Hogzhaad
+			}
+			OR = {
+				NOT = {
+					estate_influence = {
+						estate = estate_nobles
+						influence = 50
+					}
+				}
+				estate_loyalty = {
+					estate = estate_nobles
+					loyalty = 80
+				}
+			}
+		}
+
+		effect = {
+			define_advisor = {
+				type = natural_scientist
+				skill = 2
+				cost_multiplier = 0.5
+				discount = yes
+			}
+			6513 = { #Hogzhaad
+				remove_province_modifier = A49_makeshift_hatchery
+				add_province_modifier = {
+					name = A49_wyvern_farm
+					duration = -1
+				}
+			}
+			set_country_flag = A49_wyvern_farms_unlocked
+			custom_tooltip = A49_wyvern_farms_unlocked_tt
+		} 
+	}
+
+	A49_hogzhaad_slaughterhouse = {
+		icon = public_works
+		position = 9
+		required_missions = { A49_factional_cooperation } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			trade_goods = livestock
+			OR = {
+				has_production_building_trigger = no
+				NOT = { development = 15 }
+				AND = {
+					has_dlc = "Mandate of Heaven"
+					NOT = { has_state_edict = edict_protect_trade }
+				}
+			}
+		}
+
+		trigger = {
+			production_leader = { trade_goods = livestock }
+			num_of_owned_provinces_with = {
+				value = 10
+				trade_goods = livestock
+				has_production_building_trigger = yes
+				development = 15
+				if = { 
+					limit = { has_dlc = "Mandate of Heaven" }
+					has_state_edict = edict_protect_trade
+				}
+			}
+			NOT = { has_country_modifier = A49_incubating_eggs }
+		}
+
+		effect = {
+			6513 = { #Hogzhaad
+				remove_province_modifier = A49_wyvern_farm
+				change_trade_goods = ivory
+				add_province_modifier = {
+					name = A49_hogzhaad_slaughterhouses
+					duration = -1
+				}
+				center_of_trade = 1
+			}
+			every_owned_province = {
+				limit = {
+					trade_goods = livestock
+					has_production_building_trigger = yes
+					if = {
+						limit = { has_dlc = "Mandate of Heaven" }
+						has_state_edict = edict_protect_trade
+					}
+					development = 15
+				}
+				add_province_modifier = {
+					name = A49_wyvern_o_plenty
+					duration = -1
+				}
+			}
+		} 
+	}
+
+	A49_a_league_of_their_own = {
+		icon = mission_ramsteel_gunpowder
+		position = 10
+		required_missions = { A49_hogzhaad_slaughterhouse } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			trade_goods = copper
+			any_neighbor_province = {
+				OR = {
+					has_province_modifier = A49_wyvern_farm
+					has_province_modifier = A49_artificer_barracks
+				}
+			}
+			OR = { #Remove highlighting from other provinces that don't meet the criteria if you already met it in at least one
+				NOT = {
+					any_owned_province = {
+						A49_swirl_mix_province = yes
+					}
+				}
+				A49_swirl_mix_province = yes
+			}
+		}
+
+		trigger = {
+			innovativeness = 30
+			any_owned_province = {
+				A49_swirl_mix_province = yes
+				OR = {
+					has_building = university
+					AND = {
+						ROOT = { treasury = 500 }
+						has_no_ongoing_construction = yes
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_xanzerbexis.7 } #Mix Mix, Swirl Mix
+			if = {
+				limit = {
+					NOT = {
+						any_owned_province = {
+							A49_swirl_mix_province = yes
+							has_building = university
+						}
+					}
+				}
+				add_treasury = -500
+				random_owned_province = {
+					limit = {
+						A49_swirl_mix_province = yes
+						has_no_ongoing_construction = yes
+					}
+					add_building_construction = {
+						building = university
+						speed = 1
+						cost = 0
+					}
+				}
+			}
+			A49_early_artificer_unlock_increment = yes
+		}
+	}
+
+	A49_the_wyvern_trade_route = {
+		icon = mission_grand_trunk_road_mug
+		position = 11
+		required_missions = { A49_the_lions_roar } 
+		provinces_to_highlight = {
+			OR = {
+				region = businor_region
+				region = the_borders_region
+			}
+			has_port = yes
+			NOT = { owned_by = ROOT }
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = A49_the_wyvern_trade_route_tt
+				1296 = {
+					trade_share = {
+						country = ROOT
+						share = 75
+					}
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 3
+				province_has_center_of_trade_of_level = 3
+			}
+			businor_region = {
+				type = all
+				OR = {
+					NOT = { has_port = yes }
+					owned_by = ROOT
+				}
+			}
+			the_borders_region = {
+				type = all
+				OR = {
+					NOT = { has_port = yes }
+					owned_by = ROOT
+				}
+			}
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = A49_wyvern_trade_route
+				duration = -1
+			}
+			the_borders_region = {
+				add_claim = ROOT
+			}
+		} 
+	}
+
+	A49_all_roads_lead_to_bones = {
+		icon = mission_iron_and_copper
+		position = 12
+		required_missions = {
+			A49_the_wyvern_trade_route
+			A49_secure_the_khenak
+		}
+		provinces_to_highlight = {
+			region = the_borders_region
+			OR = {
+				AND = {
+					NOT = { owned_by = ROOT }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 20
+								region = the_borders_region
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 306 #Wexkeep
+					OR = {
+						NOT = { owned_by = ROOT }
+						NOT = { is_core = ROOT }
+						NOT = { base_production = 15 }
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 20
+				region = the_borders_region
+			}
+			306 = { #Wexkeep
+				owned_by = ROOT
+				is_core = ROOT
+				base_production = 15
+			}
+		} 
+
+		effect = {
+			306 = { #Wexkeep
+				change_province_name = "Invyaik"
+				add_province_modifier = {
+					name = A49_chain_factory
+					duration = -1
+				}
+				add_building = weapons
+			}
+		} 
+	}
+}
+
+A49_1_post_2 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_formed_igraxraak
+	} 
+
+	A49_goblin_artisinal_infrastructure = {
+		icon = industrialized_rhineland
+		position = 14
+		required_missions = { A49_invite_established_brainiacs } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = ROOT
+					trade_goods = iron
+					is_in_capital_area = yes
+					NOT = { development = 25 }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 10
+								trade_goods = iron
+								is_in_capital_area = yes
+								development = 25
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 6513 #Hogzhaad
+					NOT = { development = 40 }
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				production_leader = { trade_goods = iron }
+				trading_bonus = { trade_goods = iron value = yes }
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				is_in_capital_area = yes
+				trade_goods = iron
+				development = 25
+			}
+			6513 = { #Hogzhaad
+				development = 40
+			}
+		} 
+
+		effect = {
+			largest_increase_of_goblin_tolerance_effect = yes
+			country_event = {
+				id = flavour_xanzerbexis.25
+				days = 3650
+			}
+			custom_tooltip = A49_goblin_artisinal_infrastructure_tt
+			A49_early_artificer_unlock_increment = yes
+		} 
+	}
+
+	A49_artificers_in_being = {
+		icon = professional_army
+		position = 15
+		required_missions = { A49_goblin_artisinal_infrastructure } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					NOT = { owned_by = ROOT }
+					has_discovered = ROOT
+					A49_valid_wyvern_farm_province = yes
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 12
+								A49_is_wyvern_farm = yes
+							}
+						}
+					}
+				}
+				AND = {
+					A49_is_wyvern_farm = yes
+					NOT = {
+						ROOT = {
+							development_in_provinces = {
+								value = 250
+								A49_is_wyvern_farm = yes
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 12
+				A49_is_wyvern_farm = yes
+			}
+			development_in_provinces = {
+				value = 250
+				A49_is_wyvern_farm = yes
+			}
+		}
+
+		effect = {
+			custom_tooltip = A49_grand_artificer_barracks_unlocked_tt
+			hidden_effect = {
+				set_country_flag = A49_wyvern_farm_upgrade_unlocked
+				every_owned_province = {
+					limit = {
+						has_province_modifier = A49_wyvern_farm
+						development = 40
+					}
+					remove_province_modifier = A49_wyvern_farm
+					add_province_modifier = {
+						name = A49_artificer_barracks
+						duration = -1
+					}
+				}
+			}
+		} 
+	}
+}
+
+A49_2_pre = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = A49 } 
+	
+	A49_vie_the_vrestukex = {
+		icon = mission_hill_gnoll_auxilaries
+		position = 1
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			calc_true_if = {
+				employed_advisor = { category = ADM } 
+				employed_advisor = { category = DIP } 
+				employed_advisor = { category = MIL }
+				amount = 2
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_xanzerbexis.2 } #The 86 Packs
+			custom_tooltip = A49_vie_the_vrestukex_tt
+			hidden_effect = {
+				businor_region = {
+					limit = { owned_by = A29 } #Busilar
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+
+	A49_the_brainmarrow_pact = {
+		icon = reform_the_nomocanon
+		position = 3
+		required_missions = { A49_vie_the_vrestukex } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			any_known_country = {
+				technology_group = tech_cannorian
+				has_opinion = {
+					who = ROOT
+					value = 0
+				}
+				has_25_opinion_sent_gift = { target = ROOT }
+			}
+		} 
+
+		effect = {
+			random_known_country = {
+				limit = {
+					technology_group = tech_cannorian
+					has_opinion = {
+						who = ROOT
+						value = 0
+					}
+					has_25_opinion_sent_gift = { target = ROOT }
+				}
+				add_historical_friend = ROOT 
+				ROOT = { add_historical_friend = PREV }
+			}
+			custom_tooltip = A49_brainmarrow_pact_merc_tt
+			hidden_effect = {
+				every_country = {
+					limit = { technology_group = tech_cannorian }
+					set_country_flag = A49_unlocked_merc_brainmarrow_pact
+				}
+			}
+			set_country_flag = A49_enable_brainmarrow_pact
+			377 = { #Akaz Lokkex (Capital)
+				add_province_triggered_modifier = A49_brainmarrow_pact_tm
+			}
+			custom_tooltip = A49_brainmarrow_pact_tm_tt
+		}
+	}
+
+	A49_gnolls_trolls_and_tolls = {
+		icon = mission_frost_troll
+		position = 5
+		required_missions = { A49_return_to_the_old_capital } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = { 
+						province_id = 39 #Lion's Pass
+						province_id = 379 #Stonegaze
+					}
+					NOT = { 
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						ROOT = { knows_country = PREV }					
+						fast_owns_num_pops_of_race = { race = troll amount = 1 }
+					}
+					NOT = {
+						ROOT = {
+							any_known_country = {
+								has_25_opinion_sent_gift = { target = ROOT }
+								has_opinion = {
+									who = ROOT
+									value = 0
+								}
+								fast_owns_num_pops_of_race = { race = troll amount = 1 }
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			owns_core_province = 39 #Lion's Pass
+			owns_core_province = 379 #Stonegaze
+			any_known_country = {
+				has_25_opinion_sent_gift = { target = ROOT }
+				has_opinion = {
+					who = ROOT
+					value = 0
+				}
+				fast_owns_num_pops_of_race = { race = troll amount = 1 }
+			}
+		} 
+
+		effect = {
+			country_event = { id = flavour_xanzerbexis.4 } #The Troll Toll
+		} 
+	}
+}
+
+A49_2_post_1 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_formed_igraxraak
+	} 
+
+	A49_reinvigorate_our_mines = {
+		icon = mission_state_manufactories
+		position = 6
+		required_missions = { A49_gnolls_trolls_and_tolls } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						trade_goods = copper
+						trade_goods = iron
+					}
+					NOT = { owned_by = ROOT }
+					has_discovered = ROOT
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 6
+								OR = {
+									trade_goods = copper
+									trade_goods = iron
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					trade_goods = copper
+					OR = {
+						NOT = { num_of_times_improved_by_owner = 2 }
+						num_free_building_slots = 1
+					}
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 4
+								trade_goods = copper
+								num_of_times_improved_by_owner = 2
+								NOT = { num_free_building_slots = 1 }
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 6
+				OR = {
+					trade_goods = copper
+					trade_goods = iron
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 4
+				trade_goods = copper
+				num_of_times_improved_by_owner = 2
+				NOT = { num_free_building_slots = 1 }
+			}
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = A49_mining_coefficient
+				duration = 9125
+			}
+			custom_tooltip = desc_A49_mining_coefficient
+			wyvernmark_area = {	add_permanent_claim = ROOT }
+			verne_area = { add_permanent_claim = ROOT }
+			menibor_loop_area = { add_permanent_claim = ROOT }
+		}
+	}
+
+	A49_the_copper_hills_renaissance = {
+		icon = renaissance_city
+		position = 7
+		required_missions = {
+			A49_reinvigorate_our_mines
+			A49_brainmarrow_success
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = businor_region
+					owned_by = ROOT
+					is_prosperous = no
+					NOT = { num_of_times_improved_by_owner = 2 }
+				}
+				AND = {
+					owned_by = ROOT
+					trade_goods = copper
+					NOT = {
+						ROOT = {
+							development_in_provinces = {
+								value = 100
+								trade_goods = copper
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			businor_region = {
+				OR = {
+					NOT = { owned_by = ROOT }
+					OR = {
+						is_prosperous = yes
+						num_of_times_improved_by_owner = 2
+					}
+				}
+				type = all
+			}
+			development_in_provinces = {
+				value = 100
+				trade_goods = copper
+			}
+		}
+		
+		effect = {
+			custom_tooltip = A49_the_copper_hills_renaissance_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = { trade_goods = copper }
+					add_province_modifier = {
+						name = A49_futures_market
+						duration = -1
+					}
+				}
+			}
+			set_country_flag = A49_unlocked_merc_merc_brass_gnolls
+			custom_tooltip = A49_unlocked_merc_brass_gnolls_tt
+		}
+	}
+
+	A49_port_xanzerbexis_amphitheatre = {
+		icon = mission_ned_amsterdam_bourse
+		position = 9
+		required_missions = {
+			A49_the_copper_hills_renaissance
+			A49_human-gnoll_culture_exchanges
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 365 #Port Jaher
+					province_has_current_tech_fort_trigger = no
+				}
+				AND = {
+					owned_by = ROOT #Don't need to highlight unowned wyvern farm spots, player should already own ~6 wyvern farm spots by this point
+					A49_valid_wyvern_farm_province = yes
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 4
+								A49_is_wyvern_farm = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			treasury = 1000
+			any_ally = {
+				OR = {
+					has_country_modifier = human_administration
+					has_country_modifier = half_elven_administration
+				}
+				has_opinion = {
+					who = ROOT
+					value = 150
+				}
+			}
+			365 = { #Port Jaher
+				province_has_current_tech_fort_trigger = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 4
+				has_province_modifier = A49_wyvern_farm
+			}
+		} 
+
+		effect = {
+			add_treasury = -1000
+			random_ally = {
+				limit = {
+					OR = {
+						has_country_modifier = human_administration
+						has_country_modifier = half_elven_administration
+					}
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+				add_treasury = 1000
+			}
+			365 = { #Port Jaher
+				add_province_modifier = {
+					name = A49_amphitheatre_games
+					duration = 18250
+				}
+			}
+			add_country_modifier = {
+				name = A49_greatest_showmen
+				duration = -1
+			}
+			country_event = { id = flavour_xanzerbexis.20 } #Spectators From Afar
+		} 
+	}
+
+	A49_the_lions_roar = {
+		icon = invest_in_the_rich_trades
+		position = 10
+		required_missions = {
+			A49_hogzhaad_slaughterhouse
+			A49_port_xanzerbexis_amphitheatre
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 39 #Lion's Pass
+						province_id = 379 #Stonegaze
+					}
+					NOT = { has_building = impressment_offices }
+				}
+				AND = {
+					region = businor_region
+					has_port = yes
+					NOT = { has_building = naval_battery }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 4
+								region = businor_region
+								has_building = naval_battery
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 4
+				region = businor_region
+				has_building = naval_battery
+			}
+			39 = { #Lion's Pass
+				has_building = impressment_offices
+			}
+			379 = { #Stonegaze
+				has_building = impressment_offices
+			}
+			has_country_modifier = racial_focus_troll
+		} 
+
+		effect = {
+			39 = { #Lion's Pass
+				change_culture = fjord_troll
+			}
+			largest_increase_of_troll_tolerance_effect = yes
+			add_country_modifier = {
+				name = A49_sound_war_horns
+				duration = 7300
+			}
+			country_event = { id = flavour_xanzerbexis.9 } #A Bellowing Roar
+		} 
+	}
+
+	A49_secure_the_khenak = {
+		icon = mission_fortify_rajputana
+		position = 11
+		required_missions = { A49_the_lions_roar } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = wyvernmark_area
+					OR = {
+						NOT = { owned_by = ROOT }
+						NOT = { is_core = ROOT }
+					}
+				}
+				AND = {
+					OR = {
+						area = wyvernmark_area
+						area = khenak_area
+						area = mountainway_area
+					}
+					province_has_current_tech_fort_trigger = no
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 4
+								OR = {
+									area = wyvernmark_area
+									area = khenak_area
+									area = mountainway_area
+								}
+								province_has_current_tech_fort_trigger = yes
+							}
+						}
+					}
+				}
+				AND = {
+					NOT = {	A33 = { is_subject_of = ROOT } } #Verne
+					superregion = western_cannor_superregion
+					owned_by = A33 #Verne
+				}
+			}
+		} 
+
+		trigger = {
+			wyvernmark_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+			}
+			num_of_owned_provinces_with = {
+				value = 4
+				OR = {
+					area = wyvernmark_area
+					area = khenak_area
+					area = mountainway_area
+				}
+				province_has_current_tech_fort_trigger = yes
+			}
+			A33 = { #Verne
+				OR = {
+					is_subject_of = ROOT
+					custom_trigger_tooltip = {
+						tooltip = A49_secure_the_khenak_tt
+						NOT = {
+							num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+								value = 1
+								superregion = western_cannor_superregion
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			every_owned_province = {
+				limit = {
+					OR = {
+						area = wyvernmark_area
+						area = khenak_area
+						area = mountainway_area
+					}
+					province_has_current_tech_fort_trigger = yes
+				}
+				add_province_modifier = {
+					name = A49_wyvern_bastion
+					duration = -1
+				}
+			}
+			add_country_modifier = {
+				name = A49_forts_galore
+				duration = -1
+			}
+		} 
+	}
+
+	A49_invite_established_brainiacs = {
+		icon = mission_gnome_tinkering
+		position = 13
+		required_missions = {
+			A49_all_roads_lead_to_bones
+			A49_undermine_the_ivemkverag
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital = yes
+					owner = {
+						ROOT = { knows_country = PREV }
+						OR = {
+							AND = {
+								NOT = { ROOT = { A49_opinion_country_admin_or_pop = { racial = kobold } } }
+								OR = {
+									has_country_modifier = kobold_administration
+									AND = {
+										NOT = { ROOT = { any_known_country = { has_country_modifier = kobold_administration } } }
+										fast_owns_num_pops_of_race = { race = kobold amount = 1 }
+									}
+								}
+							}
+							AND = {
+								NOT = { ROOT = { A49_opinion_country_admin_or_pop = { racial = goblin } } }
+								OR = {
+									has_country_modifier = goblin_administration
+									AND = {
+										NOT = { ROOT = { any_known_country = { has_country_modifier = goblin_administration } } }
+										fast_owns_num_pops_of_race = { race = goblin amount = 1 }
+									}
+								}
+							}
+							AND = {
+								NOT = { ROOT = { A49_opinion_country_admin_or_pop = { racial = gnomish } } }
+								OR = {
+									has_country_modifier = gnomish_administration
+									AND = {
+										NOT = { ROOT = { any_known_country = { has_country_modifier = gnomish_administration } } }
+										fast_owns_num_pops_of_race = { race = gnomish amount = 1 }
+									}
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					A49_valid_wyvern_farm_province = yes
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 8
+								A49_is_wyvern_farm = yes
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 6513 #Hogzhaad
+					NOT = { has_building = university }
+					has_no_ongoing_construction = no
+				}
+			}
+		}
+
+		trigger = {
+			A49_opinion_country_admin_or_pop = { racial = kobold }
+			A49_opinion_country_admin_or_pop = { racial = goblin }
+			A49_opinion_country_admin_or_pop = { racial = gnomish }
+			num_of_owned_provinces_with = {
+				value = 8
+				A49_is_wyvern_farm = yes
+			}
+			if = {
+				limit = { has_dlc = "Cradle of Civilization" }
+				custom_trigger_tooltip = {
+					tooltip = A49_brainiac_adm_advisor_5_tt
+					has_adm_advisor_of_level = { level = 5 }
+				}
+				custom_trigger_tooltip = {
+					tooltip = A49_brainiac_dip_advisor_5_tt
+					has_dip_advisor_of_level = { level = 5 }
+				}
+				custom_trigger_tooltip = {
+					tooltip = A49_brainiac_mil_advisor_5_tt
+					has_mil_advisor_of_level = { level = 5 }
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = A49_brainiac_adm_advisor_3_tt
+					has_adm_advisor_of_level = { level = 3 }
+				}
+				custom_trigger_tooltip = {
+					tooltip = A49_brainiac_dip_advisor_3_tt
+					has_dip_advisor_of_level = { level = 3 }
+				}
+				custom_trigger_tooltip = {
+					tooltip = A49_brainiac_mil_advisor_3_tt
+					has_mil_advisor_of_level = { level = 3 }
+				}
+			}
+			6513 = { #Hogzhaad
+				OR = {
+					has_building = university
+					has_no_ongoing_construction = yes
+				}
+			}
+		}
+
+		effect = {
+			6513 = { #Hogzhaad
+				add_kobold_minority_size_effect = yes
+				add_kobold_minority_size_effect = yes
+				add_goblin_minority_size_effect = yes
+				add_goblin_minority_size_effect = yes
+				add_gnomish_minority_size_effect = yes
+				add_gnomish_minority_size_effect = yes
+				if = {
+					limit = { NOT = { has_building = university } }
+					add_building_construction = {
+						building = university
+						speed = 2
+						cost = 0
+					}
+				}
+				change_province_name = "Xalgazelag-inva"
+			}
+			A49_early_artificer_unlock_increment = yes
+		}
+	}
+}
+
+A49_2_post_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_formed_igraxraak
+	} 
+
+	A49_expanded_gene_clinics = {
+		icon = mission_kobold
+		position = 14
+		required_missions = { A49_invite_established_brainiacs } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			treasury = 10000
+			OR = {
+				full_idea_group = innovativeness_ideas
+				innovativeness = 75
+			}
+			OR = {
+				production_leader = { trade_goods = ivory }
+				trading_bonus = { 
+					trade_goods = ivory
+					value = yes
+				}
+			}
+		}
+
+		effect = {
+			add_treasury = -10000
+			largest_increase_of_kobold_tolerance_effect = yes
+			add_innovativeness_or_monarch_power_anb = { amount = 10 }
+			add_country_modifier = {
+				name = A49_pushing_biological_boundaries
+				duration = -1
+			}
+			A49_early_artificer_unlock_increment = yes
+		}
+	}
+
+	A49_gnoll_test_subjects = {
+		icon = mission_machine
+		position = 16
+		required_missions = {
+			A49_artificers_in_being
+			A49_gnollish_berserker_potions
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			production_leader = { trade_goods = livestock }
+			num_of_rajput = 20
+			has_country_modifier = racial_focus_kobold
+		} 
+
+		effect = {
+			custom_tooltip = A49_alternate_prehensile_tail_unlock_tt
+			set_country_flag = A49_alternate_prehensile_tail_unlock
+			set_country_flag = unlocked_artifice_invention_prehensile_tail_attachments
+		}
+	}
+}
+
+A49_3_pre = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = A49 } 
+	
+	A49_break_our_rusty_cage = {
+		icon = mission_obsidian_blades
+		position = 2
+		required_missions = { A49_vie_the_vrestukex } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			num_of_cities = 10
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = A49_expansive_measures
+				duration = 7300
+			}
+		} 
+	}
+
+	A49_strangle_their_trade = {
+		icon = mission_disrupt_portuguese_trade
+		position = 3
+		required_missions = { A49_break_our_rusty_cage } 
+		provinces_to_highlight = {
+			area = isle_of_tef_area
+			NOT = {
+				OR = {
+					has_province_modifier = slaves_raided
+					has_building = naval_battery
+					owned_by = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			navy_size_percentage = 0.75
+			num_of_admirals = 1
+			isle_of_tef_area = {
+				type = ALL
+				OR = {
+					has_province_modifier = slaves_raided
+					has_building = naval_battery
+					owned_by = ROOT
+				}
+			}
+			OR = {
+				trade_embargoing = A47 #Eborthil
+				isle_of_tef_area = {
+					type = all
+					NOT = { owned_by = A47 } #Eborthil
+				}
+			}
+		}
+
+		effect = {
+			isle_of_tef_area = {
+				add_claim = ROOT
+			}
+			add_country_modifier = {
+				name = A49_clogged_straits
+				duration = 9125
+			}
+		}
+	}
+
+	A49_return_to_the_old_capital = {
+		icon = dalmatian_conquest
+		position = 4
+		required_missions = {
+			A49_the_brainmarrow_pact
+			A49_strangle_their_trade 
+		} 
+		provinces_to_highlight = {
+			province_id = 365
+		}
+
+		trigger = {
+			owns_core_province = 365 #Port Jaher
+			365 = { #Port Jaher
+				development = 25
+				province_has_center_of_trade_of_level = 2
+			}
+		}
+
+		effect = {
+			set_capital = 365 #Port Jaher
+			365 = { #Port Jaher
+				rename_capital = "Port Xanzerbexis"
+				change_province_name = "Port Xanzerbexis"
+				change_religion = ROOT
+				change_culture = ROOT
+				add_building = state_house
+			}
+			add_stability_or_adm_power = yes
+		} 
+	}
+
+	A49_a_home_in_the_hills = {
+		icon = alpine_fortifications
+		position = 5
+		required_missions = { A49_return_to_the_old_capital } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 365 #Port Jaher
+					NOT = { development = 30 }
+				}
+				AND = {
+					region = businor_region
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+						}
+					}
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 20
+								is_core = ROOT
+								region = businor_region
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			government_reform_progress = 200
+			365 = { #Port Jaher
+				development = 30
+			}
+			num_of_owned_provinces_with = {
+				value = 20
+				is_core = ROOT
+				region = businor_region
+			}
+		}
+
+		effect = {
+			change_government_reform_progress = -200
+			override_country_name = A49_name_igraxraak
+			set_country_flag = A49_formed_igraxraak
+			change_government = monarchy
+			add_government_reform = A49_hillthrone_kingdom_reform
+			365 = { #Port Jaher
+				change_trade_goods = dyes
+			}
+			swap_non_generic_missions = yes #reload MT to load in the rest of the missions
+		} 
+	}
+}
+
+A49_3_post_1 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_formed_igraxraak
+	} 
+
+	A49_brainmarrow_success = {
+		icon = mission_book_of_royal_degrees
+		position = 6
+		required_missions = {
+			A49_a_home_in_the_hills
+			A49_our_way_forward
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			any_ally = {
+				capital_scope = { superregion = western_cannor_superregion }
+			}
+			has_institution = renaissance
+			OR = {
+				is_ahead_of_time_in_technology = { tech = adm }
+				is_ahead_of_time_in_technology = { tech = dip }
+				is_ahead_of_time_in_technology = { tech = mil }
+			}
+		} 
+
+		effect = {
+			add_innovativeness_or_monarch_power_anb = { amount = 10 }
+			custom_tooltip = A49_brainmarrow_success_tt
+			hidden_effect = {
+				377 = { #Akaz Lokkex
+					remove_province_triggered_modifier = A49_brainmarrow_pact_tm
+				}
+				every_country = {
+					clr_country_flag = A49_unlocked_merc_brainmarrow_pact
+				}
+			}
+		} 
+	}
+
+	A49_when_money_comes_marching_home = {
+		icon = mission_swiss_mercenaries_flipped
+		position = 7
+		required_missions = { A49_brainmarrow_success } 
+		provinces_to_highlight = {
+			superregion = western_cannor_superregion
+			is_capital = yes
+			owner = {
+				OR = {
+					has_country_modifier = human_administration
+					has_country_modifier = half_elven_administration
+				}
+				is_at_war = yes
+				#Below are common conditions that prevent sending condottieri
+				NOT = { 
+					OR = {
+						is_subject = yes
+						ROOT = { is_rival = PREV }
+						any_war_enemy_country = { ROOT = { truce_with = PREV } } 
+						AND = {
+							is_in_deficit = yes
+							num_of_loans = 1
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = A49_when_money_comes_marching_home_tt
+				any_known_country = {
+					OR = {
+						has_country_modifier = human_administration
+						has_country_modifier = half_elven_administration
+					}
+					capital_scope = { superregion = western_cannor_superregion }
+					is_at_war = yes
+					ROOT = { is_renting_condottieri_to = PREV }
+					war_score = 50
+				}
+			}
+		} 
+
+		effect = {
+			add_treasury = 500
+			decrease_monstrous_2 = yes
+			add_country_modifier = {
+				name = A49_marching_dogs
+				duration = -1
+			}
+			random_known_country = {
+				limit = {
+					OR = {
+						has_country_modifier = human_administration
+						has_country_modifier = half_elven_administration
+					}
+					capital_scope = { superregion = western_cannor_superregion }
+					is_at_war = yes
+					ROOT = { is_renting_condottieri_to = PREV }
+					war_score = 50
+				}
+				add_historical_friend = ROOT 
+				ROOT = { add_historical_friend = PREV }
+			}
+		} 
+	}
+
+	A49_human-gnoll_culture_exchanges = {
+		icon = mission_missive
+		position = 8
+		required_missions = { A49_entice_human_migrants } 
+		provinces_to_highlight = {
+			province_id = 417 #Tellum
+			NOT = {
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						OR = {
+							historical_friend_with = ROOT
+							AND = {
+								is_subject = yes
+								overlord = { historical_friend_with = ROOT }
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				full_idea_group = mercenary_ideas
+				mil_power = 300
+			}
+			high_tolerance_human_race_trigger = yes
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = A49_human-gnoll_culture_exchanges_statesman_2_tt
+					employed_advisor = {
+						type = statesman
+						skill = 2
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = A49_human-gnoll_culture_exchanges_diplomat_2_tt
+					employed_advisor = {
+						type = diplomat
+						skill = 2
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = A49_human-gnoll_culture_exchanges_tt
+				OR = {
+					owns_or_non_sovereign_subject_of = 417 #Tellum
+					any_known_country = {
+						historical_friend_with = ROOT
+						owns_or_non_sovereign_subject_of = 417 #Tellum
+					}
+				}
+			}
+		} 
+
+		effect = {
+			set_country_flag = A49_unlocked_merc_tellumite_pink_barkers
+			custom_tooltip = A49_unlocked_merc_tellumite_pink_barkers_tt
+			
+			417 = { #Tellum
+				if = {
+					limit = { NOT = { owned_by = ROOT } }
+					owner = { largest_increase_of_gnollish_tolerance_effect = yes }
+				}
+				add_gnollish_minority_size_effect = yes
+			}
+			add_country_modifier = {
+				name = A49_criers_of_the_hills
+				duration = -1
+			}
+		} 
+	}
+
+	A49_losing_my_religion = {
+		icon = mission_european_church
+		position = 10
+		required_missions = {
+			A49_port_xanzerbexis_amphitheatre
+			A49_human-gnoll_culture_exchanges
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = A49_crimson_deluge_tt
+					has_global_flag = crimson_deluge
+				}
+				religion_group = cannorian
+			}
+			has_estate_privilege = estate_burghers_enforced_interfaith_dialogue
+		} 
+
+		effect = {
+			country_event = { id = flavour_xanzerbexis.10 } #Question of Faith
+			decrease_monstrous_3 = yes
+			set_country_flag = enforced_interfaith_dialogue_buff_flag
+			add_country_modifier = {
+				name = A49_faith_united
+				duration = -1
+			}
+		} 
+	}
+
+	A49_undermine_the_ivemkverag = {
+		icon = mission_confrontation
+		position = 12
+		required_missions = {
+			A49_secure_the_khenak
+			A49_losing_my_religion
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			NOT = {
+				estate_influence = {
+					estate = estate_nobles
+					influence = 50
+				}
+			}
+			has_any_disaster = no
+			NOT = { has_estate_privilege = estate_nobles_land_rights }
+		} 
+
+		effect = {
+			country_event = { id = flavour_xanzerbexis.11 } #Not Without A Fight
+			decrease_monstrous_2 = yes
+			set_country_flag = A49_unlock_progress_at_all_costs
+		} 
+	}
+}
+
+A49_3_extra = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_unlock_progress_at_all_costs
+	} 
+
+	A49_progress_at_all_costs = {
+		icon = mission_beheading
+		position = 13
+		required_missions = { A49_undermine_the_ivemkverag } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			has_rebel_faction = noble_rebels
+		}
+
+		trigger = {
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { any_owned_province = { has_rebel_faction = noble_rebels } }
+			stability = 2
+			crown_land_share = 30
+		} 
+
+		effect = {
+			change_estate_land_share = {
+				estate = estate_nobles
+				share = -100
+			}
+			set_country_flag = disables_estate_nobles_flag
+			A49_early_artificer_unlock_increment = yes
+		}
+	}
+}
+
+A49_3_post_2 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_formed_igraxraak
+	} 
+
+	A49_gommo_coal_powered_mutagenic_vats = {
+		icon = mission_tech_stuff
+		position = 14
+		required_missions = { A49_invite_established_brainiacs } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 380 #Eborthil
+					OR = {
+						NOT = { development = 20 }
+						has_manufactory_trigger = no
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					trade_goods = glass
+					OR = {
+						NOT = { base_production = 20 }
+						has_manufactory_trigger = no
+					}
+					NOT = {
+						ROOT = {
+							any_owned_province = {
+								trade_goods = glass
+								base_production = 20
+								has_manufactory_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			380 = { #Eborthil
+				development = 20
+				has_manufactory_trigger = yes
+			}
+			any_owned_province = {
+				trade_goods = glass
+				base_production = 20
+				has_manufactory_trigger = yes
+			}
+		} 
+
+		effect = {
+			6513 = { #Hogzhaad
+				add_province_modifier = {
+					name = A49_mutagenic_vats
+					duration = -1
+				}
+			}
+			380 = { #Eborthil
+				change_trade_goods = coal
+			}
+			largest_increase_of_gnomish_tolerance_effect = yes
+			A49_early_artificer_unlock_increment = yes
+		}
+	}
+
+	A49_gnollish_berserker_potions = {
+		icon = mission_potion
+		position = 15
+		required_missions = {
+			A49_expanded_gene_clinics
+			A49_gommo_coal_powered_mutagenic_vats
+		}
+		provinces_to_highlight = {
+			trade_goods = damestear
+			has_discovered = ROOT
+			NOT = { ROOT = { any_owned_province = { trade_goods = damestear } } }
+		}
+
+		trigger = {
+			any_owned_province = {
+				trade_goods = damestear
+			}
+			treasury = 5000
+			custom_trigger_tooltip = {
+				tooltip = A49_gnollish_berserker_potions_tt
+				if = {
+					limit = { NOT = { num_artifice_inventions_discovered = { VAL = 5 } } }
+					if = {
+						limit = { num_artifice_inventions_discovered = { VAL = 4 } }
+						anb_require_all_power = { VAL = 50 }
+					}
+					else_if = {
+						limit = { num_artifice_inventions_discovered = { VAL = 3 } }
+						anb_require_all_power = { VAL = 100 }
+					}
+					else_if = {
+						limit = { num_artifice_inventions_discovered = { VAL = 2 } }
+						anb_require_all_power = { VAL = 150 }
+					}
+					else_if = {
+						limit = { num_artifice_inventions_discovered = { VAL = 1 } }
+						anb_require_all_power = { VAL = 200 }
+					}
+					else = {
+						anb_require_all_power = { VAL = 250 }
+					}
+				}
+			}
+		}
+
+		effect = {
+			add_treasury = -5000
+			if = {
+				limit = { num_artifice_inventions_discovered = { VAL = 5 } }
+				#nothing happens
+			}
+			else_if = {
+				limit = { num_artifice_inventions_discovered = { VAL = 4 } }
+				anb_remove_all_power = { VAL = 50 }
+			}
+			else_if = {
+				limit = { num_artifice_inventions_discovered = { VAL = 3 } }
+				anb_remove_all_power = { VAL = 100 }
+			}
+			else_if = {
+				limit = { num_artifice_inventions_discovered = { VAL = 2 } }
+				anb_remove_all_power = { VAL = 150 }
+			}
+			else_if = {
+				limit = { num_artifice_inventions_discovered = { VAL = 1 } }
+				anb_remove_all_power = { VAL = 200 }
+			}
+			else = {
+				anb_remove_all_power = { VAL = 250 }
+			}
+			custom_tooltip = unlocked_artifice_invention_wyvern_blood_tincture_tt
+			set_country_flag = unlocked_artifice_invention_wyvern_blood_tincture
+		} 
+	}
+
+	A49_gnollish_ascendancy = {
+		icon = mission_new_dawn
+		position = 17
+		required_missions = {
+			A49_gnoll_test_subjects
+			A49_the_wyvern_dominion
+		}
+		provinces_to_highlight = {
+			province_id = 6513 #Hogzhaad
+			NOT = { development = 60 }
+		}
+
+		trigger = {
+			num_of_rajput = 200
+			6513 = { #Hogzhaad
+				development = 60
+			}
+			num_of_owned_provinces_with = {
+				value = 15
+				has_province_modifier = A49_artificer_barracks
+			}
+		} 
+		effect = {
+			custom_tooltip = unlocked_artifice_invention_gnollverns_tt
+			set_country_flag = unlocked_artifice_invention_gnollverns
+		}
+	}
+}
+
+A49_4_pre = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = A49 } 
+
+	A49_block_the_mountains = {
+		icon = alpine_defenses
+		position = 3
+		required_missions = { A49_break_our_rusty_cage } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 362 #Enket's Pass
+					OR = {
+						NOT = { owned_by = ROOT }
+						has_fort_building_trigger = no
+					}
+				}
+				AND = {
+					province_id = 366 #Lorbet
+					OR = {
+						NOT = { owned_by = ROOT }
+						has_fort_building_trigger = no
+					}
+				}
+				AND = {
+					culture = busilari
+					NOT = { owned_by = ROOT }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 10
+								culture = busilari
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			362 = { #Enket's Pass
+				owned_by = ROOT
+				has_fort_building_trigger = yes
+			}
+			366 = { #Lorbet
+				owned_by = ROOT
+				has_fort_building_trigger = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				culture = busilari
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_xanzerbexis.5 } #Busilari Flee Southward
+		}
+	}
+
+	A49_our_way_forward = {
+		icon = mission_monarch_diplomacy
+		position = 5
+		required_missions = {
+			A49_return_to_the_old_capital
+			A49_block_the_mountains
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			culture = busilari
+			unrest = 1
+		}
+
+		trigger = {
+			all_owned_province = {
+				OR = {
+					NOT = { culture = busilari }
+					AND = {
+						culture = busilari
+						NOT = { unrest = 1 }
+					}
+				}
+			}
+			not_low_tolerance_generic_race_trigger = { race = human }
+			accepted_culture = busilari
+		}		
+
+		effect = {
+			country_event = {
+				id = flavour_xanzerbexis.16
+				days = 3650
+			}
+			decrease_monstrous_2 = yes
+			start_demonsterization_effect = yes
+			if = {
+				limit = { NOT = { has_country_modifier = monstrous_nation } }
+				add_dip_power = 100
+			}
+		}
+	}
+}
+
+A49_4_post_1 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_formed_igraxraak
+	} 
+
+	A49_invite_our_cousins = {
+		icon = mission_gain_mana
+		position = 6
+		required_missions = { A49_our_way_forward } 
+		provinces_to_highlight = {
+			has_discovered = ROOT
+			NOT = { owned_by = ROOT }
+			has_port = yes
+			is_empty = no #Skip uncolonized provinces
+			fast_has_pop_of_race = { race = gnollish }
+		}
+
+		trigger = {
+			any_known_country = {
+				has_opinion = {
+					who = ROOT
+					value = 100
+				}
+				custom_trigger_tooltip = {
+					tooltip = A49_invite_our_cousins_tt
+					any_owned_province = {
+						has_port = yes
+						fast_has_pop_of_race = { race = gnollish }
+						sea_zone = {
+							transports_in_province = 20
+							transports_in_province = ROOT
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = A49_invite_our_cousins_effect_tt
+			hidden_effect = {
+				random_province = {
+					limit = {
+						has_port = yes
+						fast_has_pop_of_race = { race = gnollish }
+						owner = { 
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+						sea_zone = {
+							transports_in_province = 20
+							transports_in_province = ROOT
+						}
+					}
+					sea_zone = {
+						kill_units = {
+							who = ROOT
+							type = transport
+							amount = 20
+						}
+					}
+				}
+			}
+			country_event = { id = flavour_xanzerbexis.12 } #Welcome to your new home
+		}
+	}
+
+	A49_entice_human_migrants = {
+		icon = mission_dominate_home_trade_node
+		position = 7
+		required_missions = { A49_invite_our_cousins } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			stability = 3
+			monthly_income = 100
+		}
+
+		effect = {
+			businor_region = {
+				limit = { owned_by = ROOT }
+				add_province_modifier = {
+					name = A49_human_resurgence
+					duration = 10950
+				}
+			}
+			country_event = { id = flavour_xanzerbexis.13 } #Human Migrants Arrive
+		}
+	}
+
+	A49_home_with_no_borders = {
+		icon = geo_a_house_divided
+		position = 9
+		required_missions = {
+			A49_human-gnoll_culture_exchanges
+			A49_entice_human_migrants
+		}
+		provinces_to_highlight = {
+			region = businor_region
+			OR = {
+				NOT = { development = 30 }
+				NOT = { num_of_buildings_in_province = 5 }
+				has_manufactory_trigger = no
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 10
+				region = businor_region
+				development = 30
+				num_of_buildings_in_province = 5
+				has_manufactory_trigger = yes
+			}
+		} 
+
+		effect = {
+			custom_tooltip = A49_home_with_no_borders_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						region = businor_region
+						development = 30
+						num_of_buildings_in_province = 5
+						has_manufactory_trigger = yes
+					}
+					ROOT = {
+						random_owned_province = {
+							limit = {
+								NOT = { region = businor_region }
+								is_core = ROOT
+								NOT = { has_province_flag = A49_add_businor_dev }
+							}
+							add_random_development = 1
+							set_province_flag = A49_add_businor_dev
+						}
+						random_owned_province = {
+							limit = {
+								NOT = { region = businor_region }
+								is_core = ROOT
+								NOT = { has_province_flag = A49_add_businor_dev }
+							}
+							add_random_development = 1
+							set_province_flag = A49_add_businor_dev
+						}
+						random_owned_province = {
+							limit = {
+								NOT = { region = businor_region }
+								is_core = ROOT
+								NOT = { has_province_flag = A49_add_businor_dev }
+							}
+							add_random_development = 1
+							set_province_flag = A49_add_businor_dev
+						}
+						every_owned_province = {
+							clr_province_flag = A49_add_businor_dev
+						}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = A49_axatala
+				duration = -1
+			}
+			country_event = { id = flavour_xanzerbexis.14 } #Axatala!
+			custom_tooltip = A49_home_with_no_borders_axatala_tt
+		}
+	}
+
+	A49_a_knife_to_our_back = {
+		icon = mission_assassination
+		position = 11
+		required_missions = {
+			A49_losing_my_religion
+			A49_brothers_from_the_past
+		}
+		provinces_to_highlight = {
+			region = daravans_folly_region
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+				has_manpower_building_trigger = no
+			}
+		}
+
+		trigger = {
+			daravans_folly_region = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+				has_manpower_building_trigger = yes
+			}
+			development_in_provinces = {
+				value = 200
+				region = daravans_folly_region
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_xanzerbexis.15 } #Call on our Human Allies
+		} 
+	}
+
+	A49_a_progressive_empire = {
+		icon = mission_science
+		position = 13
+		required_missions = {
+			A49_undermine_the_ivemkverag
+			A49_a_knife_to_our_back
+		}
+		provinces_to_highlight = {
+			is_capital = yes
+			OR = {
+				region = the_borders_region
+				region = esmaria_region
+				region = east_dameshead_region
+			}
+			owner = {
+				NOT = { total_development = 100 }
+				OR = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_allied
+					}
+				}
+			}
+		}
+
+		trigger = {
+			treasury = 2000
+			government_rank = 3
+			any_known_country = {
+				capital_scope = {
+					OR = {
+						region = the_borders_region
+						region = esmaria_region
+						region = east_dameshead_region
+					}
+				}
+				NOT = { total_development = 100 }
+				OR = {
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_friendly
+					}
+					ai_attitude = {
+						who = ROOT
+						attitude = attitude_allied
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = A49_a_progressive_empire_tt
+				has_country_flag = A49_flamemarked_pacified
+			}
+		} 
+
+		effect = {
+			custom_tooltip = A49_a_progressive_empire_effect_tt
+			every_known_country = {
+				limit = {
+					capital_scope = {
+						OR = {
+							region = the_borders_region
+							region = esmaria_region
+							region = east_dameshead_region
+						}
+					}
+					NOT = { total_development = 100 }
+					OR = {
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_friendly
+						}
+						ai_attitude = {
+							who = ROOT
+							attitude = attitude_allied
+						}
+					}
+				}
+				country_event = { id = flavour_xanzerbexis.18 } #Leaving Oppression
+			}
+		}
+	}
+}
+
+A49_4_post_2 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_formed_igraxraak
+	} 
+
+	A49_down_with_the_oppressors = {
+		icon = mission_thirty_years_war
+		position = 14
+		required_missions = { A49_a_progressive_empire } 
+		provinces_to_highlight = {
+			OR = {
+				region = businor_region
+				region = the_borders_region
+			}
+			NOT = { owned_by = ROOT }
+		}
+
+		trigger = {
+			OR = {
+				eoa_is_dismantled = yes
+				AND = {
+					power_projection = 50
+					NOT = { truce_with = emperor }
+					army_size = 200
+					businor_region = {
+						type = all 
+						owned_by = ROOT 
+					}
+					the_borders_region = {
+						type = all 
+						owned_by = ROOT 
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { eoa_is_dismantled = no }
+				set_country_flag = A49_dismantling_hre
+				declare_war_with_cb = {
+					who = emperor
+					casus_belli = cb_humiliate_rotw
+				}
+				every_country = {
+					limit = {
+						is_part_of_hre = yes
+						is_emperor = no
+						NOT = { alliance_with = ROOT }
+						NOT = { is_subject_of = ROOT }
+					}
+					join_all_defensive_wars_of = emperor
+				}
+				custom_tooltip = A49_down_with_the_oppressors_benefit_tt
+			}
+			else = {
+				country_event = { id = flavour_xanzerbexis.19 } #Gives the extra reward for dismantling the Empire of Anbennar if you already did it previously
+			}
+		}
+	}
+
+	A49_the_wyvern_dominion = {
+		icon = mission_arca_ore
+		position = 16
+		required_missions = { A49_down_with_the_oppressors } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				has_terrain = hills
+				has_terrain = mountain
+				has_terrain = highlands
+			}
+			NOT = {
+				ROOT = {
+					development_in_provinces = {
+						value = 1000
+						OR = {
+							has_terrain = mountain
+							has_terrain = hills
+							has_terrain = highlands
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			development_in_provinces = {
+				value = 1000
+				OR = {
+					has_terrain = mountain
+					has_terrain = hills
+					has_terrain = highlands
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				A49_is_wyvern_farm = yes
+			}
+		} 
+
+		effect = {
+			custom_tooltip = A49_the_wyvern_dominion_farm_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = { A49_is_wyvern_farm = yes }
+					if = {
+						limit = { has_terrain = mountain }
+						add_province_modifier = {
+							name = A49_wyvern_dominion_mountain
+							duration = -1
+						}
+					}
+					if = {
+						limit = { has_terrain = hills }
+						add_province_modifier = {
+							name = A49_wyvern_dominion_hills
+							duration = -1
+						}
+					}
+					if = {
+						limit = { has_terrain = highlands }
+						add_province_modifier = {
+							name = A49_wyvern_dominion_highlands
+							duration = -1
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+A49_5_pre = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = A49 } 
+
+	A49_the_rolling_stones = {
+		icon = mission_nomad
+		position = 4
+		required_missions = { A49_block_the_mountains } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 364 #Mount Khenak
+					NOT = {
+						num_of_units_in_province = {
+							who = ROOT
+							amount = 30
+						}
+					}
+				}
+				AND = {
+					province_id = 913
+					owner = {
+						NOT = {
+							has_opinion_modifier = {
+								who = ROOT
+								modifier = scornfully_insulted
+							}
+						}
+						NOT = {
+							AND = {
+								alliance_with = ROOT
+								trust = { who = ROOT value = 60 }
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { 913 = { owned_by = ROOT } } #Invisible bypass if people already conquered the province
+				913 = { owned_by = ROOT }
+			}
+			else = {
+				913 = { #Gnollsgate
+					owner = {
+						OR = {
+							has_opinion_modifier = {
+								who = ROOT
+								modifier = scornfully_insulted
+							}
+							AND = {
+								alliance_with = ROOT
+								trust = { who = ROOT value = 60 }
+							}
+						}
+					}
+				}
+				364 = { #Mount Khenak
+					num_of_units_in_province = {
+						who = ROOT
+						amount = 30
+					}
+				}
+				manpower = 5
+			}
+		} 
+
+		effect = {
+			if = {
+				limit = { 913 = { owned_by = ROOT } }
+				add_prestige = 30
+			}
+			else = {
+				913 = { #Gnollsgate
+					owner = { country_event = { id = flavour_xanzerbexis.6 } } #They threatened to do what?
+				}
+			}
+		} 
+	}
+}
+
+A49_5_post = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_formed_igraxraak
+	} 
+
+	A49_smoke_on_the_water = {
+		icon = mission_sinister_castle
+		position = 6
+		required_missions = { A49_our_way_forward } 
+		provinces_to_highlight = {
+			province_id = 451
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+				NOT = { development = 30 }
+				unrest = 0
+			}
+		}
+
+		trigger = {
+			owns_core_province = 451 #Nathalaire
+			451 = { #Nathalaire
+				development = 30
+				NOT = { unrest = 0 }
+			}
+		} 
+
+		effect = {
+			451 = { #Nathalaire
+				change_trade_goods = naval_supplies
+				add_building = naval_battery
+				add_building = impressment_offices
+			}
+			flooded_coast_area = {
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+
+	A49_brothers_from_the_past = {
+		icon = trade_with_the_natives
+		position = 10
+		required_missions = { A49_smoke_on_the_water } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = flooded_coast_area
+					OR = {
+						NOT = { owned_by = ROOT }
+						NOT = { is_core = ROOT }
+						has_manpower_building_trigger = no
+					}
+				}
+				AND = {
+					province_id = 1303 #Dostanesck trade node
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 50
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			flooded_coast_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+				has_manpower_building_trigger = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = A49_brothers_from_the_past_tt
+				1303 = { #Dostanesck trade node
+					trade_share = {
+						country = ROOT
+						share = 50
+					}
+				}
+			}
+		}
+
+		effect = {
+			flooded_coast_area = {
+				change_culture = flamemarked_gnoll
+			}
+			daravans_folly_region = {
+				
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+}
+
+A49_5_extra = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		tag = A49 
+		has_country_flag = A49_flamemarked_revolt
+	} 
+	
+	A49_an_unwelcoming_kullt = {
+		icon = mission_burning_parthenon
+		position = 12
+		required_missions = { A49_a_knife_to_our_back } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			continent = europe
+			OR = {
+				religion = xhazobkult
+				has_rebel_faction = xhazobkult_rebels
+			}
+		}
+
+		trigger = {
+			NOT = {
+				any_owned_province = {
+					continent = europe
+					OR = {
+						religion = xhazobkult
+						has_rebel_faction = xhazobkult_rebels
+					}
+				}
+			}
+			NOT = { num_of_rebel_armies = 1 }
+		}
+
+		effect = {
+			decrease_monstrous_10 = yes
+			daravans_folly_region = {
+				remove_province_modifier = A49_flamemark_takeover
+				add_province_modifier = {
+					name = A49_enlightened_mob
+					duration = -1
+				}
+			}
+			set_country_flag = A49_unlocked_merc_heroes_of_the_folly
+			custom_tooltip = A49_unlocked_merc_heroes_of_the_folly_tt
+			set_country_flag = A49_flamemarked_pacified
+		}
+	}
+}
+

@@ -1,0 +1,1281 @@
+#coded by schwendigo
+khasa_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = F57
+	}
+	has_country_shield = yes
+
+	khasa_revitalizing_the_coast = {
+		icon = mission_pol_breadbasket_europe
+		required_missions = { khasa_from_the_ashes }
+		position = 2
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = ROOT
+					trade_goods = grain
+				}
+				province_id = 386
+			}
+			NOT = {
+				AND = {
+					devastation = 0.01
+					base_production = 5
+					has_state_edict = edict_encourage_development
+				}
+			}
+			region = akasik_region
+		}
+
+		trigger = {
+			386 = { #Akasat
+				NOT = { devastation = 0.01 }
+				base_production = 5
+				has_state_edict = edict_encourage_development
+			}
+			akasik_region = {
+				type = all
+				OR = {
+					AND = {
+						NOT = { devastation = 0.01 }
+						base_production = 5
+						has_state_edict = edict_encourage_development
+					}
+					NOT = { trade_goods = grain }
+					NOT = { owned_by = ROOT }
+				}
+			}
+		}
+
+		effect = {
+			386 = { #Akasat
+				change_trade_goods = grain
+			}
+			every_owned_province = {
+				limit = {
+					region = akasik_region
+					trade_goods = grain
+				}
+				add_building = workshop
+				if = {
+					limit = {
+						ROOT = {
+							OR = {
+								has_personal_deity = akasik_resilience_1
+								has_personal_deity = akasik_resilience_2
+								has_personal_deity = akasik_resilience_3
+							}
+						}
+					}
+					add_base_production = 1
+				}
+				else = {
+					custom_tooltip = khasa_resilience_reward_tt
+				}
+			}
+		}
+	}
+
+	khasa_dictate_the_republic = {
+		icon = secure_the_republic
+		required_missions = { khasa_revitalizing_the_coast khasa_preparing_supplies }
+		position = 3
+
+		provinces_to_highlight = {
+			
+		}
+
+		trigger = {
+			OR = {
+				ekha_area = {
+					type = all
+					owned_by = ROOT
+				}
+				AND = {
+					custom_trigger_tooltip = {
+						tooltip = khasa_spawned_from_ekha_tt
+						has_country_flag = khasa_from_ekha
+					}
+					U08 = {
+						is_subject_of = ROOT
+						NOT = { liberty_desire = 25 }
+						NOT = { num_of_cities = 15 }
+					}
+				}
+			}
+			U08 = {
+				OR = {
+					is_subject_of = ROOT
+					exists = no
+				}
+			}
+			402 = {
+				province_has_center_of_trade_of_level = 2
+			}
+			estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 60
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					has_country_flag = khasa_from_ekha
+				}
+				inherit = U08
+			}
+			402 = {
+				add_permanent_province_modifier = {
+					name = khasa_trade_city
+					duration = -1
+				}
+				light_ship = ROOT
+				light_ship = ROOT
+				light_ship = ROOT
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = {
+							402 = {
+								province_has_center_of_trade_of_level = 2
+							}
+						}
+					}
+					402 = {
+						add_center_of_trade_level = 1
+					}
+				}
+			}
+		}
+	}
+}
+
+khasa_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = F57
+	}
+	has_country_shield = yes
+
+	khasa_preparing_supplies = {
+		icon = public_works
+		required_missions = { khasa_from_the_ashes }
+		position = 2
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 400
+					NOT = {
+						AND = {
+							has_trade_building_trigger = yes
+							province_has_center_of_trade_of_level = 2
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+					}
+				}
+				AND = {
+					province_id = 383
+					NOT = {
+						AND = {
+							has_fort_building_trigger = yes
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+					}
+				}
+				AND = {
+					province_id = 395
+					NOT = {
+						base_production = 5
+					}
+				}
+			}
+		}
+
+		trigger = {
+			400 = { #Khasa
+				has_trade_building_trigger = yes
+				province_has_center_of_trade_of_level = 2
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			383 = { #Desh-al-akasik
+				has_fort_building_trigger = yes
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			395 = { #Ciraxif/Srihaf
+				base_production = 5
+			}
+		}
+
+		effect = {
+			set_country_flag = khasa_genie_relic
+			custom_tooltip = khasa_relic_tt
+			383 = {
+				add_permanent_province_modifier = {
+					name = khasa_restoration_efforts
+					duration = 5475
+				}
+			}
+			ekha_area = {
+				add_permanent_claim = ROOT
+			}
+			akarat_area = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	khasa_moving_back_in = {
+		icon = mission_el_badi_palace
+		required_missions = { khasa_preparing_supplies khasa_new_ideas_across_the_sea }
+		position = 3
+
+		provinces_to_highlight = {
+			province_id = 383
+		}
+
+		trigger = {
+			383 = {
+				has_great_project = {
+					type = aur_kes_akasik
+					tier = 1
+				}
+				OR = {
+					num_of_times_expanded_infrastructure = 1
+					development = 16
+				}
+				owned_by = ROOT
+			}
+		}
+
+		effect = {
+			400 = {
+				add_base_tax = -2
+				add_base_manpower = -2
+			}
+			set_capital = 383
+			383 = {
+				add_base_tax = 2
+				add_base_manpower = 2
+			}
+			country_event = {
+				id = planetouched.103
+			}
+		}
+	}
+
+	khasa_life_on_the_ocean = {
+		icon = mission_stormy_seas
+		required_missions = { khasa_dictate_the_republic khasa_moving_back_in khasa_filling_the_throne }
+		position = 4
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 382 #Deshak
+						province_id = 400 #Khasa
+						province_id = 402 #Ekha
+						province_id = 406 #Bus-akasu
+					}
+					NOT = {
+						has_dock_building_trigger = yes
+						has_coast_defense_building_trigger = yes
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 1300 #Dog coast
+						province_id = 1301 #Coast of deshak
+					}
+					NOT = {
+						1300 = { units_in_province = ROOT }
+						1301 = { units_in_province = ROOT }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			382 = { #Deshak
+				OR = {
+					has_dock_building_trigger = yes
+					has_coast_defense_building_trigger = yes
+				}
+			}
+			400 = { #Khasa
+				OR = {
+					has_dock_building_trigger = yes
+					has_coast_defense_building_trigger = yes
+				}
+			}
+			402 = { #Ekha
+				OR = {
+					has_dock_building_trigger = yes
+					has_coast_defense_building_trigger = yes
+				}
+			}
+			406 = { #Bus-akasu
+				OR = {
+					has_dock_building_trigger = yes
+					has_coast_defense_building_trigger = yes
+				}
+			}
+			OR = {
+				1300 = { #Dog coast
+					units_in_province = ROOT
+				}
+				1301 = { #Coast of deshak
+					units_in_province = ROOT
+				}
+			}
+			any_owned_province = {
+				has_province_modifier = khasa_summoned_storm
+			}
+		}
+
+		effect = {
+			custom_tooltip = khasa_fish_tt
+			tooltip = {
+				add_province_modifier = {
+					name = khasa_stormy_seas
+					duration = 365
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						has_province_modifier = khasa_summoned_storm
+						trade_goods = fish
+					}
+					add_permanent_province_modifier = {
+						name = khasa_stormy_seas
+						duration = 365
+					}
+				}
+			}
+			set_country_flag = khasa_fishy_weather
+			406 = { #Bus-akasu
+				change_trade_goods = fish
+			}
+			add_country_modifier = {
+				name = khasa_fishing_sailors
+				duration = -1
+			}
+		}
+	}
+
+	khasa_divenhal_diplomacy = {
+		icon = mission_discussion_arch
+		required_missions = { khasa_life_on_the_ocean }
+		position = 5
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 400
+					NOT = { base_production = 10 }
+				}
+				AND = {
+					is_capital = yes
+					continent = europe
+					owner = {
+						NOT = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+					}
+					ROOT = {
+						NOT = {
+							calc_true_if = {
+								amount = 3
+								all_known_country = {
+									capital_scope = { continent = europe }
+									has_opinion = {
+										who = ROOT
+										value = 100
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			has_adm_advisor_2 = yes
+			has_dip_advisor_2 = yes
+			has_mil_advisor_2 = yes
+			400 = {
+				base_production = 10
+			}
+			calc_true_if = {
+				amount = 3
+				all_known_country = {
+					capital_scope = { continent = europe }
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+			calc_true_if = {
+				amount = 2
+				all_known_country = {
+					has_opinion = {
+						who = ROOT
+						value = 200
+					}
+				}
+			}
+			any_active_trade_node = {
+				continent = europe
+			}
+		}
+
+		effect = {
+			400 = {
+				add_building = state_house
+			}
+			add_country_modifier = {
+				name = khasa_permanent_embassy
+				duration = -1
+			}
+		}
+	}
+}
+
+khasa_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = F57
+	}
+	has_country_shield = yes
+
+	khasa_from_the_ashes = {
+		icon = mission_fire_judgement
+		required_missions = {  }
+		position = 1
+
+		provinces_to_highlight = {
+			is_core = ROOT
+			NOT = { owned_by = ROOT }
+			NOT = { province_id = 383 }
+		}
+
+		trigger = {
+			all_core_province = {
+				OR = {
+					owned_by = ROOT
+					province_id = 383
+				}
+			}
+			army_size = 12
+		}
+
+		effect = {
+			if = {
+				limit = {
+					has_country_modifier = racial_pop_gnollish_purge
+				}
+				add_adm_power = 100
+			}
+			else = {
+				generic_start_purge = { race = gnollish }
+			}
+			if = {
+				limit = {
+					383 = {
+						NOT = { owned_by = ROOT }
+					}
+				}
+				383 = {
+					owner = {
+						country_event = { id = flavour_khasa.130 }
+					}
+				}
+			}
+		}
+	}
+
+	khasa_new_ideas_across_the_sea = {
+		icon = renaissance_city
+		required_missions = { khasa_from_the_ashes }
+		position = 2
+
+		provinces_to_highlight = {
+			is_capital = yes
+			continent = europe
+			owner = {
+				NOT = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+				has_institution = renaissance
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = khasa_across_the_sea_tt
+				calc_true_if = {
+					any_known_country = {
+						culture_group = anbennarian
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = alenic
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = businori
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = escanni
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = dostanorian_g
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = lencori
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = halfling
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = gnomish
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = gerudian
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = elven
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = dwarven
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = kheteratan
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = reachman
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = giantkind
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = kobold
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = gnollish
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = orcish
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = goblin
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					any_known_country = {
+						culture_group = harpy
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						has_opinion = { who = ROOT value = 100 }
+					}
+					amount = 2
+				}
+			}
+			middle_akasik_area = {
+				has_state_edict = edict_advancement_effort
+			}
+			employed_advisor = {
+				category = ADM
+				skill = 1
+			}
+			employed_advisor = {
+				category = DIP
+				skill = 1
+			}
+			employed_advisor = {
+				category = MIL
+				skill = 1
+			}
+		}
+
+		effect = {
+			capital_scope = {
+				add_institution_embracement = {
+					which = renaissance
+					value = 100
+				}
+			}
+			if = {
+				limit = {
+					Z05 = { #Tretun
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+				add_country_modifier = {
+					name = khasa_friends_across_the_divenhal
+					duration = 5475
+				}
+			}
+			else = {
+				custom_tooltip = khasa_tretun_friend_tt
+			}
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							has_personal_deity = akasik_compassion_1
+							has_personal_deity = akasik_compassion_2
+							has_personal_deity = akasik_compassion_3
+						}
+					}
+				}
+				change_government_reform_progress = 50
+				random_known_country = {
+					limit = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						any_known_country = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+							capital_scope = { continent = europe }
+							has_institution = renaissance
+							NOT = { culture_group = PREV }
+						}
+					}
+					add_trust = {
+						who = FROM
+						value = 10
+						mutual = yes
+					}
+					set_country_flag = did_effect
+				}
+				random_known_country = {
+					limit = {
+						NOT = { has_country_flag = did_effect }
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+						capital_scope = { continent = europe }
+						has_institution = renaissance
+						any_known_country = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+							capital_scope = { continent = europe }
+							has_institution = renaissance
+							NOT = { culture_group = PREV }
+						}
+					}
+					add_trust = {
+						who = FROM
+						value = 10
+						mutual = yes
+					}
+				}
+				hidden_effect = {
+					random_known_country = {
+						limit = { has_country_flag = did_effect }
+						clr_country_flag = did_effect
+					}
+				}
+			}
+			else = {
+				custom_tooltip = khasa_compassion_reward_tt
+			}
+		}
+	}
+
+	khasa_the_chosen_of_akasik = {
+		icon = mission_sunset_alternative
+		required_missions = { khasa_divenhal_diplomacy khasa_heeding_the_call }
+		position = 6
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = akasik_region
+					NOT = {
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT
+							religion = ROOT
+						}
+					}
+				}
+				AND = {
+					province_id = 383
+					NOT = {
+						AND = {
+							has_building = mage_tower
+							development = 20
+						}
+					}
+				}
+				AND = {
+					province_id = 400
+					NOT = {
+						development = 30
+					}
+				}
+			}
+		}
+
+		trigger = {
+			akasik_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+				religion = ROOT
+			}
+			383 = {
+				has_building = mage_tower
+				development = 20
+			}
+			400 = {
+				development = 30
+			}
+			if = {
+				limit = {
+					U06 = { exists = yes }
+				}
+				U06 = {
+					NOT = { num_of_cities = 15 }
+					is_subject_of = ROOT
+				}
+			}
+		}
+
+		effect = {
+			383 = {
+				if = {
+					limit = {
+						NOT = {
+							has_great_project = {
+								type = aur_kes_akasik
+								tier = 3
+							}
+						}
+					}
+					add_great_project_tier = {
+						type = aur_kes_akasik
+						tier = 1
+					}
+				}
+				else = {
+					ROOT = {
+						change_estate_land_share = {
+							estate = all
+							share = -10
+						}
+					}
+				}
+			}
+			inherit = U06
+		}
+	}
+}
+
+khasa_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = F57
+	}
+	has_country_shield = yes
+
+	khasa_filling_the_throne = {
+		icon = mission_restore_faith_in_the_throne
+		required_missions = { khasa_new_ideas_across_the_sea }
+		position = 3
+
+		provinces_to_highlight = {
+			
+		}
+
+		trigger = {
+			OR = {
+				U06 = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+				U06 = {
+					has_spy_network_from = {
+						who = ROOT
+						value = 50
+					}
+				}
+				U06 = {
+					overlord = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 50
+						}
+					}
+				}
+			}
+			OR = {
+				U06 = {
+					NOT = { army_size = ROOT }
+					if = {
+						limit = {
+							is_subject = yes
+						}
+						overlord = {
+							NOT = { army_size = ROOT }
+						}
+					}
+				}
+				AND = {
+					U06 = {
+						exists = no
+					}
+					deshak_area = {
+						type = all
+						owned_by = ROOT
+					}
+					oris_area = {
+						type = all
+						owned_by = ROOT
+					}
+				}
+			}
+			prestige = 30
+			legitimacy = 90
+		}
+
+		effect = {
+			U06 = {
+				country_event = {
+					id = flavour_khasa.340
+				}
+			}
+			custom_tooltip = khasa_340_insight
+		}
+	}
+
+	khasa_heeding_the_call = {
+		icon = mission_raid_christian_trade
+		required_missions = { khasa_life_on_the_ocean khasa_supplying_the_hurkashu }
+		position = 5
+
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				OR = {
+					owns = 48
+					is_emperor = yes
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				Z05 = { #Tretun
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+				AND = {
+					Z05 = {
+						exists = no
+					}
+					48 = { #Tretun
+						owner = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 25
+							}
+						}
+					}
+				}
+			}
+			emperor = {
+				OR = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+					is_rival = ROOT
+					is_enemy = ROOT
+				}
+			}
+			legitimacy = 90
+			num_of_heavy_ship = 5
+			num_of_transport = 10
+		}
+
+		effect = {
+			if = {
+				limit = {
+					Z05 = {
+						exists = yes
+					}
+				}
+				Z05 = {
+					country_event = {
+						id = flavour_khasa.540
+					}
+				}
+				custom_tooltip = khasa_540_insight
+			}
+			else = {
+				country_event = {
+					id = flavour_khasa.541
+				}
+			}
+		}
+	}
+}
+
+khasa_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = F57
+	}
+	has_country_shield = yes
+
+	khasa_restoring_the_mountains = {
+		icon = protectors_of_christendom
+		required_missions = { khasa_from_the_ashes }
+		position = 2
+
+		provinces_to_highlight = {
+			OR = {
+				area = akasik_mountains_area
+				area = middle_akasik_area
+			}
+			has_terrain = mountain
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					religion = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			akasik_mountains_area = {
+				type = all
+				OR = {
+					AND = {
+						owned_by = ROOT
+						religion = ROOT
+					}
+					NOT = { has_terrain = mountain }
+				}
+			}
+			middle_akasik_area = {
+				type = all
+				OR = {
+					AND = {
+						owned_by = ROOT
+						religion = ROOT
+					}
+					NOT = { has_terrain = mountain }
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				OR = {
+					area = akasik_mountains_area
+					area = middle_akasik_area
+				}
+				has_terrain = mountain
+				has_tax_building_trigger = yes
+			}
+		}
+
+		effect = {
+			middle_akasik_area = {
+				limit = { has_terrain = mountain }
+				add_base_tax = 1
+				if = {
+					limit = {
+						ROOT = {
+							OR = {
+								has_personal_deity = akasik_resilience_1
+								has_personal_deity = akasik_resilience_2
+								has_personal_deity = akasik_resilience_3
+							}
+						}
+					}
+					add_base_tax = 1
+				}
+				else = {
+					custom_tooltip = khasa_resilience_reward_tt
+				}
+			}
+			akasik_mountains_area = {
+				limit = { has_terrain = mountain }
+				add_base_tax = 1
+				if = {
+					limit = {
+						ROOT = {
+							OR = {
+								has_personal_deity = akasik_resilience_1
+								has_personal_deity = akasik_resilience_2
+								has_personal_deity = akasik_resilience_3
+							}
+						}
+					}
+					add_base_tax = 1
+				}
+				else = {
+					custom_tooltip = khasa_resilience_reward_tt
+				}
+				add_harpy_minority_size_effect = yes
+			}
+			large_increase_of_harpy_tolerance_effect = yes
+			coastal_krahway_area = {
+				add_claim = ROOT
+			}
+		}
+	}
+
+	khasa_never_again = {
+		icon = take_the_bishoprics
+		required_missions = { khasa_restoring_the_mountains }
+		position = 3
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = akasik_mountains_area
+					NOT = {
+						has_fort_building_trigger = yes
+						any_neighbor_province = { has_fort_building_trigger = yes }
+					}
+				}
+				AND = {
+					area = coastal_krahway_area
+					owner = { culture_group = gnollish }
+				}
+			}
+		}
+
+		trigger = {
+			akasik_mountains_area = {
+				type = all
+				OR = {
+					has_fort_building_trigger = yes
+					any_neighbor_province = { has_fort_building_trigger = yes }
+				}
+			}
+			NOT = {
+				coastal_krahway_area = {
+					owner = { culture_group = gnollish }
+				}
+			}
+		}
+
+		effect = {
+			coastal_krahway_area = {
+				limit = { country_or_non_sovereign_subject_holds = ROOT }
+				destroy_province = yes
+				custom_tooltip = LEDGER_DESTROYED
+			}
+			akasik_mountains_area = {
+				add_base_manpower = 2
+				add_harpy_minority_size_effect = yes
+			}
+			add_country_modifier = { 
+				name = khasa_cultural_modifier
+				duration = -1
+			}
+			add_accepted_culture = stonewing_harpy
+			396 = {
+				change_culture = stonewing_harpy
+			}
+			401 = {
+				change_culture = stonewing_harpy
+			}
+			largest_increase_of_harpy_tolerance_effect = yes
+		}
+	}
+
+	khasa_supplying_the_hurkashu = {
+		icon = mission_burning_man
+		required_missions = { khasa_filling_the_throne khasa_never_again }
+		position = 4
+
+		provinces_to_highlight = {
+			region = akasik_region
+			OR = {
+				AND = {
+					trade_goods = iron
+					NOT = {
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT
+							base_production = 5
+							has_production_building_trigger = yes
+						}
+					}
+					NOT = {
+						ROOT = {
+							num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+								value = 3
+								region = akasik_region
+								trade_goods = iron
+								base_production = 5
+								has_production_building_trigger = yes
+							}
+						}
+					}
+				}
+				AND = {
+					OR = {
+						trade_goods = grain
+						trade_goods = fish
+					}
+					NOT = {
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT
+							base_manpower = 5
+							has_manpower_building_trigger = yes
+						}
+					}
+					NOT = {
+						ROOT = {
+							num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+								value = 5
+								region = akasik_region
+								OR = {
+									trade_goods = grain
+									trade_goods = fish
+								}
+								base_manpower = 5
+								has_manpower_building_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 3
+				region = akasik_region
+				trade_goods = iron
+				base_production = 5
+				has_production_building_trigger = yes
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 5
+				region = akasik_region
+				OR = {
+					trade_goods = grain
+					trade_goods = fish
+				}
+				base_manpower = 5
+				has_manpower_building_trigger = yes
+			}
+		}
+
+		effect = {
+			akasik_region = {
+				type = random
+				amount = 2
+				limit = {
+					country_or_non_sovereign_subject_holds = ROOT
+					OR = {
+						trade_goods = grain
+						trade_goods = fish
+					}
+					has_manpower_building_trigger = yes
+					NOT = { has_building = soldier_households }
+				}
+				add_building = soldier_households
+			}
+			add_country_modifier = {
+				name = khasa_reinforced_armor
+				duration = -1
+			}
+		}
+	}
+}

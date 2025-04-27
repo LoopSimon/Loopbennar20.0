@@ -1,92 +1,109 @@
-
 A16_branch_1 = {
 	slot = 1
 	generic = no
 	ai = yes
+	has_country_shield = yes
 	potential = {
 		tag = A16
-		NOT = { map_setup = map_setup_random }
 	}
-	has_country_shield = yes
-	
+
 	A16_protect_toarnaire = {
 		icon = mission_conquer_50_development
-		required_missions = {
-		}
 		position = 2
-		
 		provinces_to_highlight = {
 			province_id = 33
 			OR = {
 				NOT = { fort_level = 2 }
-				NOT = { country_or_subject_holds = ROOT }
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
 			}
 		}
-		
+
 		trigger = {
-			33 = {
-				fort_level = 2
-			}
-			owns_or_subject_of = 33
+			treasury = 100
+			owns_or_non_sovereign_subject_of = 33
 		}
-		
+
 		effect = {
+			add_treasury = -100
 			33 = {
-				add_province_modifier = {
-					name = wineport_toarnaire_defensiveness
-					duration = 7300
+				if = {
+					limit = { NOT = { has_fort_building_trigger = yes }  } 
+					add_building_construction = {
+						building = fort_15th
+						speed = 0.5
+						cost = 0
+					}
+					custom_tooltip = wineport_toarnaire.tt
+				}
+				else = {
+					add_province_modifier = {
+						name = wineport_toarnaire_defensiveness
+						duration = 5475
+					}
 				}
 			}
 		}
 	}
-	
-	A16_imperial_port = {
+
+	A16_an_imperial_connection = {
 		icon = mission_develop_nevas_port
-		required_missions = {
-			A16_unite_league
-		}
-		position = 4
-		
+		position = 5
+		required_missions = { A16_ties_to_toarnaire } 
 		provinces_to_highlight = {
-			province_id = 33
 			OR = {
-				NOT = { has_trade_building_trigger = yes }
-				NOT = { has_dock_building_trigger = yes }
+				AND = {
+					province_id = 33
+					OR = {
+						NOT = { has_trade_building_trigger = yes } 
+						NOT = { has_dock_building_trigger = yes } 
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = { is_emperor = yes } 
+				}
 			}
 		}
-		
+
 		trigger = {
 			33 = {
 				has_trade_building_trigger = yes
 				has_dock_building_trigger = yes
 			}
+			emperor = {
+				has_opinion = {
+					who = ROOT
+					value = 80
+				}
+			}
 		}
-		
+
 		effect = {
+			33 = {
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 2
+			}
+			country_event = { id = flavour_wineport.11 } 
 			eastern_winebay_area = {
 				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
 				}
 				add_permanent_claim = ROOT
 			}
 		}
 	}
-	
+
 	A16_trading_rights = {
 		icon = mission_heart_of_the_hansa
-		required_missions = {
-			A16_imperial_port
-		}
-		position = 5
-		
-		provinces_to_highlight = {
-			is_capital_of = emperor
-		}
-		
+		position = 6
+		required_missions = { A16_an_imperial_connection } 
+		provinces_to_highlight = { is_capital_of = emperor } 
+
 		trigger = {
 			if = {
-				limit = { hre_size = 1 }
+				limit = { hre_size = 1 } 
 				emperor = {
 					has_opinion = {
 						value = 100
@@ -95,97 +112,383 @@ A16_branch_1 = {
 				}
 				treasury = 100
 			}
-			else = {
-				treasury = 100
-			}
-			
+			else = { treasury = 100 } 
 		}
-		
+
 		effect = {
 			add_treasury = -100
 			add_country_modifier = {
 				name = wineport_imperial_trade_rights
-				duration = 5475 # 15 Years
+				duration = 5475
 			}
 		}
 	}
-	
-	A16_find_sponsors = {
+
+	A16_the_pearl_gambit = {
 		icon = mission_approach_throne
-		required_missions = {
-			A16_trading_rights
-		}
-		position = 6
-		
+		position = 8
+		required_missions = { A16_trading_rights } 
+		provinces_to_highlight = {  } 
+
 		trigger = {
 			234 = {
 				strongest_trade_power = {
 					has_opinion = {
-						value = 150
+						value = 100
 						who = ROOT
 					}
 				}
 			}
 		}
-		
+
 		effect = {
 			add_treasury = 200
-			14 = {
-				add_permanent_claim = ROOT
+			14 = { add_permanent_claim = ROOT } 
+			hidden_effect = { 234 = { strongest_trade_power = { save_global_event_target_as = wineport_sponsor }  }  } 
+		}
+	}
+
+	A16_promises_are_promises = {
+		icon = mission_conquer_riga
+		position = 9
+		required_missions = { A16_the_pearl_gambit } 
+		provinces_to_highlight = {
+			province_id = 14
+			NOT = { country_or_non_sovereign_subject_holds = ROOT } 
+		}
+
+		trigger = { 14 = { country_or_non_sovereign_subject_holds = ROOT } } 
+
+		effect = {
+			country_event = { id = flavour_wineport.1 } 
+			11 = { add_permanent_claim = ROOT } 
+		}
+	}
+
+	A16_merchant_port = {
+		icon = mission_guilds_of_barcelona
+		position = 10
+		required_missions = {
+			A16_imperial_vintage
+			A16_promises_are_promises
+		}
+		provinces_to_highlight = {
+			area = neckcliffe_area
+			NOT = { country_or_non_sovereign_subject_holds = ROOT } 
+		}
+
+		trigger = {
+			neckcliffe_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
 			}
-			hidden_effect = {
-				234 = {
-					strongest_trade_power = {
-						save_global_event_target_as = wineport_sponsor
+		}
+
+		effect = {
+			add_prestige = 10
+			neckcliffe_area = { cede_province = A22 } 
+			vassalize = A22
+			custom_tooltip = wineport_recomend_vassal.tt
+			A22 = {
+				hidden_effect = { change_government = republic } 
+				add_government_reform = neckcliffer_admirality
+				add_liberty_desire = -50
+				ekha_area = { add_permanent_claim = ROOT } 
+				akarat_area = { add_permanent_claim = ROOT } 
+			}
+			ekha_area = { add_permanent_claim = ROOT } 
+			akarat_area = { add_permanent_claim = ROOT } 
+		}
+	}
+}
+
+A16_winebay_1 = {
+	slot = 1
+		generic = no
+		ai = yes
+		has_country_shield = yes
+		potential = {
+			tag = A16
+			has_country_flag = wineport_upgraded_ideas
+		}	
+
+	A16_protect_the_divenhal = {
+		icon = mission_sea_battles
+		position = 12
+		required_missions = { A16_merchant_port } 
+		provinces_to_highlight = {
+			OR = {
+				area = ekha_area
+				area = akarat_area
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT } 
+		}
+
+		trigger = {
+			ekha_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			akarat_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { A22 = { is_subject_of = ROOT }  } 
+				ekha_area = { 
+					cede_province = A22 
+					add_core = A22 
+					remove_core = ROOT
+				} 
+				akarat_area = { 
+					cede_province = A22 
+					add_core = A22 
+					remove_core = ROOT
+				} 
+				create_march = A22
+				akasik_region = { add_permanent_claim = A22 } 
+				A22 = {
+					override_country_name = "A16_A22_wineguard"
+					add_country_modifier = {
+						name = wineport_naval_march
+						duration = -1
 					}
 				}
 			}
+			else = { 
+				custom_tooltip = wineport_recomend_vassal_reward.tt
+				akasik_region = { add_permanent_claim = ROOT }  
+			} 
+			sil_berkhens_land_area = { add_permanent_claim = ROOT }
+			far_uelos_isles_area = { add_permanent_claim = ROOT }
+			bavabetsaro_area = { add_permanent_claim = ROOT }
+			amezatany_colonisation_provinces = { add_permanent_claim = ROOT }
 		}
 	}
-	
-	A16_pop_cork = {
-		icon = mission_conquer_riga
+
+	A16_across_the_southern_sea = {
+		icon = mission_establish_high_seas_navy
+		position = 13
 		required_missions = {
-			A16_find_sponsors
+			A16_protect_the_divenhal
+			A16_gold_god_good_wine
 		}
-		position = 8
-		
-		provinces_to_highlight = {
-			province_id = 14
-			NOT = { country_or_subject_holds = ROOT }
-		}
-		
-		trigger = {
-			owns_or_subject_of = 14
-		}
-		
-		effect = {
-			country_event = { id = flavour_wineport.1 }
-			11 = {
-				add_permanent_claim = ROOT
+
+		provinces_to_highlight = { 
+			region = dao_nako_region
+			OR = {
+				is_city = no
+				AND = {
+					owned_by = ROOT
+					NOT = {
+						AND = {
+							development = 20
+							has_trade_building_trigger = yes
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {  
+			any_owned_province = {
+				region = dao_nako_region
+				has_trade_building_trigger = yes
+				development = 20
+			}
+		} 
+
+		effect = {  
+			country_event = { id = flavour_wineport.13 }
+			tanfandoro_area = { add_permanent_claim = ROOT }
+			nafalofimapo_area = { add_permanent_claim = ROOT }
+			ibidelibe_area = { add_permanent_claim = ROOT }
+			tebajik_area = { add_permanent_claim = ROOT }
+			ibibakely_area = { add_permanent_claim = ROOT }
+			tebolelmasi_area = { add_permanent_claim = ROOT }
+			zohejirofo_area = { add_permanent_claim = ROOT }
+		} 
+	}
+
+	A16_incursion_into_the_island = {
+		icon = mission_assemble_an_army
+		position = 14
+		required_missions = { A16_across_the_southern_sea } 
+		provinces_to_highlight = {  
+			region = fahvanosy_region
+			NOT = { owned_by = ROOT }
+		} 
+
+		trigger = { 
+			num_of_owned_provinces_with = {
+				value = 10
+				region = fahvanosy_region
+			} 
+		} 
+
+		effect = {  
+			add_country_modifier = {
+				name = wineport_new_wine_markets
+				duration = 9125
+			}
+			fahvanosy_region = { add_permanent_claim = ROOT }
+		} 
+	}
+
+	A16_the_fahvanosy_campaign = {
+		icon = mission_iberian_conquistador
+		position = 16
+		required_missions = { A16_incursion_into_the_island } 
+		provinces_to_highlight = {  
+			OR = {
+				region = fahvanosy_region
+				region = dao_nako_region
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				AND = {
+					owned_by = ROOT
+					NOT = {
+                        trade_goods = wine
+                        trade_goods = cloves
+                    }
+					NOT = {
+						AND = {
+							base_production = 10
+							has_production_building_trigger = yes
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {  
+			num_of_owned_provinces_with = {
+				value = 30
+				region = fahvanosy_region
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				region = dao_nako_region
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				OR = {
+					region = dao_nako_region
+					region = fahvanosy_region
+				}
+				NOT = {
+					trade_goods = wine
+					trade_goods = cloves
+				}
+				base_production = 10
+				has_production_building_trigger = yes			
+			}
+		} 
+
+		effect = {  
+			country_event = { id = flavour_wineport.14 }
+			5898 = { add_permanent_claim = ROOT }
+			5914 = { add_permanent_claim = ROOT }
+			5941 = { add_permanent_claim = ROOT }
+		} 
+	}
+
+	A16_open_the_lizard_markets = {
+		icon = mission_trade_company_region_abroad
+		position = 17
+		required_missions = { A16_the_fahvanosy_campaign } 
+		provinces_to_highlight = {  
+			OR = {
+				province_id = 5898
+				province_id = 5914
+				province_id = 5941
+			}
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					development = 20
+					has_trade_building_trigger = yes
+					has_dock_building_trigger = yes
+					province_has_center_of_trade_of_level = 2
+				}
+			}
+		} 
+
+		trigger = {  
+			5898 = {
+				owned_by = ROOT
+				development = 20
+				has_trade_building_trigger = yes
+				has_dock_building_trigger = yes
+				province_has_center_of_trade_of_level = 2	
+			}
+			5914 = {
+				owned_by = ROOT
+				development = 20
+				has_trade_building_trigger = yes
+				has_dock_building_trigger = yes
+				province_has_center_of_trade_of_level = 2	
+			}
+			5941 = {
+				owned_by = ROOT
+				development = 20
+				has_trade_building_trigger = yes
+				has_dock_building_trigger = yes
+				province_has_center_of_trade_of_level = 2	
+			}
+		} 
+
+		effect = { 
+			country_event = { id = flavour_wineport.15 }
+			upgrade_wineport_wines = yes
+		} 
+	}
+
+	A16_sell_to_the_baashidi = {
+		icon = mission_market_place_with_asian_traders
+		position = 18
+		required_missions = { A16_open_the_lizard_markets } 
+		provinces_to_highlight = {  
+			region = jasiir_jadid_region
+			NOT = {
+				owned_by = ROOT
+				owner = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+		} 
+
+		trigger = { 
+			calc_true_if = {
+				amount = 20
+				jasiir_jadid_region = {
+					OR = {
+						owner = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+						owned_by = ROOT
+					}
+				} 
 			}
 		}
-	}
-	
-	A16_bloody_teeth = {
-		icon = contracts_of_correspondence
-		required_missions = {
-			A16_pop_cork
-		}
-		position = 9
-		
-		provinces_to_highlight = {
-			province_id = 11
-			NOT = { country_or_subject_holds = ROOT }
-		}
-		
-		trigger = {
-			owns_or_subject_of = 11
-		}
-		
-		effect = {
-			country_event = { id = flavour_wineport.2 }
-		}
+
+		effect = {  
+			upgrade_wineport_wines = yes
+			add_country_modifier = {
+				name = wineport_baashidi_trade
+				duration = 36500
+			}
+		} 
 	}
 }
 
@@ -193,65 +496,53 @@ A16_branch_2 = {
 	slot = 2
 	generic = no
 	ai = yes
+	has_country_shield = yes
 	potential = {
 		tag = A16
-		NOT = { map_setup = map_setup_random }
 	}
-	has_country_shield = yes
-	
+
 	A16_seeking_support = {
 		icon = mission_alliances
-		required_missions = {
-		}
 		position = 1
-		
-		trigger = {
-			num_of_allies = 1
-		}
-		
+		provinces_to_highlight = {  } 
+
+		trigger = { num_of_allies = 1 } 
+
 		effect = {
 			add_country_modifier = {
 				name = wineport_to_let_them_survive
-				duration = 9125 # 25 Years
+				duration = 9125
 			}
 		}
 	}
-	
-	A16_recognition = {
+
+	A16_international_recognition = {
 		icon = friends_in_high_places
-		required_missions = {
-			A16_seeking_support
-		}
 		position = 2
-		
-		trigger = {
-			prestige = 20
-		}
-		
+		required_missions = { A16_seeking_support } 
+		provinces_to_highlight = {  } 
+
+		trigger = { prestige = 20 } 
+
 		effect = {
 			add_country_modifier = {
 				name = wineport_recognized
-				duration = 9125 # 25 Years
+				duration = 9125
 			}
 		}
 	}
-	
-	A16_toarnaire_ties = {
+
+	A16_ties_to_toarnaire = {
 		icon = friends_in_high_places
-		required_missions = {
-			A16_unite_league
-		}
 		position = 4
-		
+		required_missions = { A16_unite_the_league } 
 		provinces_to_highlight = {
 			province_id = 33
-			NOT = { owned_by = ROOT }
+			NOT = { owned_by = ROOT } 
 		}
-		
-		trigger = {
-			owns = 33
-		}
-		
+
+		trigger = { owns = 33 } 
+
 		effect = {
 			33 = {
 				add_province_modifier = {
@@ -263,66 +554,59 @@ A16_branch_2 = {
 					duration = 7300
 				}
 				if = {
-					limit = { province_has_center_of_trade_of_level = 2 }
-					owner = { add_treasury = 200 }
+					limit = { province_has_center_of_trade_of_level = 2 } 
+					owner = { add_treasury = 200 } 
 				}
-				else = {
-					add_center_of_trade_level = 1
-				}
+				else = { add_center_of_trade_level = 1 } 
 			}
 		}
 	}
-	
-	A16_roilsard = {
+
+	A16_thoarned_vines = {
 		icon = mission_feast
+		position = 6
 		required_missions = {
-			A16_toarnaire_ties A16_imperial_port
+			A16_ties_to_toarnaire
+			A16_an_imperial_connection
 		}
-		position = 5
-		
 		provinces_to_highlight = {
 			area = eastern_winebay_area
-			NOT = { owned_by = ROOT }
+			NOT = { owned_by = ROOT } 
 		}
-		
+
 		trigger = {
 			eastern_winebay_area = {
 				type = all
 				owned_by = ROOT
 			}
 		}
-		
+
 		effect = {
-			pearlywine_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
+			eastern_winebay_area = { add_nationalism = -5 }
+			pearlywine_area = { add_permanent_claim = ROOT }
 		}
 	}
-	
-	A16_miltary_expert = {
+
+	A16_roilsardi_military_minds = {
 		icon = consolidate_the_stadholders
+		position = 7
 		required_missions = {
-			A16_roilsard A16_organize_watchers
+			A16_thoarned_vines
+			A16_home_of_port
 		}
-		position = 6
-		
 		provinces_to_highlight = {
 			area = eastern_winebay_area
 			unrest = 0
 		}
-		
+
 		trigger = {
 			eastern_winebay_area = {
 				type = all
-				NOT = { unrest = 0 }
+				NOT = { unrest = 0 } 
 			}
 			mil_power = 200
 		}
-		
+
 		effect = {
 			add_mil_power = -200
 			add_country_modifier = {
@@ -331,32 +615,29 @@ A16_branch_2 = {
 			}
 		}
 	}
-	
+
 	A16_imperial_vintage = {
 		icon = prosper_in_piedmont
-		required_missions = {
-			A16_miltary_expert
-		}
-		position = 7
-		
+		position = 9
+		required_missions = { A16_roilsardi_military_minds } 
 		provinces_to_highlight = {
 			OR = {
 				province_id = 41
 				province_id = 49
 			}
-			NOT = { country_or_subject_holds = ROOT }
+			NOT = { country_or_non_sovereign_subject_holds = ROOT } 
 		}
-		
+
 		trigger = {
-			owns_or_subject_of = 41
-			owns_or_subject_of = 49
+			owns_or_non_sovereign_subject_of  = 41
+			owns_or_non_sovereign_subject_of = 49
 		}
-		
+
 		effect = {
 			neckcliffe_area = {
 				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
 				}
 				add_permanent_claim = ROOT
 			}
@@ -367,43 +648,57 @@ A16_branch_2 = {
 			}
 		}
 	}
-	
-	A16_merchant_port = {
-		icon = mission_guilds_of_barcelona
+
+	A16_bloody_teeth = {
+		icon = contracts_of_correspondence
+		position = 10
 		required_missions = {
-			A16_imperial_vintage A16_pop_cork
+			A16_imperial_vintage
+			A16_promises_are_promises
 		}
-		position = 9
-		
 		provinces_to_highlight = {
-			area = neckcliffe_area
-			NOT = { country_or_subject_holds = ROOT }
-		}
-		
-		trigger = {
-			neckcliffe_area = {
-				type = all
-				country_or_subject_holds = ROOT
+			province_id = 11
+			NOT = {
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT 
+					development = 12
+					OR = {
+						has_building = coastal_defence
+						has_building = naval_battery
+					}
+				}
 			}
 		}
-		
-		effect = {
-			add_prestige = 10
-			A22 = {
-				hidden_effect = { change_government = republic }
-				add_government_reform = merchants_reform
-				add_liberty_desire = -50
+
+		trigger = { 
+			11 = {
+				country_or_non_sovereign_subject_holds = ROOT
+				development = 12
+				OR = {
+					has_building = coastal_defence
+					has_building = naval_battery
+				}
 			}
-		}
+		} 
+
+		effect = { country_event = { id = flavour_wineport.2 }  } 
 	}
-	
-	A16_minar_colony = {
+}
+
+A16_winebay_2 = {
+	slot = 2
+		generic = no
+		ai = yes
+		has_country_shield = yes
+		potential = {
+			tag = A16
+			has_country_flag = wineport_upgraded_ideas
+		}	
+
+	A16_colonies_of_minar = {
 		icon = mission_hands_praying
-		required_missions = {
-			A16_minar_missions
-		}
-		position = 11
-		
+		position = 13
+		required_missions = { A16_gold_god_good_wine } 
 		provinces_to_highlight = {
 			country_or_non_sovereign_subject_holds = ROOT
 			OR = {
@@ -412,11 +707,11 @@ A16_branch_2 = {
 			}
 			trade_goods = wine
 			OR = {
-				NOT = { has_manufactory_trigger = yes }
-				NOT = { base_production = 5 }
+				NOT = { has_manufactory_trigger = yes } 
+				NOT = { base_production = 5 } 
 			}
 		}
-		
+
 		trigger = {
 			any_subject_country = {
 				is_colonial_nation_of = ROOT
@@ -428,7 +723,7 @@ A16_branch_2 = {
 				}
 			}
 		}
-		
+
 		effect = {
 			upgrade_wineport_wines = yes
 			add_country_modifier = {
@@ -437,102 +732,205 @@ A16_branch_2 = {
 			}
 		}
 	}
-	
-	A16_tears_of_blood = {
+
+
+	A16_forests_of_bloodwine = {
 		icon = mission_burning_separation
-		required_missions = {
-			A16_minar_colony
-		}
-		position = 12
-		
+		position = 15
+		required_missions = { A16_colonies_of_minar } 
 		provinces_to_highlight = {
+			region = bloodgroves_region
 			OR = {
-				region = trollsbay_region
-				region = sarda_region
+				NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					NOT = { trade_goods = wine }
+					NOT = {
+						AND = {
+							base_production = 8
+							has_production_building_trigger = yes
+						}
+					}
+				}
 			}
-			trade_goods = wine
 		}
-		
+
 		trigger = {
-			calc_true_if = {
-				amount = 3
-				all_province = {
-					OR = {
-						region = trollsbay_region
-						region = sarda_region
-					}
-					owner = {
-						has_opinion = {
-							value = 100
-							who = ROOT
-						}
-					}
-					trade_goods = wine
-				}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 15
+				region = bloodgroves_region
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 5
+				region = bloodgroves_region
+				base_production = 8
+				has_production_building_trigger = yes
+				NOT = { trade_goods = wine }
 			}
 		}
-		
+
 		effect = {
-			add_treasury = -1000
+			custom_tooltip = wineport_bloodgroves_wine.tt
+			hidden_effect = {
+				for = {
+					amount = 5
+					effect = "
+						bloodgroves_region = {
+							type = random
+							amount = 1
+							limit = {
+								country_or_non_sovereign_subject_holds = ROOT 
+								base_production = 8
+								has_production_building_trigger = yes
+								NOT = { trade_goods = wine }
+							}
+							change_trade_goods = wine
+						}
+					"
+				}
+			}
+			add_country_modifier = {
+				name = wineport_great_wine_deal
+				duration = 36500
+			}
 			upgrade_wineport_wines = yes
-			random_province = {
-				limit = {
-					region = trollsbay_region
-					owner = {
-						has_opinion = {
-							value = 100
-							who = ROOT
-						}
-					}
-					trade_goods = wine
-					NOT = { has_building = farm_estate }
-					NOT = { has_construction = farm_estate }
-				}
-				add_building_construction = {
-					building = farm_estate
-					cost = 0
-					speed = 1
-				}
-			}
-			random_province = {
-				limit = {
-					region = trollsbay_region
-					owner = {
-						has_opinion = {
-							value = 100
-							who = ROOT
-						}
-					}
-					trade_goods = wine
-					NOT = { has_building = farm_estate }
-					NOT = { has_construction = farm_estate }
-				}
-				add_building_construction = {
-					building = farm_estate
-					cost = 0
-					speed = 1
-				}
-			}
-			random_province = {
-				limit = {
-					region = trollsbay_region
-					owner = {
-						has_opinion = {
-							value = 100
-							who = ROOT
-						}
-					}
-					trade_goods = wine
-					NOT = { has_building = farm_estate }
-					NOT = { has_construction = farm_estate }
-				}
-				add_building_construction = {
-					building = farm_estate
-					cost = 0
-					speed = 1
-				}
-			}
+			east_vanburia_area = { add_permanent_claim = ROOT }
+			north_vanburia_area = { add_permanent_claim = ROOT }
+			west_vanburia_area = { add_permanent_claim = ROOT }
+			amadia_region = { add_permanent_claim = ROOT }
 		}
+	}
+
+	A16_the_amadia_colonie = {
+		icon = mission_colonial
+		position = 17
+		required_missions = { A16_forests_of_bloodwine } 
+		provinces_to_highlight = {  
+			OR = {
+				area = east_vanburia_area
+				area = north_vanburia_area
+				area = west_vanburia_area
+				area = chaka_nelir_area
+				area = claltrun_area
+				area = culefchas_area
+				area = oomu_nelir_area
+			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		} 
+
+		trigger = {
+			east_vanburia_area = {
+				type = ALL
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			north_vanburia_area = {
+				type = ALL
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			west_vanburia_area = {
+				type = ALL
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			chaka_nelir_area = {
+				type = ALL
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			claltrun_area  = {
+				type = ALL
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			culefchas_area  = {
+				type = ALL
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			oomu_nelir_area  = {
+				type = ALL
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		} 
+
+		effect = {  
+			2164 = {
+				change_trade_goods = wine
+				add_base_tax = 3
+				add_base_production = 5
+				add_base_manpower = 3
+			}
+			country_event = { id = flavour_wineport.16 }
+		} 
+	}
+
+	A16_trade_with_kheionai = {
+		icon = mission_asian_trader
+		position = 18
+		required_missions = { A16_the_amadia_colonie } 
+		provinces_to_highlight = {  
+			superregion = kheionai_superregion
+			NOT = {
+				owned_by = ROOT
+				owner = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+		} 
+
+		trigger = {  
+			calc_true_if = {
+				amount = 20
+				kheionai_superregion = {
+					OR = {
+						owner = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+						owned_by = ROOT
+					}
+				}
+			}
+		} 
+
+		effect = {  
+			upgrade_wineport_wines = yes
+			add_country_modifier = {
+				name = wineport_alecand_markets
+				duration = 36500
+			}
+		} 
+	}
+
+	A16_our_leyend_overseas = {
+		icon = mission_stormy_seas
+		position = 19
+		required_missions = {
+			A16_sell_to_the_baashidi
+			A16_trade_with_kheionai
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {  
+			mercantilism = 40
+			navy_size_percentage = 0.80
+			production_leader = {
+				trade_goods = wine
+			}
+		} 
+
+		effect = {  
+			add_adm_power = 50
+			add_dip_power = 50
+			add_mil_power = 50
+			upgrade_wineport_wines = yes
+			unlock_merc_company = { merc_company = merc_wineport_seven_chalices free_merc = yes } 
+			add_country_modifier = {
+				name = wineport_defend_the_cellar
+				duration = -1
+			}
+		} 
 	}
 }
 
@@ -540,33 +938,28 @@ A16_branch_3 = {
 	slot = 3
 	generic = no
 	ai = yes
+	has_country_shield = yes
 	potential = {
 		tag = A16
-		NOT = { map_setup = map_setup_random }
+
 	}
-	has_country_shield = yes
-	
-	A16_build_bottlepoint = {
+
+	A16_build_up_bottlepoint = {
 		icon = mission_hanseatic_city
-		required_missions = {
-		}
 		position = 1
-		
 		provinces_to_highlight = {
 			province_id = 86
 			OR = {
-				NOT = { owned_by = ROOT }
-				NOT = { base_production = 6 }
+				NOT = { owned_by = ROOT } 
+				NOT = { base_production = 6 } 
 			}
 		}
-		
+
 		trigger = {
-			86 = {
-				base_production = 6
-			}
+			86 = { base_production = 6 } 
 			owns = 86
 		}
-		
+
 		effect = {
 			86 = {
 				add_province_modifier = {
@@ -576,18 +969,15 @@ A16_branch_3 = {
 			}
 		}
 	}
-	
+
 	A16_dwarven_craftsmen = {
 		icon = mission_green_village
-		required_missions = {
-			A16_build_bottlepoint
-		}
 		position = 2
-		
-		trigger = {
-			treasury = 100
-		}
-		
+		required_missions = { A16_build_up_bottlepoint } 
+		provinces_to_highlight = {  } 
+
+		trigger = { treasury = 100 } 
+
 		effect = {
 			add_treasury = -100
 			small_increase_of_dwarven_tolerance_effect = yes
@@ -599,30 +989,55 @@ A16_branch_3 = {
 			}
 		}
 	}
-	
-	A16_unite_league = {
+
+	A16_unite_the_league = {
 		icon = mission_establish_the_prikazy
-		required_missions = {
-			A16_protect_toarnaire A16_recognition A16_dwarven_craftsmen A16_buyout_minar A16_fifth_city
-		}
 		position = 3
-		
-		trigger = {
-			republican_tradition = 100
+		required_missions = {
+			A16_protect_toarnaire
+			A16_international_recognition
+			A16_dwarven_craftsmen
+			A16_minar_buyout
+			A16_the_fifth_city
 		}
-		
+		provinces_to_highlight = {  } 
+
+		trigger = { republican_tradition = 80 } 
+
 		effect = {
-			add_government_reform = wineport_merchants
+			country_event = { id = flavour_wineport.17 }
+		} 
+	}
+
+	A16_organize_the_watchers = {
+		icon = the_italian_league
+		position = 4
+		required_missions = { A16_unite_the_league } 
+		provinces_to_highlight = {  } 
+
+		trigger = { 
+			has_estate_privilege = estate_adventurers_free_company_rosters 
+			mil_power = 100
+			custom_trigger_tooltip = {
+				tooltip = wineport_advisor_level_two.tt
+				employed_advisor = {
+					category = MIL
+					skill = 2
+				}
+			}
+		}
+
+		effect = {
+			add_mil_power = -100
+			unlock_merc_company = { merc_company = merc_wineport_watchers free_merc = yes } 
+			unlock_merc_company = { merc_company = merc_foxalley_foxes free_merc = yes } 
 		}
 	}
-	
+
 	A16_home_of_port = {
 		icon = bohemian_crystal
-		required_missions = {
-			A16_unite_league
-		}
-		position = 4
-		
+		position = 6
+		required_missions = { A16_organize_the_watchers } 
 		provinces_to_highlight = {
 			OR = {
 				province_id = 101
@@ -635,7 +1050,7 @@ A16_branch_3 = {
 				}
 			}
 		}
-		
+
 		trigger = {
 			101 = {
 				has_production_building_trigger = yes
@@ -646,7 +1061,7 @@ A16_branch_3 = {
 				base_production = 10
 			}
 		}
-		
+
 		effect = {
 			81 = {
 				add_province_modifier = {
@@ -662,39 +1077,15 @@ A16_branch_3 = {
 			}
 		}
 	}
-	
-	A16_organize_watchers = {
-		icon = the_italian_league
-		required_missions = {
-			A16_home_of_port
-		}
-		position = 5
-		
-		trigger = {
-			has_estate_privilege = estate_adventurers_organization_licensed_adventurers
-		}
-		
-		effect = {
-			unlock_merc_company = {
-				merc_company = merc_wineport_watchers
-			}
-			unlock_merc_company = {
-				merc_company = merc_foxalley_foxes
-			}
-		}
-	}
-	
-	A16_final_push = {
+
+	A16_the_final_push = {
 		icon = mission_cannons_firing
-		required_missions = {
-			A16_organize_watchers
-		}
-		position = 6
-		
-		trigger = {
-			army_size_percentage = 0.75
-		}
-		
+		position = 7
+		required_missions = { A16_home_of_port } 
+		provinces_to_highlight = {  } 
+
+		trigger = { army_size_percentage = 0.75 } 
+
 		effect = {
 			add_country_modifier = {
 				name = roilsard_army_enthusiasm
@@ -702,59 +1093,70 @@ A16_branch_3 = {
 			}
 			upper_winebay_area = {
 				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
 				}
 				add_permanent_claim = ROOT
 			}
 		}
 	}
-	
+
 	A16_free_coast = {
 		icon = mission_unite_home_region
-		required_missions = {
-			A16_final_push
-		}
-		position = 7
-		
+		position = 9
+		required_missions = { A16_the_final_push } 
 		provinces_to_highlight = {
 			area = upper_winebay_area
-			NOT = { owned_by = ROOT }
+			NOT = { owned_by = ROOT } 
 		}
-		
+
 		trigger = {
 			upper_winebay_area = {
 				type = all
 				owned_by = ROOT
 			}
 		}
-		
+
 		effect = {
+			38 = {
+				add_province_modifier = {
+					name = wineport_oldport_membership
+					duration = -1
+				}
+			}
 			upper_bloodwine_area = {
 				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
 				}
 				add_permanent_claim = ROOT
 			}
 		}
 	}
-	
-	A16_minar_missions = {
+}
+
+A16_winebay_3 = {
+	slot = 3
+		generic = no
+		ai = yes
+		has_country_shield = yes
+		potential = {
+			tag = A16
+			has_country_flag = wineport_upgraded_ideas
+		}	
+
+	A16_gold_god_good_wine = {
 		icon = mission_early_game_buildings
-		required_missions = {
-			A16_world_of_winecraft
-		}
-		position = 10
-		
+		position = 12
+		required_missions = { A16_world_of_winecraft } 
 		provinces_to_highlight = {
 			province_id = 97
 			OR = {
-				NOT = { development = 25 }
-				NOT = { has_tax_building_trigger = yes }
+				NOT = { development = 25 } 
+				NOT = { has_tax_building_trigger = yes } 
 			}
 		}
-		
+
 		trigger = {
 			97 = {
 				development = 25
@@ -768,19 +1170,16 @@ A16_branch_3 = {
 				}
 			}
 		}
-		
+
 		effect = {
-			upgrade_wineport_wines = yes
-		}
+			country_event = { id = flavour_wineport.18 }
+		} 
 	}
-	
+
 	A16_sorncost_initiative = {
 		icon = mission_have_manufactories
-		required_missions = {
-			A16_minar_missions
-		}
-		position = 11
-		
+		position = 13
+		required_missions = { A16_gold_god_good_wine } 
 		provinces_to_highlight = {
 			area = sorncost_vines_area
 			NOT = {
@@ -791,7 +1190,7 @@ A16_branch_3 = {
 				}
 			}
 		}
-		
+
 		trigger = {
 			sorncost_vines_area = {
 				type = all
@@ -800,33 +1199,30 @@ A16_branch_3 = {
 				owned_by = ROOT
 			}
 		}
-		
-		effect = {
-			upgrade_wineport_wines = yes
-		}
+
+		effect = { 
+			country_event = { id = flavour_wineport.19 }
+		} 
 	}
-	
+
 	A16_pearlywine = {
 		icon = mission_war_chest
-		required_missions = {
-			A16_sorncost_initiative
-		}
-		position = 12
-		
+		position = 15
+		required_missions = { A16_sorncost_initiative } 
 		provinces_to_highlight = {
 			OR = {
 				province_id = 41
 				province_id = 49
 			}
 			OR = {
-				NOT = { development = 25 }
-				NOT = { owned_by = ROOT }
+				NOT = { development = 25 } 
+				NOT = { owned_by = ROOT } 
 			}
 		}
-		
+
 		trigger = {
 			if = {
-				limit = { hre_size = 1 }
+				limit = { hre_size = 1 } 
 				emperor = {
 					has_opinion = {
 						who = ROOT
@@ -853,21 +1249,22 @@ A16_branch_3 = {
 				}
 			}
 		}
-		
-		effect = {
-			upgrade_wineport_wines = yes
-		}
+
+		effect = { 
+			country_event = { id = flavour_wineport.20 }
+		} 
 	}
-	
-	A16_roilsard_develop = {
+
+	A16_red_wine_blue_wine = {
 		icon = mission_dominate_home_trade_node
-		required_missions = {
-			A16_pearlywine
-		}
-		position = 13
-		
+		position = 16
+		required_missions = { A16_pearlywine } 
 		provinces_to_highlight = {
-			area = eastern_winebay_area
+			OR = {
+				province_id = 32
+				province_id = 33
+				province_id = 59
+			}
 			NOT = {
 				AND = {
 					development = 25
@@ -876,66 +1273,83 @@ A16_branch_3 = {
 				}
 			}
 		}
-		
+
 		trigger = {
-			eastern_winebay_area = {
-				type = all
+			32 = {
+				development = 25
+				has_manufactory_trigger = yes
+				has_production_building_trigger = yes
+			}
+			33 = {
+				development = 25
+				has_manufactory_trigger = yes
+				has_production_building_trigger = yes
+			}
+			59 = {
 				development = 25
 				has_manufactory_trigger = yes
 				has_production_building_trigger = yes
 			}
 		}
-		
-		effect = {
-			upgrade_wineport_wines = yes
-		}
+
+		effect = { 
+			country_event = { id = flavour_wineport.21 }
+		} 
 	}
-	
-	A16_winetide = {
-		icon = mission_the_grand_trunk_road_bng
-		required_missions = {
-			A16_roilsard_develop
-		}
-		position = 14
-		
+
+	A16_the_winetide = {
+		icon = mission_precursor_relics
+		position = 18
+		required_missions = { A16_red_wine_blue_wine } 
 		provinces_to_highlight = {
 			superregion = escann_superregion
 			trade_goods = wine
 		}
-		
+
 		trigger = {
 			if = {
-				limit = {
-					escann_superregion = {
-						trade_goods = wine
-					}
-				}
-				calc_true_if = {
-					amount = 1
-					escann_superregion = {
-						trade_goods = wine
+				limit = { escann_superregion = { trade_goods = wine }  } 
+				escann_superregion = {
+					trade_goods = wine
+					OR = {
+						country_or_non_sovereign_subject_holds = ROOT
 						owner = {
-							has_opinion = {
-								value = 200
-								who = ROOT
+							OR = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 50
+								}
+								has_opinion = {
+									who = ROOT
+									value = 80
+								}
 							}
 						}
 					}
 				}
 			}
-			treasury = 300
+			treasury = 1000
 		}
-		
+
 		effect = {
-			add_treasury = -300
+			add_treasury = -1000
 			random_province = {
 				limit = {
 					superregion = escann_superregion
 					trade_goods = wine
-					owner = {
-						has_opinion = {
-							value = 200
-							who = ROOT
+					OR = {
+						country_or_non_sovereign_subject_holds = ROOT
+						owner = {
+							OR = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 50
+								}
+								has_opinion = {
+									who = ROOT
+									value = 80
+								}
+							}
 						}
 					}
 				}
@@ -945,17 +1359,106 @@ A16_branch_3 = {
 				limit = {
 					superregion = escann_superregion
 					trade_goods = wine
-					owner = {
-						has_opinion = {
-							value = 200
-							who = ROOT
+					OR = {
+						country_or_non_sovereign_subject_holds = ROOT
+						owner = {
+							OR = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 50
+								}
+								has_opinion = {
+									who = ROOT
+									value = 80
+								}
+							}
 						}
 					}
 				}
 				add_base_production = 2
+			}
+			add_country_modifier = {
+				name = wineport_tastes_like_no_other
+				duration = 18250
 			}
 			upgrade_wineport_wines = yes
 		}
+	}
+
+	A16_the_red_sea = {
+		icon = mission_burning_separation
+		position = 20
+		required_missions = {
+			A16_our_leyend_overseas
+			A16_cannors_choice
+		}
+		provinces_to_highlight = {  
+			trade_goods = wine
+			country_or_non_sovereign_subject_holds = ROOT
+			NOT = {
+				AND = {
+					base_production = 12
+					has_production_building_trigger = yes
+					has_manufactory_trigger = yes
+				}
+			}
+		}
+
+		trigger = {  
+			all_owned_province = {
+				OR = {
+					NOT = { trade_goods = wine }
+					AND = {
+						trade_goods = wine
+						base_production = 12
+						has_production_building_trigger = yes
+						has_manufactory_trigger = yes
+					}
+				}
+			}
+			all_subject_country = {
+				all_owned_province = {
+					OR = {
+						NOT = { trade_goods = wine }
+						AND = {
+							trade_goods = wine
+							base_production = 12
+							has_production_building_trigger = yes
+							has_manufactory_trigger = yes
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = wineport_wine_megaproduction
+				duration = 9125
+			}
+		} 
+	}
+
+	A16_wine_crowned = {
+		icon = mission_burning_witch
+		position = 21
+		required_missions = { A16_the_red_sea } 
+		provinces_to_highlight = { 
+			province_id = 101
+		} 
+
+		trigger = {  
+			NOT = { has_country_modifier = wineport_wine_megaproduction }
+			is_hegemon = yes
+			reform_level = 8
+			home_trade_node = {
+				highest_value_trade_node = yes
+			}
+		} 
+
+		effect = {  
+			country_event = { id = flavour_wineport.32 }
+		} 
 	}
 }
 
@@ -963,18 +1466,14 @@ A16_branch_4 = {
 	slot = 4
 	generic = no
 	ai = yes
+	has_country_shield = yes
 	potential = {
 		tag = A16
-		NOT = { map_setup = map_setup_random }
 	}
-	has_country_shield = yes
-	
+
 	A16_protect_minar = {
 		icon = mission_rb_control_electors
-		required_missions = {
-		}
 		position = 1
-		
 		provinces_to_highlight = {
 			OR = {
 				AND = {
@@ -982,16 +1481,16 @@ A16_branch_4 = {
 					is_capital_of = A10
 				}
 				AND = {
-					NOT = { exists = A10 }
+					NOT = { exists = A10 } 
 					province_id = 97
-					NOT = { owned_by = ROOT }
+					NOT = { owned_by = ROOT } 
 				}
 			}
 		}
-		
+
 		trigger = {
 			if = {
-				limit = { exists = A10 }
+				limit = { exists = A10 } 
 				A10 = {
 					OR = {
 						guaranteed_by = ROOT
@@ -999,11 +1498,9 @@ A16_branch_4 = {
 					}
 				}
 			}
-			else = {
-				owns = 97
-			}
+			else = { owns = 97 } 
 		}
-		
+
 		effect = {
 			add_country_modifier = {
 				name = wineport_church_taxes
@@ -1011,14 +1508,11 @@ A16_branch_4 = {
 			}
 		}
 	}
-	
-	A16_buyout_minar = {
+
+	A16_minar_buyout = {
 		icon = mission_diplomacy_missive
-		required_missions = {
-			A16_protect_minar
-		}
 		position = 2
-		
+		required_missions = { A16_protect_minar } 
 		provinces_to_highlight = {
 			OR = {
 				AND = {
@@ -1026,16 +1520,16 @@ A16_branch_4 = {
 					is_capital_of = A10
 				}
 				AND = {
-					NOT = { exists = A10 }
+					NOT = { exists = A10 } 
 					province_id = 97
-					NOT = { owned_by = ROOT }
+					NOT = { owned_by = ROOT } 
 				}
 			}
 		}
-		
+
 		trigger = {
 			if = {
-				limit = { exists = A10 }
+				limit = { exists = A10 } 
 				A10 = {
 					has_opinion = {
 						who = ROOT
@@ -1045,34 +1539,34 @@ A16_branch_4 = {
 				}
 				treasury = 150
 			}
-			else = {
-				owns = 97
-			}
+			else = { owns = 97 } 
 		}
-		
+
 		effect = {
 			lower_bloodwine_area = {
 				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
 				}
 				add_permanent_claim = ROOT
 			}
 			if = {
-				limit = { exists = A10 }
-				A10 = { country_event = { id = flavour_wineport.3 days = 7 } } # Also flavour_wineport.4 (the response)
+				limit = { exists = A10 } 
+				A10 = {
+					country_event = {
+						id = flavour_wineport.3
+						days = 7
+					}
+				}
 				add_treasury = -150
 			}
 		}
 	}
-	
+
 	A16_crush_collaborator = {
 		icon = mission_subdue_rajputana
-		required_missions = {
-			A16_unite_league
-		}
 		position = 4
-		
+		required_missions = { A16_unite_the_league } 
 		provinces_to_highlight = {
 			province_id = 84
 			OR = {
@@ -1080,19 +1574,19 @@ A16_branch_4 = {
 				local_autonomy = 10
 			}
 		}
-		
+
 		trigger = {
 			84 = {
-				NOT = { unrest = 0 }
-				NOT = { local_autonomy = 10 }
+				NOT = { unrest = 0 } 
+				NOT = { local_autonomy = 10 } 
 			}
 		}
-		
+
 		effect = {
 			southern_flats_area = {
 				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+					NOT = { is_core = ROOT } 
+					NOT = { is_permanent_claim = ROOT } 
 				}
 				add_permanent_claim = ROOT
 			}
@@ -1104,33 +1598,30 @@ A16_branch_4 = {
 			}
 		}
 	}
-	
-	A16_renown = {
+
+	A16_worldwide_renown = {
 		icon = mission_rb_control_the_hansa
-		required_missions = {
-			A16_crush_collaborator
-		}
-		position = 5
-		
+		position = 6
+		required_missions = { A16_crush_collaborator } 
 		provinces_to_highlight = {
 			province_id = 108
 			OR = {
 				local_autonomy = 70
-				NOT = { development = 26 }
-				NOT = { has_trade_building_trigger = yes }
-				NOT = { owned_by = ROOT }
+				NOT = { development = 25 } 
+				NOT = { has_trade_building_trigger = yes } 
+				NOT = { owned_by = ROOT } 
 			}
 		}
-		
+
 		trigger = {
 			108 = {
-				NOT = { local_autonomy = 70 }
-				development = 26
+				NOT = { local_autonomy = 70 } 
+				development = 25
 				has_trade_building_trigger = yes
 				owned_by = ROOT
 			}
 		}
-		
+
 		effect = {
 			108 = {
 				add_local_autonomy = 30
@@ -1141,102 +1632,84 @@ A16_branch_4 = {
 			}
 		}
 	}
-	
+
 	A16_toward_sorncost = {
 		icon = mission_rb_into_england
-		required_missions = {
-			A16_renown
-		}
-		position = 6
-		
+		position = 8
+		required_missions = { A16_worldwide_renown } 
 		provinces_to_highlight = {
 			area = southern_flats_area
-			NOT = { owned_by = ROOT }
+			NOT = { owned_by = ROOT } 
 		}
-		
-		trigger = {
-			southern_flats_area = {
-				owned_by = ROOT
-			}
-		}
-		
+
+		trigger = { 
+			southern_flats_area = { 
+				type = ALL
+				owned_by = ROOT 
+			}  
+		} 
+
 		effect = {
-			sornhills_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-			sorncost_vines_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
+			sornhills_area = { add_permanent_claim = ROOT }
+			sorncost_vines_area = { add_permanent_claim = ROOT }
 		}
 	}
-	
-	A16_conquer_sorncost = {
-		icon = mission_pf_map_table
-		required_missions = {
-			A16_toward_sorncost
-		}
-		position = 7
-		
+
+	A16_sorncosti_techniques = {
+		icon = mission_wine_monopolies
+		position = 9
+		required_missions = { A16_toward_sorncost } 
 		provinces_to_highlight = {
-			OR = {
+			province_id = 88
+			NOT = {
 				AND = {
-					province_id = 88
-					NOT = { has_manufactory_trigger = yes }
-					NOT = { country_or_subject_holds = ROOT }
-					NOT = { base_production = 10 }
+					country_or_non_sovereign_subject_holds = ROOT
+					has_manufactory_trigger = yes
+					has_production_building_trigger = yes
+					base_production = 10
 				}
 			}
 		}
-		
+
 		trigger = {
 			88 = {
-				country_or_subject_holds = ROOT
+				country_or_non_sovereign_subject_holds = ROOT
 				has_manufactory_trigger = yes
 				has_production_building_trigger = yes
 				base_production = 10
 			}
 		}
-		
+
 		effect = {
-			88 = {
-				add_local_autonomy = 20
-			}
-			custom_tooltip = A16_conquer_sorncost_tt
+			88 = { add_local_autonomy = 20 } 
+			custom_tooltip = wineport_conquer_sorncost.tt
 			hidden_effect = {
-				every_owned_province = {
-					limit = { trade_goods = wine region = lencenor_region }
+				lencenor_region = {
+					limit = {
+						trade_goods = wine
+						country_or_non_sovereign_subject_holds = ROOT
+					}
 					add_base_production = 2
 				}
 			}
 		}
 	}
-	
+
 	A16_wine_must_flow = {
 		icon = imperial_navy
+		position = 10
 		required_missions = {
-			A16_neglected_sister A16_free_coast A16_conquer_sorncost
+			A16_neglected_sister
+			A16_free_coast
+			A16_sorncosti_techniques
 		}
-		position = 8
-		
 		provinces_to_highlight = {
 			province_id = 67
-			NOT = { owned_by = ROOT }
+			NOT = { owned_by = ROOT } 
 		}
-		
-		trigger = {
-			67 = {
-				owned_by = ROOT
-			}
-		}
-		
+
+		trigger = { 67 = { owned_by = ROOT }  } 
+
 		effect = {
 			101 = {
 				add_province_modifier = {
@@ -1255,27 +1728,21 @@ A16_branch_4 = {
 					name = united_wine_lords
 					duration = -1
 				}
-				hidden_effect = {
-					remove_province_modifier = wineport_rubenaire_trade
-				}
+				hidden_effect = { remove_province_modifier = wineport_rubenaire_trade } 
 			}
 			79 = {
 				add_province_modifier = {
 					name = united_wine_lords
 					duration = -1
 				}
-				hidden_effect = {
-					remove_province_modifier = wineport_eilisin_goods
-				}
+				hidden_effect = { remove_province_modifier = wineport_eilisin_goods } 
 			}
 			114 = {
 				add_province_modifier = {
 					name = united_wine_lords
 					duration = -1
 				}
-				hidden_effect = {
-					remove_province_modifier = wineport_madalaire_dev_cost
-				}
+				hidden_effect = { remove_province_modifier = wineport_madalaire_dev_cost } 
 			}
 			add_country_modifier = {
 				name = wineport_splendor
@@ -1283,126 +1750,123 @@ A16_branch_4 = {
 			}
 		}
 	}
-	
+
 	A16_world_of_winecraft = {
 		icon = glory_to_turin
-		required_missions = {
-			A16_wine_must_flow
-		}
-		position = 9
-		
+		position = 11
+		required_missions = { 
+			A16_bloody_teeth
+			A16_wine_must_flow 
+		} 
 		provinces_to_highlight = {
 			province_id = 1292
-			NOT = { is_strongest_trade_power = ROOT }
+			NOT = { is_strongest_trade_power = ROOT } 
 		}
-		
-		trigger = {
-			1292 = {
-				is_strongest_trade_power = ROOT
-			}
-		}
-		
+
+		trigger = { 1292 = { is_strongest_trade_power = ROOT }  } 
+
 		effect = {
+			country_event = { id = flavour_wineport.22 }
 			add_country_modifier = {
 				name = wineport_trade_diplomats
 				duration = -1
 			}
 		}
 	}
-	
-	A16_winelords_three = {
+}
+
+A16_winebay_4 = {
+	slot = 4
+		generic = no
+		ai = yes
+		has_country_shield = yes
+		potential = {
+			tag = A16
+			has_country_flag = wineport_upgraded_ideas
+		}	
+
+
+	A16_the_wine_lords_three = {
 		icon = hand-picked_bureaucrats
-		required_missions = {
-			A16_world_of_winecraft
-		}
-		position = 10
-		
+		position = 12
+		required_missions = { A16_world_of_winecraft } 
 		provinces_to_highlight = {
 			OR = {
 				province_id = 79
 				province_id = 108
 				province_id = 114
 			}
-			NOT = { development = 35 }
+			NOT = { development = 30 } 
 		}
-		
+
 		trigger = {
-			79 = { development = 35 }
-			108 = { development = 35 }
-			114 = { development = 35 }
+			79 = { development = 30 } 
+			108 = { development = 30 } 
+			114 = { development = 30 } 
 		}
-		
-		effect = {
-			upgrade_wineport_wines = yes
-		}
+
+		effect = { upgrade_wineport_wines = yes } 
 	}
-	
+
 	A16_redglade_fionca = {
 		icon = mission_empire
-		required_missions = {
-			A16_winelords_three
-		}
-		position = 11
-		
+		position = 14
+		required_missions = { A16_the_wine_lords_three } 
 		provinces_to_highlight = {
 			province_id = 77
-			NOT = { owned_by = ROOT }
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+				owner = {
+					has_opinion = {
+						who = ROOT
+						value = 125
+					}
+				}
+			}
 		}
-		
+
 		trigger = {
 			77 = {
 				OR = {
 					owner = {
 						has_opinion = {
-							value = 150
+							value = 125
 							who = ROOT
 						}
 					}
-					owned_by = ROOT
+					country_or_non_sovereign_subject_holds = ROOT
 				}
 			}
 		}
-		
-		effect = {
-			upgrade_wineport_wines = yes
+
+		effect = { 
+			country_event = { id = flavour_wineport.23 }
 		}
 	}
-	
-	A16_secrets_red_lineage = {
+
+	A16_secrets_of_the_red_lineage = {
 		icon = mission_invade_arakan
-		required_missions = {
-			A16_redglade_fionca
-		}
-		position = 12
-		
-		provinces_to_highlight = {
-			province_id = 67
-		}
-		
+		position = 15
+		required_missions = { A16_redglade_fionca } 
+		provinces_to_highlight = { province_id = 67 } 
+
 		trigger = {
 			treasury = 300
 			67 = {
-				NOT = { unrest = 0 }
+				NOT = { unrest = 0 } 
 				infantry_in_province = 3
 			}
 		}
-		
-		effect = {
-			country_event = { id = flavour_wineport.5 }
-		}
+
+		effect = { country_event = { id = flavour_wineport.5 }  } 
 	}
-	
-	A16_secure_varilleni_wines = {
+
+	A16_secure_the_varilleni = {
 		icon = mission_establish_the_prikazy
-		required_missions = {
-			A16_secrets_red_lineage
-		}
-		position = 14
-		
-		provinces_to_highlight = {
-			province_id = 353
-		}
-		
+		position = 17
+		required_missions = { A16_secrets_of_the_red_lineage } 
+		provinces_to_highlight = { province_id = 353 } 
+
 		trigger = {
 			diplomatic_reputation = 2
 			estate_loyalty = {
@@ -1410,18 +1874,52 @@ A16_branch_4 = {
 				loyalty = 60
 			}
 			353 = {
-				owner = {
-					has_opinion = {
-						who = ROOT
-						value = 50
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						OR = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 50
+							}
+							has_opinion = {
+								who = ROOT
+								value = 80
+							}
+						}
 					}
 				}
 			}
 		}
-		
-		effect = {
-			upgrade_wineport_wines = yes
+
+		effect = { 
+			country_event = { id = flavour_wineport.24 }
+		} 
+	}
+
+	A16_cannors_choice = {
+		icon = mission_approach_throne
+		position = 19
+		required_missions = {
+			A16_the_winetide
+			A16_secure_the_varilleni
+			A16_illusive_chylys
 		}
+		provinces_to_highlight = {} 
+
+		trigger = {  
+			is_great_power = yes
+			diplomatic_reputation = 5
+			trading_bonus = {
+				trade_goods = wine
+				value = yes
+			}
+		} 
+
+		effect = {  
+			country_event = { id = flavour_wineport.25 }
+			upgrade_wineport_wines = yes
+		} 
 	}
 }
 
@@ -1429,50 +1927,38 @@ A16_branch_5 = {
 	slot = 5
 	generic = no
 	ai = yes
+	has_country_shield = yes
 	potential = {
 		tag = A16
-		NOT = { map_setup = map_setup_random }
 	}
-	has_country_shield = yes
-	
-	##Mission Start
+
 	A16_hired_veterans = {
 		icon = mission_assemble_an_army
-		required_missions = {
-		}
 		position = 1
-		
-		trigger = {
-			dip_power = 100
-		}
-		
+		provinces_to_highlight = {  } 
+
+		trigger = { mil_power = 80 } 
+
 		effect = {
-			add_dip_power = -100
+			add_mil_power = -80
 			add_country_modifier = {
 				name = wineport_mecenaries
 				duration = 9125
 			}
 		}
 	}
-	
-	A16_fifth_city = {
+
+	A16_the_fifth_city = {
 		icon = mission_establish_high_seas_navy
-		required_missions = {
-			A16_hired_veterans
-		}
 		position = 2
-		
+		required_missions = { A16_hired_veterans } 
 		provinces_to_highlight = {
 			province_id = 84
-			NOT = { owned_by = ROOT }
+			NOT = { owned_by = ROOT } 
 		}
-		
-		trigger = {
-			84 = {
-				owned_by = ROOT
-			}
-		}
-		
+
+		trigger = { 84 = { owned_by = ROOT }  } 
+
 		effect = {
 			light_ship = 84
 			light_ship = 84
@@ -1481,61 +1967,58 @@ A16_branch_5 = {
 			light_ship = 84
 		}
 	}
-	
-	A16_expand_league = {
+
+	A16_expand_the_league = {
 		icon = mission_gwalior_and_rathambore
-		required_missions = {
-			A16_unite_league
-		}
 		position = 4
-		
+		required_missions = { A16_unite_the_league } 
 		provinces_to_highlight = {
 			OR = {
 				province_id = 79
 				province_id = 80
 			}
-			NOT = { owned_by = ROOT }
+			NOT = { owned_by = ROOT } 
 		}
-		
+
 		trigger = {
 			owns = 79
 			owns = 80
 		}
-		
+
 		effect = {
 			add_country_modifier = {
 				name = wineport_more_merchants
-				duration = 3650
+				duration = 9125
 			}
 		}
 	}
-	
+
 	A16_integrate_eilisin = {
 		icon = mission_have_two_subjects
-		required_missions = {
-			A16_crush_collaborator A16_expand_league
-		}
 		position = 5
-		
+		required_missions = {
+			A16_crush_collaborator
+			A16_expand_the_league
+		}
 		provinces_to_highlight = {
 			province_id = 79
 			OR = {
 				unrest = 0
 				local_autonomy = 25
-				NOT = { base_production = 10 }
-				NOT = { owned_by = ROOT }
+				NOT = { base_production = 10 } 
+				NOT = { owned_by = ROOT } 
 			}
 		}
-		
+
 		trigger = {
 			79 = {
-				NOT = { unrest = 0 }
-				NOT = { local_autonomy = 25 }
+				NOT = { unrest = 0 } 
+				NOT = { local_autonomy = 25 } 
 				base_production = 10
 				owned_by = ROOT
 			}
 		}
-		
+
 		effect = {
 			79 = {
 				add_local_autonomy = 30
@@ -1546,33 +2029,30 @@ A16_branch_5 = {
 			}
 		}
 	}
-	
+
 	A16_neglected_sister = {
 		icon = mission_chinese_general_riding
-		required_missions = {
-			A16_integrate_eilisin
-		}
-		position = 7
-		
+		position = 9
+		required_missions = { A16_integrate_eilisin } 
 		provinces_to_highlight = {
 			province_id = 114
 			OR = {
 				local_autonomy = 70
-				NOT = { owned_by = ROOT }
-				NOT = { has_production_building_trigger = yes }
-				NOT = { base_production = 10 }
+				NOT = { owned_by = ROOT } 
+				NOT = { has_production_building_trigger = yes } 
+				NOT = { base_production = 10 } 
 			}
 		}
-		
+
 		trigger = {
 			114 = {
-				NOT = { local_autonomy = 70 }
+				NOT = { local_autonomy = 70 } 
 				owned_by = ROOT
 				has_production_building_trigger = yes
 				base_production = 10
 			}
 		}
-		
+
 		effect = {
 			114 = {
 				add_local_autonomy = 30
@@ -1583,19 +2063,35 @@ A16_branch_5 = {
 			}
 		}
 	}
-	
+}
+
+A16_winebay_5 = {
+	slot = 5
+		generic = no
+		ai = yes
+		has_country_shield = yes
+		potential = {
+			tag = A16
+			has_country_flag = wineport_upgraded_ideas
+		}	
+
 	A16_bridgewine_trade = {
 		icon = mission_early_game_buildings
-		required_missions = {
-			A16_world_of_winecraft
-		}
-		position = 10
-		
+		position = 12
+		required_missions = { A16_world_of_winecraft } 
 		provinces_to_highlight = {
 			province_id = 569
-			NOT = { owned_by = ROOT }
+			NOT = { 
+				owned_by = ROOT
+				owner = {
+					OR = {
+						is_in_trade_league_with = ROOT
+						alliance_with = ROOT
+					}
+				}
+			}
 		}
-		
+
 		trigger = {
 			569 = {
 				owner = {
@@ -1607,157 +2103,179 @@ A16_branch_5 = {
 				}
 			}
 		}
-		
-		effect = {
-			upgrade_wineport_wines = yes
-		}
+
+		effect = { 
+			country_event = { id = flavour_wineport.28 }
+		} 
 	}
-	
+
 	A16_busilari_fortified = {
 		icon = mission_junk_boat
-		required_missions = {
-			A16_bridgewine_trade
-		}
-		position = 11
-		
+		position = 13
+		required_missions = { A16_bridgewine_trade } 
 		provinces_to_highlight = {
 			province_id = 380
-			NOT = { owned_by = ROOT }
-		}
-		
-		trigger = {
-			trader = 3
-			380 = {
+			NOT = { 
+				owned_by = ROOT
 				owner = {
 					OR = {
-						tag = ROOT
+						has_spy_network_from = {
+							who = ROOT
+							value = 50
+						}
 						has_opinion = {
 							who = ROOT
-							value = 100
+							value = 80
 						}
 					}
 				}
 			}
 		}
-		
-		effect = {
-			upgrade_wineport_wines = yes
+
+		trigger = {
+			trader = 3
+			380 = {
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						OR = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 50
+							}
+							has_opinion = {
+								who = ROOT
+								value = 80
+							}
+						}
+					}
+				}
+			}
 		}
+
+		effect = { 
+			country_event = { id = flavour_wineport.29 }
+		} 
 	}
-	
-	A16_crimson_red = {
-		icon = mission_construct_a_corsair_fleet
-		required_missions = {
-			A16_busilari_fortified
-		}
-		position = 12
-		
-		provinces_to_highlight = {
-			province_id = 522
-		}
-		
+
+	A16_citadel_purple = {
+		icon = mission_the_ascension
+		position = 15
+		required_missions = { A16_busilari_fortified } 
+		provinces_to_highlight = { province_id = 522 } 
+
 		trigger = {
 			522 = {
-				owner = {
-					has_opinion = {
-						value = 100
-						who = ROOT
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						OR = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 50
+							}
+							has_opinion = {
+								who = ROOT
+								value = 80
+							}
+						}
 					}
 				}
 			}
 			dip = 6
 			dip_power = 50
 		}
-		
+
 		effect = {
 			add_dip_power = -50
-			upgrade_wineport_wines = yes
+			country_event = { id = flavour_wineport.30 }
 		}
 	}
-	
+
 	A16_liquid_sunlight = {
-		icon = mission_construct_a_corsair_fleet
-		required_missions = {
-			A16_crimson_red
-		}
-		position = 13
-		
+		icon = mission_sunset
+		position = 16
+		required_missions = { A16_citadel_purple } 
 		provinces_to_highlight = {
 			superregion = bulwar_superregion
 			culture = sun_elf
 			trade_goods = wine
 		}
-		
+
 		trigger = {
 			bulwar_superregion = {
 				trade_goods = wine
 				culture = sun_elf
 				owner = {
-					has_opinion = {
-						value = 100
-						who = ROOT
+					OR = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 50
+						}
+						has_opinion = {
+							who = ROOT
+							value = 80
+						}
 					}
 				}
 			}
 			treasury = 1000
 		}
-		
+
 		effect = {
 			add_treasury = -1000
 			hidden_effect = {
 				bulwar_superregion = {
 					limit = {
 						trade_goods = wine
+						culture = sun_elf
 						owner = {
-							has_opinion = {
-								value = 100
-								who = ROOT
+							OR = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 50
+								}
+								has_opinion = {
+									who = ROOT
+									value = 80
+								}
 							}
 						}
 					}
-					owner = { save_global_event_target_as = wineport_bulwar_contact }
+					owner = { save_global_event_target_as = wineport_bulwar_contact } 
 				}
 			}
-			country_event = { id = flavour_wineport.7 }
+			country_event = { id = flavour_wineport.7 } 
 		}
 	}
-	
+
 	A16_illusive_chylys = {
 		icon = mission_a_million_rice_fields
-		required_missions = {
-			A16_liquid_sunlight
-		}
-		position = 14
-		
+		position = 18
+		required_missions = { A16_liquid_sunlight } 
 		provinces_to_highlight = {
-			superregion = deepwoods_superregion
-			trade_goods = wine
+			province_id = 3006
 		}
-		
+
 		trigger = {
 			3006 = {
-				owner = {
-					has_spy_network_from = {
-						who = ROOT
-						value = 50
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 50
+						}
 					}
 				}
 			}
 			manpower = 10
 		}
-		
+
 		effect = {
-			3006 = {
-				owner = {
-					add_spy_network_from = {
-						who = ROOT
-						value = -50
-					}
-				}
-				change_trade_goods = wine
-			}
+			3006 = { change_trade_goods = wine }
 			add_manpower = -10
-			upgrade_wineport_wines = yes
+			country_event = { id = flavour_wineport.31 days = 10 } 
 		}
 	}
 }

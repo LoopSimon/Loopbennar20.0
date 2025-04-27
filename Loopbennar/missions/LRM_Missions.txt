@@ -1,0 +1,1368 @@
+LRM_1_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = { is_luna_river_minor = yes }
+
+	LRM_reassess_the_damage = {
+		icon = mission_colonial
+		position = 1
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+			NOT = {
+				AND = {
+					NOT = { devastation = 1 }
+					has_fort_building_trigger = yes
+				}
+			}
+		}
+
+		trigger = {
+			capital_scope = {
+				NOT = { devastation = 1 }
+				has_fort_building_trigger = yes
+			}
+			manpower_percentage = 0.80
+			has_estate_privilege = estate_burghers_patronage_of_the_arts
+		}
+
+		effect = {
+			add_adm_power = 50
+			capital_scope = {
+				add_province_modifier = {
+					name = LRM_post_lilac_wars_recovery
+					duration = 9125
+				}
+			}
+			custom_tooltip = LRM_reassess_the_damage_tt
+			hidden_effect = {
+				if = {
+					limit = { has_country_flag = lilac_wars_moon_party }
+					every_known_country = {
+						limit = {
+							OR = {
+								has_country_flag = lilac_wars_moon_party
+								has_country_flag = lilac_wars_rose_party
+							}
+						}
+						reverse_remove_opinion = { who = ROOT modifier = lilac_wars_moon_party_member }
+						reverse_remove_opinion = { who = ROOT modifier = lilac_wars_rose_party_enemy }
+						remove_opinion = { who = ROOT modifier = lilac_wars_moon_party_member }
+						remove_opinion = { who = ROOT modifier = lilac_wars_moon_party_enemy }
+					}
+				}
+				else_if = {
+					limit = { has_country_flag = lilac_wars_rose_party }
+					every_known_country = {
+						limit = {
+							OR = {
+								has_country_flag = lilac_wars_rose_party
+								has_country_flag = lilac_wars_moon_party
+							}
+						}
+						reverse_remove_opinion = { who = ROOT modifier = lilac_wars_rose_party_member }
+						reverse_remove_opinion = { who = ROOT modifier = lilac_wars_moon_party_enemy }
+						remove_opinion = { who = ROOT modifier = lilac_wars_rose_party_member }
+						remove_opinion = { who = ROOT modifier = lilac_wars_rose_party_enemy }
+					}
+				}
+				else = {
+					add_prestige = 10
+				}
+			}
+		} 
+	}
+}
+
+LRM_1_bellacaire = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z03 }
+
+	LRM_bellacaire_1 = {
+		icon = mission_diplomatic_relation
+		position = 2
+		required_missions = {
+			LRM_reassess_the_damage
+			LRM_tickle_emperor_ego
+		}
+		provinces_to_highlight = {
+			owner = { is_luna_river_minor = yes }
+			NOT = {
+				owner = { 
+					has_any_opinion_sent_gift = { target = ROOT }
+				}
+			}
+		} 
+
+		trigger = {
+			has_estate_privilege = estate_church_religious_diplomats
+			NOT = { war_exhaustion = 1 }
+			all_known_country = {
+				OR = {
+					NOT = { is_luna_river_minor = yes }
+					has_any_opinion_sent_gift = { target = ROOT } 
+				}
+			}
+		} 
+		effect = {
+			change_government_reform_progress = 50
+			gain_2_sway = yes
+			add_country_modifier = {
+				name = LRM_benevolent_care
+				duration = 9125
+			}
+		} 
+	}
+
+	LRM_bellacaire_2 = {
+		icon = mission_cope_with_refugees
+		position = 3
+		required_missions = {
+			LRM_bellacaire_1
+			LRM_our_greatest_friends
+		}
+		provinces_to_highlight = {
+			province_id = 587
+			OR = {
+				NOT = { has_building = ramparts }
+				NOT = { base_tax = 8 }
+			}
+		} 
+
+		trigger = {
+			has_idea = Z03_free_city_confederation
+			587 = {
+				has_building = ramparts
+				base_tax = 8
+			}
+		} 
+		effect = {
+			custom_tooltip = LRM_bellacaire_2_tt
+			hidden_effect = {
+				set_country_flag = LRM_bellacaire_privilege
+				remove_estate_privilege = estate_church_religious_diplomats
+				set_estate_privilege = estate_church_lrm_bellacaire_the_pink_stripe
+				every_known_country = {
+					limit = { is_luna_river_minor = yes }
+					add_stability_or_adm_power = yes
+					capital_scope = {
+						add_random_development = 1
+					}
+				}
+				add_stability_or_adm_power = yes
+				capital_scope = {
+					add_random_development = 1
+				}
+			}
+		} 
+	}
+}
+
+LRM_1_bluehart = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = A61 }
+
+	LRM_bluehart_1 = {
+		icon = mission_parthenon
+		position = 2
+		required_missions = {
+			LRM_reassess_the_damage
+			LRM_tickle_emperor_ego
+		}
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				OR = {
+					AND = {
+						tag = A38
+						NOT = { has_any_opinion_sent_gift = { target = ROOT } }
+					}
+					AND = {
+						OR = {
+							primary_culture = east_damerian
+							primary_culture = west_damerian
+						}
+						NOT = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			has_estate_privilege = estate_nobles_officer_corp
+			calc_true_if = {
+				amount = 3
+				all_known_country = {
+					OR = {
+						primary_culture = east_damerian
+						primary_culture = west_damerian
+					}
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+			if = {
+				limit = { exists = A38 }
+				A38 = {
+					has_any_opinion_sent_gift = { target = ROOT }
+				}
+			}
+		} 
+		effect = {
+			add_army_tradition = 10
+			gain_2_sway = yes
+			add_country_modifier = {
+				name = LRM_embracing_the_heritage
+				duration = 9125
+			}
+		} 
+	}
+
+	LRM_bluehart_2 = {
+		icon = give_him_back_his_legions
+		position = 3
+		required_missions = {
+			LRM_bluehart_1
+			LRM_our_greatest_friends
+		}
+		provinces_to_highlight = {
+			province_id = 329
+			OR = {
+				NOT = { has_manpower_building_trigger = yes }
+				NOT = { has_forcelimit_building_trigger = yes }
+				NOT = { base_manpower = 8 }
+			}
+		} 
+
+		trigger = {
+			has_idea = A61_legacy_of_the_hartlord
+			329 = {
+				has_manpower_building_trigger = yes
+				has_forcelimit_building_trigger = yes
+				base_manpower = 8
+			}
+		} 
+		effect = {
+			custom_tooltip = LRM_bluehart_2_tt
+			hidden_effect = {
+				set_country_flag = LRM_bluehart_privilege
+				set_estate_privilege = estate_nobles_emulants_of_the_hartlord
+				remove_estate_privilege = estate_nobles_officer_corp
+			}
+			329 = {
+				add_or_upgrade_manpower_building = yes
+			}
+		} 
+	}
+}
+
+LRM_1_menibor = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = A55 }
+
+	LRM_menibor_1 = {
+		icon = swiss_mercenaries
+		position = 2
+		required_missions = {
+			LRM_reassess_the_damage
+			LRM_tickle_emperor_ego
+		}
+		provinces_to_highlight = {
+			owned_by = A33
+			is_capital = yes
+		} 
+
+		trigger = {
+			has_estate_privilege = estate_adventurers_free_company_rosters
+			num_of_mercenaries = 8
+			reverse_has_opinion = {
+				who = A33
+				value = 100
+			}
+			is_in_deficit = no
+		} 
+		effect = {
+			add_army_tradition = 10
+			gain_2_sway = yes
+			add_country_modifier = {
+				name = LRM_impressive_mustachio
+				duration = 9125
+			}
+		} 
+	}
+
+	LRM_menibor_2 = {
+		icon = mission_feast
+		position = 3
+		required_missions = {
+			LRM_menibor_1
+			LRM_our_greatest_friends
+		}
+		provinces_to_highlight = {
+			province_id = 569
+			OR = {
+				NOT = { has_manpower_building_trigger = yes }
+				NOT = { has_trade_building_trigger = yes }
+				NOT = { base_manpower = 8 }
+			}
+		} 
+
+		trigger = {
+			has_idea = A55_city_of_valor
+			569 = {
+				has_manpower_building_trigger = yes
+				has_trade_building_trigger = yes
+				base_manpower = 8
+			}
+		} 
+		effect = {
+			custom_tooltip = LRM_menibor_2_tt
+			hidden_effect = {
+				set_country_flag = LRM_menibor_privilege
+				remove_estate_privilege = estate_adventurers_free_company_rosters
+				set_estate_privilege = estate_adventurers_the_wider_loop
+				add_historical_friend = A33
+				A33 = { add_historical_friend = ROOT }
+				add_historical_friend = B12
+				B12 = { add_historical_friend = ROOT }
+				add_historical_friend = B39
+				B39 = { add_historical_friend = ROOT }
+				add_historical_friend = H48
+				H48 = { add_historical_friend = ROOT }
+				add_historical_friend = H49
+				H49 = { add_historical_friend = ROOT }
+			}
+		}  
+	}
+}
+
+LRM_1_napesbay = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = A82 }
+
+	LRM_napesbay_1 = {
+		icon = crusader_fleet
+		position = 2
+		required_missions = {
+			LRM_reassess_the_damage
+			LRM_tickle_emperor_ego
+		} 
+
+		trigger = {
+			has_estate_privilege = estate_burghers_private_trade_fleets
+			has_estate_privilege = estate_burghers_admirals
+			num_of_light_ship = 6
+			num_of_admirals = 1
+		} 
+		effect = {
+			add_sailors = 500
+			gain_2_sway = yes
+			add_country_modifier = {
+				name = LRM_patroling_the_dameshead
+				duration = 9125
+			}
+		} 
+	}
+
+	LRM_napesbay_2 = {
+		icon = expand_the_arsenal
+		position = 3
+		required_missions = {
+			LRM_napesbay_1
+			LRM_our_greatest_friends
+		}
+		provinces_to_highlight = {
+			province_id = 50
+			OR = {
+				NOT = { has_coast_defense_building_trigger = yes }
+				NOT = { has_dock_building_trigger = yes }
+				NOT = { base_production = 8 }
+			}
+		} 
+
+		trigger = {
+			has_idea = A82_vernid_arsenal
+			50 = {
+				has_coast_defense_building_trigger = yes
+				has_dock_building_trigger = yes
+				base_production = 8
+			}
+		} 
+		effect = {
+			custom_tooltip = LRM_napesbay_2_tt
+			add_or_upgrade_shipyard_building = yes
+			hidden_effect = {
+				set_country_flag = LRM_napesbay_privilege
+				remove_estate_privilege = estate_burghers_private_trade_fleets
+				set_estate_privilege = estate_burghers_supremacy_of_napesfleet
+			}
+		} 
+	}
+}
+
+
+LRM_1_2 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = { is_luna_river_minor = yes } 
+
+	LRM_the_art_of_company = {
+		icon = continue_the_renaissance
+		position = 4
+		required_missions = { LRM_the_moon_emerges }  
+
+		trigger = {
+			num_of_estate_agendas_completed = {
+                estate = estate_adventurers
+                value = 1
+            }
+			A01 = {
+				OR = {
+					is_enemy = ROOT
+					alliance_with = ROOT
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+			}
+			A13 = {
+				OR = {
+					is_enemy = ROOT
+					alliance_with = ROOT
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+			}
+			emperor = {
+				OR = {
+					is_enemy = ROOT
+					alliance_with = ROOT
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = LRM_the_art_of_company__trigger_tt
+				any_known_country = {
+					capital_scope = {
+						province_group = escann_proper
+					}
+					OR = {
+						is_enemy = ROOT
+						alliance_with = ROOT
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+					}
+				}
+			}
+		}
+
+		effect = { 
+			custom_tooltip = LRM_the_art_of_company_tt
+			hidden_effect = { set_country_flag = LRM_better_adventurers }
+		} 
+	}
+
+	LRM_perfect_new_techniques = {
+		icon = mission_landsknecht_soldier
+		position = 5
+		required_missions = {
+			LRM_the_art_of_company
+			LRM_unhorse_the_princes
+		}
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+			has_manpower_building_trigger = no
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = LRM_perfect_new_techniques_tt
+				check_variable = {
+					which = artilleryBarrageUsed
+					value = 3
+				}
+			}
+			OR = {
+				AND = {
+					army_professionalism = 0.30
+					num_of_battles = { amount = 15 }
+				}
+				AND = {
+					army_professionalism = 0.15
+					num_of_battles = { amount = 30 }
+				}
+			}	
+			capital_scope = {
+				has_manpower_building_trigger = yes
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = LRM_early_gunpowder_focus
+				duration = -1
+			}
+		} 
+	}
+}
+
+LRM_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = { is_luna_river_minor = yes } 
+
+	LRM_tickle_emperor_ego = {
+		icon = mission_pol_delegate_emperor
+		position = 1
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				is_emperor = yes
+				NOT = {
+					alliance_with = ROOT
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			check_variable = { 
+				which = lunaRiverSwayUsedVariable 
+				value = 2 
+			}
+			emperor = {
+				OR = {
+					alliance_with = ROOT
+					has_opinion = {
+						who = ROOT
+						value = 125
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = lrm_tickle_emperor_ego_tt
+			hidden_effect = { set_country_flag = lrm_additional_actions }
+		} 
+	}
+
+	LRM_our_greatest_friends = {
+		icon = balance_the_estates
+		position = 2
+		required_missions = { LRM_tickle_emperor_ego } 
+
+		trigger = {
+			estate_loyalty = {
+                estate = all
+                loyalty = 60
+            }
+			num_of_estate_privileges = {
+                estate = estate_church
+                value = 3
+            }
+			num_of_estate_privileges = {
+                estate = estate_burghers
+                value = 3
+            }
+			num_of_estate_privileges = {
+                estate = estate_nobles
+                value = 3
+            }
+			num_of_estate_privileges = {
+                estate = estate_adventurers
+                value = 2
+            }
+			num_of_estate_privileges = {
+                estate = estate_mages
+                value = 2
+            }
+            has_estate_privilege = estate_nobles_advisors
+			num_of_estate_agendas_completed = {
+                estate = estate_nobles
+                value = 1
+            }
+		} 
+
+		effect = {
+			custom_tooltip = LRM_our_greatest_friends_tt
+			hidden_effect = { set_country_flag = LRM_better_nobles }
+		} 
+	}
+
+	LRM_the_moon_emerges = {
+		icon = mission_pol_polish_renaissance
+		position = 3
+		required_missions = {
+			LRM_our_greatest_friends
+			LRM_starve_the_vultures
+		}
+		provinces_to_highlight = {
+			province_group = luna_river_cities_provinces
+			NOT = {
+				AND = {
+					development = 20
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		} 
+
+		trigger = {
+			has_any_age_ability = yes
+			has_institution = renaissance
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 4
+				province_group = luna_river_cities_provinces
+				development = 20
+			}
+			custom_trigger_tooltip = {
+				tooltip = obj_humiliate_rival_tooltip
+				has_country_flag = humiliated_rival
+			}
+		} 
+
+		effect = {
+			custom_tooltip = LRM_the_moon_emerges_tt
+			hidden_effect = {
+				luna_river_cities_provinces = {
+					limit = {
+						development = 20
+					}
+					ROOT = {
+						add_prestige = 5
+						add_splendor = 20
+						gain_1_sway = yes
+					}
+				}
+				set_country_flag = LRM_better_patronage 
+			}
+		} 
+	}
+
+	LRM_unhorse_the_princes = {
+		icon = mission_guns_of_urban
+		position = 4
+		required_missions = {
+			LRM_the_moon_emerges
+			LRM_wars_of_luna
+		}
+
+		trigger = {
+			any_ally = {
+				any_owned_province = {
+					OR = {
+						trade_goods = copper
+						trade_goods = iron
+					}
+				}
+			}
+			OR = {
+				army_professionalism = 0.15
+				num_of_battles = { amount = 15 }
+			}
+			OR = {
+				mil_tech = 7
+				AND = {
+					innovativeness = 20
+					treasury = 100
+				}
+			}
+		} 
+
+		effect = {
+			if = {
+				limit = { NOT = { mil_tech = 7 } }
+				add_treasury = -100
+				capital_scope = {
+					large_cast_bronze_mortar = ROOT
+					large_cast_bronze_mortar = ROOT
+					large_cast_bronze_mortar = ROOT
+				}
+			}
+			else = {
+				capital_scope = {
+					artillery = ROOT
+					artillery = ROOT
+					artillery = ROOT
+				}
+			}
+			add_country_modifier_for_age = {
+				name = LRM_ready_aim_fire
+				age = age_of_discovery
+			}
+		} 
+	}
+}
+LRM_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = { is_luna_river_minor = yes } 
+
+	LRM_starve_the_vultures = {
+		icon = mission_pol_imperial_commonwealth
+		position = 2
+		required_missions = {
+			LRM_tickle_emperor_ego
+			LRM_muster_the_city_guard
+		}
+
+		trigger = {
+			treasury = 100
+			calc_true_if = {
+				amount = 4
+				all_known_country = {
+					is_part_of_hre = yes
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = LRM_swayed
+					}
+				}
+			}
+		} 
+
+		effect = {
+			add_treasury = -100
+			country_event = {
+				id = flavour_LRM.1
+			}
+			custom_tooltip = LRM_flavour_LRM_1_ei_tt
+		} 
+	}
+
+	LRM_wars_of_luna = {
+		icon = mission_italian_condottiere
+		position = 3
+		required_missions = { LRM_starve_the_vultures } 
+		provinces_to_highlight = {
+			province_group = luna_river_cities_provinces
+			owner = {
+				is_luna_river_minor = no
+			}
+		} 
+
+		trigger = {
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = LRM_the_luna_wars_trigger_tt
+					A55 = { exists = yes }
+					A61 = { exists = yes }
+					A82 = { exists = yes }
+					B87 = { exists = yes }
+					B88 = { exists = yes }
+					B89 = { exists = yes }
+					B90 = { exists = yes }
+					B91 = { exists = yes }
+					Z03 = { exists = yes }
+				}
+				AND = {
+					is_in_war = {
+						attacker_leader = ROOT
+					}
+					luna_river_cities_provinces = {
+						NOT = { owned_by = ROOT }
+						controlled_by = ROOT
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = LRM_the_luna_wars_tt
+			hidden_effect = {
+				luna_river_cities_provinces = {
+					limit = {
+						owner = { is_luna_river_minor = no }
+					}
+					add_province_modifier = {
+						name = LRM_the_luna_wars
+						duration = 18250
+					}
+				}
+				create_general = {
+					tradition = 75
+					add_siege = 1
+				}
+			}
+		} 
+	}
+
+	LRM_seize_the_opportunity = {
+		icon = imperial_ascendancy
+		position = 5
+		required_missions = {
+			LRM_unhorse_the_princes
+			LRM_pashainey_unity
+		}
+		provinces_to_highlight = {
+			province_group = luna_river_cities_provinces
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		} 
+
+		trigger = {
+			luna_river_cities_provinces = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			prestige = 50
+			OR = {
+				advisor = diplomat
+				advisor = statesman
+				has_dip_advisor_3 = yes
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_LRM.16
+			}
+			custom_tooltip = LRM_flavour_LRM_16_ei_tt
+			custom_tooltip = LRM_seize_the_opportunity_tt
+		} 
+	}
+
+	LRM_curtain_call = {
+		icon = italian_riches
+		position = 6
+		required_missions = { LRM_seize_the_opportunity } 
+		provinces_to_highlight = {
+			NOT = { is_capital_of = ROOT }
+			province_group = luna_river_cities_provinces
+			owner = { total_development = ROOT }
+		}
+
+		trigger = {
+			republican_tradition = 100
+			custom_trigger_tooltip = {
+				tooltip = LRM_curtain_call_ctt
+				capital_scope = {
+					luna_river_cities_provinces = {
+						type = all
+						OR = {
+							NOT = { higher_development_than = PREV }
+							is_capital_of = ROOT
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = LRM_special_pashaine }
+				all_subject_country = {
+					OR = {
+						is_luna_river_minor = no
+						NOT = { liberty_desire = 25 }
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = LRM_no_special_pashaine }
+				luna_river_cities_provinces = {
+					type = all
+					owned_by = ROOT
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = LRM_curtain_call_tt
+			hidden_effect = { set_country_flag = LRM_can_form_pashaine }
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = LRM_curtain_call_50_sway_tt
+				first_limit = "check_variable = { which = lunaRiverSwayUsedVariable value = 50 }"
+				first_effect = "country_event = { id = flavour_LRM.5 } custom_tooltip = LRM_flavour_LRM_5_ei_tt"
+			}
+		} 
+	}
+}
+
+LRM_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = { is_luna_river_minor = yes } 
+
+	LRM_muster_the_city_guard = {
+		icon = form_the_swiss_guard
+		position = 1
+
+		trigger = {
+			army_size_percentage = 0.9
+			num_of_generals = 1
+			has_mil_advisor = yes
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = thriving_arms_industry
+				duration = 9125
+			}
+			custom_tooltip = LRM_muster_the_city_guard_tt
+			hidden_effect = { set_country_flag = LRM_city_guard }
+		} 
+	}
+
+	LRM_eyes_in_every_corner = {
+		icon = venture_captains
+		position = 2
+		required_missions = { LRM_muster_the_city_guard } 
+		provinces_to_highlight = {
+			OR = {
+				owner = {
+					is_luna_river_minor = no
+					any_owned_province = {
+						province_group = luna_river_cities_provinces
+					}
+				}
+				owner = {
+					is_luna_river_minor = yes
+					army_size = ROOT
+				}
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = LRM_eyes_in_every_corner_trigger_tt
+				all_known_country = {
+					OR = {
+						NOT = { is_luna_river_minor = yes }
+						NOT = { army_size = ROOT }
+					}
+				}
+			}
+			calc_true_if = {
+				amount = 2
+				all_known_country = {
+					any_owned_province = {
+						province_group = luna_river_cities_provinces
+					}
+					has_spy_network_from = {
+						who = ROOT
+						value = 25
+					}
+				}
+			}
+		} 
+
+		effect = {
+			add_stability_or_adm_power = yes
+			custom_tooltip = LRM_eyes_in_every_corner_tt
+			hidden_effect = {
+				every_neighbor_country = {
+					add_spy_network_in = {
+						who = ROOT
+						value = -25
+					}
+				}
+				every_neighbor_country = {
+					add_spy_network_from = {
+						who = ROOT
+						value = 25
+					}
+				}
+			}
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = LRM_eyes_in_every_corner_spy_network_tt
+				first_limit = "luna_river_cities_provinces = { type = all OR = { owned_by = ROOT owner = { has_spy_network_from = { who = ROOT value = 25 } } } }"
+				first_effect = "gain_2_sway = yes"
+			}
+		} 
+	}
+
+	LRM_assume_formal_control = {
+		icon = republican_yearnings
+		position = 3
+		required_missions = {
+			LRM_thousand_temple_river
+			LRM_eyes_in_every_corner
+			LRM_starve_the_vultures
+		}
+
+		provinces_to_highlight = {
+			owner = {
+				is_luna_river_minor = yes
+				NOT = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+		}
+
+		trigger = {
+			treasury = 100
+			reform_level = 3
+			calc_true_if = {
+				amount = 3
+				all_known_country = {
+					is_luna_river_minor = yes
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+		} 
+
+		effect = {
+			hidden_effect = { save_global_event_target_as = LRM_leader set_country_flag = LRM_leader_flag }
+			add_treasury = -100
+			capital_scope = {
+				add_building_construction = {
+					building = town_hall
+					speed = 0.5
+					cost = 0
+				}
+			}
+			add_government_reform = decentralized_luna_confederation_reform
+			country_event = {
+				id = flavour_LRM.8
+				days = 365
+			}
+			custom_tooltip = LRM_flavour_LRM_2_ei_tt
+		} 
+	}
+
+	LRM_pashainey_unity = {
+		icon = mission_unite_home_region
+		position = 4
+		required_missions = { LRM_assume_formal_control } 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = LRM_pashainey_unity_ctt
+				has_country_flag = LRM_1_dispute
+				has_country_flag = LRM_2_dispute
+				has_country_flag = LRM_3_dispute
+				has_country_flag = LRM_4_dispute
+				has_country_flag = LRM_5_dispute
+				has_country_flag = LRM_6_dispute
+				has_country_flag = LRM_7_dispute
+				has_country_flag = LRM_8_dispute
+				has_country_flag = LRM_9_dispute
+			}
+		} 
+
+		effect = {
+			hidden_effect = {
+				set_country_flag = LRM_can_promote_luna_identity
+				change_primary_culture = pashainey
+				capital_scope = { change_culture = pashainey }
+				every_subject_country = {
+					limit = { check_variable = { which = lunaRiverAttitudeVariable value = 5 } }
+					change_primary_culture = pashainey
+					capital_scope = { change_culture = pashainey }
+				}
+				every_subject_country = {
+					limit = { NOT = { check_variable = { which = lunaRiverAttitudeVariable value = 4 } } }
+					ROOT = { lose_1_sway = yes }
+				}
+			}
+			custom_tooltip = LRM_pashainey_unity_tt
+		} 
+	}
+
+	LRM_the_open_university = {
+		icon = leiden_university
+		position = 5
+		required_missions = {
+			LRM_the_luna_stamp
+			LRM_pashainey_unity
+		}
+
+		trigger = {
+			has_adm_advisor_2 = yes
+			is_ahead_of_time_in_technology = { tech = adm }
+			has_dip_advisor_2 = yes
+			is_ahead_of_time_in_technology = { tech = dip }
+			has_mil_advisor_2 = yes
+			is_ahead_of_time_in_technology = { tech = mil }
+			OR = {
+				innovativeness = 30
+				ruler_has_personality = patron_of_arts_personality
+				ruler_has_personality = reformist_personality
+				ruler_has_personality = scholar_personality
+				ruler_has_personality = free_thinker_personality
+			}
+		} 
+
+		effect = {
+			capital_scope = {
+				add_building_construction = {
+					building = university
+					speed = 2
+					cost = 0
+				}
+			}
+			country_event = {
+				id = flavour_LRM.4
+				days = 730
+			}
+			custom_tooltip = LRM_flavour_LRM_4_ei_tt
+		}
+	}
+}
+LRM_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = { is_luna_river_minor = yes } 
+
+	LRM_thousand_temple_river = {
+		icon = mission_early_game_buildings
+		position = 2
+		required_missions = { LRM_muster_the_city_guard } 
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				OR = {
+					tag = ROOT
+					is_subject_of = ROOT
+				}
+			}
+			has_tax_building_trigger = no
+		} 
+
+		trigger = {
+			capital_scope = {
+				has_tax_building_trigger = yes
+			}
+			any_subject_country = {
+				capital_scope = {
+					has_tax_building_trigger = yes
+				}
+			}
+			num_of_estate_agendas_completed = {
+                estate = estate_church
+                value = 1
+            }
+		} 
+
+		effect = {
+			custom_tooltip = LRM_thousand_temple_river_tt
+			hidden_effect = { set_country_flag = LRM_better_clergy }
+		} 
+	}
+
+	LRM_confederated_customs = {
+		icon = mission_market
+		position = 3
+		required_missions = { LRM_thousand_temple_river } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			capital_scope = {
+				has_trade_building_trigger = yes
+			}
+			calc_true_if = {
+				amount = 3
+				all_subject_country = {
+					has_embargo_rivals = yes
+					has_divert_trade = yes
+					NOT = { liberty_desire = 50 }
+				}
+			}
+		} 
+
+		effect = { 
+			custom_tooltip = LRM_confederated_customs_tt
+			hidden_effect = { set_country_flag = LRM_better_burghers }
+			if = {
+				limit = {
+					capital_scope = {
+						province_has_center_of_trade_of_level = 1
+					}
+				}
+				gain_3_sway = yes
+			}
+			else = {
+				capital_scope = {
+					center_of_trade = 1
+				}
+			}
+		} 
+	}
+
+	LRM_the_luna_stamp = {
+		icon = mission_rb_control_the_hansa
+		position = 4
+		required_missions = {
+			LRM_confederated_customs
+			LRM_assume_formal_control
+		}
+		provinces_to_highlight = {
+			province_group = luna_river_cities_provinces
+			OR = {
+				NOT = { has_production_building_trigger = yes }
+				AND = {
+					OR = {
+						province_id = 282
+						province_id = 296
+						province_id = 394
+					}
+					NOT = { num_of_times_improved = 3 }
+				}
+				AND = {
+					OR = {
+						province_id = 50
+						province_id = 569
+					}
+					NOT = { num_of_times_improved = 2 }
+				}
+				AND = {
+					OR = {
+						province_id = 109
+						province_id = 284
+						province_id = 329
+						province_id = 587
+					}
+					NOT = { num_of_times_improved = 1 }
+				}
+			}
+		} 
+
+		trigger = {
+			treasury = 1000
+			282 = { num_of_times_improved = 3 }
+			296 = { num_of_times_improved = 3 }
+			394 = { num_of_times_improved = 3 }
+			50 = { num_of_times_improved = 2 }
+			569 = { num_of_times_improved = 2 }
+			109 = { num_of_times_improved = 1 }
+			284 = { num_of_times_improved = 1 }
+			329 = { num_of_times_improved = 1 }
+			587 = { num_of_times_improved = 1 }
+			luna_river_cities_provinces = {
+				type = all
+				has_production_building_trigger = yes
+			}
+		} 
+
+		effect = {
+			add_treasury = -1000
+			country_event = {
+				id = flavour_LRM.3
+			}
+			custom_tooltip = LRM_flavour_LRM_3_ei_tt
+		} 
+	}
+
+	LRM_centre_of_fashion = {
+		icon = mission_state_manufactories
+		position = 4
+		required_missions = {
+			LRM_the_luna_stamp
+		}
+		provinces_to_highlight = {
+			owner = {
+				capital_scope = { region = esmaria_region }
+				has_been_insulted_by_root = no
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = LRM_centre_of_fashion_trigger_tt
+				all_known_country = {
+					OR = {
+						NOT = { capital_scope = { region = esmaria_region } }
+						has_been_insulted_by_root = yes
+					}
+				}
+			}
+			emperor = {
+				has_opinion = {
+					who = ROOT
+					value = 150
+				}
+			}
+			check_variable = {
+				which = lunaRiverSwayVariable
+				value = 3
+			}
+			OR = {
+				901 = {
+					trade_share = {
+						country = ROOT
+						share = 30
+					}
+				}
+				904 = {
+					trade_share = {
+						country = ROOT
+						share = 30
+					}
+				}
+				1270 = {
+					trade_share = {
+						country = ROOT
+						share = 30
+					}
+				}
+				1926 = {
+					trade_share = {
+						country = ROOT
+						share = 30
+					}
+				}
+			}
+		} 
+
+		effect = {
+			lose_3_sway = yes
+			simple_dynamic_effect = {
+				first_custom_tooltip = LRM_centre_of_fashion_cloth_tt
+				first_limit = "capital_scope = { trade_goods = cloth }"
+				first_effect = "capital_scope = { add_building = textile }"
+				second_limit = "capital_scope = { NOT = { trade_goods = cloth } }"
+				second_effect = "add_or_upgrade_production_building = yes"
+			}
+			simple_dynamic_effect = {
+				first_custom_tooltip = LRM_centre_of_fashion_esmari_fashion_tt
+				first_limit = "NOT = { has_global_flag = esmari_fashion_happened }"
+				first_effect = "country_event = { id = flavour_LRM.7 } custom_tooltip = LRM_flavour_LRM_7_ei_tt"
+				second_limit = "has_global_flag = esmari_fashion_happened"
+				second_effect = "add_years_of_income = 0.25 add_dip_power = 100 add_prestige = 25"
+			}
+		} 
+	}
+}

@@ -1,0 +1,421 @@
+toarnaire_left = {
+	slot = 2
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = Z68 }
+
+	toarnaire_wineries = {
+		icon = mission_shady_encounter
+		position = 3
+		required_missions = {}
+		
+		provinces_to_highlight = {
+		}
+		
+		trigger = {
+			treasury = 50
+			adm_power = 100
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 50
+			}
+		}
+		
+		effect = {
+			add_treasury = -50
+			adm_power_cost = -100
+			33 = { add_building = workshop }
+			33 = {
+				add_permanent_province_modifier = { 
+					name = toarnaire_underground_wineries
+					duration = -1  
+				}
+			}
+		}
+	}
+
+	toarnaire_bloody_rebirth = {
+		icon = mission_early_game_buildings
+		position = 4
+		required_missions = {
+			toarnaire_wineries
+		}
+		
+		provinces_to_highlight = {
+			province_id = 33
+			NOT = {
+				AND = {
+					has_tax_building_trigger = yes
+					has_state_edict = edict_advancement_effort					
+				}
+			}
+		}
+		
+		trigger = {
+			is_institution_enabled = renaissance
+			estate_influence = {
+				estate = estate_mages
+				influence = 40
+			}
+			33 = {
+				has_tax_building_trigger = yes
+				if = {
+					limit = { has_dlc = "Mandate of Heaven" }
+					has_state_edict = edict_advancement_effort
+				}
+			}
+		}
+		
+		effect = {
+			33 = {
+				add_institution_embracement = {
+					which = renaissance
+					value = 100
+				}
+			}
+			33 = {
+				add_permanent_province_modifier = {
+					name = toarnaire_revived_vioraine
+					duration = -1  
+				}
+			}
+			add_country_modifier = { 
+				name = toarnaire_architectural_boom
+				duration = 3650
+			}
+		}
+	}
+
+	toarnaire_mageblood = {
+		icon = mission_have_manufactories
+		position = 5
+		required_missions = {
+			toarnaire_bloody_rebirth
+			toarnaire_hidden_secrets
+		}
+		
+		provinces_to_highlight = {
+			province_id = 33
+			NOT = {
+				AND = {
+					has_building = mage_tower
+					base_production = 20
+				}
+			}
+		}
+		
+		trigger = {
+			33 = {
+				has_building = mage_tower
+				base_production = 20
+			}
+			has_estate_privilege = estate_mages_reduced_research_regulations
+		}
+		
+		effect = {
+			33 = {
+				add_permanent_province_modifier = { 
+					name = toarnaire_blueblood
+					duration = -1  
+				}
+			}
+			set_estate_privilege = estate_mages_fifth_family
+			hidden_effect = {
+				33 = {
+					add_province_modifier = {
+						name = toarnaire_toarnaire_mage_tower
+						duration =  -1
+					}
+				}
+			}
+		}
+	}
+}
+
+toarnaire_center = {
+	slot = 3
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = Z68 }
+
+	toarnaire_hidden_secrets = {
+		icon = mission_sinister_castle
+		position = 4
+		required_missions = {
+			toarnaire_wineries
+			toarnaire_tasteful_gift
+		}
+		
+		provinces_to_highlight = {
+			province_id = 40
+			pure_unrest = 5
+		}
+		
+		trigger = {
+			owns_core_province = 40
+			NOT = { 40 = { pure_unrest = 5 } }
+			OR = {
+				mil_power = 100
+				has_mil_advisor_2 = yes
+			}
+			has_estate_privilege = estate_nobles_noble_officer_right
+		}
+		
+		effect = {
+			country_event = { 
+				id = flavor_toarnaire.1
+			}
+		}
+	}
+
+	toarnaire_red_street = {
+		icon = mission_impaled_soldies
+		position = 5
+		required_missions = {
+			toarnaire_hidden_secrets
+			toarnaire_old_capital
+			toarnaire_bloody_rebirth
+		}
+		
+		provinces_to_highlight = {
+		}
+		
+		trigger = {
+			estate_influence = {
+				estate = estate_nobles
+				influence = 70
+			}
+			estate_influence = {
+				estate = estate_mages
+				influence = 50
+			}
+			reverse_has_opinion = {
+				who = A16
+				value = 200
+			}
+			A16 = { vassal_of = ROOT }
+			NOT = { A16 = { liberty_desire = 50 } }
+			NOT = { crown_land_share = 25 }
+			NOT = { land_maintenance = 0.01 }
+		}
+		
+		effect = {
+			country_event = { 
+				id = flavor_toarnaire.2
+			}	
+		}
+	}
+}
+
+toarnaire_right = {
+	slot = 4
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = Z68 }
+
+	toarnaire_gather_the_league = {
+		icon = mission_missive
+		position = 1
+		required_missions = {}
+		
+		provinces_to_highlight = {
+			owned_by = A87
+		}
+		
+		trigger = {
+			reverse_has_opinion = {
+				who = A16
+				value = 100
+			}
+			A87 = { has_been_insulted_by_root = yes }
+			dip_power = 100
+		}
+		
+		effect = {
+			add_dip_power = -100
+			add_country_modifier = { 
+				name = toarnaire_wineport_support
+				duration = 5475
+			}
+			
+			40 = {
+				add_permanent_claim = Z68
+			}
+			32 = {
+				add_permanent_claim = Z68
+			}
+			34 = {
+				add_permanent_claim = Z68
+			}
+			59 = {
+				add_permanent_claim = Z68
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						Z68 = {
+							NOT = {
+								ai = yes
+							}
+						}
+						A87 = {
+							ai = yes
+						}
+					}
+					A87 = {
+						country_event = {
+							id = flavor_toarnaire.4
+							days = 90
+						}
+					}
+				}
+			}
+			custom_tooltip = toarnaire_war_tt
+		}
+	}
+
+	toarnaire_thorns_must_stand = {
+		icon = mission_noble_council
+		position = 2
+		required_missions = {
+			toarnaire_gather_the_league
+		}
+		
+		provinces_to_highlight = {
+			OR = {
+				province_id = 32
+				province_id = 34
+			}
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		}
+		
+		trigger = {
+			owns_core_province = 32
+			owns_core_province = 34
+			estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 50
+			}
+			has_estate_privilege = estate_nobles_land_rights
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = toarnaire_stand_as_one_1
+				duration = -1
+			}
+			32 = { add_nationalism = -15 }
+			34 = { add_nationalism = -15 }
+			33 = {add_building = barracks}
+		}
+	}
+
+	toarnaire_tasteful_gift = {
+		icon = mission_potion
+		position = 3
+		required_missions = {
+			toarnaire_thorns_must_stand
+		}
+		
+		provinces_to_highlight = {
+			is_capital_of = A16
+		}
+		
+		trigger = {
+			has_spy_network_in = {
+				who = A16
+				value = 30
+			}
+			reverse_has_opinion = {
+				who = A16
+				value = 150
+			}
+			diplomatic_reputation = 4
+			OR = {
+				diplomat = 1
+				ruler_has_personality = silver_tongue_personality
+				dip_power = 100
+			}
+		}
+		
+		effect = {
+			custom_tooltip = toarnaire_tasteful_tt
+			country_event = { 
+				id = flavor_toarnaire.3
+			}
+			if = {
+				limit = {
+					NOT = {
+						diplomat = 1
+						ruler_has_personality = silver_tongue_personality
+					}
+				}
+				add_dip_power = -100
+			}
+		}
+	}
+
+	toarnaire_old_capital = {
+		icon = mission_rb_the_education_acts
+		position = 4
+		required_missions = {
+			toarnaire_tasteful_gift
+		}
+		
+		provinces_to_highlight = {
+			province_id = 59
+			NOT = {
+				AND = {
+					is_core = ROOT
+					owned_by = ROOT
+				}
+			}
+		}
+		
+		trigger = {
+			owns_core_province = 59
+			num_of_estate_agendas_completed = {
+                estate = estate_nobles
+                value = 2
+            }
+			has_estate_privilege = estate_nobles_statesman_servitude
+		}
+		
+		effect = {
+			33 = {
+				add_permanent_province_modifier = {
+					name = toarnaire_great_rose
+					duration = -1  
+				}
+			}
+			if = {
+				limit = {
+					Z68 = { has_country_modifier = toarnaire_stand_as_one_2 }
+				}
+				remove_country_modifier = toarnaire_stand_as_one_2
+				add_country_modifier = { 
+					name = toarnaire_stand_as_one_3
+					duration = -1
+				}
+			}
+			if = {
+				limit = {
+					Z68 = { has_country_modifier = toarnaire_stand_as_one_1 }
+				}
+				remove_country_modifier = toarnaire_stand_as_one_1
+				add_country_modifier = { 
+					name = toarnaire_stand_as_one_2
+					duration = -1
+				}		
+			}
+		}
+	}
+}

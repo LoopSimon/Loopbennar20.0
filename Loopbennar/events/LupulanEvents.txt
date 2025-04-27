@@ -1,0 +1,615 @@
+namespace = lupulan_events
+# Sri Baginda System :
+# Designed by Everest @everestsereve
+# Written by Fantastic Kitten @fantastic_kitten_88435
+# Coded by Mike@butek69
+
+# lupulan_events.1001-1xxx: Sri Baginda System -
+# lupulan_events.1-x: Random events
+# There's a scripted effects and triggers file for the Sri Baginda, use/add when appropriate
+# Event targets for Sri Baginda System: 
+# - event_target:sri_baginda
+# - event_target:sri_baginda_help (Lupulan calling for help)
+# - event_target:sri_baginda_attacker (Lupulan attacker)
+
+#Startup Event 
+country_event = {
+	id = lupulan_events.1000
+	title = lupulan_events.1000.t
+	desc = {
+		trigger = { 
+			OR = {
+				has_reform = yanglam_tengalam_reform
+				is_sri_baginda = yes
+			}
+		}
+		desc = lupulan_events.1000.d.1
+	}
+	desc = {
+		trigger = { 
+			NOT = {
+				has_reform = yanglam_tengalam_reform
+				is_sri_baginda = yes
+			}
+		}
+		desc = lupulan_events.1000.d.2
+	}
+	picture = AMILAK_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+	}
+
+	option = { #For Lupulan Tribes
+		name = lupulan_events.1000.a
+		trigger = {
+			OR = {
+				has_reform = yanglam_tengalam_reform
+				is_sri_baginda = yes
+			}
+		}
+		custom_tooltip = sri_baginda_starting_explanation_yanglam_tt
+	}
+
+	option = { #For Outsiders
+		name = lupulan_events.1000.b
+		trigger = {
+			NOT = {
+				has_reform = yanglam_tengalam_reform
+				is_sri_baginda = yes
+			}
+		}
+		custom_tooltip = sri_baginda_starting_explanation_outsiders_tt
+	}
+}
+
+#Sri Baginda Called To Arms
+country_event = {
+	id = lupulan_events.1001
+	title = lupulan_events.1001.t
+	desc = lupulan_events.1001.d
+	picture = VILLAGE_BURNING_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		is_sri_baginda = yes
+	}
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit {
+					is_in_war = {
+						defender_leader = event_target:sri_baginda_help
+						attacker_leader = ROOT
+					}
+				}
+				set_country_flag = sri_baginda_no_lose_title
+			}
+			add_country_modifier = {
+				name = sri_baginda_call_cd
+				duration = -1
+				hidden = yes
+			}
+		}
+	}
+
+	option = { #Accept the call to arms
+		name = lupulan_events.1001.a
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 20
+				army_strength = {
+					who = event_target:sri_baginda_attacker
+					value = 2
+				}
+			}
+		}
+		custom_tooltip = sri_baginda_call_to_arms_tt
+		add_sri_baginda_power = { value = 25 }
+		hidden_effect = {
+			if = {
+				limit {
+					is_in_war = {
+						defender_leader = event_target:sri_baginda_help
+						attacker_leader = ROOT
+					}
+				}
+				white_peace = event_target:sri_baginda_help
+			}
+			event_target:sri_baginda_help = { 
+				ROOT = { join_all_defensive_wars_of = PREV }
+			}
+			#Sri baginda white peace the lupulan tribes that are not in a offensive war with them
+			event_target:sri_baginda_help = {
+				every_war_enemy_country = {
+					limit = {
+						has_reform = yanglam_tengalam_reform
+						is_in_war = {
+							defender_leader = PREV
+							attacker_leader = THIS
+						}
+						ROOT = { 
+							NOT = {
+								is_in_war = {
+									defender_leader = PREV
+									attacker_leader = ROOT
+								}
+							}
+						}
+					}
+					white_peace = ROOT
+				}
+			}
+			event_target:sri_baginda_attacker = { country_event = { id = lupulan_events.1002 } }
+		}
+	}
+
+	option = { #Refuse the call
+		name = lupulan_events.1001.b
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 30
+				event_target:sri_baginda_attacker = {
+					army_strength = {
+						who = ROOT
+						value = 2
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				is_rival = event_target:sri_baginda_help
+			}
+		}
+		if = {
+			limit = {
+				OR = { 
+					has_country_flag = sri_baginda_no_lose_title
+					has_country_flag = sri_baginda_lord_of_the_lupulan
+				}
+			}
+			custom_tooltip = sri_baginda_no_lose_title_tt
+		}
+		else = {
+			remove_sri_baginda = yes
+			make_random_highest_prestige_sri_baginda = yes
+		}
+	}
+
+	after = {
+		clr_country_flag = sri_baginda_no_lose_title
+		remove_country_modifier = sri_baginda_call_cd
+	}
+}
+
+#Notif event for attacker
+country_event = {
+	id = lupulan_events.1002
+	title = lupulan_events.1002.t
+	desc = lupulan_events.1002.d
+	picture = QIZILBASH_CAVALRY_CHARGING_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_country_flag = sri_baginda_attacker_no_notif }
+	}
+
+	option = {
+		name = lupulan_events.1002.a
+		custom_tooltip = sri_baginda_attacker_notif_tt
+	}
+
+	option = {
+		name = lupulan_events.1002.b
+		custom_tooltip = sri_baginda_attacker_notif_tt
+		custom_tooltip = " " #Linebreak
+		custom_tooltip = anb_no_more_notifs_tt
+		set_country_flag = sri_baginda_attacker_no_notif
+	}
+
+}
+
+#Died with less than 50 Prestige
+country_event = {
+	id = lupulan_events.1003
+	title = lupulan_events.1003.t
+	desc = lupulan_events.1003.d
+	picture = indiangfx_KING_SICK_IN_BED_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_country_flag = sri_baginda_lord_of_the_lupulan }
+	}
+
+	option = {
+		name = lupulan_events.1003.a
+		remove_sri_baginda = yes
+		hidden_effect = { make_random_highest_prestige_sri_baginda = yes }
+	}
+}
+
+#Sri Baginda Title Claimed
+country_event = {
+	id = lupulan_events.1004
+	title = lupulan_events.1004.t
+	desc = lupulan_events.1004.d
+	picture = ROYAL_STRESS_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+	}
+
+	option = {
+		name = lupulan_events.1004.a
+		tooltip = {
+			remove_sri_baginda = yes
+		}
+	}
+}
+
+#Dissolution of the Sri Baginda
+country_event = {
+	id = lupulan_events.1005
+	title = lupulan_events.1005.t
+	desc = lupulan_events.1005.d
+	picture = indiangfx_COUNTRY_COLLAPSE_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+	}
+
+	option = {
+		name = lupulan_events.1005.a
+		custom_tooltip = sri_baginda_disabled_tt
+	}
+}
+
+#Conquered the Lupulan as T3 Baginda
+country_event = {
+	id = lupulan_events.1006
+	title = lupulan_events.1006.t
+	desc = lupulan_events.1006.d
+	picture = CONQUEST_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	mean_time_to_happen = { days = 1 }
+
+	trigger = {
+		ai = no
+		is_sri_baginda = yes
+		is_tier_3_baginda = yes
+		lupulan_rainforest_region = {
+			type = all
+			OR = {
+				is_island = yes
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		}
+	}
+
+	option = {
+		name = lupulan_events.1006.a
+		add_sri_baginda_power = { value = 100 }
+		set_country_flag = sri_baginda_rapid_gain
+	}
+}
+
+#Calm before the storm
+country_event = {
+	id = lupulan_events.1007
+	title = lupulan_events.1007.t
+	desc = lupulan_events.1007.d
+	picture = confucianism_IMPORTANT_STATUE_eventPicture
+
+	is_triggered_only = yes
+
+	mean_time_to_happen = { days = 1 }
+
+	trigger = {
+		ai = no
+		is_sri_baginda = yes
+		has_country_flag = sri_baginda_rapid_gain
+		#Need to block this when the disaster is in
+	}
+
+	option = {
+		name = lupulan_events.1007.a
+		add_sri_baginda_power = { value = 50 }
+	}
+}
+
+#Lord Of The Lupulan
+country_event = {
+	id = lupulan_events.1008
+	title = lupulan_events.1008.t
+	desc = lupulan_events.1008.d
+	picture = asiangfx_COURT_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	mean_time_to_happen = { days = 1 }
+
+	trigger = {
+		ai = no
+		is_sri_baginda = yes
+		is_tier_3_baginda = yes
+		num_of_owned_provinces_with = {
+			region = lupulan_rainforest_region
+			is_island = no
+			value = 40
+		}
+	}
+
+	option = {
+		name = lupulan_events.1008.a
+		set_country_flag = sri_baginda_lord_of_the_lupulan
+		custom_tooltip = sri_baginda_lord_of_the_lupulan_tt
+		add_ruler_modifier = {
+			name = first_true_sri_baginda
+			duration = -1
+		}
+		hidden_effect = {
+			add_ruler_modifier = {
+				name = exceptional_willpower_75
+				duration = 5475 #Lasts until 15 years
+			}
+		}
+	}
+}
+
+#A New Lord
+country_event = {
+	id = lupulan_events.1009
+	title = lupulan_events.1009.t
+	desc = {
+		trigger = { is_sri_baginda = yes }
+		desc =  lupulan_events.1009.d.1
+	}
+	desc = {
+		trigger = { is_sri_baginda = no }
+		desc =  lupulan_events.1009.d.2
+	}
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+	}
+
+	option = {
+		name = lupulan_events.1009.a
+		trigger = { is_sri_baginda = yes }
+		tooltip = { make_sri_baginda = yes }
+	}
+
+	option = {
+		name = lupulan_events.1009.b
+		trigger = { is_sri_baginda = no }
+		custom_tooltip = new_sri_baginda_tt 
+	}
+}
+
+country_event = {
+	id = lupulan_events.1010
+	title = lupulan_events.1010.t
+	desc = {
+		trigger = { is_sri_baginda = yes }
+		desc =  lupulan_events.1010.d.1
+	}
+	desc = {
+		trigger = { is_sri_baginda = no }
+		desc =  lupulan_events.1010.d.2
+	}
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+	}
+
+	option = {
+		name = lupulan_events.1010.a
+		trigger = { is_sri_baginda = yes }
+		tooltip = { make_sri_baginda = yes }
+	}
+
+	option = {
+		name = lupulan_events.1010.b
+		trigger = { is_sri_baginda = no }
+		custom_tooltip = new_sri_baginda_tt
+	}
+}
+
+country_event = { #Duplicate of 1001, needed because 2nd attacker while event open messes stuff up
+	id = lupulan_events.1011
+	title = lupulan_events.1001.t
+	desc = lupulan_events.1001.d
+	picture = VILLAGE_BURNING_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		is_sri_baginda = yes
+	}
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit {
+					is_in_war = {
+						defender_leader = event_target:sri_baginda_help_2
+						attacker_leader = ROOT
+					}
+				}
+				set_country_flag = sri_baginda_no_lose_title
+			}
+		}
+	}
+
+	option = { #Accept the call to arms
+		name = lupulan_events.1001.a
+		ai_chance = {
+			factor = 80
+			modifier = {
+				factor = 20
+				army_strength = {
+					who = event_target:sri_baginda_attacker_2
+					value = 2
+				}
+			}
+		}
+		custom_tooltip = sri_baginda_call_to_arms_tt_2
+		add_sri_baginda_power = { value = 25 }
+		hidden_effect = {
+			if = {
+				limit {
+					is_in_war = {
+						defender_leader = event_target:sri_baginda_help_2
+						attacker_leader = ROOT
+					}
+				}
+				white_peace = event_target:sri_baginda_help_2
+			}
+			event_target:sri_baginda_help_2 = { 
+				ROOT = { join_all_defensive_wars_of = PREV }
+			}
+			#Sri baginda white peace the lupulan tribes that are not in a offensive war with them
+			event_target:sri_baginda_help_2 = {
+				every_war_enemy_country = {
+					limit = {
+						has_reform = yanglam_tengalam_reform
+						is_in_war = {
+							defender_leader = PREV
+							attacker_leader = THIS
+						}
+						ROOT = { 
+							NOT = {
+								is_in_war = {
+									defender_leader = PREV
+									attacker_leader = ROOT
+								}
+							}
+						}
+					}
+					white_peace = ROOT
+				}
+			}
+			event_target:sri_baginda_attacker_2 = { country_event = { id = lupulan_events.1002 } }
+		}
+	}
+
+	option = { #Refuse the call
+		name = lupulan_events.1001.b
+		ai_chance = {
+			factor = 30
+			modifier = {
+				factor = 30
+				event_target:sri_baginda_attacker_2 = {
+					army_strength = {
+						who = ROOT
+						value = 2
+					}
+				}
+			}
+			modifier = {
+				factor = 10
+				is_rival = event_target:sri_baginda_help_2
+			}
+		}
+		if = {
+			limit = {
+				OR = { 
+					has_country_flag = sri_baginda_no_lose_title
+					has_country_flag = sri_baginda_lord_of_the_lupulan
+				}
+			}
+			custom_tooltip = sri_baginda_no_lose_title_tt
+		}
+		else = {
+			remove_sri_baginda = yes
+			make_random_highest_prestige_sri_baginda = yes
+		}
+	}
+
+	after = {
+		clr_country_flag = sri_baginda_no_lose_title
+	}
+}
+
+country_event = { #Tributary Selection Event
+	id = lupulan_events.1012
+	title = lupulan_events.1012.t
+	desc = lupulan_events.1012.d
+	picture = NUSANTARA_THRONE_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		is_sri_baginda = yes
+	}
+
+	immediate = { #Top 3 by dev, rest is random
+		hidden_effect = {
+			sri_baginda_tributary_selection_by_dev = { tributary = 1 }
+			sri_baginda_tributary_selection_by_dev = { tributary = 2 }
+			sri_baginda_tributary_selection_by_dev = { tributary = 3 }
+			sri_baginda_tributary_selection_random = { tributary = 4 }
+			sri_baginda_tributary_selection_random = { tributary = 5 }
+			sri_baginda_tributary_selection_random = { tributary = 6 }
+		}
+	}
+
+	option = { #Tributary 1
+		name = lupulan_events.1012.a
+		trigger = { has_saved_event_target = sri_baginda_tributary_1 }
+		vassalize = event_target:sri_baginda_tributary_1
+	}
+
+	option = { #Tributary 2
+		name = lupulan_events.1012.b
+		trigger = { has_saved_event_target = sri_baginda_tributary_2 }
+		vassalize = event_target:sri_baginda_tributary_2
+	}
+
+	option = { #Tributary 3
+		name = lupulan_events.1012.c
+		trigger = { has_saved_event_target = sri_baginda_tributary_3 }
+		vassalize = event_target:sri_baginda_tributary_3
+	}
+
+	option = { #Tributary 4
+		name = lupulan_events.1012.d.1
+		trigger = { has_saved_event_target = sri_baginda_tributary_4 }
+		vassalize = event_target:sri_baginda_tributary_4
+	}
+
+	option = { #Tributary 5
+		name = lupulan_events.1012.e
+		trigger = { has_saved_event_target = sri_baginda_tributary_5 }
+		vassalize = event_target:sri_baginda_tributary_5
+	}
+
+	option = { #Tributary 6
+		name = lupulan_events.1012.f
+		trigger = { has_saved_event_target = sri_baginda_tributary_6 }
+		vassalize = event_target:sri_baginda_tributary_6
+	}
+
+	option = { #Go back
+		name = lupulan_events.goback
+		highlight = yes
+		add_sri_baginda_power = { value = 50 }
+	}
+}

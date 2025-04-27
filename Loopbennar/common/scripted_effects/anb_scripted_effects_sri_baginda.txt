@@ -1,0 +1,195 @@
+make_sri_baginda = {
+	custom_tooltip = make_sri_baginda_tt
+	hidden_effect = {
+		set_country_flag = is_sri_baginda
+		save_global_event_target_as = sri_baginda
+		regenerate_government_mechanics = yes
+		capital_scope = {
+			area = {
+				limit = { owner = { is_sri_baginda = yes } }
+				add_province_modifier = {
+					name = sri_baginda_lower_dev_cost_capital_mod
+					duration = -1
+					hidden = yes
+				}
+			}
+		}
+	}
+}
+
+disable_sri_baginda = {
+	custom_tooltip  = dissolved_the_sri_baginda_tt
+	hidden_effect = {
+		set_global_flag = sri_baginda_disabled
+		clear_global_event_target = sri_baginda
+		every_country = {
+			limit = { culture_group = yanglam }
+			remove_sri_baginda = yes
+			clr_country_flag = tier_1_baginda
+		}
+		every_country = {
+			limit = {
+				OR = {
+					capital_scope = { region = lupulan_rainforest_region }
+					any_neighbor_province = { region = lupulan_rainforest_region }
+				}
+			}
+			country_event = { id = lupulan_events.1005 }
+		}
+	}
+}
+
+make_random_highest_prestige_sri_baginda = { #Please use this inside the former Sri Baginda scope
+	if = {
+		limit = { 
+			any_known_country = {
+				has_reform = yanglam_tengalam_reform
+				is_subject = no
+			}
+		}
+		every_known_country = {
+			limit = { 
+				has_reform = yanglam_tengalam_reform
+				is_subject = no
+			}
+			if = {
+				limit = {
+					OR = {
+						NOT = { has_saved_event_target = highest_prestige_yanglam }
+						NOT = { event_target:highest_prestige_yanglam = { prestige = PREV } }
+					}
+				}
+				save_event_target_as = highest_prestige_yanglam
+			}
+		}
+		event_target:highest_prestige_yanglam = { make_sri_baginda = yes }
+		hidden_effect = { 
+			every_country = {
+				limit = {
+					OR = { 
+						has_reform = yanglam_tengalam_reform
+						is_sri_baginda = yes
+					} 
+				}
+				country_event = { id = lupulan_events.1009 days = 5 } 
+			}
+		}
+	}
+	else = { disable_sri_baginda = yes }
+}
+
+remove_sri_baginda = {
+	custom_tooltip = remove_sri_baginda_tt
+	hidden_effect = {
+		clr_country_flag = is_sri_baginda
+		regenerate_government_mechanics = yes
+		if = {
+			limit = {
+				has_country_flag = tier_3_baginda
+			}
+			remove_country_modifier = sri_baginda_tier_3_mod
+			clr_country_flag = tier_3_baginda
+			set_country_flag = tier_2_baginda
+		}
+		else_if = {
+			limit = {
+				has_country_flag = tier_2_baginda
+			}
+			clr_country_flag = tier_2_baginda
+			set_country_flag = tier_1_baginda
+		}
+		capital_scope = { 
+			area = {
+				remove_province_modifier = sri_baginda_lower_dev_cost_capital_mod
+			}
+		}
+	}
+}
+
+add_sri_baginda_power = {
+	add_government_power = {
+		mechanic_type = sri_baginda_mechanic
+		power_type = sri_baginda_power
+		value = $value$
+	}
+}
+
+upgrade_sri_baginda_tier = {
+	custom_tooltip = sri_baginda_upgrade_tier_tt
+	if = {
+		limit = {
+			is_tier_1_baginda = yes
+		}
+		clr_country_flag = tier_1_baginda
+		set_country_flag = tier_2_baginda
+	}
+	else_if = {
+		limit = {
+			is_tier_2_baginda = yes
+		}
+		clr_country_flag = tier_2_baginda
+		set_country_flag = tier_3_baginda
+		add_country_modifier = {
+			name = sri_baginda_tier_3_mod
+			duration = -1
+		}
+	}
+}
+
+sri_baginda_tributary_selection_by_dev = { #Ranking from highest dev to lowest, supports up to 3
+	every_subject_country = {
+		limit = {
+			is_subject_of_type = tributary_state_anb
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = { has_saved_event_target = sri_baginda_tributary_$tributary$ }
+					NOT = { event_target:sri_baginda_tributary_$tributary$ = { total_development = PREV } }
+				}
+				if = {
+					limit = { has_saved_event_target = sri_baginda_tributary_1 } 
+					NOT = { tag = event_target:sri_baginda_tributary_1 }
+				} 
+				if = {
+					limit = { has_saved_event_target = sri_baginda_tributary_2 } 
+					NOT = { tag = event_target:sri_baginda_tributary_2 }
+				}
+				if = {
+					limit = { has_saved_event_target = sri_baginda_tributary_3 } 
+					NOT = { tag = event_target:sri_baginda_tributary_3 }
+				}
+			}
+			save_event_target_as = sri_baginda_tributary_$tributary$
+		}
+	}
+}
+
+sri_baginda_tributary_selection_random = {
+	random_subject_country = {
+		limit = {
+			is_subject_of_type = tributary_state_anb
+			if = {
+				limit = { has_saved_event_target = sri_baginda_tributary_1 } 
+				NOT = { tag = event_target:sri_baginda_tributary_1 }
+			} 
+			if = {
+				limit = { has_saved_event_target = sri_baginda_tributary_2 } 
+				NOT = { tag = event_target:sri_baginda_tributary_2 }
+			}
+			if = {
+				limit = { has_saved_event_target = sri_baginda_tributary_3 } 
+				NOT = { tag = event_target:sri_baginda_tributary_3 }
+			}
+			if = {
+				limit = { has_saved_event_target = sri_baginda_tributary_4 } 
+				NOT = { tag = event_target:sri_baginda_tributary_4 }
+			}
+			if = {
+				limit = { has_saved_event_target = sri_baginda_tributary_5 } 
+				NOT = { tag = event_target:sri_baginda_tributary_5 }
+			}
+		}
+		save_event_target_as = sri_baginda_tributary_$tributary$
+	}
+}

@@ -23,6 +23,7 @@ republic_mechanic = {
 
 	government_abilities = {
 		anb_dummy_hold_mechanic
+		anb_taychend_reform
 	}
 }
 
@@ -2245,6 +2246,7 @@ technocracy_republic_reform = {
 		enables_plutocratic_idea_group = yes
 		enables_aristocratic_idea_group = no
 		is_technocracy = yes
+		anb_special_elections = yes
 		cannot_become_dictatorship = yes
 	}
 	effect = {
@@ -2312,6 +2314,7 @@ imperial_technocracy_republic_reform = {
 		enables_plutocratic_idea_group = yes
 		enables_aristocratic_idea_group = no
 		is_technocracy = yes
+		anb_special_elections = yes
 		cannot_become_dictatorship = yes
 		locked_government_type = yes
 	}
@@ -3060,6 +3063,7 @@ sunrise_court_reform = {
 		has_parliament = yes
 		disabled_purging = yes
 		disabled_expelling = yes
+		anb_special_elections = yes
 	}
 	duration = 30
 }
@@ -5700,7 +5704,8 @@ war_against_the_world_doctrine_reform = {
 		}
 	}
 	trigger = {
-		NOT = { culture_group = gnollish }
+			NOT = { religion = xhazobkult }
+			NOT = { tag = G93 }
 	}
 	modifiers = {
 		pr_buccaneers_influence = 0.1
@@ -6305,6 +6310,7 @@ dynastic_rulership_reform = {
 			has_reform = golden_republic_reform
 			culture_group = dwarven
 			has_reform = united_federation
+			has_reform = the_stone_jun
 		}
 	}
 	trigger = {
@@ -6922,6 +6928,9 @@ wineport_merchants = {
 	modifiers = {
 		max_absolutism = -10
 		merchants = 1
+		burghers_loyalty_modifier = 0.1
+		burghers_influence_modifier = 0.1
+		nobles_influence_modifier = 0.15
 	}
 	
 	trigger = {
@@ -6931,7 +6940,7 @@ wineport_merchants = {
 		}
 	}
 	boost_income = yes
-	duration = 4
+	duration = 8
 	lock_level_when_selected = yes
 	factions = {
 		mr_aristocrats
@@ -6998,6 +7007,47 @@ wineport_merchants = {
 	
 	ai = {
 		factor = 10
+	}
+}
+
+wineport_queendom_of_wine_reform = {
+	icon = "english_monarchy"
+	allow_normal_conversion = yes
+
+	potential = {
+		OR = {
+			has_reform = wineport_queendom_of_wine_reform
+			have_had_reform = wineport_queendom_of_wine_reform
+		}
+	}
+	
+	modifiers = {
+		merchants = 1
+		global_unrest = -2
+		trade_range_modifier = 0.20
+	}
+	
+	trigger = {
+		OR = {
+			has_reform = wineport_queendom_of_wine_reform
+			crown_stronger_than_estate = { estate = all }
+		}
+	}
+
+	effect = {
+		custom_tooltip = wineport_wine_25.tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					trade_goods = wine
+				}
+				add_province_modifier = { 
+					name = wineport_wine_25
+					duration = -1
+					hidden = yes
+				}
+			}
+		}
 	}
 }
 
@@ -9454,4 +9504,85 @@ ikogshaantus_khantaar_industrial_council = {
 		enables_plutocratic_idea_group = yes
 		enables_aristocratic_idea_group = no
 	} 
+}
+
+decentralized_luna_confederation_reform = {
+	icon = "parliament_hall"
+	allow_normal_conversion = yes
+	potential = {
+		OR = {
+			has_reform = decentralized_luna_confederation_reform
+			have_had_reform = decentralized_luna_confederation_reform
+		}
+		NOT = {
+			has_reform = centralized_luna_confederation_reform
+			have_had_reform = centralized_luna_confederation_reform
+		}
+	}
+	modifiers = {
+		monthly_splendor = 1
+	}
+	custom_attributes = {
+		luna_confederation_ability = yes
+	}
+	ai = {
+		factor = 1
+	}
+}
+
+centralized_luna_confederation_reform = {
+	icon = "parliament_hall"
+	allow_normal_conversion = no
+	potential = {
+		tag = B59
+	}
+	modifiers = {
+		monthly_splendor = 2
+		global_tax_modifier = 0.2
+		republican_tradition = 0.5
+		governing_capacity_modifier = -0.25
+	}
+	custom_attributes = {
+		has_parliament = yes
+		monarch_power_on_institutions = yes
+	}
+	ai = {
+		factor = 1
+	}
+}
+
+free_city_of_luna = {
+	icon = "free_city"
+	allow_normal_conversion = no
+	potential = {
+		has_reform = free_city_of_luna
+		NOT = {
+			num_of_owned_provinces_with = {
+				value = 2
+				is_city = yes
+			}
+		}
+	}
+	legacy_equivalent = imperial_city
+	valid_for_nation_designer = yes
+	lock_level_when_selected = yes
+	nation_designer_cost = 40
+	nation_designer_trigger = {
+		capital_scope = { is_part_of_hre = yes }
+		NOT = { num_custom_nation_provinces = 2 }
+	}
+	modifiers = {
+		trade_efficiency = 0.1
+		development_cost = -0.2
+		burghers_influence_modifier = 0.1
+		liberty_desire = -25
+	}
+	fixed_rank = 1
+
+	custom_attributes = {
+		locked_government_type = yes
+		enables_plutocratic_idea_group = yes
+		enables_aristocratic_idea_group = no
+	}
+	duration = 4
 }

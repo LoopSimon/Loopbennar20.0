@@ -4014,3 +4014,230 @@ estate_nobles_wyvernheart_remove_corrupt_overseer = {
 		}
     }
 }
+
+estate_nobles_luna_denounce_the_enemies_of_emperor = {
+	max_days_active = 3650
+	can_select = {
+		NOT = { wyvernheart_is_floodborn_council = yes }
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		emperor = { NOT = { is_rival = ROOT } }
+	}
+	provinces_to_highlight = {
+		is_capital = yes
+		owner = {
+			emperor = {
+				is_rival = PREV
+			}
+			NOT = { has_been_insulted_by_root = yes }
+		}
+	}
+	selection_weight = {
+		factor = 4
+	}
+	task_requirements = {
+		emperor = {
+			all_rival_country = {
+				has_been_insulted_by_root = yes
+			}
+		}
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_nobles
+		}
+		emperor = {
+			add_power_projection = { 
+				type = mission_rewards_power_projection 
+				amount = 10
+			}
+			sway_target = yes
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}
+
+estate_nobles_luna_court_the_electors = {
+	max_days_active = 3650
+	can_select = {
+		NOT = { wyvernheart_is_floodborn_council = yes }
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		emperor = { NOT = { has_ruler_modifier = LRM_free_city_support } }
+	}
+	provinces_to_highlight = {
+		is_capital = yes
+		owner = {
+			is_elector = yes
+			is_emperor = no
+		}
+	}
+	selection_weight = {
+		factor = 4
+	}
+	task_requirements = {
+		calc_true_if = {
+			all_elector = {
+				has_opinion = {
+					who = ROOT
+					value = 100
+				}
+			}
+			amount = 3
+		}
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_nobles
+		}
+		emperor = {
+			add_ruler_modifier = { 
+				name = LRM_free_city_support
+				duration = -1  
+				hidden = yes
+			}
+			sway_target = yes
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}
+
+estate_nobles_luna_represent_before_court = {
+	max_days_active = 3650
+	can_select = {
+		NOT = { wyvernheart_is_floodborn_council = yes }
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		any_known_country = {
+			is_part_of_hre = yes
+			any_owned_province = {
+				has_province_modifier = unlawful_territory
+			}
+		}
+	}
+	pre_effect = {
+		random_known_country = {
+			limit = {
+				any_owned_province = {
+					has_province_modifier = unlawful_territory
+				}
+				is_part_of_hre = yes
+			}
+			random_owned_province = {
+				limit = { has_province_modifier = unlawful_territory }
+				save_event_target_as = agenda_province
+			}
+		}
+	}
+	provinces_to_highlight = {
+		owner = {
+			owns = event_target:agenda_province
+		}
+	}
+	selection_weight = {
+		factor = 50
+	}
+	task_requirements = {
+		emperor = {
+			has_10_opinion_sent_gift = { target = ROOT }
+		}
+		event_target:agenda_province = {
+			owner = {
+				has_10_opinion_sent_gift = { target = ROOT }
+			}
+		}
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_nobles
+		}
+		event_target:agenda_province = {
+			remove_province_modifier = unlawful_territory
+			owner = { sway_target = yes }
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}
+
+estate_nobles_luna_reinforce_emperor = {
+	max_days_active = 3650
+	can_select = {
+		NOT = { wyvernheart_is_floodborn_council = yes }
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		emperor = { NOT = { manpower_percentage = 0.8 } }
+	}
+	provinces_to_highlight = {
+		is_capital = yes
+		owner = { is_emperor = yes }
+	}
+	selection_weight = {
+		factor = 50
+	}
+	task_requirements = {
+		emperor = {
+			capital_scope = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 5
+				}
+			}
+		}
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_nobles
+		}
+		add_manpower = -5
+		emperor = { sway_target = yes add_manpower = 5 }
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}

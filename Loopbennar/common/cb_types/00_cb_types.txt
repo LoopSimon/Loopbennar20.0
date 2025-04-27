@@ -257,29 +257,29 @@ cb_trade_war_triggered = {
 	}
 }
 
-#cb_trade_conflict = {
-#	valid_for_subject = no
-#
-#	is_triggered_only = yes
-#	months = 24
-#
-#	war_goal = blockade_ports
-#
-#	attacker_disabled_po = {
-#		po_demand_provinces
-#		po_revoke_cores
-#		po_release_vassals
-#		po_release_annexed
-#		po_return_cores
-#		po_become_vassal
-#		po_subjugate_vassal
-#		po_form_personal_union
-#		#po_become_tributary_state
-#		#po_subjugate_tributary_state
-#		po_anb_tributary
-#		po_transfer_vassals
-#	}
-#}
+cb_trade_conflict = {
+	valid_for_subject = no
+
+	is_triggered_only = yes
+	months = 24
+
+	war_goal = blockade_ports
+
+	attacker_disabled_po = {
+		po_demand_provinces
+		po_revoke_cores
+		po_release_vassals
+		po_release_annexed
+		po_return_cores
+		po_become_vassal
+		po_subjugate_vassal
+		po_form_personal_union
+		#po_become_tributary_state
+		#po_subjugate_tributary_state
+		po_anb_tributary
+		po_transfer_vassals
+	}
+}
 
 cb_trade_conflict_triggered = {
 	valid_for_subject = no
@@ -871,6 +871,7 @@ cb_liberation = {
 				tag = S53
 				has_country_flag = S53_liberation_non_GP_flag
 			}
+			has_country_flag = LRM_imperial_liberation_war
 		}
  	}
 	prerequisites = {
@@ -889,10 +890,32 @@ cb_liberation = {
 				tag = S53
 				has_country_flag = S53_liberation_non_GP_flag
 				FROM = {
-					any_owned_province = {
-						region = ishyamtumu_region
+					OR = {
+						any_subject_country = {
+							OR = {
+								primary_culture = tanizu
+								primary_culture = cyazizeta_lizardfolk
+							}
+						}
+						AND = {
+							any_owned_province = {
+								region = ishyamtumu_region
+							}
+							is_subject = no
+							NOT = {
+								primary_culture = tanizu
+								primary_culture = cyazizeta_lizardfolk
+							}
+						}
 					}
-					is_subject = no
+				}
+			}
+			AND = {
+				has_country_flag = LRM_imperial_liberation_war
+				FROM = {
+					any_owned_province = {
+						province_group = luna_river_cities_provinces
+					}
 				}
 			}
 		}
@@ -1179,7 +1202,18 @@ cb_blooming_of_the_lorentish_rose = {
 	is_triggered_only = yes
 
 	war_goal = blooming_of_the_lorentish_rose
-} 
+}
+
+cb_the_second_sons_rebellion = {
+	valid_for_subject = no
+	prerequisites_self = {
+		is_emperor = yes
+	}
+	call_empire_members = yes
+
+	is_triggered_only = yes
+	war_goal = second_son_rebellion
+}
 
 cb_aldresian_incursion = {
 	valid_for_subject = yes
@@ -1731,25 +1765,44 @@ cb_force_satrapy = {
 
 cb_force_tributary_anb = {
 
-    valid_for_subject = no
+	valid_for_subject = no
 
-    prerequisites_self = {
-        has_dlc = "Mandate of Heaven"
-    }
+	prerequisites_self = {
+		has_dlc = "Mandate of Heaven"
+	}
 
-    prerequisites = {
+	prerequisites = {
 
-        FROM = { is_subject = no }
-        OR = {
-            culture_group = ogre # anbennar
-            religion = feast_of_the_gods # anbennar, required for mechanics
-            has_country_flag = can_use_tributary_cb_flag # anbennar
+		FROM = { is_subject = no }
+		NOT = { tag = L25 } #so AI sakul doesnt block its own expansion
+		OR = {
+			culture_group = ogre # anbennar
+			religion = feast_of_the_gods # anbennar, required for mechanics
+			has_country_flag = can_use_tributary_cb_flag # anbennar
 			has_government_attribute = can_use_tributary_cb
-        }
-        OR = {	
+			AND = { #T2 can only use on yanglam, T3 whatever
+				is_sri_baginda = yes
+				OR = {
+					AND = {
+						is_tier_2_baginda = yes
+						FROM = { 
+							OR = {
+								tag = Y69  #Brenulan
+								culture_group = yanglam 
+							}
+						}
+					}
+					is_tier_3_baginda = yes
+				}
+			}
+		}
+		OR = {	
 			is_neighbor_of = FROM
 			AND = {
-				religion = feast_of_the_gods
+				OR = {
+					is_sri_baginda = yes
+					religion = feast_of_the_gods
+				}
 				any_subject_country = { is_neighbor_of = FROM } #Anbennar
 			}
 			AND = { #anbennar, miremaw MT reward
@@ -1768,9 +1821,9 @@ cb_force_tributary_anb = {
 				}
 				has_country_modifier = miremaw_exerting_our_influence_reward
 			}
-        }
-    }
-    war_goal = take_capital_force_tributary_anb
+		}
+	}
+	war_goal = take_capital_force_tributary_anb
 }
 
 cb_force_tributary_mission = {
@@ -1885,6 +1938,7 @@ cb_world_crusade = {
 					has_global_flag = B38_elikhetist_enlightenment_flag
 				}
 			}
+			has_country_modifier = temporary_world_crusade
 		}
 		NOT = { has_ruler_flag = xhazob_patron }
 	}
@@ -1897,6 +1951,7 @@ cb_world_crusade = {
 			claim = FROM
 			cb_on_religious_enemies = yes
 			has_country_flag = enabled_great_holy_war_cb
+			has_country_modifier = temporary_world_crusade
 #			AND = {
 #				FROM = { religion_group = pagan }
 #				OR = {

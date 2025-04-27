@@ -11,7 +11,7 @@ namespace = spirits
 # 600-699 = temple corruption/misc DVP
 # 700-899 = rending events
 # 900-999 = country-specific events
-# Temple Provinces: 4380, 4384, 4397, 4411, 4417, 4420, 4438, 4450, 4465, 4469, 4488, 4499, 4510, 4527, 4546d, 4565, 4570 4580, 4630d, 4633d, 4764, 4811, 4839d, 4859, 4871, 4925, 4930, 4941d, 4949, 4951, 4955d, 4964, 4979, 4618d
+# Temple Provinces: 4380, 4384, 4397, 4411, 4417, 4420, 4438, 4450, 4465, 4469, 4488, 4499, 4510, 4527, 4546d, 4570 4580, 4630d, 4633d, 4764, 4811, 4839d, 4859, 4871, 4925, 4930, 4941d, 4949, 4951, 4955d, 4964, 4979, 4618d
 # If you want to downgrade a temple province, use the scripted effect 'downgrade_temple_wards = yes' in the temple province scope AFTER (very important!) downgrading the temple province modifier itself, same for upgrading
 ##############################################################
 
@@ -402,7 +402,7 @@ country_event = {	#Startup event to give out hidden wards modifiers
 			set_province_flag = pristine_wards
 			set_province_flag = temple_radius
 		}
-		bubhagama_temple_area = {
+		babhagama_temple_area = {
 			set_province_flag = pristine_wards
 			set_province_flag = temple_radius
 		}
@@ -460,10 +460,6 @@ country_event = {	#Startup event to give out hidden wards modifiers
 		}
 		sir_temple_area = {
 			set_province_flag = damaged_wards
-			set_province_flag = temple_radius
-		}
-		bimlau_temple_area = {
-			set_province_flag = pristine_wards
 			set_province_flag = temple_radius
 		}
 		khabtei_temple_area = {
@@ -1829,6 +1825,7 @@ province_event = {	#Temple Purified
 		}
 		remove_province_modifier = rite_of_purification
 		remove_province_modifier = religious_zeal_at_conv
+		remove_province_modifier = yuanszi_smiling_men
 	}
 	
 	option = {
@@ -2375,7 +2372,7 @@ country_event = { #Inquiry into the Wards of the High Temples - Gnomish artifice
 	id = spirits.014
 	title = spirits.014.t
 	desc = spirits.014.d
-	picture = BIG_BOOK_eventPicture
+	picture = HIGH_TEMPLE_IN_DISTANCE_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -2452,7 +2449,7 @@ country_event = { #Invention of the Korashi Drill
 	id = spirits.015
 	title = spirits.015.t
 	desc = spirits.015.d
-	picture = INVENTION_eventPicture
+	picture = ARTIFICE_GEAR_eventPicture
 	
 	fire_only_once = yes
 	
@@ -2556,7 +2553,7 @@ country_event = { #News of the Korashi Drill
 	id = spirits.016
 	title = spirits.016.t
 	desc = spirits.016.d
-	picture = INVENTION_eventPicture
+	picture = ARTIFICE_GEAR_eventPicture
 	goto = korashi_drill_test_province
 	
 	is_triggered_only = yes
@@ -6513,7 +6510,6 @@ province_event = {	#Handler event, determines which TEMPLE event the country get
 
 	trigger = {
 		NOT = { has_province_modifier = ruined_temple_complex }
-		NOT = { province_id = 4565 } #Bim Lau Necropolis has it's own events.
 	}
 
 	option = {	#Temple Event
@@ -11995,13 +11991,24 @@ country_event = {
 				}
 			}
 		}
-		modifier = {
+		modifier = { #Most games happen at or above this range
 			factor = 0.50
 			NOT = {
 				4871 = {
 					check_variable = {
 						which = globalWardStrength
 						value = 30
+					}
+				}
+			}
+		}
+		modifier = { #Successful corruption/destruction makes it happen faster
+			factor = 0.5
+			NOT = {
+				4871 = {
+					check_variable = {
+						which = globalWardStrength
+						value = 1
 					}
 				}
 			}
@@ -12042,30 +12049,8 @@ country_event = {
 			}
 		}
 		open_stormwall = yes # do it now at rending start until we get an actual event with insyaa
+		6153 = { add_permanent_province_modifier = { name = ai_cinulau_blocker duration = 5475 hidden = yes } }
 	}
-
-#	after = {
-#		hidden_effect = {
-#			if = {
-#				limit = {
-#					NOT = {
-#						4533 = {
-#							has_great_project = {
-#								type = godswall_tunnel
-#							}
-#						}
-#					}
-#				}
-#				set_global_flag = rending_happened
-#				4533 = {
-#					add_great_project = {
-#						type = godswall_tunnel
-#						instant = yes
-#					}
-#				}
-#			}
-#		}
-#	}
 }
 
 # something is awry, damaged temple ver
@@ -12099,6 +12084,23 @@ country_event = {
 		ai_chance = { factor = 100 }
 		custom_tooltip = "I'm certain this is no cause for concern."
 	}
+	option = {
+        name = spirits.701.b
+        ai_chance = { factor = 1 }
+        trigger = { mission_completed = Y26_huszien_restored }
+        highlight = yes
+        random_list = {
+			1 = {
+				add_adm_power = 44
+			}
+			1 = {
+				add_dip_power = 44
+			}
+			1 = {
+				add_mil_power = 44
+			}
+		}
+    }
 }
 
 # something is awry, everyone else
@@ -12120,6 +12122,23 @@ country_event = {
 		name = spirits.702.a
 		ai_chance = { factor = 100 }
 	}
+	option = {
+        name = spirits.702.b
+        ai_chance = { factor = 1 }
+        trigger = { mission_completed = Y26_huszien_restored }
+        highlight = yes
+        random_list = {
+			1 = {
+				add_adm_power = 44
+			}
+			1 = {
+				add_dip_power = 44
+			}
+			1 = {
+				add_mil_power = 44
+			}
+		}
+    }
 }
 
 # RENDING HAS STARTED, GLOBAL EVENT
@@ -12130,13 +12149,10 @@ country_event = {
 	picture = GREAT_SPIRIT_YANHE_eventPicture
 
 	trigger = {
-        OR = {
-            Y26 = { mission_completed = Y26_huszien_restored }
-            had_global_flag = {
-                flag = rending_active
-                days = 360
-            }
-        }
+        had_global_flag = {
+			flag = rending_active
+			days = 360
+		}
 		NOT = { has_country_flag = rending_started_country }
 		OR = {
 			capital_scope = {
@@ -12154,60 +12170,6 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			set_country_flag = rending_started_country
-			temple_province_group = {
-				limit = { owned_by = ROOT }
-				spirit_swarms = 2
-				if = {
-					limit = { has_province_modifier = temple_complex }
-					random_list = {
-						35 = {
-							remove_province_modifier = temple_complex
-							add_permanent_province_modifier = { name = damaged_temple_complex duration = -1 }
-							downgrade_temple_wards = yes
-						}
-						15 = {
-							remove_province_modifier = temple_complex
-							add_permanent_province_modifier = { name = derelict_temple_complex duration = -1 }
-							downgrade_temple_wards = yes
-						}
-						50 = {}
-					}
-				}
-				if = {
-					limit = { has_province_modifier = damaged_temple_complex }
-					add_devastation = 25
-					every_neighbor_province = { add_devastation = 10 }
-				}
-				else_if = {
-					limit = { has_province_modifier = derelict_temple_complex }
-					add_devastation = 50
-					every_neighbor_province = { add_devastation = 15 }
-				}
-				else_if = {
-					limit = { has_province_modifier = ruined_temple_complex }
-					add_devastation = 75
-					every_neighbor_province = { add_devastation = 20 }
-				}
-				else_if = {
-					limit = { has_province_modifier = corrupted_temple_complex }
-					add_devastation = 100
-					spirit_swarms = 3
-				}
-			}
-			every_owned_province = {
-				limit = {
-					continent = asia
-					NOT = { superregion = forbidden_lands_superregion }
-				}
-				random = {
-					chance = 20
-					add_devastation = 5
-				}
-				random = {
-					chance = 2
-					spirit_swarms = 1
-				}
-			}
 			if = {
 				limit = {
 					OR = {
@@ -12229,15 +12191,67 @@ country_event = {
 				}
 				set_country_flag = rending_ward_flag
 			}
-			4559 = {
-				set_variable = {
-					which = rendingMonthsLeft
-					value = 480
-				}
-			}
 			if = {
 				#some setup only needs to happen once, globally
 				limit = { NOT = { has_global_flag = rending_startup_complete } }
+				temple_province_group = {
+					spirit_swarms = 2
+					if = {
+						limit = { has_province_modifier = temple_complex }
+						random_list = {
+							35 = {
+								remove_province_modifier = temple_complex
+								add_permanent_province_modifier = { name = damaged_temple_complex duration = -1 }
+								downgrade_temple_wards = yes
+							}
+							15 = {
+								remove_province_modifier = temple_complex
+								add_permanent_province_modifier = { name = derelict_temple_complex duration = -1 }
+								downgrade_temple_wards = yes
+							}
+							50 = {}
+						}
+					}
+					if = {
+						limit = { has_province_modifier = damaged_temple_complex }
+						add_devastation = 25
+						every_neighbor_province = { add_devastation = 10 }
+					}
+					else_if = {
+						limit = { has_province_modifier = derelict_temple_complex }
+						add_devastation = 50
+						every_neighbor_province = { add_devastation = 15 }
+					}
+					else_if = {
+						limit = { has_province_modifier = ruined_temple_complex }
+						add_devastation = 75
+						every_neighbor_province = { add_devastation = 20 }
+					}
+					else_if = {
+						limit = { has_province_modifier = corrupted_temple_complex }
+						add_devastation = 100
+						spirit_swarms = 3
+					}
+				}
+				asia = {
+					limit = {
+						NOT = { superregion = forbidden_lands_superregion }
+					}
+					random = {
+						chance = 20
+						add_devastation = 5
+					}
+					random = {
+						chance = 2
+						spirit_swarms = 1
+					}
+				}
+				4559 = {
+					set_variable = {
+						which = rendingMonthsLeft
+						value = 480
+					}
+				}
 				asia = {
 					limit = { 
 						NOT = { 
@@ -12363,6 +12377,11 @@ country_event = {
 		OR = {
 			religion = accretive_path
 			religion = transmutative_path
+		}
+		NOT = {
+			has_country_flag = rending_ward_flag
+			has_country_flag = rending_appease_flag
+			has_country_flag = rending_corrupt_flag
 		}
 	}
 
@@ -12639,6 +12658,7 @@ country_event = { #ward menu
 					OR = {
 						area_for_scope_province = { has_state_edict = spirit_hunters_edict }
 						AND = {
+							6153 = { NOT = { has_province_modifier = ai_cinulau_blocker } }
 							NOT = { has_province_flag = temple_radius }
 							owner = { ai = yes }
 						}
@@ -13785,10 +13805,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = hokuma_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_hokuma
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -13824,10 +13846,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = yanhe_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_yanhe
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -13863,10 +13887,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = kharunyana_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_kharunyana
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -13902,10 +13928,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = phokhao_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_phokhao
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -13941,10 +13969,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = hengdu_bowu_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_hengdu_bowu
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -13980,10 +14010,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = cinulau_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_cinulau
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -14019,10 +14051,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = lupulan_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_lupulan
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -14058,10 +14092,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = dhenbasana_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_dhenbasana
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -14097,10 +14133,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = marutha_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_marutha
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -14136,10 +14174,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = gehet_ketine_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_gehet_ketine
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -14175,10 +14215,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = hukai_telebei_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_hukai
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -14213,10 +14255,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = huszien_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_huszien
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -14252,10 +14296,12 @@ country_event = {
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
 			set_global_flag = tughayasa_suppressed
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_tughayasa
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -14338,6 +14384,7 @@ country_event = {
 				remove_country_modifier = hukai_telebei_scoured_modifier
 				remove_country_modifier = huszien_scoured_modifier
 				remove_country_modifier = huli_jing_scoured_modifier
+				remove_country_modifier = scouring_domain_modifier
 
 				#MA stuff:
 
@@ -14451,6 +14498,7 @@ country_event = {
 		clr_country_flag = rending_ward_flag
 		clr_country_flag = rending_appease_flag
 		clr_country_flag = rending_corrupt_flag
+		set_global_flag = rending_over
 	}
 }
 
@@ -14484,7 +14532,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 5430
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 5430
+			}
 			hokuma_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14506,7 +14557,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4846
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 4846
+			}
 			yanhe_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14528,14 +14582,17 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4492
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 4492
+			}
 			kharunyana_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
-				NOT = { has_global_flag = kharunyana_suppressed }
-				NOT = { is_scouring_domain = yes }
-				NOT = { has_global_flag = kharunyana_scoured }
 			}
+			NOT = { has_global_flag = kharunyana_suppressed }
+			NOT = { is_scouring_domain = yes }
+			NOT = { has_global_flag = kharunyana_scoured }
 		}
 
 		custom_tooltip = spirit_scour_region_tt
@@ -14550,7 +14607,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4756
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 4756
+			}
 			phokhao_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14572,7 +14632,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4948
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 4948
+			}
 			hengdu_bowu_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14594,7 +14657,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 6153
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 6153
+			}
 			cinulau_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14616,7 +14682,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4953
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 4953
+			}
 			lupulan_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14638,7 +14707,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4411
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 4411
+			}
 			dhenbasana_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14660,7 +14732,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4424
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 4424
+			}
 			marutha_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14682,7 +14757,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4954
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 4954
+			}
 			gehet_ketine_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14704,8 +14782,13 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4580
-			owns_or_non_sovereign_subject_of = 4557
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				AND = {
+					owns_or_non_sovereign_subject_of = 4580
+					owns_or_non_sovereign_subject_of = 4557
+				}
+			}
 			hukai_telebei_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14747,7 +14830,10 @@ country_event = { #scour menu
 		ai_chance = { factor = 100 }
 
 		trigger = {
-			owns_or_non_sovereign_subject_of = 4527
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				owns_or_non_sovereign_subject_of = 4527
+			}
 			tughayasa_spirit_area = {
 				type = all
 				NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
@@ -14775,10 +14861,15 @@ country_event = { #scour menu
 			NOT = { has_global_flag = huszien_suppressed }
 			NOT = { is_scouring_domain = yes }
 			NOT = { has_global_flag = huszien_scoured }
-			owns_or_non_sovereign_subject_of = 4923
-			owns_or_non_sovereign_subject_of = 4915
-			owns_or_non_sovereign_subject_of = 4877
-			owns_or_non_sovereign_subject_of = 4891
+			OR = {
+				mission_completed = yuanszi_great_scouring
+				AND = {
+					owns_or_non_sovereign_subject_of = 4923
+					owns_or_non_sovereign_subject_of = 4915
+					owns_or_non_sovereign_subject_of = 4877
+					owns_or_non_sovereign_subject_of = 4891
+				}
+			}
 		}
 		custom_tooltip = spirit_scour_region_tt
 		hidden_effect = {
@@ -14806,7 +14897,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 5430 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 5430
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = hokuma_unowned_tt
 		}
@@ -14829,7 +14923,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 5430 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 5430
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = hokuma_suppressed }
 			NOT = { has_global_flag = hokuma_scoured }
@@ -14851,7 +14948,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4846 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4846
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = yanhe_unowned_tt
 		}
@@ -14874,7 +14974,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4846 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4846
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = yanhe_suppressed }
 			NOT = { has_global_flag = yanhe_scoured }
@@ -14896,7 +14999,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4492 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4492
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = kharunyana_unowned_tt
 		}
@@ -14919,7 +15025,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4492 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4492
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = kharunyana_suppressed }
 			NOT = { has_global_flag = kharunyana_scoured }
@@ -14941,7 +15050,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4756 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4756
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = phokhao_unowned_tt
 		}
@@ -14964,7 +15076,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4756 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4756
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = phokhao_suppressed }
 			NOT = { has_global_flag = phokhao_scoured }
@@ -14986,7 +15101,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4948 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4948
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = hengdu_bowu_unowned_tt
 		}
@@ -15009,7 +15127,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4948 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4948
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = hengdu_bowu_suppressed }
 			NOT = { has_global_flag = hengdu_bowu_scoured }
@@ -15031,7 +15152,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 6153 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 6153
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = cinulau_unowned_tt
 		}
@@ -15054,7 +15178,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 6153 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 6153
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = cinulau_suppressed }
 			NOT = { has_global_flag = cinulau_scoured }
@@ -15076,7 +15203,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4953 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4953
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = lupulan_unowned_tt
 		}
@@ -15099,7 +15229,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4953 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4953
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = lupulan_suppressed }
 			NOT = { has_global_flag = lupulan_scoured }
@@ -15121,7 +15254,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4411 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4411
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = dhenbasana_unowned_tt
 		}
@@ -15144,7 +15280,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4411 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4411
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = dhenbasana_suppressed }
 			NOT = { has_global_flag = dhenbasana_scoured }
@@ -15166,7 +15305,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4424 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4424
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = marutha_unowned_tt
 		}
@@ -15189,7 +15331,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4424 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4424
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = marutha_suppressed }
 			NOT = { has_global_flag = marutha_scoured }
@@ -15211,7 +15356,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4954 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4954
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = gehet_ketine_unowned_tt
 		}
@@ -15234,7 +15382,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4954 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4954
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = gehet_ketine_suppressed }
 			NOT = { has_global_flag = gehet_ketine_scoured }
@@ -15256,8 +15407,13 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4580 }
-				NOT = { owns_or_non_sovereign_subject_of = 4557 }
+				NOT = {
+					AND = {
+						owns_or_non_sovereign_subject_of = 4580
+						owns_or_non_sovereign_subject_of = 4557
+					}
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = hukai_telebei_unowned_tt
 		}
@@ -15280,8 +15436,13 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4580 }
-				NOT = { owns_or_non_sovereign_subject_of = 4557 }
+				NOT = {
+					AND = {
+						owns_or_non_sovereign_subject_of = 4580
+						owns_or_non_sovereign_subject_of = 4557
+					}
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = hukai_telebei_suppressed }
 			NOT = { has_global_flag = hukai_telebei_scoured }
@@ -15340,7 +15501,10 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				NOT = { owns_or_non_sovereign_subject_of = 4527 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4527
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			custom_tooltip = tughayasa_unowned_tt
 		}
@@ -15362,7 +15526,10 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4527 }
+				NOT = {
+					owns_or_non_sovereign_subject_of = 4527
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = tughayasa_suppressed }
 			NOT = { has_global_flag = tughayasa_scoured }
@@ -15393,11 +15560,14 @@ country_event = { #scour menu
 		}
 		if = {
 			limit = {
-				OR = {
-					NOT = { owns_or_non_sovereign_subject_of = 4923 }
-					NOT = { owns_or_non_sovereign_subject_of = 4915 }
-					NOT = { owns_or_non_sovereign_subject_of = 4877 }
-					NOT = { owns_or_non_sovereign_subject_of = 4891 }
+				NOT = {
+					AND = {
+						owns_or_non_sovereign_subject_of = 4923
+						owns_or_non_sovereign_subject_of = 4915
+						owns_or_non_sovereign_subject_of = 4877
+						owns_or_non_sovereign_subject_of = 4891
+					}
+					mission_completed = yuanszi_great_scouring
 				}
 			}
 			custom_tooltip = four_lords_unowned_tt
@@ -15411,10 +15581,15 @@ country_event = { #scour menu
 						NOT = { has_non_ruined_or_corrupted_temple_complex = yes }
 					}
 				}
-				NOT = { owns_or_non_sovereign_subject_of = 4923 }
-				NOT = { owns_or_non_sovereign_subject_of = 4915 }
-				NOT = { owns_or_non_sovereign_subject_of = 4877 }
-				NOT = { owns_or_non_sovereign_subject_of = 4891 }
+				NOT = {
+					AND = {
+						owns_or_non_sovereign_subject_of = 4923
+						owns_or_non_sovereign_subject_of = 4915
+						owns_or_non_sovereign_subject_of = 4877
+						owns_or_non_sovereign_subject_of = 4891
+					}
+					mission_completed = yuanszi_great_scouring
+				}
 			}
 			NOT = { has_global_flag = huszien_suppressed }
 			NOT = { has_global_flag = huszien_scoured }
@@ -15462,12 +15637,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = hokuma_scouring
 			set_global_flag = hokuma_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_hokuma
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15504,12 +15680,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = yanhe_scouring
 			set_global_flag = yanhe_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_yanhe
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15546,12 +15723,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = kharunyana_scouring
 			set_global_flag = kharunyana_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_kharunyana
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15588,12 +15766,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = phokhao_scouring
 			set_global_flag = phokhao_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_phokhao
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15630,12 +15809,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = hengdu_bowu_scouring
 			set_global_flag = hengdu_bowu_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_hengdu_bowu
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15672,12 +15852,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = cinulau_scouring
 			set_global_flag = cinulau_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_cinulau
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15714,12 +15895,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = lupulan_scouring
 			set_global_flag = lupulan_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_lupulan
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15756,12 +15938,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = dhenbasana_scouring
 			set_global_flag = dhenbasana_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_dhenbasana
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15798,12 +15981,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = marutha_scouring
 			set_global_flag = marutha_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_marutha
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15840,12 +16024,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = gehet_ketine_scouring
 			set_global_flag = gehet_ketine_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_gehet_ketine
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15882,12 +16067,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = hukai_telebei_scouring
 			set_global_flag = hukai_telebei_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_hukai
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15923,12 +16109,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = huszien_scouring
 			set_global_flag = huszien_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_huszien
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -15965,12 +16152,13 @@ country_event = {
 				remove_province_modifier = rending_unhindered_spirits
 				add_permanent_province_modifier = { name = spirit_region_warded duration = -1 }
 			}
-			clr_country_flag = tughayasa_scouring
 			set_global_flag = tughayasa_scoured
-			spirit_end_rending_if_applicable = yes
-
 			set_global_flag = disable_tughayasa
 		}
+	}
+
+	after = {
+		spirit_end_rending_if_applicable = yes
 	}
 
 	option = {
@@ -16006,7 +16194,8 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			set_country_flag = is_scouring_domain
+			add_country_modifier = { name = scouring_domain_modifier duration = 912 }
+			country_event = { id = spirits.751 days = 912 }
 		}
 	}
 
@@ -16028,34 +16217,26 @@ country_event = {
 	desc = spirits.751.d
 	picture = ONI_HUMANS_eventPicture
 
-	trigger = {
-		has_global_flag = rending_active
-		had_country_flag = {
-			flag = is_scouring_domain
-			days = 912
-		}
-	}
-
+	is_triggered_only = yes
 	hidden = yes
 
 	immediate = {
-		hidden_effect = {
-			trigger_switch = {
-				on_trigger = has_country_flag
-				hokuma_scouring = { country_event = { id = spirits.737 } }
-				yanhe_scouring = { country_event = { id = spirits.738 } }
-				kharunyana_scouring = { country_event = { id = spirits.739 } }
-				phokhao_scouring = { country_event = { id = spirits.740 } }
-				hengdu_bowu_scouring = { country_event = { id = spirits.741 } }
-				cinulau_scouring = { country_event = { id = spirits.742 } }
-				lupulan_scouring = { country_event = { id = spirits.743 } }
-				dhenbasana_scouring = { country_event = { id = spirits.744 } }
-				marutha_scouring = { country_event = { id = spirits.745 } }
-				gehet_ketine_scouring = { country_event = { id = spirits.746 } }
-				hukai_telebei_scouring = { country_event = { id = spirits.747 } }
-				huszien_scouring = { country_event = { id = spirits.748 } }
-				tughayasa_scouring = { country_event = { id = spirits.749 } }
-			}
+
+		trigger_switch = {
+			on_trigger = has_country_flag
+			hokuma_scouring			= { country_event = { id = spirits.737 } clr_country_flag = hokuma_scouring }
+			yanhe_scouring			= { country_event = { id = spirits.738 } clr_country_flag = yanhe_scouring }
+			kharunyana_scouring		= { country_event = { id = spirits.739 } clr_country_flag = kharunyana_scouring }
+			phokhao_scouring		= { country_event = { id = spirits.740 } clr_country_flag = phokhao_scouring }
+			hengdu_bowu_scouring	= { country_event = { id = spirits.741 } clr_country_flag = hengdu_bowu_scouring }
+			cinulau_scouring		= { country_event = { id = spirits.742 } clr_country_flag = cinulau_scouring }
+			lupulan_scouring		= { country_event = { id = spirits.743 } clr_country_flag = lupulan_scouring }
+			dhenbasana_scouring		= { country_event = { id = spirits.744 } clr_country_flag = dhenbasana_scouring }
+			marutha_scouring		= { country_event = { id = spirits.745 } clr_country_flag = marutha_scouring }
+			gehet_ketine_scouring	= { country_event = { id = spirits.746 } clr_country_flag = gehet_ketine_scouring }
+			hukai_telebei_scouring	= { country_event = { id = spirits.747 } clr_country_flag = hukai_telebei_scouring }
+			huszien_scouring		= { country_event = { id = spirits.748 } clr_country_flag = huszien_scouring }
+			tughayasa_scouring		= { country_event = { id = spirits.749 } clr_country_flag = tughayasa_scouring }
 		}
 	}
 
@@ -16337,6 +16518,7 @@ country_event = {
 			factor = 2
 		}
 		change_religion = mystic_accord
+		hidden_effect = { set_country_flag = supernaturally_bound_faith }
 		add_stability = -4
 		if = {
 			limit = {
@@ -16554,6 +16736,108 @@ country_event = { #Kharunyana destroys the Godswall
 				}
 			}
 		}
+	}
+}
+
+country_event = { #Halessi Tribute
+	id = spirits.1003
+	title = spirits.1003.t
+	picture = GREAT_SPIRIT_FOUR_LORDS_eventPicture.dds
+	desc = spirits.1003.d
+
+	is_triggered_only = yes
+	
+	trigger = {
+		ai = no
+		capital_scope = {
+			continent = asia
+			NOT = { superregion = forbidden_lands_superregion }
+		}
+		NOT = { 
+			has_country_modifier = monstrous_nation 
+			is_semi_monstrous = yes
+		}
+		adm = 4
+		dip = 4
+		mil = 4
+		NOT = { has_country_flag = had_halessi_tribute_event } 
+		OR = { 
+			AND = {
+				current_age = age_of_absolutism
+				player_ruler_expanded_by_dev_on_death = { dev = 600 } 
+			}
+			AND = {
+				current_age = age_of_revolutions
+				player_ruler_expanded_by_dev_on_death = { dev = 900 } 
+			}
+			AND = {
+				player_ruler_expanded_by_dev_on_death = { dev = 300 }
+				OR =  { current_age = age_of_discovery current_age = age_of_reformation }
+			}
+		}
+	}
+
+	immediate = {
+		set_country_flag = had_halessi_tribute_event
+		hidden_effect = {
+			random_list = {
+				1 = { set_country_flag = biegeltoren_tribute }
+				1 = { set_country_flag = thorfindel_tribute }
+				1 = { set_country_flag = karlov_tribute }
+				1 = { set_country_flag = elefante_tribute }
+				1 = { set_country_flag = indi_tribute }
+			}
+		}
+	}
+	after = {
+		clr_country_flag = biegeltoren_tribute
+		clr_country_flag = thorfindel_tribute
+		clr_country_flag = karlov_tribute
+		clr_country_flag = elefante_tribute
+		clr_country_flag = indi_tribute
+	}
+
+	desc = spirits.1003.d
+
+	option = {
+		name = spirits.1003.a
+		trigger = { 
+			has_country_flag = biegeltoren_tribute
+		}
+		add_country_modifier = { name = haless_tribute_legacy duration = 9125 }
+		add_dip_power = 150
+	}
+	option = {
+		name = spirits.1003.a
+		trigger = { 
+			has_country_flag = thorfindel_tribute
+		}
+		add_country_modifier = { name = haless_tribute_legacy duration = 9125 }
+		add_mil_power = 150
+	}
+	option = {
+		name = spirits.1003.a
+		trigger = { 
+			has_country_flag = karlov_tribute
+		}
+		add_country_modifier = { name = haless_tribute_legacy duration = 9125 }
+		change_government_reform_progress = 100
+	}
+	option = {
+		name = spirits.1003.a
+		trigger = { 
+			has_country_flag = elefante_tribute
+		}
+		add_country_modifier = { name = haless_tribute_legacy duration = 9125 }
+		add_army_tradition_or_mil_power = { amount = 40 }
+	}
+	option = {
+		name = spirits.1003.a
+		trigger = { 
+			has_country_flag = indi_tribute
+		}
+		add_country_modifier = { name = haless_tribute_legacy duration = 9125 }
+		add_adm_power = 150
 	}
 }
 

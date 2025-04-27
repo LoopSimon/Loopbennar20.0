@@ -3006,3 +3006,320 @@ estate_burghers_protect_against_piracy = {
         }
     }
 }
+
+estate_burghers_luna_send_great_man = {
+	max_days_active = 3650
+	can_select = {
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+	}
+	selection_weight = {
+		factor = 50
+	}
+	task_requirements = {
+		OR = {
+			advisor = natural_scientist
+			advisor = philosopher
+			advisor = artist
+		}
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		burghers_sway_agenda = yes
+		add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_burghers
+		}
+		if = {
+			limit = {
+				advisor = natural_scientist
+			}
+			remove_advisor = natural_scientist
+			emperor = {
+				define_advisor = {
+					type = natural_scientist
+					skill = 1
+					cost_multiplier = 0.5
+					culture = ROOT
+				}
+			}
+		}
+		if = {
+			limit = {
+				advisor = philosopher
+			}
+			remove_advisor = philosopher
+			emperor = {
+				define_advisor = {
+					type = philosopher
+					skill = 1
+					cost_multiplier = 0.5
+					culture = ROOT
+				}
+			}
+		}
+		if = {
+			limit = {
+				advisor = artist
+			}
+			remove_advisor = artist
+			emperor = {
+				sway_target = yes
+				define_advisor = {
+					type = artist
+					skill = 1
+					cost_multiplier = 0.5
+					culture = ROOT
+				}
+			}
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}
+
+estate_burghers_luna_take_foreign_loans = {
+	max_days_active = 3650
+	can_select = {
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		NOT = { num_of_loans = 1 }
+		any_known_country = {
+			num_of_loans = 2
+			is_part_of_hre = yes
+		}
+	}
+	selection_weight = {
+		factor = 50
+	}
+	pre_effect = {
+		random_known_country = {
+			limit = {
+				num_of_loans = 2
+				is_part_of_hre = yes
+			}
+			save_event_target_as = agenda_country
+		}
+	}
+	task_requirements = {
+		num_of_loans = 4
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		burghers_sway_agenda = yes
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_burghers
+		}
+		event_target:agenda_country = {
+			sway_target = yes
+			if = {
+				limit = { num_of_loans = 4 }
+				add_treasury = 200
+			}
+			else_if = {
+				limit = { num_of_loans = 3 }
+				add_treasury = 150
+			}
+			else_if = {
+				limit = { num_of_loans = 2 }
+				add_treasury = 100
+			}
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}
+
+estate_burghers_luna_escort_caravans = {
+	max_days_active = 3650
+	can_select = {
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		any_known_country = {
+			is_part_of_hre = yes
+			any_owned_province = {
+				NOT = { region = east_dameshead_region }
+			}
+		}
+	}
+	selection_weight = {
+		factor = 50
+	}
+	pre_effect = {
+		random_known_country = {
+			limit = {
+				is_part_of_hre = yes
+				any_owned_province = {
+					NOT = { region = east_dameshead_region }
+				}
+			}
+			random_owned_province = {
+				limit = { NOT = { region = east_dameshead_region } }
+				save_event_target_as = agenda_province
+			}
+		}
+	}
+	task_requirements = {
+		event_target:agenda_province = {
+			num_of_units_in_province = {
+				who = ROOT
+				amount = 5
+			}
+		}
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		burghers_sway_agenda = yes
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_burghers
+		}
+		event_target:agenda_province = {
+			owner = {
+				add_treasury = 100
+				sway_target = yes
+			}
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}
+
+estate_burghers_luna_appease_a_city = {
+	max_days_active = 3650
+	can_select = {
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		has_country_flag = LRM_leader_flag
+		NOT = { has_country_flag = LRM_can_promote_luna_identity }
+		any_subject_country = {
+			is_luna_river_minor = yes
+		}
+	}
+	selection_weight = {
+		factor = 50
+	}
+	pre_effect = {
+		random_subject_country = {
+			limit = {
+				is_luna_river_minor = yes
+			}
+			save_event_target_as = agenda_country
+		}
+	}
+	task_requirements = {
+		always = yes
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		burghers_sway_agenda = yes
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_burghers
+		}
+		capital_scope = {
+			add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1
+		}
+		event_target:agenda_country = {
+			add_treasury = 50
+			sway_target = yes
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}
+
+estate_burghers_luna_secure_imperial_trade = {
+	max_days_active = 3650
+	can_select = {
+		hre_size = 1
+		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+		any_active_trade_node = {
+			any_trade_node_member_country = {
+				is_part_of_hre = no
+			}
+		}
+	}
+	selection_weight = {
+		factor = 50
+	}
+	pre_effect = {
+		random_active_trade_node = {
+			limit = {
+				any_trade_node_member_country = {
+					is_part_of_hre = no
+				}
+			}
+			random_trade_node_member_country = {
+				limit = { is_part_of_hre = no }
+				save_event_target_as = agenda_country
+			}
+		}
+	}
+	task_requirements = {
+		event_target:agenda_country = {
+			trade_embargo_by = ROOT
+		}
+	}
+	task_completed_effect = {
+		gain_1_sway = yes
+		burghers_sway_agenda = yes
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_burghers
+		}
+		emperor = {
+			add_treasury = 100
+			sway_target = yes
+		}
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		lose_1_sway = yes
+	}
+
+	invalid_trigger = {
+		NOT = { hre_size = 1 }
+	}
+}

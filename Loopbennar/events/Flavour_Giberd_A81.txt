@@ -2,8 +2,10 @@
 # 1-9: old events
 # 10-19: mission flavour events
 # 20-29: electorate event chain
-# 30-39: artificer faction events
+# 30-49: artificer faction events
 # 50-60: cleanup events to end temporary effects
+#
+# 100-109: rebuilding anvilwright
 namespace = flavor_giberd
 # Reworked Giberd MT events
 #Our Options of War
@@ -149,7 +151,7 @@ country_event = {
 		set_estate_privilege = estate_artificers_organization_giberd_magisterium_oversight
 	}
 	after = {
-		research_speed = yes
+		update_research_speed = yes
 		clr_country_flag = artificers_regular_organization_locked
 	}
 }
@@ -163,6 +165,7 @@ country_event = {
 	is_triggered_only = yes
 	option = {
 		name = flavor_giberd.11.a
+		set_country_flag = giberd_silverforge_promise
 		add_favors = {
 			who = A73
 			amount = 20
@@ -389,6 +392,7 @@ country_event = {
 	is_triggered_only = yes
 	option = {
 		name = flavor_giberd.20.a
+		set_country_flag = giberd_silverforge_promise
 		add_country_modifier = {
 			name = giberd_silverforge_relations_good
 			duration = 3650			#20 years
@@ -1105,7 +1109,15 @@ country_event = {
 	option = {
 		name = flavor_giberd.34.a
 		giberd_factions_technomancers_increase = yes
-		set_country_flag = giberd_silverforge_hold_large
+		custom_tooltip = giberd_silverforge_hold_rebuilding_tt
+		custom_tooltip = giberd_silverforge_war_tt
+		set_country_flag = giberd_silverforge_hold_ongoing
+		large_increase_of_dwarven_tolerance_effect = yes
+		for = {
+			custom_tooltip = giberd_10_provinces_get_dwarves_tt
+			amount = 10
+			effect = "random_owned_province = { limit = { region = esmaria_region } add_dwarven_minority_size_effect = yes }"
+		}
 		custom_tooltip = artificer_points_upkeep_tt
 		add_or_extend_country_modifier = {
 			name = artificers_busy_60
@@ -1115,19 +1127,6 @@ country_event = {
 		add_country_modifier = {
 			name = giberd_paying_for_silverforge
 			duration = 3650
-		}
-		912 = {
-			add_province_modifier = {
-				name = giberd_silverforge_hold
-				duration = -1
-			}
-		}
-		custom_tooltip = giberd_silverforge_war_tt
-		large_increase_of_dwarven_tolerance_effect = yes
-		for = {
-			custom_tooltip = giberd_10_provinces_get_dwarves_tt
-			amount = 10
-			effect = "random_owned_province = { limit = { region = esmaria_region } add_dwarven_minority_size_effect = yes }"
 		}
 	}
 	option = {
@@ -1162,6 +1161,11 @@ country_event = {
 		}
 		912 = {
 			add_permanent_claim = ROOT
+		}
+		complex_dynamic_effect_without_alternative = {
+			first_custom_tooltip = giberd_silverforge_didnt_keep_promise_tt
+			first_limit = "has_country_flag = giberd_silverforge_promise"
+			first_effect = "add_prestige = -20"
 		}
 	}
 }
@@ -1634,6 +1638,378 @@ country_event = {
 				name = giberd_ace
 				duration = -1
 			}
+		}
+	}
+}
+
+##########
+# Spawning Ravelianism Early
+country_event = {
+	id = flavor_giberd.60
+	title = ravelian.4.t
+	desc = ravelian.4.d
+	picture = GOD_FRAGMENT_eventPicture
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = {
+			# Esmarainé
+			266 = {
+				save_event_target_as = ravelian_province
+			}
+		}
+	}
+	option = {
+		name = ravelian.4.a		# yes, give them Esmarainé
+		trigger = {
+			266 = {
+				is_capital = yes
+			}
+		}
+		enable_religion = ravelian
+		setup_the_rectorate_in_ravelian_province = yes
+		hidden_effect = {
+			every_country = {
+				limit = {
+					OR = {
+						capital_scope = {
+							continent = europe
+						}
+						capital_scope = {
+							continent = north_america
+						}
+						capital_scope = {
+							continent = south_america
+						}
+						any_owned_province = {
+							OR = {
+								has_province_modifier = ravelian_society
+								has_province_modifier = ravelian_lodge
+							}
+						}
+					}
+					NOT = {
+						tag = Z97
+					}
+					NOT = {
+						tag = ROOT
+					}
+					NOT = {
+						tag = A31
+					}
+					NOT = {
+						religion = kalyin_worshippers
+					}
+				}
+				country_event = {
+					id = ravelian.5
+				}
+			}
+			577 = {
+				province_event = {
+					id = new_sun_cult.8
+					days = 3650
+					random = 3650
+				}
+			}
+			#Ravelian missionaries arrive in the Drolas
+			A31 = {
+				country_event = {
+					id = A31_flavour.23
+					days = 15
+				}
+			}
+			#Ravelian Switch
+		}
+		convert_all_lodges_and_societies = yes
+		capital_scope = {
+			change_religion = ravelian
+			add_cardinal = yes
+		}
+		change_religion = ravelian
+		add_treasury = 500
+		add_papal_influence = 100
+		add_country_modifier = {
+			name = "conversion_zeal"
+			duration = 3650
+		}
+	}
+	option = {
+		name = ravelian.4.c		# no, normal spawn
+		custom_tooltip = flavor_giberd.60.b_tt
+		hidden_effect = {
+			set_country_flag = denied_rectorship
+			country_event = {
+				id = ravelian.10
+			}
+		}
+	}
+}
+
+##########
+# Rebuilding Anvilwright
+country_event = {
+	id = flavor_giberd.100
+	title = flavor_giberd.100.t
+	desc = flavor_giberd.100.d
+	picture = GENERALS_DISCUSSING_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	trigger = {
+		is_or_was_tag = {
+			tag = A81
+		}
+		ai = no
+		has_country_flag = giberd_silverforge_hold_ongoing
+		912 = {
+			OR = {
+				owned_by = ROOT
+				owned_by = A73
+			}
+		}
+		NOT = {
+			war_with = A73
+		}
+	}
+	option = {
+		name = flavor_giberd.100.a
+		# these flags signal what is to be done next
+		# adm_1 means the admin event is next
+		# adm_2 means wait for another pulse
+		if = {
+			limit = {
+				has_country_flag = giberd_silverforge_hold_work_done
+			}
+			country_event = {
+				id = flavor_giberd.104				# finished
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = giberd_silverforge_hold_mil_2
+			}
+			clr_country_flag = giberd_silverforge_hold_mil_2
+			set_country_flag = giberd_silverforge_hold_work_done
+		}
+		else_if = {
+			limit = {
+				has_country_flag = giberd_silverforge_hold_mil_1
+			}
+			country_event = {
+				id = flavor_giberd.103				# digging
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = giberd_silverforge_hold_dip_2
+			}
+			clr_country_flag = giberd_silverforge_hold_dip_2
+			set_country_flag = giberd_silverforge_hold_mil_1
+		}
+		else_if = {
+			limit = {
+				has_country_flag = giberd_silverforge_hold_dip_1
+			}
+			country_event = {
+				id = flavor_giberd.102				# paying
+			}
+		}
+		else_if = {
+			limit = {
+				has_country_flag = giberd_silverforge_hold_adm_2
+			}
+			clr_country_flag = giberd_silverforge_hold_adm_2
+			set_country_flag = giberd_silverforge_hold_dip_1
+		}
+		else = {
+			country_event = {
+				id = flavor_giberd.101				# planning
+			}
+		}
+	}
+}
+
+# To Hold Dreams Into Reality
+country_event = {
+	id = flavor_giberd.101
+	title = flavor_giberd.101.t
+	desc = flavor_giberd.101.d
+	picture = SCIENTISTS_eventPicture
+	is_triggered_only = yes
+	major = yes
+	major_trigger = {
+		tag = A73
+	}
+	immediate = {
+		giberd_silverforge_hold_price_calculate_discount = yes
+	}
+	option = {
+		name = flavor_giberd.100.update
+		highlight = yes
+		hidden_effect = {
+			country_event = {
+				id = flavor_giberd.100
+			}
+		}
+	}
+	option = {
+		name = flavor_giberd.101.a
+		clr_country_flag = giberd_silverforge_hold_adm_1
+		set_country_flag = giberd_silverforge_hold_adm_2
+		giberd_silverforge_hold_price_apply_discount = {
+			mana = adm
+		}
+		add_country_modifier = {
+			name = giberd_silverforge_hold_adm_price
+			duration = 7300
+		}
+		custom_tooltip = giberd_silverforge_hold_price_discount_tt
+	}
+	option = {
+		name = flavor_giberd.101.b
+		custom_tooltip = giberd_silverforge_hold_wait
+	}
+}
+
+# Over Budget, Overwhelmed, Underpaid
+country_event = {
+	id = flavor_giberd.102
+	title = flavor_giberd.102.t
+	desc = flavor_giberd.102.d
+	picture = FALUN_COPPER_MINE_eventPicture
+	is_triggered_only = yes
+	major = yes
+	major_trigger = {
+		tag = A73
+	}
+	immediate = {
+		giberd_silverforge_hold_price_calculate_discount = yes
+	}
+	option = {
+		name = flavor_giberd.100.update
+		highlight = yes
+		hidden_effect = {
+			country_event = {
+				id = flavor_giberd.100
+			}
+		}
+	}
+	option = {
+		name = flavor_giberd.102.a
+		clr_country_flag = giberd_silverforge_hold_dip_1
+		set_country_flag = giberd_silverforge_hold_dip_2
+		giberd_silverforge_hold_price_apply_discount = {
+			mana = dip
+		}
+		add_country_modifier = {
+			name = giberd_silverforge_hold_dip_price
+			duration = 7300
+		}
+		custom_tooltip = giberd_silverforge_hold_price_discount_tt
+	}
+	option = {
+		name = flavor_giberd.102.b
+		custom_tooltip = giberd_silverforge_hold_wait
+	}
+}
+
+# Digging Down And Down Into The Deep
+country_event = {
+	id = flavor_giberd.103
+	title = flavor_giberd.103.t
+	desc = flavor_giberd.103.d
+	picture = DARK_EXPEDITION_eventPicture
+	is_triggered_only = yes
+	major = yes
+	major_trigger = {
+		tag = A73
+	}
+	immediate = {
+		giberd_silverforge_hold_price_calculate_discount = yes
+	}
+	option = {
+		name = flavor_giberd.100.update
+		highlight = yes
+		hidden_effect = {
+			country_event = {
+				id = flavor_giberd.100
+			}
+		}
+	}
+	option = {
+		name = flavor_giberd.103.a
+		clr_country_flag = giberd_silverforge_hold_mil_1
+		set_country_flag = giberd_silverforge_hold_mil_2
+		giberd_silverforge_hold_price_apply_discount = {
+			mana = mil
+		}
+		add_manpower = -50
+		add_country_modifier = {
+			name = giberd_silverforge_hold_mil_price
+			duration = 7300
+		}
+		custom_tooltip = giberd_silverforge_hold_price_discount_tt
+	}
+	option = {
+		name = flavor_giberd.103.b
+		custom_tooltip = giberd_silverforge_hold_wait
+	}
+}
+
+# Finishing The Unfinishable
+country_event = {
+	id = flavor_giberd.104
+	title = flavor_giberd.104.t
+	desc = flavor_giberd.104.d
+	picture = FORT_eventPicture
+	is_triggered_only = yes
+	major = yes
+	goto = 912
+	option = {
+		name = flavor_giberd.104.a
+		clr_country_flag = giberd_silverforge_hold_work_done
+		clr_country_flag = giberd_silverforge_hold_ongoing
+		912 = {
+			remove_province_modifier = incomplete_hold
+			remove_province_modifier = incomplete_hold_0
+		}
+		if = {
+			limit = {
+				is_or_was_tag = {
+					tag = A81
+				}
+				912 = {
+					owned_by = A73
+				}
+			}
+			A73 = {
+				country_event = {
+					id = flavor_giberd.105
+				}
+			}
+		}
+	}
+}
+
+# Giberd demands Vassalage
+country_event = {
+	id = flavor_giberd.105
+	title = flavor_giberd.105.t
+	desc = flavor_giberd.105.d
+	picture = FORT_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = flavor_giberd.105.a
+		ai_chance = {
+			factor = 100
+		}
+		A81 = {
+			vassalize = A73
+		}
+	}
+	option = {
+		name = flavor_giberd.105.b
+		ai_chance = {
+			factor = 0
 		}
 	}
 }

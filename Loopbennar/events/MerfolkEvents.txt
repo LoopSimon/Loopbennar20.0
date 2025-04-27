@@ -3,6 +3,188 @@ namespace = merfolk_events
 ###################
 ###SYSTEM EVENTS###
 ###################
+
+province_event = { #Merfolk agendas
+	id = merfolk_events.0
+	title = merfolk_events.0.t
+	desc = merfolk_events.0.desc
+	picture = DIPLOMACY_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { owner = { NOT = { has_country_flag = in_merfolk_agenda } } }
+				owner = { set_country_flag = in_merfolk_agenda }
+				for = {
+					amount = 3
+					effect = " merfolk_generate_random_agenda_effect = yes "
+				}
+			}
+		}
+	}
+	
+	after = {
+		hidden_effect = {
+			owner = { clr_country_flag = in_merfolk_agenda }
+			merfolk_clear_all_agendas_effect = yes
+		}
+	}
+
+	option = {
+		name = merfolk_events.0.a
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = send_delegation_unlock_flag }
+		owner = {
+			add_dip_power = -50
+			if = {
+				limit = { total_development = 1000 }
+				add_treasury = -500
+			}
+			else_if = {
+				limit = { total_development = 500 }
+				add_treasury = -250
+			}
+			else_if = {
+				limit = { total_development = 100 }
+				add_treasury = -150
+			}
+			else = {
+				add_treasury = -50
+			}
+			merfolk_add_opinion_effect_large = yes
+		}
+	}
+
+	option = {
+		name = merfolk_events.0.b
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = send_weapons_unlock_flag }
+		owner = {
+			add_mil_power = -50
+			if = {
+				limit = { total_development = 1000 }
+				add_treasury = -500
+			}
+			else_if = {
+				limit = { total_development = 500 }
+				add_treasury = -250
+			}
+			else_if = {
+				limit = { total_development = 100 }
+				add_treasury = -150
+			}
+			else = {
+				add_treasury = -50
+			}
+			merfolk_add_opinion_effect_large = yes
+		}
+	}
+	
+	option = {
+		name = merfolk_events.0.c
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = conduct_surveys_unlock_flag }
+		owner = {
+			add_adm_power = -50
+			if = {
+				limit = { total_development = 1000 }
+				add_treasury = -500
+			}
+			else_if = {
+				limit = { total_development = 500 }
+				add_treasury = -250
+			}
+			else_if = {
+				limit = { total_development = 100 }
+				add_treasury = -150
+			}
+			else = {
+				add_treasury = -50
+			}
+			merfolk_add_opinion_effect_large = yes
+		}
+	}
+
+	option = {
+		name = merfolk_events.0.d
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = allow_freedom_of_movement_unlock_flag }
+
+		add_local_autonomy = 50
+		owner = { merfolk_add_opinion_effect_large = yes }
+	}
+
+	option = {
+		name = merfolk_events.0.e
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = flood_lands_unlock_flag }
+
+		owner = {
+			change_estate_land_share = {
+				estate = all
+				share = 2
+			}
+			merfolk_add_opinion_effect_large = yes
+		}
+	}
+
+	option = {
+		name = merfolk_events.0.f
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = mint_currency_unlock_flag }
+
+		owner = {
+			add_inflation = 1
+			merfolk_add_opinion_effect_large = yes
+		}
+	}
+
+	option = {
+		name = merfolk_events.0.g
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = bow_ruler_unlock_flag }
+
+		owner = {
+			add_legitimacy = -30
+			merfolk_add_opinion_effect_large = yes
+		}
+	}
+
+	option = {
+		name = merfolk_events.0.h
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = bow_demands_unlock_flag }
+
+		owner = {
+			add_prestige = -20
+			merfolk_add_opinion_effect_large = yes
+		}
+	}
+
+	option = {
+		name = merfolk_events.0.i
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = partake_ritual_unlock_flag }
+
+		owner = {
+			add_devotion = -30
+			merfolk_add_opinion_effect_large = yes
+		}
+	}
+
+	option = {
+		name = merfolk_events.0.j
+		ai_chance = { factor = 1 }
+		trigger = { has_province_flag = cede_waters_unlock_flag }
+
+		owner = {
+			add_stability = -1
+			merfolk_add_opinion_effect_large = yes
+		}
+	}
+}
 country_event = { #neutral to allied
 	id = merfolk_events.1
 	title = merfolk_events.1.t
@@ -16,19 +198,35 @@ country_event = { #neutral to allied
 		merfolk_change_modifiers_positive_effect = yes
 	}
 }
-country_event = { #angered to neutral
-	id = merfolk_events.2
-	title = merfolk_events.2.t
-	desc = merfolk_events.2.d
-	picture = GOOD_WITH_MONARCH_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = merfolk_events.2.a
-		merfolk_change_modifiers_positive_effect = yes
-	}
-}
+#province_event = { #event that un-angers merfolk--angered does not exist right now
+#	id = merfolk_events.2
+#	title = merfolk_events.2.t
+#	desc = merfolk_events.2.d
+#	picture = GOOD_WITH_MONARCH_eventPicture
+#
+#	is_triggered_only = yes
+#	trigger = {
+#		has_province_modifier = offcoast_merfolk_angered
+#		OR = {
+#			is_empty = yes
+#			owner = { is_or_was_tag = { tag = FROM } }
+#			NOT = { has_province_modifier = merfolk_was_conquered }
+#		}
+#	}
+#
+#	immediate = {
+#		hidden_effect = {
+#			remove_province_modifier = offcoast_merfolk_angered
+#			remove_province_modifier = merfolk_was_conquered
+#			merfolk_spawn_modifier = yes
+#		}
+#	}
+#
+#	option = {
+#		name = merfolk_events.2.a
+#		ai_chance = { factor = 1 }
+#	}
+#}
 country_event = { #isolated to neutral
 	id = merfolk_events.3
 	title = merfolk_events.3.t
@@ -39,7 +237,6 @@ country_event = { #isolated to neutral
 
 	option = {
 		name = merfolk_events.3.a
-		merfolk_dynamic_settlement_on_opinion_increase_effect = yes
 		merfolk_change_modifiers_positive_effect = yes
 	}
 }
@@ -53,23 +250,31 @@ country_event = { #allied to neutral
 
 	option = {
 		name = merfolk_events.4.a
-		merfolk_change_modifiers_positive_effect = yes
+		merfolk_change_modifiers_negative_effect = yes
 	}
 }
-country_event = { #neutral to angered
-	id = merfolk_events.5
-	title = merfolk_events.5.t
-	desc = merfolk_events.5.d
-	picture = BAD_WITH_MONARCH_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = merfolk_events.5.a
-		merfolk_change_modifiers_positive_effect = yes
-	}
-}
-country_event = { #angered to isolated
+#country_event = { #event telling you that merfolk will be angered if you conquer them - angered does not exist right now
+#	id = merfolk_events.5
+#	title = merfolk_events.5.t
+#	desc = merfolk_events.5.d
+#	picture = BAD_WITH_MONARCH_eventPicture
+#	goto = FROM
+#
+#	is_triggered_only = yes
+#	trigger = { NOT = { has_country_flag = received_merfolk_information } }
+#
+#	option = {
+#		name = merfolk_events.5.a
+#		ai_chance = { factor = 1 }
+#
+#		set_country_flag = received_merfolk_information
+#		tooltip = {
+#			merfolk_subtract_opinion_effect_medium = yes
+#			FROM = { province_event = { id = merfolk_events.2 days = 2190 } }
+#		}
+#	}
+#}
+country_event = { #neutral to isolated
 	id = merfolk_events.6
 	title = merfolk_events.6.t
 	desc = merfolk_events.6.d
@@ -79,7 +284,7 @@ country_event = { #angered to isolated
 
 	option = {
 		name = merfolk_events.6.a
-		merfolk_change_modifiers_positive_effect = yes
+		merfolk_change_modifiers_negative_effect = yes
 	}
 }
 province_event = { #development of an offcoast settlement
@@ -92,27 +297,37 @@ province_event = { #development of an offcoast settlement
 
 	option = {
 		name = merfolk_events.7.a
+		ai_chance = { factor = 1 }
+
 		if = {
-			limit = {
-				owner = { has_country_flag = merfolk_opinion_allied }
-			}
-			add_permanent_province_modifier = {
-				name = offcoast_merfolk_allied
-				duration = -1
-			}
+			limit = { region = fahvanosy_region }
+			6678 = { change_variable = { which = fahvanosyMerfolkCap value = 1 } }
 		}
-		else = {
-			add_permanent_province_modifier = {
-				name = offcoast_merfolk_neutral
-				duration = -1
-			}
+		else_if = {
+			limit = { region = odu_kherass_region }
+			6678 = { change_variable = { which = oduKherassMerfolkCap value = 1 } }
 		}
-		if = {
-			limit = {
-				has_province_modifier = offcoast_merfolk_isolated
-			}
-			remove_province_modifier = offcoast_merfolk_isolated
+		else_if = {
+			limit = { region = ishyamtumu_region }
+			6678 = { change_variable = { which = ishyamtumuMerfolkCap value = 1 } }
 		}
+		else_if = {
+			limit = { region = bamaliwuni_region }
+			6678 = { change_variable = { which = bamaliwuniMerfolkCap value = 1 } }
+		}
+		else_if = {
+			limit = { region = throden_gokad_region }
+			6678 = { change_variable = { which = throdenGokadMerfolkCap value = 1 } }
+		}
+		else_if = {
+			limit = { region = ardimya_region }
+			6678 = { change_variable = { which = ardimyaMerfolkCap value = 1 } }
+		}
+		else_if = {
+			limit = { region = jasiir_jadid_region }
+			6678 = { change_variable = { which = jasiirJadidMerfolkCap value = 1 } }
+		}
+		merfolk_spawn_modifier = yes
 		custom_tooltip = merfolk_amount_update_region_tt
 	}
 }
@@ -164,16 +379,7 @@ country_event = { #Handler event
 
 	immediate = {
 		if = {
-			limit = {
-				any_owned_province = {
-					OR = {
-						has_province_modifier = offcoast_merfolk_angered
-						has_province_modifier = offcoast_merfolk_neutral
-						has_province_modifier = offcoast_merfolk_allied
-						has_province_modifier = offcoast_merfolk_isolated
-					}
-				}
-			}
+			limit = { any_owned_province = { has_province_flag = merfolk_settlement } }
 			set_country_flag = has_merfolk_in_land
 		}
 	}
@@ -238,12 +444,7 @@ country_event = { #Handler event
 			15 = {
 				trigger = {
 					any_owned_province = {
-						OR = {
-							has_province_modifier = offcoast_merfolk_allied
-							has_province_modifier = offcoast_merfolk_neutral
-							has_province_modifier = offcoast_merfolk_angered
-							has_province_modifier = offcoast_merfolk_isolated
-						}
+						has_province_flag = merfolk_settlement
 						NOT = { has_province_modifier = successful_merfolk_protest }
 					}
 				}
@@ -265,17 +466,8 @@ country_event = { #Handler event
 			}
 			15 = {
 				trigger = {
-					OR = {
-						has_country_flag = merfolk_opinion_allied
-						has_country_flag = merfolk_opinion_neutral
-						has_country_flag = merfolk_opinion_isolated
-					}
 					any_owned_province = {
-						OR = {
-							has_province_modifier = offcoast_merfolk_allied
-							has_province_modifier = offcoast_merfolk_neutral
-							has_province_modifier = offcoast_merfolk_allied
-						} 
+						has_province_flag = merfolk_settlement
 						NOT = { has_province_modifier = merfolk_youth_stranding } 
 					}
 				}
@@ -284,37 +476,18 @@ country_event = { #Handler event
 				}
 			}
 			5 = {
-				trigger = {
-					OR = {
-						has_country_flag = merfolk_opinion_neutral
-						has_country_flag = merfolk_opinion_angered
-						has_country_flag = merfolk_opinion_isolated
-					}
-				}
+				trigger = { NOT = { has_country_flag = merfolk_opinion_allied } }
 				country_event = {
 					id = merfolk_events.17
 				}
 			}
 			15 = {
-				trigger = {
-					OR = {
-						has_country_flag = merfolk_opinion_neutral
-						has_country_flag = merfolk_opinion_angered
-						has_country_flag = merfolk_opinion_isolated
-					}
-				}
+				trigger = { NOT = { has_country_flag = merfolk_opinion_allied } }
 				country_event = {
 					id = merfolk_events.18
 				}
 			}
 			15 = {
-				trigger = {
-					OR = {
-						has_country_flag = merfolk_opinion_allied
-						has_country_flag = merfolk_opinion_neutral
-						has_country_flag = merfolk_opinion_isolated
-					}
-				}
 				country_event = {
 					id = merfolk_events.19
 				}
@@ -338,11 +511,7 @@ country_event = { #Handler event
 			}
 			15 = {
 				trigger = {
-					OR = {
-						has_country_flag = merfolk_opinion_neutral
-						has_country_flag = merfolk_opinion_angered
-						has_country_flag = merfolk_opinion_isolated
-					}
+					NOT = { has_country_flag = merfolk_opinion_allied }
 					NOT = { has_country_modifier = merfolk_detente }
 				}
 				country_event = {
@@ -359,11 +528,7 @@ country_event = { #Handler event
 			}
 			15 = {
 				trigger = {
-					OR = {
-						has_country_flag = merfolk_opinion_neutral
-						has_country_flag = merfolk_opinion_angered
-						has_country_flag = merfolk_opinion_isolated
-					}
+					NOT = { has_country_flag = merfolk_opinion_allied }
 					NOT = { has_country_flag = merfolk_ocean_curve }
 				}
 				country_event = {
@@ -371,13 +536,6 @@ country_event = { #Handler event
 				}
 			}
 			15 = {
-				trigger = {
-					OR = {
-						has_country_flag = merfolk_opinion_allied
-						has_country_flag = merfolk_opinion_neutral
-						has_country_flag = merfolk_opinion_isolated
-					}
-				}
 				country_event = {
 					id = merfolk_events.35
 				}
@@ -393,7 +551,176 @@ country_event = { #Handler event
 					id = merfolk_events.36
 				}
 			}
-			240 = {	
+			15 = {
+				trigger = {
+					NOT = { has_country_flag = merfolk_opinion_allied }
+					any_owned_province = {
+						has_port = yes
+						OR = {
+							superregion = djinnakah_superregion
+							region = bamaliwuni_region
+							region = ishyamtumu_region
+							region = odu_kherass_region
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						OR = {
+							superregion = djinnakah_superregion
+							region = bamaliwuni_region
+							region = ishyamtumu_region
+							region = odu_kherass_region
+						}
+					}
+					province_event = {
+						id = merfolk_events.37
+					}
+				}
+			}
+			15 = {
+				random_owned_province = {
+					limit = { has_province_flag = merfolk_settlement }
+					province_event = {
+						id = merfolk_events.38
+					}
+				}
+			}
+			15 = {
+				trigger = {
+					any_owned_province = {
+						has_port = yes
+						OR = {
+							superregion = djinnakah_superregion
+							region = bamaliwuni_region
+							region = ishyamtumu_region
+							region = odu_kherass_region
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						OR = {
+							superregion = djinnakah_superregion
+							region = bamaliwuni_region
+							region = ishyamtumu_region
+							region = odu_kherass_region
+						}
+					}
+					province_event = {
+						id = merfolk_events.39
+					}
+				}
+			}
+			15 = {
+				trigger = {
+					any_owned_province = {
+						has_port = yes
+						OR = {
+							superregion = djinnakah_superregion
+							region = bamaliwuni_region
+							region = ishyamtumu_region
+							region = odu_kherass_region
+						}
+						OR = {
+							has_shipyard_building_trigger = yes
+							has_dock_building_trigger = yes
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						OR = {
+							superregion = djinnakah_superregion
+							region = bamaliwuni_region
+							region = ishyamtumu_region
+							region = odu_kherass_region
+						}
+						OR = {
+							has_shipyard_building_trigger = yes
+							has_dock_building_trigger = yes
+						}
+					}
+					province_event = {
+						id = merfolk_events.40
+					}
+				}
+			}
+			15 = {
+				country_event = {
+					id = merfolk_events.41
+				}
+			}
+			15 = {
+				trigger = {
+					NOT = { has_country_flag = merfolk_opinion_allied }
+				}
+				random_owned_province = {
+					limit = {
+						OR = {
+							has_province_modifier = offcoast_merfolk_neutral
+							has_province_modifier = offcoast_merfolk_isolated
+						}
+					}
+					province_event = {
+						id = merfolk_events.42
+					}
+				}
+			}
+			15 = {
+				trigger = {
+					NOT = { has_country_flag = merfolk_opinion_allied }
+					any_owned_province = {
+						has_port = yes
+						OR = {
+							superregion = djinnakah_superregion
+							region = bamaliwuni_region
+							region = ishyamtumu_region
+							region = odu_kherass_region
+						}
+					}
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						OR = {
+							superregion = djinnakah_superregion
+							region = bamaliwuni_region
+							region = ishyamtumu_region
+							region = odu_kherass_region
+						}
+					}
+					province_event = {
+						id = merfolk_events.45
+					}
+				}
+			}
+			15 = {
+				trigger = {
+					NOT = { has_country_flag = merfolk_opinion_allied }
+				}
+				country_event = {
+					id = merfolk_events.46
+				}
+			}
+			15 = {
+				trigger = {
+					NOT = { has_country_flag = merfolk_opinion_allied }
+				}
+				country_event = {
+					id = merfolk_events.47
+				}
+			}
+			15 = {
+				trigger = { NOT = { has_country_modifier = merfolk_revolutionary_thought } }
+				country_event = {
+					id = merfolk_events.48
+				}
+			}
+			125 = {	
 			}
 		}
 	}
@@ -461,14 +788,7 @@ country_event = { #Fishy Love Story
 	immediate = {
 		hidden_effect = {
 			random_owned_province = {
-				limit = {
-					OR = {
-						has_province_modifier = offcoast_merfolk_allied
-						has_province_modifier = offcoast_merfolk_neutral
-						has_province_modifier = offcoast_merfolk_angered
-						has_province_modifier = offcoast_merfolk_isolated
-					}
-				}
+				limit = { has_province_flag = merfolk_settlement }
 				save_event_target_as = merfolk_settlement
 			}
 		}
@@ -656,12 +976,7 @@ country_event = {
 		hidden_effect = {
 			random_owned_province = {
 				limit = {
-					OR = {
-						has_province_modifier = offcoast_merfolk_allied
-						has_province_modifier = offcoast_merfolk_neutral
-						has_province_modifier = offcoast_merfolk_angered
-						has_province_modifier = offcoast_merfolk_isolated
-					}
+					has_province_flag = merfolk_settlement
 					NOT = { has_province_modifier = successful_merfolk_protest }
 				}
 				save_event_target_as = merfolk_settlement
@@ -778,13 +1093,7 @@ country_event = {
 	option = {
 		name = merfolk_events.16.a #It's all good
 		every_owned_province = {
-			limit = {
-				OR = {
-					has_province_modifier = offcoast_merfolk_allied
-					has_province_modifier = offcoast_merfolk_neutral
-					has_province_modifier = offcoast_merfolk_isolated
-				}	
-			}
+			limit = { has_province_flag = merfolk_settlement }
 			add_province_modifier = {
 				name = merfolk_youth_stranding
 				duration = 3650
@@ -1146,7 +1455,7 @@ country_event = {
 				limit = { 
 					OR = {
 						has_province_modifier = offcoast_merfolk_neutral
-						has_province_modifier = offcoast_merfolk_angered
+						# has_province_modifier = offcoast_merfolk_angered
 						has_province_modifier = offcoast_merfolk_isolated
 					}  
 				}
@@ -1391,7 +1700,7 @@ country_event = {
 				limit = {
 					OR = {
 						has_province_modifier = offcoast_merfolk_neutral
-						has_province_modifier = offcoast_merfolk_angered
+						# has_province_modifier = offcoast_merfolk_angered
 						has_province_modifier = offcoast_merfolk_isolated
 					}
 				}
@@ -1677,5 +1986,476 @@ country_event = {
 
 	after = {
 		merfolk_first_event_conquering_in_effect = yes
+	}
+}
+
+province_event = {
+	id = merfolk_events.37 #Shore-Spying Spyglass
+	title = merfolk_events.37.t
+	desc = merfolk_events.37.d
+	picture = ACCUSATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.37.a
+		owner = {
+			add_prestige = 5
+			add_years_of_income = -0.1
+			merfolk_add_opinion_effect_medium = yes
+		}
+		add_province_modifier = {
+			name = merfolk_tourist
+			duration = 1825
+		}
+	}
+	
+	option = {
+		name = merfolk_events.37.b
+		owner = {
+			merfolk_add_opinion_effect_small = yes
+		}
+	}
+	
+	option = {
+		name = merfolk_events.37.c
+		owner = {
+			merfolk_subtract_opinion_effect_medium = yes
+			add_country_modifier = {
+				name = merfolk_spy_alert
+				duration = 1825
+			}
+		}
+	}
+}
+
+province_event = {
+	id = merfolk_events.38 #Sunken Cove Booty
+	title = merfolk_events.38.t
+	desc = merfolk_events.38.d
+	picture = CARIBBEAN_PIRATE_FORT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.38.a
+		owner = {
+			add_yearly_manpower = -0.25
+			add_yearly_sailors = -0.5
+			merfolk_add_opinion_effect_medium = yes
+		}
+	}
+	
+	option = {
+		name = merfolk_events.38.b
+	}
+	
+	option = {
+		name = merfolk_events.38.c
+		owner = {
+			add_years_of_income = 0.2
+			add_inflation = 1
+			merfolk_subtract_opinion_effect_small = yes
+		}
+	}
+}
+
+province_event = {
+	id = merfolk_events.39 #Sea Sorcerer
+	title = merfolk_events.39.t
+	desc = merfolk_events.39.d
+	picture = MAGES_ESTATE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.39.a
+		add_province_modifier = {
+			name = merfolk_sea_sorcerer
+			duration = 3650
+		}
+		owner = {
+			merfolk_add_opinion_effect_small = yes
+		}
+	}
+	
+	option = {
+		name = merfolk_events.39.b
+	}
+}
+
+province_event = {
+	id = merfolk_events.40 #Wharf Offerings
+	title = merfolk_events.40.t
+	desc = merfolk_events.40.d
+	picture = TRADE_GOODS_FURS_FISH_AND_SALT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.40.a
+		add_province_modifier = {
+			name = merfolk_wharf_gratitude
+			duration = 1825
+		}
+		owner = {
+			merfolk_add_opinion_effect_small = yes
+		}
+	}
+	
+	option = {
+		name = merfolk_events.40.b
+		owner = {
+			add_years_of_income = 1
+		}
+	}
+	
+	option = {
+		name = merfolk_events.40.c
+		owner = {
+			add_prestige = 10
+			merfolk_subtract_opinion_effect_small = yes
+		}
+	}
+}
+
+country_event = {
+	id = merfolk_events.41 #Terminal Plea
+	title = merfolk_events.41.t
+	desc = merfolk_events.41.d
+	picture = PIETY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.41.a
+		merfolk_add_opinion_effect_medium = yes
+		add_country_modifier = {
+			name = merfolk_terminal_plea
+			duration = 1825
+		}
+	}
+	
+	option = {
+		name = merfolk_events.41.b
+	}
+}
+
+province_event = {
+	id = merfolk_events.42 #Stars Beneath
+	title = merfolk_events.42.t
+	desc = merfolk_events.42.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.42.a
+		add_province_modifier = {
+			name = merfolk_light_dismantled
+			duration = 3650
+		}
+		owner = {
+			add_years_of_income = 0.25
+			merfolk_subtract_opinion_effect_small = yes
+		}
+	}
+	
+	option = {
+		name = merfolk_events.42.b
+		custom_tooltip = merfolk_events.42.b.tt
+		add_province_modifier = {
+			name = merfolk_stars_beneath
+			duration = 3650
+		}
+		hidden_effect = {
+			random_list = {
+				50 = {
+					province_event = {
+						id = merfolk_events.43
+						days = 3650
+					}
+				}
+				50 = {
+					province_event = {
+						id = merfolk_events.44
+						days = 3650
+					}
+				}
+			}
+		}
+	}
+}
+
+province_event = {
+	id = merfolk_events.43 #Aquatic Lights
+	title = merfolk_events.43.t
+	desc = merfolk_events.43.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.43.a
+		add_province_modifier = {
+			name = merfolk_aquatic_lights
+			duration = 3650
+		}
+		owner = {
+			merfolk_add_opinion_effect_medium = yes
+		}
+	}
+}
+
+province_event = {
+	id = merfolk_events.44 #Ocean Leyline Storm
+	title = merfolk_events.44.t
+	desc = merfolk_events.44.d
+	picture = VILLAGE_BURNING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.44.a
+		add_province_modifier = {
+			name = merfolk_leyline_storms
+			duration = 1825
+		}
+		owner = {
+			merfolk_subtract_opinion_effect_small = yes
+			add_prestige = 10
+			add_country_modifier = {
+				name = merfolk_hatred
+				duration = 1825
+			}
+		}
+	}
+	
+	option = {
+		name = merfolk_events.44.b
+		add_province_modifier = {
+			name = merfolk_leyline_storms
+			duration = 185
+		}
+		owner = {
+			merfolk_add_opinion_effect_small = yes
+			add_years_of_income = -0.8
+		}
+	}
+	
+	option = {
+		name = merfolk_events.44.c
+		highlight = yes
+		trigger = {
+			owner = {
+				OR = {
+					ruler_has_personality = water_planetouched_personality
+					ruler_has_personality = wind_planetouched_personality
+					is_abjuration_1 = yes
+					is_abjuration_2 = yes
+					is_abjuration_3 = yes
+					is_conjuration_1 = yes
+					is_conjuration_2 = yes
+					is_conjuration_3 = yes
+					is_transmutation_1 = yes
+					is_transmutation_2 = yes
+					is_transmutation_3 = yes
+				}
+			}
+		}
+		add_province_modifier = {
+			name = merfolk_storm_cleared
+			duration = 3650
+		}
+	}
+}
+
+province_event = {
+	id = merfolk_events.45 #Crabtastrophe
+	title = merfolk_events.45.t
+	desc = merfolk_events.45.d
+	picture = GOBLINS_AND_SPIDER_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.45.a
+		add_devastation = 10
+		add_province_modifier = {
+			name = merfolk_crabs_unadressed
+			duration = 1825
+		}
+		owner = {
+			add_mil_power = -20
+			add_prestige = -10
+			merfolk_add_opinion_effect_small = yes
+		}
+	}
+	
+	option = {
+		name = merfolk_events.45.b
+		add_province_modifier = {
+			name = merfolk_crabs_adressed
+			duration = 1825
+		}
+		owner = {
+			merfolk_subtract_opinion_effect_small = yes
+		}
+	}
+	
+	option = {
+		name = merfolk_events.45.c
+		highlight = yes
+		trigger = {
+			owner = {
+				OR = {
+					ruler_has_personality = water_planetouched_personality
+					ruler_has_personality = lawgiver_personality
+					ruler_has_personality = calm_personality
+					ruler_has_personality = charismatic_negotiator_personality
+					full_idea_group = diplomatic_ideas
+					full_idea_group = court_ideas
+				}
+			}
+		}
+		add_province_modifier = {
+			name = merfolk_crabs_adressed
+			duration = 1825
+		}
+		owner = {
+			merfolk_add_opinion_effect_medium = yes
+			add_dip_power = 25
+			add_prestige = 10
+		}
+	}
+	
+	option = {
+		name = merfolk_events.45.e
+		highlight = yes
+		trigger = {
+			owner = {
+				OR = {
+					full_idea_group = economic_ideas
+					full_idea_group = trade_ideas
+					full_idea_group = maritime_ideas
+				}
+			}
+		}
+		add_province_modifier = {
+			name = merfolk_crabs_insurance
+			duration = 1825
+		}
+		owner = {
+			merfolk_add_opinion_effect_small = yes
+		}
+	}
+}
+
+country_event = {
+	id = merfolk_events.46 #Blood in the Water
+	title = merfolk_events.46.t
+	desc = merfolk_events.46.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.46.a		
+		merfolk_add_opinion_effect_small = yes
+		add_legitimacy = -5
+		add_navy_tradition = -10
+	}
+	
+	option = {
+		name = merfolk_events.46.b
+	}
+}
+
+country_event = {
+	id = merfolk_events.47 #Returned Messages
+	title = merfolk_events.47.t
+	desc = merfolk_events.47.d
+	picture = DIPLOMACY_SIGNING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = merfolk_events.47.a
+		add_adm_power = -15
+		merfolk_add_opinion_effect_small = yes
+	}
+	
+	option = {
+		name = merfolk_events.47.b
+		add_years_of_income = 0.75
+		add_inflation = 1
+		merfolk_subtract_opinion_effect_small = yes
+	}
+	
+	option = {
+		name = merfolk_events.47.c
+		highlight = yes
+		trigger = {
+			OR = {
+				ruler_has_personality = midas_touched_personality
+				ruler_has_personality = charismatic_negotiator_personality
+				ruler_has_personality = entrepreneur_personality
+				ruler_has_personality = greedy_personality
+				ruler_has_personality = embezzler_personality
+			}
+		}
+		add_years_of_income = 1.5
+		add_inflation = 2
+		merfolk_subtract_opinion_effect_small = yes
+	}
+}
+
+country_event = { #An Unusual Claim To Authority
+	id = merfolk_events.48
+	title = merfolk_events.48.t
+	desc = merfolk_events.48.d
+	picture = BATTLE_VISTULA_LAGOON_eventPicture
+	
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { has_province_flag = merfolk_settlement }
+				save_event_target_as = merfolk_settlement_province
+			}
+		}
+	}
+	
+	option = {
+		name = merfolk_events.48.a
+		ai_chance = { factor = 1 }
+		trigger = { NOT = { stability = 3 } }
+
+		add_adm_power = -100
+		add_stability = 1
+	}
+	
+	option = {
+		name = merfolk_events.48.b
+		ai_chance = { factor = 1 }
+		
+		add_dip_power = -50
+		add_country_modifier = { name = merfolk_revolutionary_thought duration = 3650 }
+		merfolk_add_opinion_effect_medium = yes
+	}
+	
+	option = {
+		name = merfolk_events.48.c
+		ai_chance = { factor = 1 }
+		goto = merfolk_settlement_province
+
+		event_target:merfolk_settlement_province = {
+			spawn_rebels = {
+				type = pretender_rebels
+				size = 2
+				leader = "King Arthur"
+			}
+		}
+		merfolk_subtract_opinion_effect_medium = yes
 	}
 }

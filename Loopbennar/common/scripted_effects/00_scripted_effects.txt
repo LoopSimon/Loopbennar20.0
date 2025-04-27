@@ -16,6 +16,8 @@ add_or_extend_province_modifier_effect = {
 
 #Country scope
 add_or_extend_country_modifier = {
+	# Will add a country modifier of duration X, or extend an existing modifier *to* duration X
+	# E.g. If the modifier exists with 1 year remaining, and this has duration of 5 years, takes to 5 years.
 	if = {
 		limit = {
 			has_country_modifier = $name$
@@ -32,6 +34,23 @@ add_or_extend_country_modifier = {
 		}
 	}
 }
+add_or_extend_country_modifier_indefinitely = {
+	# Will add a country modifier of duration X, or extend an existing modifier *by* duration X
+	# E.g. If the modifier exists with 1 year remaining, and this has duration of 5 years, takes to 6 years.
+	if = {
+		limit = {
+			has_country_modifier = $name$
+		}
+		extend_country_modifier = { name = $name$ duration = $duration$ }
+	}
+	else = {
+		add_country_modifier = {
+			name = $name$
+			duration = $duration$
+		}
+	}
+}
+
 
 add_or_extend_ruler_modifier = { #Did you know? extend_country_modifier doesn't work with ruler mods
 	if = {
@@ -2982,6 +3001,204 @@ add_latest_building = {
 		}
 		else = {
 			add_building = fort_15th
+		}
+	]
+}
+
+add_latest_building_construction = {
+	[[trade]
+		if = {
+			limit = { $builder$ = { dip_tech = 22 } }
+			add_building_construction = {
+				building = stock_exchange
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else_if = {
+			limit = { $builder$ = { dip_tech = 17 } }
+			add_building_construction = {
+				building = trade_depot
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else = {
+			add_building_construction = {
+				building = marketplace
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+	]
+	[[government]
+		if = {
+			limit = { $builder$ = { adm_tech = 22 } }
+			add_building_construction = {
+				building = town_hall
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else = {
+			add_building_construction = {
+				building = courthouse
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+	]
+	[[production]
+		if = {
+			limit = { $builder$ = { adm_tech = 24 } }
+			add_building_construction = {
+				building = counting_house
+				speed = $speed$
+				cost = $cost$
+			}
+		
+		}
+		else = {
+			add_building_construction = {
+				building = workshop
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+	]
+	[[tax]
+		if = {
+			limit = { $builder$ = { adm_tech = 19 } }
+			add_building_construction = {
+				building = cathedral
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else = {
+			add_building_construction = {
+				building = temple
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+	]
+	[[manpower]
+		if = {
+			limit = { $builder$ = { mil_tech = 16 } }
+			add_building_construction = {
+				building = training_fields
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else = {
+			add_building_construction = {
+				building = barracks
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+	]
+	[[sailors]
+		if = {
+			limit = { $builder$ = { dip_tech = 19 } }
+			add_building_construction = {
+				building = drydock
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else = {
+			add_building_construction = {
+				building = dock
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+	]
+	[[army_forcelimit]
+		if = {
+			limit = { $builder$ = { mil_tech = 22 } }
+			add_building_construction = {
+				building = conscription_center
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else = {
+			add_building_construction = {
+				building = regimental_camp
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+	]
+	[[navy_forcelimit]
+		if = {
+			limit = { $builder$ = { dip_tech = 24 } }
+			add_building_construction = {
+				building = grand_shipyard
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else = {
+			add_building_construction = {
+				building = shipyard
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+	]
+	[[coastal]
+		if = {
+			limit = { $builder$ = { dip_tech = 12 } }
+			add_building_construction = {
+				building = naval_battery
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else = {
+			add_building_construction = {
+				building = coastal_defence
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+	]
+	[[fort]
+		if = {
+			limit = { $builder$ = { mil_tech = 24 } }
+			add_building_construction = {
+				building = fort_18th
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else_if = {
+			limit = { $builder$ = { mil_tech = 19 } }
+			add_building_construction = {
+				building = fort_17th
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else_if = {
+			limit = { $builder$ = { mil_tech = 14 } }
+			add_building_construction = {
+				building = fort_16th
+				speed = $speed$
+				cost = $cost$
+			}
+		}
+		else = {
+			add_building_construction = {
+				building = fort_15th
+				speed = $speed$
+				cost = $cost$
+			}
 		}
 	]
 }
@@ -9644,7 +9861,7 @@ country_event_with_insight = {
 
 # Use this if you want the rewards / triggers to be exclusive
 # This means if a AND b are fulfilled then the player gets only reward from a
-# IMPORTANT: They do NOT fire events for some reason.
+# IMPORTANT: you can't fire an event in the 'else' section of an if-else statement inside a scripted effect
 simple_dynamic_effect = {
 	custom_tooltip = $first_custom_tooltip$
 	if = {

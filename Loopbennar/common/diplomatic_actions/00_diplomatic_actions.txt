@@ -694,6 +694,16 @@ declarewar = {
 		}
 	}
 	
+	condition = {
+		tooltip = EKHA_NO_WAR
+		potential = {
+			has_country_flag = ekhasi_plotting
+		}
+		allow = {
+			always = no
+		}
+	}
+	
 	effect = {
 		on_war_declaration_effect = yes #1.35
 
@@ -800,22 +810,6 @@ declarewar = {
 				hidden = yes
 			}
 		}
-		if = {
- 			limit = {
- 				has_country_modifier = loop_remnant_spiner
- 				FROM = {
- 					NOT = {
- 						any_owned_province = {
- 							continent = serpentspine
- 						}
- 					}
- 					NOT = { coalition_target = FROM }
- 				}
- 			}
- 			country_event = {
- 				id = flavor_loopgeneric.7
- 			}
- 		}
 		if = {
 			limit = {
 				has_country_modifier = dwarovar_claimer
@@ -1275,8 +1269,8 @@ declarewar = {
 			limit = { FROM = { tag = R62 } }
 			if = {
 				limit = { FROM = { has_country_flag = command_sir_revolt_started } }
-				4352 = { remove_building = fort_15th remove_province_modifier = command_fake_fort }
-				4345 = { remove_building = fort_15th remove_province_modifier = command_fake_fort }
+				4348 = { remove_building = fort_15th remove_province_modifier = command_fake_fort }
+				4354 = { remove_building = fort_15th remove_province_modifier = command_fake_fort }
 			}
 		}
 		if = {
@@ -1414,6 +1408,93 @@ declarewar = {
 		if = {
 			limit = { has_country_flag = mengi_expand_realm }
 			clr_country_flag = mengi_expand_realm
+		}
+		if = {
+			limit = {
+				tag = Y89
+				has_global_flag = rending_active
+			}
+			temple_province_group = {
+				limit = { country_or_non_sovereign_subject_holds = FROM }
+				remove_province_modifier = rite_of_purification
+			}
+		}
+
+		#Drozma Tur war checks
+		if = {
+			limit = {
+				religion = drozma_tur
+				has_church_aspect = aspire_wisdom_aspect_mil
+				NOT = {
+					any_known_country = {
+						has_country_flag = dt_war_leader_against@ROOT
+					}
+				}
+			}
+			every_war_enemy_country = {
+				limit = {
+					OR = {
+						is_in_war = {
+							attacker_leader = THIS
+							defender_leader = FROM
+						}
+						is_in_war = {
+							defender_leader = THIS
+							attacker_leader = FROM
+						}
+					}
+				}
+				set_country_flag = dt_war_leader_against@ROOT
+				every_ally = {
+					set_country_flag = dt_ally_to_leader_against@ROOT
+				}
+			}
+		}
+
+		#Sri Baginda
+		if = { #If a non lupulan declares on a lupulan, the Sri Baginda can join the war
+			limit = {
+				has_saved_global_event_target = sri_baginda
+				FROM = {
+					OR = {
+						tag = Y69  #Brenulan
+						tag = Y74  #Pelimkan 
+						has_reform = yanglam_tengalam_reform
+					}
+					OR = {
+						is_subject = no
+						overlord = {
+							OR = {
+								tag = Y69  #Brenulan
+								tag = Y74  #Pelimkan 
+								has_reform = yanglam_tengalam_reform
+							}
+						}
+					}
+					NOT = { war_with = event_target:sri_baginda }
+				}
+				NOT = { 
+					has_reform = yanglam_tengalam_reform
+					tag = Y69  #Brenulan
+					tag = Y74  #Pelimkan
+					war_with = event_target:sri_baginda
+				}
+			}
+			event_target:sri_baginda = {
+				if = {
+					limit = {
+						has_country_modifier = sri_baginda_call_cd
+					}
+					FROM = { save_event_target_as = sri_baginda_help_2 }
+					ROOT = { save_event_target_as = sri_baginda_attacker_2 }
+					country_event = { id = lupulan_events.1011 days = 30 }
+				}
+				else = {
+					FROM = { save_event_target_as = sri_baginda_help }
+					ROOT = { save_event_target_as = sri_baginda_attacker }
+					country_event = { id = lupulan_events.1001 days = 1 } 
+				}
+			}
 		}
 	}
 }
@@ -2497,14 +2578,27 @@ annexationaction = {
 	condition = { #1.35
 		tooltip = CANNOT_ANNEX
 		potential = {
-			FROM = {
-				has_country_modifier = tur_mamlukian_administration
-			}
+			#FROM = {
+			#	has_country_modifier = tur_mamlukian_administration
+			#}
 		}
 		allow = {
-			FROM = {
-				NOT = { has_country_modifier = tur_mamlukian_administration }
+			#FROM = {
+			#	NOT = { has_country_modifier = tur_mamlukian_administration }
+			#}
+		}
+	}
+
+	condition = { #Blocking AI Taychend from annexing their subject so they can reform first
+		potential = {
+			OR = {
+				religion = gods_of_the_taychend
+				religion = oren_nayiru
 			}
+			ai = yes
+		}
+		allow = {
+			always = no
 		}
 	}
 
@@ -3419,7 +3513,7 @@ insultaction = {
 		}
 		if = {
 			limit = {
-				tag = H73
+				is_or_was_tag = { tag = H73 }
 				has_government_attribute = skewered_drake_call_the_name_effect
 				FROM = { has_opinion_modifier = { who = ROOT modifier = scornfully_insulted } }
 			}
@@ -3505,6 +3599,25 @@ requestpeace = {
 					defender_leader = A59
 				}
 			}
+		}
+		allow = {
+			always = no
+        }
+    }
+	condition = {
+        tooltip = the_second_sons_rebellion_tt
+        potential = {
+			FROM = {
+                tag = A77
+                has_country_flag = aldresian_uprising
+                hre_size = 1
+                emperor = {
+                    is_in_war = {
+                        defender_leader = A77
+                        attacker_leader = THIS
+                    }
+                }
+            }
 		}
 		allow = {
 			always = no
@@ -3740,3 +3853,40 @@ trade_favors_for_heir = {
 		allow = { FROM = { has_government_attribute = heir } }
 	}
 }
+
+trade_favors_for_men = {
+	effect = {
+		if = {
+			limit = {
+				religion = drozma_tur
+				has_church_aspect = aspire_compassion_aspect_mil
+			}
+			dt_change_aspire_compassion_modifier = yes
+		}
+	}
+}
+
+trade_favors_for_gold = {
+	effect = {
+		if = {
+			limit = {
+				religion = drozma_tur
+				has_church_aspect = aspire_compassion_aspect_mil
+			}
+			dt_change_aspire_compassion_modifier = yes
+		}
+	}
+}
+
+trade_favors_for_sailors = {
+	effect = {
+		if = {
+			limit = {
+				religion = drozma_tur
+				has_church_aspect = aspire_compassion_aspect_mil
+			}
+			dt_change_aspire_compassion_modifier = yes
+		}
+	}
+}
+

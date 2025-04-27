@@ -1,0 +1,302 @@
+###	So You Want to Add a New Xia Path
+###	1. Determine its origin province. This will be the same from game to game, and its ID will be the name in code
+###		* For example, all instances of the Path of the Sacred Spring are actually 4948 in code
+###		* For the rest of this guide, all instances of [path] are the province id of the origin
+###	2. Come up with a set of modifiers and name them according to convention
+###		* xia_path_[path]_origin --has no modifiers, its modifier is taken up by [picture = "abundant_goods"]
+###		* xia_path_[path]_mod_0 --novice modifier
+###		* xia_path_[path]_mod_1 --empowered modifier
+###		* xia_path_[path]_mod_2 --enlightened modifier
+###	3. Localise the path and the modifiers
+###		* xia_path_[path]:0 "Path/School/Way of the XYZ"
+###		* xia_path_[path]_origin:0 "Path/School/Way of the XYZ"
+###		* desc_xia_path_[path]_origin:0 "This is the origin of the... Owning this province will... etc."
+###		* xia_path_[path]_mod_0:0 "Path of the XYZ §g(Novice)§!"
+###		* xia_path_[path]_mod_1:0 "Path of the XYZ §O(Empowered)§!"
+###		* xia_path_[path]_mod_2:0 "Path of the XYZ §T(Enlightened)§!"
+###	4. Add it to the scripted effects:
+###		* cultivate_active_xia_path
+###		* cultivate_province_xia_path
+###		* clr_xia_path
+###	5. Give it an entry in one_xia.4 and one_xia.5
+###		* Follow the format in the events
+###		* Note the two event options have different scripted effects, and are not the same
+
+###	So You Want to Code in the Xia
+### 1. On Origins
+###		* Origins can be added for paths that exist with add_xia_origin_effect = { path = XYZ }
+###		* A path needs an origin in order to function properly in one_xia.4 and one_xia.5
+###		* Origin provinces are distinguished as having the is_xia_origin flag
+###			* And should always have the associated origin province modifier
+###	2. Buffing Xia provinces
+###		* Xia provinces are defined as provinces with the rightful_xia_territory modifier
+###		* PLEASE give your nation the xia_has_territory_buff flag if you're buffing xia provinces
+###			* and keep all buffs inside the if statement--helps performance.
+###		* apply_appropriate_xia_mods_to_province is the scripted effect to change.
+###			* However, note that it only fires for people with the is_in_xia government attribute.
+###			* Therefore, people without this government attribute cannot get Xia province buffs.
+###		* There is no automatic mechanism to remove these buffs when you lose the government attribute
+### 3. Creating a new Xia government reform
+###		* All Xia government reforms have five things:
+###			* The is_in_xia government attribute
+###			* An effect that fires apply_appropriate_xia_mods_to_province = yes to every_owned_province
+###			* A removed_effect that removes rightful_xia_territory_malus from every_owned_province
+###			* Effect and post_removed_effect to assign_dvp_cultural_aspects = yes
+###			* Effect to fire event one_xia.3001
+
+apply_appropriate_xia_mods_to_province = {
+	if = {
+		limit = { owner = { has_government_attribute = is_in_xia } }
+		if = {
+			limit = { has_province_modifier = rightful_xia_territory }
+			if = {
+				limit = { owner = { has_country_flag = xia_has_territory_buff } }
+				province_event = { id = yuanszi.23 } #Yuanszi MT buffs
+			}
+		}
+		else = { add_province_modifier = { name = rightful_xia_territory_malus duration = -1 } }  
+	}
+}
+
+add_province_to_xia_effect = {
+	custom_tooltip = add_province_to_xia_effect_tt
+	hidden_effect = {
+		if = {
+			limit = { NOT = { has_province_modifier = rightful_xia_territory } }
+			remove_province_modifier = rightful_xia_territory_malus
+			add_permanent_province_modifier = { name = rightful_xia_territory duration = -1 }
+			apply_appropriate_xia_mods_to_province = yes
+		}
+	}
+}
+
+add_xia_origin_effect = { #Can be called in any scope, because $path$ is a province ID
+	$path$ = {
+		set_province_flag = is_xia_origin
+		[[MT] set_province_flag = is_MT_xia_origin] #Ensures it always appears as an option in One_Xia.4
+		add_permanent_province_modifier = { name = xia_path_$path$_origin duration = -1 }
+		owner = {
+			change_variable = { which = num_xia_origins_owned value = 1 }
+			evaluate_num_xia_origin_effect = yes
+		}
+	}
+}
+
+evaluate_num_xia_origin_effect = {
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		xia_2_owned_origins = { remove_country_modifier = xia_2_owned_origins }
+		xia_4_owned_origins = { remove_country_modifier = xia_4_owned_origins }
+		xia_6_owned_origins = { remove_country_modifier = xia_6_owned_origins }
+		xia_8_owned_origins = { remove_country_modifier = xia_8_owned_origins }
+		xia_10_owned_origins = { remove_country_modifier = xia_10_owned_origins }
+		xia_12_owned_origins = { remove_country_modifier = xia_12_owned_origins }
+		xia_14_owned_origins = { remove_country_modifier = xia_14_owned_origins }
+		xia_16_owned_origins = { remove_country_modifier = xia_16_owned_origins }
+		xia_18_owned_origins = { remove_country_modifier = xia_18_owned_origins }
+		xia_20_owned_origins = { remove_country_modifier = xia_20_owned_origins }
+		xia_22_owned_origins = { remove_country_modifier = xia_22_owned_origins }
+		xia_24_owned_origins = { remove_country_modifier = xia_24_owned_origins }
+		xia_26_owned_origins = { remove_country_modifier = xia_26_owned_origins }
+		xia_28_owned_origins = { remove_country_modifier = xia_28_owned_origins }
+		xia_30_owned_origins = { remove_country_modifier = xia_30_owned_origins }
+	}
+	if = { limit = { check_variable = { which = num_xia_origins_owned value = 30 } } add_country_modifier = { name = xia_30_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 28 } } add_country_modifier = { name = xia_28_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 26 } } add_country_modifier = { name = xia_26_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 24 } } add_country_modifier = { name = xia_24_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 22 } } add_country_modifier = { name = xia_22_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 20 } } add_country_modifier = { name = xia_20_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 18 } } add_country_modifier = { name = xia_18_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 16 } } add_country_modifier = { name = xia_16_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 14 } } add_country_modifier = { name = xia_14_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 12 } } add_country_modifier = { name = xia_12_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 10 } } add_country_modifier = { name = xia_10_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 8 } } add_country_modifier = { name = xia_8_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 6 } } add_country_modifier = { name = xia_6_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 4 } } add_country_modifier = { name = xia_4_owned_origins duration = -1 hidden = yes } }
+	else_if = { limit = { check_variable = { which = num_xia_origins_owned value = 2 } } add_country_modifier = { name = xia_2_owned_origins duration = -1 hidden = yes } }
+}
+
+apply_xia_path_generic = {
+	set_country_flag = xia_path_$path$
+	if = {
+		limit = { has_country_flag = xia_path_enlightened_$path$ }
+		add_country_modifier = { name = xia_path_$path$_mod_2 duration = -1 }
+	}
+	else_if = {
+		limit = { has_country_flag = xia_path_empowered_$path$ }
+		add_country_modifier = { name = xia_path_$path$_mod_1 duration = -1 }
+	}
+	else = { add_country_modifier = { name = xia_path_$path$_mod_0 duration = -1 } }
+}
+
+cultivate_xia_path_generic = {
+	if = {
+		limit = { NOT = { has_country_flag = xia_path_enlightened_$path$ } } #Can't level up if max level
+		if = {
+			limit = { NOT = { has_country_flag = xia_path_empowered_$path$ } } #Go to empowered
+			clr_xia_path = yes
+			tooltip = { add_country_modifier = { name = xia_path_$path$_mod_1 duration = -1 } } #tooltip here, hidden scripted effect makes things easier to code later
+
+			hidden_effect = {
+				set_country_flag = xia_path_empowered_$path$
+				apply_xia_path_generic = { path = $path$ }
+				change_variable = { which = xia_enlightenment_counter value = 1 }
+				if = {
+					limit = {
+						check_variable = { which = xia_enlightenment_counter value = 5 }
+						NOT = { has_government_attribute = is_in_xia }
+					}
+					country_event = { id = one_xia.5 }
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					check_variable = { which = xia_enlightenment_counter value = 5 } #Go to enlightened
+					has_government_attribute = is_in_xia
+				}
+			}
+			clr_xia_path = yes
+			tooltip = { add_country_modifier = { name = xia_path_$path$_mod_2 duration = -1 } }
+
+			hidden_effect = {
+				clr_country_flag = xia_path_empowered_$path$
+				set_country_flag = xia_path_enlightened_$path$
+				apply_xia_path_generic = { path = $path$ }
+				if = {
+					limit = { NOT = { has_government_attribute = is_in_xia } }
+					subtract_variable = { which = xia_enlightenment_counter value = 5 }
+				}
+			}
+		}
+	}
+}
+
+cultivate_active_xia_path = {
+	trigger_switch = {
+		on_trigger = has_country_flag
+		xia_path_4822 = { cultivate_xia_path_generic = { path = 4822 } }
+		xia_path_4808 = { cultivate_xia_path_generic = { path = 4808 } }
+		xia_path_4816 = { cultivate_xia_path_generic = { path = 4816 } }
+		xia_path_4622 = { cultivate_xia_path_generic = { path = 4622 } }
+		xia_path_4936 = { cultivate_xia_path_generic = { path = 4936 } }
+		xia_path_4512 = { cultivate_xia_path_generic = { path = 4512 } }
+		xia_path_4641 = { cultivate_xia_path_generic = { path = 4641 } }
+		xia_path_4609 = { cultivate_xia_path_generic = { path = 4609 } }
+		xia_path_4785 = { cultivate_xia_path_generic = { path = 4785 } }
+		xia_path_4784 = { cultivate_xia_path_generic = { path = 4784 } }
+		xia_path_4783 = { cultivate_xia_path_generic = { path = 4783 } }
+		xia_path_4806 = { cultivate_xia_path_generic = { path = 4806 } }
+		xia_path_4607 = { cultivate_xia_path_generic = { path = 4607 } }
+		xia_path_4614 = { cultivate_xia_path_generic = { path = 4614 } }
+		xia_path_4793 = { cultivate_xia_path_generic = { path = 4793 } }
+		xia_path_4794 = { cultivate_xia_path_generic = { path = 4794 } }
+		xia_path_4948 = { cultivate_xia_path_generic = { path = 4948 } }
+		xia_path_4616 = { cultivate_xia_path_generic = { path = 4616 } }
+		xia_path_4618 = { cultivate_xia_path_generic = { path = 4618 } }
+		xia_path_4820 = { cultivate_xia_path_generic = { path = 4820 } }
+		xia_path_4811 = { cultivate_xia_path_generic = { path = 4811 } }
+		xia_path_4809 = { cultivate_xia_path_generic = { path = 4809 } }
+		xia_path_4612 = { cultivate_xia_path_generic = { path = 4612 } }
+		xia_path_4621 = { cultivate_xia_path_generic = { path = 4621 } }
+		xia_path_4559 = { cultivate_xia_path_generic = { path = 4559 } }
+
+		#MT Schools
+		xia_path_4813 = { cultivate_xia_path_generic = { path = 4813 } }
+		xia_path_4789 = { cultivate_xia_path_generic = { path = 4789 } }
+	}
+}
+
+cultivate_province_xia_path = {
+	trigger_switch = {
+		on_trigger = province_id
+		4822 = { owner = { cultivate_xia_path_generic = { path = 4822 } } }
+		4808 = { owner = { cultivate_xia_path_generic = { path = 4808 } } }
+		4816 = { owner = { cultivate_xia_path_generic = { path = 4816 } } }
+		4622 = { owner = { cultivate_xia_path_generic = { path = 4622 } } }
+		4936 = { owner = { cultivate_xia_path_generic = { path = 4936 } } }
+		4512 = { owner = { cultivate_xia_path_generic = { path = 4512 } } }
+		4641 = { owner = { cultivate_xia_path_generic = { path = 4641 } } }
+		4609 = { owner = { cultivate_xia_path_generic = { path = 4609 } } }
+		4785 = { owner = { cultivate_xia_path_generic = { path = 4785 } } }
+		4784 = { owner = { cultivate_xia_path_generic = { path = 4784 } } }
+		4783 = { owner = { cultivate_xia_path_generic = { path = 4783 } } }
+		4806 = { owner = { cultivate_xia_path_generic = { path = 4806 } } }
+		4607 = { owner = { cultivate_xia_path_generic = { path = 4607 } } }
+		4614 = { owner = { cultivate_xia_path_generic = { path = 4614 } } }
+		4793 = { owner = { cultivate_xia_path_generic = { path = 4793 } } }
+		4794 = { owner = { cultivate_xia_path_generic = { path = 4794 } } }
+		4948 = { owner = { cultivate_xia_path_generic = { path = 4948 } } }
+		4616 = { owner = { cultivate_xia_path_generic = { path = 4616 } } }
+		4618 = { owner = { cultivate_xia_path_generic = { path = 4618 } } }
+		4820 = { owner = { cultivate_xia_path_generic = { path = 4820 } } }
+		4811 = { owner = { cultivate_xia_path_generic = { path = 4811 } } }
+		4809 = { owner = { cultivate_xia_path_generic = { path = 4809 } } }
+		4612 = { owner = { cultivate_xia_path_generic = { path = 4612 } } }
+		4621 = { owner = { cultivate_xia_path_generic = { path = 4621 } } }
+		4559 = { owner = { cultivate_xia_path_generic = { path = 4559 } } }
+
+		#MT Schools
+		4813 = { owner = { cultivate_xia_path_generic = { path = 4813 } } }
+		4789 = { owner = { cultivate_xia_path_generic = { path = 4789 } } }
+	}
+}
+
+clr_xia_path_generic = {
+	clr_country_flag = xia_path_$path$
+	trigger_switch = {
+		on_trigger = has_country_modifier
+		xia_path_$path$_mod_2 = { remove_country_modifier = xia_path_$path$_mod_2 }
+		xia_path_$path$_mod_1 = { remove_country_modifier = xia_path_$path$_mod_1 }
+		xia_path_$path$_mod_0 = { remove_country_modifier = xia_path_$path$_mod_0 }
+	}
+}
+
+clr_xia_path = {
+	trigger_switch = {
+		on_trigger = has_country_flag
+		xia_path_4822 = { clr_xia_path_generic = { path = 4822 } }
+		xia_path_4808 = { clr_xia_path_generic = { path = 4808 } }
+		xia_path_4816 = { clr_xia_path_generic = { path = 4816 } }
+		xia_path_4622 = { clr_xia_path_generic = { path = 4622 } }
+		xia_path_4936 = { clr_xia_path_generic = { path = 4936 } }
+		xia_path_4512 = { clr_xia_path_generic = { path = 4512 } }
+		xia_path_4641 = { clr_xia_path_generic = { path = 4641 } }
+		xia_path_4609 = { clr_xia_path_generic = { path = 4609 } }
+		xia_path_4785 = { clr_xia_path_generic = { path = 4785 } }
+		xia_path_4784 = { clr_xia_path_generic = { path = 4784 } }
+		xia_path_4783 = { clr_xia_path_generic = { path = 4783 } }
+		xia_path_4806 = { clr_xia_path_generic = { path = 4806 } }
+		xia_path_4607 = { clr_xia_path_generic = { path = 4607 } }
+		xia_path_4614 = { clr_xia_path_generic = { path = 4614 } }
+		xia_path_4793 = { clr_xia_path_generic = { path = 4793 } }
+		xia_path_4794 = { clr_xia_path_generic = { path = 4794 } }
+		xia_path_4948 = { clr_xia_path_generic = { path = 4948 } }
+		xia_path_4616 = { clr_xia_path_generic = { path = 4616 } }
+		xia_path_4618 = { clr_xia_path_generic = { path = 4618 } }
+		xia_path_4820 = { clr_xia_path_generic = { path = 4820 } }
+		xia_path_4811 = { clr_xia_path_generic = { path = 4811 } }
+		xia_path_4809 = { clr_xia_path_generic = { path = 4809 } }
+		xia_path_4612 = { clr_xia_path_generic = { path = 4612 } }
+		xia_path_4621 = { clr_xia_path_generic = { path = 4621 } }
+		xia_path_4559 = { clr_xia_path_generic = { path = 4559 } }
+
+		#MT Paths
+		xia_path_4813 = { clr_xia_path_generic = { path = 4813 } }
+		xia_path_4789 = { clr_xia_path_generic = { path = 4789 } }
+	}
+}
+
+choose_new_xia_path = {
+	if = {
+		limit = { has_country_flag = xia_path_$path$ }
+		custom_tooltip = xia_continue_current_path_tt
+	}
+	else = {
+		clr_xia_path = yes
+		apply_xia_path_generic = { path = $path$ }
+	}
+}

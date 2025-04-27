@@ -209,6 +209,7 @@ country_event = {
 		}
 		any_country = { religion = the_jadd knows_country = ROOT }
 		NOT = { religion = the_jadd }
+		NOT = { has_country_flag = supernaturally_bound_faith }
 	}
 
 
@@ -703,7 +704,7 @@ country_event = {
 		}
 	}
 	
-	immediate = { random_owned_province = { limit = { NOT = { religion = the_jadd } } save_event_target_as = jadd_religious_violence_province } }
+	immediate = { hidden_effect = { random_owned_province = { limit = { NOT = { religion = the_jadd } } save_event_target_as = jadd_religious_violence_province } } }
 	after = { add_country_modifier = { name = jaddari_religious_massacre_cd duration = 3650 hidden = yes } }
 
 	option = { #They deserve it
@@ -940,6 +941,7 @@ country_event = {
 
 	option = { #Let us embrace the Light of the Jadd
 		name = bulwar_flavour.12.a
+		trigger = { NOT = { has_country_flag = supernaturally_bound_faith } }
 		ai_chance = {
 			factor = 2
 			modifier = {
@@ -5515,6 +5517,200 @@ country_event = {
 				leader = evil_magi
 				type = old_bulwari_sun_cult_rebels
 			}
+		}
+	}
+}
+
+#Aldarian's Oath
+province_event = {
+	id = bulwar_flavour.139
+	title = bulwar_flavour.139.t
+	desc = bulwar_flavour.139.d
+	picture = ELVEN_EYE_eventPicture
+	
+	goto = 622
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		owner = {
+			capital_scope = { superregion = bulwar_superregion }
+			owns_core_province = 622 #Setadazar
+			has_regency = no
+			OR = {
+				ruler_is_elven = yes
+				ruler_is_half_elven = yes
+				ruler_is_human = yes
+			}
+		}
+	}
+
+	
+	option = {
+		name = bulwar_flavour.139.a
+		owner = {
+			define_general = {
+				name = "Aldarian Surpašilu"
+				fire = 2
+				shock = 5
+				manuever = 5
+				siege = 2
+				trait = inspirational_leader_general_personality
+			}
+			set_country_flag = aldarian_is_general
+			hidden_effect = {
+				set_variable = {
+					which = aldarian_battles_won 
+					value = 0
+				}
+			}
+		}
+	}
+}
+#A Legend Forged in War
+country_event = {
+	id = bulwar_flavour.140
+	title = bulwar_flavour.140.t
+	desc = bulwar_flavour.140.d
+	picture = ELVEN_EYE_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = bulwar_flavour.140.a
+		add_prestige = 10
+		every_war_enemy_country = {
+			add_war_exhaustion = 2
+		}
+	}
+}
+#The Sunset of a Warrior
+country_event = {
+	id = bulwar_flavour.141
+	title = bulwar_flavour.141.t
+	desc = bulwar_flavour.141.d
+	picture = ELVEN_EYE_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		has_country_flag = aldarian_is_general
+		has_leader = "Aldarian Surpašilu"
+		OR = {
+			AND = {
+				religion = bulwari_sun_cult
+				is_incident_happened = incident_summit_of_samartal
+			}
+			AND = {
+				religion = the_jadd
+				is_year = 1485
+			}
+		}
+	}
+	
+	option = {
+		name = bulwar_flavour.141.a
+		add_country_modifier = {
+			name = aldarian_reorganizer
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 25
+		}
+	}
+	
+	option = {
+		name = bulwar_flavour.141.b
+		add_country_modifier = {
+			name = aldarian_instructor
+			duration = 9125
+		}
+		ai_chance = {
+			factor = 25
+		}
+	}
+	
+	option = {
+		name = bulwar_flavour.141.c
+			define_advisor = {
+				name = "Aldarian Surpašilu"
+				type = commandant
+				culture = sun_elf
+				religion = the_jadd
+				cost_multiplier = 0.5
+				skill = 3
+			}
+		ai_chance = {
+			factor = 50
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			kill_leader = { type = "Aldarian Surpašilu" }
+			clr_country_flag = aldarian_is_general
+		}
+	}
+}
+#A Vow Shattered
+country_event = {
+	id = bulwar_flavour.142
+	title = bulwar_flavour.142.t
+	desc = bulwar_flavour.142.d
+	picture = ELVEN_EYE_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		has_leader = "Aldarian Surpašilu"
+		has_country_flag = aldarian_is_general
+		is_at_war = yes
+		war_with = F46
+		any_war_enemy_country = {
+			tag = F46
+			has_ruler_flag = is_jaddar
+		}
+	}
+	
+	option = {
+		name = bulwar_flavour.142.a
+		custom_tooltip = bulwar_flavour.142.a.tooltip
+		hidden_effect = {
+			kill_leader = { type = "Aldarian Surpašilu" }
+			clr_country_flag = aldarian_is_general
+		}
+	}
+
+	after = {
+		F46 = {
+			country_event = {
+				id = bulwar_flavour.143
+			}
+		}
+	}
+}
+#An Oath Renewed
+country_event = {
+	id = bulwar_flavour.143
+	title = bulwar_flavour.143.t
+	desc = bulwar_flavour.143.d
+	picture = ELVEN_EYE_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = bulwar_flavour.143.a
+		set_country_flag = aldarian_is_general
+		define_general = {
+			name = "Aldarian Surpašilu"
+			fire = 2
+			shock = 5
+			manuever = 5
+			siege = 2
+			trait = inspirational_leader_general_personality
 		}
 	}
 }

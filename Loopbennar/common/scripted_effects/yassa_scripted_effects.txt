@@ -1,0 +1,86 @@
+#Yassa (Mostly Tolerance Thing)
+
+yassa_tolerance_effect = {
+    random_owned_province = {
+        limit = {
+            province_has_center_of_trade_of_level = 1
+                }
+        add_$race$_minority_size_effect = yes
+    }
+    large_increase_of_$race$_tolerance_effect = yes
+}
+
+yassa_yes_merchants = {
+    add_treasury = -250
+        $province$ = { 
+            add_permanent_province_modifier = { name = Lizard_merchant_community duration = -1 } 
+            add_lizardfolk_minority_size_effect = yes
+            owner = {
+                largest_increase_of_lizardfolk_tolerance_effect = yes
+            }
+        }
+        hidden_effect = {
+            change_variable = {
+                which = NumOfLizardMerchants
+                value = 1
+            }
+            set_country_flag = $merchant_from$_merchants 
+            yassa_lm_update_trade_modifiers = { node_id = $node_id$ value = 10 } 
+        }
+}
+
+yassa_no_merchants = {
+    if = {
+        limit = { has_country_flag = $merchant_from$_merchants }
+        custom_tooltip = yassa_lm_present
+    }
+    if = {
+        limit = { 
+            $province$ = { 
+                NOT = { owned_by = ROOT }
+                NOT = {
+                    owner = {
+                        has_opinion = {
+                            who = ROOT
+                            value = 120
+                        }
+                        
+                    }
+                }
+            } 
+        }
+        custom_tooltip = yassa_low_opinion_not_owned
+    }
+    if = {
+        limit = { NOT = { treasury = 250 } }
+        custom_tooltip = yassa_no_money
+    }
+}
+
+yassa_lm_update_trade_modifiers = {
+    custom_tooltip = yassa_lm_update_trade_modifiers_tooltip_$value$
+    hidden_effect = {
+		change_variable = { which = lm_$node_id$_power value = $value$ } 
+		$node_id$ = { remove_trade_modifier = { who = ROOT key = yassa_lm_power } }
+		if = {
+			limit = { check_variable = { which = lm_$node_id$_power value = 50 } }
+			$node_id$ = { add_trade_modifier = { who = ROOT duration = -1 power = 50 key = yassa_lm_power } }
+		}
+		else_if = {
+			limit = { check_variable = { which = lm_$node_id$_power value = 40 } }
+			$node_id$ = { add_trade_modifier = { who = ROOT duration = -1 power = 40 key = yassa_lm_power } }
+		}
+		else_if = {
+			limit = { check_variable = { which = lm_$node_id$_power value = 30 } }
+			$node_id$ = { add_trade_modifier = { who = ROOT duration = -1 power = 30 key = yassa_lm_power } }
+		}
+		else_if = {
+			limit = { check_variable = { which = lm_$node_id$_power value = 20 } }
+			$node_id$ = { add_trade_modifier = { who = ROOT duration = -1 power = 20 key = yassa_lm_power } }
+		}
+		else_if = {
+			limit = { check_variable = { which = lm_$node_id$_power value = 10 } }
+			$node_id$ = { add_trade_modifier = { who = ROOT duration = -1 power = 10 key = yassa_lm_power } }
+		}
+	}
+}

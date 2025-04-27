@@ -225,10 +225,6 @@ country_event = {
 			factor = 50
 			modifier = {
 				factor = 0
-				is_at_war = yes
-			}
-			modifier = {
-				factor = 0
 				taychend_has_vassals = yes
 			}
 		}
@@ -239,10 +235,6 @@ country_event = {
 		trigger = { num_of_subjects = 1 }
 		ai_chance = {
 			factor = 50
-			modifier = {
-				factor = 0
-				is_at_war = yes
-			}
 			modifier = {
 				factor = 0
 				NOT = { taychend_has_vassals = yes }
@@ -1528,4 +1520,369 @@ country_event = { #Map Color Change
 	}
 }
 
+#Ways to give out free reform (Free reform meaning the requirements for passing one are removed, removing stab should be asked with your 
+#reviewer first):
+#1. set_country_flag = taychend_free_reform_x (1-5)
+#2. free_taychend_reform_effect (Has uses/charges instead of specific reforms) 
+country_event = { #Religious Reforms - Reform 1
+	id = taychendi.1000
+	title = taychendi.1000.t
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_dlc = "El Dorado"
+		OR = {
+			religion = gods_of_the_taychend
+			religion = oren_nayiru
+		}
+	}
+	desc = taychendi.1000.d
 
+	immediate = {
+		hidden_effect = {
+			set_country_flag = taychendi_is_passing_reform
+			if = { #Larankar gets no stab if they have the flag, future tags that also want to should go here
+				limit = {
+					NOT = { tag = G65 } #Larankar 
+					NOT = { has_country_flag = free_taychend_reform_1 }
+				}
+				add_stability = -1
+			}
+		}
+	}
+
+	option = {
+		name = taychendi.1000.a
+		if = { #Larankar gets no stab if they have the flag
+			limit = {
+				NOT = { tag = G65 } #Larankar 
+				NOT = { has_country_flag = free_taychend_reform_1 }
+			}
+			tooltip = { add_stability = -1 }
+		}
+		every_subject_country = {
+			add_aggressive_expansion = {
+				who = ROOT
+				value = -50
+				apply_calc = no
+			}
+		}
+		add_country_modifier = {
+			name = taychend_reform_1_mod
+			duration = -1
+		}
+	}
+
+	after = {
+		taychend_remove_free_reform = { reform = 1 }
+		clr_country_flag = taychendi_is_passing_reform
+		every_owned_province = { clr_province_flag = taychendi_reform_rebels }
+	}
+}
+
+country_event = { #Religious Reforms - Reform 2
+	id = taychendi.1001
+	title = taychendi.1000.t
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_dlc = "El Dorado"
+		OR = {
+			religion = gods_of_the_taychend
+			religion = oren_nayiru
+		}
+	}
+	desc = taychendi.1001.d
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = taychendi_is_passing_reform
+			if = { #Larankar gets no stab if they have the flag. future tags that also want to should go here
+				limit = {
+					NOT = { tag = G65 } #Larankar 
+					NOT = { has_country_flag = free_taychend_reform_1 }
+				}
+				add_stability = -1
+			}
+			for = {
+				amount = 5
+				effect = "
+					random_owned_province = {
+						limit = { 
+							development = 15
+							NOT = { has_province_flag = taychendi_reform_rebels }
+						}
+						if = {
+							limit = { religion = gods_of_the_taychend }
+							gods_of_the_taychend_rebels = 2
+						}
+						else_if = {
+							limit = { religion = oren_nayiru }
+							oren_nayiru_rebels = 2
+						}
+						set_province_flag = taychendi_reform_rebels
+					}
+				"
+			}
+		}
+	}
+
+	option = {
+		name = taychendi.1000.a
+		if = { #Larankar gets no stab if they have the flag
+			limit = {
+				NOT = { tag = G65 } #Larankar 
+				NOT = { has_country_flag = free_taychend_reform_2 }
+			}
+			tooltip = { add_stability = -1 }
+		}
+		capital_scope = {
+			add_institution_embracement = {
+				which = feudalism
+				value = 100
+			}
+		}
+		every_subject_country = {
+			add_aggressive_expansion = {
+				who = ROOT
+				value = -50
+				apply_calc = no
+			}
+		}
+		add_country_modifier = {
+			name = taychend_reform_2_mod
+			duration = -1
+		}
+	}
+
+	after = {
+		taychend_remove_free_reform = { reform = 2 }
+		clr_country_flag = taychendi_is_passing_reform
+		every_owned_province = { clr_province_flag = taychendi_reform_rebels }
+	}
+}
+
+country_event = { #Religious Reforms - Reform 3
+	id = taychendi.1002
+	title = taychendi.1000.t
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_dlc = "El Dorado"
+		OR = {
+			religion = gods_of_the_taychend
+			religion = oren_nayiru
+		}
+	}
+	desc = taychendi.1002.d
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = taychendi_is_passing_reform
+			add_stability = -1
+			for = {
+				amount = 7
+				effect = "
+					random_owned_province = {
+						limit = { 
+							development = 15
+							NOT = { has_province_flag = taychendi_reform_rebels }
+						}
+						nationalist_rebels = 3
+						set_province_flag = taychendi_reform_rebels
+					}
+				"
+			}
+		}
+	}
+
+	option = {
+		name = taychendi.1000.a
+		tooltip = { add_stability = -1 }
+		change_estate_land_share = {
+			estate = all
+			share = -5
+		}
+		every_subject_country = {
+			add_aggressive_expansion = {
+				who = ROOT
+				value = -50
+				apply_calc = no
+			}
+		}
+		add_country_modifier = {
+			name = taychend_reform_3_mod
+			duration = -1
+		}
+	}
+
+	after = {
+		taychend_remove_free_reform = { reform = 3 }
+		clr_country_flag = taychendi_is_passing_reform
+		every_owned_province = { clr_province_flag = taychendi_reform_rebels }
+	}
+}
+
+country_event = { #Religious Reforms - Reform 4
+	id = taychendi.1003
+	title = taychendi.1000.t
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_dlc = "El Dorado"
+		OR = {
+			religion = gods_of_the_taychend
+			religion = oren_nayiru
+		}
+	}
+	desc = taychendi.1003.d
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = taychendi_is_passing_reform
+			add_stability = -2
+			for = {
+				amount = 10
+				effect = "
+					random_owned_province = {
+						limit = { 
+							development = 20
+							NOT = { has_province_flag = taychendi_reform_rebels }
+						}
+						particularist_rebels = 4
+						set_province_flag = taychendi_reform_rebels
+					}
+				"
+			}
+		}
+	}
+
+	option = {
+		name = taychendi.1000.a
+		tooltip = { add_stability = -2 }
+		change_estate_land_share = {
+			estate = all
+			share = -5
+		}
+		every_subject_country = {
+			add_aggressive_expansion = {
+				who = ROOT
+				value = -50
+				apply_calc = no
+			}
+		}
+		add_country_modifier = {
+			name = taychend_reform_4_mod
+			duration = -1
+		}
+	}
+
+	after = {
+		taychend_remove_free_reform = { reform = 4 }
+		clr_country_flag = taychendi_is_passing_reform
+		every_owned_province = { clr_province_flag = taychendi_reform_rebels }
+	}
+}
+
+country_event = { #Religious Reforms - Reform 5
+	id = taychendi.1004
+	title = taychendi.1000.t
+	picture = REFORM_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		has_dlc = "El Dorado"
+		OR = {
+			religion = gods_of_the_taychend
+			religion = oren_nayiru
+		}
+	}
+	desc = taychendi.1004.d
+
+	immediate = {
+		set_country_flag = taychendi_is_passing_reform
+		hidden_effect = { add_stability = 1 }
+	}
+
+	option = {
+		name = taychendi.1000.a
+		tooltip = { add_stability = 1 }
+		if = { 
+			limit = { religion = gods_of_the_taychend }
+			change_religion = gods_of_the_taychend_reformed
+		}
+		else_if = {
+			limit = { religion = oren_nayiru }
+			change_religion = oren_nayiru_reformed
+			hidden_effect = {
+				every_owned_province = {
+					limit = { religion = oren_nayiru }
+					change_religion = oren_nayiru_reformed
+				}
+			}
+		}
+		every_subject_country = {
+			add_aggressive_expansion = {
+				who = ROOT
+				value = -1000
+				apply_calc = no
+			}
+		}
+		hidden_effect = {
+			every_owned_province = {
+				limit = { religion = gods_of_the_taychend }
+				change_religion = gods_of_the_taychend_reformed
+			}
+			add_prestige = 100
+			every_subject_country = {
+				if = {
+					limit = { religion = gods_of_the_taychend }
+					change_religion = gods_of_the_taychend_reformed
+					every_owned_province = {
+						limit = { religion = gods_of_the_taychend }
+						change_religion = gods_of_the_taychend_reformed
+					}
+				}
+				else_if = {
+					limit = { religion = oren_nayiru }
+					change_religion = oren_nayiru_reformed
+					every_owned_province = {
+						limit = { religion = oren_nayiru }
+						change_religion = oren_nayiru_reformed
+					}
+				}
+			}
+		}
+		add_country_modifier = {
+			name = taychend_reform_5_mod
+			duration = 3650 #10 years
+		}
+		hidden_effect = {
+			remove_country_modifier = taychend_reform_1_mod
+			remove_country_modifier = taychend_reform_2_mod
+			remove_country_modifier = taychend_reform_3_mod
+			remove_country_modifier = taychend_reform_4_mod
+			add_country_modifier = {
+				name = taychend_reform_4_mod
+				duration = 3650 #10 years
+			}
+			add_country_modifier = {
+				name = taychend_reform_3_mod
+				duration = 3650 #10 years
+			}
+			add_country_modifier = {
+				name = taychend_reform_2_mod
+				duration = 3650 #10 years
+			}
+			add_country_modifier = {
+				name = taychend_reform_1_mod
+				duration = 3650 #10 years
+			}
+		}
+	}
+
+	after = {
+		taychend_remove_free_reform = { reform = 5 }
+		clr_country_flag = taychendi_is_passing_reform
+		every_owned_province = { clr_province_flag = taychendi_reform_rebels }
+	}
+}

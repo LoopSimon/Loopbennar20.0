@@ -28,10 +28,16 @@ country_decisions = {
 			NOT = { exists = Y99 }
 			is_free_or_tributary_trigger = yes
 			is_at_war = no
-			num_of_cities = 30
-			
+			num_of_owned_provinces_with = {
+				value = 30
+				has_province_modifier = rightful_xia_territory
+			}
 		}
 		effect = {
+			if = {
+				limit = { tag = Y89 }
+				custom_tooltip = yuanszi_tag_warning_tt
+			}
 			set_government_rank = 3
 			custom_tooltip = unite_one_xia_subject_tooltip
 			hidden_effect = {
@@ -68,9 +74,19 @@ country_decisions = {
 			hidden_effect = { restore_country_name = yes }
 			set_country_flag = formed_one_xia_flag
 			swap_non_generic_missions = yes
-			if = { limit = { NOT = { has_country_flag = xia_nation } } set_country_flag = xia_nation set_variable = { which = xiaWarsWon value = 0 } }
+			if = {
+				limit = { has_custom_ideas = no }
+				country_event = { id = ideagroups.1 } #Swap Ideas
+			}
+			set_country_flag = count_wars_won
 
 			xia_accept_all_xia_cultures = yes
+
+			if = {
+				limit = { ai = yes }
+				add_army_professionalism = 0.2
+				add_country_modifier = { name = ai_one_xia_stopgap duration = -1 }
+			}
 		}
 		ai_will_do = {
 			factor = 1
@@ -105,6 +121,10 @@ country_decisions = {
 			}
 		}
 		effect = {
+			if = {
+				limit = { tag = Y89 }
+				custom_tooltip = yuanszi_tag_warning_tt
+			}
 			hidden_effect = {
 				if = { #For yinquans mt, event target doesn't cary over tags
 					limit = {
@@ -130,7 +150,7 @@ country_decisions = {
 				limit = { has_custom_ideas = no }
 				country_event = { id = ideagroups.1 } #Swap Ideas
 			}
-			if = { limit = { NOT = { has_country_flag = xia_nation } } set_country_flag = xia_nation set_variable = { which = xiaWarsWon value = 0 } }
+			set_country_flag = count_wars_won
 			hidden_effect = {
 				if = {
 					limit = { has_reform = wulin }
@@ -139,6 +159,12 @@ country_decisions = {
 			}
 
 			xia_accept_all_xia_cultures = yes
+
+			if = {
+				limit = { ai = yes }
+				add_army_professionalism = 0.2
+				add_country_modifier = { name = ai_one_xia_stopgap duration = -1 }
+			}
 		}
 		ai_will_do = {
 			factor = 1
@@ -207,6 +233,30 @@ country_decisions = {
 				}
 			}
 		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+	retrain_xia_army = {
+		major = yes
+		potential = {
+			owns = 4559
+			4559 = { has_great_project = { type = jiangliubao tier = 3 } }
+			NOT = { has_government_attribute = is_in_xia }
+		}
+		provinces_to_highlight = { has_province_flag = is_xia_origin }
+		allow = {
+			owns = 4559
+			4559 = { has_great_project = { type = jiangliubao tier = 3 } }
+			NOT = { has_country_modifier = xia_retraining_martial_school }
+		}
+		effect = {
+			add_country_modifier = { name = xia_retraining_martial_school duration = 1825 }
+			country_event = { id = one_xia.4 }
+			custom_tooltip = retrain_xia_army_hint_tt
+		}
+
 		ai_will_do = {
 			factor = 1
 		}

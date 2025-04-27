@@ -1752,6 +1752,17 @@ has_any_age_ability = {
 	}
 }
 
+giberd_silverforge_dwarf_friend = {
+	has_country_modifier = dwarven_administration
+	has_25_opinion_sent_gift = {
+		target = ROOT
+	}
+	has_90_opinion_improved_relation = {
+		target = ROOT
+	}
+	has_country_flag = owns_hold_province
+}
+
 brambleskinner_building_grove_highlight = {
 	province_group = deepwoods_$grove$_grove
 	country_or_non_sovereign_subject_holds = ROOT
@@ -2220,4 +2231,140 @@ rezankand_has_sundancers_order = {
 		tooltip = rezankand_sundancers_mission_tt
 		holy_order = sundancers_order
 	}
+}
+
+#Xanzerbexis
+A49_valid_wyvern_farm_province = {
+	hidden_trigger = { NOT = { has_province_flag = A49_created_wyvern_farm } }
+	OR = {
+		has_terrain = hills
+		has_terrain = mountain
+		has_terrain = highlands
+	}
+	OR = {
+		trade_goods = fish
+		trade_goods = livestock
+		trade_goods = wool
+	}
+	OR = {
+		A49 = { mission_completed = A49_the_wyvern_dominion }
+		superregion = western_cannor_superregion
+	}
+}
+
+A49_is_wyvern_farm = {
+	if = {
+		limit = { A49 = { has_country_flag = A49_wyvern_farm_upgrade_unlocked } }
+		custom_trigger_tooltip = {
+			tooltip = A49_is_wyvern_farm_adv_tt
+			has_province_flag = A49_created_wyvern_farm
+		}
+	}
+	else = {
+		custom_trigger_tooltip = {
+			tooltip = A49_is_wyvern_farm_tt
+			has_province_flag = A49_created_wyvern_farm
+		}
+	}
+}
+
+A49_swirl_mix_province = {
+	trade_goods = copper
+	development = 30
+	any_neighbor_province = {
+		OR = {
+			has_province_modifier = A49_wyvern_farm
+			has_province_modifier = A49_artificer_barracks
+		}
+	}
+}
+
+A49_valid_axatala_province = {
+	is_state = yes
+	has_owner_accepted_culture = no
+	NOT = {	culture_group = gnollish }
+	NOT = { province_id = 39 } #Lion's Pass, special Fjord Troll culture
+	NOT = { province_id = 379 } #Stonegaze, special Fjord Troll culture
+}
+
+A49_opinion_country_admin_or_pop = {
+	if = { #This is in an IF for tooltip reasons
+		limit = { NOT = { any_known_country = { has_country_modifier = $racial$_administration } } }
+		any_known_country = {
+			fast_owns_num_pops_of_race = { race = $racial$ amount = 1 }
+			has_opinion = {
+				who = ROOT
+				value = 150
+			}
+		}
+	}
+	else = {
+		any_known_country = {
+			has_country_modifier = $racial$_administration
+			has_opinion = {
+				who = ROOT
+				value = 150
+			}
+		}
+	}
+}
+
+#Luna River Minors MT
+is_luna_river_minor = {
+	OR = {
+		tag = A55 #Menibor
+		tag = A61 #Bluehart
+		tag = A82 #Napesbay
+		tag = B87 #Byshade
+		tag = B88 #Cannleigh
+		tag = B89 #Eastbright
+		tag = B90 #Elensbridge
+		tag = B91 #Thanallen
+		tag = Z03 #Bellacaire
+	}
+}
+
+yuanszi_can_corrupt = {
+	NOT = {
+		country_or_subject_holds = Y89
+		has_province_modifier = ruined_temple_complex
+		has_province_modifier = corrupted_temple_complex
+		has_province_modifier = corrupted_temple_complex_inactive
+		has_province_modifier = yuanszi_smiling_men
+		has_province_flag = yuanszi_corrupting_temple
+	}
+	owner = {
+		OR = {
+			AND = {
+				is_subject = yes
+				overlord = {
+					has_spy_network_from = { who = Y89 value = 60 }
+					has_opinion_modifier = { who = Y89 modifier = sent_gift value = 10 }
+				}
+			}
+			AND = {
+				is_subject = no
+				has_spy_network_from = { who = Y89 value = 60 }
+				has_opinion_modifier = { who = Y89 modifier = sent_gift value = 10 }
+			}
+		}
+	}
+}
+
+#Yassa
+yassa_if_merchants = {
+    NOT = { has_country_flag = $merchant_from$_merchants }
+    treasury = 250
+    $province$ = {
+		is_city = yes
+        OR = {
+            owned_by = ROOT
+            owner = {
+                has_opinion = {
+                    who = ROOT
+                    value = 120
+                }
+            }
+        }
+    }
 }

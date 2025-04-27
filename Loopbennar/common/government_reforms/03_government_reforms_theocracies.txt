@@ -26,6 +26,7 @@ theocracy_mechanic = {
 	}
 	government_abilities = {
 		anb_dummy_hold_mechanic
+		anb_taychend_reform
 	}
 }
 
@@ -925,7 +926,6 @@ wulin = {
 	icon = "shogunate"
 	allow_normal_conversion = no
 	potential = {
-		NOT = { has_country_flag = formed_one_xia_flag }
 		# OR = {
 		# 	AND = {
 		# 		capital_scope = {
@@ -942,6 +942,7 @@ wulin = {
 		OR = {
 			religion = accretive_path
 			religion = transmutative_path
+			religion = devouring_path
 		}
 		OR = {
 			AND = {
@@ -966,6 +967,7 @@ wulin = {
 		OR = {
 			religion = accretive_path
 			religion = transmutative_path
+			religion = devouring_path
 		}
 		capital_scope = {
 			OR = {
@@ -987,17 +989,29 @@ wulin = {
 
 	modifiers = {
 		may_recruit_female_generals = yes
-		diplomats = 1
 		free_leader_pool = 1
-		legitimacy = 1
 		governing_capacity = -100
-		block_introduce_heir = yes
 		reverse_relation_with_same_religion = 10
+		has_samurai = yes
+		amount_of_samurai = 5
 	}
 
 	custom_attributes = {
 		locked_government_type = yes
+		is_in_xia = yes
 	}
+
+	effect = {
+		hidden_effect = {
+			every_owned_province = { apply_appropriate_xia_mods_to_province = yes }
+			assign_dvp_cultural_aspects = yes
+			country_event = { id = one_xia.3001 }
+		}
+	}
+
+	removed_effect = { hidden_effect = { every_owned_province = { remove_province_modifier = rightful_xia_territory_malus } } }
+
+	post_removed_effect = { hidden_effect = { assign_dvp_cultural_aspects = yes } }
 }
 
 one_xia = {
@@ -1027,13 +1041,26 @@ one_xia = {
 		may_recruit_female_generals = yes
 		free_leader_pool = 1
 		governing_capacity = 250
-		block_introduce_heir = yes
-		heir_chance = -2
+		has_samurai = yes
+		allowed_samurai_fraction = 0.1
 	}
 
 	custom_attributes = {
 		locked_government_type = yes
+		is_in_xia = yes
 	}
+
+	effect = {
+		hidden_effect = {
+			every_owned_province = { apply_appropriate_xia_mods_to_province = yes }
+			assign_dvp_cultural_aspects = yes
+			country_event = { id = one_xia.3001 }
+		}
+	}
+
+	removed_effect = { hidden_effect = { every_owned_province = { remove_province_modifier = rightful_xia_territory_malus } } }
+
+	post_removed_effect = { hidden_effect = { assign_dvp_cultural_aspects = yes } }
 }
 
 xia_parliament_reform = {
@@ -1072,8 +1099,8 @@ xiaken = {
 		OR = {
 			religion = accretive_path
 			religion = transmutative_path
+			religion = devouring_path
 		}
-		NOT = { has_country_flag = formed_one_xia_flag }
 		overlord = { has_reform = wulin }
 		NOT = { has_adventurer_reform = yes } # Anbennar
 	}
@@ -1094,13 +1121,26 @@ xiaken = {
 		may_recruit_female_generals = yes
 		land_morale = 0.1
 		infantry_power = 0.1
-		governing_capacity = -100
-		block_introduce_heir = yes
-		heir_chance = -2
+		church_power_modifier = -0.2
+		has_samurai = yes
+		amount_of_samurai = 3
 	}
 	custom_attributes = {
 		locked_government_type = yes
+		is_in_xia = yes
 	}
+	
+	effect = {
+		hidden_effect = {
+			every_owned_province = { apply_appropriate_xia_mods_to_province = yes }
+			assign_dvp_cultural_aspects = yes
+			country_event = { id = one_xia.3001 }
+		}
+	}
+
+	removed_effect = { hidden_effect = { every_owned_province = { remove_province_modifier = rightful_xia_territory_malus } } }
+
+	post_removed_effect = { hidden_effect = { assign_dvp_cultural_aspects = yes } }
 }
 
 indep_xiaken = {
@@ -1110,8 +1150,8 @@ indep_xiaken = {
 		OR = {
 			religion = accretive_path
 			religion = transmutative_path
+			religion = devouring_path
 		}
-		NOT = { has_country_flag = formed_one_xia_flag }
 		OR = {
 			is_subject = no
 			overlord = { NOT = { has_reform = wulin } }
@@ -1147,12 +1187,26 @@ indep_xiaken = {
 		may_recruit_female_generals = yes
 		land_morale = 0.1
 		infantry_power = 0.1
-		block_introduce_heir = yes
-		heir_chance = -2
+		church_power_modifier = -0.2
+		has_samurai = yes
+		amount_of_samurai = 3
 	}
 	custom_attributes = {
 		locked_government_type = yes
+		is_in_xia = yes
 	}
+	
+	effect = {
+		hidden_effect = {
+			every_owned_province = { apply_appropriate_xia_mods_to_province = yes }
+			assign_dvp_cultural_aspects = yes
+			country_event = { id = one_xia.3001 }
+		}
+	}
+
+	removed_effect = { hidden_effect = { every_owned_province = { remove_province_modifier = rightful_xia_territory_malus } } }
+
+	post_removed_effect = { hidden_effect = { assign_dvp_cultural_aspects = yes } }
 }
 
 nirat_priesthood_reform = {
@@ -1526,6 +1580,49 @@ baashidi_adventurer_reform = {
 		locked_government_type = yes
 		disables_regular_estates = yes
 		enables_divine_idea_group = no
+	}
+}
+
+sponsored_adventurer_reform = {
+	potential = {
+		OR = {
+			has_reform = sponsored_adventurer_reform	#aka you cant see it unless you're already one
+			is_playing_custom_nation = yes
+		}
+
+	}
+	modifiers = {
+		diplomats = -1
+		diplomatic_upkeep = -2
+		land_forcelimit = 3
+		governing_capacity_modifier = -0.50
+		monthly_reform_progress = 0.75
+	}
+	valid_for_nation_designer = yes
+	nation_designer_cost = 10
+	icon = "soldiers_2"
+	allow_normal_conversion = no
+	lock_level_when_selected = yes
+	fixed_rank = 1
+
+	monastic = yes
+	different_religion_group_acceptance = 0
+	rulers_can_be_generals = yes
+	heirs_can_be_generals = yes
+	native_mechanic = no
+	allow_migration = no
+
+	government_abilities = {
+		anb_adventurer_unity
+	}
+	
+	custom_attributes = {
+		locked_government_type = yes
+		disables_regular_estates = yes
+		enables_divine_idea_group = no
+		major_reduced_gov_cap = yes
+		disables_estate_adeen = yes
+		reform_progress_from_conquest = yes
 	}
 }
 
@@ -2428,6 +2525,29 @@ appease_khet_theocracy = {
 	ai = { factor = 1000 }
 }
 		
+sharpening_the_blade_reform = {
+	icon = "castle"
+	potential = {
+		has_reform = sponsored_adventurer_reform
+	}
+	modifiers = {
+		shock_damage = 0.075
+		fire_damage = 0.075
+		morale_damage = 0.075
+	}
+}
+
+raising_the_standard_reform = {
+	icon = "regionally_elected_commanders"
+	potential = {
+		has_reform = sponsored_adventurer_reform
+	}
+	modifiers = {
+		morale_damage_received = -0.05
+		shock_damage_received = -0.05
+		fire_damage_received = -0.05
+	}
+}
 
 #Education of the State
 
@@ -2630,6 +2750,53 @@ ravelian_state_technocracy = { #Tier 3: Education of the state
 	}
 }
 
+importing_administrators_reform = {
+	icon = "royal_court"
+	potential = {
+		has_reform = sponsored_adventurer_reform
+	}
+	effect = {
+		hidden_effect = {
+			set_variable = {
+				which = reform_progress_dev_variable
+				value = 1
+			}
+		}
+	}
+	modifiers = {
+		same_culture_advisor_cost = -0.1
+		development_cost_in_primary_culture = -0.05
+	}
+
+	custom_attributes = {
+		reform_progress_from_development = yes
+	}
+}
+
+relying_on_local_administrators_reform = {
+	icon = "landscape"
+	potential = {
+		has_reform = sponsored_adventurer_reform
+	}
+	effect = {
+		hidden_effect = {
+			set_variable = {
+				which = reform_progress_cultures_variable
+				value = 1
+			}
+		}
+	}
+	modifiers = {
+		promote_culture_cost = -0.2
+		diplomats = 1
+		improve_relation_modifier = 0.2
+	}
+
+	custom_attributes = {
+		reform_progress_from_promoted_cultures = yes
+	}
+}
+
 #Religious Doctrine - Anbennar
 stake_our_claim = {
 	icon = "dutch_flag"
@@ -2816,6 +2983,36 @@ dwarovar_secrets_in_the_dark = {
 	}
 
 	custom_attributes = { dwarovar_secrets_in_the_dark_effect = yes }
+}
+
+converting_the_natives_reform = {
+	icon = "generic_people"
+	potential = {
+		has_reform = sponsored_adventurer_reform
+	}
+	modifiers = {
+		global_missionary_strength = 0.01
+		culture_conversion_cost = -0.15
+	}
+
+	custom_attributes = {
+		reform_progress_from_conversion = yes
+	}
+}
+
+salvation_through_work_reform = {
+	icon = "dutch_flag"
+	potential = {
+		has_reform = sponsored_adventurer_reform
+	}
+	modifiers = {
+		production_efficiency = 0.05
+		global_tax_modifier = 0.1
+	}
+
+	custom_attributes = {
+		reform_progress_from_buildings = yes
+	}
 }
 
 #Clergy in Administration
@@ -3051,20 +3248,39 @@ adventurer_administration = {
 	}
 }
 
-corintar_new_corintar = {
-	icon = "judge"
-	fixed_rank = 2
+corintar_the_circle_reborn = {
+	icon = "kingdom_of_god"
+	fixed_rank = 0
 	potential = {
 		has_reform = monastic_order_reform
 		OR = {
-			has_reform = corintar_new_corintar
-			have_had_reform = corintar_new_corintar
+			has_reform = corintar_the_circle_reborn
+			has_reform = corintar_warrior_priests
+			have_had_reform = corintar_the_circle_reborn
+			have_had_reform = corintar_warrior_priests
 		}
 	}
 	modifiers = {
-		ae_impact = -0.1
-		spy_offence = 0.15
-		rebel_support_efficiency = 0.25
+		advisor_cost = -0.1
+		max_absolutism = 10
+	}
+}
+
+corintar_warrior_priests = {
+	icon = "warrior_monks_reform"
+	fixed_rank = 0
+	potential = {
+		has_reform = monastic_order_reform
+		OR = {
+			has_reform = corintar_the_circle_reborn
+			has_reform = corintar_warrior_priests
+			have_had_reform = corintar_the_circle_reborn
+			have_had_reform = corintar_warrior_priests
+		}
+	}
+	modifiers = {
+		general_cost = -0.1
+		leader_land_fire = 1
 	}
 }
 
@@ -3148,6 +3364,28 @@ verdical_parliament = {
 			blocked_call_diet = yes
 			disables_estate_nobles = yes
 		}
+	}
+}
+
+professional_bands_reform = {
+	icon = "mercenaries"
+	potential = {
+		has_reform = sponsored_adventurer_reform
+	}
+	modifiers = {
+		mercenary_manpower = 0.10
+		mercenary_cost = -0.10
+	}
+}
+
+cloistered_doctrines_reform = {
+	icon = "people_walking"
+	potential = {
+		has_reform = sponsored_adventurer_reform
+	}
+	modifiers = {
+		free_land_leader_pool = 1
+		army_tradition = 0.25
 	}
 }
 
@@ -3308,39 +3546,20 @@ proclaim_republic_reform = {
 
 #Anbennar
 
-corintar_the_circle_reborn = {
-	icon = "kingdom_of_god"
-	fixed_rank = 0
+corintar_new_corintar = {
+	icon = "judge"
+	fixed_rank = 2
 	potential = {
 		has_reform = monastic_order_reform
 		OR = {
-			has_reform = corintar_the_circle_reborn
-			has_reform = corintar_warrior_priests
-			have_had_reform = corintar_the_circle_reborn
-			have_had_reform = corintar_warrior_priests
+			has_reform = corintar_new_corintar
+			have_had_reform = corintar_new_corintar
 		}
 	}
 	modifiers = {
-		advisor_cost = -0.1
-		max_absolutism = 10
-	}
-}
-
-corintar_warrior_priests = {
-	icon = "warrior_monks_reform"
-	fixed_rank = 0
-	potential = {
-		has_reform = monastic_order_reform
-		OR = {
-			has_reform = corintar_the_circle_reborn
-			has_reform = corintar_warrior_priests
-			have_had_reform = corintar_the_circle_reborn
-			have_had_reform = corintar_warrior_priests
-		}
-	}
-	modifiers = {
-		general_cost = -0.1
-		leader_land_fire = 1
+		ae_impact = -0.1
+		spy_offence = 0.15
+		rebel_support_efficiency = 0.25
 	}
 }
 
@@ -3508,6 +3727,46 @@ pursuit_of_knowledge_reform = {
 		#DO NOT DO THIS!!!! it generates a huge amount of errors in the logs
 		custom_attributes = {
 			can_see_theocratic_heir_stats = yes
+		}
+	}
+}
+
+our_own_rulers_reform = {
+	icon = "religious_leader"
+	potential = {
+		has_reform = sponsored_adventurer_reform
+	}
+	effect = {
+		if = {
+			limit = { tag = S98 }
+			country_event = {
+				id = flavour_bibyobi.100
+			}
+		}
+		if = {
+			limit = { tag = S22 }
+			country_event = {
+				id = flavour_hisraad.100
+			}
+		}
+		every_owned_province = {
+			limit = {
+				OR = {
+					has_province_flag = reform_progress_from_tax_building
+					has_province_flag = reform_progress_from_prod_building
+					has_province_flag = reform_progress_from_trade_building
+					has_province_flag = reform_progress_from_conquest_granted
+					has_province_flag = reform_progress_from_culture_conversion
+					has_province_flag = reform_progress_from_religion_conversion
+				}
+				
+			}
+			clr_province_flag = reform_progress_from_conquest_granted
+			clr_province_flag = reform_progress_from_tax_building
+			clr_province_flag = reform_progress_from_prod_building
+			clr_province_flag = reform_progress_from_trade_building
+			clr_province_flag = reform_progress_from_culture_conversion
+			clr_province_flag = reform_progress_from_religion_conversion
 		}
 	}
 }
@@ -4935,7 +5194,6 @@ spiderwretch_T2_spider_warfare = {
 
 	custom_attributes = {
 		enables_horde_idea_group = yes
-		disables_aristocratic_idea_group = yes
 	}
 }
 
@@ -4958,10 +5216,13 @@ eagle_hobgoblins_searching_reform = {
 		global_manpower_modifier = 0.10
 		land_maintenance_modifier = -0.05
 	}
-	fixed_rank = 2
+	fixed_rank = 1
 	heir = no
 	custom_attributes = {
 		locked_government_type = yes
+		rulers_can_be_generals = no
+		rulers_cant_be_war_wizards = yes
+
 	}
 }
 
@@ -5296,4 +5557,47 @@ mission_of_exemplary = {
 	government_abilities = {
 		rezankand_exemplar_mechanic
 	}
+}
+
+yuanszi_xia_reform = { #Yuanszi
+	icon = "divine_guidance_reform"
+	allow_normal_conversion = no
+	potential = {
+		OR = {
+			has_reform = yuanszi_xia_reform
+			have_had_reform = yuanszi_xia_reform
+		}
+	}
+	legacy_equivalent = monastic_order_government
+	fixed_rank = 3
+	rulers_can_be_generals = yes
+	heirs_can_be_generals = yes
+	maintain_dynasty = yes
+	lock_level_when_selected = yes
+
+	modifiers = {
+		may_recruit_female_generals = yes
+		diplomats = 1
+		global_tax_modifier = 0.1
+		development_cost = -0.1
+		has_samurai = yes
+		allowed_samurai_fraction = 0.1	
+	}
+
+	custom_attributes = {
+		locked_government_type = yes
+		is_in_xia = yes
+	}
+	
+	effect = {
+		hidden_effect = {
+			every_owned_province = { apply_appropriate_xia_mods_to_province = yes }
+			assign_dvp_cultural_aspects = yes
+			country_event = { id = one_xia.3001 }
+		}
+	}
+
+	removed_effect = { hidden_effect = { every_owned_province = { remove_province_modifier = rightful_xia_territory_malus } } }
+
+	post_removed_effect = { hidden_effect = { assign_dvp_cultural_aspects = yes } }
 }

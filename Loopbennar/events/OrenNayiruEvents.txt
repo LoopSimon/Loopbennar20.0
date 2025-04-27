@@ -35,7 +35,12 @@ country_event = {
 				country_event = { id = oren_nayiru.910 }
 			}
 			if = {
-				limit = { is_year = 1500 }
+				limit = { 
+					is_year = 1500
+					NOT = {
+						J78 = { has_country_flag = uesrennu_early_oren }
+					}
+				}
 				set_global_flag = oren_nayiru_intro
 			}
 			else = {
@@ -59,6 +64,10 @@ country_event = {
 	
 	option = {
 		name = oren_nayiru.1.a
+		if = {
+			limit = { is_or_was_tag = { tag = J78 } }
+			custom_tooltip = uesrennu_warning
+		}
 	}
 }
 
@@ -181,6 +190,9 @@ country_event = {
 	option = {
 		name = oren_nayiru.2.a #Let them Be
 		goto = 2502 #Uesrennu
+		trigger = {
+			NOT = { is_or_was_tag = { tag = J78 } }
+		}
 		tooltip = {
 			2502 = { #Uesrennu
 				change_religion = oren_nayiru
@@ -219,6 +231,15 @@ country_event = {
 		add_country_modifier = {
 			name = on_persecuting_the_oren_nayiru
 			duration = 36500 #100 years
+		}
+		if = {
+			limit = { is_or_was_tag = { tag = J78 } }
+			hidden_effect = {
+				country_event = {
+					id = uesrennu.13
+					days = 1825
+				}
+			}
 		}
 	}
 }
@@ -428,8 +449,22 @@ country_event = {
 country_event = {
 	id = oren_nayiru.4
 	title = oren_nayiru.4.t #The Calsithara Revolt
-	desc = oren_nayiru.4.d
-	picture = SIEGE_eventPicture #TODO
+	desc = {
+		trigger = { NOT = { is_or_was_tag = { tag = J78 } } }
+		desc = oren_nayiru.4.d
+	}
+	desc = { 
+		trigger = { 
+			is_or_was_tag = { tag = J78 }
+			NOT = { has_country_flag = uesrennu_rat_emperor }
+		}
+		desc = oren_nayiru.4.d1	#uesrennu
+	}
+	desc = { 
+		trigger = { has_country_flag = uesrennu_rat_emperor }
+		desc = oren_nayiru.4.d2	#ditto
+	}
+	picture = wihgfx_FEMALE_GENERAL_eventPicture
 	
 	mean_time_to_happen = { days = 1 }
 	fire_only_once = yes
@@ -475,10 +510,25 @@ country_event = {
 				oren_nayiru_rebels = 1
 				remove_province_modifier = religious_zeal_at_conv
 				set_province_flag = calsithara_revolt_province_flag
-				2502 = { set_variable = { which = onVariable value = 0 } }
+				hidden_effect = { 2502 = { set_variable = { which = onVariable value = 0 } } }
 			}
 			else = {
-				2502 = { change_variable = { which = onVariable value = 1 } }
+				hidden_effect = { 2502 = { change_variable = { which = onVariable value = 1 } } }
+			}
+		}
+		if = {
+			limit = { is_or_was_tag = { tag = J78 } }
+			if = {
+				limit = { has_heir = yes }
+				kill_heir = {}
+			}
+			2502 = { add_devastation = 25 }
+			if = { 
+				limit = { NOT = { has_country_flag = uesrennu_rat_emperor } }
+				define_ruler = { dynasty = "Uesrenna" }
+				set_dynasty = "Uesrenna"
+				custom_tooltip = uesrennu_dream_is_dead_tt
+				clr_country_flag = rat_kings_alive
 			}
 		}
 		if = {
@@ -517,8 +567,22 @@ country_event = {
 country_event = {
 	id = oren_nayiru.940
 	title = oren_nayiru.940.t #The Calsithara Revolt
-	desc = oren_nayiru.940.d
-	picture = SIEGE_eventPicture #TODO
+	desc = {
+		trigger = { NOT = { is_or_was_tag = { tag = J78 } } }
+		desc = oren_nayiru.4.d
+	}
+	desc = { 
+		trigger = { 
+			is_or_was_tag = { tag = J78 }
+			NOT = { has_country_flag = uesrennu_rat_emperor }
+		}
+		desc = oren_nayiru.4.d1	#uesrennu
+	}
+	desc = { 
+		trigger = { has_country_flag = uesrennu_rat_emperor }
+		desc = oren_nayiru.4.d2	#ditto
+	}
+	picture = wihgfx_FEMALE_GENERAL_eventPicture
 	
 	is_triggered_only = yes
 	
@@ -539,6 +603,21 @@ country_event = {
 					size = 3
 					leader = "Calsithara Flamespeaker"
 				}
+			}
+		}
+		if = {
+			limit = { is_or_was_tag = { tag = J78 } }
+			if = {
+				limit = { has_heir = yes }
+				kill_heir = {}
+			}
+			2502 = { add_devastation = 25 }
+			if = { 
+				limit = { NOT = { has_country_flag = uesrennu_rat_emperor } }
+				define_ruler = { dynasty = "Uesrenna" }
+				set_dynasty = "Uesrenna"
+				custom_tooltip = uesrennu_dream_is_dead_tt
+				clr_country_flag = rat_kings_alive
 			}
 		}
 	}
@@ -685,6 +764,7 @@ country_event = {
 
 	trigger = {
 		is_religion_enabled = oren_nayiru
+		NOT = { has_country_modifier = the_abolish_slavery_act }
 		NOT = { has_country_flag = rezankand_supported_on }
 		NOT = { OR = { religion = oren_nayiru religion = oren_nayiru_reformed } }
 		num_of_owned_provinces_with = {
@@ -797,6 +877,7 @@ country_event = {
 		any_owned_province = { 
 			superregion = taychend_superregion 
 			trade_goods = slaves
+			NOT = { religion = oren_nayiru }
 		}
 		NOT = { OR = { religion = oren_nayiru religion = oren_nayiru_reformed } }
 		NOT = { has_country_flag = oren_nayiru_slaves_converted }
@@ -807,7 +888,8 @@ country_event = {
 		every_owned_province = {
 			limit = { 
 				superregion = taychend_superregion 
-				trade_goods = slaves 
+				trade_goods = slaves
+				NOT = { religion = oren_nayiru }
 			}
 			change_religion = oren_nayiru
 		}
@@ -1291,7 +1373,7 @@ country_event = {
 					}
 				}
 				country_event = { id = oren_nayiru.1000 }
-			}
+			}			
 		}
 	}
 	
@@ -1463,6 +1545,13 @@ country_event = {
 				disaster = kamrayakvals_war
 				value = 100
 			}
+			if = {
+				limit = { was_tag = J78 }
+				country_event = {
+					id = uesrennu.14
+					days = 5
+				}
+			}
 		}
 	}
 	
@@ -1557,6 +1646,31 @@ country_event = {
 			add_disaster_progress = {
 				disaster = kamrayakvals_war
 				value = 100
+			}
+			if = {
+				limit = { is_or_was_tag = { tag = J78 } }
+				country_event = {
+					id = uesrennu.14
+					days = 15
+				}
+				if = {
+					limit = { exists = H66 }
+					H66 = {
+						country_event = {
+							id = uesrennu.15
+							days = 90
+						}
+					}
+				}
+				else_if = {
+					limit = { exists = H67 }
+					H67 = {
+						country_event = {
+							id = uesrennu.15
+							days = 90
+						}
+					}
+				}
 			}
 		}
 	}
@@ -1829,6 +1943,13 @@ country_event = {
 				name = on_kamrayakvals_victorious
 				duration = 9125 #25 years
 			}
+			if = {
+				limit = { was_tag = J78 }
+				country_event = {
+					id = uesrennu.18
+					days = 30
+				}
+			}
 		}
 		kheionai_superregion = { add_permanent_claim = U39 }
 		taychend_superregion = { add_permanent_claim = U39 }
@@ -1921,6 +2042,13 @@ country_event = {
 			add_country_modifier = {
 				name = on_kamrayakvals_defeated
 				duration = 18250 #50 years
+			}
+			if = {
+				limit = { is_or_was_tag = { tag = J78 } }
+				country_event = {
+					id = uesrennu.17
+					days = 30
+				}
 			}
 		}
 	}

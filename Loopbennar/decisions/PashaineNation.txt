@@ -7,6 +7,7 @@ country_decisions = {
 			OR = {
 				primary_culture = east_damerian
 				primary_culture = vernman
+				primary_culture = pashainey
 			}
 			OR = {
 				ai = no
@@ -17,10 +18,11 @@ country_decisions = {
 			}
 			NOT = { has_country_flag = formed_pashaine_flag }
 			NOT = { tag = Z01 } #Empire of Anbennar
-			NOT = { tag = A45 } #Istralore, loyal to Dameria
-			NOT = { tag = A33 } #Verne, they'd want to reforge their kingdom
-			NOT = { tag = A85 } #Magisterium shouldn't be forming anything
-			NOT = { tag = A58 } #Dameria, it's Dameria
+			NOT = { tag = A33 } #Verne
+			NOT = { tag = A58 } #Dameria
+			NOT = { tag = A45 } #Istralore
+			NOT = { tag = A04 } #Wesdam
+			NOT = { tag = A85 } #Magisterium
 			OR = {
 				ai = no
 				is_playing_custom_nation = no
@@ -36,87 +38,75 @@ country_decisions = {
 			normal_or_historical_nations = yes
 			was_never_end_game_tag_trigger = yes
 		}
-		
+
 		provinces_to_highlight = {
-			OR = {	
-				province_id = 284	# Thanallen
-				province_id = 329	# Bluehart
-				province_id = 587	# Bellacaire
-				province_id = 109	# Elvenbridge
-				province_id = 327	# Cestaire
-			}
 			OR = {
-				NOT = { owned_by = ROOT }
-				NOT = { is_core = ROOT }
+				province_id = 327
+				province_group = luna_river_cities_provinces
 			}
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
-		
+
 		allow = {
-			owns_core_province = 284	# Thanallen
-			owns_core_province = 329	# Bluehart
-			owns_core_province = 587	# Bellacaire
-			owns_core_province = 109	# Elvenbridge
-			owns_core_province = 327	# Cestaire
-			is_at_war = no
-			is_free_or_tributary_trigger = yes		
-			adm_tech = 10
-			NOT = { exists = B59 }			
-		}
-		
-		effect = {
-			284 = { #Thanallen
-				move_capital_effect = yes
-			}
-			change_tag = B59
-			hidden_effect = { restore_country_name = yes }
+			primary_culture = pashainey
 			if = {
-				limit = {
-					NOT = { government_rank = 2 }
+				limit = { has_country_flag = LRM_special_pashaine }
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 7
+					OR = {
+						province_id = 327	# Cestaire
+						province_group = luna_river_cities_provinces
+					}
 				}
-				set_government_rank = 2
 			}
-			primary_and_ruler_culture_change = { race = human new_culture = pashainey }
-			every_owned_province = {
+			else = {
+				num_of_owned_provinces_with = {
+					value = 7
+					OR = {
+						province_id = 327	# Cestaire
+						province_group = luna_river_cities_provinces
+					}
+				}
+			}
+			adm_tech = 10
+			is_at_war = no
+			is_free_or_tributary_trigger = yes
+			NOT = { exists = B59 }
+			if = {
+				limit = { is_luna_river_minor = yes }
+				mission_completed = LRM_curtain_call
+			}			
+		}
+
+		effect = {
+			if = {		#Special Formation of Pashainé - Luna River Minors
+				limit = { has_country_flag = LRM_special_pashaine }
+				every_subject_country = {
+					limit = { is_luna_river_minor = yes }
+					ROOT = { inherit = PREV }
+				}	
+			}
+			luna_river_basin = {
 				limit = {
-					province_group = luna_river_basin
+					owned_by = ROOT
 					culture_is_human = yes
 				}
 				change_culture = pashainey
 			}
-			
-			upper_luna_area = {
+			luna_river_basin = {
 				limit = {
 					NOT = { owned_by = ROOT }
 				}
 				add_permanent_claim = B59
 			}
-			eastneck_area = {
-				limit = {
-					NOT = { owned_by = ROOT }
-				}
-				add_permanent_claim = B59
-			}
-			galeinn_area = {
-				limit = {
-					NOT = { owned_by = ROOT }
-				}
-				add_permanent_claim = B59
-			}
-			heartlands_area = {
-				limit = {
-					NOT = { owned_by = ROOT }
-				}
-				add_permanent_claim = B59
-			}
-			285  = { add_permanent_claim = B59 }
-			331  = { add_permanent_claim = B59 }
-			569  = { add_permanent_claim = B59 }
-			
+			primary_and_ruler_culture_change = { race = human new_culture = pashainey }
+			change_tag = B59
+			hidden_effect = { restore_country_name = yes }
 			add_country_modifier = {
 				name = "centralization_modifier"
 				duration = 7300
 			}
-			add_prestige = 50
+			add_prestige = 25
 			if = {
 				limit = {
 					has_custom_ideas = no
@@ -124,6 +114,20 @@ country_decisions = {
 				country_event = { id = ideagroups.1 } #Swap Ideas
 			}
 			set_country_flag = formed_pashaine_flag
+			if = {
+				limit = { has_country_flag = LRM_centralised_confederation }
+				add_government_reform = centralized_luna_confederation_reform
+				luna_river_cities_provinces = {
+					add_province_modifier = {
+						name = LRM_constituent_city
+						duration = -1
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = LRM_can_promote_luna_identity }
+				country_event = { id = flavour_LRM.6 days = 7 }
+			}
 		}
 		ai_will_do = {
 			factor = 1

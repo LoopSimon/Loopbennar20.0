@@ -8,7 +8,7 @@ orda_aldresia_1 = {
 	}
 
     workshops_of_war = {
-		icon = mission_taula_de_canvi
+		icon = mission_armoury
 		required_missions = { }
 		position = 1
 		
@@ -61,6 +61,14 @@ orda_aldresia_1 = {
                     duration = -1
                 }
             }
+			update_magic_study_experience_modifier = { value = 10 }
+			custom_tooltip = A77_archives_tt
+			hidden_effect = {
+				country_event = { 
+					id = flavor_orda_aldresia.47 
+					days = 7300
+				}
+			}
 		}
 	}
 
@@ -129,7 +137,7 @@ orda_aldresia_2 = {
 	}
 
 	youngbloods_of_the_greentide = {
-		icon = king_of_poland
+		icon = mission_greentide
 		required_missions = { }
 		position = 1
 		
@@ -204,7 +212,7 @@ orda_aldresia_2 = {
 	}
 
 	the_storming_of_old_tower = {
-		icon = mission_conquer_alexandria
+		icon = mission_magic_tower
 		required_missions = { 
 			surround_the_beast
 			aldresian_archives
@@ -249,7 +257,7 @@ orda_aldresia_2 = {
 	}
 
 	raid_of_the_magisteriums_vault = {
-		icon = mission_rb_inland_india
+		icon = mission_mechanical_mining
 		required_missions = { 
 			guns_magic_and_steel
 			the_storming_of_old_tower
@@ -278,7 +286,7 @@ orda_aldresia_2 = {
 	}
 
 	aldresias_rotating_castle = {
-		icon = defend_the_city
+		icon = mission_magnificent_castle
 		required_missions = { 
 			raid_of_the_magisteriums_vault 
 			the_great_vault
@@ -303,7 +311,6 @@ orda_aldresia_2 = {
 		}
 		
 		effect = {
-			custom_tooltip = aldresias_rotating_castle_tt
 			country_event = { id = flavor_orda_aldresia.19 }
 		}
 	}
@@ -322,7 +329,10 @@ orda_aldresia_2 = {
 				}
 				AND = {
 					NOT = { exists = A85 }
-					legitimacy = 100
+					OR = {
+						legitimacy = 100
+						devotion = 100
+					}
 					prestige = 100
 				}
 			}
@@ -330,7 +340,9 @@ orda_aldresia_2 = {
 		}
 		
 		effect = {
-			country_event = { id = flavor_orda_aldresia.21 }
+			custom_tooltip = aldresias_rotating_castle_tt
+			set_country_flag = orda_the_challenge
+			country_event = { id = flavor_orda_aldresia.40 }
 		}
 	}
 
@@ -376,6 +388,31 @@ orda_aldresia_2 = {
 		}
 	}
 
+	the_imperial_magic_controller = {
+		icon = a_center_of_religion
+		required_missions = { call_of_god }
+		position = 11
+		
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 10
+				base_manpower = 10
+				has_building = mage_tower
+			}
+		}
+		
+		effect = {
+			custom_tooltip = A77_imperial_magic_controller_tt
+			set_country_flag = aldresia_renowned_proficiency
+			if = { 
+				limit = { has_ruler_flag = aldresia_emil_alive }
+				change_dip = 1
+				set_ruler_flag = evocation_1
+				set_ruler_flag = evocation_2
+				set_ruler_flag = evocation_3
+			}
+		}
+	}
 }
 
 orda_aldresia_3 = {
@@ -453,7 +490,7 @@ orda_aldresia_3 = {
 			custom_trigger_tooltip = {
 				tooltip = redeem_our_name_tt
 			}
-			treasury = 500
+			treasury = 250
 			has_estate_privilege = estate_burghers_commercial_board_of_advice
 			calc_true_if = {
 				amount = 3
@@ -475,7 +512,7 @@ orda_aldresia_3 = {
 		}
 		
 		effect = {
-			add_treasury = -500
+			add_treasury = -250
 			add_country_modifier = {
 				name = A77_anbenncost_kickbacks
 				duration = -1
@@ -491,7 +528,7 @@ orda_aldresia_3 = {
 	}
 
 	incident_at_ebrosfield = {
-		icon = mission_conquer_kanem_bornu
+		icon = mission_moon_moon
 		required_missions = { 
 			cut_their_purse
 			an_ancient_purpose
@@ -530,7 +567,7 @@ orda_aldresia_3 = {
 		}
 	}
 	descent_into_the_cursewood = {
-		icon = mission_junnagadh_fort
+		icon = mission_misty_forest
 		required_missions = { 
 			incident_at_ebrosfield
 		}
@@ -578,7 +615,7 @@ orda_aldresia_3 = {
 	hearts_and_minds = {
 		icon = mission_dominate_persian_gulf
 		required_missions = { the_hunt_begins }
-		position = 8
+		position = 7
 		
 		trigger = {
 			num_of_owned_provinces_with = {
@@ -742,6 +779,186 @@ orda_aldresia_3 = {
 			}
 		}
 	}
+
+	an_unshakeable_faith = {
+		icon = mission_writing_book
+		required_missions = { 
+			hearts_and_minds
+		}
+		position = 8
+		
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 4
+				region = dostanor_region
+				has_tax_building_trigger = yes
+			}
+			OR = {
+				religion = ravelian
+				NOT = { is_religion_enabled = ravelian }
+			}
+		}
+		
+		effect = {
+			if = {
+				limit = { religion = ravelian }
+				423 = { add_cardinal = yes }
+			} 
+			if = {
+				limit = { NOT = { is_religion_enabled = ravelian }}
+				add_country_modifier = {
+					name = A77_rising_fervor
+					duration = 300
+				}
+			}
+		}
+	}
+
+	call_of_god = {
+		icon = mission_swear_fealty_knight
+		required_missions = {
+			the_umbral_king
+			imperfect_perfection
+		 }
+		position = 10
+		
+		trigger = {
+			calc_true_if = {
+				amount = 2
+				all_known_country = {
+					religion = ravelian
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+			estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 65
+			}
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 65
+			}
+			estate_loyalty = {
+				estate = estate_artificers
+				loyalty = 65
+			}
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 65
+			}
+			estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 65
+			}
+		}
+		
+		effect = {
+			country_event = { id = flavor_orda_aldresia.22 }
+		}
+	}
+
+	soldiers_of_the_saint = {
+		icon = mission_city_of_the_world's_desire
+		required_missions = {
+			call_of_god
+		 }
+		position = 11
+		
+		trigger = {
+			land_forcelimit = 100
+			is_defender_of_faith = yes
+			has_country_modifier = warrior_automata 
+			has_country_modifier = papal_blessing
+			OR = {
+				check_variable = {
+					which = orda_conversion_war
+					value = 5
+				}
+				hre_religion = ravelian
+			}
+			any_elector = {
+				capital_scope = {
+					controlled_by = A77
+				}
+			}
+		}
+		
+		effect = {
+			every_elector = {
+				limit = {
+					capital_scope = {
+						controlled_by = A77
+					}
+				 }
+				set_country_flag = occupied_by_second_sons
+			}
+			country_event = { id = flavor_orda_aldresia.38 }
+			if = { 
+				limit = { has_ruler_flag = aldresia_emil_alive }
+				add_years_of_income = 1
+			}
+		}
+	}
+
+	swords_of_god = {
+		icon = mission_pray_light
+		required_missions = { 
+			soldiers_of_the_saint
+			the_fall_of_wex
+			the_imperial_magic_controller
+		 }
+		position = 12
+		
+		trigger = {
+			is_in_war = {
+				defender_leader = Z97
+				attacker_leader = ROOT
+				war_score = 90
+			}
+			Z97 = {
+				capital_scope = {
+					controlled_by = A77
+				}
+			}
+		}
+		
+		effect = {
+			country_event = { id = flavor_orda_aldresia.42 }
+		}
+	}
+
+	legacy_of_a_hero = {
+		icon = mission_princess_writing
+		required_missions = { 
+			swords_of_god
+		}
+
+		trigger = {
+			8 = {
+				owned_by = ROOT
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 50
+				}
+			}
+			423 = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 50
+				}
+			}
+			legitimacy_equivalent = emperor
+			prestige = emperor
+		}
+
+		effect = {
+			country_event = { id = flavor_orda_aldresia.43 }
+		}
+
+	}
 }
 
 
@@ -901,7 +1118,7 @@ orda_aldresia_4 = {
 		icon = mission_the_ascension
 		required_missions = {
 			adenns_revenge
-			hearts_and_minds
+			an_unshakeable_faith
 			master_of_the_diranbe
 			bastions_of_light
 		 }
@@ -938,74 +1155,31 @@ orda_aldresia_4 = {
 		}
 	}
 
-	a_knightly_night = {
-		icon = join_the_reformation
+	the_fall_of_wex = {
+		icon = mission_burning_castle
 		required_missions = {
-			the_umbral_king
-			imperfect_perfection
-		 }
-		position = 10
-		
-		trigger = {
-			OR = {
-				religion = ravelian
-				AND = {
-					any_owned_province = {
-						has_province_modifier = ravelian_lodge
-					}
-					calc_true_if = {
-						amount = 2
-						all_known_country = {
-							any_owned_province = {
-								has_province_modifier = ravelian_lodge
-							}
-							has_opinion = {
-								who = ROOT
-								value = 100
-							}
-						}
-					}
-				}
-			}
-			is_religion_enabled = ravelian
-			898 = {
-				development = 25
-			}
-
-		}
-		
-		effect = {
-			country_event = { id = flavor_orda_aldresia.22 }
-		}
-	}
-
-	swords_of_god = {
-		icon = mission_teutonic_knights
-		required_missions = {
-			a_knightly_night
+			call_of_god
 		 }
 		position = 11
 		
 		trigger = {
-			custom_trigger_tooltip = { 
-				tooltip = orda_war_variables_tt
-			}
-			OR = {
-				check_variable = {
-					which = orda_conversion_war
-					value = 10
+			wexhills_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+				NOT = { unrest = 1 }
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 5
 				}
-				hre_religion = ravelian
 			}
-			is_defender_of_faith = yes
-			exists = Z97
+			
 		}
 		
 		effect = {
-			custom_tooltip = swords_of_god_tt
-			country_event = { id = flavor_orda_aldresia.31 }
+			country_event = { id = flavor_orda_aldresia.41 }
 		}
 	}
+	
 }
 
 
@@ -1029,7 +1203,7 @@ orda_aldresia_5 = {
 	            area = rotwall_area
 	            base_manpower = 6
             }
-			treasury = 200
+			treasury = 100
 			estate_loyalty = {
 				estate = estate_nobles
 				loyalty = 50
@@ -1037,7 +1211,7 @@ orda_aldresia_5 = {
 		}
 		
 		effect = {
-			add_treasury = -200
+			add_treasury = -100
 			423 = {
                 add_permanent_province_modifier = {
                     name = imperial_barracks
@@ -1094,7 +1268,7 @@ orda_aldresia_5 = {
 	}
 
 	old_ways_and_the_new = {
-		icon = mission_have_two_subjects
+		icon = mission_marriage
 		required_missions = { 
 			the_empires_second_sons
 			reign_in_the_knight_errants
@@ -1105,10 +1279,12 @@ orda_aldresia_5 = {
 			custom_trigger_tooltip = {
 				tooltip = old_ways_and_the_new_pre_tt
 			}
-			average_autonomy = 10
-			any_known_country = {
-				is_enemy = emperor
-				humiliated_by = PREV 
+			NOT = {average_autonomy = 10}
+			hidden_trigger = {
+				any_known_country = {
+					is_enemy = emperor
+					humiliated_by = PREV 
+				}
 			}
 		}
 		
@@ -1174,7 +1350,7 @@ orda_aldresia_5 = {
 	}
 
 	master_of_the_diranbe = {
-		icon = form_the_swiss_guard
+		icon = mission_defy_the_dragon
 		required_missions = { proving_grounds }
 		position = 8
 		

@@ -198,7 +198,10 @@ else = { remove_building = barracks add_building = training_fields }
 		trigger = { 
 			Y96 = { #Guwaamud
 				num_of_owned_provinces_with = {
-					culture = shuvuush
+					OR = {
+						culture = shuvuush
+						culture = guwaadun
+					}
 					NOT = { unrest = 0 }
 					province_has_current_tech_fort_trigger = yes
 					has_manpower_building_trigger = yes
@@ -274,12 +277,12 @@ else = { remove_building = barracks add_building = training_fields }
 				num_of_units_in_province = {
 					who = ROOT #Gushuokguan
 					type = infantry
-					amount = 20
+					amount = 10
 				}				
 				num_of_units_in_province = {
 					who = ROOT #Gushuokguan
 					type = artillery
-					amount = 20
+					amount = 10
 				}
 			}
 			Y03 = { #Hubao
@@ -404,8 +407,11 @@ gushuokguan_2 = {
 						has_fort_building_trigger = yes
 					}
 				}
-				has_tax_building_trigger = yes
 				value = 10
+			}
+			num_of_owned_provinces_with = {
+				has_tax_building_trigger = yes
+				value = 5
 			}
 		}
 
@@ -487,6 +493,7 @@ gushuokguan_2 = {
 			custom_tooltip = gushuokguan_2_3_effect_tt
 			custom_tooltip = gushuokguan_can_replenish_mercenaries_tt
 			hidden_effect = { 
+				set_country_flag = gushuokguan_can_replenish_mercenaries 
 				for = {
 					amount = 10 #Cursed indentation, better safe than sorry
 					effect = "
@@ -534,7 +541,6 @@ random_owned_province = {
 		icon = spa_tercios_system
 		position = 5
 		required_missions = {
-			gushuokguan_1_4
 			gushuokguan_2_4
 		}
 		provinces_to_highlight = {  } 
@@ -616,7 +622,7 @@ random_owned_province = {
 			4838 = { #Wongpou
 				num_of_units_in_province = {
 					who = ROOT #Gushuokguan
-					type = cavalry
+					type = infantry
 					amount = 20
 				}
 			}
@@ -1025,6 +1031,10 @@ gushuokguan_3 = {
 				subject_type = dao
 				subject = V19 #Yanszin
 			}
+			V19 = { #Yanszin
+				change_government = republic
+				add_government_reform = stratocracy_reform
+			}
 			custom_tooltip = gushuokguan_release_yanszin_tt
 			custom_tooltip = feitenNewLine
 			add_mil_power = 50
@@ -1187,13 +1197,7 @@ gushuokguan_3 = {
 		provinces_to_highlight = {  } 
 
 		trigger = {  
-			custom_trigger_tooltip = {
-				tooltip = gushuokguan_won_100_battles_tt
-				check_variable = {
-					which = gushuokguan_battle_counter
-					value = 100
-				}
-			}
+			num_of_battles = { amount = 100 }
 		} 
 
 		effect = {  
@@ -1506,6 +1510,7 @@ gushuokguan_4 = {
 							area = hongnguan_area
 							area = gungi_area
 							area = xiyun_area
+							area = mulim_area
 						}
 					}
 					cede_province = Y20 #Feiten
@@ -1515,6 +1520,10 @@ gushuokguan_4 = {
 			create_subject = {
 				subject_type = dao
 				subject = Y20 #Feiten
+			}
+			Y20 = { #Feiten
+				change_government = republic
+				add_government_reform = stratocracy_reform
 			}
 			custom_tooltip = gushuokguan_release_feiten_tt
 			4871 = { #Tianlou
@@ -1735,6 +1744,25 @@ gushuokguan_5 = {
 				name = gushuokguan_guardians_of_the_stone_state
 				duration = 7300
 			}
+			add_country_modifier = {
+				name = gushuokguan_home_of_the_stone_army
+				duration = -1
+			}
+			xuanbing_area = {
+				add_permanent_claim = ROOT #Gushuokguan
+			}
+			beidugang_area = {
+				add_permanent_claim = ROOT #Gushuokguan
+			}
+			4980 = { #Tsianjian
+				add_permanent_claim = ROOT #Gushuokguan
+			}
+			4927 = { #Shiying
+				add_permanent_claim = ROOT #Gushuokguan
+			}
+			4917 = { #Jiangchang
+				add_permanent_claim = ROOT #Gushuokguan
+			}
 		} 
 	}
 
@@ -1773,18 +1801,6 @@ gushuokguan_5 = {
 				add_base_manpower = 2
 			}
 			add_army_tradition = 20
-			xuanbing_area = {
-				add_permanent_claim = ROOT #Gushuokguan
-			}
-			4980 = { #Tsianjian
-				add_permanent_claim = ROOT #Gushuokguan
-			}
-			4927 = { #Shiying
-				add_permanent_claim = ROOT #Gushuokguan
-			}
-			4917 = { #Jiangchang
-				add_permanent_claim = ROOT #Gushuokguan
-			}
 		}
 		
 	}
@@ -2032,10 +2048,7 @@ gushuokguan_5 = {
 			}
 			all_subject_country = {
 				all_owned_province = {
-					OR = {
-						local_autonomy = 25
-						has_province_modifier = autonomy_increased
-					}
+					NOT = { devastation = 0.01 }
 					NOT = { unrest = 0 }
 				}
 				capital_scope = {

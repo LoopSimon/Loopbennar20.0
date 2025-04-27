@@ -2855,7 +2855,7 @@ decrease_monstrous_1 = {
 increase_monstrous_8 = {
 	if = {
 		limit = { has_country_flag = removing_monstrous has_country_modifier = monstrous_nation }
-		custom_tooltip = increase_monstrous_10_tooltip
+		custom_tooltip = increase_monstrous_5_tooltip
 		hidden_effect = {
 			change_variable = { monstrousPoints = 8 }
 			country_event = { id = monstrous.5 }
@@ -3185,7 +3185,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 1
-						shock = 4
+						shock = 7
 						manuever = 0
 						siege = 2
 						trait = war_wizard_personality
@@ -3195,7 +3195,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 1
-						shock = 4
+						shock = 7
 						manuever = 0
 						siege = 2
 						trait = war_wizard_personality
@@ -3215,7 +3215,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 2
-						shock = 5
+						shock = 7
 						manuever = 1
 						siege = 3
 						trait = war_wizard_personality
@@ -3225,7 +3225,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 2
-						shock = 5
+						shock = 7
 						manuever = 1
 						siege = 3
 						trait = war_wizard_personality
@@ -3245,7 +3245,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 2
-						shock = 6
+						shock = 8
 						manuever = 1
 						siege = 4
 						trait = war_wizard_personality
@@ -3255,7 +3255,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 2
-						shock = 6
+						shock = 8
 						manuever = 1
 						siege = 4
 						trait = war_wizard_personality
@@ -3275,7 +3275,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 2
-						shock = 7
+						shock = 9
 						manuever = 2
 						siege = 5
 						trait = war_wizard_personality
@@ -3285,7 +3285,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 2
-						shock = 7
+						shock = 9
 						manuever = 2
 						siege = 5
 						trait = war_wizard_personality
@@ -3304,7 +3304,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 3
-						shock = 8
+						shock = 10
 						manuever = 3
 						siege = 6
 						trait = war_wizard_personality
@@ -3314,7 +3314,7 @@ create_war_wizard_effect = {
 				50 = {
 					define_general = {
 						fire = 3
-						shock = 8
+						shock = 10
 						manuever = 3
 						siege = 6
 						trait = war_wizard_personality
@@ -4854,35 +4854,6 @@ add_mercantilism_excess_to_diplo_power_effect = {
 	}
 }
 
-add_mercantilism_excess_to_diplo_power_effect = {
-	tooltip = { add_mercantilism = $VAL$ }
-	custom_tooltip = add_mercantilism_excess_to_diplo_power_effect_tt
-	hidden_effect = {
-		change_variable = {
-			which = left_to_convert
-			value = $VAL$
-		}
-		while = {
-			limit = {
-				check_variable = {
-					which = left_to_convert
-					value = 1
-				}
-			}
-			if = {
-				limit = { mercantilism = 100 }
-				add_dip_power = 100
-			}
-			else = { add_mercantilism = 1 }
-
-			subtract_variable = {
-				which = left_to_convert
-				value = 1
-			}
-		}
-	}
-}
-
 set_vampire_masquerade_opinion = {
 	every_country = {
 		limit = {
@@ -5464,6 +5435,55 @@ anb_on_development_effect = {
 	if = {
 		limit = { province_group = infernal_court_temples }
 		infernal_deity_upgrade_effect = yes
+	}
+	#Xanzerbexis
+	if = {
+		limit = {
+			owner = { has_country_flag = A49_wyvern_farm_upgrade_unlocked }
+			development = 40
+			has_province_modifier = A49_wyvern_farm
+		}
+		remove_province_modifier = A49_wyvern_farm
+		add_province_modifier = {
+			name = A49_artificer_barracks
+			duration = -1
+		}
+	}
+
+	# sponsored adventurers
+	if = {
+		limit = {
+			owner = { 
+				has_reform = sponsored_adventurer_reform
+				total_development = 250
+			}
+		}
+		owner = {
+			overlord = {
+				country_event = {
+					id = sponsored_adventurers.101
+				}
+			}
+		}
+	}
+
+	#sponsored adventurers
+	#not bothering taking it away if it goes below 15
+	if = {
+		limit = {
+			owner = {
+				has_government_attribute = reform_progress_from_development
+			}
+			development = 15
+			NOT = { has_province_flag = reform_progress_from_dev_granted }
+		}
+		owner = {
+			change_variable = {
+				which = reform_progress_dev_variable
+				value = 1
+			}
+		}
+		set_province_flag = reform_progress_from_dev_granted
 	}
 }
 
@@ -7827,12 +7847,6 @@ anb_changed_ways_effect = {
 		}
 		else_if = {
 			limit = {
-				dominant_culture = anbenlander
-			}
-			change_primary_culture = anbenlander
-		}
-		else_if = {
-			limit = {
 				dominant_culture = nurcestiran
 			}
 			change_primary_culture = nurcestiran
@@ -8540,4 +8554,157 @@ anb_gain_permanent_claims_on_continent = {
 		}
 	}
 	]
+}
+
+anb_remove_all_power = {
+	add_adm_power = -$VAL$
+	add_dip_power = -$VAL$
+	add_mil_power = -$VAL$
+}
+
+irdaeos_worship_clear_aspects = {
+	clr_country_flag = irdaeos_tournament_scarrification
+	clr_country_flag = irdaeos_tournament_headhunting
+	clr_country_flag = irdaeos_tournament_drawn
+	clr_country_flag = irdaeos_festivals_herbalism
+	clr_country_flag = irdaeos_festivals_ornamentation
+	clr_country_flag = irdaeos_festivals_hospitality
+	clr_country_flag = irdaeos_rite_hunting
+	clr_country_flag = irdaeos_rite_falconry
+	clr_country_flag = irdaeos_rite_judicial
+	clr_country_flag = irdaeos_communion_shaping
+	clr_country_flag = irdaeos_communion_tatooing
+	clr_country_flag = irdaeos_communion_night
+}
+
+give_bladeskeep_monument_worthy_reward = {
+    custom_tooltip = bladeskeep_monument_can_use.tt
+    hidden_effect = {
+        set_country_flag = bladeskeep_monument_is_worthy
+        if = {
+            limit = { owns = 817 }
+            817 = {
+                remove_province_modifier = bladeskeep_monument_not_steward
+                add_province_modifier = {
+                    name = bladeskeep_monument_steward
+                    duration = -1
+                }
+            }
+        }
+    }
+}
+gain_yearly_tribute = { #Effect similar to the yearly tribute
+	hidden_effect = {
+		[[ducats]
+			#12.5% of yearly income rounded down
+			export_to_variable = {
+				which = tributary_monthly_income
+				value = trigger_value:monthly_income
+			}
+			multiply_variable = {
+				which = tributary_monthly_income
+				value = 12
+			}
+			multiply_variable = {
+				which = tributary_monthly_income
+				value = 0.125
+			}
+			round_variable = {
+				which = tributary_monthly_income
+				value = -1
+			}
+			overlord = {
+				set_variable = {
+					which = tributary_monthly_income
+					which = PREV
+				}
+				var_effect = { effect = add_treasury var = tributary_monthly_income sign = + }
+			}
+		]
+		[[manpower]
+		#25% of yearly manpower - (Max Manpower * (1 + Manpower Recovery Speed))/10
+			export_to_variable = {
+				which = tributary_max_manpower
+				value = trigger_value:max_manpower
+			}
+			export_to_variable = {
+				which = tributary_manpower_recovery
+				value = modifier:manpower_recovery_speed
+			}
+			change_variable = {
+				which = tributary_manpower_recovery
+				value = 1
+			}
+			multiply_variable = {
+				which = tributary_max_manpower
+				which = tributary_manpower_recovery
+			}
+			divide_variable = {
+				which = tributary_max_manpower
+				value = 10
+			}
+			multiply_variable = {
+				which = tributary_max_manpower
+				value = 0.25
+			}
+			overlord = {
+				set_variable = {
+					which = tributary_max_manpower
+					which = PREV
+				}
+				var_effect_granular = { effect = add_manpower var = tributary_max_manpower sign = + }
+			}
+		]
+		[[mana]
+			#Adm/Dip/Mil - Total Development/33 (Max 12 + Monarch Power Tribute) 
+			export_to_variable = {
+				which = tributary_total_dev
+				value = trigger_value:total_development
+			}
+			divide_variable = {
+				which = tributary_total_dev
+				value = 33
+			}
+			export_to_variable = {
+				which = overlord_bonus_tribute_power
+				value = modifier:monarch_power_tribute
+				who = overlord
+			}
+			if = { #If the total monarch power is above 12, decrease it
+				limit = {
+					check_variable = {
+						which = tributary_total_dev
+						value = 12
+					}
+				}
+				set_variable = {
+					which = tributary_total_dev
+					value = 12
+				}
+			}
+			change_variable = {
+				which = tributary_total_dev
+				which = overlord_bonus_tribute_power
+			}
+			while = {
+				limit = {
+					check_variable = {
+						which = tributary_total_dev
+						value = 1
+					}
+				}
+				overlord = {
+					random_list = {
+						1 = { add_adm_power = 1 }
+						1 = { add_dip_power = 1 }
+						1 = { add_mil_power = 1 }
+					}
+				}
+				change_variable = {
+					which = tributary_total_dev
+					value = -1
+				}
+			}
+		]
+	}
 }

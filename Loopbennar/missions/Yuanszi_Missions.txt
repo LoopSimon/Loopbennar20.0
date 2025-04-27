@@ -1,0 +1,2588 @@
+yuanszi_1_missions = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = Y89
+		NOT = { has_reform = one_xia }
+	}
+
+	yuanszi_insincere_promises = {
+		icon = mission_diplomatic_relation
+		position = 1
+		provinces_to_highlight = { province_id = 4559 } #Xiadao
+
+		trigger = {
+			trading_policy_in_node = { node = 4559 policy = establish_communities }
+			any_known_country = {
+				has_reform = wulin
+				has_spy_network_from = { who = ROOT value = 20 }
+				has_90_opinion_improved_relation = { target = ROOT }
+			}
+			OR = {
+				statesman = 1
+				diplomat = 1
+				dip_power = 50
+			}
+			OR = {
+				theologian = 1
+				adm_power = 50
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { theologian = 1 } }
+				add_adm_power = -50
+			}
+			if = {
+				limit = {
+					NOT = {
+						statesman = 1
+						diplomat = 1
+					}
+				}
+				add_dip_power = -50
+			}
+			set_estate_privilege = estate_church_insincere_conversion
+		}
+	}
+
+	yuanszi_new_xiaken = {
+		icon = mission_buddhist_monk_praying
+		position = 2
+		required_missions = { yuanszi_insincere_promises } 
+		provinces_to_highlight = {
+			OR = {
+				owner = {
+					tag = Y01
+					overlord_of = Y89
+				}
+				province_id = 4559 #Xiadao
+			}
+		}
+
+		trigger = {
+			OR = {
+				statesman = 1
+				diplomat = 1
+				dip_power = 50
+			}
+			employed_advisor = { category = MIL }
+			any_known_country = {
+				has_reform = wulin
+				has_opinion = { who = ROOT value = 200 }
+			}
+			is_subject = no
+			if = {
+				limit = { exists = Y01 }
+				Y01 = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = scornfully_insulted
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { statesman = 1 diplomat = 1 } }
+				add_dip_power = -50
+			}
+			random_known_country = {
+				limit = { has_reform = wulin }
+				hidden_effect = { break_alliance = ROOT }
+				create_subject = {
+					subject_type = daimyo_xiaken_vassal
+					subject = ROOT
+				}
+			}
+			change_government = theocracy
+			add_devotion = 50
+			add_government_reform = xiaken
+
+			define_ruler = {
+				dynasty = "Of the Mist"
+				adm = 3
+				dip = 4
+				mil = 6
+			}
+			hidden_effect = { #Sets their units to Wandering Swords
+				change_unit_type = tech_raheni
+				change_unit_type = tech_halessi
+			}
+		}
+	}
+
+	yuanszi_burn_heart = {
+		icon = mission_fire_acolyte
+		position = 10
+		required_missions = { yuanszi_heartbeats_devouring } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4559 #Xiadao
+					NOT = { development = 45 }
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						is_neighbor_of = ROOT
+						NOT = { truce_with = ROOT }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			check_variable = { which = rending_pillage_counter_variable value = 10 }
+			4559 = { development = 45 }
+		}
+
+		effect = {
+			4559 = { add_permanent_province_modifier = { name = yuanszi_fires_conviction duration = 3650 } }
+			custom_tooltip = yuanszi_burn_heart_effect_tt
+			custom_tooltip = yuanszi_the_gods_from_flesh_unlock
+		}
+	}
+
+	yuanszi_build_heart = {
+		icon = mission_burning_parthenon
+		position = 12
+		required_missions = { yuanszi_burn_heart } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4559 #Xiadao
+					NOT = {
+						AND = {
+							has_multiple_manufactory_trigger = { VAL = 3 }
+							has_courthouse_building_trigger = yes
+							has_production_building_trigger = yes
+							has_manpower_building_trigger = yes
+							has_forcelimit_building_trigger = yes
+							development = 60
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 4500 #Sarisung
+						province_id = 4633 #Sir
+						province_id = 4813 #Yuanszi
+						province_id = 4936 #Jiktziancheng
+					}
+					NOT = {
+						AND = {
+							development = 30
+							has_tax_building_trigger = yes
+							has_manpower_building_trigger = yes
+							has_building = mage_tower
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						is_neighbor_of = ROOT
+						NOT = { truce_with = ROOT }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			check_variable = { which = rending_pillage_counter_variable value = 25 }
+			4559 = {
+				development = 60
+				has_multiple_manufactory_trigger = { VAL = 3 }
+				has_courthouse_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manpower_building_trigger = yes
+				has_forcelimit_building_trigger = yes
+			}
+			4500 = {
+				development = 30
+				has_tax_building_trigger = yes
+				has_manpower_building_trigger = yes
+				has_building = mage_tower
+			}
+			4633 = {
+				development = 30
+				has_tax_building_trigger = yes
+				has_manpower_building_trigger = yes
+				has_building = mage_tower
+			}
+			4813 = {
+				development = 30
+				has_tax_building_trigger = yes
+				has_manpower_building_trigger = yes
+				has_building = mage_tower
+			}
+			4936 = {
+				development = 30
+				has_tax_building_trigger = yes
+				has_manpower_building_trigger = yes
+				has_building = mage_tower
+			}
+		}
+
+		effect = {
+			4559 = { add_permanent_province_modifier = { name = yuanszi_heart_haless duration = -1 } }
+			4500 = { add_permanent_province_modifier = { name = yuanszi_valves_heart duration = -1 } }
+			4633 = { add_permanent_province_modifier = { name = yuanszi_valves_heart duration = -1 } }
+			4813 = { add_permanent_province_modifier = { name = yuanszi_valves_heart duration = -1 } }
+			4936 = { add_permanent_province_modifier = { name = yuanszi_valves_heart duration = -1 } }
+			complex_dynamic_effect = {
+				first_custom_tooltip = yuanszi_bonus_for_being_small_tt
+				first_limit = "all_owned_province = { has_province_modifier = rightful_xia_territory }"
+				first_effect = "4559 = { add_great_project_tier = { type = jiangliubao tier = 1 } }"
+			}
+		}
+	}
+}
+yuanszi_2_missions = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = Y89
+		NOT = { has_reform = one_xia }
+	}
+
+	yuanszi_tusk_boar = {
+		icon = mission_assassination
+		position = 2
+		required_missions = { yuanszi_shadows_will } 
+		provinces_to_highlight = { province_id = 4538 } #Tamvihar
+
+		trigger = {
+			OR = {
+				spymaster = 1
+				dip_power = 50
+			}
+			if = {
+				limit = { owns = 4538 }
+				owns = 4538 
+			}
+			else = {
+				4538 = {
+					OR = {
+						owner = { has_spy_network_from = { who = ROOT value = 50 } }
+						AND = {
+							owner = { has_spy_network_from = { who = ROOT value = 25 } }
+							controller = { offensive_war_with = R62 }
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { spymaster = 1 } }
+				add_dip_power = -50
+			}
+			if = {
+				limit = { NOT = { owns = 4538 } }
+				4538 = {
+					if = {
+						limit = { controller = { offensive_war_with = R62 } }
+						owner = { add_spy_network_from = { who = ROOT value = -25 } }
+					}
+					else = { owner = { add_spy_network_from = { who = ROOT value = -50 } } }
+					owner = {
+						kill_ruler = yes
+						add_country_modifier = { name = yuanszi_folly_boarborn duration = 3650 }
+					}
+				}
+			}
+			add_army_tradition = 15
+		}
+	}
+
+	yuanszi_climb_ranks = {
+		icon = mission_haasa
+		position = 4
+		required_missions = { yuanszi_tortured_mist } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					has_province_modifier = rightful_xia_territory
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					owned_by = ROOT
+					has_manpower_building_trigger = no
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 4
+								has_manpower_building_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_times_used_pillage_capital = 1
+			num_of_owned_provinces_with = {
+				value = 4
+				has_manpower_building_trigger = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 15
+				has_province_modifier = rightful_xia_territory
+			}
+		}
+
+		effect = {
+			add_army_tradition = 20
+			add_army_professionalism = 0.05
+			yuanszi_improve_school_effect = yes
+		}
+	}
+
+	yuanszi_enforce_obedience = {
+		icon = mission_establish_the_black_guard
+		position = 6
+		required_missions = { yuanszi_the_gauntlet } 
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				is_subject_of = ROOT
+				NOT = { religion = devouring_path }
+			}
+			NOT = { num_of_units_in_province = { who = ROOT type = infantry amount = 5 } }
+		}
+
+		trigger = {
+			NOT = {
+				tag = Y99
+				has_estate_privilege = estate_church_insincere_conversion
+			}
+			all_subject_country = {
+				OR = {
+					religion = devouring_path
+					capital_scope = { num_of_units_in_province = { who = ROOT type = infantry amount = 5 } }
+				}
+			}
+			OR = {
+				church_power = 200
+				has_church_aspect = expand_the_dark_world
+			}
+		}
+
+		effect = {
+			add_church_power = -200
+			country_event = { id = yuanszi.8 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = yuanszi_enforce_obedience_effect_tt
+		}
+	}
+
+	yuanszi_one_path = {
+		icon = mission_priest_church
+		position = 7
+		required_missions = { yuanszi_enforce_obedience } 
+		provinces_to_highlight = {
+			OR = {
+				region = xianjie_region
+				area = rangadevi_area
+			}
+			NOT = { owned_by = ROOT }
+		}
+
+		trigger = {
+			xianjie_region = { type = all owned_by = ROOT }
+			rangadevi_area = { type = all owned_by = ROOT }
+		}
+
+		effect = { country_event = { id = yuanszi.12 } }
+	}
+
+	yuanszi_heartbeats_devouring = {
+		icon = mission_sinister_castle
+		position = 9
+		required_missions = { yuanszi_one_path } 
+		provinces_to_highlight = {
+			OR = {
+				region = xianjie_region
+				area = rangadevi_area
+			}
+			OR = {
+				NOT = { development = 9 }
+				NOT = { religion = devouring_path }
+				AND = {
+					province_id = 4559 #Xiadao
+					NOT = {
+						AND = {
+							has_tax_building_trigger = yes
+							has_manpower_building_trigger = yes
+							has_building = mage_tower
+							development = 30
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			xianjie_region = { type = all development = 9 religion = devouring_path }
+			rangadevi_area = { type = all development = 9 religion = devouring_path }
+			4559 = {
+				development = 30
+				has_tax_building_trigger = yes
+				has_manpower_building_trigger = yes
+				has_building = mage_tower
+			}
+		}
+
+		effect = {
+			add_stability_or_adm_power = yes
+			4559 = { add_permanent_province_modifier = { name = yuanszi_heart_palpitations duration = -1 } }
+		}
+	}
+
+	yuanszi_black_mist_mines = {
+		icon = mission_zambezi_gold
+		position = 10
+		required_missions = { yuanszi_heartbeats_devouring } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = ROOT
+					OR = {
+						trade_goods = copper
+						trade_goods = iron
+					}
+					NOT = {
+						AND = {
+							base_production = 6
+							has_production_building_trigger = yes
+							has_manufactory_trigger = yes
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					trade_goods = gold
+					NOT = { base_production = 10 }
+				}
+				AND = {
+					province_id = 4811
+					NOT = {
+						AND = {
+							has_production_building_trigger = yes
+							OR = {
+								AND = {
+									base_production = 10
+									has_manufactory_trigger = yes
+								}
+								base_production = 15
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 5
+				OR = {
+					trade_goods = copper
+					trade_goods = iron
+				}
+				base_production = 6
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+			}
+			any_owned_province = {
+				trade_goods = gold
+				base_production = 10
+			}
+			4811 = {
+				has_production_building_trigger = yes
+				OR = {
+					base_production = 15
+					AND = {
+						base_production = 10
+						has_manufactory_trigger = yes
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = yuanszi_black_mist_mines_effect_tt
+			complex_dynamic_effect = {
+				first_custom_tooltip = yuanszi_bonus_for_being_small_tt
+				first_limit = "all_owned_province = { OR = { has_province_modifier = rightful_xia_territory province_id = 4940 } }"
+				first_effect = "4940 = { add_province_to_xia_effect = yes }"
+			}
+			hidden_effect = {
+				every_owned_province = {
+					if = {
+						limit = {
+							OR = {
+								AND = {
+									OR = {
+										trade_goods = copper
+										trade_goods = iron
+									}
+									base_production = 6
+									has_production_building_trigger = yes
+									has_manufactory_trigger = yes
+								}
+								AND = {
+									trade_goods = gold
+									base_production = 10
+								}
+								AND = {
+									province_id = 4811
+									base_production = 10
+									has_production_building_trigger = yes
+									has_manufactory_trigger = yes
+								}
+							}
+						}
+						add_permanent_province_modifier = { name = yuanszi_black_mist_mines_mod duration = -1 }
+					}
+					else_if = {
+						limit = {
+							OR = {
+								trade_goods = livestock
+								trade_goods = grain
+							}
+						}
+						add_permanent_province_modifier = { name = yuanszi_black_mist_tools duration = -1 }
+					}
+				}
+			}
+		}
+	}
+
+	yuanszi_black_monks = {
+		icon = jap_train_samurai
+		position = 11
+		required_missions = {
+			yuanszi_black_mist_mines
+			yuanszi_temples_travelers
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			NOT = {
+				AND = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 8	
+					has_state_edict = edict_promote_military_recruitment
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 15
+				has_manpower_building_trigger = yes
+				has_tax_building_trigger = yes
+				base_manpower = 8
+				has_state_edict = edict_promote_military_recruitment
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = yuanszi_black_monks_mod duration = -1 }
+			custom_tooltip = yuanszi_black_monks_effect_tt
+			hidden_effect = {
+				set_country_flag = xia_has_territory_buff
+				every_owned_province = {
+					limit = {
+						base_manpower = 8
+						num_of_times_expanded_infrastructure = 1
+						has_province_modifier = rightful_xia_territory
+					}
+					yuanszi_attempt_mil_specialization = yes
+				}
+			}
+		}
+	}
+
+	yuanszi_friendly_faces = {
+		icon = mission_elf_smiling
+		position = 12
+		required_missions = { yuanszi_invite_outcasts } 
+		provinces_to_highlight = {
+			is_capital = yes
+			has_discovered = ROOT
+			owner = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = aggressive_expansion
+				}
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = aggressive_expansion
+						value = -50
+					}
+					has_75_opinion_improved_relation = { target = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			NOT = { employed_advisor = { culture = szitu } }
+			has_adm_advisor_4 = yes
+			has_dip_advisor_4 = yes
+			has_mil_advisor_4 = yes
+			all_known_country = {
+				OR = {
+					has_50_opinion_aggressive_expansion_or_less = { target = ROOT }
+					has_75_opinion_improved_relation = { target = ROOT }
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = yuanszi_smiling_faces duration = -1 }
+			custom_tooltip = yuanszi_friendly_faces_effect_tt
+			hidden_effect = {
+				every_province = {
+					limit = { religion = devouring_path }
+					add_permanent_province_modifier = { name = yuanszi_smiling_men duration = -1 }
+				}
+				set_global_flag = yuanszi_smiling_men_flag
+			}
+		}
+	}
+
+	yuanszi_sickened_veins = {
+		icon = mission_blood_sacrifice
+		position = 13
+		required_missions = {
+			yuanszi_build_heart
+			yuanszi_friendly_faces
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = ROOT
+					has_province_modifier = rightful_xia_territory
+					has_tax_building_trigger = no
+				}
+				AND = {
+					province_id = 4539 #Taraghata
+					owner = { NOT = { tag = ROOT has_spy_network_from = { who = ROOT value = 95 } } }
+				}
+				AND = {
+					province_id = 4361 #Khinana
+					NOT = { has_global_flag = golden_highway_rahen_coast_started }
+					owner = { NOT = { tag = ROOT has_spy_network_from = { who = ROOT value = 95 } } }
+				}
+				AND = {
+					province_id = 4408 #Dhurajaghan
+					NOT = { has_global_flag = golden_highway_dhujat_started }
+					owner = { NOT = { tag = ROOT has_spy_network_from = { who = ROOT value = 95 } } }
+				}
+				AND = {
+					province_id = 4826 #Bianfang
+					NOT = { has_global_flag = golden_highway_upper_yanshen_started }
+					owner = { NOT = { tag = ROOT has_spy_network_from = { who = ROOT value = 95 } } }
+				}
+				AND = {
+					province_id = 4873 #Guangshui
+					NOT = { has_global_flag = golden_highway_yanshen_coast_started }
+					owner = { NOT = { tag = ROOT has_spy_network_from = { who = ROOT value = 95 } } }
+				}
+			}
+		}
+
+		trigger = {
+			has_global_flag = golden_highway_xianjie_started
+			all_owned_province = {
+				OR = {
+					has_tax_building_trigger = yes
+					has_province_modifier = rightful_xia_territory_malus
+				}
+			}
+			treasury = 3500
+			adm_power = 300
+			if = {
+				limit = { owns = 4539 }
+				treasury = 7000
+				adm_power = 600
+			}
+			else = {
+				4539 = { owner = { has_spy_network_from = { who = ROOT value = 95 } } }
+			}
+			if = {
+				limit = {
+					OR = {
+						owns = 4361
+						has_global_flag = golden_highway_rahen_coast_started
+					}
+					OR = {
+						owns = 4408
+						has_global_flag = golden_highway_dhujat_started
+					}
+					OR = {
+						owns = 4826
+						has_global_flag = golden_highway_upper_yanshen_started
+					}
+					OR = {
+						owns = 4873
+						has_global_flag = golden_highway_yanshen_coast_started
+					}
+				}
+				OR = {
+					owns = 4361
+					has_global_flag = golden_highway_rahen_coast_started
+				}
+				OR = {
+					owns = 4408
+					has_global_flag = golden_highway_dhujat_started
+				}
+				OR = {
+					owns = 4826
+					has_global_flag = golden_highway_upper_yanshen_started
+				}
+				OR = {
+					owns = 4873
+					has_global_flag = golden_highway_yanshen_coast_started
+				}
+			}
+			else = {
+				OR = {
+					if = {
+						limit = { has_global_flag = golden_highway_rahen_coast_started }
+						hidden_trigger = { always = no }
+					}
+					else = { 4361 = { owner = { has_spy_network_from = { who = ROOT value = 95 } } } }
+
+					if = {
+						limit = { has_global_flag = golden_highway_dhujat_started }
+						hidden_trigger = { always = no }
+					}
+					else = { 4408 = { owner = { has_spy_network_from = { who = ROOT value = 95 } } } }
+
+					if = {
+						limit = { has_global_flag = golden_highway_upper_yanshen_started }
+						hidden_trigger = { always = no }
+					}
+					else = { 4826 = { owner = { has_spy_network_from = { who = ROOT value = 95 } } } }
+
+					if = {
+						limit = { has_global_flag = golden_highway_yanshen_coast_started }
+						hidden_trigger = { always = no }
+					}
+					else = { 4873 = { owner = { has_spy_network_from = { who = ROOT value = 95 } } } }
+				}
+			}
+		}
+
+		effect = {
+			golden_highway_start_construction = { south_haless = yes }
+			4539 = { owner = { add_spy_network_from = { who = ROOT value = -95 } golden_highway_start_construction = { shamakhad = yes } } }
+			custom_tooltip = yuanszi_sickened_veins_effect_tt
+			if = {
+				limit = {
+					NOT = { has_global_flag = golden_highway_rahen_coast_started }
+					4361 = { owner = { has_spy_network_from = { who = ROOT value = 95 } } }
+				}
+				4361 = { owner = { add_spy_network_from = { who = ROOT value = -95 } golden_highway_start_construction = { rahen_coast = yes } set_country_flag = yuanszi_spy } }
+			}
+			if = {
+				limit = {
+					NOT = { has_global_flag = golden_highway_dhujat_started }
+					4408 = { owner = { OR = { has_spy_network_from = { who = ROOT value = 95 } has_country_flag = yuanszi_spy } } }
+				}
+				4408 = { owner = { add_spy_network_from = { who = ROOT value = -95 } golden_highway_start_construction = { dhujat = yes } set_country_flag = yuanszi_spy } }
+			}
+			if = {
+				limit = {
+					NOT = { has_global_flag = golden_highway_upper_yanshen_started }
+					4826 = { owner = { OR = { has_spy_network_from = { who = ROOT value = 95 } has_country_flag = yuanszi_spy } } }
+				}
+				4826 = { owner = { add_spy_network_from = { who = ROOT value = -95 } golden_highway_start_construction = { upper_yanshen = yes } set_country_flag = yuanszi_spy } }
+			}
+			if = {
+				limit = {
+					NOT = { has_global_flag = golden_highway_yanshen_coast_started }
+					4873 = { owner = { OR = { has_spy_network_from = { who = ROOT value = 95 } has_country_flag = yuanszi_spy } } }
+				}
+				4873 = { owner = { add_spy_network_from = { who = ROOT value = -95 } golden_highway_start_construction = { yanshen_coast = yes } } }
+			}
+			hidden_effect = {
+				set_global_flag = golden_highway_yuanszi_corruption
+				4361 = { owner = { clr_country_flag = yuanszi_spy } } #Edge case where one tag owns multiple origin provinces
+				4408 = { owner = { clr_country_flag = yuanszi_spy } }
+				4826 = { owner = { clr_country_flag = yuanszi_spy } }
+				4873 = { owner = { clr_country_flag = yuanszi_spy } }
+				golden_highway_bulwar_proper = {
+					limit = { has_province_modifier = golden_highway }
+					random = {
+						chance = 50
+						change_religion = devouring_path
+					}
+				}
+				golden_highway_far_bulwar = {
+					limit = { has_province_modifier = golden_highway }
+					random = {
+						chance = 50
+						change_religion = devouring_path
+					}
+				}
+				golden_highway_far_salahad = {
+					limit = { has_province_modifier = golden_highway }
+					random = {
+						chance = 50
+						change_religion = devouring_path
+					}
+				}
+				golden_highway_rahen_coast = {
+					limit = { has_province_modifier = golden_highway }
+					random = {
+						chance = 50
+						change_religion = devouring_path
+					}
+				}
+				golden_highway_dhujat = {
+					limit = { has_province_modifier = golden_highway }
+					random = {
+						chance = 50
+						change_religion = devouring_path
+					}
+				}
+				golden_highway_xianjie = {
+					limit = { has_province_modifier = golden_highway }
+					random = {
+						chance = 50
+						change_religion = devouring_path
+					}
+				}
+				golden_highway_upper_yanshen = {
+					limit = { has_province_modifier = golden_highway }
+					random = {
+						chance = 50
+						change_religion = devouring_path
+					}
+				}
+				golden_highway_yanshen_coast = {
+					limit = { has_province_modifier = golden_highway }
+					random = {
+						chance = 50
+						change_religion = devouring_path
+					}
+				}
+			}
+		}
+	}
+}
+yuanszi_3_missions = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = Y89
+		NOT = { has_reform = one_xia }
+	}
+
+	yuanszi_shadows_will = {
+		icon = mission_three_death
+		position = 1
+		provinces_to_highlight = { province_id = 4630 } #Sarilavhan
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = yuanszi_shadows_will_trigger_tt
+				has_country_flag = yuanszi_shadows_will_flag
+			}
+			trading_policy_in_node = { node = 4630 policy = hostile_trading }
+		}
+
+		effect = {
+			clr_country_flag = yuanszi_shadows_will_flag
+			define_advisor = {
+				type = spymaster
+				skill = 1
+				discount = yes
+			}
+		}
+	}
+
+	yuanszi_ears_wolf = {
+		icon = mission_missive
+		position = 2
+		required_missions = { yuanszi_shadows_will } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4630 #Sarilavhan
+					exists = R62
+				}
+				AND = {
+					province_id = 4532 #Kradhungur
+					NOT = { exists = R62 }
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				spymaster = 1
+				dip_power = 50
+			}
+			if = {
+				limit = { exists = R62 }
+				if = {
+					limit = { owns = 4630 }
+					owns = 4630
+				}
+				else = {
+					4630 = { #We still write it this way to give the player the incentive to siege it down
+						OR = {
+							owner = { has_spy_network_from = { who = ROOT value = 50 } }
+							AND = {
+								owner = { has_spy_network_from = { who = ROOT value = 25 } }
+								controller = { offensive_war_with = R62 }
+							}
+						}
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { owns = 4532 }
+					owns = 4532
+				}
+				else = {
+					4532 = {
+						OR = {
+							owner = { has_spy_network_from = { who = ROOT value = 50 } }
+							AND = {
+								owner = { has_spy_network_from = { who = ROOT value = 25 } }
+								controlled_by = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { spymaster = 1 } }
+				add_dip_power = -50
+			}
+			if = {
+				limit = { exists = R62 }
+				if = {
+					limit = { NOT = { owns = 4630 } }
+					4630 = {
+						if = {
+							limit = { controller = { offensive_war_with = R62 } }
+							owner = { add_spy_network_from = { who = ROOT value = -25 } }
+						}
+						else = { owner = { add_spy_network_from = { who = ROOT value = -50 } } }
+						owner = { add_country_modifier = { name = yuanszi_doubts_wolfborn duration = 3650 } }
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { NOT = { owns = 4532 } }
+					4532 = {
+						if = {
+							limit = { controlled_by = ROOT }
+							owner = { add_spy_network_from = { who = ROOT value = -25 } }
+						}
+						else = { owner = { add_spy_network_from = { who = ROOT value = -50 } } }
+						owner = { add_country_modifier = { name = yuanszi_doubts_wolfborn duration = 3650 } }
+					}
+				}
+			}
+			jade_mines_region = { discover_country = ROOT }
+			add_army_professionalism = 0.025
+		}
+	}
+
+	yuanszi_tortured_mist = {
+		icon = mission_misty_forest
+		position = 3
+		required_missions = {
+			yuanszi_new_xiaken
+			yuanszi_tusk_boar
+			yuanszi_ears_wolf
+			yuanszi_brain_lion
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4559 #Xiadao
+				AND = {
+					owned_by = ROOT
+					has_tax_building_trigger = no
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 2
+								has_tax_building_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 2
+				has_tax_building_trigger = yes
+			}
+			army_size_percentage = 1
+			has_leader_with = { total_pips = 7 }
+			if = {
+				limit = { NOT = { has_reform = wulin } }
+				overlord = {
+					has_reform = wulin
+					has_any_opinion_sent_gift = { target = ROOT }
+				}
+			}
+			exists = R78
+		}
+
+		effect = {
+			4813 = { add_province_to_xia_effect = yes }
+			4814 = { add_province_to_xia_effect = yes }
+			hidden_effect = { add_xia_origin_effect = { path = 4813 } }
+			add_country_modifier = { name = yuanszi_school_3 duration = -1 }
+			choose_new_xia_path = { path = 4813 }
+			custom_tooltip = xia_own_provinces_reminder_tt
+		}
+	}
+
+	yuanszi_the_blade = {
+		icon = per_sword_of_our_faith
+		position = 4
+		required_missions = { yuanszi_tortured_mist } 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4559 #Xiadao
+				province_id = 4811 #Jianxusi
+			}
+		}
+
+		trigger = {
+			OR = {
+				has_reform = wulin
+				4559 = { owner = { has_spy_network_from = { who = ROOT value = 40 } } }
+			}
+			4811 = {
+				OR = {
+					owner = { has_reform = wulin }
+					AND = {
+						controlled_by = ROOT
+						has_ruler_leader_from = ROOT
+					}
+				}
+			}
+		}
+
+		effect = { country_event = { id = yuanszi.2 } }
+	}
+
+	yuanszi_the_gauntlet = {
+		icon = mission_duel_snow
+		position = 5
+		required_missions = {
+			yuanszi_climb_ranks
+			yuanszi_the_blade
+			yuanszi_grand_spymaster
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					has_province_modifier = rightful_xia_territory
+					NOT = {
+						owned_by = ROOT
+						ROOT = { num_of_owned_provinces_with = { value = 25 has_province_modifier = rightful_xia_territory } }
+					}
+				}
+				AND = {
+					province_id = 4559 #Xiadao
+					NOT = {
+						AND = {
+							owner = { has_opinion_modifier = { who = ROOT modifier = scornfully_insulted } }
+							has_ruler_leader_from = ROOT
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 25
+				has_province_modifier = rightful_xia_territory
+			}
+			OR = {
+				has_reform = wulin
+				4559 = {
+					has_ruler_leader_from = ROOT
+					owner = { has_opinion_modifier = { who = ROOT modifier = scornfully_insulted } }
+				}
+			}
+			OR = {
+				spymaster = 2
+				dip_power = 100
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { spymaster = 2 } }
+				add_dip_power = -100
+			}
+			if = {
+				limit = { has_reform = wulin }
+				country_event = { id = yuanszi.7 }
+			}
+			else = {
+				country_event = { id = yuanszi.4 }
+				custom_tooltip = EVENT_INSIGHT_INTRO
+				custom_tooltip = yuanszi_the_gauntlet_effect_tt
+			}
+		} 
+	}
+
+	yuanszi_northern_frontier = {
+		icon = mission_the_surge
+		position = 6
+		required_missions = { yuanszi_the_gauntlet } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4633 #Sir
+					owner = {
+						NOT = {
+							has_spy_network_from = { who = ROOT value = 50 }
+							overlord = { has_spy_network_from = { who = ROOT value = 50 } }
+							tag = ROOT
+						}
+					}
+				}
+				AND = {
+					NOT = { region = shamakhad_region }
+					any_neighbor_province = { region = shamakhad_region }
+				}
+			}
+		}
+
+		trigger = {
+			has_adm_advisor_2 = yes
+			has_dip_advisor_2 = yes
+			has_mil_advisor_2 = yes
+			if = {
+				limit = { owns = 4633 }
+				owns = 4633
+			}
+			else = {
+				4633 = {
+					owner = {
+						OR = {
+							has_spy_network_from = { who = ROOT value = 50 }
+							overlord = { has_spy_network_from = { who = ROOT value = 50 } }
+						}
+					}
+				}
+			}
+			shamakhad_region = {
+				any_neighbor_province = {
+					NOT = { region = shamakhad_region }
+					infantry_in_province = ROOT
+				}
+			}
+		}
+
+		effect = { country_event = { id = yuanszi.9 } }
+	}
+
+	yuanszi_yan_under_mist = {
+		icon = mission_trade_with_cathay
+		position = 7
+		required_missions = { yuanszi_northern_frontier } 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4636
+				province_id = 4632
+				province_id = 4633
+				province_id = 4631
+				province_id = 4629
+				area = khasardul_area
+				province_id = 4529
+				province_id = 4630
+			}
+			NOT = {
+				AND = {
+					base_manpower = 5
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					infantry_in_province = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = yuanszi_yan_under_mist_trigger_tt
+				4636 = {
+					base_manpower = 5
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					infantry_in_province = ROOT
+				}
+				4632 = {
+					base_manpower = 5
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					infantry_in_province = ROOT
+				}
+				4633 = {
+					base_manpower = 5
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					infantry_in_province = ROOT
+				}
+				4631 = {
+					base_manpower = 5
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					infantry_in_province = ROOT
+				}
+				4629 = {
+					base_manpower = 5
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					infantry_in_province = ROOT
+				}
+				khasardul_area = {
+					type = all
+					base_manpower = 5
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					infantry_in_province = ROOT
+				}
+				4529 = {
+					base_manpower = 5
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					infantry_in_province = ROOT
+				}
+				4630 = {
+					base_manpower = 5
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					infantry_in_province = ROOT
+				}
+			}
+		}
+
+		effect = {
+			4636 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4632 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4633 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4631 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4629 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			khasardul_area = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4529 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4630 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			country_event = { id = yuanszi.10 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = yuanszi_yan_under_mist_effect_tt
+			complex_dynamic_effect = {
+				first_custom_tooltip = yuanszi_bonus_for_being_small_tt
+				first_limit = "
+					all_owned_province = {
+						OR = {
+							has_province_modifier = rightful_xia_territory
+							area = yodhilakra_area
+							area = sir_area
+							area = pharata_area
+							area = nadida_area
+							area = khasardul_area
+							area = ghatasak_area
+							area = marudhoj_area
+							area = nakara_area
+							province_id = 4529
+							province_id = 4630
+						}
+					}
+				"
+				first_effect = "4546 = { add_permanent_province_modifier = { name = yuanszi_devouring_origin duration = -1 } }"
+			}
+		}
+	}
+
+	yuanszi_blight_extremities = {
+		icon = plague_doctor_training
+		position = 8
+		required_missions = {
+			yuanszi_one_path
+			yuanszi_yan_under_mist
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				NOT = { religion = devouring_path }
+				AND = {
+					has_terrain = farmlands
+					NOT = {
+						AND = {
+							has_tax_building_trigger = yes
+							base_tax = 6
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			all_owned_province = {
+				religion = devouring_path
+				custom_trigger_tooltip = {
+					tooltip = yuanszi_blight_extremities_trigger_tt
+					OR = {
+						NOT = { has_terrain = farmlands }
+						AND = {
+							base_tax = 6
+							has_tax_building_trigger = yes
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = yuanszi_acres_skin duration = -1 }
+			custom_tooltip = yuanszi_blight_extremities_effect_tt
+			hidden_effect = {
+				set_country_flag = xia_has_territory_buff
+				every_owned_province = {
+					limit = {
+						base_tax = 8
+						has_province_modifier = rightful_xia_territory
+						OR = {
+							ROOT = { ai = yes }
+							num_of_times_expanded_infrastructure = 1
+						}
+					}
+					yuanszi_attempt_adm_specialization = yes
+				}
+			}
+		}
+	}
+
+	yuanszi_temples_travelers = {
+		icon = mission_big_house
+		position = 10
+		required_missions = { yuanszi_blight_extremities } 
+		provinces_to_highlight = {
+			has_province_modifier = rightful_xia_territory
+			province_has_center_of_trade_of_level = 1
+			NOT = {
+				AND = {
+					has_tax_building_trigger = yes
+					base_tax = 9
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				inquisitor = 3
+				adm_power = 100
+			}
+			custom_trigger_tooltip = {
+				tooltip = yuanszi_temples_travelers_trigger_tt
+				asia = {
+					type = all
+					OR = {
+						NOT = { has_province_modifier = rightful_xia_territory }
+						NOT = { province_has_center_of_trade_of_level = 1 }
+						AND = {
+							has_tax_building_trigger = yes
+							base_tax = 9
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = yuanszi_temples_travelers_effect_tt
+			complex_dynamic_effect = {
+				first_custom_tooltip = yuanszi_bonus_for_being_small_tt
+				first_limit = "all_owned_province = { has_province_modifier = rightful_xia_territory }"
+				first_effect = "4618 = { add_permanent_province_modifier = { name = yuanszi_ubercorrupt_temple duration = -1 } change_trade_goods = incense }"
+			}
+			for = {
+				amount = 25
+				effect = "
+					random_province = {
+						limit = {
+							province_group = yanhe_spirit_area
+							NOT = { province_group = temple_province_group religion = devouring_path }
+						}
+						change_religion = devouring_path
+						add_permanent_province_modifier = { name = yuanszi_smiling_men duration = -1 }
+					}
+				"
+			}
+			hidden_effect = {
+				asia = {
+					limit = {
+						has_province_modifier = rightful_xia_territory
+						province_has_center_of_trade_of_level = 1
+					}
+					add_permanent_province_modifier = { name = yuanszi_taxing_travelers duration = -1 }
+				}
+			}
+		}
+	}
+
+	yuanszi_invite_outcasts = {
+		icon = mission_forest_pilgrim
+		position = 11
+		required_missions = { yuanszi_temples_travelers } 
+		provinces_to_highlight = {
+			owner = {
+				is_neighbor_of = ROOT
+				NOT = {
+					ROOT = { has_spawned_supported_rebels = PREV }
+					has_opinion_modifier = { who = ROOT modifier = helped_support_rebels }
+				}
+			}
+		}
+
+		trigger = {
+			any_neighbor_country = {
+				OR = {
+					ROOT = { has_spawned_supported_rebels = PREV }
+					has_opinion_modifier = { who = ROOT modifier = helped_support_rebels }
+				}
+			}
+			OR = {
+				spymaster = 4
+				dip_power = 100
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = yuanszi_home_outcasts duration = -1 }
+			complex_dynamic_effect = {
+				first_custom_tooltip = yuanszi_bonus_for_being_small_tt
+				first_limit = "all_owned_province = { has_province_modifier = rightful_xia_territory }"
+				first_effect = "
+					custom_tooltip = yuanszi_invite_outcasts_effect_tt
+					hidden_effect = { every_known_country = { add_aggressive_expansion = { who = ROOT value = -25 apply_calc = no } } }
+				"
+			}
+		}
+	}
+
+	yuanszi_prosperity_faithful = {
+		icon = mission_forest_shrine
+		position = 12
+		required_missions = { yuanszi_invite_outcasts } 
+		provinces_to_highlight = {
+			has_province_modifier = rightful_xia_territory
+			NOT = {
+				AND = {
+					has_production_building_trigger = yes
+					has_manufactory_trigger = yes
+					base_production = 9
+					NOT = { devastation = 0.01 }
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 30
+				has_province_modifier = rightful_xia_territory
+				base_production = 9
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				NOT = { devastation = 0.01 }
+			}
+		}
+
+		effect = {
+			custom_tooltip = yuanszi_prosperity_faithful_effect_tt
+			complex_dynamic_effect = {
+				first_custom_tooltip = yuanszi_bonus_for_being_small_tt
+				first_limit = "all_owned_province = { has_province_modifier = rightful_xia_territory }"
+				first_effect = "
+					add_stability_or_adm_power = yes
+					add_stability_or_adm_power = yes
+				"
+			}
+			hidden_effect = {
+				set_country_flag = xia_has_territory_buff
+				every_owned_province = {
+					limit = { has_province_modifier = rightful_xia_territory }
+					add_province_modifier = { name = yuanszi_prosperity_faithful_mod duration = -1 }
+					if = {
+						limit = {
+							base_production = 8
+							OR = {
+								ROOT = { ai = yes }
+								num_of_times_expanded_infrastructure = 1
+							}
+						}
+						yuanszi_attempt_dip_specialization = yes
+					}
+				}
+			}
+		}
+	}
+
+	yuanszi_great_scouring = {
+		icon = mission_mushroom_cloud
+		position = 14
+		required_missions = {
+			yuanszi_sickened_veins
+			yuanszi_broken_spine
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = rending_has_happened
+				has_global_flag = rending_happened
+			}
+		}
+
+		effect = { country_event = { id = yuanszi.18 } }
+	}
+
+	yuanszi_haless_defiled = {
+		icon = mission_haless_map
+		position = 15
+		required_missions = { yuanszi_great_scouring } 
+		provinces_to_highlight = {
+			has_global_flag = rending_active
+			OR = {
+				AND = {
+					NOT = { has_global_flag = disable_hokuma }
+					province_id = 5430 #Shinukhorchi
+				}
+				AND = {
+					NOT = { has_global_flag = disable_yanhe }
+					province_id = 4846 #Szicheng
+				}
+				AND = {
+					NOT = { has_global_flag = disable_kharunyana }
+					province_id = 4492 #Endhuvi
+				}
+				AND = {
+					NOT = { has_global_flag = disable_phokhao }
+					province_id = 4756 #Phongao
+				}
+				AND = {
+					NOT = { has_global_flag = disable_hengdu_bowu }
+					province_id = 4948 #Lingtsuan
+				}
+				AND = {
+					NOT = { has_global_flag = disable_cinulau }
+					province_id = 6153 #Batamis
+				}
+				AND = {
+					NOT = { has_global_flag = disable_lupulan }
+					province_id = 4953 #Hujanusun
+				}
+				AND = {
+					NOT = { has_global_flag = disable_dhenbasana }
+					province_id = 4411 #Dhenijansar
+				}
+				AND = {
+					NOT = { has_global_flag = disable_marutha }
+					province_id = 4424 #Granedh
+				}
+				AND = {
+					NOT = { has_global_flag = disable_gehet_ketine }
+					province_id = 4954 #Simpajab
+				}
+				AND = {
+					NOT = { has_global_flag = disable_hukai }
+					OR = {
+						province_id = 4580 #Khabtei Teleni
+						province_id = 4557 #Telebei Fingers
+					}
+				}
+				AND = {
+					NOT = { has_global_flag = disable_huszien }
+					OR = {
+						province_id = 4923 #Lipshu
+						province_id = 4915 #Sziguantai
+						province_id = 4877 #Hongtioksing
+						province_id = 4891 #Unhoulim
+					}
+				}
+				AND = {
+					NOT = { has_global_flag = disable_tughayasa }
+					province_id = 4527 #Tughayasa
+				}
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = yuanszi_haless_defiled_trigger_tt
+				always = yes
+			}
+			if = {
+				limit = { has_global_flag = rending_active }
+				has_global_flag = hokuma_scoured
+				has_global_flag = yanhe_scoured
+				has_global_flag = kharunyana_scoured
+				has_global_flag = phokhao_scoured
+				has_global_flag = hengdu_bowu_scoured
+				has_global_flag = cinulau_scoured
+				has_global_flag = lupulan_scoured
+				has_global_flag = dhenbasana_scoured
+				has_global_flag = marutha_scoured
+				has_global_flag = gehet_ketine_scoured
+				has_global_flag = hukai_telebei_scoured
+				has_global_flag = huszien_scoured
+				has_global_flag = tughayasa_scoured
+			}
+			else = { NOT = { has_global_flag = rending_active } }
+		}
+
+		effect = {
+			country_event = { id = yuanszi.19 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = yuanszi_haless_defiled_effect_tt
+		}
+	}
+}
+yuanszi_4_missions = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = Y89
+		NOT = { has_reform = one_xia }
+	} 
+
+	yuanszi_brain_lion = {
+		icon = mission_dark_book
+		position = 2
+		required_missions = { yuanszi_shadows_will } 
+		provinces_to_highlight = {
+			has_province_flag = command_lion_warcamp
+			OR = {
+				province_id = 4311 #Gronstunad
+				province_id = 4635 #Khanamohri
+				#This bit is literally just here for my reference
+			}
+		}
+
+		trigger = {
+			is_institution_enabled = renaissance
+			OR = {
+				spymaster = 1
+				dip_power = 50
+			}
+			if = {
+				limit = { 4635 = { has_province_flag = command_lion_warcamp } }
+				if = {
+					limit = { owns = 4635 }
+					owns = 4635
+				}
+				else = {
+					4635 = {
+						OR = {
+							owner = { has_spy_network_from = { who = ROOT value = 50 } }
+							AND = {
+								owner = { has_spy_network_from = { who = ROOT value = 25 } }
+								OR = {
+									controlled_by = ROOT
+									controlled_by = R78
+								}
+							}
+						}
+					}
+				}
+			}
+			else = {
+				if = {
+					limit = { owns = 4311 }
+					owns = 4311
+				}
+				else = {
+					4311 = {
+						OR = {
+							owner = { has_spy_network_from = { who = ROOT value = 50 } }
+							AND = {
+								owner = { has_spy_network_from = { who = ROOT value = 25 } }
+								OR = {
+									controlled_by = ROOT
+									controller = { offensive_war_with = R62 }
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { spymaster = 1 } }
+				add_dip_power = -50
+			}
+			if = {
+				limit = { 4635 = { has_province_flag = command_lion_warcamp } }
+				if = {
+					limit = { NOT = { owns = 4635 } }
+					4635 = {
+						if = {
+							limit = {
+								OR = {
+									controlled_by = ROOT
+									controller = { offensive_war_with = R62 }
+								}
+							}
+							owner = { add_spy_network_from = { who = ROOT value = -25 } }
+						}
+						else = { owner = { add_spy_network_from = { who = ROOT value = -50 } } }
+					}
+				}
+				capital_scope = { add_permanent_province_modifier = { name = yuanszi_insight_lionborn duration = 3650 } }
+			}
+			else = {
+				if = {
+					limit = { NOT = { owns = 4311 } }
+					4311 = {
+						if = {
+							limit = {
+								OR = {
+									controlled_by = ROOT
+									controller = { offensive_war_with = R62 }
+								}
+							}
+							owner = { add_spy_network_from = { who = ROOT value = -25 } }
+						}
+						else = { owner = { add_spy_network_from = { who = ROOT value = -50 } } }
+					}
+				}
+				capital_scope = { add_permanent_province_modifier = { name = yuanszi_insight_lionborn duration = 3650 } }
+			}
+		}
+	}
+
+	yuanszi_grand_spymaster = {
+		icon = mission_whisper
+		position = 4
+		required_missions = { yuanszi_tortured_mist } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4559 #Xiadao
+					owner = { NOT = { has_95_opinion_improved_relation = { target = ROOT } } }
+				}
+				AND = {
+					owner = {
+						NOT = { has_government_attribute = is_in_xia }
+						any_neighbor_country = {
+							OR = {
+								has_reform = xiaken
+								has_reform = wulin
+							}
+						}
+						NOT = { has_spy_network_from = { who = ROOT value = 50 } }
+					}
+					ROOT = {
+						NOT = {
+							calc_true_if = {
+								amount = 2
+								all_known_country = {
+									has_spy_network_from = { who = ROOT value = 50 }
+									any_neighbor_country = {
+										OR = {
+											has_reform = xiaken
+											has_reform = wulin
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				spymaster = 2
+				dip_power = 50
+			}
+			OR = {
+				has_reform = wulin
+				overlord = { has_95_opinion_improved_relation = { target = ROOT } }
+			}
+			calc_true_if = {
+				amount = 2
+				all_known_country = {
+					custom_trigger_tooltip = {
+						tooltip = yuanszi_grand_spymaster_trigger_tt
+						NOT = { has_government_attribute = is_in_xia }
+					}
+					has_spy_network_from = { who = ROOT value = 50 }
+					any_neighbor_country = {
+						custom_trigger_tooltip = {
+							tooltip = yuanszi_grand_spymaster_trigger_2_tt
+							has_government_attribute = is_in_xia
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { spymaster = 2 } }
+				add_dip_power = -50
+			}
+			country_event = { id = yuanszi.3 }
+		}
+	}
+
+	yuanszi_hills_eyes = {
+		icon = mission_oni
+		position = 6
+		required_missions = { yuanszi_the_gauntlet } 
+		provinces_to_highlight = {
+			OR = {
+				owned_by = Y01 #Azjakuma
+				AND = {
+					NOT = { exists = Y01 }
+					owner = { owns = 5430 }
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { exists = Y01 }
+				Y01 = {
+					has_spy_network_from = { who = ROOT value = 50 }
+					any_neighbor_province = { infantry_in_province = ROOT }
+				}
+			}
+			else_if = {
+				limit = { owns = 5430 }
+				owns = 5430
+			}
+			else = {
+				5430 = {
+					owner = {
+						has_spy_network_from = { who = ROOT value = 50 }
+						any_neighbor_province = { infantry_in_province = ROOT }
+					}
+				}
+			}
+			OR = {
+				spymaster = 3
+				dip_power = 100
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { spymaster = 3 } }
+				add_dip_power = -100
+			}
+			moryokang_area = {
+				add_province_to_xia_effect = yes
+				add_permanent_claim = ROOT
+			}
+			if = {
+				limit = { exists = Y01 }
+				declare_war_with_cb = { who = Y01 casus_belli = cb_vassalize_mission }
+			}
+			else_if = {
+				limit = { NOT = { owns = 5430 } }
+				5430 = { owner = { ROOT = { declare_war_with_cb = { who = PREV casus_belli = cb_vassalize_mission } } } }
+			}
+			custom_tooltip = yuanszi_hills_eyes_effect_tt
+			hidden_effect = {
+				set_country_flag = formed_one_xia_flag
+				if = {
+					limit = { exists = Y01 }
+					Y01 = {
+						every_owned_province = {
+							limit = {
+								OR = {
+									culture = beikling
+									culture = serene_harimari
+								}
+							}
+							spawn_rebels = {
+								type = nationalist_rebels
+								size = 1
+							}
+						}
+					}
+				}
+				else = {
+					5430 = {
+						owner = {
+							every_owned_province = {
+								limit = {
+									OR = {
+										culture = beikling
+										culture = serene_harimari
+									}
+								}
+								spawn_rebels = {
+									type = nationalist_rebels
+									size = 1
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	yuanszi_oni_kneel = {
+		icon = mission_have_two_subjects
+		position = 7
+		required_missions = { yuanszi_hills_eyes } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					NOT = { exists = Y01 }
+					owner = {
+						owns = 5430
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+				AND = {
+					province_id = 5430 #Shinukhorchi
+					NOT = { has_ruler_leader_from = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { exists = Y01 }
+				Y01 = { is_subject_of = ROOT }
+			}
+			else = {
+				5430 = { owner = { is_subject_of = ROOT } }
+			}
+			5430 = { has_ruler_leader_from = ROOT }
+		}
+
+		effect = { country_event = { id = yuanszi.11 } }
+	}
+
+	yuanszi_secrets_ancients = {
+		icon = found_the_vatican_library
+		position = 8
+		required_missions = { yuanszi_oni_kneel } 
+		provinces_to_highlight = {
+			OR = {
+				owned_by = Y01
+				AND = {
+					NOT = { exists = Y01 }
+					owner = { owns = 5430 }
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { exists = Y01 }
+				Y01 = {
+					is_subject_of = ROOT
+					OR = {
+						AND = {
+							has_200_opinion_improved_relation = { target = ROOT }
+							has_25_opinion_sent_gift = { target = ROOT }
+							NOT = { liberty_desire = 1 }
+						}
+						AND = {
+							has_spy_network_from = { who = ROOT value = 75 }
+							5430 = { infantry_in_province = ROOT }
+							4831 = { infantry_in_province = ROOT }
+							4829 = { infantry_in_province = ROOT }
+							4828 = { infantry_in_province = ROOT }
+						}
+					}
+				}
+			}
+			else = {
+				5430 = {
+					owner = {
+						is_subject_of = ROOT
+						OR = {
+							AND = {
+								has_200_opinion_improved_relation = { target = ROOT }
+								has_25_opinion_sent_gift = { target = ROOT }
+								NOT = { liberty_desire = 1 }
+							}
+							AND = {
+								has_spy_network_from = { who = ROOT value = 75 }
+								5430 = { infantry_in_province = ROOT }
+								4831 = { infantry_in_province = ROOT }
+								4829 = { infantry_in_province = ROOT }
+								4828 = { infantry_in_province = ROOT }
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { exists = Y01 }
+				if = {
+					limit = {
+						Y01 = {
+							NOT = {
+								AND = {
+									has_200_opinion_improved_relation = { target = ROOT }
+									has_25_opinion_sent_gift = { target = ROOT }
+									NOT = { liberty_desire = 1 }
+								}
+							}
+						}
+					}
+					5430 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+					4831 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+					4829 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+					4828 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+				}
+			}
+			else_if = {
+				limit = {
+					5430 = {
+						owner = {
+							NOT = {
+								AND = {
+									has_200_opinion_improved_relation = { target = ROOT }
+									has_25_opinion_sent_gift = { target = ROOT }
+									NOT = { liberty_desire = 1 }
+								}
+							}
+						}
+					}
+				}
+				5430 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+				4831 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+				4829 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+				4828 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			}
+			
+			country_event = { id = yuanszi.13 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = to_devour_chi_effect_tt
+		}
+	}
+
+	yuanszi_arterys_edge = {
+		icon = mission_magadna_and_varanasi
+		position = 9
+		required_missions = { yuanszi_secrets_ancients } 
+		provinces_to_highlight = { province_id = 4500 } #Sarisung
+
+		trigger = {
+			has_adm_advisor_3 = yes
+			has_dip_advisor_3 = yes
+			has_mil_advisor_3 = yes
+			if = {
+				limit = { owns = 4500 }
+				4500 = { has_merchant = ROOT }
+				owns = 4500
+			}
+			else = {
+				4500 = {
+					has_merchant = ROOT
+					owner = {
+						OR = {
+							has_spy_network_from = { who = ROOT value = 50 }
+							overlord = { has_spy_network_from = { who = ROOT value = 50 } }
+						}
+					}
+				}
+			}
+		}
+
+		effect = { country_event = { id = yuanszi.14 } }
+	}
+
+	yuanszi_kharunyana_mist = {
+		icon = mission_steer_trade_to_bengal
+		position = 10
+		required_missions = { yuanszi_arterys_edge } 
+		provinces_to_highlight = {
+			region = dhujat_region #performance reasons
+			OR = {
+				province_id = 4527
+				province_id = 4504
+				province_id = 4503
+				province_id = 4489
+				province_id = 4470
+				province_id = 4499
+				province_id = 4497
+				province_id = 4500
+				province_id = 4364
+				province_id = 4601
+				province_id = 4600
+				province_id = 4599
+			}
+			NOT = {
+				AND = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = yuanszi_kharunyana_mist_trigger_tt
+				4527 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4504 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4503 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4489 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4470 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4499 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4497 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4497 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4500 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4364 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4601 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4600 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+				4599 = {
+					has_manpower_building_trigger = yes
+					has_tax_building_trigger = yes
+					base_manpower = 5
+					infantry_in_province = ROOT
+				}
+			}
+		}
+
+		effect = {
+			4527 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4504 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4503 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4489 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4470 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4499 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4497 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4500 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4364 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4601 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4600 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			4599 = { kill_units = { who = ROOT type = infantry amount = 1 } }
+			country_event = { id = yuanszi.15 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = yuanszi_kharunyana_under_mist_effect_tt
+		}
+	}
+
+	yuanszi_blackened_eyes = {
+		icon = mission_star_ascendency
+		position = 11
+		required_missions = { yuanszi_tar_banks } 
+		provinces_to_highlight = { province_id = 4527 } #Tughayasa
+
+		trigger = {
+			OR = {
+				court_mage = 4
+				adm_power = 150
+			}
+			OR = {
+				spymaster = 4
+				dip_power = 150
+			}
+			4527 = { has_ruler_leader_from = ROOT }
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { court_mage = 4 } }
+				add_adm_power = -150
+			}
+			if = {
+				limit = { NOT = { spymaster = 4 } }
+				add_dip_power = -150
+			}
+			country_event = { id = yuanszi.16 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = yuanszi_blackened_eyes_effect_tt
+		}
+	}
+
+	yuanszi_fractured_ribcage = {
+		icon = mission_the_ascension
+		position = 12
+		required_missions = {
+			yuanszi_blackened_eyes
+			yuanszi_rot_arteries
+		}
+		provinces_to_highlight = {
+			province_group = temple_province_group
+			NOT = {
+				has_province_modifier = ruined_temple_complex
+				has_province_modifier = corrupted_temple_complex
+				has_province_modifier = corrupted_temple_complex_inactive
+				has_province_modifier = yuanszi_smiling_men
+			}
+		}
+
+		trigger = {
+			calc_true_if = {
+				amount = 10
+				temple_province_group = {
+					type = all
+					has_province_modifier = yuanszi_smiling_men
+				}
+			}
+		}
+
+		effect = { add_country_modifier = { name = yuanszi_now_spine duration = -1 } }
+	}
+
+	yuanszi_broken_spine = {
+		icon = mission_impaled_soldies
+		position = 13
+		required_missions = { yuanszi_fractured_ribcage }
+		provinces_to_highlight = {
+			province_group = temple_province_group
+			NOT = {
+				has_province_modifier = ruined_temple_complex
+				has_province_modifier = corrupted_temple_complex
+				has_province_modifier = corrupted_temple_complex_inactive
+				has_province_modifier = yuanszi_smiling_men
+			}
+		}
+
+		trigger = {
+			temple_province_group = {
+				type = all
+				OR = {
+					has_province_modifier = ruined_temple_complex
+					has_province_modifier = corrupted_temple_complex
+					has_province_modifier = corrupted_temple_complex_inactive
+					has_province_modifier = yuanszi_smiling_men
+				}
+			}
+		}
+
+		effect = {
+			simple_dynamic_effect = {
+				first_custom_tooltip = rending_has_not_happened
+				first_limit = " NOT = { has_global_flag = rending_happened } "
+				first_effect = " add_country_modifier = { name = yuanszi_lie_wait duration = -1 desc = until_rending } "
+				second_custom_tooltip = rending_has_happened
+				second_limit = " has_global_flag = rending_happened "
+				second_effect = "
+					reduce_stability_or_adm_power = yes
+					add_country_modifier = { name = yuanszi_mad_dash duration = 7300 }
+				"
+			}
+		}
+	}
+}
+yuanszi_5_missions = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = Y89
+		NOT = { has_reform = one_xia }
+	}
+
+	yuanszi_tar_banks = {
+		icon = industrialized_rhineland
+		position = 10
+		required_missions = { yuanszi_arterys_edge } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					NOT = { owned_by = ROOT }
+					OR = {
+						area = sarisung_area
+						area = khirnadhiman_area
+						area = semphrerong_area
+						area = tughayasa_area
+						area = thadarsaghol_area
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 4500 #Sarisung
+						province_id = 4600 #Semphrerong
+					}
+					NOT = {
+						AND = {
+							province_has_center_of_trade_of_level = 2
+							has_trade_building_trigger = yes
+						}
+					}
+				}
+				AND = {
+					province_id = 1361 #Gulf of Rahen
+					NOT = { has_merchant = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			sarisung_area = { type = all owned_by = ROOT }
+			khirnadhiman_area = { type = all owned_by = ROOT }
+			semphrerong_area = { type = all owned_by = ROOT }
+			tughayasa_area = { type = all owned_by = ROOT }
+			thadarsaghol_area = { type = all owned_by = ROOT }
+			OR = {
+				spymaster = 3
+				trader = 3
+				has_promote_investments = trade_company_kharunyana
+			}
+			4500 = {
+				province_has_center_of_trade_of_level = 2
+				has_trade_building_trigger = yes
+			}
+			4600 = {
+				province_has_center_of_trade_of_level = 2
+				has_trade_building_trigger = yes
+			}
+			1361 = { has_merchant = ROOT }
+		}
+
+		effect = {
+			custom_tooltip = yuanszi_tar_banks_effect_tt
+			hidden_effect = { set_variable = { which = YuansziPowerCost value = 25 } }
+			complex_dynamic_effect = {
+				first_custom_tooltip = yuanszi_bonus_for_being_small_tt
+				first_limit = "all_owned_province = { has_province_modifier = rightful_xia_territory }"
+				first_effect = "
+					add_country_modifier = { name = yuanszi_bonus_trade_range duration = 18250 }
+				"
+			}
+		}
+	}
+
+	yuanszi_rot_arteries = {
+		icon = mission_skull
+		position = 11
+		required_missions = { yuanszi_tar_banks } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 4420 #Sramaya
+						province_id = 4871 #Tianlou
+					}
+					NOT = {
+						owner = {
+							OR = {
+								has_spy_network_from = { who = ROOT value = 50 }
+								overlord = { has_spy_network_from = { who = ROOT value = 50 } }
+								tag = ROOT
+							}
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 4500 #Sarisung
+						province_id = 4633 #Sir
+					}
+					NOT = {
+						AND = {
+							province_has_center_of_trade_of_level = 3
+							has_trade_building_trigger = yes
+							province_has_current_tech_fort_trigger = yes
+							development = 25
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 1372 #Tianlou Bay
+						province_id = 1361 #Gulf of Rahen
+					}
+					NOT = { ROOT = { trading_policy_in_node = { node = PREV policy = hostile_trading } } }
+				}
+			}
+		}
+
+		trigger = {
+			trading_policy_in_node = { node = 1361 policy = hostile_trading }
+			if = {
+				limit = { owns = 4420 }
+				owns = 4420
+			}
+			else = {
+				4420 = {
+					owner = {
+						OR = {
+							has_spy_network_from = { who = ROOT value = 50 }
+							overlord = { has_spy_network_from = { who = ROOT value = 50 } }
+						}
+					}
+				}
+			}
+			trading_policy_in_node = { node = 1372 policy = hostile_trading }
+			if = {
+				limit = { owns = 4871 }
+				owns = 4871
+			}
+			else = {
+				4871 = {
+					owner = {
+						OR = {
+							has_spy_network_from = { who = ROOT value = 50 }
+							overlord = { has_spy_network_from = { who = ROOT value = 50 } }
+						}
+					}
+				}
+			}
+			4500 = {
+				province_has_center_of_trade_of_level = 3
+				has_trade_building_trigger = yes
+				province_has_current_tech_fort_trigger = yes
+				development = 25
+			}
+			4633 = {
+				province_has_center_of_trade_of_level = 3
+				has_trade_building_trigger = yes
+				province_has_current_tech_fort_trigger = yes
+				development = 25
+			}
+		}
+
+		effect = { country_event = { id = yuanszi.17 } }
+	}
+
+	yuanszi_bleeding_tar = {
+		icon = mission_murder
+		position = 12
+		required_missions = { yuanszi_rot_arteries }
+		provinces_to_highlight = {
+			OR = {
+				superregion = rahen_superregion
+				superregion = vimdatrong_superregion
+				superregion = yanshen_superregion
+			}
+			NOT = {
+				religion = devouring_path
+				country_or_subject_holds = ROOT
+			}
+		}
+
+		trigger = {
+			calc_true_if = {
+				amount = 50
+				rahen_superregion = {
+					type = all
+					NOT = { country_or_subject_holds = ROOT }
+					religion = devouring_path
+				}
+				vimdatrong_superregion = {
+					type = all
+					NOT = { country_or_subject_holds = ROOT }
+					religion = devouring_path
+				}
+				yanshen_superregion = {
+					type = all
+					NOT = { country_or_subject_holds = ROOT }
+					religion = devouring_path
+				}
+			}
+		}
+
+		effect = { add_country_modifier = { name = yuanszi_flowing_rot duration = -1 } }
+	}
+}
