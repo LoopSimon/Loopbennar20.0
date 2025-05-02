@@ -1,6 +1,6 @@
 NDefines.NDiplomacy.MIN_RELATIONS_TO_ALLY = -200 
 NDefines.NDiplomacy.DAYS_TO_DECLARE_WAR = 3
-NDefines.NDiplomacy.NUM_OF_GREAT_POWERS = 9
+NDefines.NDiplomacy.NUM_OF_GREAT_POWERS = 10
 NDefines.NDiplomacy.DISHONORABLE_PEACE_MONTHS = 1
 NDefines.NDiplomacy.MONTHS_BEFORE_TOTAL_OCCUPATION = 24
 
