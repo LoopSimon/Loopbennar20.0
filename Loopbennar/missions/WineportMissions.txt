@@ -70,10 +70,21 @@ A16_branch_1 = {
 				has_trade_building_trigger = yes
 				has_dock_building_trigger = yes
 			}
-			emperor = {
-				has_opinion = {
-					who = ROOT
-					value = 80
+			OR = {
+				emperor = {
+					OR = {
+						has_opinion = {
+							value = 80
+							who = ROOT
+						}
+						has_75_opinion_improved_relation = { target = ROOT }
+					}
+				}
+				calc_true_if = {
+					amount = 2
+					any_ally = { 
+						is_elector = yes
+					}
 				}
 			}
 		}
@@ -103,11 +114,14 @@ A16_branch_1 = {
 
 		trigger = {
 			if = {
-				limit = { hre_size = 1 } 
+				limit = { hre_size = 1 }
 				emperor = {
-					has_opinion = {
-						value = 100
-						who = ROOT
+					OR = {
+						has_opinion = {
+							value = 100
+							who = ROOT
+						}
+						has_75_opinion_improved_relation = { target = ROOT }
 					}
 				}
 				treasury = 100
@@ -186,8 +200,11 @@ A16_branch_1 = {
 
 		effect = {
 			add_prestige = 10
-			neckcliffe_area = { cede_province = A22 } 
-			vassalize = A22
+			neckcliffe_area = { cede_province = A22 }
+			if = {
+				limit = { A22 = { NOT = { is_subject_of = ROOT } } }
+				vassalize = A22
+			}
 			custom_tooltip = wineport_recomend_vassal.tt
 			A22 = {
 				hidden_effect = { change_government = republic } 
@@ -469,6 +486,7 @@ A16_winebay_1 = {
 			calc_true_if = {
 				amount = 20
 				jasiir_jadid_region = {
+					type = ALL
 					OR = {
 						owner = {
 							has_opinion = {
@@ -881,6 +899,7 @@ A16_winebay_2 = {
 			calc_true_if = {
 				amount = 20
 				kheionai_superregion = {
+					type = ALL
 					OR = {
 						owner = {
 							has_opinion = {
@@ -1489,16 +1508,15 @@ A16_branch_4 = {
 		}
 
 		trigger = {
-			if = {
-				limit = { exists = A10 } 
+			OR = {
 				A10 = {
 					OR = {
 						guaranteed_by = ROOT
 						is_in_trade_league_with = ROOT
 					}
 				}
+				owns = 97
 			}
-			else = { owns = 97 } 
 		}
 
 		effect = {
@@ -1606,7 +1624,7 @@ A16_branch_4 = {
 		provinces_to_highlight = {
 			province_id = 108
 			OR = {
-				local_autonomy = 70
+				local_autonomy = 40
 				NOT = { development = 25 } 
 				NOT = { has_trade_building_trigger = yes } 
 				NOT = { owned_by = ROOT } 
@@ -1615,7 +1633,7 @@ A16_branch_4 = {
 
 		trigger = {
 			108 = {
-				NOT = { local_autonomy = 70 } 
+				NOT = { local_autonomy = 40 } 
 				development = 25
 				has_trade_building_trigger = yes
 				owned_by = ROOT
@@ -1624,7 +1642,7 @@ A16_branch_4 = {
 
 		effect = {
 			108 = {
-				add_local_autonomy = 30
+				add_local_autonomy = -30
 				add_province_modifier = {
 					name = wineport_rubenaire_trade
 					duration = -1
@@ -1909,7 +1927,7 @@ A16_winebay_4 = {
 
 		trigger = {  
 			is_great_power = yes
-			diplomatic_reputation = 5
+			diplomatic_reputation = 4
 			trading_bonus = {
 				trade_goods = wine
 				value = yes
@@ -2004,7 +2022,7 @@ A16_branch_5 = {
 			province_id = 79
 			OR = {
 				unrest = 0
-				local_autonomy = 25
+				local_autonomy = 40
 				NOT = { base_production = 10 } 
 				NOT = { owned_by = ROOT } 
 			}
@@ -2013,7 +2031,7 @@ A16_branch_5 = {
 		trigger = {
 			79 = {
 				NOT = { unrest = 0 } 
-				NOT = { local_autonomy = 25 } 
+				NOT = { local_autonomy = 40 } 
 				base_production = 10
 				owned_by = ROOT
 			}
@@ -2021,7 +2039,7 @@ A16_branch_5 = {
 
 		effect = {
 			79 = {
-				add_local_autonomy = 30
+				add_local_autonomy = -30
 				add_province_modifier = {
 					name = wineport_eilisin_goods
 					duration = -1
@@ -2037,7 +2055,7 @@ A16_branch_5 = {
 		provinces_to_highlight = {
 			province_id = 114
 			OR = {
-				local_autonomy = 70
+				local_autonomy = 40
 				NOT = { owned_by = ROOT } 
 				NOT = { has_production_building_trigger = yes } 
 				NOT = { base_production = 10 } 
@@ -2046,7 +2064,7 @@ A16_branch_5 = {
 
 		trigger = {
 			114 = {
-				NOT = { local_autonomy = 70 } 
+				NOT = { local_autonomy = 40 } 
 				owned_by = ROOT
 				has_production_building_trigger = yes
 				base_production = 10
@@ -2055,7 +2073,7 @@ A16_branch_5 = {
 
 		effect = {
 			114 = {
-				add_local_autonomy = 30
+				add_local_autonomy = -30
 				add_province_modifier = {
 					name = wineport_madalaire_dev_cost
 					duration = -1
@@ -2182,7 +2200,11 @@ A16_winebay_5 = {
 					}
 				}
 			}
-			dip = 6
+			OR = {
+				dip = 6
+				monthly_dip = 10
+			}	
+			
 			dip_power = 50
 		}
 

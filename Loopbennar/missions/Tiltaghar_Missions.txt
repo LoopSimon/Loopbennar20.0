@@ -376,7 +376,7 @@ tiltaghar_slot_2 = {
 		trigger = {
 			army_size_percentage = 0.8
 			OR = {
-				has_country_modifier = raj_mandate_right_to_expansion
+				#has_country_modifier = raj_mandate_right_to_expansion
 				has_estate_privilege = estate_uppercastes_right_of_counsel
 			}
 		}
@@ -1072,14 +1072,10 @@ tiltaghar_slot_3 = {
 		trigger = {
 			if = {
 				limit = {
-					any_known_country = {
-						NOT = { tag = R08 } #Tiltaghar
-						has_government_attribute = is_raja
-					}
-				} 
-				any_known_country = {
-					has_government_attribute = is_raja
-					overlord_of = ROOT
+					has_saved_global_event_target = raj_raja_global_target
+					NOT = { has_government_attribute = is_raja }
+				}
+				event_target:raj_raja_global_target = {
 					has_opinion = {
 						who = ROOT
 						value = 150
@@ -1099,34 +1095,25 @@ tiltaghar_slot_3 = {
 		effect = {
 			if = {
 				limit = {
-					NOT = { has_country_flag = raj_vizier }
-					any_known_country = {
-						NOT = { tag = R08 } #Tiltaghar
-						has_government_attribute = is_raja
+					has_saved_global_event_target = raj_raja_global_target
+					NOT = { 
+						tag = event_target:raj_raja_global_target
+						tag = event_target:raj_vizier_global_target
 					}
 				}
 				custom_tooltip = tiltaghar_most_loyal_subject_tooltip
 				hidden_effect = {
-							overlord = {
-								random_subject_country  = {
-									limit = { has_country_flag = raj_vizier }
-									raj_clear_vizier = yes
-									country_event = { id = rahenraj.2103 }
-								}
-							}
-					ROOT = {
-						set_country_flag = raj_vizier
-						save_event_target_as = new_vizier
-						country_event = { id = rahenraj.2102  }
-					}
+					event_target:raj_vizier_global_target = { raj_become_senapti = yes }
+					raj_become_vizier = yes
 				}
 			}
 			else_if = {
 				limit = {
-					has_country_flag = raj_vizier
+					has_saved_global_event_target = raj_vizier_global_target
+					tag = event_target:raj_vizier_global_target
 				}
 				add_prestige = 20
-				change_variable = { which = vizierSway value = 15 }
+				# change_variable = { which = vizierSway value = 15 }
 			}
 			else = {
 				rahen_coast_region = {
@@ -1265,7 +1252,7 @@ tiltaghar_slot_4 = {
 		trigger = {
 			OR = {
 				mil_power = 100
-				has_country_modifier = raj_mandate_ministry_lectures
+				#has_country_modifier = raj_mandate_ministry_lectures
 				has_estate_privilege = estate_lowercastes_mediators
 			}
 		}
