@@ -335,58 +335,6 @@ declarewar = {
 			FROM = { NOT = { has_country_modifier = ultakal_decree } }
 		}
 	}
-	
-	condition = {
-		tooltip = RAJ_HIGH_COHESION
-		potential = {
-			OR = {
-				has_reform = prabhi_reform
-				has_reform = senapti_reform
-			}
-			NOT = { has_country_flag = raj_vizier }
-			4411 = {
-				check_variable = {
-					which = raj_cohesion
-					value = 80
-				}
-			}
-		}
-		allow = {
-			OR = {
-				has_country_modifier = raj_mandate_right_to_expansion
-				FROM = { has_government_attribute = is_raja }
-			}
-		}
-	}
-	
-	condition = {
-		tooltip = RAJ_NEED_RIGHT_TO_EXPANSION
-		potential = {
-			has_reform = senapti_reform
-		}
-		allow = {
-			OR = {
-				has_country_modifier = raj_mandate_right_to_expansion
-				FROM = { has_reform = prabhi_reform }
-				FROM = { has_reform = senapti_reform }
-				FROM = { has_government_attribute = is_raja }
-				has_country_flag = raj_vizier
-			}
-		}
-	}
-	
-	condition = {
-		tooltip = RAJ_ALREADY_AT_WAR
-		potential = {
-			OR = {
-				has_reform = prabhi_reform
-				has_reform = senapti_reform
-			}
-		}
-		allow = {
-			is_at_war = no
-		}
-	}
 
 	# Can't declare on subjects of the Raja if you are at war with them
 	condition = {
@@ -403,36 +351,6 @@ declarewar = {
 					has_government_attribute = is_raja
 				}
 			}
-		}
-	}
-	
-	condition = {
-		tooltip = RAJ_PROTECTED_BY_THE_RAJA
-		potential = {
-			OR = {
-				has_reform = prabhi_reform
-				has_reform = senapti_reform
-			}
-		}
-		allow = {
-			NOT = { FROM = { has_country_modifier = raj_mandate_raja_protection } }
-		}
-	}
-	
-	condition = {
-		tooltip = RAJ_RAJA_LIMITED_TERRITORY
-		potential = {
-			OR = {
-				has_reform = prabhi_reform
-				has_reform = senapti_reform
-			}
-		}
-		allow = {
-			OR = {
-				NOT = { has_country_modifier = raj_mandate_territorial_limits }
-				FROM = { has_government_attribute = is_raja }
-			}
-			NOT = { has_country_modifier = raj_ai_introspecting }
 		}
 	}
 	
@@ -694,7 +612,15 @@ declarewar = {
 		}
 	}
 	
-	
+	condition = {
+		tooltip = EKHA_NO_WAR
+		potential = {
+			has_country_flag = ekhasi_plotting
+		}
+		allow = {
+			always = no
+		}
+	}
 	
 	effect = {
 		on_war_declaration_effect = yes #1.35
@@ -772,52 +698,6 @@ declarewar = {
 			add_government_reform = indep_xiaken
 		}
 		
-		if = {
-			limit = {
-				OR = {
-					has_reform = prabhi_reform
-					has_reform = senapti_reform
-					has_government_attribute = is_raja
-				}
-				FROM = {
-					OR = {
-						has_reform = prabhi_reform
-						has_reform = senapti_reform
-						has_government_attribute = is_raja
-					}
-				}
-			}
-			raj_calc_internal_wars = yes
-			# raj_cohesion_change = { amount = 30 non_monthly = yes }
-			# FROM = { raj_cohesion_change = { amount = 10 } non_monthly = yes }
-		}
-		if = {
-			limit = { 
-				has_country_modifier = raj_mandate_right_to_expansion
-			}
-			remove_country_modifier = raj_mandate_right_to_expansion
-			add_country_modifier = {
-				name = raj_mandate_sactioned_conquest
-				duration = 3650
-				hidden = yes
-			}
-		}
-		if = {
- 			limit = {
- 				has_country_modifier = loop_remnant_spiner
- 				FROM = {
- 					NOT = {
- 						any_owned_province = {
- 							continent = serpentspine
- 						}
- 					}
- 					NOT = { coalition_target = FROM }
- 				}
- 			}
- 			country_event = {
- 				id = flavor_loopgeneric.7
- 			}
- 		}
 		if = {
 			limit = {
 				has_country_modifier = dwarovar_claimer
@@ -1271,6 +1151,32 @@ declarewar = {
 			country_event = {
 				id = flavour_velsfadhecai.12
 			}
+		}
+
+		# Raja mandate buffs, declaration of harmony
+		if = {
+			limit = {
+				overlord = { has_government_attribute = is_raja }
+				FROM = {
+					OR = { 
+						overlord = { has_government_attribute = is_raja }
+						has_government_attribute = is_raja
+					}
+				}
+			}
+			remove_country_modifier = rahen_raj_mandate_raja_3_vizier_peace_mod
+			remove_country_modifier = rahen_raj_mandate_raja_3_senaptia_peace_mod
+			remove_country_modifier = rahen_raj_mandate_raja_3_prabhia_peace_mod
+		}
+		if = {
+			limit = {
+				OR = {
+					has_country_modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod
+					FROM = { has_country_modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod }
+				}
+			}
+			remove_country_modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod
+			FROM = { remove_country_modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod }
 		}
 
 		if = {
@@ -2545,25 +2451,14 @@ annexationaction = {
 	}
 	
 	condition = {
-		tooltip = RAJ_INDEPENDENCE_GUARANTEED
-		potential = {
-			has_government_attribute = is_raja
-		}
-		allow = {
-			NOT = { FROM = { has_country_modifier = raj_mandate_guaranteed_autonomy } }
-		}
-	}
-	condition = {
 		tooltip = RAJ_COHESION_TOO_LOW
 		potential = {
 			has_government_attribute = is_raja
 		}
 		allow = {
-			4411 = {
-				check_variable = {
-					which = raj_cohesion
-					value = 80
-				}
+			check_variable = {
+				which = raj_var_cohesion
+				value = 70
 			}
 		}
 	}
@@ -2972,25 +2867,6 @@ form_coalition = {
 			NOT = { has_country_flag = nsc_was_at_samartal }
 		}
 	}
-	
-	condition = { #Raja subjects can't join external coalitions
-		tooltip = RAJ_EXTERNAL_COALITIONS
-		potential = {
-			overlord = { has_government_attribute = is_raja }
-		}
-		allow = {
-			FROM = { overlord = { has_government_attribute = is_raja } }
-		}
-	}
-	
-	condition = { #External tags can't coalition Raja subjects
-		tooltip = RAJ_COALITIONS_EXTERNALS
-		potential = {
-		}
-		allow = {
-			FROM = { NOT = { overlord = { has_government_attribute = is_raja } } }
-		}
-	}
 }
 
 request_to_join_trade_league = {
@@ -3387,6 +3263,57 @@ callaction = {
 			FROM = { NOT = { capital_scope = { continent = europe } } }
 		}
 	}
+
+	condition = { #raj
+		tooltip = NO_SENAPTI_VS_RAJA
+		potential = {
+			FROM = {
+				OR = {
+					is_subject_of_type = great_daimyo_vassal
+					is_subject_of_type = vizier_vassal
+				}
+			}
+			NOT = {
+				has_reform = senapti_reform
+				has_reform = prabhi_reform
+				has_reform = indep_prabhi_reform
+			}
+		}
+		allow = {
+			NOT = {
+				event_target:raj_raja_global_target = {	war_with = ROOT }
+			}
+		}
+	}
+
+	effect = {		#make ai use some raj mandates. might need better control in the future (i.e. only if the enemy is strong?)
+		if = {
+			limit = {
+				has_saved_global_event_target = raj_raja_global_target
+				tag = event_target:raj_raja_global_target
+				FROM = { tag = event_target:raj_vizier_global_target }
+			}
+			if = {
+				limit = {
+					event_target:raj_vizier_global_target = {
+						ai = yes
+						NOT = { liberty_desire = 50 }
+					}
+				}
+				event_target:raj_vizier_global_target = {
+					add_adm_power = -100
+					rahen_raj_mandate_vizier_logistical_focus = yes
+					add_dip_power = -100
+					rahen_raj_mandate_vizier_prabhi_recruitment = yes
+				}
+			}
+			if = {
+				limit = { ai = yes }
+				add_adm_power = -100
+				rahen_raj_mandate_raja_imperial_tribute = yes
+			}			
+		}
+	}
 }
 
 designate_march = {
@@ -3544,7 +3471,7 @@ requestpeace = {
         potential = {
 			FROM = {
 				OR = {
-					is_subject_of_type = daimyo_vassal
+					is_subject_of_type = vizier_vassal
 					is_subject_of_type = great_daimyo_vassal
 				}
 				overlord = {

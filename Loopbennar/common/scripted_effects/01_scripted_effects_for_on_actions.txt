@@ -1497,7 +1497,7 @@ on_new_monarch_effect = { #1.35
 	}
 
 	#Raj Vizier
-	if = { limit = { has_country_flag = raj_vizier }
+	if = { limit = { is_subject_of_type = vizier_vassal }
 		overlord = {
 			set_country_flag = raj_vizier_just_died
 			country_event = { id = rahenraj.2100 days = 1 }
@@ -3835,6 +3835,21 @@ on_battle_won_country_effect = {
 			value = 1
 		}
 	}
+	# Raj rework
+	overlord = {
+		PREV = {	#the shit I have to do - overlord in attacker_leader_doesn't work, global event targets do but throw errors
+			if = {
+				limit = {
+					is_subject_of_type = great_daimyo_vassal
+					OR = {
+						is_in_war = { attacker_leader = PREV participants = THIS }
+						is_in_war = { defender_leader = PREV participants = THIS }
+					}
+				}
+				change_variable = { which = senapti_battles_won value = 1 }
+			}
+		}
+	}
 }
 
 on_battle_lost_country_effect = {
@@ -5542,6 +5557,19 @@ on_war_declaration_effect = {
 			has_reform = rally_to_the_roar #ashhana lizardfolk reform
 		}
 		add_manpower = 5
+	}
+
+	if = {	#expand the war against raj
+		limit = {
+			FROM = { is_subject_of_type = daimyo_vassal }
+			NOT = {
+				overlord = { has_government_attribute = is_raja }
+			}
+		}
+		FROM = { save_event_target_as = prabhi_victim }
+		country_event = {
+			id = rahenraj.5010
+		}
 	}
 }
 
@@ -7773,7 +7801,6 @@ on_advisor_removed_effct_dip = {}
 on_advisor_removed_effct_mil = {}
 on_advisor_removed_effct = {
 	on_advisor_removed_effct_$type$ = yes
-	remove_grand_vizier_modifiers = yes
 	#remove_country_modifier = zoroastrian_prophet_in_the_court
 }
 
@@ -8174,6 +8201,7 @@ startup_1444_effects = {
 		# STARTUP EFFECTS GO HERE #
 		###########################
 
+
 		#ruler optimization
 
 		if = {
@@ -8193,6 +8221,12 @@ startup_1444_effects = {
 		update_magic_study_experience_modifier = yes
 		update_artifice_points = yes
 		update_research_speed = yes
+
+		# Raj setup
+		if = { limit = { tag = R51 }
+			rahen_raj_variables_startup = yes
+			country_event = { id = rahenraj.90 days = 120 random = 60 }
+		}
 
 		if = {
 			limit = {
@@ -8854,13 +8888,6 @@ startup_1444_effects = {
 				ai = yes
 			}
 			country_event = { id = flavor_wex.2 }
-		}
-
-		if = {
-			limit = {
-				tag = R51
-			}
-			country_event = { id = rahenraj.90 days = 120 random = 60 }
 		}
 
 		if = {
