@@ -1,0 +1,3282 @@
+namespace = rahenraj
+
+country_event = {
+	id = rahenraj.0		#Corruption of the Lotus Court Disaster stuff
+	title = rahenraj.0.t
+	desc = rahenraj.0.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			4411 = {
+				province_event = { id = rahenraj.91 days = 730 }				#Foreshadowing
+				province_event = { id = rahenraj.92 days = 1095 random = 730 }	#death of Manava
+				set_variable = { which = rahen_court_case_strength value = 5 }
+			}
+			random_owned_province = {
+				limit = { NOT = { has_province_modifier = rahen_severely_neglected_infrastructure has_province_modifier = rahen_neglected_infrastructure  } }
+				random_list = {
+					1 = {
+						add_permanent_province_modifier = {
+							name = rahen_severely_neglected_infrastructure
+							duration = -1
+						}
+						set_variable = { which = rahen_months_to_repair value = 6 }
+					}
+					7 = {
+						add_permanent_province_modifier = {
+							name = rahen_neglected_infrastructure
+							duration = -1
+						}
+						set_variable = { which = rahen_months_to_repair value = 6 }
+					}
+				}
+			}
+			random_owned_province = {
+				limit = { NOT = { has_province_modifier = rahen_severely_neglected_infrastructure has_province_modifier = rahen_neglected_infrastructure  } }
+				random_list = {
+					1 = {
+						add_permanent_province_modifier = {
+							name = rahen_severely_neglected_infrastructure
+							duration = -1
+						}
+						set_variable = { which = rahen_months_to_repair value = 6 }
+					}
+					7 = {
+						add_permanent_province_modifier = {
+							name = rahen_neglected_infrastructure
+							duration = -1
+						}
+						set_variable = { which = rahen_months_to_repair value = 6 }
+					}
+				}
+			}
+			for = {
+				amount = 20
+				effect = "
+					rahen_add_new_neglected_infrastructure = yes
+				"
+			}
+
+			add_corruption = 15
+
+			rahen_calc_reform_ministry_of_agriculture = yes
+			rahen_calc_reform_ministry_of_philosophy = yes
+			rahen_calc_reform_ministry_of_internal_relations = yes
+			rahen_calc_reform_ministry_of_foreign_relations = yes
+			
+			set_variable = { which = raj_deved_farmlands value = 0 }
+		}
+	}
+
+	option = {
+		name = rahenraj.0.a
+		goto = 4411
+		custom_tooltip = raj_cohesion_current_tt
+		
+		custom_tooltip = raj_dhenijansar_colon # Can't actually scope, since the modifier already exists thus the effect appears to add nothing. 
+		tooltip = {
+			add_province_modifier = { name = raj_manavas_influence duration = -1 }
+		}
+	}
+}
+
+province_event = {	#on raj capital conquered
+	id = rahenraj.1
+	title = rahenraj.1.t
+	picture = COURT_eventPicture
+	desc = {
+		trigger = {
+			owner = {
+				has_government_attribute = is_raja
+				NOT = { tag = event_target:raj_vizier_global_target }
+			}
+			FROM = { has_government_attribute = is_raja }
+		}
+		desc = rahenraj.1.da
+	}
+	desc = {
+		trigger = {
+			owner = {
+				has_government_attribute = is_raja
+				NOT = { tag = event_target:raj_vizier_global_target }
+			}
+			FROM = { NOT = { has_government_attribute = is_raja } }
+		}
+		desc = rahenraj.1.da
+	}
+	desc = {
+		trigger = { owner = { NOT = { has_government_attribute = is_raja } } }
+		desc = rahenraj.1.db
+	}
+	desc = {
+		trigger = {
+			owner = {
+				has_government_attribute = is_raja
+				tag = event_target:raj_vizier_global_target
+			}
+		}
+		desc = rahenraj.1.dc
+	}
+
+	major = yes
+	is_triggered_only = yes
+
+	trigger = {
+		province_id = 4411
+		NOT = { has_global_flag = destroyed_raj }
+	}
+
+
+	immediate = {
+		# Save new owner as Raja if valid
+		hidden_effect = {
+			owner = {
+				if = {
+					limit = {
+						OR = {
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+							AND = {
+								has_reform = indep_prabhi_reform
+								NOT = { is_subject = yes }
+							}
+						}
+					}
+					add_core = 4411
+					set_capital = 4411
+					grant_independence = yes
+					add_government_reform = raja_reform
+					save_global_event_target_as = raj_raja_global_target
+					if = {
+						limit = { NOT = { has_estate_privilege = estate_raj_ministries_raj_cohesion } }
+						set_estate_privilege = estate_raj_ministries_raj_cohesion
+					}
+				}
+			}
+
+			# Handle all Prabhi+Senapti transfers
+			if = { #Case: new owner is the new Raja, previous Raja lives -> all Prabhi+Senapti get transferred to new Raja
+				limit = {
+					#FROM = Previous Raja
+					FROM = { exists = yes }
+					FROM = { has_government_attribute = is_raja }
+					#New owner is Raja
+					owner = { has_government_attribute = is_raja }
+				}
+				#Degrade the previous Raja to Prabhi level, and gives them+their daimyo vassals to new raja
+				FROM = {
+					every_subject_country = {
+						limit = {
+							OR = {
+								is_subject_of_type = daimyo_vassal
+								is_subject_of_type = great_daimyo_vassal
+								is_subject_of_type = vizier_vassal
+							}
+						}
+						#Make subject of new raja
+						raj_become_prabhi = yes
+					}
+
+					#Make old raja subject of new raja
+					raj_become_prabhi = yes
+					set_government_rank = 1
+					remove_country_modifier = raj_opened_senapti_ranks
+					remove_country_modifier = raj_closed_senapti_ranks
+				}
+				#Cleanup event.
+				event_target:raj_raja_global_target = {
+					country_event = {	#open or closed senapti
+						id = rahenraj.1001
+						days = 5
+					}
+					if = {
+						limit = { is_variable_equal = { which = raj_var_cohesion_impact_bonus value = 0 } } #it's uninitialised?
+						set_variable = { which = raj_var_cohesion_impact_bonus value = 0 }
+					}
+				}
+				rahen_raj_calc_cohesion = yes
+			}
+			if = { #Case: new owner is NOT the new Raja, previous Raja lives -> all Prabhi+Senapti go free
+				limit = {
+					#FROM = Previous Raja
+					FROM = { exists = yes }
+					FROM = { has_government_attribute = is_raja }
+					#New owner is NOT raja
+					NOT = { owner = { has_government_attribute = is_raja } }
+				}
+				#Degrade the previous Raja to Prabhi level, release everyone, disband the Raja
+				FROM = {
+					every_subject_country = {
+						limit = {
+							OR = {
+								is_subject_of_type = daimyo_vassal
+								is_subject_of_type = great_daimyo_vassal
+								is_subject_of_type = vizier_vassal
+							}
+						}
+
+						#Grant freedom from old raja
+						PREV = { create_subject = {	subject_type = daimyo_vassal subject = PREV } }	#prevent insta-annexation, pdx bug
+						grant_independence = yes
+						rahen_raj_remove_mandates = yes # Mandates no longer relevant. 
+
+						if = {
+							limit = {
+								has_reform = prabhi_reform
+								has_reform = senapti_reform
+							}
+							#Previous subjects become independent Prabhi
+							add_government_reform = indep_prabhi_reform
+						}
+					}
+
+					#Downgrade rank and force indep_prabhi reform onto old raja
+					set_government_rank = 1
+					add_government_reform = indep_prabhi_reform
+					remove_country_modifier = raj_opened_senapti_ranks
+					remove_country_modifier = raj_closed_senapti_ranks
+					clear_global_event_target = raj_raja_global_target
+					clear_global_event_target = raj_vizier_global_target
+				}
+			}
+			if = { #Case: new owner is the new Raja, previous Raja is dead -> all Prabhi+Senapti get transferred to new Raja
+				limit = {
+					#FROM = Previous Raja is dead
+					NOT = { FROM = { exists = yes } }
+					#New owner is raja
+					owner = { has_government_attribute = is_raja }
+				}
+				#Vassalize all old prabhi/senapti.
+				every_country = {
+					limit = {
+						OR = {
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+						NOT = { war_with = event_target:raj_raja_global_target }
+					}
+					raj_become_prabhi = yes
+				}
+				#Any old prabhi/senapti still at war with the new raja get independence
+				every_country = {
+					limit = {
+						OR = {
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+						war_with = event_target:raj_raja_global_target
+					}
+					add_government_reform = indep_prabhi_reform
+				}
+
+				#Cleanup event.
+				event_target:raj_raja_global_target = {
+					country_event = {
+						id = rahenraj.1001
+						days = 5
+					}
+					if = {
+						limit = { is_variable_equal = { which = raj_var_cohesion_impact_bonus value = 0 } } #it's uninitialised?
+						set_variable = { which = raj_var_cohesion_impact_bonus value = 0 }
+					}
+				}
+				rahen_raj_calc_cohesion = yes
+			}
+			if = { #Case: new owner is NOT the new Raja, previous Raja dead -> all Prabhi+Senapti go free, disband the Raja
+				limit = {
+					#FROM = Previous Raja is dead
+					NOT = { FROM = { exists = yes } }
+					#New owner is NOT raja
+					NOT = { owner = { has_government_attribute = is_raja } }
+				}
+
+				#Grant freedom to all old prabhi/senapti
+				every_country = {
+					limit = {
+						OR = {
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+					}
+
+					#Grant freedom
+					grant_independence = yes
+					rahen_raj_remove_mandates = yes # Mandates no longer relevant. 
+					add_government_reform = indep_prabhi_reform
+				}
+				clear_global_event_target = raj_raja_global_target
+				clear_global_event_target = raj_vizier_global_target
+			}
+
+
+			if = {
+				limit = {
+					any_country = {
+						OR = {
+							is_subject_of_type = daimyo_vassal
+							is_subject_of_type = great_daimyo_vassal
+							is_subject_of_type = vizier_vassal
+						}
+						NOT = { overlord = { has_government_attribute = is_raja } }
+					}
+				}
+				every_country = {
+					limit = {
+						OR = {
+							is_subject_of_type = daimyo_vassal
+							is_subject_of_type = great_daimyo_vassal
+							is_subject_of_type = vizier_vassal
+						}
+						NOT = { overlord = { has_government_attribute = is_raja } }
+					}
+					grant_independence = yes
+					rahen_raj_remove_mandates = yes # Mandates no longer relevant. 
+				}
+			}
+		}
+	}
+
+	option = {
+		name = rahenraj.1.a
+		trigger = { owner = { has_government_attribute = is_raja } }
+		custom_tooltip = claiming_the_raj_tooltip
+		owner = {
+			country_event = { id = rahenraj.2100 days = 1 }	#new Vizier election
+		}
+	}
+
+	option = {
+		name = rahenraj.1.b
+		trigger = { owner = { NOT = { has_government_attribute = is_raja } } }
+		owner = {
+			add_prestige = 20
+			add_adm_power = 50
+			add_dip_power = 50
+			add_mil_power = 50
+			set_global_flag = destroyed_raj
+			4411 = {
+				remove_province_modifier = raj_royal_barracks
+				remove_province_modifier = rahen_corrupt_ministery_of_agriculture
+				remove_province_modifier = rahen_corrupt_ministery_of_philosophy
+				remove_province_modifier = rahen_corrupt_ministery_of_internal_relations
+				remove_province_modifier = rahen_corrupt_ministery_of_foreign_relations
+			}
+		}
+		hidden_effect = { #stip all reformation modifiers from the former Raja
+			rahen_superregion = {
+				rahen_clear_court_disaster_province_modifiers = yes
+			}
+		}
+	}
+}
+
+
+#Event to ensure that Senapti and Prabhi keep Harimari rulers
+country_event = { #If a Senapti ruler isn't a harimari
+	id = rahenraj.5
+	title = rahenraj.5.t
+	picture = COURT_eventPicture
+
+	desc = {
+		trigger = {
+			overlord = {
+				culture_group = harimari
+			}
+		}
+		desc = rahenraj.5.da
+	}
+	desc = {
+		trigger = {
+			overlord = {
+				culture_is_human = yes
+			}
+		}
+		desc = rahenraj.5.db
+	}
+
+	trigger = {
+		has_reform = senapti_reform
+		overlord = { has_country_modifier = raj_closed_senapti_ranks }
+		OR = {
+			AND = {
+				overlord = {
+					culture_group = harimari
+				}
+				NOT = { ruler_is_harimari = yes }
+			}
+			AND = {
+				overlord = {
+					culture_is_human = yes
+				}
+				NOT = { ruler_is_human = yes }
+			}
+		}
+		NOT = { has_country_modifier = rajiya_senapti }
+	}
+	is_triggered_only = yes
+
+	option = { #Keep Current Ruler
+		ai_chance = { factor = 0 }
+		name = rahenraj.5.a
+
+		add_prestige = 10
+		increase_legitimacy_medium_effect = yes
+	}
+	option = { #Change Ruler
+		ai_chance = { factor = 5 }
+		name = rahenraj.5.b
+
+		hidden_effect = {
+			export_to_variable = {
+				which = rajCulture
+				value = primary_culture
+				who = overlord
+			}
+		}
+
+		define_ruler = {
+			culture = variable:rajCulture
+			claim = 50
+			male = yes
+		}
+	}
+}
+country_event = { #If a Raj subject has an heir that isn't a harimari
+	id = rahenraj.6
+	title = rahenraj.6.t
+	picture = COURT_eventPicture
+
+	desc = {
+		trigger = {
+			overlord = {
+				culture_group = harimari
+			}
+		}
+		desc = rahenraj.6.da
+	}
+	desc = {
+		trigger = {
+			overlord = {
+				culture_is_human = yes
+			}
+		}
+		desc = rahenraj.6.db
+	}
+
+	trigger = {
+		OR = {
+			has_reform = prabhi_reform
+			has_reform = senapti_reform
+		}
+		overlord = { has_country_modifier = raj_closed_senapti_ranks }
+		has_heir = yes
+		NOT = { has_heir_flag = raj_heir_refused }
+		OR = {
+			AND = {
+				overlord = {
+					culture_group = harimari
+				}
+				ruler_is_harimari = yes
+				NOT = { heir_is_harimari = yes }
+			}
+			AND = {
+				overlord = {
+					culture_is_human = yes
+				}
+				ruler_is_human = yes
+				NOT = { heir_is_human = yes }
+			}
+		}
+	}
+	is_triggered_only = yes
+
+	option = { #Keep Current Heir
+		ai_chance = { factor = 0 }
+		name = rahenraj.5.a
+
+		add_prestige = 10
+		add_heir_claim = 20
+
+		set_heir_flag = raj_heir_refused
+	}
+	option = { #Change Heir
+		ai_chance = { factor = 5 }
+		name = rahenraj.5.b
+
+		hidden_effect = {
+			export_to_variable = {
+				which = rajCulture
+				value = primary_culture
+				who = overlord
+			}
+
+		}
+
+		define_heir = {
+			culture = variable:rajCulture
+			claim = 50
+			male = yes
+			no_consort_with_heir = yes
+			age = 25
+		}
+		set_heir_flag = set_heir_race
+	}
+}
+
+#Sets the raj cohesion privilege
+country_event = {
+	id = rahenraj.10
+	title = rahenraj.10.t
+	picture = COURT_eventPicture
+	desc = rahenraj.10.d
+
+	is_triggered_only = yes
+
+	hidden = yes
+
+	option = {
+		name = rahenraj.10.a
+		set_estate_privilege = estate_raj_ministries_raj_cohesion
+	}
+}
+
+country_event = {
+	id = rahenraj.90
+	title = rahenraj.90.t
+	desc = rahenraj.90.d
+	picture = COURT_eventPicture
+	
+	fire_only_once = yes
+	
+	trigger = {
+		has_government_attribute = is_raja
+		NOT = { has_global_flag = indranayar_died }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			set_global_flag = indranayar_died
+			if = { limit = { exists = R53 }
+				R53 = {
+					capital_scope = { save_event_target_as = dhenijansar_capital }
+					if = { limit = { has_heir = yes }
+						ROOT = { set_country_flag = raj_has_exiled_heir }
+					}
+				}
+			}
+			if = { limit = { exists = R10 }
+				R10 = { capital_scope = { save_event_target_as = sarnavan_capital } }
+			}
+			if = {
+				limit = {
+					has_ruler_flag = is_indranayar
+				}
+				kill_ruler = yes
+			}
+		}
+	}
+	
+	#Indrapalar is the rightful heir
+	option = {
+		name = rahenraj.90.a
+		trigger = { has_regency = yes }
+		define_ruler = {
+			name = "Manava"
+			dynasty = "of the Bloody Claw"
+			age = 37
+			adm = 6
+			dip = 3
+			mil = 4
+			regency = yes
+			culture = royal_harimari
+		}
+		set_heir_flag = manava_as_regent
+	}
+	
+	#Ganyakanar has the experience we need
+	option = {
+		name = rahenraj.90.b
+		goto = dhenijansar_capital
+		trigger = {
+			R53 = {
+				exists = yes
+				dynasty = ROOT
+				ai = yes
+			}
+		}
+		add_legitimacy = -10
+		define_ruler = {
+			name = "Ganyakanar"
+			dynasty = "of the Lotus Claw"
+			age = 55
+			adm = 2
+			dip = 1
+			mil = 5
+			claim = 95
+			culture = royal_harimari
+		}
+		if = {
+			limit = { has_country_flag = raj_has_exiled_heir }
+			hidden_effect = { R53 = { exile_heir_as = ganyakanar_heir } }
+			set_heir = ganyakanar_heir			
+		}
+		inherit = R53
+	}
+	
+	#Ganjina's rule offers the chance for a powerful union
+	option = {
+		name = rahenraj.90.c
+		goto = sarnavan_capital
+		trigger = {
+			R10 = {
+				exists = yes
+				dynasty = ROOT
+			}
+		}
+		add_legitimacy = -40
+		create_alliance = R10
+		create_marriage = R10
+		define_ruler = {
+			name = "Ganjina"
+			dynasty = "of the Lotus Claw"
+			age = 27
+			adm = 4
+			dip = 2
+			mil = 2
+			female = yes
+			culture = royal_harimari
+		}
+		set_country_flag = raj_married_ganjina
+	}
+	after = { clr_country_flag = raj_has_exiled_heir }
+}
+
+#Manava
+province_event = {
+	id = rahenraj.91
+	title = rahenraj.91.t
+	desc = rahenraj.91.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = rahenraj.91.a
+		owner = { add_corruption = 0.5 }
+	}
+}
+
+#death of Manava
+province_event = {
+	id = rahenraj.92
+	title = rahenraj.92.t
+	desc = rahenraj.92.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	immediate = {
+		hidden_effect = {
+			owner = {
+				if = { limit = { ai = yes }
+					if = { limit = { any_subject_country = { ai = no } }
+						add_country_modifier = { name = raj_manavas_legacy duration = 9125 }
+					}
+					else = {
+						add_country_modifier = { name = raj_manavas_legacy duration = 5475 }
+					}
+					# raj_cohesion_change_bonus = { value = -30 }	this is probably overkill now, but maybe a lil of this will be warranted, see after testing
+				}
+			}
+			remove_province_modifier = raj_manavas_influence
+		}
+	}
+	
+	option = {
+		name = rahenraj.92.a
+		custom_tooltip = raj_corrupt_court_disaster_happening_tt
+		tooltip = {
+			remove_province_modifier = raj_manavas_influence
+			# raj_cohesion_change_bonus = { value = -30 }
+		}
+		owner = {
+			if = { limit = { has_heir_flag = manava_as_regent }
+				clr_heir_flag = manava_as_regent
+				define_ruler = {
+					regency = yes
+					culture = royal_harimari
+				}
+			}
+		}
+		R52 = {
+			if = { limit = { has_ruler_flag = manava }
+				kill_ruler = yes
+			}
+		}
+	}
+}
+
+
+############################################
+### Corruption of the Lotus Court events ###
+############################################
+
+country_event = { #The Court has finally been reformed
+	id = rahenraj.97
+	title = rahenraj.97.t
+	desc = rahenraj.97.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+	trigger = { has_global_flag = rahen_corrupt_court_completed }
+
+	option = { #Shit
+		ai_chance = { factor = 1 }
+		name = rahenraj.97.a
+
+		add_government_reform = restructured_dhenijansari_court_reform
+		add_country_modifier = {
+			name = rahen_curtailed_courts
+			duration = 9125 #25 years
+		}
+		hidden_effect = {
+			rahen_superregion = {
+				rahen_clear_court_disaster_province_modifiers = yes
+			}
+		}
+	}
+}
+country_event = { #The Court is completely out of our control
+	id = rahenraj.98
+	title = rahenraj.98.t
+	desc = rahenraj.98.d
+	picture = COURT_eventPicture
+
+	trigger = { capital = 4411 }
+
+	major = yes
+	is_triggered_only = yes
+
+	option = { #How dare they disobey me!
+		ai_chance = { factor = 1 }
+		name = rahenraj.98.a
+
+		reduce_legitimacy_huge_effect = yes
+
+		hidden_effect = {
+			random_owned_province = {
+				add_permanent_province_modifier = {
+					name = rahen_suspicious_ministry_estate
+					duration = -1
+				}
+			}
+			random_subject_country = {
+				random_owned_province = {
+					add_permanent_province_modifier = {
+						name = rahen_suspicious_ministry_estate
+						duration = -1
+					}
+				}
+			}
+			random_subject_country = {
+				random_owned_province = {
+					add_permanent_province_modifier = {
+						name = rahen_suspicious_ministry_estate
+						duration = -1
+					}
+				}
+			}
+			random_subject_country = {
+				random_owned_province = {
+					add_permanent_province_modifier = {
+						name = rahen_suspicious_ministry_estate
+						duration = -1
+					}
+				}
+			}
+			random_subject_country = {
+				random_owned_province = {
+					add_permanent_province_modifier = {
+						name = rahen_suspicious_ministry_estate
+						duration = -1
+					}
+				}
+			}
+			hidden_effect = {
+				add_country_modifier = {
+					name = R51_speedy_recovery_time_limit
+					hidden = yes
+					duration = 7300
+				}
+			}
+		}
+	}
+}
+country_event = { #The Court has finally been reformed
+	id = rahenraj.99
+	title = rahenraj.99.t
+	desc = rahenraj.99.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = { #Grand!
+		ai_chance = { factor = 1 }
+		name = rahenraj.99.a
+
+		if = {
+			limit = { has_government_attribute = is_raja }
+			set_global_flag = rahen_corrupt_court_completed
+		}
+		if = {
+			limit = { ai = yes }
+			add_corruption = -20
+		}
+
+		country_event = {
+			id = rahenraj.97
+			days = 5
+		}
+	}
+}
+
+country_event = { #Update Score calculation
+	id = rahenraj.100
+	title = rahenraj.100.t
+	desc = rahenraj.100.d
+	picture = ACCUSATION_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.100.a
+
+		rahen_calc_reform_ministry_of_agriculture = yes
+		rahen_calc_reform_ministry_of_philosophy = yes
+		rahen_calc_reform_ministry_of_internal_relations = yes
+		rahen_calc_reform_ministry_of_foreign_relations = yes
+	}
+}
+
+country_event = { #New suspicious ministry estate
+	id = rahenraj.102
+	title = rahenraj.102.t
+	desc = rahenraj.102.d
+	picture = KING_SICK_IN_BED_eventPicture
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_list = {
+				1 = {
+					random_owned_province = {
+						limit = { NOT = { has_province_modifier = rahen_suspicious_ministry_estate } }
+						add_permanent_province_modifier = {
+							name = rahen_suspicious_ministry_estate
+							duration = -1
+						}
+						save_event_target_as = target_province
+					}
+				}
+				4 = {
+					random_subject_country = {
+						limit = { any_owned_province = { NOT = { has_province_modifier = rahen_suspicious_ministry_estate } } }
+						random_owned_province = {
+							limit = { NOT = { has_province_modifier = rahen_suspicious_ministry_estate } }
+							add_permanent_province_modifier = {
+								name = rahen_suspicious_ministry_estate
+								duration = -1
+							}
+							save_event_target_as = target_province
+						}
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.102.a
+		goto = target_province
+		custom_tooltip = rahen_new_suspicious_ministry_estate_tt
+
+	}
+}
+
+country_event = { #Crumbling Infrastructure
+	id = rahenraj.103
+	title = rahenraj.103.t
+	desc = rahenraj.103.d
+	picture = KING_SICK_IN_BED_eventPicture
+	goto = target_province
+
+	is_triggered_only = yes
+	trigger = {
+		4411 = { has_province_modifier = rahen_corrupt_ministery_of_agriculture }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			random_list = {
+				1 = {
+					random_owned_province = {
+						if = {
+							limit = { has_province_modifier = rahen_severely_neglected_infrastructure }
+							random_list = {
+								1 = { add_base_tax = -1 }
+								1 = { add_base_production = -1 }
+								1 = { add_base_manpower = -1 }
+							}
+						}
+						else_if = {
+							limit = { has_province_modifier = rahen_neglected_infrastructure }
+							remove_province_modifier = rahen_neglected_infrastructure
+							add_permanent_province_modifier = {
+								name = rahen_severely_neglected_infrastructure
+								duration = -1
+							}
+						}
+						else = {
+							add_permanent_province_modifier = {
+								name = rahen_neglected_infrastructure
+								duration = -1
+							}
+						}
+						save_event_target_as = target_province
+					}
+				}
+				4 = {
+					random_subject_country = {
+						random_owned_province = {
+							if = {
+								limit = { has_province_modifier = rahen_severely_neglected_infrastructure }
+								random_list = {
+									1 = { add_base_tax = -1 }
+									1 = { add_base_production = -1 }
+									1 = { add_base_manpower = -1 }
+								}
+							}
+							else_if = {
+								limit = { has_province_modifier = rahen_neglected_infrastructure }
+								remove_province_modifier = rahen_neglected_infrastructure
+								add_permanent_province_modifier = {
+									name = rahen_severely_neglected_infrastructure
+									duration = -1
+								}
+							}
+							else = {
+								add_permanent_province_modifier = {
+									name = rahen_neglected_infrastructure
+									duration = -1
+								}
+							}
+							save_event_target_as = target_province
+						}
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.103.a
+		tooltip = {
+			event_target:target_province = {
+				if = {
+					limit = { has_province_modifier = rahen_severely_neglected_infrastructure }
+					random_list = {
+						1 = { add_base_tax = -1 }
+						1 = { add_base_production = -1 }
+						1 = { add_base_manpower = -1 }
+					}
+				}
+				else_if = {
+					limit = { has_province_modifier = rahen_neglected_infrastructure }
+					remove_province_modifier = rahen_neglected_infrastructure
+					add_permanent_province_modifier = {
+						name = rahen_severely_neglected_infrastructure
+						duration = -1
+					}
+				}
+				else = {
+					add_permanent_province_modifier = {
+						name = rahen_neglected_infrastructure
+						duration = -1
+					}
+				}
+				hidden_effect = {
+					save_event_target_as = target_province
+				}
+			}
+		}
+	}
+}
+country_event = { #Raid on the archives
+	id = rahenraj.104
+	title = rahenraj.104.t
+	desc = rahenraj.104.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		4411 = { has_province_modifier = rahen_corrupt_ministery_of_philosophy }
+	}
+
+	option = { #Deep raid
+		ai_chance = { factor = 1 }
+		name = rahenraj.104.a
+
+		add_mil_power = -50
+		4411 = { change_variable = { which = rahen_court_case_strength value = 2 } }
+	}
+	option = { #Proceed as planned
+		ai_chance = { factor = 1 }
+		name = rahenraj.104.b
+
+
+		4411 = { change_variable = { which = rahen_court_case_strength value = 1 } }
+	}
+	option = { #This is not proper
+		ai_chance = { factor = 1 }
+		name = rahenraj.104.c
+
+		add_legitimacy = 5
+		4411 = { change_variable = { which = rahen_court_case_strength value = -2 } }
+	}
+}
+country_event = { #Ministers demand more privileges
+	id = rahenraj.105
+	title = rahenraj.105.t
+	desc = rahenraj.105.d
+	picture = ACCUSATION_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Give them what they want
+		ai_chance = { factor = 1 }
+		name = rahenraj.105.a
+
+		add_corruption = 1
+	}
+	option = { #This has to end
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 10
+				manpower_percentage = 0.1
+			}
+		}
+		name = rahenraj.105.b
+		if = { limit = { ai = yes }
+			random = {
+				chance = 10
+				4411 = {
+					spawn_rebels = {
+						type = pretender_rebels
+						size = 1
+					}
+				}
+			}
+		}
+		else = {
+			4411 = {
+				spawn_rebels = {
+					type = pretender_rebels
+					size = 1
+				}
+			}
+		}
+		add_corruption = -0.5
+	}
+}
+country_event = { #Evidence found
+	id = rahenraj.106
+	title = rahenraj.106.t
+	desc = rahenraj.106.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		4411 = { has_province_modifier = rahen_corrupt_ministery_of_philosophy }
+	}
+
+	option = { #File it for later
+		ai_chance = { factor = 1 }
+		name = rahenraj.106.a
+
+		4411 = { change_variable = { which = rahen_court_case_strength value = 5 } }
+	}
+	option = { #Use it now
+		ai_chance = { factor = 1 }
+		name = rahenraj.106.b
+
+		add_corruption = 1
+		add_stability_or_adm_power = yes
+	}
+}
+country_event = { #Honest courtiers replace the corrupt
+	id = rahenraj.107
+	title = rahenraj.107.t
+	desc = rahenraj.107.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { 4411 = { has_province_modifier = rahen_corrupt_ministery_of_philosophy } }
+	}
+
+	option = { #Finally some cooperation
+		ai_chance = { factor = 1 }
+		name = rahenraj.107.a
+
+		add_corruption = -0.5
+	}
+}
+country_event = { #Ministers do good work
+	id = rahenraj.108
+	title = rahenraj.108.t
+	desc = rahenraj.108.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		4411 = { has_province_modifier = rahen_corrupt_ministery_of_philosophy }
+	}
+
+	option = { #I guess they are good for something
+		ai_chance = { factor = 1 }
+		name = rahenraj.108.a
+		random_list = {
+			1 = { add_adm_power = 20 }
+			1 = { add_dip_power = 10 }
+			1 = { add_mil_power = 5 }
+		}
+		4411 = { change_variable = { which = rahen_court_case_strength value = -1 } }
+	}
+}
+country_event = { #Farmlands counter
+	id = rahenraj.109
+	title = rahenraj.108.t
+	desc = rahenraj.108.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		4411 = { has_province_modifier = rahen_corrupt_ministery_of_agriculture }
+	}
+	
+	option = { #
+		ai_chance = { factor = 1 }
+		name = rahenraj.108.a
+		set_variable = { which = raj_deved_farmlands value = 0 }
+		every_owned_province = {
+			limit = {
+				has_terrain = farmlands
+				development = 18
+			}
+			ROOT = { change_variable = { which = raj_deved_farmlands value = 1 } }
+		}
+		every_subject_country = {
+			every_owned_province = {
+				limit = {
+					has_terrain = farmlands
+					development = 18
+				}
+				ROOT = { change_variable = { which = raj_deved_farmlands value = 1 } }
+			}
+		}
+	}
+}
+
+
+province_event = { #Estate investigation management event
+	id = rahenraj.120
+	title = rahenraj.120.t
+	desc = rahenraj.120.d
+	picture = KING_SICK_IN_BED_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.120.a
+
+		if = {
+			limit = { owner = { has_government_attribute = is_raja } }
+			owner = {
+				random_list = {
+					1 = {
+						country_event = { id = rahenraj.121 }
+					}
+					2 = {
+						country_event = { id = rahenraj.122 }
+					}
+					1 = {
+						country_event = { id = rahenraj.123 }
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { owner = { overlord = { has_government_attribute = is_raja } } }
+			owner = {
+				overlord = {
+					random_list = {
+						1 = {
+							country_event = { id = rahenraj.121 }
+						}
+						2 = {
+							country_event = { id = rahenraj.122 }
+						}
+						1 = {
+							country_event = { id = rahenraj.123 }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+country_event = { #Investigation turned up blank
+	id = rahenraj.121
+	title = rahenraj.121.t
+	desc = rahenraj.121.d
+	picture = KING_SICK_IN_BED_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.121.a
+
+		add_prestige = -1
+		add_estate_loyalty = {
+			estate = estate_raj_ministries
+			loyalty = -2
+		}
+	}
+}
+country_event = { #Investigation meets resistance
+	id = rahenraj.122
+	title = rahenraj.122.t
+	desc = rahenraj.122.d
+	picture = KING_SICK_IN_BED_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #We're not here to tumble
+		ai_chance = { factor = 1 }
+		name = rahenraj.122.a
+
+		add_prestige = -1
+		add_estate_loyalty = {
+			estate = estate_raj_ministries
+			loyalty = -2
+		}
+	}
+	option = { #Force the matter
+		ai_chance = { factor = 1 }
+		name = rahenraj.122.b
+
+		FROM = { noble_rebels = 1 }
+		random_list = {
+			1 = { add_corruption = -0.5 4411 = { change_variable = { which = rahen_court_case_strength value = 2 } } }
+			1 = { add_corruption = -0.5 4411 = { change_variable = { which = rahen_court_case_strength value = 5 } } }
+			1 = { add_corruption = -1 4411 = { change_variable = { which = rahen_court_case_strength value = 2 } } }
+			1 = { add_corruption = -1 4411 = { change_variable = { which = rahen_court_case_strength value = 5 } } }
+		}
+		add_estate_influence_modifier = {
+			estate = estate_raj_ministries
+			desc = EST_VAL_PERSONAL_ESTATES_INVESTIGATED
+			influence = -3
+			duration = 3650
+		}
+		4411 = { change_variable = { which = rahen_court_case_strength value = 1 } }
+		change_estate_land_share = {
+			estate = estate_raj_ministries
+			share = -0.5
+		}
+	}
+}
+country_event = { #Estate investigation found evidence!
+	id = rahenraj.123
+	title = rahenraj.123.t
+	desc = rahenraj.123.d
+	picture = KING_SICK_IN_BED_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.123.a
+
+		random_list = {
+			1 = { add_corruption = -0.5 4411 = { change_variable = { which = rahen_court_case_strength value = 2 } } }
+			1 = { add_corruption = -0.5 4411 = { change_variable = { which = rahen_court_case_strength value = 5 } } }
+			1 = { add_corruption = -1 4411 = { change_variable = { which = rahen_court_case_strength value = 2 } } }
+			1 = { add_corruption = -1 4411 = { change_variable = { which = rahen_court_case_strength value = 5 } } }
+		}
+		add_estate_influence_modifier = {
+			estate = estate_raj_ministries
+			desc = EST_VAL_PERSONAL_ESTATES_INVESTIGATED
+			influence = -2
+			duration = 3650
+		}
+		4411 = { change_variable = { which = rahen_court_case_strength value = 1 } }
+	}
+}
+
+country_event = { #Reformation of the Ministry of Agriculture
+	id = rahenraj.150
+	title = rahenraj.150.t
+	desc = rahenraj.150.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.150.a
+		
+		define_advisor = {
+			type = master_of_mint
+			skill = 3
+			cost_multiplier = 0.25
+			culture = royal_harimari
+			religion = high_philosophy
+		}
+		4411 = {
+			remove_province_modifier = rahen_corrupt_ministery_of_agriculture
+		}
+	}
+}
+country_event = { #Reformation of the Ministry of Foreign Relations
+	id = rahenraj.151
+	title = rahenraj.151.t
+	desc = rahenraj.151.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.151.a
+		
+		define_advisor = {
+			type = diplomat
+			skill = 3
+			cost_multiplier = 0.25
+			culture = royal_harimari
+			religion = high_philosophy
+		}
+		4411 = {
+			remove_province_modifier = rahen_corrupt_ministery_of_foreign_relations
+		}
+	}
+}
+country_event = { #Reformation of the Ministry of Internal Relations
+	id = rahenraj.152
+	title = rahenraj.152.t
+	desc = rahenraj.152.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.152.a
+		
+		define_advisor = {
+			type = statesman
+			skill = 3
+			cost_multiplier = 0.25
+			culture = royal_harimari
+			religion = high_philosophy
+		}
+		4411 = {
+			remove_province_modifier = rahen_corrupt_ministery_of_internal_relations
+		}
+	}
+}
+country_event = { #Reformation of the Ministry of Philosophy
+	id = rahenraj.153
+	title = rahenraj.153.t
+	desc = rahenraj.153.d
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		ai_chance = { factor = 1 }
+		name = rahenraj.153.a
+		
+		define_advisor = {
+			type = philosopher
+			skill = 3
+			cost_multiplier = 0.25
+			culture = royal_harimari
+			religion = high_philosophy
+		}
+		4411 = {
+			remove_province_modifier = rahen_corrupt_ministery_of_philosophy
+		}
+	}
+}
+
+#########################
+## Collapse of the Raj ##
+#########################
+
+country_event = { #Collapse of the Raj
+	id = rahenraj.200
+	title = rahenraj.200.t
+	desc = rahenraj.200.d
+	picture = COURT_eventPicture
+
+	major = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { num_of_subjects = 5 }
+		all_subject_country = { capital_scope = { province_group = harimraj_core_lands } }
+	}
+
+	option = { #It was inevitable
+		ai_chance = { factor = 1 }
+		name = rahenraj.200.a
+
+		add_prestige = -50
+
+		4411 = {
+			remove_province_modifier = raj_royal_barracks
+			remove_province_modifier = rahen_corrupt_ministery_of_agriculture
+			remove_province_modifier = rahen_corrupt_ministery_of_philosophy
+			remove_province_modifier = rahen_corrupt_ministery_of_internal_relations
+			remove_province_modifier = rahen_corrupt_ministery_of_foreign_relations
+		}
+		if = {
+			limit = { has_reform = raja_magocracy_reform }
+			remove_government_reform = raja_magocracy_reform
+			add_government_reform = magocracy_reform
+		}
+		else = {
+			add_government_reform = feudalism_reform
+		}
+		
+		every_subject_country = {
+			overlord = {
+				create_subject = {
+					subject_type = vassal
+					subject = PREV
+				}
+			}
+			hidden_effect = {
+				rahen_raj_remove_mandates = yes
+			}
+		}
+		hidden_effect = {
+			rahen_superregion = {
+				rahen_clear_court_disaster_province_modifiers = yes
+			}
+			clr_country_flag = reformed_rahen_court
+			set_global_flag = destroyed_raj
+			remove_country_modifier = raj_opened_senapti_ranks
+			remove_country_modifier = raj_closed_senapti_ranks
+		}
+	}
+}
+country_event = { #A Raj falling apart
+	id = rahenraj.201
+	title = rahenraj.201.t
+	desc = rahenraj.201.d
+	picture = COURT_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			num_of_subjects = 5
+			any_subject_country = { NOT = { capital_scope = { province_group = harimraj_core_lands } } }
+		}
+	}
+
+	option = {
+		ai_chance = { factor = 4 }
+
+		if = {
+			limit = {
+				any_subject_country = {
+					all_neighbor_country = {
+						NOT = {
+							has_government_attribute = is_raja
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+					}
+				}
+			}
+			random_subject_country = {
+				limit = {
+					all_neighbor_country = {
+						NOT = {
+							has_government_attribute = is_raja
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+					}
+				}
+				country_event = { id = rahenraj.202 }
+			}
+		}
+		else_if = {
+			limit = { any_subject_country = { NOT = { capital_scope = { province_group = harimraj_core_lands } } } }
+			random_subject_country = {
+				limit = {
+					NOT = { capital_scope = { province_group = harimraj_core_lands } }
+					OR = {
+						any_neighbor_country = {
+							NOT = {
+								has_government_attribute = is_raja
+								has_reform = prabhi_reform
+								has_reform = senapti_reform
+							}
+						}
+						any_owned_province = { has_port = yes }
+					}
+				}
+				country_event = { id = rahenraj.202 }
+			}
+		}
+		else = {
+			random_subject_country = {
+				limit = {
+					OR = { #! Replace with targetting countries the furthest away from the Raja
+						any_neighbor_country = {
+							NOT = {
+								has_government_attribute = is_raja
+								has_reform = prabhi_reform
+								has_reform = senapti_reform
+							}
+						}
+						any_owned_province = { has_port = yes }
+					}
+				}
+				country_event = { id = rahenraj.202 }
+			}
+		}
+	}
+	option = {
+		ai_chance = { factor = 2 }
+
+		if = {
+			limit = {
+				any_subject_country = {
+					all_neighbor_country = {
+						NOT = {
+							has_government_attribute = is_raja
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+					}
+				}
+			}
+			random_subject_country = {
+				limit = {
+					all_neighbor_country = {
+						NOT = {
+							has_government_attribute = is_raja
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+					}
+				}
+				country_event = { id = rahenraj.202 }
+			}
+		}
+		else_if = {
+			limit = { any_subject_country = { NOT = { capital_scope = { province_group = harimraj_core_lands } } } }
+			random_subject_country = {
+				limit = {
+					NOT = { capital_scope = { province_group = harimraj_core_lands } }
+					OR = {
+						any_neighbor_country = {
+							NOT = {
+								has_government_attribute = is_raja
+								has_reform = prabhi_reform
+								has_reform = senapti_reform
+							}
+						}
+						any_owned_province = { has_port = yes }
+					}
+				}
+				country_event = { id = rahenraj.202 }
+			}
+		}
+		else = {
+			random_subject_country = {
+				limit = {
+					OR = { #! Replace with targetting countries the furthest away from the Raja
+						any_neighbor_country = {
+							NOT = {
+								has_government_attribute = is_raja
+								has_reform = prabhi_reform
+								has_reform = senapti_reform
+							}
+						}
+						any_owned_province = { has_port = yes }
+					}
+				}
+				country_event = { id = rahenraj.202 }
+			}
+		}
+
+		country_event = { id = rahenraj.201 days = 10 }
+	}
+	option = {
+		ai_chance = { factor = 1 }
+		trigger = { any_subject_country = { NOT = { capital_scope = { province_group = harimraj_core_lands } } } }
+
+		if = {
+			limit = {
+				any_subject_country = {
+					all_neighbor_country = {
+						NOT = {
+							has_government_attribute = is_raja
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+					}
+				}
+			}
+			random_subject_country = {
+				limit = {
+					all_neighbor_country = {
+						NOT = {
+							has_government_attribute = is_raja
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+					}
+				}
+				country_event = { id = rahenraj.202 }
+			}
+		}
+		else = {
+			random_subject_country = {
+				limit = {
+					NOT = { capital_scope = { province_group = harimraj_core_lands } }
+					OR = {
+						any_neighbor_country = {
+							NOT = {
+								has_government_attribute = is_raja
+								has_reform = prabhi_reform
+								has_reform = senapti_reform
+							}
+						}
+						any_owned_province = { has_port = yes }
+					}
+				}
+				country_event = { id = rahenraj.202 }
+			}
+		}
+
+		country_event = { id = rahenraj.201 days = 10 }
+		country_event = { id = rahenraj.201 days = 20 }
+	}
+}
+country_event = { #A Raj falling apart
+	id = rahenraj.202
+	title = rahenraj.202.t
+	desc = rahenraj.202.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #! Notify the Raja
+		ai_chance = { factor = 1 }
+		name = rahenraj.202.a
+
+		hidden_effect = {
+			overlord = {
+				country_event = { id = rahenraj.1104 }
+			}
+			raj_become_prabhi = yes	#prevent insta-annexation, pdx bug
+			rahen_raj_remove_mandates = yes
+			every_owned_province = {
+				rahen_clear_court_disaster_province_modifiers = yes
+			}
+		}
+		grant_independence = yes
+		if = {
+			limit = {
+				OR = {
+					has_reform = senapti_reform
+					has_reform = prabhi_reform
+				}
+			}
+			add_government_reform = indep_prabhi_reform
+		}
+	}
+}
+
+country_event = { #[From.GetName] has left the Raj!
+	id = rahenraj.1104
+	title = rahenraj.1104.t
+	desc = rahenraj.1104.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Oh no!
+		ai_chance = { factor = 1 }
+		name = rahenraj.1104.a
+
+		add_prestige = -5
+	}
+}
+
+#####################################
+### General Raj Management Extras ###
+#####################################
+
+# country_event = {			#insurance event, uncomment if we see it's needed, also uncomment in on_action
+# 	id = rahenraj.1000
+# 	title = rahenraj.1000.t
+# 	desc = rahenraj.1000.d
+# 	picture = COURT_eventPicture
+
+# 	hidden = yes
+# 	is_triggered_only = yes
+
+# 	trigger = {
+# 		OR = {
+# 			has_government_attribute = is_raja
+# 			overlord = { has_government_attribute = is_raja }
+# 		}
+# 		OR = {
+# 			AND = {
+# 				is_subject_of_type = daimyo_vassal
+# 				NOT = { has_reform = prabhi_reform }
+# 			}
+# 			AND = {
+# 				OR = {
+# 					is_subject_of_type = great_daimyo_vassal
+# 					is_subject_of_type = vizier_vassal
+# 				}
+# 				NOT = { has_reform = senapti_reform }
+# 			}
+# 			NOT = {
+# 				has_estate_privilege = estate_raj_ministries_raj_cohesion
+# 			}
+# 		}
+# 	}
+
+# 	immediate = {
+# 		if = {
+# 			limit = {
+# 				is_subject_of_type = daimyo_vassal
+# 				NOT = { has_reform = prabhi_reform }
+# 			}
+# 			add_government_reform = prabhi_reform
+# 		}
+# 		else_if = {
+# 			limit = {
+# 				OR = {
+# 					is_subject_of_type = great_daimyo_vassal
+# 					is_subject_of_type = vizier_vassal
+# 				}
+# 				NOT = { has_reform = senapti_reform }
+# 			}
+# 			add_government_reform = senapti_reform
+# 		}
+
+# 		if = {
+# 			limit = { NOT = { has_estate_privilege = estate_raj_ministries_raj_cohesion } }
+# 			set_estate_privilege = estate_raj_ministries_raj_cohesion
+# 		}
+# 	}
+
+# 	option = {
+# 		ai_chance = { factor = 1 }
+# 		name = rahenraj.1000.a
+# 	}
+# }
+
+#Open or Closed Senapti Ranks?
+country_event = {
+	id = rahenraj.1001
+	title = rahenraj.1001.t
+	desc = rahenraj.1001.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Only our own can be Senapti
+		ai_chance = { factor = 20 }
+		name = rahenraj.1001.b
+		trigger = { OR = { culture_group = harimari culture_is_human = yes } }
+		add_country_modifier = {
+			name = raj_closed_senapti_ranks
+			duration = -1
+		}
+		custom_tooltip = rahen_close_senapti_ranks_tt
+		hidden_effect = {
+			if = {
+				limit = { culture_group = harimari }
+				every_subject_country = {
+					limit = { ruler_is_harimari = yes }
+					add_opinion = {
+						who = ROOT
+						modifier = rahen_raja_closed_senapti_a
+					}
+				}
+				every_subject_country = {
+					limit = { NOT = { ruler_is_harimari = yes } }
+					add_opinion = {
+						who = ROOT
+						modifier = rahen_raja_closed_senapti_b
+					}
+				}
+			}
+			if = {
+				limit = { culture_is_human = yes }
+				every_subject_country = {
+					limit = { ruler_is_human = yes }
+					add_opinion = {
+						who = ROOT
+						modifier = rahen_raja_closed_senapti_a
+					}
+				}
+				every_subject_country = {
+					limit = { NOT = { ruler_is_human = yes } }
+					add_opinion = {
+						who = ROOT
+						modifier = rahen_raja_closed_senapti_b
+					}
+				}
+			}
+		}
+	}
+	option = { #Open Senapti ranks to all
+		ai_chance = { factor = 1 }
+		name = rahenraj.1001.a
+		add_country_modifier = {
+			name = raj_opened_senapti_ranks
+			duration = -1
+		}
+		reduce_stability_or_adm_power = yes
+		custom_tooltip = rahen_open_up_senapti_ranks_tt
+		hidden_effect = {
+			if = {
+				limit = { culture_group = harimari }
+				every_subject_country = {
+					limit = { ruler_is_harimari = yes }
+					add_opinion = {
+						who = ROOT
+						modifier = rahen_raja_opened_up_senapti_b
+					}
+				}
+				every_subject_country = {
+					limit = { NOT = { ruler_is_harimari = yes } }
+					add_opinion = {
+						who = ROOT
+						modifier = rahen_raja_opened_up_senapti_a
+					}
+				}
+			}
+			if = {
+				limit = { culture_is_human = yes }
+				every_subject_country = {
+					limit = { ruler_is_human = yes }
+					add_opinion = {
+						who = ROOT
+						modifier = rahen_raja_opened_up_senapti_b
+					}
+				}
+				every_subject_country = {
+					limit = { NOT = { ruler_is_human = yes } }
+					add_opinion = {
+						who = ROOT
+						modifier = rahen_raja_opened_up_senapti_a
+					}
+				}
+			}
+		}
+	}
+}
+
+#Vizier Nomination
+country_event = {
+	id = rahenraj.2099	#on_raja_death
+	title = rahenraj.2099.t
+	desc = rahenraj.2099.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_government_attribute = is_raja
+		4411 = { NOT = { has_province_modifier = raj_manavas_influence } }
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = raja_death_event_active
+
+			event_target:raj_vizier_global_target = {
+				capital_scope = { save_event_target_as = current_vizier_capital }
+			}
+		}
+	}
+
+	#Check other candidates
+	option = {
+		name = rahenraj.2099.a
+		trigger = {
+			OR = {
+				ai = no
+				event_target:raj_vizier_global_target = { ai = yes }
+			}
+		}
+		ai_chance = { factor = 100 }
+		set_country_flag = vizier_nomination_on_new_raja
+		clr_country_flag = raja_death_event_active
+		country_event = { id = rahenraj.2100 }
+	}
+
+	#Nominate previous vizier
+	option = {
+		name = rahenraj.2099.b
+		trigger = { event_target:raj_vizier_global_target = { exists = yes } }
+		ai_chance = { factor = 1 }
+		hidden_effect = {
+			clr_country_flag = raja_death_event_active
+			set_country_flag = raj_same_vizier
+			country_event = { id = rahenraj.2101 }
+		}
+	}
+}
+
+country_event = {
+	id = rahenraj.2100
+	title = rahenraj.2100.t
+	desc = { trigger = { has_country_flag = vizier_nomination_on_new_raja } desc = rahenraj.2100.da }
+	desc = { trigger = { has_country_flag = raj_vizier_just_died } desc = rahenraj.2100.db }
+	desc = {
+		trigger = {
+			NOT = { has_country_flag = vizier_nomination_on_new_raja }
+			NOT = { has_country_flag = raj_vizier_just_died }
+		}
+		desc = rahenraj.2100.dc
+	}
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_government_attribute = is_raja
+		NOT = { has_country_flag = raja_death_event_active }
+	}
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					any_subject_country = { is_subject_of_type = great_daimyo_vassal }
+				}
+				pick_best_tags = { scope = every_subject_country scale = army_size 5 = yes event_target_name = strongest_senapti global_trigger = "is_subject_of_type = great_daimyo_vassal ai = yes" }
+				event_target:strongest_senapti_1 = { capital_scope = { save_event_target_as = senapti1_capital } }
+				event_target:strongest_senapti_2 = { capital_scope = { save_event_target_as = senapti2_capital } }
+				event_target:strongest_senapti_3 = { capital_scope = { save_event_target_as = senapti3_capital } }
+				event_target:strongest_senapti_4 = { capital_scope = { save_event_target_as = senapti4_capital } }
+				event_target:strongest_senapti_5 = { capital_scope = { save_event_target_as = senapti5_capital } }
+			}
+			else = {
+				random_subject_country = {
+					limit = {
+						is_subject_of_type = daimyo_vassal
+						ai = yes
+					}
+					save_event_target_as = prabhi1
+					capital_scope = { save_event_target_as = prabhi1_capital }
+				}
+			}
+		}
+	}
+
+	#Nominate previous vizier
+	option = {
+		name = rahenraj.2100.a
+		goto = current_vizier_capital
+		trigger = {
+			any_subject_country = { tag = event_target:raj_vizier_global_target }
+			has_country_flag = vizier_nomination_on_new_raja
+		}
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				event_target:raj_vizier_global_target = {
+					NOT = {
+						army_strength = {
+							who = event_target:strongest_senapti_1
+							value = 1
+						}
+					}
+				}
+			}
+		}
+		set_country_flag = raj_same_vizier
+	}
+
+	#Nominate previous vizier's heir
+	option = {
+		name = rahenraj.2100.b
+		goto = current_vizier_capital
+		trigger = {
+			any_subject_country = { tag = event_target:raj_vizier_global_target }
+			NOT = { has_country_flag = vizier_nomination_on_new_raja }
+		}
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				event_target:raj_vizier_global_target = {
+					NOT = {
+						army_strength = {
+							who = event_target:strongest_senapti_1
+							value = 1
+						}
+					}
+				}
+			}
+		}
+		set_country_flag = raj_same_vizier
+	}
+
+	#Others candidates
+	option = {
+		name = rahenraj.2100.c
+		goto = senapti1_capital
+		ai_chance = { factor = 1 }
+		trigger = { has_saved_event_target = strongest_senapti_1 event_target:raj_vizier_global_target = { ai = yes } }
+		event_target:strongest_senapti_1 = { raj_become_vizier = yes }
+	}
+
+	option = {
+		name = rahenraj.2100.dd
+		goto = senapti2_capital
+		trigger = { has_saved_event_target = strongest_senapti_2 ai = no }
+		event_target:strongest_senapti_2 = { raj_become_vizier = yes }
+	}
+
+	option = {
+		name = rahenraj.2100.e
+		goto = senapti3_capital
+		trigger = { has_saved_event_target = strongest_senapti_3 ai = no }
+		event_target:strongest_senapti_3 = { raj_become_vizier = yes }
+	}
+
+	option = {
+		name = rahenraj.2100.f
+		goto = senapti4_capital
+		trigger = { has_saved_event_target = strongest_senapti_4 ai = no }
+		event_target:strongest_senapti_4 = { raj_become_vizier = yes }
+	}
+	
+	option = {
+		name = rahenraj.2100.g
+		goto = senapti5_capital
+		trigger = { has_saved_event_target = strongest_senapti_5 ai = no }
+		event_target:strongest_senapti_5 = { raj_become_vizier = yes }
+	}
+
+	option = {
+		name = rahenraj.2100.h
+		goto = prabhi1_capital
+		trigger = { has_saved_event_target = prabhi1 ai = no }
+		event_target:prabhi1 = { raj_become_vizier = yes }
+	}
+
+	after = {
+		clr_country_flag = vizier_nomination_on_new_raja
+		clr_country_flag = raj_vizier_just_died
+		country_event = { id = rahenraj.2101 }
+	}
+}
+
+#A new Vizier (Raja)
+country_event = {
+	id = rahenraj.2101
+	title = rahenraj.2101.t
+	desc = { trigger = { NOT = { has_country_flag = raj_same_vizier } } desc = rahenraj.2101.da }
+	desc = { trigger = { has_country_flag = raj_same_vizier } desc = rahenraj.2101.db }
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+	major = yes
+
+	major_trigger = {
+		overlord = { has_government_attribute = is_raja }
+	}
+	
+	option = {
+		name = rahenraj.2101.a
+		clr_country_flag = raj_same_vizier
+	}
+}
+
+#A new Vizier (new Vizier)
+country_event = {
+	id = rahenraj.2102
+	title = rahenraj.2102.t
+	desc = rahenraj.2102.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.2102.a
+		add_prestige = 10
+		add_legitimacy = 5
+	}
+}
+
+#A new Vizier (previous Vizier)
+country_event = {
+	id = rahenraj.2103
+	title = rahenraj.2103.t
+	desc = rahenraj.2103.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.2103.a
+		add_prestige = -10
+		add_legitimacy = -5
+	}
+}
+
+#-----# Raja-Vizier Interaction #-----#
+
+#Vizier's son promising with Blade and Bow
+country_event = {
+	id = rahenraj.2111
+	title = rahenraj.2111.t
+	desc = rahenraj.2111.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_saved_global_event_target = raj_vizier_global_target
+		tag = event_target:raj_vizier_global_target
+		NOT = { has_country_flag = raj_had_promising_heir_event }
+		has_heir = yes
+	}
+
+	#Demand he be made a general
+	option = {
+		name = rahenraj.2111.a
+		ai_chance = { factor = 100 }
+		add_dip_power = -10
+		custom_tooltip = raj_raja_vizier_risky_option_tt
+		set_country_flag = raj_vizier_risky_option
+		hidden_effect = {
+			export_to_variable = { which = vizierCulture value = ruler_culture }
+			export_to_variable = { which = vizierReligion value = ruler_religion }
+		}
+		overlord = { country_event = { id = rahenraj.2112 } }
+	}
+
+	#Introduce him in a lavish ceremony
+	option = {
+		name = rahenraj.2111.b
+		ai_chance = { factor = 0 }
+		add_years_of_income = -0.35
+		overlord = { country_event = { id = rahenraj.2112 } }
+	}
+
+	#Reject his request
+	option = {
+		name = rahenraj.2111.c
+		ai_chance = { factor = 0 }
+		create_general = { tradition = 50 }
+	}
+
+	after = {
+		set_country_flag = raj_had_promising_heir_event
+	}
+}
+#Vizier's son promising - Answer
+country_event = {
+	id = rahenraj.2112
+	title = rahenraj.2112.t
+	desc = rahenraj.2112.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	major = yes
+	major_trigger = { tag = event_target:raj_vizier_global_target }
+
+	#Accept him as a general
+	option = {
+		name = rahenraj.2112.a
+		ai_chance = {
+			factor = 10
+			modifier = { factor = 0.01 NOT = { has_opinion = { who = FROM value = 0 } } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 50 } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 100 } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 150 } }
+			modifier = { factor = 2 FROM = { army_strength = { who = ROOT value = 0.2 } } }
+			modifier = { factor = 2 FROM = { total_development = 100 } }
+			modifier = { factor = 2 FROM = { total_development = 200 } }
+			modifier = { factor = 0.5 FROM = { has_country_flag = raj_vizier_risky_option } }
+		}
+		create_general = { tradition = 50 }
+		event_target:raj_vizier_global_target = {
+			add_prestige = 15
+			add_army_tradition = 10
+		}
+	}
+
+	#Accept him as an advisor
+	option = {
+		name = rahenraj.2112.b
+		ai_chance = {
+			factor = 10
+			modifier = { factor = 0.01 NOT = { has_opinion = { who = FROM value = 0 } } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 50 } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 100 } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 150 } }
+			modifier = { factor = 2 FROM = { army_strength = { who = ROOT value = 0.2 } } }
+			modifier = { factor = 2 FROM = { total_development = 100 } }
+			modifier = { factor = 2 FROM = { total_development = 200 } }
+			modifier = { factor = 0.5 FROM = { has_country_flag = raj_vizier_risky_option } }
+		}
+		define_advisor = {
+			type = commandant
+			skill = 2
+			culture = variable:From::vizierCulture
+			religion = variable:From::vizierReligion
+		}
+		event_target:raj_vizier_global_target = {
+			add_prestige = 15
+			add_dip_power = 100
+		}
+	}
+
+	#Reject the request
+	option = {
+		name = rahenraj.2112.c
+		ai_chance = { factor = 50 }
+		reduce_stability_or_adm_power = yes
+		reverse_add_opinion = { who = FROM modifier = raj_rejected_vizier_demands }
+		event_target:raj_vizier_global_target = { add_prestige = -20 }
+	}
+
+	after = {
+		FROM = { clr_country_flag = raj_vizier_risky_option }
+	}
+}
+
+#The Raja's elephants harass the vizier
+country_event = {
+	id = rahenraj.2113
+	title = rahenraj.2113.t
+	desc = rahenraj.2113.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_saved_global_event_target = raj_vizier_global_target
+		tag = event_target:raj_vizier_global_target
+		NOT = { has_country_flag = raj_had_harassed_by_elephants_event }
+	}
+
+	#Demand elephants be punished
+	option = {
+		name = rahenraj.2113.a
+		ai_chance = { factor = 100 }
+		add_prestige = -10
+		custom_tooltip = raj_raja_vizier_risky_option_tt
+		set_country_flag = raj_vizier_risky_option
+		hidden_effect = {
+			export_to_variable = { which = vizierCulture value = ruler_culture }
+			export_to_variable = { which = vizierReligion value = ruler_religion }
+		}
+		overlord = { country_event = { id = rahenraj.2114 } }
+	}
+
+	#Let it go
+	option = {
+		name = rahenraj.2113.b
+		ai_chance = { factor = 0 }
+		add_prestige = -25
+	}
+
+	after = {
+		set_country_flag = raj_had_harassed_by_elephants_event
+	}
+}
+#The Raja's elephants - Answer
+country_event = {
+	id = rahenraj.2114
+	title = rahenraj.2114.t
+	desc = rahenraj.2114.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	major = yes
+	major_trigger = {
+		is_subject_of = ROOT
+		tag = event_target:raj_vizier_global_target
+	}
+
+	#Execute the elephants!
+	option = {
+		name = rahenraj.2114.a
+		ai_chance = {
+			factor = 10
+			modifier = { factor = 0.01 NOT = { has_opinion = { who = FROM value = 0 } } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 50 } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 100 } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 150 } }
+			modifier = { factor = 2 FROM = { army_strength = { who = ROOT value = 0.2 } } }
+			modifier = { factor = 2 FROM = { total_development = 100 } }
+			modifier = { factor = 2 FROM = { total_development = 200 } }
+			modifier = { factor = 0.5 FROM = { has_country_flag = raj_vizier_risky_option } }
+		}
+		reverse_add_opinion = { who = FROM modifier = raj_granted_vizier_demands }
+		every_known_country = {
+			limit = { culture = ghavaanaj }
+			add_opinion = { who = ROOT modifier = raj_executed_elephant }
+		}
+		add_country_modifier = { name = raj_angered_elephant_riders duration = 3650 }
+	}
+
+	#Banish the trainers!
+	option = {
+		name = rahenraj.2114.b
+		ai_chance = {
+			factor = 80
+		}
+		add_mil_power = -200
+	}
+
+	#Reject the request
+	option = {
+		name = rahenraj.2114.c
+		ai_chance = {
+			factor = 10
+		}
+		reduce_stability_or_adm_power = yes
+		reverse_add_opinion = { who = FROM modifier = raj_rejected_vizier_demands }
+	}
+
+	after = {
+		FROM = { clr_country_flag = raj_vizier_risky_option }
+	}
+}
+
+#Deputize the vizier to X
+country_event = {
+	id = rahenraj.2117
+	title = rahenraj.2117.t
+	desc = rahenraj.2117.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_government_attribute = is_raja
+		has_saved_global_event_target = raj_vizier_global_target
+		event_target:raj_vizier_global_target = {
+			NOT = { has_country_flag = raj_had_deputised_event }
+		}
+		any_subject_country = {
+			NOT = { tag = event_target:raj_vizier_global_target }
+			is_subject_of_type = daimyo_vassal
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_subject_country = {
+				limit = {
+					NOT = { tag = event_target:raj_vizier_global_target }
+					is_subject_of_type = daimyo_vassal
+				}
+				save_event_target_as = vizier_destination
+				capital_scope = { save_event_target_as = vizier_destination_capital }
+			}
+		}
+	}
+
+	#Tell the vizier to pack his bags
+	option = {
+		name = rahenraj.2117.a
+		ai_chance = { factor = 100 }
+		event_target:raj_vizier_global_target = {
+			country_event = { id = rahenraj.2118 }
+		}
+	}
+
+	#Send a delegation of advisors
+	option = {
+		name = rahenraj.2117.b
+		trigger = {
+			OR = {
+				AND = {
+					employed_advisor = { category = ADM }
+					employed_advisor = { category = DIP }
+				}
+				AND = {
+					employed_advisor = { category = DIP }
+					employed_advisor = { category = MIL }
+				}
+				AND = {
+					employed_advisor = { category = MIL }
+					employed_advisor = { category = ADM }
+				}
+			}
+		}
+		ai_chance = { factor = 0 }
+		random_list = {
+			33 = {
+				trigger = {
+					employed_advisor = { category = ADM }
+					employed_advisor = { category = DIP }
+				}
+				remove_advisor_by_category = ADM
+				remove_advisor_by_category = DIP
+			}
+			33 = {
+				trigger = {
+					employed_advisor = { category = DIP }
+					employed_advisor = { category = MIL }
+				}
+				remove_advisor_by_category = DIP
+				remove_advisor_by_category = MIL
+			}
+			33 = {
+				trigger = {
+					employed_advisor = { category = MIL }
+					employed_advisor = { category = ADM }
+				}
+				remove_advisor_by_category = MIL
+				remove_advisor_by_category = ADM
+			}
+		}
+		event_target:vizier_destination = {
+			add_country_modifier = { name = raj_raja_delegation duration = 1825 }
+			add_opinion = { who = ROOT modifier = raj_raja_delegation_opinion }
+			hidden_effect = { country_event = { id = rahenraj.2119 } }
+		}
+	}
+
+	#Maybe another time
+	option = {
+		name = rahenraj.2117.c
+		ai_chance = { factor = 0 }
+		event_target:vizier_destination = {
+			add_country_modifier = { name = raj_raja_neglected duration = 1825 }
+			add_opinion = { who = ROOT modifier = raj_raja_neglected_opinion }
+			hidden_effect = { country_event = { id = rahenraj.2120 } }
+		}
+	}
+
+	after = {
+		event_target:raj_vizier_global_target = { set_country_flag = raj_had_deputised_event }
+	}
+}
+#Deputize the vizier to X - Answer
+country_event = {
+	id = rahenraj.2118
+	title = rahenraj.2118.t
+	desc = rahenraj.2118.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	major = yes
+	major_trigger = {
+		overlord_of = ROOT
+	}
+
+	#Leverage the opportunity for connections
+	option = {
+		name = rahenraj.2118.a
+		ai_chance = { factor = 100 }
+		overlord = {
+			every_subject_country = {
+				event_target:raj_vizier_global_target = {
+					add_trust = {
+						who = PREV
+						value = 5
+						mutual = yes
+					}
+				}
+			}
+		}
+		add_adm_power = -50
+		add_dip_power = -50
+		add_mil_power = -50
+	}
+
+	#Leverage the opportunity for self-profit
+	option = {
+		name = rahenraj.2118.b
+		ai_chance = { factor = 0 }
+		add_country_modifier = { name = raj_raja_delegation duration = 1825 }
+		add_adm_power = -20
+		add_dip_power = -20
+		add_mil_power = -20
+	}
+
+	#Refuse
+	option = {
+		name = rahenraj.2118.c
+		ai_chance = { factor = 0 }
+		add_prestige = -10
+	}
+}
+#Raja Delegation - Info event
+country_event = {
+	id = rahenraj.2119
+	title = rahenraj.2119.t
+	desc = rahenraj.2119.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.2119.a
+		tooltip = {
+			add_country_modifier = { name = raj_raja_delegation duration = 1825 }
+			add_opinion = { who = ROOT modifier = raj_raja_delegation_opinion }
+		}
+	}
+}
+#Neglected by Raja - Info event
+country_event = {
+	id = rahenraj.2120
+	title = rahenraj.2120.t
+	desc = rahenraj.2120.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.2120.a
+		tooltip = {
+			add_country_modifier = { name = raj_raja_neglected duration = 1825 }
+			add_opinion = { who = FROM modifier = raj_raja_neglected_opinion }
+		}
+	}
+}
+
+#Vizier spreads religious school
+country_event = {
+	id = rahenraj.2121
+	title = rahenraj.2121.t
+	desc = rahenraj.2121.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		overlord = { has_government_attribute = is_raja }
+		tag = event_target:raj_vizier_global_target
+		OR = {
+			religion = suhans_praxis
+			religion = high_philosophy
+		}
+		NOT = { has_country_flag = raj_had_religious_school_event }
+		overlord = { NOT = { anb_same_religious_school_trigger = { who = ROOT } } }
+	}
+
+	#Share the wisdom
+	option = {
+		name = rahenraj.2121.a
+		ai_chance = { factor = 100 }
+		add_adm_power = -20
+		overlord = { country_event = { id = rahenraj.2122 } }
+	}
+
+	#Share the wisdom... but time is money
+	option = {
+		name = rahenraj.2121.b
+		ai_chance = { factor = 0 }
+		add_treasury = 100
+		add_adm_power = -20
+		custom_tooltip = raj_raja_vizier_risky_option_tt
+		set_country_flag = raj_vizier_risky_option
+		overlord = { country_event = { id = rahenraj.2122 } }
+	}
+
+	#You are not worthy of these teachings
+	option = {
+		name = rahenraj.2121.c
+		ai_chance = { factor = 0 }
+		add_prestige = 10
+	}
+
+	after = {
+		set_country_flag = raj_had_religious_school_event
+	}
+}
+#Vizier spreads religious school - Answer
+country_event = {
+	id = rahenraj.2122
+	title = rahenraj.2122.t
+	desc = rahenraj.2122.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	major = yes
+	major_trigger = {
+		tag = event_target:raj_vizier_global_target
+	}
+
+	#Let it be
+	option = {
+		name = rahenraj.2122.a
+		ai_chance = {
+			factor = 10
+			modifier = { factor = 0.01 NOT = { has_opinion = { who = FROM value = 0 } } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 50 } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 100 } }
+			modifier = { factor = 2 has_opinion = { who = FROM value = 150 } }
+			modifier = { factor = 2 FROM = { army_strength = { who = ROOT value = 0.2 } } }
+			modifier = { factor = 2 FROM = { total_development = 100 } }
+			modifier = { factor = 2 FROM = { total_development = 200 } }
+			modifier = { factor = 0.5 FROM = { has_country_flag = raj_vizier_risky_option } }
+		}
+		if = { limit = { FROM = { religious_school = { group = raheni school = starry_eye_school } } }
+			add_country_modifier = { name = starry_eye_scholar_modifier duration = 3650 }
+		}
+		else_if = { limit = { FROM = { religious_school = { group = raheni school = radiant_sun_school } } }
+			add_country_modifier = { name = radiant_sun_scholar_modifier duration = 3650 }
+		}
+		else_if = { limit = { FROM = { religious_school = { group = raheni school = orange_sash_school } } }
+			add_country_modifier = { name = orange_sash_scholar_modifier duration = 3650 }
+		}
+		else_if = { limit = { FROM = { religious_school = { group = raheni school = golden_palace_school } } }
+			add_country_modifier = { name = golden_palace_scholar_modifier duration = 3650 }
+		}
+		else_if = { limit = { FROM = { religious_school = { group = raheni school = unbroken_claw_school } } }
+			add_country_modifier = { name = unbroken_claw_scholar_modifier duration = 3650 }
+		}
+		else_if = { limit = { FROM = { religious_school = { group = raheni school = silk_turban_school } } }
+			add_country_modifier = { name = silk_turban_scholar_modifier duration = 3650 }
+		}
+		else_if = { limit = { FROM = { religious_school = { group = raheni school = ascendant_soul_school } } }
+			add_country_modifier = { name = ascendant_soul_scholar_modifier duration = 3650 }
+		}
+		else_if = { limit = { FROM = { religious_school = { group = raheni school = synthetic_truth_school } } }
+			add_country_modifier = { name = synthetic_truth_scholar_modifier duration = 3650 }
+		}
+		else_if = { limit = { FROM = { religious_school = { group = raheni school = final_paradigm_school } } }
+			add_country_modifier = { name = final_paradigm_scholar_modifier duration = 3650 }
+		}
+	}
+
+	#That is not their role at court!
+	option = {
+		name = rahenraj.2122.b
+		ai_chance = { factor = 40 }
+		add_prestige = -10
+		add_country_modifier = { name = raj_refused_vizier_school duration = 3650 }
+		reverse_add_opinion = { who = FROM modifier = raj_rejected_vizier_demands }
+		FROM = {
+			add_prestige = -20
+			add_legitimacy = -10
+		}
+	}
+
+	after = {
+		FROM = { clr_country_flag = raj_vizier_risky_option }
+	}
+}
+
+#Offer the vizier a wife
+country_event = {
+	id = rahenraj.2123
+	title = rahenraj.2123.t
+	desc = rahenraj.2123.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_government_attribute = is_raja
+		event_target:raj_vizier_global_target = {
+			NOT = { has_country_flag = raj_had_wife_offer_event }
+			ruler_culture = ROOT
+			NOT = { marriage_with = ROOT }
+		}
+	}
+
+	#Offer a wife
+	option = {
+		name = rahenraj.2123.a
+		ai_chance = { factor = 100 }
+		add_adm_power = 50
+		event_target:raj_vizier_global_target = {
+			country_event = { id = rahenraj.2124 }
+		}
+	}
+
+	#Nonsense!
+	option = {
+		name = rahenraj.2123.b
+		ai_chance = { factor = 0 }
+		add_prestige = -25
+	}
+
+	after = {
+		event_target:raj_vizier_global_target = { set_country_flag = raj_had_wife_offer_event }
+	}
+}
+#Offer the vizier a wife - Answer
+country_event = {
+	id = rahenraj.2124
+	title = rahenraj.2124.t
+	desc = rahenraj.2124.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	major = yes
+	major_trigger = {
+		overlord_of = ROOT
+	}
+
+	# I am honoured... what's this about a dowry?
+	option = {
+		name = rahenraj.2124.a
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0
+				NOT = { treasury = 150 }
+			}
+		}
+		add_treasury = -250
+		overlord = { add_treasury = 250 }
+		add_prestige = 10
+		create_marriage = FROM
+		define_consort = {
+			country_of_origin = FROM
+			religion = FROM
+			culture = FROM
+			dynasty = FROM
+		}
+	}
+
+	#Matchmaker is not a good role for the Raja
+	option = {
+		name = rahenraj.2124.b
+		ai_chance = { factor = 1 }
+		add_prestige = -20
+		reverse_add_opinion = { who = FROM modifier = raj_rejected_raja_demands }
+	}
+}
+
+# Convert new vassals to prabhia
+# Moved from on_dependency_gained to prevent crashes
+country_event = {
+	id = rahenraj.5000
+	title = rahenraj.5000.t
+	desc = rahenraj.5000.d
+	picture = TRADEGOODS_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = rahenraj.5000.a
+		ai_chance = { factor = 1 }
+		
+		raj_become_prabhi = yes
+		country_event = { id = rahenraj.10 days = 35 }  #adds the raj cohesion privilege
+		
+	}
+}
+
+#promotion war
+country_event = {	#the raja is in another castle\we got him
+	id = rahenraj.5001
+	title = rahenraj.5001.t
+	desc = {
+		trigger = { has_saved_event_target = got_raja }
+		desc = rahenraj.5001.d1
+	}
+	desc = {
+		trigger = { NOT = { has_saved_event_target = got_raja } }
+		desc = rahenraj.5001.d2
+	}
+	picture = TIGER_THRONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			event_target:raj_raja_global_target = {
+				random_owned_province = {
+					limit = {
+						fort_level = 1
+						controlled_by = owner 
+					}
+					save_event_target_as = go_there_vizier
+				}
+			}
+			random_list = {
+				25 = {
+					save_event_target_as = got_raja
+					set_country_flag = vizier_captured_raja
+				}
+				75 = {
+					trigger = { has_saved_event_target = go_there_vizier }
+					hidden_effect = {
+						event_target:go_there_vizier = { set_province_flag = raja_new_castle }
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = rahenraj.5001.a
+		trigger = { has_saved_event_target = got_raja }
+		custom_tooltip = found_our_peep_tt
+	}
+
+	option = {
+		name = rahenraj.5001.b
+		trigger = { NOT = { has_saved_event_target = got_raja } }
+		custom_tooltip = raja_another_castle_tt
+	}
+}
+
+country_event = {
+	id = rahenraj.5002	#slow vizier, no promotion
+	title = rahenraj.5002.t
+	desc = rahenraj.5002.d
+	picture = TIGER_BODYGUARD_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {	war_with = event_target:raj_raja_global_target }
+	
+	option = {
+		name = rahenraj.5002.a
+		event_target:raj_raja_global_target = { white_peace = ROOT }
+	}
+}
+
+country_event = {	#wohoo, we senapti
+	id = rahenraj.5003
+	title = rahenraj.5003.t
+	desc = rahenraj.5003.d
+	picture = CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.5003.a
+		add_prestige = 10
+	}
+}
+
+country_event = {	#mandate notification events for everyone
+	id = rahenraj.5005
+	title = rahenraj.5005.t
+	desc = rahenraj.5005.d
+	picture = TRADEGOODS_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.5005.a
+		trigger = { has_government_attribute = is_raja }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_3_raja_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5005.c
+		trigger = { is_subject_of_type = daimyo_vassal }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_3_prabhia_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5005.b
+		trigger = { is_subject_of_type = great_daimyo_vassal }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_3_senaptia_mod
+				duration = 3650
+			}
+		}
+	}
+}
+country_event = {	#mandate notification events for everyone
+	id = rahenraj.5006
+	title = rahenraj.5006.t
+	desc = rahenraj.5006.d
+	picture = indiangfx_LAND_MILITARY_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.5006.a
+		trigger = { has_government_attribute = is_raja }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_1_raja_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5006.c
+		trigger = { is_subject_of_type = daimyo_vassal }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_1_prabhia_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5006.b
+		trigger = { is_subject_of_type = great_daimyo_vassal }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_1_vizier_senaptia_mod
+				duration = 3650
+			}
+		}
+		custom_tooltip = rahen_raj_mandate_extra_tt
+	}
+}
+country_event = {	#mandate notification events for everyone
+	id = rahenraj.5007
+	title = rahenraj.5007.t
+	desc = rahenraj.5007.d
+	picture = LAND_MILITARY_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.5007.a
+		trigger = { has_government_attribute = is_raja }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_2_raja_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5007.c
+		trigger = { is_subject_of_type = daimyo_vassal }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_2_prabhia_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5007.b
+		trigger = { is_subject_of_type = great_daimyo_vassal }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_2_senaptia_mod
+				duration = 3650
+			}
+			custom_tooltip = rahenraj.5007.tt
+			add_country_modifier = {
+				name = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod
+				duration = 3650
+			}
+		}
+	}
+}
+country_event = {	#mandate notification events for everyone
+	id = rahenraj.5008
+	title = rahenraj.5008.t
+	desc = rahenraj.5008.d
+	picture = indiangfx_ECONOMY_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.5008.a
+		trigger = { is_subject_of_type = vizier_vassal }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_raja_2_vizier_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5008.b
+		trigger = { is_subject_of_type = daimyo_vassal }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_raja_2_prabhia_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5008.a
+		trigger = { is_subject_of_type = great_daimyo_vassal }
+		tooltip = {
+			add_country_modifier = {
+				name = rahen_raj_mandate_raja_2_senaptia_mod
+				duration = 3650
+			}
+		}
+	}
+}
+country_event = {	#mandate notification events for everyone
+	id = rahenraj.5009
+	title = rahenraj.5009.t
+	desc = rahenraj.5009.d
+	picture = indiangfx_GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.5009.a
+		trigger = { is_subject_of_type = vizier_vassal }
+		tooltip = {
+			custom_tooltip = rahenraj.5009.tt
+			add_country_modifier = {
+				name = rahen_raj_mandate_raja_3_vizier_peace_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5009.c
+		trigger = { is_subject_of_type = daimyo_vassal }
+		tooltip = {
+			custom_tooltip = rahenraj.5009.tt
+			add_country_modifier = {
+				name = rahen_raj_mandate_raja_3_prabhia_peace_mod
+				duration = 3650
+			}
+		}
+	}
+	option = {
+		name = rahenraj.5009.b
+		trigger = { is_subject_of_type = great_daimyo_vassal }
+		tooltip = {
+			custom_tooltip = rahenraj.5009.tt
+			add_country_modifier = {
+				name = rahen_raj_mandate_raja_3_senaptia_peace_mod
+				duration = 3650
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rahenraj.5010
+	title = rahenraj.5010.t
+	desc = rahenraj.5010.d
+	picture = TIGER_BODYGUARD_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = rahenraj.5010.a
+		event_target:prabhi_victim = {
+			every_neighbor_country = {
+				limit = {
+					is_subject_of_type = daimyo_vassal
+					ai = yes
+					NOT = {
+						truce_with = ROOT
+						war_with = ROOT
+					}
+				}
+				join_all_defensive_wars_of = overlord
+			}
+		}
+		add_war_exhaustion = 3
+		add_dip_power = -50
+	}
+
+	option = {
+		name = rahenraj.5010.b		
+	}
+}
+
+################################
+#####   Flavour 'n shit    #####
+################################
+
+#Ministerial Census	chain.
+country_event = { #To Subject: Visit of the Censors
+	id = rahenraj.1200
+	title = rahenraj.1200.t
+	desc = rahenraj.1200.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = { #Do not fire the event if they have been vassalized by someone else after the event got queued
+		OR = {
+			is_subject_of_type = daimyo_vassal
+			is_subject_of_type = great_daimyo_vassal
+			is_subject_of_type = vizier_vassal
+		}
+	}
+
+	option = { #Grant them full access to our ledgers
+		ai_chance = { factor = 2 }
+		name = rahenraj.1200.a
+		add_country_modifier = {
+			name = raj_census_full_access_to_ledgers
+			duration = 3650
+		}
+	}
+	option = { #There are some things we would rather they do not see
+		ai_chance = { factor = 1 }
+		name = rahenraj.1200.b
+		add_country_modifier = {
+			name = raj_census_limited_access_to_ledgers
+			duration = 3650
+		}
+		custom_tooltip = raj_raja_may_intervene_for_ministries_tt
+	}
+
+	after = {
+		#if ministry influence is too low, send message to Raja and ask if they want to send extra administrators to the appropriate region
+		if = {
+			limit = {
+				NOT = {
+					estate_influence = {
+						estate = estate_raj_ministries
+						influence = 20
+					}
+				}
+			}
+			overlord = {
+				country_event = {
+					id = rahenraj.1201
+					days = 14
+					random = 30
+				}
+			}
+		}
+	}
+}
+
+country_event = { # Ministries failing their administration in FROM
+	id = rahenraj.1201
+	title = rahenraj.1201.t
+	desc = rahenraj.1201.d
+	picture = WESTERNISATION_eventPicture
+
+	is_triggered_only = yes
+
+	option = { # It's time for an intervention!
+		name = rahenraj.1201.a
+		ai_chance = {
+			factor = 1
+		}
+		hidden_effect = {
+			FROM = {
+				country_event = {
+					id = rahenraj.1202
+				}
+			}
+		}
+		tooltip = {
+			FROM = {
+				add_estate_influence_modifier = {
+					estate = estate_raj_ministries
+					desc = EST_VAL_INTERVENTION_FROM_THE_RAJA
+					influence = 20
+					duration = 3590
+				}
+			}
+		}
+		add_adm_power = -10
+		add_dip_power = -10
+	}
+	option = { # We have other priorities currently
+		name = rahenraj.1201.b
+		ai_chance = {
+			factor = 1
+		}
+		add_country_modifier = {
+			name = raj_neglected_provincial_administration
+			duration = 3590
+		}
+
+	}
+}
+
+country_event = { # A Delegation from the Raja
+	id = rahenraj.1202
+	title = rahenraj.1202.t
+	desc = rahenraj.1202.d
+	picture = WESTERNISATION_eventPicture
+
+	is_triggered_only = yes
+
+	option = { # I see...
+		name = rahenraj.1202.a
+		ai_chance = {
+			factor = 1
+		}
+		add_estate_influence_modifier = {
+			estate = estate_raj_ministries
+			desc = EST_VAL_INTERVENTION_FROM_THE_RAJA
+			influence = 20
+			duration = 3650
+		}
+	}
+}
