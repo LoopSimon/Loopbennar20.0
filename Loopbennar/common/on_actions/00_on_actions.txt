@@ -41,7 +41,6 @@ on_startup = {
 		diggy.108				#Dwarovar Claimer event
 		diggy.110				#Dwarovar setup event
 		verkalgulan_events.1		#Verkal Gulan setup
-		rahenraj.0				#Setup for the Raj
 		jaddari_missions.1000	#AI boost for Jaddari
 		centaur.3				#Horde modifier for centaur
 		flavor_maghargma.1		#Adds Reign of Ziltagh to Maghargma
@@ -1078,6 +1077,7 @@ on_war_won = {
 					OR = {
 						is_subject_of_type = daimyo_vassal
 						is_subject_of_type = great_daimyo_vassal
+						is_subject_of_type = vizier_vassal
 					}
 				}
 				grant_independence = yes
@@ -1095,6 +1095,7 @@ on_war_won = {
 					OR = {
 						is_subject_of_type = daimyo_vassal
 						is_subject_of_type = great_daimyo_vassal
+						is_subject_of_type = vizier_vassal
 					}
 				}
 			}
@@ -1105,6 +1106,7 @@ on_war_won = {
 					OR = {
 						is_subject_of_type = daimyo_vassal
 						is_subject_of_type = great_daimyo_vassal
+						is_subject_of_type = vizier_vassal
 					}
 				}
 				grant_independence = yes
@@ -1181,17 +1183,7 @@ on_war_won = {
 	#Raja winning war
 	if = {
 		limit = { has_government_attribute = is_raja }
-		FROM = { raj_cohesion_change = { amount = 10 non_monthly = yes } }
 		every_subject_country = {
-			# make sure all subjects of the Raja get truces with the party.
-			if = {
-				limit = {
-					NOT = { FROM = { is_subject_of = ROOT } }	# make sure FROM is external party
-					NOT = { truce_with = FROM } 			# check for truces
-				}
-				add_truce_with = FROM						# add truce with external party
-				FROM = { add_truce_with = PREV }			# add truce with subject
-			}
 			if = {
 				limit = { is_subject_of_type = daimyo_vassal }
 				if = {
@@ -1409,17 +1401,6 @@ on_war_won = {
 		remove_country_modifier = black_overseer_4
 		remove_country_modifier = black_overseer_5
 		remove_country_modifier = black_overseer_6
-	}
-
-	#Raj internal wars
-	if = {
-		limit = {
-			OR = {
-				has_government_attribute = is_raja
-				overlord = { has_government_attribute = is_raja }
-			}
-		}
-		raj_calc_internal_wars = yes
 	}
 
 	#Zongji Eunuch war
@@ -1926,7 +1907,7 @@ on_separate_war_won = {
 on_war_lost = {
 	#ROOT = { country_event = { id = flavor_cri.6 } }
 	ROOT = { country_event = { id = tributary_events.32 } }
-	ROOT = { country_event = { id = rahenraj.1000 } }
+	# ROOT = { country_event = { id = rahenraj.1000 } }
 	ROOT = { country_event = { id = xhazobkult_events.1 } } #Xhazobkult tributaries
 	ROOT = { country_event = { id = anb_miscevents.21 } } #Removing corinite buff during league war
 
@@ -1971,27 +1952,6 @@ on_war_lost = {
 		}
 		country_event = {
 			id = diggy.122
-		}
-	}
-
-	#Raja losing war
-	if = {
-		limit = { has_government_attribute = is_raja }
-		FROM = { raj_cohesion_change = { amount = -10 non_monthly = yes } }
-
-		if = {
-			# make sure all subjects of the Raja get truces with the party.
-			limit = { NOT = { FROM = { is_subject_of = ROOT } } }		# make sure FROM is external party
-
-			every_subject_country = {
-				if = {
-					limit = {
-						NOT = { truce_with = FROM } 			# check for truces
-					}
-					add_truce_with = FROM						# add truce with external party
-					FROM = { add_truce_with = PREV }			# add truce with subject
-				}
-			}
 		}
 	}
 
@@ -2515,6 +2475,7 @@ on_siege_won_country = {
 		flavour_tluukt.8
 		flavor_nuugdan_tsarai.100
 		spirits.019
+		flavor_toarnaire.9
 	}
 	if = {
 		limit = { is_subject_of_type = acolyte_dominion }
@@ -3129,6 +3090,20 @@ on_siege_lost_province =  {
 			province_event = { id = escanni_wars.301 }
 		}
 	}
+
+	if = {	#vizier challenge war
+		limit = {
+			OR = {
+				province_id = 4411
+				has_province_flag = raja_new_castle
+			}
+			FROM = { has_country_flag = has_vizier_won }
+		}
+		event_target:raj_vizier_global_target = {
+			country_event = { id = rahenraj.5001 }
+		}
+		clr_province_flag = raja_new_castle
+	}
 }
 
 # province
@@ -3178,7 +3153,7 @@ on_new_monarch = {
 		flavor_sugamber.999		# Lisolette's legitimacy called into question
 
 		rahenraj.5				#To ensure Harimari rulers in Rahen
-		rahenraj.1000			#To make sure newly independent Prabhi and Senapti have the proper government
+		#rahenraj.1000			#To make sure newly independent Prabhi and Senapti have the proper government
 		the_command.3			#Hobgoblin faction influence
 		flavor_blademarches.3 	#Blademarches succession evenz
 		aelnar.82				#Sicrheior Son
@@ -5915,7 +5890,7 @@ on_monthly_pulse = {
 		limit = {
 			has_government_attribute = is_raja
 		}
-		4411 = { raj_monthy_calc = yes }
+		rahen_raj_calc_cohesion = yes
 	}
 
 	if = {
@@ -6895,8 +6870,6 @@ on_bi_yearly_pulse = {
 	events = {
 		center_of_revolution.2950
 		center_of_revolution.3000
-		rahenraj.2000
-		rahenraj.2001
 		jaddari_missions.1003
 		# jaddari_missions.1004
 		bulwar_flavour.0
@@ -6919,7 +6892,6 @@ on_bi_yearly_pulse = {
 		flavour_vrendzan.2
 	}
 	if = { limit = { ruler_can_revive = yes } save_ruler_stats = yes }
-	if = { limit = { capital = 4411 has_government_attribute = is_raja } country_event = { id = rahenraj.2000 days = 365 } }
 	if = {
 		limit = {
 			owns_core_province = 4565
@@ -7328,6 +7300,7 @@ on_bi_yearly_pulse = {
 		}
 		country_event = {
 			id = flavour_yinquan.40
+			days = 1
 			random = 90
 		}
 	}
@@ -8951,11 +8924,10 @@ on_thri_yearly_pulse_4 = {
 	random_events = {
 		10 = rahenraj.2111
 		10 = rahenraj.2113
-		10 = rahenraj.2115
 		10 = rahenraj.2117
 		10 = rahenraj.2121
 		10 = rahenraj.2123
-
+		2 = rahenraj.1200
 		10 = the_command.15
 
 		20 = 0
@@ -9039,7 +9011,7 @@ on_thri_yearly_pulse_4 = {
 			country_event = { id = infernal_events.200 }
 		}
 	}
-	
+
 	events = {
 		#mystic accord pact events
 		mystic_accord_events.1
@@ -9058,7 +9030,6 @@ on_thri_yearly_pulse_4 = {
 		mystic_accord_events.14
 		mystic_accord_events.15
 	}
-
 }
 
 on_four_year_pulse = {
@@ -9659,6 +9630,7 @@ on_four_year_pulse_3 = {
 		100 = diggy.763 #Lava flood!
 		2000 = diggy.765 #Great Cavern City
 		25 = diggy.766 #Ancient Dwarven Bunker
+		100 = diggy.767 #Idiot New Colonizers
 
 		1000 = ancestor_worship.1	#Discover Krummul
 		1000 = ancestor_worship.2	#Discover Balgar
@@ -10510,6 +10482,7 @@ on_five_year_pulse = {
 					# Hurt Legitimacy
 					country_event = {
 						id = flavor_rogieria.24
+						days = 1
 						random = 185
 					}
 				}
@@ -10517,6 +10490,7 @@ on_five_year_pulse = {
 					# Hurt Prestige
 					country_event = {
 						id = flavor_rogieria.25
+						days = 1
 						random = 185
 					}
 				}
@@ -10527,6 +10501,7 @@ on_five_year_pulse = {
 					}
 					country_event = {
 						id = flavor_rogieria.26
+						days = 1
 						random = 185
 					}
 				}
@@ -10853,7 +10828,6 @@ on_five_year_pulse_2 = {
 		100 = rajministries.11 #Bonus
 		100 = rajministries.12 #Bonus
 		400 = rajministries.101 #Raja pissed off ministries
-		400 = rajministries.102 #Subject of the Raj slipping away
 		800 = rajministries.2022 #A wedding
 
 		# Castes
@@ -12888,7 +12862,38 @@ on_province_owner_change = {
 			hidden = yes
 		}
 	}
-}
+
+	#Raj
+	if = {
+		limit = {
+			owner = { is_subject_of_type = great_daimyo_vassal }
+			FROM = {
+				NOT = {
+					overlord = { has_government_attribute = is_raja }
+				}
+			}
+		}
+		owner = {
+			change_variable = { which = senapti_external_expansion value = 1 }
+		}
+	}
+	if = {
+		limit = {
+			FROM = {
+				overlord = { has_government_attribute = is_raja }
+			}
+			owner = {
+				overlord = { has_government_attribute = is_raja }
+			}
+		}
+		owner = {
+			reverse_add_opinion = {
+				who = overlord
+				modifier = raja_opinion_unlawful_territory
+			}
+		}
+	}
+}	
 
 # country 1.35
 on_parliament_debate_reset = {
@@ -14328,6 +14333,7 @@ on_dependency_gained = {
 				NOT = { has_reform = oracular_order_reform } 		# Tughayasa has their own thing.
 				NOT = { is_subject_of_type = great_daimyo_vassal }	# Do nothing if already correct type.
 				NOT = { is_subject_of_type = daimyo_vassal }		# Do nothing if already correct type.
+				NOT = { is_subject_of_type = vizier_vassal }		# Do nothing if already correct type.
 			}
 		}
 		# logic moved into event to prevent crashes
@@ -14751,13 +14757,15 @@ on_dependency_lost = {
 	FROM = {
 		update_nsc_level_secondary_effects = yes
 
-		if = { limit = { has_country_flag = raj_vizier }
-			raj_clear_vizier = yes
-			ROOT = { country_event = { id = rahenraj.2100 days = 1 } }
-		}
 		if = { limit = { ROOT = { has_government_attribute = is_raja } }
 			every_owned_province = {
 				rahen_clear_court_disaster_province_modifiers = yes
+			}
+			if = { limit = { tag = event_target:raj_vizier_global_target NOT = { has_country_flag = has_vizier_won } }
+				ROOT = { country_event = { id = rahenraj.2100 days = 1 } }
+			}
+			if = { limit = { is_subject_of_type = great_daimyo_vassal }
+				4411 = { change_variable = { rajNbSenapti = -1 } }
 			}
 		}
 
@@ -17608,90 +17616,105 @@ on_new_age = {
 		75 = { #High Ording
 			province_event = {
 				id = aelantirspawnables.5 #Ebenmas
+				days = 1
 				random = 365
 			}
 		}
 		827 = { #Ionntras
 			province_event = {
 				id = aelantirspawnables.6 #Corinsfield
+				days = 1
 				random = 365
 			}
 		}
 		267 = { #Themarenn
 			province_event = {
 				id = aelantirspawnables.8 #Themaria
+				days = 1
 				random = 365
 			}
 		}
 		190 = { #Storm Isles
 			province_event = {
 				id = aelantirspawnables.21 #Nortiochand
+				days = 1
 				random = 365
 			}
 		}
 		68 = { #Redfort
 			province_event = {
 				id = aelantirspawnables.15 #Argezvale
+				days = 1
 				random = 365
 			}
 		}
 		234 = { #Damescrown
 			province_event = {
 				id = adventurerspawnables.3 #Shining Circle/Beggaston
+				days = 1
 				random = 365
 			}
 		}
 		277 = { #Istralore
 			province_event = {
 				id = adventurerspawnables.4 #Istralorian Crusaders/Istranar
+				days = 1
 				random = 365
 			}
 		}
 		569 = { #Menibor
 			province_event = {
 				id = adventurerspawnables.5 #Menibor Free Company/Tiru Moine
+				days = 1
 				random = 365
 			}
 		}
 		350 = { #Silent Repose
 			province_event = {
 				id = adventurerspawnables.7 #House of Reflection/Elathael
+				days = 1
 				random = 365
 			}
 		}
 		135 = { #Tipney
 			province_event = {
 				id = adventurerspawnables.8 #Tipney Pioneers/West Tipney
+				days = 1
 				random = 365
 			}
 		}
 		909 = { #Havorton
 			province_event = {
 				id = adventurerspawnables.9 #Havoral Band/New Havoral
+				days = 1
 				random = 365
 			}
 		}
 		8 = { #Anbenncost
 			province_event = {
 				id = adventurerspawnables.10 #Chipped Tooth Company/Chippengard
+				days = 1
 				random = 365
 			}
 		}
 		281 = { #Plumwall
 			province_event = {
 				id = adventurerspawnables.11 #Plumwall Expedition/Plumstead
+				days = 1
 				random = 365
 			}
 		}
 		417 = { #TELLUM!
 			province_event = {
 				id = adventurerspawnables.13 #Bardswood Band/Tellumtir
+				days = 1
 				random = 365
 			}
 		}
 		244 = { #Arca Dhanaenn
 			province_event = {
 				id = adventurerspawnables.12 #Brigade Magnificent/Nur Dhanaenn
+				days = 1
 				random = 365
 			}
 		}
@@ -18693,6 +18716,69 @@ on_war_ended = { #ROOT - Winer FROM - Loser
 			}
 		}
 		remove_country_modifier = Y26_onwards_lingyuk_mod
+	}
+
+	if = {	#vizier raja war
+		limit = {
+			has_country_flag = has_vizier_won
+			FROM = { has_government_attribute = is_raja }
+		}
+		if = {
+			limit = { tag = event_target:raj_vizier_global_target }
+			every_known_country = {
+				limit = { has_country_flag = has_vizier_won }
+				clr_country_flag = has_vizier_won
+				raj_become_prabhi = yes				
+			}
+			clr_country_flag = has_vizier_won
+			FROM = {
+				create_subject = {
+					subject_type = vizier_vassal
+					subject = ROOT
+				}
+			}
+			add_country_modifier = {
+				name = vizier_lost_promotion_mod
+				duration = 3650
+				hidden = yes
+			}
+		}
+		else = {
+			clr_country_flag = has_vizier_won
+			raj_become_prabhi = yes
+		}
+	}
+	if = {
+		limit = {
+			FROM = { has_country_flag = has_vizier_won }
+			has_government_attribute = is_raja
+		}
+		if = {
+			limit = { FROM = { tag = event_target:raj_vizier_global_target } }
+			every_known_country = {
+				limit = { has_country_flag = has_vizier_won }
+				clr_country_flag = has_vizier_won
+				raj_become_prabhi = yes			
+			}
+			create_subject = {
+				subject_type = vizier_vassal
+				subject = FROM
+			}
+			FROM = {
+				clr_country_flag = has_vizier_won
+				add_country_modifier = {
+					name = vizier_lost_promotion_mod
+					duration = 3650
+					hidden = yes
+				}
+			}
+		}
+		else = {
+			FROM = {
+				clr_country_flag = has_vizier_won
+				raj_become_prabhi = yes
+			}
+		}
 	}
 }
 
