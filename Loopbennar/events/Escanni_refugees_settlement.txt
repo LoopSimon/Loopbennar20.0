@@ -22,6 +22,7 @@ country_event = {#The final flight of the Escanni
 		any_owned_province = {
 			has_escanni_refugees = yes
 		}
+		NOT = { capital_scope = { province_group = escann_proper } }
 	}
 	
 	immediate = {
@@ -169,15 +170,14 @@ country_event = {#The call of home
 						NOT = { is_migratory_tribe = yes }
 						num_of_cities = 2
 					}
-					NOT = { has_country_modifier = monstrous_nation }
+					NOT = {
+						has_country_modifier = monstrous_nation 
+						has_country_flag = elikhand_no_refugees
+					}
 				}
 			}
 			amount = 5
 		}
-	}
-
-	mean_time_to_happen = {
-		days = 1
 	}
 
 	immediate = {
@@ -196,7 +196,10 @@ country_event = {#The call of home
 									NOT = { is_migratory_tribe = yes }
 									num_of_cities = 2
 								}
-								NOT = { has_country_modifier = monstrous_nation }
+								NOT = {
+									has_country_modifier = monstrous_nation 
+									has_country_flag = elikhand_no_refugees
+								}
 							}
 						}
 						amount = 5
@@ -468,15 +471,15 @@ country_event = {#Result of refugee policy
 	title = "escanni_refugees_settlement.103.t"
 	picture = CITY_DEVELOPMENT_eventPicture
 	desc = {
-		trigger = { has_country_modifier =  escanni_refugee_integration }
+		trigger = { has_country_modifier = escanni_refugee_integration }
 		desc = "escanni_refugees_settlement.103.d"
 	}
 	desc = {
-		trigger = { has_country_modifier =  escanni_refugee_tolerance }
+		trigger = { has_country_modifier = escanni_refugee_tolerance }
 		desc = "escanni_refugees_settlement.103.d2"
 	}
 	desc = {
-		trigger = { has_country_modifier =  escanni_refugee_repatriation }
+		trigger = { has_country_modifier = escanni_refugee_repatriation }
 		desc = "escanni_refugees_settlement.103.d3"
 	}
 
@@ -498,7 +501,10 @@ country_event = {#Result of refugee policy
 						NOT = { is_migratory_tribe = yes }
 						num_of_cities = 2
 					}
-					NOT = { has_country_modifier = monstrous_nation }
+					NOT = {
+						has_country_modifier = monstrous_nation 
+						has_country_flag = elikhand_no_refugees
+					}
 				}
 			}
 			amount = 3
@@ -521,7 +527,10 @@ country_event = {#Result of refugee policy
 									NOT = { is_migratory_tribe = yes }
 									num_of_cities = 2
 								}
-								NOT = { has_country_modifier = monstrous_nation }
+								NOT = {
+									has_country_modifier = monstrous_nation 
+									has_country_flag = elikhand_no_refugees
+								}
 							}
 						}
 						amount = 3
@@ -741,10 +750,6 @@ country_event = { #event manager
 		}
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	option = { #Event trigger random_list
 		name = escanni_refugees_settlement.300.a
 		trigger = {
@@ -763,13 +768,10 @@ country_event = { #event manager
 		}
 		ai_chance = { factor = 1 }
 		random_list = {
-			1 = { #If no other events are available the refugees wil get that
-				modifier = {
-					factor = 0
-					OR = {
-						NOT = { has_country_flag = escanni_refugees_left }
-						has_country_flag = had_escanni_refugee_policy
-					}
+			1 = { #If no other events are available the refugees will get that
+				trigger = {
+					has_country_flag = escanni_refugees_left
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				random = {
 					chance = 60
@@ -779,9 +781,8 @@ country_event = { #event manager
 				}
 			}
 			1 = { #If you conquer a province with refugees after you lost your policy it gives the policy back
-				modifier = {
-					factor = 0
-					NOT = { has_country_flag = had_escanni_refugee_policy }
+				trigger = {
+					has_country_flag = had_escanni_refugee_policy
 				}
 				add_country_modifier = {
 					name = escanni_refugee_tolerance
@@ -790,138 +791,168 @@ country_event = { #event manager
 				clr_country_flag = had_escanni_refugee_policy
 			}
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_flag = escanni_robbers_event
-						NOT = {
-							any_owned_province = {
-								province_group = escanni_refugee_centers
-								has_escanni_refugees = yes
-								unrest = 0
-							}
-						}
-						has_country_flag = had_escanni_refugee_policy
+				trigger = {
+					NOT = { has_country_flag = escanni_robbers_event }
+					any_owned_province = {
+						province_group = escanni_refugee_centers
+						has_escanni_refugees = yes
+						unrest = 0
 					}
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.301 #Infamous robbers
 				}
 			}
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_flag = escanni_artisans_event
-						has_country_modifier = escanni_refugee_integration
-						has_country_flag = had_escanni_refugee_policy
-					}
+				trigger = {
+					NOT = { has_country_flag = escanni_artisans_event }
+					NOT = { has_country_modifier = escanni_refugee_integration }
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.302 #Artisans complain
 				}
 			}
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_flag = escanni_stories_event
-						has_country_modifier = escanni_refugee_repatriation
-						has_country_flag = had_escanni_refugee_policy
-					}
+				trigger = {
+					NOT = { has_country_flag = escanni_stories_event }
+					NOT = { has_country_modifier = escanni_refugee_repatriation }
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.303 #Stories of the Greentide
 				}
 			}
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_flag = escanni_distinguished_event
-						has_country_modifier = escanni_refugee_repatriation
-						has_country_flag = had_escanni_refugee_policy
-					}
+				trigger = {
+					NOT = { has_country_flag = escanni_distinguished_event }
+					NOT = { has_country_modifier = escanni_refugee_repatriation }
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.304 #Distinguished refugees
 				}
 			}
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_flag = escanni_exiled_soldiers_event
-						NOT = { has_country_modifier = escanni_refugee_integration }
-						has_country_flag = had_escanni_refugee_policy
-					}
+				trigger = {
+					NOT = { has_country_flag = escanni_exiled_soldiers_event }
+					has_country_modifier = escanni_refugee_integration
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.305 #Exiled soldiers
 				}
 			}
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_flag = escanni_foodsupplies_event
-						has_country_flag = had_escanni_refugee_policy
-					}
+				trigger = {
+					NOT = { has_country_flag = escanni_foodsupplies_event }
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.306 #Food supplies strained
 				}
 			}
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_flag = escanni_hedgemages_event
-						NOT = { has_estate = estate_mages }
-						has_country_flag = had_escanni_refugee_policy
-					}
+				trigger = {
+					NOT = { has_country_flag = escanni_hedgemages_event }
+					has_estate = estate_mages
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.307 #Hedgemages
 				}
 			}
 			200 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_institution = renaissance
-						has_country_flag = escanni_scholars_event
-						NOT = { has_country_modifier = escanni_refugee_repatriation }
-						has_country_flag = had_escanni_refugee_policy
-					}
+				trigger = {
+					NOT = { has_institution = renaissance }
+					NOT = { has_country_flag = escanni_scholars_event }
+					has_country_modifier = escanni_refugee_repatriation
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.308 #Escanni scholars
 				}
 			}
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_flag = escanni_sickness_event
-						has_country_flag = had_escanni_refugee_policy
-					}
+				trigger = {
+					NOT = { has_country_flag = escanni_sickness_event }
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.309 #Sickness in the camps
 				}
 			}
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_flag = escanni_corinite_ideas_event
-						NOT = { is_religion_enabled = corinite }
-						has_country_flag = had_escanni_refugee_policy
-					}
+				trigger = {
+					NOT = { has_country_flag = escanni_corinite_ideas_event }
+					is_religion_enabled = corinite
+					NOT = { has_country_flag = had_escanni_refugee_policy }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.310 #Sickness in the camps
+				}
+			}
+			1000 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_dameria_event }
+					NOT = { is_year = 1475 }
+					NOT = { exists = A58 } #Dameria is not DEAD
+					OR = { 
+						accepted_culture = east_damerian
+						accepted_culture = west_damerian
+						accepted_culture = anbenncoster
+					}
+					NOT = { has_country_flag = had_escanni_refugee_policy }
+				}
+				country_event = {
+					id = escanni_refugees_settlement.315 #Legacy of Dameria
+				}
+			}
+			200 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_esmaria_event }
+					any_owned_province = {
+						region = esmaria_region
+						has_escanni_refugees = yes
+					}
+					NOT = { has_country_flag = had_escanni_refugee_policy }
+				}
+				country_event = {
+					id = escanni_refugees_settlement.316 #Party on the River
+				}
+			}
+			100 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_infernalists_event }
+					NOT = { is_year = 1480 }
+					NOT = { has_country_flag = had_escanni_refugee_policy }
+				}
+				country_event = {
+					id = escanni_refugees_settlement.317 #Infernal court cultist
+				}
+			}
+			200 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_vampires_event }
+					has_estate = estate_vampires
+					NOT = { has_country_flag = had_escanni_refugee_policy }
+				}
+				country_event = {
+					id = escanni_refugees_settlement.318 #Whispers in the Night
+				}
+			}
+			400 = {
+				trigger = {
+						NOT = { has_country_flag = escanni_reclaim_event }
+						num_of_owned_provinces_with = {
+							value = 3
+							province_group = escann_proper
+						}
+						NOT = { has_country_flag = had_escanni_refugee_policy }
+				}
+				country_event = {
+					id = escanni_refugees_settlement.319 #Reclaiming Escann Ourselves
 				}
 			}
 		}
@@ -1022,39 +1053,10 @@ country_event = { #infamous robbers
 	trigger = {#trigger is in the factors of the event manager
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		hidden_effect = {
 			set_country_flag = escanni_robbers_event
-			random_owned_province = {
-				limit = { has_escanni_refugees = yes }
-				save_event_target_as = escanni_center_target_1
-				random_area_province = {
-					limit = {
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_1
-				}
-				random_area_province = {
-					limit = {
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_2
-				}
-				random_area_province = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						NOT = { province_id = event_target:escanni_effect_target_2 }
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_3
-				}
-			}
+			setup_escanni_refugees_target_wescann = yes
 			country_event = {
 				id = escanni_refugees_settlement.103
 				days = 2738
@@ -1080,36 +1082,7 @@ country_event = { #infamous robbers
 			estate = estate_nobles
 			loyalty = -10
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = upset_escanni_refugees
-				duration = 5475
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 5475 }" }
 		random = {
 			chance = 5
 			if = {
@@ -1137,36 +1110,7 @@ country_event = { #infamous robbers
 			name = escanni_upset_the_masses
 			duration = 5475
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = appeased_escanni_refugees
-				duration = 5475
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 5475 }" }
 		random_list = {
 			95 = {}
 			5 = {
@@ -1176,30 +1120,7 @@ country_event = { #infamous robbers
 						decrease_escanni_refugee_settlement_size = yes
 					}
 				}
-				if = {
-					limit = { has_saved_event_target = escanni_effect_target_1 }
-					event_target:escanni_effect_target_1 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						
-					}
-					event_target:escanni_effect_target_2 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_3
-						
-					}
-					event_target:escanni_effect_target_3 = {
-						add_random_development = 1
-					}
-				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 			}
 		}
 		increase_escanni_integration_policy = yes
@@ -1230,36 +1151,7 @@ country_event = { #infamous robbers
 					tradition = 50
 					culture = marcher
 				}
-				event_target:escanni_effect_target_1 = {
-					add_province_modifier = {
-						name = appeased_escanni_refugees
-						duration = 5475
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						
-					}
-					event_target:escanni_effect_target_2 = {
-						add_province_modifier = {
-							name = appeased_escanni_refugees
-							duration = 5475
-						}
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_3
-						
-					}
-					event_target:escanni_effect_target_3 = {
-						add_province_modifier = {
-							name = appeased_escanni_refugees
-							duration = 5475
-						}
-					}
-				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 5475 }" }
 			}
 			35 = {
 				add_army_tradition = 5
@@ -1268,36 +1160,7 @@ country_event = { #infamous robbers
 					tradition = 35
 					culture = ROOT
 				}
-				event_target:escanni_effect_target_1 = {
-					add_province_modifier = {
-						name = upset_escanni_refugees
-						duration = 5475
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						
-					}
-					event_target:escanni_effect_target_2 = {
-						add_province_modifier = {
-							name = upset_escanni_refugees
-							duration = 5475
-						}
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_3
-						
-					}
-					event_target:escanni_effect_target_3 = {
-						add_province_modifier = {
-							name = upset_escanni_refugees
-							duration = 5475
-						}
-					}
-				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 5475 }" }
 			}
 			5 = {}
 		}
@@ -1316,36 +1179,7 @@ country_event = { #infamous robbers
 						has_escanni_refugees = yes
 					}
 				}
-				event_target:escanni_effect_target_1 = {
-					add_province_modifier = {
-						name = escanni_refugee_discriminate_escann
-						duration = 5475
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						
-					}
-					event_target:escanni_effect_target_2 = {
-						add_province_modifier = {
-							name = escanni_refugee_discriminate_escann
-							duration = 5475
-						}
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_3
-						
-					}
-					event_target:escanni_effect_target_3 = {
-						add_province_modifier = {
-							name = escanni_refugee_discriminate_escann
-							duration = 5475
-						}
-					}
-				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = escanni_refugee_discriminate_escann duration = 5475 }" }
 			}
 		}
 		decrease_escanni_integration_policy = yes
@@ -1370,39 +1204,10 @@ country_event = { #artisans complain
 	trigger = {#trigger is in the factors of the event manager
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		hidden_effect = {
 			set_country_flag = escanni_artisans_event
-			random_owned_province = {
-				limit = { has_escanni_refugees = yes }
-				save_event_target_as = escanni_center_target_1
-				random_area_province = {
-					limit = {
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_1
-				}
-				random_area_province = {
-					limit = { 
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_2
-				}
-				random_area_province = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2 
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						NOT = { province_id = event_target:escanni_effect_target_2 }
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_3
-				}
-			}
+			setup_escanni_refugees_target_wescann = yes
 			country_event = {
 				id = escanni_refugees_settlement.103
 				days = 2738
@@ -1428,36 +1233,7 @@ country_event = { #artisans complain
 			name = escanni_unrestp_prodp_statecostn_mod
 			duration = 5475
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = appeased_escanni_refugees
-				duration = 5475
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 5475 }" }
 	}
 	option = {
 		name = escanni_refugees_settlement.302.b
@@ -1472,36 +1248,7 @@ country_event = { #artisans complain
 			name = escanni_unrestn_tradep_mod
 			duration = 5475
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = upset_escanni_refugees
-				duration = 5475
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 5475 }" }
 		decrease_escanni_integration_policy = yes
 	}
 	option = { #special 1 - greedy/cruel
@@ -1518,36 +1265,7 @@ country_event = { #artisans complain
 		}
 		add_treasury = 50
 		add_prestige = -5
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = exploited_escanni_refugees
-				duration = 5475
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = exploited_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = exploited_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = exploited_escanni_refugees duration = 5475 }" }
 		decrease_escanni_integration_policy = yes
 	}
 	option = { #special 2 - esmari or giberd
@@ -1567,36 +1285,7 @@ country_event = { #artisans complain
 			name = escanni_prodp_mod
 			duration = 5475
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = appeased_escanni_refugees
-				duration = 5475
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 5475 }" }
 	}
 }
 country_event = { #Stories of the Greentide
@@ -1610,39 +1299,10 @@ country_event = { #Stories of the Greentide
 	trigger = {#trigger is in the factors of the event manager
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		hidden_effect = {
 			set_country_flag = escanni_stories_event
-			random_owned_province = {
-				limit = { has_escanni_refugees = yes }
-				save_event_target_as = escanni_center_target_1
-				random_area_province = {
-					limit = {
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_1
-				}
-				random_area_province = {
-					limit = { 
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_2
-				}
-				random_area_province = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						NOT = { province_id = event_target:escanni_effect_target_2 }
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_3
-				}
-			}
+			setup_escanni_refugees_target_wescann = yes
 			country_event = {
 				id = escanni_refugees_settlement.103
 				days = 1825
@@ -1691,30 +1351,7 @@ country_event = { #Stories of the Greentide
 							decrease_escanni_refugee_settlement_size = yes
 						}
 					}
-					if = {
-						limit = { has_saved_event_target = escanni_effect_target_1 }
-						event_target:escanni_effect_target_1 = {
-							add_random_development = 1
-						}
-					}
-					if = {
-						limit = {
-							has_saved_event_target = escanni_effect_target_2
-							
-						}
-						event_target:escanni_effect_target_2 = {
-							add_random_development = 1
-						}
-					}
-					if = {
-						limit = {
-							has_saved_event_target = escanni_effect_target_3
-							
-						}
-						event_target:escanni_effect_target_3 = {
-							add_random_development = 1
-						}
-					}
+					escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 				}
 				95 = {}
 			}
@@ -1729,30 +1366,7 @@ country_event = { #Stories of the Greentide
 						decrease_escanni_refugee_settlement_size = yes
 					}
 				}
-				if = {
-					limit = { has_saved_event_target = escanni_effect_target_1 }
-					event_target:escanni_effect_target_1 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						
-					}
-					event_target:escanni_effect_target_2 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_3
-						
-					}
-					event_target:escanni_effect_target_3 = {
-						add_random_development = 1
-					}
-				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 			}
 		}
 	}
@@ -1786,35 +1400,7 @@ country_event = { #Stories of the Greentide
 								has_escanni_refugees = yes
 							}
 						}
-						event_target:escanni_effect_target_1 = {
-							add_province_modifier = {
-								name = escanni_refugee_discriminate_escann
-								duration = 3600
-							}
-						}
-						if = {
-							limit = {
-								has_saved_event_target = escanni_effect_target_2
-								
-							}
-							event_target:escanni_effect_target_2 = {
-								add_province_modifier = {
-									name = escanni_refugee_discriminate_escann
-									duration = 3600
-								}
-							}
-						}
-						if = {
-							limit = {
-								has_saved_event_target = escanni_effect_target_3
-							}
-							event_target:escanni_effect_target_3 = {
-								add_province_modifier = {
-									name = escanni_refugee_discriminate_escann
-									duration = 3600
-								}
-							}
-						}
+						escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = escanni_refugee_discriminate_escann duration = 3600 }" }
 					}
 				}
 				80 = {}
@@ -1839,35 +1425,7 @@ country_event = { #Stories of the Greentide
 							has_escanni_refugees = yes
 						}
 					}
-					event_target:escanni_effect_target_1 = {
-						add_province_modifier = {
-							name = escanni_refugee_discriminate_escann
-							duration = 3600
-						}
-					}
-					if = {
-						limit = {
-							has_saved_event_target = escanni_effect_target_2
-							
-						}
-						event_target:escanni_effect_target_2 = {
-							add_province_modifier = {
-								name = escanni_refugee_discriminate_escann
-								duration = 3600
-							}
-						}
-					}
-					if = {
-						limit = {
-							has_saved_event_target = escanni_effect_target_3
-						}
-						event_target:escanni_effect_target_3 = {
-							add_province_modifier = {
-								name = escanni_refugee_discriminate_escann
-								duration = 3600
-							}
-						}
-					}
+					escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = escanni_refugee_discriminate_escann duration = 3600 }" }
 				}
 			}
 		}
@@ -1892,36 +1450,7 @@ country_event = { #Stories of the Greentide
 			name = escanni_ideacostn_mod
 			duration = 3600
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = upset_escanni_refugees
-				duration = 3600
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 3600 }" }
 		decrease_escanni_integration_policy = yes
 	}
 	option = { #special 2 - Conqueror, Zealot or Strict
@@ -1943,36 +1472,7 @@ country_event = { #Stories of the Greentide
 			name = escanni_upset_the_masses
 			duration = 3600
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = mobilized_escanni_refugees
-				duration = 3600
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = mobilized_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = mobilized_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = mobilized_escanni_refugees duration = 3600 }" }
 		random = {
 			chance = 5
 			if = {
@@ -1981,30 +1481,7 @@ country_event = { #Stories of the Greentide
 					decrease_escanni_refugee_settlement_size = yes
 				}
 			}
-			if = {
-				limit = { has_saved_event_target = escanni_effect_target_1 }
-				event_target:escanni_effect_target_1 = {
-					add_random_development = 1
-				}
-			}
-			if = {
-				limit = {
-					has_saved_event_target = escanni_effect_target_2
-					
-				}
-				event_target:escanni_effect_target_2 = {
-					add_random_development = 1
-				}
-			}
-			if = {
-				limit = {
-					has_saved_event_target = escanni_effect_target_3
-					
-				}
-				event_target:escanni_effect_target_3 = {
-					add_random_development = 1
-				}
-			}
+			escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 		}
 		increase_escanni_integration_policy = yes
 	}
@@ -2018,10 +1495,6 @@ country_event = { #Distinguished refugees
 	is_triggered_only = yes
 
 	trigger = {#trigger is in the factors of the event manager
-	}
-
-	mean_time_to_happen = {
-		days = 1
 	}
 
 	immediate = {
@@ -2144,36 +1617,7 @@ country_event = { #Distinguished refugees
 			estate = estate_church
 			loyalty = 5
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = upset_escanni_refugees
-				duration = 3600
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 3600 }" }
 		decrease_escanni_integration_policy = yes
 	}
 	option = { #special 1 - Well Connected, Free Thinker, Patron of the Arts or DIP > 5
@@ -2226,7 +1670,7 @@ country_event = { #Distinguished refugees
 			religion = regent_court
 		}
 		tooltip = {
-			custom_tooltip =  10_percent_chance_of_integrate_escanni_tt
+			custom_tooltip = 10_percent_chance_of_integrate_escanni_tt
 		}
 		hidden_effect = {
 			random = {
@@ -2237,30 +1681,7 @@ country_event = { #Distinguished refugees
 						decrease_escanni_refugee_settlement_size = yes
 					}
 				}
-				if = {
-					limit = { has_saved_event_target = escanni_effect_target_1 }
-					event_target:escanni_effect_target_1 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						
-					}
-					event_target:escanni_effect_target_2 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_3
-						
-					}
-					event_target:escanni_effect_target_3 = {
-						add_random_development = 1
-					}
-				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 			}
 		}
 
@@ -2278,39 +1699,10 @@ country_event = { #Exiled soldiers
 	trigger = {#trigger is in the factors of the event manager
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		hidden_effect = {
 			set_country_flag = escanni_exiled_soldiers_event
-			random_owned_province = {
-				limit = { has_escanni_refugees = yes }
-				save_event_target_as = escanni_center_target_1
-				random_area_province = {
-					limit = {
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_1
-				}
-				random_area_province = {
-					limit = { 
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_2
-				}
-				random_area_province = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						NOT = { province_id = event_target:escanni_effect_target_2 }
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_3
-				}
-			}
+			setup_escanni_refugees_target_wescann = yes
 			country_event = {
 				id = escanni_refugees_settlement.103
 				days = 1875
@@ -2330,38 +1722,7 @@ country_event = { #Exiled soldiers
 		}
 		add_treasury = -30
 		add_manpower = 2
-		if = {
-			limit = { has_saved_event_target = escanni_effect_target_1 }
-			event_target:escanni_effect_target_1 = {
-				add_province_modifier = {
-					name = drafted_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = drafted_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = drafted_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = drafted_escanni_refugees duration = 3600 }" }
 		tooltip = {
 			random_list = {
 				20 = {
@@ -2425,7 +1786,10 @@ country_event = { #Exiled soldiers
 				capital_scope = {
 					superregion = escann_superregion 
 				}
-				NOT = { has_country_modifier = monstrous_nation }
+				NOT = {
+					has_country_modifier = monstrous_nation 
+					has_country_flag = elikhand_no_refugees
+				}
 			}
 			add_manpower = 2
 		}
@@ -2437,42 +1801,16 @@ country_event = { #Exiled soldiers
 		}
 		add_treasury = 50
 		add_prestige = -5
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = upset_escanni_refugees
-				duration = 3600
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 3600
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 3600 }" }
 		random_country = {
 			limit = {
 				capital_scope = {
 					superregion = escann_superregion 
 				}
-				NOT = { has_country_modifier = monstrous_nation }
+				NOT = {
+					has_country_modifier = monstrous_nation 
+					has_country_flag = elikhand_no_refugees
+				}
 			}
 			add_opinion = {
 				who = ROOT
@@ -2493,39 +1831,10 @@ country_event = { #Food supplies strained
 	trigger = {#trigger is in the factors of the event manager
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		hidden_effect = {
 			set_country_flag = escanni_foodsupplies_event
-			random_owned_province = {
-				limit = { has_escanni_refugees = yes }
-				save_event_target_as = escanni_center_target_1
-				random_area_province = {
-					limit = {
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_1
-				}
-				random_area_province = {
-					limit = { 
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_2
-				}
-				random_area_province = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						NOT = { province_id = event_target:escanni_effect_target_2 }
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_3
-				}
-			}
+			setup_escanni_refugees_target_wescann = yes
 			country_event = {#6.5 years
 				id = escanni_refugees_settlement.103
 				days = 2433
@@ -2562,30 +1871,7 @@ country_event = { #Food supplies strained
 							decrease_escanni_refugee_settlement_size = yes
 						}
 					}
-					if = {
-						limit = { has_saved_event_target = escanni_effect_target_1 }
-						event_target:escanni_effect_target_1 = {
-							add_random_development = 1
-						}
-					}
-					if = {
-						limit = {
-							has_saved_event_target = escanni_effect_target_2
-							
-						}
-						event_target:escanni_effect_target_2 = {
-							add_random_development = 1
-						}
-					}
-					if = {
-						limit = {
-							has_saved_event_target = escanni_effect_target_3
-							
-						}
-						event_target:escanni_effect_target_3 = {
-							add_random_development = 1
-						}
-					}
+					escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 				}
 				90 = {}
 			}
@@ -2599,61 +1885,10 @@ country_event = { #Food supplies strained
 						decrease_escanni_refugee_settlement_size = yes
 					}
 				}
-				if = {
-					limit = { has_saved_event_target = escanni_effect_target_1 }
-					event_target:escanni_effect_target_1 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						
-					}
-					event_target:escanni_effect_target_2 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_3
-						
-					}
-					event_target:escanni_effect_target_3 = {
-						add_random_development = 1
-					}
-				}			
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 			}
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = appeased_escanni_refugees
-				duration = 7300
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 7300 }" }
 		increase_escanni_integration_policy = yes
 	}
 	option = {
@@ -2674,36 +1909,7 @@ country_event = { #Food supplies strained
 				duration = 7300
 			}
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = upset_escanni_refugees
-				duration = 7300
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 7300 }" }
 		random = {
 			chance = 5
 			if = {
@@ -2816,57 +2022,9 @@ country_event = { #Food supplies strained
 					decrease_escanni_refugee_settlement_size = yes
 				}
 			}
-			if = {
-				limit = { has_saved_event_target = escanni_effect_target_1 }
-				event_target:escanni_effect_target_1 = {
-					add_random_development = 1
-				}
-			}
-			if = {
-				limit = {
-					has_saved_event_target = escanni_effect_target_2
-					
-				}
-				event_target:escanni_effect_target_2 = { add_random_development = 1 }
-			}
-			if = {
-				limit = {
-					has_saved_event_target = escanni_effect_target_3
-					
-				}
-				event_target:escanni_effect_target_3 = { add_random_development = 1 }
-			}			
+			escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = appeased_escanni_refugees
-				duration = 7300
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 7300 }" }
 		increase_escanni_integration_policy = yes
 	}
 	option = { #special 2 - Prod bonus or lead producer of fish/grain/livestock
@@ -2915,57 +2073,9 @@ country_event = { #Food supplies strained
 					decrease_escanni_refugee_settlement_size = yes
 				}
 			}
-			if = {
-				limit = { has_saved_event_target = escanni_effect_target_1 }
-				event_target:escanni_effect_target_1 = {
-					add_random_development = 1
-				}
-			}
-			if = {
-				limit = {
-					has_saved_event_target = escanni_effect_target_2
-					
-				}
-				event_target:escanni_effect_target_2 = { add_random_development = 1 }
-			}
-			if = {
-				limit = {
-					has_saved_event_target = escanni_effect_target_3
-					
-				}
-				event_target:escanni_effect_target_3 = { add_random_development = 1 }
-			}			
+			escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }			
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = appeased_escanni_refugees
-				duration = 7300
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = appeased_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 7300 }" }
 		increase_escanni_integration_policy = yes
 	}
 }
@@ -2979,40 +2089,10 @@ country_event = { #Escanni hedgemages rampant
 
 	trigger = {#trigger is in the factors of the event manager
 	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		hidden_effect = {
 			set_country_flag = escanni_hedgemages_event
-			random_owned_province = {
-				limit = { has_escanni_refugees = yes }
-				save_event_target_as = escanni_center_target_1
-				random_area_province = {
-					limit = {
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_1
-				}
-				random_area_province = {
-					limit = { 
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_2
-				}
-				random_area_province = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						NOT = { province_id = event_target:escanni_effect_target_2 }
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_3
-				}
-			}
+			setup_escanni_refugees_target_wescann = yes
 			country_event = {
 				id = escanni_refugees_settlement.103
 				days = 3650
@@ -3058,33 +2138,7 @@ country_event = { #Escanni hedgemages rampant
 			influence = 10
 			duration = 7300
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = upset_escanni_refugees
-				duration = 7300
-			}
-		}
-		if = {
-			limit = { has_saved_event_target = escanni_effect_target_2 }
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 7300
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 7300 }" }
 		random = {
 			chance = 5
 			if = {
@@ -3119,9 +2173,9 @@ country_event = { #Escanni hedgemages rampant
 			random_list = {
 				5 = {
 					event_target:escanni_effect_target_1 = {
-						add_permanent_province_modifier  = {
+						add_permanent_province_modifier = {
 							name = aw_haunted_house_1
-							duration = -1  
+							duration = -1 
 						}
 						custom_tooltip = aw_how_to_get_more_adventurer_removal_chance_tooltip				
 					}
@@ -3131,9 +2185,9 @@ country_event = { #Escanni hedgemages rampant
 							
 						}
 						event_target:escanni_effect_target_2 = {
-							add_permanent_province_modifier  = {
+							add_permanent_province_modifier = {
 								name = aw_haunted_house_1
-								duration = -1  
+								duration = -1 
 							}
 							custom_tooltip = aw_how_to_get_more_adventurer_removal_chance_tooltip				
 						}
@@ -3146,9 +2200,9 @@ country_event = { #Escanni hedgemages rampant
 			random = {
 				chance = 5
 				event_target:escanni_effect_target_1 = {
-					add_permanent_province_modifier  = {
+					add_permanent_province_modifier = {
 						name = aw_haunted_house_1
-						duration = -1  
+						duration = -1 
 					}
 					custom_tooltip = aw_how_to_get_more_adventurer_removal_chance_tooltip				
 				}
@@ -3158,9 +2212,9 @@ country_event = { #Escanni hedgemages rampant
 						
 					}
 					event_target:escanni_effect_target_2 = {
-						add_permanent_province_modifier  = {
+						add_permanent_province_modifier = {
 							name = aw_haunted_house_1
-							duration = -1  
+							duration = -1 
 						}
 						custom_tooltip = aw_how_to_get_more_adventurer_removal_chance_tooltip				
 					}
@@ -3282,30 +2336,7 @@ country_event = { #Escanni hedgemages rampant
 						decrease_escanni_refugee_settlement_size = yes
 					}
 				}
-				if = {
-					limit = { has_saved_event_target = escanni_effect_target_1 }
-					event_target:escanni_effect_target_1 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						
-					}
-					event_target:escanni_effect_target_2 = {
-						add_random_development = 1
-					}
-				}
-				if = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_3
-						
-					}
-					event_target:escanni_effect_target_3 = {
-						add_random_development = 1
-					}
-				}			
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 			}
 		}
 		increase_escanni_integration_policy = yes
@@ -3355,39 +2386,10 @@ country_event = { #Escanni scholars seek refuge
 	trigger = {#trigger is in the factors of the event manager
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		hidden_effect = {
 			set_country_flag = escanni_scholars_event
-			random_owned_province = {
-				limit = { has_escanni_refugees = yes }
-				save_event_target_as = escanni_center_target_1
-				random_area_province = {
-					limit = {
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_1
-				}
-				random_area_province = {
-					limit = { 
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_2
-				}
-				random_area_province = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						NOT = { province_id = event_target:escanni_effect_target_2 }
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_3
-				}
-			}
+			setup_escanni_refugees_target_wescann = yes
 			country_event = {
 				id = escanni_refugees_settlement.103
 				days = 2737
@@ -3411,32 +2413,7 @@ country_event = { #Escanni scholars seek refuge
 			name = escanni_techcostn_mod
 			duration = 5475
 		}
-		event_target:escanni_effect_target_1 = {
-			add_institution_embracement = {
-				which = renaissance
-				value = 25
-			}
-			add_province_modifier = {
-				name = escanni_center_of_learning
-				duration = 18250
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_institution_embracement = {
-					which = renaissance
-					value = 25
-				}
-				add_province_modifier = {
-					name = escanni_center_of_learning
-					duration = 18250
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_institution_embracement = { which = renaissance value = 25 } add_province_modifier = { name = escanni_center_of_learning duration = 18250 }" }
 		increase_escanni_integration_policy = yes
 	}
 	option = {
@@ -3470,24 +2447,7 @@ country_event = { #Escanni scholars seek refuge
 			estate = estate_church
 			loyalty = 10
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = upset_escanni_refugees
-				duration = 5475
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-				
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 5475 }" }
 		decrease_escanni_integration_policy = yes
 	}
 }
@@ -3501,40 +2461,10 @@ country_event = { #Sickness stikes the camps
 
 	trigger = {#trigger is in the factors of the event manager
 	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		hidden_effect = {
 			set_country_flag = escanni_sickness_event
-			random_owned_province = {
-				limit = { has_escanni_refugees = yes }
-				save_event_target_as = escanni_center_target_1
-				random_area_province = {
-					limit = {
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_1
-				}
-				random_area_province = {
-					limit = { 
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_2
-				}
-				random_area_province = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						NOT = { province_id = event_target:escanni_effect_target_2 }
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_3
-				}
-			}
+			setup_escanni_refugees_target_wescann = yes
 			country_event = {
 				id = escanni_refugees_settlement.103
 				days = 2737
@@ -3558,35 +2488,7 @@ country_event = { #Sickness stikes the camps
 			name = escanni_upset_the_masses
 			duration = 5475
 		}
-		event_target:escanni_effect_target_1 = {
-			add_province_modifier = {
-				name = upset_escanni_refugees
-				duration = 5475
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 5475 }" }
 		tooltip = {
 			5 = {
 				if = {
@@ -3782,39 +2684,7 @@ country_event = { #Sickness stikes the camps
 				}
 			}
 		}
-		if = {
-			limit = { has_saved_event_target = escanni_effect_target_1 }
-			event_target:escanni_effect_target_1 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
-		
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_2
-			}
-			event_target:escanni_effect_target_2 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
-		if = {
-			limit = {
-				has_saved_event_target = escanni_effect_target_3
-				
-			}
-			event_target:escanni_effect_target_3 = {
-				add_province_modifier = {
-					name = upset_escanni_refugees
-					duration = 5475
-				}
-			}
-		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 5475 }" }
 		decrease_escanni_integration_policy = yes
 	}
 }
@@ -3829,39 +2699,10 @@ country_event = { #Spread of Corinite ideas
 	trigger = {#trigger is in the factors of the event manager
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		hidden_effect = {
 			set_country_flag = escanni_corinite_ideas_event
-			random_owned_province = {
-				limit = { has_escanni_refugees = yes }
-				save_event_target_as = escanni_center_target_1
-				random_area_province = {
-					limit = {
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_1
-				}
-				random_area_province = {
-					limit = { 
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_2
-				}
-				random_area_province = {
-					limit = {
-						has_saved_event_target = escanni_effect_target_2
-						NOT = { province_id = event_target:escanni_effect_target_1 } 
-						NOT = { province_id = event_target:escanni_effect_target_2 }
-						owned_by = ROOT
-					}
-					save_event_target_as = escanni_effect_target_3
-				}
-			}
+			setup_escanni_refugees_target_wescann = yes
 			country_event = {#6.5 years
 				id = escanni_refugees_settlement.103
 				days = 2433
@@ -4042,17 +2883,7 @@ country_event = { #Spread of Corinite ideas
 					random_list = {
 						5 = {
 							decrease_escanni_refugee_settlement_size = yes
-							if = {
-								limit = { has_saved_event_target = escanni_effect_target_1 }
-								event_target:escanni_effect_target_1 = { add_random_development = 1 }
-							}
-							if = {
-								limit = {
-									has_saved_event_target = escanni_effect_target_2
-									event_target:escanni_effect_target_2 = { NOT = { province_id = event_target:escanni_effect_target_1 } } 
-								}
-								event_target:escanni_effect_target_2 = { add_random_development = 1 }
-							}
+							escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 						}
 						95 = {}
 					}
@@ -4061,17 +2892,7 @@ country_event = { #Spread of Corinite ideas
 					random = {
 						chance = 5
 						decrease_escanni_refugee_settlement_size = yes
-						if = {
-							limit = { has_saved_event_target = escanni_effect_target_1 }
-							event_target:escanni_effect_target_1 = { add_random_development = 1 }
-						}
-						if = {
-							limit = {
-								has_saved_event_target = escanni_effect_target_2
-								event_target:escanni_effect_target_2 = { NOT = { province_id = event_target:escanni_effect_target_1 } } 
-							}
-							event_target:escanni_effect_target_2 = { add_random_development = 1 }
-						}
+						escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 					}
 				}
 			}
@@ -4107,252 +2928,865 @@ country_event = { #Spread of Corinite ideas
 				random = {
 					chance = 5
 					decrease_escanni_refugee_settlement_size = yes
-					if = {
-						limit = { has_saved_event_target = escanni_effect_target_1 }
-						event_target:escanni_effect_target_1 = { add_random_development = 1 }
-					}
-					if = {
-						limit = {
-							has_saved_event_target = escanni_effect_target_2
-							event_target:escanni_effect_target_2 = { NOT = { province_id = event_target:escanni_effect_target_1 } } 
-						}
-						event_target:escanni_effect_target_2 = { add_random_development = 1 }
-					}
+					escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
 				}
 			}
 		}
 		increase_escanni_integration_policy = yes
 	}
 }
-# country_event = { #Schematic
-# 	id = escanni_refugees_settlement.30x
-# 	title = "escanni_refugees_settlement.30x.t"
-# 	picture = REFUGEES_ESCAPING_eventPicture
-# 	desc = "escanni_refugees_settlement.30x.d"
+province_event = { #City of Exiles - Bayvic
+	id = escanni_refugees_settlement.311
+	title = "escanni_refugees_settlement.311.t"
+	picture = FREE_CITY_eventPicture
+	desc = "escanni_refugees_settlement.311.d"
 	
-# 	is_triggered_only = yes
+	is_triggered_only = yes
+	fire_only_once = yes
 
-# 	trigger = {#trigger is in the factors of the event manager
-# 	}
+	trigger = {#trigger is in the factors of the event manager
+	}
 
-# 	mean_time_to_happen = {
-# 		days = 1
-# 	}
+	immediate = {
+		hidden_effect = {
+			owner = {
+				setup_escanni_refugees_target_wescann = yes
+				country_event = {
+					id = escanni_refugees_settlement.103
+					days = 2737
+				}
+				add_country_modifier = {
+					name = escanni_timer_mod
+					duration = 5465 # 10, 15 or 20 years - 10days
+					hidden = yes
+				}
+			}
+		}
+	}
 
-# 	immediate = {
-# 		hidden_effect = {
-# 		set_country_flag = escanni_XXX_event
-# 		random_owned_province = {
-# 			limit = { has_escanni_refugees = yes }
-# 			save_event_target_as = escanni_center_target_1
-# 			random_area_province = {
-# 				limit = {
-# 					owned_by = ROOT
-# 				}
-# 				save_event_target_as = escanni_effect_target_1
-# 			}
-# 			random_area_province = {
-# 				limit = { 
-# 					NOT = { province_id = event_target:escanni_effect_target_1 } 
-# 					owned_by = ROOT
-# 				}
-# 				save_event_target_as = escanni_effect_target_2
-# 			}
-# 			random_area_province = {
-# 				limit = {
-#					has_saved_event_target = escanni_effect_target_2
-# 					NOT = { province_id = event_target:escanni_effect_target_1 } 
-# 					NOT = { province_id = event_target:escanni_effect_target_2 }
-# 					owned_by = ROOT
-# 				}
-# 				save_event_target_as = escanni_effect_target_3
-# 			}
-# 		}
-#		country_event = {
-#			id = escanni_refugees_settlement.103
-#			days = XXXX
-#		}
-# 		add_country_modifier = {
-# 			name = escanni_timer_mod
-# 			duration = XXXX # 10, 15 or 20 years - 10days
-# 			hidden = yes
-# 		}
-# 		}
-# 	}
+	option = {
+		name = escanni_refugees_settlement.311.a
+		ai_chance = {
+			factor = 1
+		}
+		owner = {
+			add_prestige = 10
+			add_splendor = 30
+			add_country_modifier = {
+				name = escanni_icap_mod
+				duration = 5475
+			}
+			escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 5475 }" }
+			random = {
+				chance = 10
+				if = {
+					limit = { has_saved_event_target = escanni_center_target_1 }
+					event_target:escanni_center_target_1 = {
+						decrease_escanni_refugee_settlement_size = yes 
+					}
+					escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+				}
+			}
+			increase_escanni_integration_policy = yes
+		}
+	}
+}
+province_event = { #The Eastern Bodyguards - Nathalaire
+	id = escanni_refugees_settlement.312
+	title = "escanni_refugees_settlement.312.t"
+	picture = TRADE_GOODS_METALS_AND_MINING_EQUIPENT_eventPicture
+	desc = "escanni_refugees_settlement.312.d"
+	
+	is_triggered_only = yes
+	fire_only_once = yes
 
-# 	option = {
-# 		name = escanni_refugees_settlement.30x.a
-# 		ai_chance = {
-# 			factor = 1
-# 		}
-# 		add_estate_loyalty = {
-# 			estate = estate_burghers
-# 			loyalty = -10
-# 		}
-# 		add_country_modifier = {
-# 			name = escanni_unrestp_prodp_statecostn_mod
-# 			duration = 5475
-# 		}
-# 		event_target:escanni_effect_target_1 = {
-# 			add_province_modifier = {
-# 				name = appeased_escanni_refugees
-# 				duration = 5475
-# 			}
-# 		}
-# 		if = {
-# 			limit = {
-#				has_saved_event_target = escanni_effect_target_2
-# 			}
-# 			event_target:escanni_effect_target_2 = {
-# 				add_province_modifier = {
-# 					name = appeased_escanni_refugees
-# 					duration = 5475
-# 				}
-# 			}
-# 		}
-# 		if = {
-# 			limit = {
-#				has_saved_event_target = escanni_effect_target_3
-# 				
-# 			}
-# 			event_target:escanni_effect_target_3 = {
-# 				add_province_modifier = {
-# 					name = appeased_escanni_refugees
-# 					duration = 5475
-# 				}
-# 			}
-# 		}
-# 	}
-# 	option = {
-# 		name = escanni_refugees_settlement.30x.b
-# 		ai_chance = {
-# 			factor = 1
-# 		}
-# 		add_estate_loyalty = {
-# 			estate = estate_burghers
-# 			loyalty = 5
-# 		}
-# 		add_country_modifier = {
-# 			name = escanni_unrestn_tradep_mod
-# 			duration = 5475
-# 		}
-# 		event_target:escanni_effect_target_1 = {
-# 			add_province_modifier = {
-# 				name = upset_escanni_refugees
-# 				duration = 5475
-# 			}
-# 		}
-# 		if = {
-# 			limit = {
-#				has_saved_event_target = escanni_effect_target_2
-# 			}
-# 			event_target:escanni_effect_target_2 = {
-# 				add_province_modifier = {
-# 					name = upset_escanni_refugees
-# 					duration = 5475
-# 				}
-# 			}
-# 		}
-# 		if = {
-# 			limit = {
-#				has_saved_event_target = escanni_effect_target_3
-# 				
-# 			}
-# 			event_target:escanni_effect_target_3 = {
-# 				add_province_modifier = {
-# 					name = upset_escanni_refugees
-# 					duration = 5475
-# 				}
-# 			}
-# 		}
-# 		decrease_escanni_integration_policy = yes
-# 	}
-# 	option = { #special 1 - 
-# 		name = escanni_refugees_settlement.30x.c
-# 		highlight = yes
-# 		trigger = {
-# 		}
-# 		ai_chance = {
-# 			factor = 6
-# 		}
-# 		add_treasury = 50
-# 		add_prestige = -5
-# 		event_target:escanni_effect_target_1 = {
-# 			add_province_modifier = {
-# 				name = exploited_escanni_refugees
-# 				duration = 5475
-# 			}
-# 		}
-# 		if = {
-# 			limit = {
-#				has_saved_event_target = escanni_effect_target_2
-# 			}
-# 			event_target:escanni_effect_target_2 = {
-# 				add_province_modifier = {
-# 					name = exploited_escanni_refugees
-# 					duration = 5475
-# 				}
-# 			}
-# 		}
-# 		if = {
-# 			limit = {
-#				has_saved_event_target = escanni_effect_target_3
-# 				
-# 			}
-# 			event_target:escanni_effect_target_3 = {
-# 				add_province_modifier = {
-# 					name = exploited_escanni_refugees
-# 					duration = 5475
-# 				}
-# 			}
-# 		}
-# 		decrease_escanni_integration_policy = yes
-# 	}
-# 	option = { #special 2 - 
-# 		name = escanni_refugees_settlement.30x.e
-# 		highlight = yes
-# 		trigger = {
-# 		}
-# 		ai_chance = {
-# 			factor = 6
-# 		}
-# 		add_prestige = 5
-# 		add_country_modifier = {
-# 			name = escanni_prodp_mod
-# 			duration = 5475
-# 		}
-# 		event_target:escanni_effect_target_1 = {
-# 			add_province_modifier = {
-# 				name = appeased_escanni_refugees
-# 				duration = 5475
-# 			}
-# 		}
-# 		if = {
-# 			limit = {
-#				has_saved_event_target = escanni_effect_target_2
-# 				
-# 			}
-# 			event_target:escanni_effect_target_2 = {
-# 				add_province_modifier = {
-# 					name = appeased_escanni_refugees
-# 					duration = 5475
-# 				}
-# 			}
-# 		}
-# 		if = {
-# 			limit = {
-#				has_saved_event_target = escanni_effect_target_3
-# 				
-# 			}
-# 			event_target:escanni_effect_target_3 = {
-# 				add_province_modifier = {
-# 					name = appeased_escanni_refugees
-# 					duration = 5475
-# 				}
-# 			}
-# 		}
-# 	}
-# }
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			owner = {
+				setup_escanni_refugees_target_wescann = yes
+				country_event = {
+					id = escanni_refugees_settlement.103
+					days = 2737
+				}
+				add_country_modifier = {
+					name = escanni_timer_mod
+					duration = 5465 # 10, 15 or 20 years - 10days
+					hidden = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = escanni_refugees_settlement.312.a
+		ai_chance = {
+			factor = 1
+		}
+		owner = {
+			add_manpower = 2
+			add_faction_influence = {
+				faction = pr_buccaneers
+				influence = 10
+			}
+			add_country_modifier = {
+				name = escanni_soothed_the_masses
+				duration = 5475
+			}
+			escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 5475 }" }
+			random = {
+				chance = 10
+				if = {
+					limit = { has_saved_event_target = escanni_center_target_1 }
+					event_target:escanni_center_target_1 = {
+						decrease_escanni_refugee_settlement_size = yes 
+					}
+					escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+				}
+			}
+			increase_escanni_integration_policy = yes
+		}
+	}
+}
+country_event = { #In Memore of Prince Jon - Gawed
+	id = escanni_refugees_settlement.313
+	title = "escanni_refugees_settlement.313.t"
+	picture = GOOD_WITH_MONARCH_eventPicture
+	desc = "escanni_refugees_settlement.313.d"
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			setup_escanni_refugees_target_wescann = yes
+			country_event = {
+				id = escanni_refugees_settlement.103
+				days = 2737
+			}
+			add_country_modifier = {
+				name = escanni_timer_mod
+				duration = 5465 # 10, 15 or 20 years - 10days
+				hidden = yes
+			}
+		}
+	}
+
+	option = {
+		name = escanni_refugees_settlement.313.a
+		ai_chance = {
+			factor = 1
+		}
+		add_treasury = 25
+		add_army_tradition = 10
+		add_country_modifier = {
+			name = escanni_manpowerp_legitimacyp_mod
+			duration = 5475
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = loyal_escanni_refugees duration = 5475 }" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+			}
+		}
+		increase_escanni_integration_policy = yes
+	}
+}
+country_event = { #The Valiant Charge of Varil Silcalas - Arbaran
+	id = escanni_refugees_settlement.314
+	title = "escanni_refugees_settlement.314.t"
+	picture = {
+		trigger = {
+			has_dlc = "Lions of the North"
+		}
+		picture = BATTLE_eventPicture
+	}
+	picture = {
+		trigger = {
+			NOT = { has_dlc = "Lions of the North" }
+		}
+		picture = KNIGHTS_eventPicture
+	}
+	desc = "escanni_refugees_settlement.314.d"
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			setup_escanni_refugees_target_wescann = yes
+			country_event = {
+				id = escanni_refugees_settlement.103
+				days = 2737
+			}
+			add_country_modifier = {
+				name = escanni_timer_mod
+				duration = 5465 # 10, 15 or 20 years - 10days
+				hidden = yes
+			}
+		}
+	}
+
+	option = {
+		name = escanni_refugees_settlement.314.a
+		ai_chance = {
+			factor = 1
+		}
+		add_prestige = 10
+		add_army_tradition = 10
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = inspired_escanni_refugees duration = 5475 }" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+			}
+		}
+		increase_escanni_integration_policy = yes
+	}
+}
+country_event = { #The Legacy of Dameria
+	id = escanni_refugees_settlement.315
+	title = "escanni_refugees_settlement.315.t"
+	picture = MULTI_RACIAL_MERC_eventPicture
+	desc = "escanni_refugees_settlement.315.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = escanni_dameria_event
+			setup_escanni_refugees_target_wescann = yes
+			country_event = {
+				id = escanni_refugees_settlement.103
+				days = 1325
+			}
+			add_country_modifier = {
+				name = escanni_timer_mod
+				duration = 3640
+				hidden = yes
+			}
+		}
+	}
+
+	option = {
+		name = escanni_refugees_settlement.315.a
+		ai_chance = {
+			factor = 1
+		}
+		add_country_modifier = {
+			name = escanni_legitimacyn_ideacostn_unrestp_mod
+			duration = 3650
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 3650 }" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+			}
+		}
+		increase_escanni_integration_policy = yes
+	}
+	option = {
+		name = escanni_refugees_settlement.315.b
+		ai_chance = {
+			factor = 1
+		}
+		add_prestige = -10
+		add_country_modifier = {
+			name = escanni_soothed_the_masses
+			duration = 3650
+		}
+	}
+	option = {
+		name = escanni_refugees_settlement.315.c
+		ai_chance = {
+			factor = 1
+		}
+		add_legitimacy = 5
+		add_country_modifier = {
+			name = escanni_ideacostp_unrestn_mod
+			duration = 3650
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = escanni_refugee_discriminate_escann duration = 3650 }" }
+		decrease_escanni_integration_policy = yes
+	}
+	option = {
+		name = escanni_refugees_settlement.315.e
+		ai_chance = {
+			factor = 10
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = lilac_wars.2.a
+				has_country_flag = lilac_wars_rose_party
+			}
+		}
+		highlight = yes
+		add_country_modifier = {
+			name = escanni_prestigep_legitimacyp_unrestp_mod
+			duration = 3650
+		}
+	}
+	option = {
+		name = escanni_refugees_settlement.315.f
+		ai_chance = {
+			factor = 10
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = lilac_wars.1.a
+				has_country_flag = lilac_wars_moon_party
+			}
+		}
+		highlight = yes
+		add_legitimacy = -5
+		add_prestige = 10
+		add_country_modifier = {
+			name = escanni_ideacostn_unrestn_mod
+			duration = 3650
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 3650 }" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+			}
+		}
+		increase_escanni_integration_policy = yes
+	}
+}
+country_event = { #A Party on the River
+	id = escanni_refugees_settlement.316
+	title = "escanni_refugees_settlement.316.t"
+	picture = BYZ_SHIP_SAILING_eventPicture
+	desc = "escanni_refugees_settlement.316.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = escanni_esmaria_event
+			setup_escanni_refugees_target_wescann = yes
+			country_event = {
+				id = escanni_refugees_settlement.103
+				days = 3650
+			}
+			add_country_modifier = {
+				name = escanni_timer_mod
+				duration = 7200
+				hidden = yes
+			}
+		}
+	}
+
+	option = {
+		name = escanni_refugees_settlement.316.a
+		ai_chance = {
+			factor = 1
+		}
+		add_prestige = -5
+	}
+	option = {
+		name = escanni_refugees_settlement.316.b
+		ai_chance = {
+			factor = 1
+		}
+		add_treasury = -50
+		add_adm_power = -25
+		add_dip_power = -25
+		add_prestige = 5
+		add_splendor = 10
+		random = {
+			chance = 20
+			add_stability = 1
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 7300 }" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+			}
+		}
+		increase_escanni_integration_policy = yes
+	}
+	option = {
+		name = escanni_refugees_settlement.316.c
+		ai_chance = {
+			factor = 1
+		}
+		trigger = {
+			OR = {
+				adm = 5
+				tag = A95
+				has_personal_deity = esmaryal
+			}
+		}
+		highlight = yes
+		add_treasury = -100
+		add_adm_power = -50
+		add_prestige = 10
+		add_legitimacy = 10
+		add_splendor = 20
+		random_list = {
+			1 = {
+				define_advisor = {
+					type = natural_scientist
+					culture = adenner
+					cost_multiplier = 0.5
+				}
+			}
+			1 = {
+				define_advisor = {
+					type = spymaster
+					culture = adenner
+					cost_multiplier = 0.5
+				}
+			}
+			1 = {
+				define_advisor = {
+					type = quartermaster
+					culture = adenner
+					cost_multiplier = 0.5
+				}
+			}
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 7300 }" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+			}
+		}
+		increase_escanni_integration_policy = yes
+	}
+}
+country_event = { #Infernal court cultists
+	id = escanni_refugees_settlement.317
+	title = "escanni_refugees_settlement.317.t"
+	picture = CHURCH_ESTATE_UPSET_eventPicture
+	desc = "escanni_refugees_settlement.317.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = escanni_infernalists_event
+			setup_escanni_refugees_target_wescann = yes
+			country_event = {
+				id = escanni_refugees_settlement.103
+				days = 3650
+			}
+			add_country_modifier = {
+				name = escanni_timer_mod
+				duration = 7200
+				hidden = yes
+			}
+		}
+	}
+
+	option = {
+		name = escanni_refugees_settlement.317.a
+		ai_chance = {
+			factor = 1
+		}
+		add_adm_power = -30
+		add_dip_power = -30
+		add_country_modifier = {
+			name = escanni_stabp_mod
+			duration = 7300
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 7300 }" }
+		random = {
+			chance = 25
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = infernal_cult_hub duration = -1 }" }
+			}
+		}
+		increase_escanni_integration_policy = yes
+	}
+	option = {
+		name = escanni_refugees_settlement.317.b
+		ai_chance = {
+			factor = 1
+		}
+		add_country_modifier = {
+			name = escanni_upset_the_masses
+			duration = 7300
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 7300 }" }
+		random = {
+			chance = 50
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = infernal_cult_hub duration = -1 }" }
+			}
+		}
+	}
+	option = {
+		name = escanni_refugees_settlement.317.c
+		ai_chance = {
+			factor = 1
+		}
+		add_treasury = -30
+		add_adm_power = -30
+		add_prestige = 10
+		add_country_modifier = {
+			name = escanni_soothed_the_masses
+			duration = 7300
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 7300 }" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+			}
+		}
+	}
+	option = {
+		name = escanni_refugees_settlement.317.e
+		ai_chance = {
+			factor = 1
+		}
+		add_treasury = -20
+		add_adm_power = -10
+		random = {
+			chance = 10
+			add_stability = -1
+		}
+		add_country_modifier = {
+			name = escanni_tolownp_tolhereticsn_unrestn_mod
+			duration = 7300
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = escanni_refugee_discriminate_escann duration = 7300 }" }
+		if = {
+			limit = { has_saved_event_target = escanni_center_target_1 }
+			event_target:escanni_center_target_1 = {
+				decrease_escanni_refugee_settlement_size = yes 
+			}
+		}
+		random = {
+			chance = 50
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					spawn_rebels = {
+						size = 2
+						type = leadered_peasant_rebels
+					}
+				}
+			}
+		}
+		decrease_escanni_integration_policy = yes
+	}
+	option = {
+		name = escanni_refugees_settlement.317.f
+		ai_chance = {
+			factor = 1
+		}
+		trigger = {
+			ruler_religion = infernal_court
+		}
+		highlight = yes
+		add_dip_power = -40
+		add_adm_power = 30
+		random = {
+			chance = 5
+			add_stability = -1
+		}
+		add_country_modifier = {
+			name = escanni_stabp_mod
+			duration = 7300
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "change_religion = infernal_court" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+			}
+		}
+	}
+}
+country_event = { #Whispers in the Night
+	id = escanni_refugees_settlement.318
+	title = "escanni_refugees_settlement.318.t"
+	picture = LOOMING_DEATH_eventPicture
+	desc = "escanni_refugees_settlement.318.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = escanni_vampires_event
+			setup_escanni_refugees_target_wescann = yes
+			country_event = {
+				id = escanni_refugees_settlement.103
+				days = 2737
+			}
+			add_country_modifier = {
+				name = escanni_timer_mod
+				duration = 5465
+				hidden = yes
+			}
+		}
+	}
+
+	option = {
+		name = escanni_refugees_settlement.318.a
+		ai_chance = {
+			factor = 1
+		}
+		add_dip_power = -40
+		add_country_modifier = {
+			name = escanni_vamp_loyp_infp_mod
+			duration = 5475
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 5475 }" }
+		decrease_escanni_integration_policy = yes
+	}
+	option = {
+		name = escanni_refugees_settlement.318.b
+		ai_chance = {
+			factor = 1
+		}
+		add_adm_power = -40
+		add_treasury = -75
+		add_estate_influence_modifier = {
+			influence = 10
+			duration = 5475
+			estate = estate_vampires
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 5475 }" }
+	}
+	option = {
+		name = escanni_refugees_settlement.318.c
+		ai_chance = {
+			factor = 1
+		}
+		random = {
+			chance = 20
+			add_stability = -1
+		}
+		add_country_modifier = {
+			name = escanni_vamp_hunt_mod
+			duration = 5475
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = appeased_escanni_refugees duration = 5475 }" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+				escanni_refugees_generic_wescann_effect = { effect = "add_random_development = 1" }
+			}
+		}
+		increase_escanni_integration_policy = yes
+	}
+	option = {
+		name = escanni_refugees_settlement.318.e
+		ai_chance = {
+			factor = 1
+		}
+		trigger = {
+			OR = {
+				has_open_vampires = yes
+				a_vampire_rules_the_country = yes
+			}
+		}
+		highlight = yes
+		add_estate_loyalty = {
+			estate = estate_vampires
+			loyalty = 25
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = escanni_refugee_discriminate_escann duration = 7300 } }" }
+		if = {
+			limit = { has_saved_event_target = escanni_center_target_1 }
+			event_target:escanni_center_target_1 = {
+				decrease_escanni_refugee_settlement_size = yes 
+			}
+		}
+		decrease_escanni_integration_policy = yes
+	}
+}
+country_event = { #Reclaiming Escann Ourselves
+	id = escanni_refugees_settlement.319
+	title = "escanni_refugees_settlement.319.t"
+	picture = USA_COLONIZATION_eventPicture
+	desc = "escanni_refugees_settlement.319.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = escanni_reclaim_event
+			setup_escanni_refugees_target_wescann = yes
+			random_owned_province = {
+				limit = { province_group = escann_proper }
+				save_event_target_as = escanni_escann_effect_target_1
+			}
+			random_owned_province = {
+				limit = {
+					province_group = escann_proper
+					NOT = { province_id = event_target:escanni_escann_effect_target_1 }
+				}
+				save_event_target_as = escanni_escann_effect_target_2
+			}
+			random_owned_province = {
+				limit = {
+					province_group = escann_proper
+					NOT = { province_id = event_target:escanni_escann_effect_target_1 }
+					NOT = { province_id = event_target:escanni_escann_effect_target_2 }
+				}
+				save_event_target_as = escanni_escann_effect_target_3
+			}
+			country_event = {
+				id = escanni_refugees_settlement.103
+				days = 3650
+			}
+			add_country_modifier = {
+				name = escanni_timer_mod
+				duration = 7200
+				hidden = yes
+			}
+		}
+	}
+
+	option = {
+		name = escanni_refugees_settlement.319.a
+		ai_chance = {
+			factor = 1
+		}
+		add_prestige = 10
+		add_legitimacy = 5
+		add_treasury = -50
+		every_country = {
+			limit = {
+				NOT = {
+					has_country_modifier = monstrous_nation 
+					has_country_flag = elikhand_no_refugees
+				}
+				capital_scope = {
+					province_group = escann_proper
+				}
+			}
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = A31_baashidi_negative
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -10
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = autonomous_escanni_refugees duration = 7300 } add_random_development = 1 change_religion = regent_court change_culture = adenner" }
+		if = {
+			limit = { has_saved_event_target = escanni_center_target_1 }
+			event_target:escanni_center_target_1 = {
+				decrease_escanni_refugee_settlement_size = yes 
+			}
+		}
+		increase_escanni_integration_policy = yes
+	}
+	option = {
+		name = escanni_refugees_settlement.319.b
+		ai_chance = {
+			factor = 1
+		}
+		add_adm_power = -20
+		add_estate_influence_modifier = {
+			influence = -10
+			duration = 7300
+			estate = estate_adventurers
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = upset_escanni_refugees duration = 7300 } add_random_development = 1 add_local_autonomy = 10 add_human_minority_size_effect = yes change_religion = regent_court" }
+		if = {
+			limit = { has_saved_event_target = escanni_center_target_1 }
+			event_target:escanni_center_target_1 = {
+				decrease_escanni_refugee_settlement_size = yes 
+			}
+		}
+	}
+	option = {
+		name = escanni_refugees_settlement.319.c
+		ai_chance = {
+			factor = 1
+		}
+		add_mil_power = 30
+		add_prestige = -5
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 5
+		}
+		escanni_refugees_generic_wescann_effect = { effect = "add_province_modifier = { name = escanni_refugee_discriminate_escann duration = 7300 }" }
+		random = {
+			chance = 10
+			if = {
+				limit = { has_saved_event_target = escanni_center_target_1 }
+				event_target:escanni_center_target_1 = {
+					decrease_escanni_refugee_settlement_size = yes 
+				}
+			}
+		}
+		decrease_escanni_integration_policy = yes
+	}
+}
 
 #400+ Events on Escann side
 country_event = {#Escanni event manager
@@ -4371,35 +3805,143 @@ country_event = {#Escanni event manager
 		any_owned_province = { has_province_flag = escanni_migration_target }
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
-	option = {
+	option = { #Adventurers/Escanni
 		name = escanni_refugees_settlement.400.a
 		ai_chance = { factor = 1 }
+		trigger = {
+			NOT = { has_country_modifier = orcish_administration }
+			NOT = { has_country_modifier = goblin_administration }
+		}
 		random_list = {
 			100 = {
-				modifier = {
-					factor = 0
-					OR = {
-						has_country_modifier =  orcish_administration
-						has_country_modifier =  goblin_administration
-					}
+				trigger = {
+					NOT = { has_country_flag = escanni_refugee_former_inhabitants_last }
 				}
 				country_event = {
 					id = escanni_refugees_settlement.401 #Former inhabitants return
 				}
 			}
-			100 = {
-				modifier = {
-					factor = 0
-					NOT = { has_country_modifier =  orcish_administration }
-					NOT = { has_country_modifier =  goblin_administration }
+			500 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_lost_sons_of_escann }
+					OR = {
+						tag = B36
+						tag = B55
+						tag = B31
+					}
 				}
 				country_event = {
-					id = escanni_refugees_settlement.402 #Human settlers approach
+					id = escanni_refugees_settlement.403 #Lost sons of Escann
 				}
+			}
+			100 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_refugee_dispute_claim_last }
+					NOT = { tag = B36 }
+					NOT = { tag = B55 }
+					NOT = { tag = B31 }
+					NOT = { has_reform = local_administration }
+				}
+				country_event = {
+					id = escanni_refugees_settlement.404 #Refugees dispute our claim
+				}
+			}
+			100 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_refugee_different_perspective_last }
+				}
+				country_event = {
+					id = escanni_refugees_settlement.405 #A Difference in Perspective
+				}
+			}
+			100 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_refugee_influx_sellswords_last }
+				}
+				country_event = {
+					id = escanni_refugees_settlement.406 #Influx of Sellswords and Adventurers
+				}
+			}
+			100 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_refugee_refugees_beliefs_last }
+					OR = {
+						religion_group = cannorian
+						religion = elikhetist
+					}
+				}
+				country_event = {
+					id = escanni_refugees_settlement.407 #The Refugees' Beliefs
+				}
+			}
+			100 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_refugee_scars_of_past_last }
+					OR = {
+						fast_owns_num_pops_of_race = { race = goblin amount = 1 }
+						fast_owns_num_pops_of_race = { race = orcish amount = 1 }
+					}
+				}
+				country_event = {
+					id = escanni_refugees_settlement.408 #The Scars of the Past
+				}
+			}
+			100 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_refugee_grand_tournament_last }
+					num_of_owned_provinces_with = {
+						value = 5
+						has_province_flag = escanni_migration_target
+					}
+				}
+				country_event = {
+					id = escanni_refugees_settlement.409 #A Grand Chivalric Tournament
+				}
+			}
+			50 = {
+				trigger = {
+					NOT = { has_country_flag = escanni_refugee_manufactoring_knowledge_last }
+					num_of_owned_provinces_with = {
+						value = 4
+						has_province_flag = escanni_migration_target
+					}
+					any_owned_province = {
+						OR = {
+							trade_goods = grain
+							trade_goods = livestock
+							trade_goods = naval_supplies
+						}
+						NOT = { culture_is_orcish = yes }
+						NOT = { culture_is_goblin = yes }
+					}
+				}
+				country_event = {
+					id = escanni_refugees_settlement.410 #Manufactoring Knowledge from the West
+				}
+			}
+			2000 = {
+				trigger = {
+					is_or_was_tag = { tag = B15 }
+				}
+				country_event = {
+					id = escanni_refugees_settlement.411 #Foreigners in a familiar land
+				}
+			}
+		}
+	}
+	option = { #Orcs and Goblins
+		name = escanni_refugees_settlement.400.a
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				has_country_modifier = orcish_administration
+				has_country_modifier = goblin_administration
+			}
+		}
+		random = {
+			chance = 33
+			country_event = {
+				id = escanni_refugees_settlement.402 #Human settlers approach
 			}
 		}
 	}
@@ -4415,8 +3957,12 @@ country_event = {#Former inhabitants return home - repeat
 	trigger = {#trigger is in the factors of the event manager
 	}
 
-	mean_time_to_happen = {
-		days = 1
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+			clr_escanni_refugee_escann_side_generic_flags = yes
+			set_country_flag = escanni_refugee_former_inhabitants_last
+		}
 	}
 
 	option = { #Assimilate them into our society
@@ -4424,71 +3970,37 @@ country_event = {#Former inhabitants return home - repeat
 		ai_chance = { factor = 1 }
 		trigger = {
 			NOT = {
-				OR = {
-					tag = B36 #Marrhold
-					tag = B55 #Count's league
-					tag = B31 #Castellyr
-				}
+				tag = B36 #Marrhold
+				tag = B55 #Count's league
+				tag = B31 #Castellyr
 			}
 		}
-		every_owned_province = {
-			limit = { has_province_flag = escanni_migration_target }
-			if = {
-				limit = { 
-					is_colony = yes
-				}
-				add_colonysize = 100
+		event_target:escanni_migration_effect_target_1 = {
+			escanni_refugees_generic_escann_effect = yes
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				escanni_refugees_generic_escann_effect = yes
 			}
-			else = {
-				add_random_development = 1
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				escanni_refugees_generic_escann_effect = yes
 			}
-			add_province_modifier = {
-				name = escanni_refugee_assimilate_escann
-				duration = 3650
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				escanni_refugees_generic_escann_effect = yes
 			}
-			if = {
-				limit = { NOT = { culture_is_human = yes } }
-				add_human_minority_size_effect = yes
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				escanni_refugees_generic_escann_effect = yes
 			}
-			if = { #corinite
-				limit = {
-					is_religion_enabled = corinite
-					NOT = { religion = corinite }
-					NOT = { is_capital = yes }
-				}
-				if = {
-					limit = {
-						NOT = { OR = { religion = dalcabba religion = elikhetist }}
-					}
-					change_religion = corinite
-				}
-				else = {
-					random = {
-						chance = 40
-						change_religion = corinite
-					}
-				}
-			}
-			else_if = { #RC
-				limit = {
-					NOT = { is_religion_enabled = corinite }
-					NOT = { religion = regent_court }
-					NOT = { is_capital = yes }
-				}
-				if = {
-					limit = {
-						NOT = { OR = { religion = dalcabba religion = elikhetist }}
-					}
-					change_religion = regent_court
-				}
-				else = {
-					random = {
-						chance = 40
-						change_religion = regent_court
-					}
-				}
-			}
-			clr_province_flag = escanni_migration_target
 		}
 	}
 	option = { #If they don't adapt, they don't belong
@@ -4496,11 +4008,9 @@ country_event = {#Former inhabitants return home - repeat
 		ai_chance = { factor = 0 }
 		trigger = {
 			NOT = {
-				OR = {
-					tag = B36 #Marrhold
-					tag = B55 #Count's league
-					tag = B31 #Castellyr
-				}
+				tag = B36 #Marrhold
+				tag = B55 #Count's league
+				tag = B31 #Castellyr
 			}
 		}
 		random = {
@@ -4512,6 +4022,7 @@ country_event = {#Former inhabitants return home - repeat
 	option = { #It is their lands, and ours
 		name = escanni_refugees_settlement.401.c
 		ai_chance = { factor = 1 }
+		highlight = yes
 		trigger = {
 			OR = {
 				tag = B36 #Marrhold
@@ -4519,8 +4030,7 @@ country_event = {#Former inhabitants return home - repeat
 				tag = B31 #Castellyr
 			}
 		}
-		every_owned_province = {
-			limit = { has_province_flag = escanni_migration_target }
+		event_target:escanni_migration_effect_target_1 = {
 			if = {
 				limit = { 
 					is_colony = yes
@@ -4554,8 +4064,162 @@ country_event = {#Former inhabitants return home - repeat
 				}
 				change_religion = regent_court
 			}
-			clr_province_flag = escanni_migration_target
 		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_homecoming_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = { #corinite
+					limit = {
+						is_religion_enabled = corinite
+						NOT = { religion = corinite }
+						NOT = { is_capital = yes }
+					}
+					change_religion = corinite
+				}
+				else_if = { #RC
+					limit = {
+						NOT = { is_religion_enabled = corinite }
+						NOT = { religion = regent_court }
+						NOT = { is_capital = yes }
+					}
+					change_religion = regent_court
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_homecoming_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = { #corinite
+					limit = {
+						is_religion_enabled = corinite
+						NOT = { religion = corinite }
+						NOT = { is_capital = yes }
+					}
+					change_religion = corinite
+				}
+				else_if = { #RC
+					limit = {
+						NOT = { is_religion_enabled = corinite }
+						NOT = { religion = regent_court }
+						NOT = { is_capital = yes }
+					}
+					change_religion = regent_court
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_homecoming_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = { #corinite
+					limit = {
+						is_religion_enabled = corinite
+						NOT = { religion = corinite }
+						NOT = { is_capital = yes }
+					}
+					change_religion = corinite
+				}
+				else_if = { #RC
+					limit = {
+						NOT = { is_religion_enabled = corinite }
+						NOT = { religion = regent_court }
+						NOT = { is_capital = yes }
+					}
+					change_religion = regent_court
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_homecoming_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = { #corinite
+					limit = {
+						is_religion_enabled = corinite
+						NOT = { religion = corinite }
+						NOT = { is_capital = yes }
+					}
+					change_religion = corinite
+				}
+				else_if = { #RC
+					limit = {
+						NOT = { is_religion_enabled = corinite }
+						NOT = { religion = regent_court }
+						NOT = { is_capital = yes }
+					}
+					change_religion = regent_court
+				}
+			}
+		}
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
 	}
 }
 country_event = {#Human settlers approach our borders
@@ -4567,10 +4231,6 @@ country_event = {#Human settlers approach our borders
 	is_triggered_only = yes
 
 	trigger = {#trigger is in the factors of the event manager
-	}
-
-	mean_time_to_happen = {
-		days = 1
 	}
 
 	option = { #They are those displaced by Korgus, show them mercy, allow them to settle
@@ -4614,7 +4274,6 @@ country_event = {#Human settlers approach our borders
 						limit = { NOT = { culture_is_human = yes } }
 						add_human_minority_size_effect = yes
 					}
-					clr_province_flag = escanni_migration_target
 				}
 			}
 			25 = {#flee
@@ -4672,7 +4331,6 @@ country_event = {#Human settlers approach our borders
 						limit = { NOT = { culture_is_human = yes } }
 						add_human_minority_size_effect = yes
 					}
-					clr_province_flag = escanni_migration_target
 				}
 			}
 			75 = {#flee
@@ -4703,5 +4361,2604 @@ country_event = {#Human settlers approach our borders
 			increase_monstrous_3 = yes
 		}
 		set_flags_escanni_refugees_escann_side = yes #flee
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
+	}
+}
+country_event = {#The Lost Sons of Escann
+	id = escanni_refugees_settlement.403
+	title = "escanni_refugees_settlement.403.t"
+	picture = REFUGEES_ESCAPING_eventPicture
+	desc = {
+		trigger = {
+			OR = {
+				tag = B55 #Count's League
+				tag = B31 #Castellyr
+			}
+		}
+		desc = "escanni_refugees_settlement.403.d1"
+	}
+	desc = {
+		trigger = {
+			tag = B36 #Marrhold
+		}
+		desc = "escanni_refugees_settlement.403.d2"
+	}
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+			set_country_flag = escanni_lost_sons_of_escann
+		}
+	}
+
+	option = { #A symbol of what we have achieved - CL/Castellyr
+		name = escanni_refugees_settlement.403.a
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				tag = B55 #Count's league
+				tag = B31 #Castellyr
+			}
+		}
+		add_treasury = -40
+		add_stability_or_adm_power = yes
+		event_target:escanni_migration_effect_target_1 = {
+			add_random_development = 1
+			change_culture = castellyrian
+			if = { #corinite
+				limit = {
+					is_religion_enabled = corinite
+					NOT = { religion = corinite }
+					NOT = { is_capital = yes }
+				}
+				change_religion = corinite
+			}
+			else= { #RC
+				change_religion = regent_court
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				add_random_development = 1
+				change_culture = castellyrian
+				if = { #corinite
+					limit = {
+						is_religion_enabled = corinite
+						NOT = { religion = corinite }
+						NOT = { is_capital = yes }
+					}
+					change_religion = corinite
+				}
+				else= { #RC
+					change_religion = regent_court
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				add_random_development = 1
+				change_culture = castellyrian
+				if = { #corinite
+					limit = {
+						is_religion_enabled = corinite
+						NOT = { religion = corinite }
+						NOT = { is_capital = yes }
+					}
+					change_religion = corinite
+				}
+				else= { #RC
+					change_religion = regent_court
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				add_random_development = 1
+				change_culture = castellyrian
+				if = { #corinite
+					limit = {
+						is_religion_enabled = corinite
+						NOT = { religion = corinite }
+						NOT = { is_capital = yes }
+					}
+					change_religion = corinite
+				}
+				else= { #RC
+					change_religion = regent_court
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				add_random_development = 1
+				change_culture = castellyrian
+				if = { #corinite
+					limit = {
+						is_religion_enabled = corinite
+						NOT = { religion = corinite }
+						NOT = { is_capital = yes }
+					}
+					change_religion = corinite
+				}
+				else= { #RC
+					change_religion = regent_court
+				}
+			}
+		}
+	}
+	option = { #Reclaim a neighbouring province
+		name = escanni_refugees_settlement.403.b
+		ai_chance = { factor = 1 }
+		trigger = {
+			any_owned_province = {
+				has_empty_adjacent_province = yes
+			}
+		}
+		add_treasury = -50
+		add_adm_power = -35
+		add_dip_power = -20
+		add_prestige = 5
+		random_owned_province = {
+			limit = { has_empty_adjacent_province = yes }
+			random_empty_neighbor_province = {
+				add_siberian_construction = 1
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = { #corinite
+					limit = {
+						is_religion_enabled = corinite
+						NOT = { religion = corinite }
+						NOT = { is_capital = yes }
+					}
+					change_religion = corinite
+				}
+				else= { #RC
+					change_religion = regent_court
+				}
+			}
+		}
+	}
+	option = { #Offer a place in the hold - Marrhold
+		name = escanni_refugees_settlement.403.c
+		ai_chance = { factor = 1 }
+		trigger = {
+			tag = B36 #Marrhold
+		}
+		highlight = yes
+		add_adm_power = -25
+		add_dip_power = -25
+		add_treasury = -40
+		add_stability_or_adm_power = yes
+		4097 = {
+			add_base_tax = 1
+			add_base_production = 1
+			add_base_manpower = 1
+		}
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
+	}
+}
+country_event = {#Refugee dispute our claims
+	id = escanni_refugees_settlement.404
+	title = "escanni_refugees_settlement.404.t"
+	picture = BURGHER_ESTATE_UPSET_eventPicture
+	desc = "escanni_refugees_settlement.404.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+			clr_escanni_refugee_escann_side_generic_flags = yes
+			set_country_flag = escanni_refugee_dispute_claim_last
+		}
+	}
+
+	option = { #It's not like they have a choice
+		name = escanni_refugees_settlement.404.a
+		ai_chance = { factor = 1 }
+		event_target:escanni_migration_effect_target_1 = {
+			random = {
+				chance = 50
+				add_random_development = 1
+			}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			add_local_autonomy = 15
+			add_province_modifier = {
+				name = escanni_refugee_discriminate_escann
+				duration = 3650
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				random = {
+					chance = 50
+					add_random_development = 1
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_local_autonomy = 15
+				add_province_modifier = {
+					name = escanni_refugee_discriminate_escann
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				random = {
+					chance = 50
+					add_random_development = 1
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_local_autonomy = 15
+				add_province_modifier = {
+					name = escanni_refugee_discriminate_escann
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				random = {
+					chance = 50
+					add_random_development = 1
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_local_autonomy = 15
+				add_province_modifier = {
+					name = escanni_refugee_discriminate_escann
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				random = {
+					chance = 50
+					add_random_development = 1
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_local_autonomy = 15
+				add_province_modifier = {
+					name = escanni_refugee_discriminate_escann
+					duration = 3650
+				}
+			}
+		}
+	}
+	option = { #Maybe we should rething our stance
+		name = escanni_refugees_settlement.404.b
+		ai_chance = { factor = 1 }
+		add_prestige = -10
+		add_legitimacy = -10
+		change_government_reform_progress = -30
+		event_target:escanni_migration_effect_target_1 = {
+			if = {
+				limit = { unrest = 1 }
+				add_province_modifier = {
+					name = appeased_escanni_refugees
+					duration = 3650
+				}
+			}
+			else = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				if = {
+					limit = { unrest = 1 }
+					add_province_modifier = {
+						name = appeased_escanni_refugees
+						duration = 3650
+					}
+				}
+				else = {
+					if = {
+						limit = { 
+							is_colony = yes
+						}
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				if = {
+					limit = { unrest = 1 }
+					add_province_modifier = {
+						name = appeased_escanni_refugees
+						duration = 3650
+					}
+				}
+				else = {
+					if = {
+						limit = { 
+							is_colony = yes
+						}
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				if = {
+					limit = { unrest = 1 }
+					add_province_modifier = {
+						name = appeased_escanni_refugees
+						duration = 3650
+					}
+				}
+				else = {
+					if = {
+						limit = { 
+							is_colony = yes
+						}
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				if = {
+					limit = { unrest = 1 }
+					add_province_modifier = {
+						name = appeased_escanni_refugees
+						duration = 3650
+					}
+				}
+				else = {
+					if = {
+						limit = { 
+							is_colony = yes
+						}
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+				}
+			}
+		}
+	}
+	option = { #They can establish an enclave
+		name = escanni_refugees_settlement.404.c
+		ai_chance = { factor = 1 }
+		trigger = {
+			any_owned_province = {
+				NOT = { is_capital = yes }
+				is_city = yes
+				has_province_flag = escanni_migration_target
+			}
+		}
+		add_prestige = 10
+		add_legitimacy = -10
+		change_government_reform_progress = 20
+		add_adm_power = -40
+		add_treasury = -40
+		add_stability_or_adm_power = yes
+		random_owned_province = {
+			limit = {
+				NOT = { is_capital = yes }
+				is_city = yes
+				has_province_flag = escanni_migration_target
+			}
+			change_culture = castellyrian
+			change_religion = regent_court
+			add_province_modifier = {
+				name = escanni_refugee_assimilate_escann
+				duration = 7300
+			}
+			if = {
+				limit = {
+					has_saved_event_target = escanni_migration_effect_target_1
+					has_saved_event_target = escanni_migration_effect_target_2
+					has_saved_event_target = escanni_migration_effect_target_3
+					has_saved_event_target = escanni_migration_effect_target_4
+					has_saved_event_target = escanni_migration_effect_target_5
+				}
+				add_random_development = 3
+			}
+			else_if = {
+				limit = {
+					has_saved_event_target = escanni_migration_effect_target_1
+					has_saved_event_target = escanni_migration_effect_target_2
+					has_saved_event_target = escanni_migration_effect_target_3
+				}
+				add_random_development = 2
+			}
+			else = {
+				add_random_development = 1
+			}
+		}
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
+	}
+}
+country_event = {#A difference in perspective
+	id = escanni_refugees_settlement.405
+	title = "escanni_refugees_settlement.405.t"
+	picture = ACCUSATION_eventPicture
+	desc = {
+		trigger = {
+			NOT = { #NOR
+				tag = B36 #Marrhold
+				tag = B55 #Count's league
+				tag = B31 #Castellyr
+				has_reform = local_administration
+			}
+		}
+		desc = "escanni_refugees_settlement.405.d1"
+	}
+	desc = {
+		trigger = {
+			OR = {
+				tag = B36 #Marrhold
+				tag = B55 #Count's league
+				tag = B31 #Castellyr
+				has_reform = local_administration
+			}
+		}
+		desc = "escanni_refugees_settlement.405.d2"
+	}
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+			clr_escanni_refugee_escann_side_generic_flags = yes
+			set_country_flag = escanni_refugee_different_perspective_last
+		}
+	}
+
+	option = { #Assuage their concern
+		name = escanni_refugees_settlement.405.a
+		ai_chance = { factor = 1 }
+		add_adm_power = -30
+		add_treasury = -20
+		event_target:escanni_migration_effect_target_1 = {
+			if = {
+				limit = { local_autonomy = 25 }
+				if = {
+					limit = { is_colony = yes }
+					add_colonysize = 100
+				}
+				else = {
+					add_local_autonomy = -15
+				}
+			}
+			else = {
+				if = {
+					limit = { is_colony = yes }
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				if = {
+					limit = { local_autonomy = 25 }
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_local_autonomy = -15
+					}
+				}
+				else = {
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+					add_province_modifier = {
+						name = escanni_refugee_assimilate_escann
+						duration = 3650
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				if = {
+					limit = { local_autonomy = 25 }
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_local_autonomy = -15
+					}
+				}
+				else = {
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+					add_province_modifier = {
+						name = escanni_refugee_assimilate_escann
+						duration = 3650
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				if = {
+					limit = { local_autonomy = 25 }
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_local_autonomy = -15
+					}
+				}
+				else = {
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+					add_province_modifier = {
+						name = escanni_refugee_assimilate_escann
+						duration = 3650
+					}
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				if = {
+					limit = { local_autonomy = 25 }
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_local_autonomy = -15
+					}
+				}
+				else = {
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+					add_province_modifier = {
+						name = escanni_refugee_assimilate_escann
+						duration = 3650
+					}
+				}
+			}
+		}
+	}
+	option = { #The tales of old are exagerated
+		name = escanni_refugees_settlement.405.b
+		ai_chance = { factor = 1 }
+		random = {
+			chance = 10
+			add_stability = -1
+		}
+		event_target:escanni_migration_effect_target_1 = {
+			if = {
+				limit = { is_colony = yes }
+				add_colonysize = 100
+			}
+			else = {
+				add_random_development = 1
+			}
+			add_province_modifier = {
+				name = escanni_refugee_assimilate_escann
+				duration = 3650
+			}
+			add_local_autonomy = 10
+			if = {
+				limit = { NOT = { culture_is_human = yes } }
+				add_human_minority_size_effect = yes
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				if = {
+					limit = { is_colony = yes }
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				add_local_autonomy = 10
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				if = {
+					limit = { is_colony = yes }
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				add_local_autonomy = 10
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				if = {
+					limit = { is_colony = yes }
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				add_local_autonomy = 10
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				if = {
+					limit = { is_colony = yes }
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				add_local_autonomy = 10
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+	}
+	option = { #We are an escanni realm indeed
+		name = escanni_refugees_settlement.405.c
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				tag = B36 #Marrhold
+				tag = B55 #Count's league
+				tag = B31 #Castellyr
+				has_reform = local_administration
+			}
+		}
+		highlight = yes
+		event_target:escanni_migration_effect_target_1 = {
+			if = {
+				limit = { local_autonomy = 50 }
+				if = {
+					limit = { is_colony = yes }
+					add_colonysize = 100
+				}
+				else = {
+					add_local_autonomy = -15
+				}
+			}
+			else = {
+				if = {
+					limit = { is_colony = yes }
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_homecoming_escann
+					duration = 3650
+				}
+			}
+			if = {
+				limit = { NOT = { culture_is_human = yes } }
+				add_human_minority_size_effect = yes
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				if = {
+					limit = { local_autonomy = 50 }
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_local_autonomy = -15
+					}
+				}
+				else = {
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+					add_province_modifier = {
+						name = escanni_refugee_homecoming_escann
+						duration = 3650
+					}
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				if = {
+					limit = { local_autonomy = 50 }
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_local_autonomy = -15
+					}
+				}
+				else = {
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+					add_province_modifier = {
+						name = escanni_refugee_homecoming_escann
+						duration = 3650
+					}
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				if = {
+					limit = { local_autonomy = 50 }
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_local_autonomy = -15
+					}
+				}
+				else = {
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+					add_province_modifier = {
+						name = escanni_refugee_homecoming_escann
+						duration = 3650
+					}
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				if = {
+					limit = { local_autonomy = 50 }
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_local_autonomy = -15
+					}
+				}
+				else = {
+					if = {
+						limit = { is_colony = yes }
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+					add_province_modifier = {
+						name = escanni_refugee_homecoming_escann
+						duration = 3650
+					}
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
+	}
+}
+country_event = {#Influx of Sellswords and adventurers
+	id = escanni_refugees_settlement.406
+	title = "escanni_refugees_settlement.406.t"
+	picture = MULTI_RACIAL_MERC_eventPicture
+	desc = "escanni_refugees_settlement.406.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+			clr_escanni_refugee_escann_side_generic_flags = yes
+			set_country_flag = escanni_refugee_influx_sellswords_last
+		}
+	}
+
+	option = { #More men for the Army
+		name = escanni_refugees_settlement.406.a
+		ai_chance = { factor = 1 }
+		add_mil_power = -30
+		add_prestige = -5
+		if = {
+			limit = {
+				has_saved_event_target = escanni_migration_effect_target_1
+				has_saved_event_target = escanni_migration_effect_target_2
+				has_saved_event_target = escanni_migration_effect_target_3
+			}
+			add_manpower = 9
+		}
+		else_if = {
+			limit = {
+				has_saved_event_target = escanni_migration_effect_target_1
+				has_saved_event_target = escanni_migration_effect_target_2
+			}
+			add_manpower = 6
+		}
+		else_if = {
+			limit = {
+				has_saved_event_target = escanni_migration_effect_target_1
+			}
+			add_manpower = 3
+		}
+	}
+	option = { #We need to rebuild more than we need to conquer
+		name = escanni_refugees_settlement.406.b
+		ai_chance = { factor = 1 }
+		add_adm_power = -40
+		add_treasury = -50
+		random_owned_area = {
+			add_province_modifier = {
+				name = escanni_merc_settle_down
+				duration = 10
+			}
+		}
+	}
+	option = { #We can offer them lands in a newly conquered territory
+		name = escanni_refugees_settlement.406.c
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				fast_owns_num_pops_of_race = { race = orcish amount = 1 }
+				fast_owns_num_pops_of_race = { race = goblin amount = 1 }
+			}
+		}
+		highlight = yes
+		add_adm_power = -25
+		if = {
+			limit = {
+				OR = {
+					low_tolerance_goblin_race_trigger = yes
+					low_tolerance_orcish_race_trigger = yes 
+				}
+			}
+			add_legitimacy = 5
+		}
+		else = {
+			add_legitimacy = -10
+		}
+		random_owned_province = {
+			limit = {
+				OR = {
+					culture_is_goblin = yes
+					culture_is_orcish = yes
+				}
+			}
+			if = {
+				limit = {
+					has_saved_event_target = escanni_migration_effect_target_1
+					has_saved_event_target = escanni_migration_effect_target_2
+					has_saved_event_target = escanni_migration_effect_target_3
+				}
+				add_base_manpower = 2
+			}
+			else_if = {
+				limit = {
+					has_saved_event_target = escanni_migration_effect_target_1
+					has_saved_event_target = escanni_migration_effect_target_2
+				}
+				add_base_manpower = 1
+			}
+			if = {
+				limit = { has_large_human_minority_trigger = yes }
+				random_list = {
+					1 = { change_culture = vernman }
+					1 = { change_culture = gawedi }
+					1 = { change_culture = wexonard }
+					1 = { change_culture = aldresian }
+					1 = { change_culture = east_damerian }
+				}
+			}
+			else_if = {
+				limit = { NOT = { culture_is_human = yes } }
+				add_human_minority_size_effect = yes
+			}
+		}
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
+	}
+}
+country_event = {#The Refugees' beliefs
+	id = escanni_refugees_settlement.407
+	title = "escanni_refugees_settlement.407.t"
+	picture = CHURCH_ESTATE_UPSET_eventPicture
+	desc = {
+		trigger = {
+			OR = {
+				religion = corinite
+				religion = regent_court
+			}
+		}
+		desc = "escanni_refugees_settlement.407.d1"
+	}
+	desc = {
+		trigger = {
+			OR = {
+				religion = elikhetist
+				religion = dalcabba
+			}
+		}
+		desc = "escanni_refugees_settlement.407.d2"
+	}
+	desc = {
+		trigger = {
+			religion = infernal_court
+		}
+		desc = "escanni_refugees_settlement.407.d3"
+	}
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+			clr_escanni_refugee_escann_side_generic_flags = yes
+			set_country_flag = escanni_refugee_refugees_beliefs_last
+		}
+	}
+
+	option = { #Free to worship who they please
+		name = escanni_refugees_settlement.407.a
+		ai_chance = { factor = 1 }
+		trigger = {
+			NOT = { religion = corinite }
+		}
+		event_target:escanni_migration_effect_target_1 = {
+			escanni_refugees_generic_escann_effect = yes
+			add_province_modifier = {
+				name = religious_zeal_at_conv
+				duration = 3650
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = religious_zeal_at_conv
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = religious_zeal_at_conv
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = religious_zeal_at_conv
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = religious_zeal_at_conv
+					duration = 3650
+				}
+			}
+		}
+	}
+	option = { #Heresy cannot be tolerated
+		name = escanni_refugees_settlement.407.b
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				religion = dalcabba
+				religion = elikhetist
+				AND = {
+					religion = regent_court
+					is_religion_enabled = corinite
+				}
+			}
+		}
+		highlight = yes
+		add_adm_power = -50
+		add_treasury = -25
+		event_target:escanni_migration_effect_target_1 = {
+			escanni_refugees_generic_escann_effect = yes
+			add_province_modifier = {
+				name = enforcing_unity
+				duration = 3650
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = enforcing_unity
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = enforcing_unity
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = enforcing_unity
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = enforcing_unity
+					duration = 3650
+				}
+			}
+		}
+	}
+	option = { #New brethren join our realm
+		name = escanni_refugees_settlement.407.c
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				religion = corinite
+				has_personal_deity = corin
+			}
+		}
+		highlight = yes
+		if = {
+			limit = { religion = regent_court }
+			add_ruler_modifier = {
+				name = escanni_ruler_tol_heretics
+			}
+			capital_scope = {
+				add_random_development = 2
+			}
+		}
+		else = {
+			add_karma = 10
+			add_ruler_modifier = {
+				name = escanni_ruler_missionary
+			}
+			event_target:escanni_migration_effect_target_1 = {
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = {
+					limit = { religion = corinite }
+					add_base_manpower = 1
+				}
+				else = {
+					change_religion = corinite
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+				event_target:escanni_migration_effect_target_2 = {
+					if = {
+						limit = { NOT = { culture_is_human = yes } }
+						add_human_minority_size_effect = yes
+					}
+					if = {
+						limit = { religion = corinite }
+						add_base_manpower = 1
+					}
+					else = {
+						change_religion = corinite
+					}
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+				event_target:escanni_migration_effect_target_3 = {
+					if = {
+						limit = { NOT = { culture_is_human = yes } }
+						add_human_minority_size_effect = yes
+					}
+					if = {
+						limit = { religion = corinite }
+						add_base_manpower = 1
+					}
+					else = {
+						change_religion = corinite
+					}
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+				event_target:escanni_migration_effect_target_4 = {
+					if = {
+						limit = { NOT = { culture_is_human = yes } }
+						add_human_minority_size_effect = yes
+					}
+					if = {
+						limit = { religion = corinite }
+						add_base_manpower = 1
+					}
+					else = {
+						change_religion = corinite
+					}
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+				event_target:escanni_migration_effect_target_5 = {
+					if = {
+						limit = { NOT = { culture_is_human = yes } }
+						add_human_minority_size_effect = yes
+					}
+					if = {
+						limit = { religion = corinite }
+						add_base_manpower = 1
+					}
+					else = {
+						change_religion = corinite
+					}
+				}
+			}
+		}
+	}
+	option = { #Agrados the redeemed
+		name = escanni_refugees_settlement.407.e
+		ai_chance = { factor = 1 }
+		trigger = {
+			religion = infernal_court
+		}
+		highlight = yes
+		add_adm_power = -40
+		add_treasury = -25
+		event_target:escanni_migration_effect_target_1 = {
+			if = {
+				limit = { NOT = { culture_is_human = yes } }
+				add_human_minority_size_effect = yes
+			}
+			if = {
+				limit = { religion = infernal_court }
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+			}
+			else = {
+				add_province_modifier = {
+					name = enforcing_unity
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = {
+					limit = { religion = infernal_court }
+					if = {
+						limit = { 
+							is_colony = yes
+						}
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+				}
+				else = {
+					add_province_modifier = {
+						name = enforcing_unity
+						duration = 3650
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = {
+					limit = { religion = infernal_court }
+					if = {
+						limit = { 
+							is_colony = yes
+						}
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+				}
+				else = {
+					add_province_modifier = {
+						name = enforcing_unity
+						duration = 3650
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = {
+					limit = { religion = infernal_court }
+					if = {
+						limit = { 
+							is_colony = yes
+						}
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+				}
+				else = {
+					add_province_modifier = {
+						name = enforcing_unity
+						duration = 3650
+					}
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				if = {
+					limit = { religion = infernal_court }
+					if = {
+						limit = { 
+							is_colony = yes
+						}
+						add_colonysize = 100
+					}
+					else = {
+						add_random_development = 1
+					}
+				}
+				else = {
+					add_province_modifier = {
+						name = enforcing_unity
+						duration = 3650
+					}
+				}
+			}
+		}
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
+	}
+}
+country_event = {#The Scars of the Past
+	id = escanni_refugees_settlement.408
+	title = "escanni_refugees_settlement.408.t"
+	picture = CIVIL_WAR_eventPicture
+	desc = "escanni_refugees_settlement.408.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+			clr_escanni_refugee_escann_side_generic_flags = yes
+			set_country_flag = escanni_refugee_scars_of_past_last
+		}
+	}
+
+	option = { #Share these lands
+		name = escanni_refugees_settlement.408.a
+		ai_chance = { factor = 1 }
+		trigger = {
+			NOT = {
+				has_country_modifier = racial_pop_orcish_expulsion
+				has_country_modifier = racial_pop_orcish_purge
+				has_country_modifier = racial_pop_goblin_expulsion
+				has_country_modifier = racial_pop_goblin_purge
+			}
+			OR = {
+				NOT = { high_tolerance_orcish_race_trigger = yes }
+				NOT = { high_tolerance_goblin_race_trigger = yes }
+			}
+		}
+		add_dip_power = -30
+		add_prestige = 10
+		every_known_country = {
+			limit = {
+				has_reform = greentide_horde
+			}
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = monstrous_historic_reconciliation_1
+			}
+		}
+		event_target:escanni_migration_effect_target_1 = {
+			escanni_refugees_generic_escann_effect = yes
+			add_nationalism = 10
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_nationalism = 10
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_nationalism = 10
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_nationalism = 10
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_nationalism = 10
+			}
+		}
+	}
+	option = { #Accelerate repatriation in kind
+		name = escanni_refugees_settlement.408.b
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				religion = dalcabba
+				religion = elikhetist
+				AND = {
+					religion = regent_court
+					is_religion_enabled = corinite
+				}
+			}
+			NOT = { has_country_flag = anb_abolished_slavery_flag }
+		}
+		add_adm_power = -25
+		add_dip_power = -25
+		medium_decrease_of_goblin_tolerance_effect = yes
+		medium_decrease_of_orcish_tolerance_effect = yes
+		event_target:escanni_migration_effect_target_1 = {
+			escanni_refugees_generic_escann_effect = yes
+			if = {
+				limit = {
+					OR = {
+						culture_group = orcish
+						culture_group = goblin
+					}
+					NOT = { area = castonath_area }
+				}
+				add_treasury = 15
+				change_trade_goods = slaves
+			}
+			else_if = {
+				limit = {
+					OR = {
+						has_orcish_minority_trigger = yes
+						has_goblin_minority_trigger = yes
+					}
+				}
+				add_treasury = 15
+				remove_orcish_minority_size_effect = yes
+				remove_goblin_minority_size_effect = yes
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				escanni_refugees_generic_escann_effect = yes
+				if = {
+					limit = {
+						OR = {
+							culture_group = orcish
+							culture_group = goblin
+						}
+						NOT = { area = castonath_area }
+					}
+					add_treasury = 15
+					change_trade_goods = slaves
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_orcish_minority_trigger = yes
+							has_goblin_minority_trigger = yes
+						}
+					}
+					add_treasury = 15
+					remove_orcish_minority_size_effect = yes
+					remove_goblin_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				escanni_refugees_generic_escann_effect = yes
+				if = {
+					limit = {
+						OR = {
+							culture_group = orcish
+							culture_group = goblin
+						}
+						NOT = { area = castonath_area }
+					}
+					add_treasury = 15
+					change_trade_goods = slaves
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_orcish_minority_trigger = yes
+							has_goblin_minority_trigger = yes
+						}
+					}
+					add_treasury = 15
+					remove_orcish_minority_size_effect = yes
+					remove_goblin_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				escanni_refugees_generic_escann_effect = yes
+				if = {
+					limit = {
+						OR = {
+							culture_group = orcish
+							culture_group = goblin
+						}
+						NOT = { area = castonath_area }
+					}
+					add_treasury = 15
+					change_trade_goods = slaves
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_orcish_minority_trigger = yes
+							has_goblin_minority_trigger = yes
+						}
+					}
+					add_treasury = 15
+					remove_orcish_minority_size_effect = yes
+					remove_goblin_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				escanni_refugees_generic_escann_effect = yes
+				if = {
+					limit = {
+						OR = {
+							culture_group = orcish
+							culture_group = goblin
+						}
+						NOT = { area = castonath_area }
+					}
+					add_treasury = 15
+					change_trade_goods = slaves
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_orcish_minority_trigger = yes
+							has_goblin_minority_trigger = yes
+						}
+					}
+					add_treasury = 15
+					remove_orcish_minority_size_effect = yes
+					remove_goblin_minority_size_effect = yes
+				}
+			}
+		}
+	}
+	option = { #This is their lands too
+		name = escanni_refugees_settlement.408.c
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				high_tolerance_goblin_race_trigger = yes
+				high_tolerance_orcish_race_trigger = yes
+				high_tolerance_half_orcish_race_trigger = yes
+			}
+			NOT = {
+				has_country_modifier = racial_pop_orcish_purge
+				has_country_modifier = racial_pop_goblin_purge
+				has_country_modifier = racial_pop_half_orcish_purge
+			}
+		}
+		highlight = yes
+		add_dip_power = 50
+		every_known_country = {
+			limit = {
+				has_reform = greentide_horde
+			}
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = monstrous_historic_reconciliation_2
+			}
+		}
+		event_target:escanni_migration_effect_target_1 = {
+			if = {
+				limit = { 
+					is_colony = yes
+				}
+				add_colonysize = 100
+			}
+			else = {
+				add_random_development = 1
+			}
+			add_province_modifier = {
+				name = escanni_refugee_assimilate_escann
+				duration = 3650
+			}
+			if = {
+				limit = { NOT = { culture_is_human = yes } }
+				add_human_minority_size_effect = yes
+			}
+			add_nationalism = 10
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_nationalism = 10
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_nationalism = 10
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_nationalism = 10
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_nationalism = 10
+			}
+		}
+	}
+	option = { #We are taking care of it
+		name = escanni_refugees_settlement.408.e
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				has_country_modifier = racial_pop_orcish_purge
+				has_country_modifier = racial_pop_goblin_purge
+			}
+		}
+		highlight = yes
+		add_adm_power = -50
+		add_treasury = 50
+		event_target:escanni_migration_effect_target_1 = {
+			escanni_refugees_generic_escann_effect = yes
+			if = {
+				limit = {
+					OR = {
+						culture_group = orcish
+						culture_group = goblin
+					}
+				}
+				random_list = {
+					1 = { change_culture = castellyrian }
+					1 = { change_culture = marcher }
+				}
+				add_devastation = 20
+			}
+			else_if = {
+				limit = {
+					OR = {
+						has_goblin_minority_trigger = yes
+						has_orcish_minority_trigger = yes
+					}
+				}
+				remove_goblin_minority_size_effect = yes
+				remove_orcish_minority_size_effect = yes
+				add_devastation = 5
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				escanni_refugees_generic_escann_effect = yes
+				if = {
+					limit = {
+						OR = {
+							culture_group = orcish
+							culture_group = goblin
+						}
+					}
+					random_list = {
+						1 = { change_culture = castellyrian }
+						1 = { change_culture = marcher }
+					}
+					add_devastation = 20
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_goblin_minority_trigger = yes
+							has_orcish_minority_trigger = yes
+						}
+					}
+					remove_goblin_minority_size_effect = yes
+					remove_orcish_minority_size_effect = yes
+					add_devastation = 5
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				escanni_refugees_generic_escann_effect = yes
+				if = {
+					limit = {
+						OR = {
+							culture_group = orcish
+							culture_group = goblin
+						}
+					}
+					random_list = {
+						1 = { change_culture = castellyrian }
+						1 = { change_culture = marcher }
+					}
+					add_devastation = 20
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_goblin_minority_trigger = yes
+							has_orcish_minority_trigger = yes
+						}
+					}
+					remove_goblin_minority_size_effect = yes
+					remove_orcish_minority_size_effect = yes
+					add_devastation = 5
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				escanni_refugees_generic_escann_effect = yes
+				if = {
+					limit = {
+						OR = {
+							culture_group = orcish
+							culture_group = goblin
+						}
+					}
+					random_list = {
+						1 = { change_culture = castellyrian }
+						1 = { change_culture = marcher }
+					}
+					add_devastation = 20
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_goblin_minority_trigger = yes
+							has_orcish_minority_trigger = yes
+						}
+					}
+					remove_goblin_minority_size_effect = yes
+					remove_orcish_minority_size_effect = yes
+					add_devastation = 5
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				escanni_refugees_generic_escann_effect = yes
+				if = {
+					limit = {
+						OR = {
+							culture_group = orcish
+							culture_group = goblin
+						}
+					}
+					random_list = {
+						1 = { change_culture = castellyrian }
+						1 = { change_culture = marcher }
+					}
+					add_devastation = 20
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_goblin_minority_trigger = yes
+							has_orcish_minority_trigger = yes
+						}
+					}
+					remove_goblin_minority_size_effect = yes
+					remove_orcish_minority_size_effect = yes
+					add_devastation = 5
+				}
+			}
+		}
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
+	}
+}
+country_event = {#A Grand Chivalric Tournament
+	id = escanni_refugees_settlement.409
+	title = "escanni_refugees_settlement.409.t"
+	picture = TOURNAMENT_eventPicture
+	desc = "escanni_refugees_settlement.409.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+			clr_escanni_refugee_escann_side_generic_flags = yes
+			set_country_flag = escanni_refugee_grand_tournament_last
+		}
+	}
+
+	option = { #A Marvelous idea!
+		name = escanni_refugees_settlement.409.a
+		ai_chance = { factor = 1 }
+		add_adm_power = -30
+		add_treasury = -100
+		add_stability_or_adm_power = yes
+		add_prestige = 10
+		add_legitimacy = 10
+		event_target:escanni_migration_effect_target_1 = {
+			add_province_modifier = {
+				name = escanni_jousting_ground
+				duration = 7300
+			}
+			add_random_development = 2
+			random = {
+				chance = 25
+				ROOT = {
+					country_event = {
+						id = random_event.6
+					}
+				}
+			}
+		}
+	}
+	option = { #Frivolous, if they contribute they can organise it
+		name = escanni_refugees_settlement.409.b
+		ai_chance = { factor = 1 }
+		add_adm_power = -30
+		add_prestige = 10
+		add_legitimacy = 10
+		event_target:escanni_migration_effect_target_1 = {
+			add_province_modifier = {
+				name = escanni_jousting_ground
+				duration = 7300
+			}
+			add_random_development = 2
+		}
+	}
+	option = { #This is a waste of time
+		name = escanni_refugees_settlement.409.c
+		ai_chance = { factor = 1 }
+		add_prestige = -10
+		event_target:escanni_migration_effect_target_1 = {
+			if = {
+				limit = { 
+					is_colony = yes
+				}
+				add_colonysize = 100
+			}
+			else = {
+				add_random_development = 1
+			}
+			add_province_modifier = {
+				name = escanni_refugee_assimilate_escann
+				duration = 3650
+			}
+			if = {
+				limit = { NOT = { culture_is_human = yes } }
+				add_human_minority_size_effect = yes
+			}
+			add_nationalism = 10
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_nationalism = 10
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_nationalism = 10
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_nationalism = 10
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+				add_nationalism = 10
+			}
+		}
+	}
+	option = { #An old tradition we shall honour
+		name = escanni_refugees_settlement.409.e
+		ai_chance = { factor = 10 }
+		trigger = {
+			OR = {
+				tag = B36
+				tag = B58
+				tag = B31
+				tag = B60
+			}
+		}
+		highlight = yes
+		add_adm_power = -30
+		add_treasury = -50
+		add_stability_or_adm_power = yes
+		add_prestige = 10
+		add_legitimacy = 10
+		event_target:escanni_migration_effect_target_1 = {
+			add_province_modifier = {
+				name = escanni_jousting_ground
+				duration = 7300
+			}
+			add_random_development = 2
+			random = {
+				chance = 25
+				ROOT = {
+					country_event = {
+						id = random_event.6
+					}
+				}
+			}
+		}
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
+	}
+}
+country_event = {#Manufactoring knowledge from the West
+	id = escanni_refugees_settlement.410
+	title = "escanni_refugees_settlement.410.t"
+	picture = CITY_VIEW_eventPicture
+	desc = "escanni_refugees_settlement.410.d"
+	
+	is_triggered_only = yes
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+			clr_escanni_refugee_escann_side_generic_flags = yes
+			set_country_flag = escanni_refugee_manufactoring_knowledge_last
+		}
+	}
+
+	option = { #Give them a stipend
+		name = escanni_refugees_settlement.410.a
+		ai_chance = { factor = 1 }
+		add_treasury = -150
+		random_owned_province = {
+			limit = {
+				OR = {
+					trade_goods = grain
+					trade_goods = naval_supplies
+					trade_goods = livestock
+				}
+				NOT = {
+					culture_group = orcish
+					culture_group = goblin
+				}
+			}
+			random_list = {
+				1 = { change_trade_goods = cloth }
+				1 = { change_trade_goods = glass }
+				1 = { change_trade_goods = paper }
+			}
+			add_province_modifier = {
+				name = escanni_refugee_assimilate_escann
+				duration = 3650
+			}
+			add_province_modifier = {
+				name = escanni_changing_production
+				duration = 5475
+			}
+			if = {
+				limit = {
+					NOT = { culture_is_human = yes }
+				}
+				add_human_minority_size_effect = yes
+			}
+			if = { #corinite
+				limit = {
+					is_religion_enabled = corinite
+					NOT = { religion = corinite }
+					NOT = { is_capital = yes }
+				}
+				if = {
+					limit = {
+						NOT = { religion = dalcabba religion = elikhetist }
+					}
+					change_religion = corinite
+				}
+				else = {
+					random = {
+						chance = 40
+						change_religion = corinite
+					}
+				}
+			}
+			else_if = { #RC
+				limit = {
+					NOT = { is_religion_enabled = corinite }
+					NOT = { religion = regent_court }
+					NOT = { is_capital = yes }
+				}
+				if = {
+					limit = {
+						NOT = { religion = dalcabba religion = elikhetist }
+					}
+					change_religion = regent_court
+				}
+				else = {
+					random = {
+						chance = 40
+						change_religion = regent_court
+					}
+				}
+			}
+		}
+	}
+	option = { #Frivolous, if they contribute they can organise it
+		name = escanni_refugees_settlement.410.b
+		ai_chance = { factor = 1 }
+		add_prestige = -10
+		reduce_innovativeness_small_effect = yes
+		event_target:escanni_migration_effect_target_1 = {
+			escanni_refugees_generic_escann_effect = yes
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				escanni_refugees_generic_escann_effect = yes
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				escanni_refugees_generic_escann_effect = yes
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				escanni_refugees_generic_escann_effect = yes
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				escanni_refugees_generic_escann_effect = yes
+			}
+		}
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
+	}
+}
+country_event = {#Foreigners in a familiar land
+	id = escanni_refugees_settlement.411
+	title = "escanni_refugees_settlement.411.t"
+	picture = REFUGEES_ESCAPING_eventPicture
+	desc = "escanni_refugees_settlement.411.d"
+	
+	is_triggered_only = yes
+	fire_only_once = yes #should happen only once as only new wanderers and the tag it forms can get it
+
+	trigger = {#trigger is in the factors of the event manager
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_flags_escanni_refugees_effect_escann_side = yes
+		}
+	}
+
+	option = { #Let them settle, but no freedom of worship
+		name = escanni_refugees_settlement.411.a
+		ai_chance = { factor = 1 }
+		add_adm_power = 50
+		add_country_modifier = {
+			name = escanni_elikhand_worship_no_freedom
+			duration = 7300
+		}
+		event_target:escanni_migration_effect_target_1 = {
+			if = {
+				limit = { 
+					is_colony = yes
+				}
+				add_colonysize = 100
+			}
+			else = {
+				add_random_development = 1
+			}
+			add_province_modifier = {
+				name = escanni_refugee_assimilate_escann
+				duration = 3650
+			}
+			if = {
+				limit = { NOT = { culture_is_human = yes } }
+				add_human_minority_size_effect = yes
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				if = {
+					limit = { 
+						is_colony = yes
+					}
+					add_colonysize = 100
+				}
+				else = {
+					add_random_development = 1
+				}
+				add_province_modifier = {
+					name = escanni_refugee_assimilate_escann
+					duration = 3650
+				}
+				if = {
+					limit = { NOT = { culture_is_human = yes } }
+					add_human_minority_size_effect = yes
+				}
+			}
+		}
+	}
+	option = { #Autonomy and freedom of worship
+		name = escanni_refugees_settlement.411.b
+		ai_chance = { factor = 1 }
+		random_list = {
+			2 = {
+				add_stability = -1
+			}
+			8 = {
+				add_adm_power = -30
+			}
+		}
+		add_country_modifier = {
+			name = escanni_elikhand_worship_freedom
+			duration = 7300
+		}
+		event_target:escanni_migration_effect_target_1 = {
+			escanni_refugees_generic_escann_effect = yes
+			add_province_modifier = {
+				name = religious_zeal_at_conv
+				duration = 3650
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_2 }
+			event_target:escanni_migration_effect_target_2 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = religious_zeal_at_conv
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_3 }
+			event_target:escanni_migration_effect_target_3 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = religious_zeal_at_conv
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_4 }
+			event_target:escanni_migration_effect_target_4 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = religious_zeal_at_conv
+					duration = 3650
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = escanni_migration_effect_target_5 }
+			event_target:escanni_migration_effect_target_5 = {
+				escanni_refugees_generic_escann_effect = yes
+				add_province_modifier = {
+					name = religious_zeal_at_conv
+					duration = 3650
+				}
+			}
+		}
+	}
+	option = { #We have enough trouble as is, bar their entry for now
+		name = escanni_refugees_settlement.411.c
+		ai_chance = { factor = 1 }
+		random_list = {
+			2 = {
+				add_stability = 1
+			}
+			8 = {
+				add_adm_power = 30
+			}
+		}
+		add_country_modifier = {
+			name = escanni_soothed_the_masses
+			duration = 7300
+		}
+		set_flags_escanni_refugees_escann_side = yes
+	}
+	option = { #They lost these lands once already, they are ours now
+		name = escanni_refugees_settlement.411.e
+		ai_chance = { factor = 10 }
+		add_stability_or_adm_power = yes
+		add_country_modifier = {
+			name = escanni_elikhand_ban_refugees
+			duration = 14600
+		}
+		every_known_country = {
+			limit = {
+				capital_scope = {
+					province_group = escann_proper
+				}
+				NOT = {
+					culture_group = orcish
+					culture_group = goblin
+				}
+			}
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = banned_refugees
+			}
+		}
+		set_country_flag = elikhand_no_refugees
+		set_flags_escanni_refugees_escann_side = yes
+	}
+	after = {
+		escanni_refugees_generic_escann_clear_flags_effect = yes
 	}
 }
