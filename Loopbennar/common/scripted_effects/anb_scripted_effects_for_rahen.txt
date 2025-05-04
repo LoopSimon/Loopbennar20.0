@@ -3615,9 +3615,6 @@ rahen_raj_calc_cohesion = {
 		4411 = {
 			set_variable = { which = raj_var_cohesion which = PREV }
 		}
-
-		# Ai Raj elevate an ai Prabhi if there are fewer than max Senaptia.
-		check_if_at_senaptia_cap_pick_best_if_not = yes
 	}
 }
 
@@ -3645,6 +3642,7 @@ rahen_raj_variables_startup = {
 	R52 = { save_global_event_target_as = raj_vizier_global_target }
 	set_variable = { which = raj_var_cohesion_impact_bonus value = 0 }
 	rahen_raj_calc_cohesion = yes
+	check_if_at_senaptia_cap_pick_best_if_not = yes
 	country_event = {
 		id = rahenraj.0
 	}
@@ -3880,20 +3878,28 @@ check_if_at_senaptia_cap_pick_best_if_not = {
 			
 			#If a senapti rank is available
 		if = {
-			limit = { raj_below_allowed_senaptia = yes owner = { ai = yes } }
-			owner = {
-				pick_best_tag = {
-					scope = every_subject_country
-					scale = army_size
-					event_target_name = strongest_prabhi
-					global_trigger = "
-						is_subject_of_type = daimyo_vassal
-						ai = yes
-					"
-					number = 1
+			limit = {
+				raj_below_allowed_senaptia = yes
+				owner = {
+					ai = yes
+					any_subject_country = { is_subject_of_type = daimyo_vassal }
 				}
 			}
-			event_target:strongest_prabhi_1 = { raj_become_senapti = yes }	#prabhi with the biggest army, player escluded. make them fight cool war
+			owner = {
+				every_subject_country = {
+					limit = { is_subject_of_type = daimyo_vassal }
+					if = {
+						limit = {
+							OR = {
+								NOT = { has_saved_event_target = strongest_prabhi }
+								army_size = event_target:strongest_prabhi
+							}
+						}
+						save_event_target_as = strongest_prabhi
+					}
+				}
+			}
+			event_target:strongest_prabhi = { raj_become_senapti = yes }	#prabhi with the biggest army, player escluded. make them fight cool war
 		}
 	}
 }
@@ -3951,7 +3957,7 @@ raj_become_prabhi = {
 raj_become_vizier = {
 	hidden_effect = {
 		if = {
-			limit = { event_target:raj_vizier_global_target = { exists = yes } }
+			limit = { event_target:raj_vizier_global_target = { exists = yes NOT = { has_government_attribute = is_raja } } }
 			event_target:raj_vizier_global_target = { raj_become_senapti = yes }
 		}
 	}
