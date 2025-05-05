@@ -122,15 +122,15 @@ rahen_calc_reform_ministry_of_internal_relations = {
 		}
 		
 		if = {
-			limit = { 4411 = { check_variable = { which = raj_var_cohesion value = 40 } } }
+			limit = { 4411 = { check_variable = { which = raj_cohesion value = 40 } } }
 			change_variable = { which = reformMinistryInternalRelationsScore value = 5 }
 		}
 		if = {
-			limit = { 4411 = { check_variable = { which = raj_var_cohesion value = 60 } } }
+			limit = { 4411 = { check_variable = { which = raj_cohesion value = 60 } } }
 			change_variable = { which = reformMinistryInternalRelationsScore value = 5 }
 		}
 		if = {
-			limit = { 4411 = { check_variable = { which = raj_var_cohesion value = 80 } } }
+			limit = { 4411 = { check_variable = { which = raj_cohesion value = 80 } } }
 			change_variable = { which = reformMinistryInternalRelationsScore value = 5 }
 		}
 		
@@ -365,6 +365,976 @@ clear_oracle_prophecy_flag = {
 	clr_ruler_flag = prophecy_low_intensity
 	clr_ruler_flag = prophecy_high_intensity
 	clr_ruler_flag = oracle_prophecy_ongoing
+}
+
+####################
+### Raj Cohesion ###
+####################
+
+raj_monthy_calc = {
+	4411 = { 
+		change_variable = { which = raj_cohesion which = rajCohesionMonthy }
+		if = { limit = { check_variable = { raj_cohesion = 100 } }
+			set_variable = { which = raj_cohesion value = 100 }
+		}
+		else_if = { limit = { NOT = { check_variable = { raj_cohesion = 0 } } }
+			set_variable = { which = raj_cohesion value = 0 }
+		}
+	}
+	raj_cohesion_calc = yes
+}
+
+raj_cohesion_calc = {
+	4411 = {
+		set_variable = { which = rajCohesionMonthy value = 0 }
+		set_variable = { which = rajCohesionMonthy_mandate value = 0 }
+		set_variable = { which = rajCohesionMonthy_ministries_influence value = 0 }
+		set_variable = { which = rajCohesionMonthy_low_liberty_desire value = 0 }
+		set_variable = { which = rajCohesionMonthy_high_liberty_desire value = 0 }
+		set_variable = { which = rajDev value = 0 }
+		set_variable = { which = rajNbMandate value = 0 }
+		set_variable = { which = rajNbLowLD value = 0 }
+		set_variable = { which = rajNbHighLD value = 0 }
+		
+		owner = {
+			every_subject_country = {
+				export_to_variable = { which = rajDev value = total_development }
+				4411 = { change_variable = { which = rajDev which = PREV } }
+			}
+			export_to_variable = { which = rajDev value = total_development }
+			4411 = { change_variable = { which = rajDev which = PREV } }
+			
+			every_subject_country = {
+				4411 = { PREV = { divide_variable = { which = rajDev which = PREV } } }	#divides the country's dev but the total Raj dev
+				if = { limit = { has_estate = estate_raj_ministries }
+					if = { limit = { estate_influence = { estate = estate_raj_ministries influence = 60 } }
+						raj_cohesion_change = {	amount = 1 ministries_influence = yes }
+					}
+					else_if = { limit = { estate_influence = { estate = estate_raj_ministries influence = 40 } }
+						raj_cohesion_change = {	amount = 0.5 ministries_influence = yes }
+					}
+					else_if = { limit = { NOT = { estate_influence = { estate = estate_raj_ministries influence = 20 } } }
+						raj_cohesion_change = {	amount = -1 ministries_influence = yes }
+					}
+					else_if = { limit = { NOT = { estate_influence = { estate = estate_raj_ministries influence = 1 } } }
+						raj_cohesion_change = {	amount = -2 ministries_influence = yes }
+					}
+					
+					if = { limit = { liberty_desire = 60 }
+						raj_cohesion_change = {	amount = -1 high_liberty_desire = yes }
+					}
+					else_if = { limit = { liberty_desire = 40 }
+						raj_cohesion_change = {	amount = -0.5 high_liberty_desire = yes }
+					}
+					else_if = { limit = { NOT = { liberty_desire = 15 } }
+						raj_cohesion_change = {	amount = 0.5 low_liberty_desire = yes }
+					}
+				}
+			}
+			
+			4411 = { PREV = { divide_variable = { which = rajDev which = PREV } } }
+			if = { limit = { estate_influence = { estate = estate_raj_ministries influence = 60 } }
+				raj_cohesion_change = {	amount = 1 ministries_influence = yes }
+			}
+			else_if = { limit = { estate_influence = { estate = estate_raj_ministries influence = 40 } }
+				raj_cohesion_change = {	amount = 0.5 ministries_influence = yes }
+			}
+			else_if = { limit = { NOT = { estate_influence = { estate = estate_raj_ministries influence = 20 } } }
+				raj_cohesion_change = {	amount = -1 ministries_influence = yes }
+			}
+		}
+		
+		change_variable = { which = rajCohesionMonthy which = rajCohesionMonthy_internal_wars }
+		
+		change_variable = { which = rajCohesionMonthy which = rajaVizierCohesion }
+	}
+}
+
+raj_rounding_variables = {
+	4411 = {
+		divide_variable = { which = raj_cohesion value = 10 }
+		divide_variable = { which = rajCohesionMonthy value = 10 }
+		divide_variable = { which = rajCohesionMonthy_mandate value = 10 }
+		divide_variable = { which = rajCohesionMonthy_ministries_influence value = 10 }
+		divide_variable = { which = rajCohesionMonthy_low_liberty_desire value = 10 }
+		divide_variable = { which = rajCohesionMonthy_high_liberty_desire value = 10 }
+		divide_variable = { which = rajCohesionMonthy_internal_wars value = 10 }
+		multiply_variable = { which = raj_cohesion value = 10 }
+		multiply_variable = { which = rajCohesionMonthy value = 10 }
+		multiply_variable = { which = rajCohesionMonthy_mandate value = 10 }
+		multiply_variable = { which = rajCohesionMonthy_ministries_influence value = 10 }
+		multiply_variable = { which = rajCohesionMonthy_low_liberty_desire value = 10 }
+		multiply_variable = { which = rajCohesionMonthy_high_liberty_desire value = 10 }
+		multiply_variable = { which = rajCohesionMonthy_internal_wars value = 10 }
+	}
+}
+
+raj_cohesion_change = {
+
+	# Arguments (mandatory):
+	#  - amount = float
+	#  - One of:
+		#  - mandate = yes
+		#  - ministries_influence = yes
+		#  - ministries_agenda = yes
+		#  - ministries_events = yes
+		#  - low_liberty_desire = yes
+		#  - high_liberty_desire = yes
+		#  - vassal_integration = yes
+		#  - internal_wars = yes
+		#  - non_monthy = yes
+	#
+	
+	hidden_effect = {
+		#Set amount to change by
+		set_variable = { which = rajCohesionChangeAmount value = $amount$ }
+		if = { limit = { NOT = { overlord = { has_government_attribute = is_raja } } }	#Raj countries already have this part calculated every month
+			export_to_variable = { which = rajDev value = total_development }
+			4411 = { PREV = { divide_variable = { which = rajDev which = PREV } } }	#divides the country's dev but the total Raj dev
+		}
+		else_if = { limit = { NOT = { check_variable = { which = rajDev value = 0.001 } } }
+			export_to_variable = { which = rajDev value = total_development }
+			4411 = { PREV = { divide_variable = { which = rajDev which = PREV } } }
+		}
+		multiply_variable = { which = rajCohesionChangeAmount which = rajDev }
+		
+		#debug stuff
+		# if = { limit = { check_variable = { which = rajDev value = 1 } }
+			# random_known_country = {
+				# limit = { ai = no }
+				# country_event = { id = rahenraj.4000 }
+			# }
+		# }
+		
+		4411 = {
+			set_variable = { which = rajCohesionChangeAmount which = PREV }
+			[[mandate]
+				change_variable = { which = rajCohesionMonthy_mandate which = rajCohesionChangeAmount }
+				change_variable = { which = rajCohesionMonthy which = rajCohesionChangeAmount }
+			]
+			[[ministries_influence]
+				change_variable = { which = rajCohesionMonthy_ministries_influence which = rajCohesionChangeAmount }
+				change_variable = { which = rajCohesionMonthy which = rajCohesionChangeAmount }
+			]
+			[[ministries_agenda]
+				change_variable = { which = raj_cohesion which = rajCohesionChangeAmount }
+				
+				if = { limit = { check_variable = { raj_cohesion = 100 } }
+					set_variable = { which = raj_cohesion value = 100 }
+				}
+				else_if = { limit = { NOT = { check_variable = { raj_cohesion = 0 } } }
+					set_variable = { which = raj_cohesion value = 0 }
+				}
+			]
+			[[ministries_events]
+				change_variable = { which = raj_cohesion which = rajCohesionChangeAmount }
+				
+				if = { limit = { check_variable = { raj_cohesion = 100 } }
+					set_variable = { which = raj_cohesion value = 100 }
+				}
+				else_if = { limit = { NOT = { check_variable = { raj_cohesion = 0 } } }
+					set_variable = { which = raj_cohesion value = 0 }
+				}
+			]
+			[[low_liberty_desire]
+				change_variable = { which = rajCohesionMonthy_low_liberty_desire which = rajCohesionChangeAmount }
+				change_variable = { which = rajCohesionMonthy which = rajCohesionChangeAmount }
+			]
+			[[high_liberty_desire]
+				change_variable = { which = rajCohesionMonthy_high_liberty_desire which = rajCohesionChangeAmount }
+				change_variable = { which = rajCohesionMonthy which = rajCohesionChangeAmount }
+			]
+			[[internal_wars]
+				change_variable = { which = rajCohesionMonthy_internal_wars which = rajCohesionChangeAmount }
+				change_variable = { which = rajCohesionMonthy which = rajCohesionChangeAmount }
+			]
+			[[vassal_integration]
+				change_variable = { which = rajCohesionChangeAmount value = -10 }
+				if = { limit = { NOT = { check_variable = { which = rajCohesionChangeAmount value = -50 } } }
+					set_variable = { which = rajCohesionChangeAmount value = -50 }
+				}
+				
+				change_variable = { which = raj_cohesion which = rajCohesionChangeAmount }
+				
+				if = { limit = { NOT = { check_variable = { raj_cohesion = 0 } } }
+					set_variable = { which = raj_cohesion value = 0 }
+				}
+			]
+			[[non_monthly]
+				change_variable = { which = raj_cohesion which = rajCohesionChangeAmount }
+				
+				if = { limit = { check_variable = { raj_cohesion = 100 } }
+					set_variable = { which = raj_cohesion value = 100 }
+				}
+				else_if = { limit = { NOT = { check_variable = { raj_cohesion = 0 } } }
+					set_variable = { which = raj_cohesion value = 0 }
+				}
+			]
+		}
+	}
+	4411 = {
+		if = { limit = { owner = { ai = no } }
+			if = { limit = { NOT = { check_variable = { which = rajCohesionChangeNull value = $amount$ } } }
+				if = { limit = { check_variable = { which = rajCohesionIncreaseSmall value = $amount$ } }
+					custom_tooltip = raj_cohesion_increase_tiny_tt
+				}
+				else_if = { limit = { check_variable = { which = rajCohesionIncreaseMedium value = $amount$ } }
+					custom_tooltip = raj_cohesion_increase_small_tt
+				}
+				else_if = { limit = { check_variable = { which = rajCohesionIncreaseLarge value = $amount$ } }
+					custom_tooltip = raj_cohesion_increase_medium_tt
+				}
+				else_if = { limit = { check_variable = { which = rajCohesionIncreaseHuge value = $amount$ } }
+					custom_tooltip = raj_cohesion_increase_large_tt
+				}
+				else_if = { limit = { check_variable = { which = rajCohesionIncreaseGargantuan value = $amount$ } }
+					custom_tooltip = raj_cohesion_increase_huge_tt
+				}
+				else = {
+					custom_tooltip = raj_cohesion_increase_gargantuan_tt
+				}
+			}
+			else = {
+				if = { limit = { check_variable = { which = rajCohesionDecreaseGargantuan value = $amount$ } }
+					custom_tooltip = raj_cohesion_decrease_gargantuan_tt
+				}
+				else_if = { limit = { check_variable = { which = rajCohesionDecreaseHuge value = $amount$ } }
+					custom_tooltip = raj_cohesion_decrease_huge_tt
+				}
+				else_if = { limit = { check_variable = { which = rajCohesionDecreaseLarge value = $amount$ } }
+					custom_tooltip = raj_cohesion_decrease_large_tt
+				}
+				else_if = { limit = { check_variable = { which = rajCohesionDecreaseMedium value = $amount$ } }
+					custom_tooltip = raj_cohesion_decrease_medium_tt
+				}
+				else_if = { limit = { check_variable = { which = rajCohesionDecreaseSmall value = $amount$ } }
+					custom_tooltip = raj_cohesion_decrease_small_tt
+				}
+				else = {
+					custom_tooltip = raj_cohesion_decrease_tiny_tt
+				}
+			}
+		}
+	}
+}
+
+raj_cohesion_change_absolute = {
+	hidden_effect = {
+		4411 = {
+			change_variable = { which = raj_cohesion value = $amount$ }
+			
+			if = { limit = { check_variable = { raj_cohesion = 100 } }
+				set_variable = { which = raj_cohesion value = 100 }
+			}
+			else_if = { limit = { NOT = { check_variable = { raj_cohesion = 0 } } }
+				set_variable = { which = raj_cohesion value = 0 }
+			}
+		}
+	}
+	tooltip = { change_variable = { which = raj_cohesion value = $amount$ } }
+}
+
+raj_vizier_sway_change = {
+	hidden_effect = {
+		4411 = {
+			change_variable = { which = vizierSway value = $amount$ }
+			
+			if = { limit = { check_variable = { vizierSway = 100 } }
+				set_variable = { which = vizierSway value = 100 }
+			}
+			else_if = { limit = { NOT = { check_variable = { vizierSway = 0 } } }
+				set_variable = { which = vizierSway value = 0 }
+			}
+		}
+	}
+	tooltip = { change_variable = { which = vizierSway value = $amount$ } }
+}
+
+remove_raj_mandate = {
+	remove_country_modifier = raj_mandate_raja_protection
+	remove_country_modifier = raj_mandate_right_to_expansion
+	remove_country_modifier = raj_mandate_guaranteed_autonomy
+	remove_country_modifier = raj_mandate_mercantile_preference
+	remove_country_modifier = raj_mandate_sanctioned_armoury
+	remove_country_modifier = raj_mandate_ministry_lectures
+	remove_country_modifier = raj_mandate_senapti_primacy
+	remove_country_modifier = raj_mandate_extended_prabhi_privileges
+	remove_country_modifier = raj_mandate_territorial_limits
+}
+
+raj_clear_vizier = {
+	clr_country_flag = raj_vizier
+	clr_country_flag = raj_swayed_senaptia
+	clr_country_flag = raj_gathered_ministries
+	clr_country_flag = raj_outmaneuvered_raja
+	clr_country_flag = raj_discredited_raja
+	clr_country_flag = raj_became_raja_confident
+	
+	clr_country_flag = raj_had_promising_heir_event
+	clr_country_flag = raj_had_harassed_by_elephants_event
+	clr_country_flag = raj_had_tianlou_event
+	clr_country_flag = raj_had_deputised_event
+	clr_country_flag = raj_had_religious_school_event
+	clr_country_flag = raj_had_wife_offer_event
+}
+
+raj_cohesion_yearly_tick = {
+	raj_calc_max_allowed_senaptia = yes
+	raj_calc_vizier_sway = yes
+	4411 = {
+		owner = {
+			if = {
+				limit = {
+					NOT = { any_subject_country = { has_country_flag = raj_vizier } }
+					any_subject_country = {
+						OR = {
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+						NOT = { has_opinion_modifier = { who = PREV modifier = raj_dismissed_vizier_opinion } }
+					}
+				}
+				country_event = { id = rahenraj.2100 }
+			}
+		}
+		change_variable = { which = vizierSway which = vizierYearlySway }
+		if = { limit = { check_variable = { which = vizierSway value = 100 } }
+			set_variable = { which = vizierSway value = 100 }
+		}
+		else_if = { limit = { NOT = { check_variable = { which = vizierSway value = 0 } } }
+			set_variable = { which = vizierSway value = 0 }
+		}
+	}
+}
+
+raj_calc_vizier_sway = {
+	4411 = {
+		owner = {			
+			random_subject_country = {
+				limit = { has_country_flag = raj_vizier }
+				4411 = {
+					export_to_variable = { which = vizierTotalDev value = total_development who = PREV }
+					export_to_variable = { which = vizierAdm value = ADM who = PREV }
+					export_to_variable = { which = vizierDip value = DIP who = PREV }
+					export_to_variable = { which = vizierMil value = MIL who = PREV }
+				}
+			}
+			
+			4411 = {		
+				export_to_variable = { which = rajaAdm value = ADM who = PREV }
+				export_to_variable = { which = rajaDip value = DIP who = PREV }
+				export_to_variable = { which = rajaMil value = MIL who = PREV }
+			}
+		}
+		
+		#Cohesion
+		if = { limit = { check_variable = { which = vizierAdm which = rajaAdm } }
+			set_variable = { which = rajaVizierCohesion which = vizierAdm }
+		}
+		else = {
+			set_variable = { which = rajaVizierCohesion which = rajaAdm }
+		}
+		if = { limit = { check_variable = { which = vizierDip which = rajaDip } }
+			change_variable = { which = rajaVizierCohesion which = vizierDip }
+		}
+		else = {
+			change_variable = { which = rajaVizierCohesion which = rajaDip }
+		}
+		if = { limit = { check_variable = { which = vizierMil which = rajaMil } }
+			change_variable = { which = rajaVizierCohesion which = vizierMil }
+		}
+		else = {
+			change_variable = { which = rajaVizierCohesion which = rajaMil }
+		}
+		subtract_variable = { which = rajaVizierCohesion value = 9 }
+		divide_variable = { which = rajaVizierCohesion value = 300 }
+		multiply_variable = { which = rajaVizierCohesion value = 10 } #For rounding purposes
+		
+		#Sway
+		set_variable = { which = vizierSkillDiff which = vizierAdm }
+		change_variable = { which = vizierSkillDiff which = vizierDip }
+		change_variable = { which = vizierSkillDiff which = vizierMil }
+		subtract_variable = { which = vizierSkillDiff which = rajaAdm }
+		subtract_variable = { which = vizierSkillDiff which = rajaDip }
+		subtract_variable = { which = vizierSkillDiff which = rajaMil }
+		
+		divide_variable = { which = vizierTotalDev which = rajDev }
+		
+		set_variable = { which = vizierYearlySway which = vizierTotalDev }
+		multiply_variable = { which = vizierYearlySway value = 100 }
+		change_variable = { which = vizierYearlySway which = vizierSkillDiff }
+		multiply_variable = { which = vizierYearlySway value = 0.15 }
+		
+		divide_variable = { which = vizierYearlySway value = 100 }
+		multiply_variable = { which = vizierYearlySway value = 100 }
+
+		#Pasiragha Mission Rewards
+		if = { limit = {R61 = { has_country_flag = pasiragha_flag_viziersway } } 
+			change_variable = { which = vizierYearlySway value = 1 }
+		}
+	}
+}
+
+raj_calc_internal_wars = {
+	4411 = {
+		set_variable = { which = rajCohesionMonthy_internal_wars value = 0 }
+		owner = {
+			every_subject_country = {
+				limit = { is_in_war = { attacker_leader = THIS } }
+				save_event_target_as = raj_subject_at_war
+				if = {
+					limit = {
+						PREV = {
+							any_subject_country = {
+								is_in_war = {
+									attacker_leader = event_target:raj_subject_at_war
+									defender_leader = THIS
+								}
+							}
+						}
+					}
+					if = { limit = { NOT = { check_variable = { which = rajDev value = 0.0001 } } }
+						export_to_variable = { which = rajDev value = total_development }
+						4411 = { PREV = { divide_variable = { which = rajDev which = PREV } } }
+					}
+					set_variable = { which = rajCohesionMonthy_internal_wars which = rajDev }
+					4411 = { change_variable = { which = rajCohesionMonthy_internal_wars which = PREV } }
+				}
+			}
+		}
+		multiply_variable = { which = rajCohesionMonthy_internal_wars value = -2.5 } #ratio between % of dev at war and monthly cohesion impact
+	}
+}
+
+raj_calc_max_allowed_senaptia = {
+	4411 = {
+
+		#Based on your number of subjects divided by 5.5
+		owner = { save_event_target_as = raja_event_target }
+		export_to_variable = {
+			which = raj_max_allowed_senaptia
+			value = trigger_value:num_of_subjects
+			who = event_target:raja_event_target
+		}
+		divide_variable = {
+			which = raj_max_allowed_senaptia
+			value = 5.5
+		}
+		if = {
+			limit = {
+				owner = {
+					num_of_subjects = 100
+				}
+			}
+			multiply_variable = {
+				which = raj_max_allowed_senaptia
+				value = 0.8
+			}
+			if = {
+				limit = {
+					NOT = {
+						check_variable = {
+							which = raj_max_allowed_senaptia
+							value = 18
+						}
+					}
+				}
+				set_variable = {
+					which = raj_max_allowed_senaptia
+					value = 18
+				}
+			}
+		}
+		
+		if = {
+			limit = { owner = { has_estate_privilege = estate_raj_ministries_expanded_senaptia_ranks } }
+			multiply_variable = {
+				which = raj_max_allowed_senaptia
+				value = 1.2
+			}
+		}
+		if = {
+			limit = { owner = { has_estate_privilege = estate_raj_ministries_reduced_senaptia_ranks } }
+			divide_variable = {
+				which = raj_max_allowed_senaptia
+				value = 1.2
+			}
+		}
+
+		#Rounding
+		divide_variable = {
+			which = raj_max_allowed_senaptia
+			value = 1000
+		}
+		multiply_variable = {
+			which = raj_max_allowed_senaptia
+			value = 1000
+		}
+		
+		#Checking if you have too many Senaptia
+		set_variable = { which = rajNbSenapti value = 0 }
+		owner = {
+			every_subject_country = {
+				limit = { is_subject_of_type = great_daimyo_vassal }
+				4411 = { change_variable = { rajNbSenapti = 1 } }
+			}
+			
+			#If a senapti rank is available
+			if = { limit = { raj_below_allowed_senaptia = yes }
+				export_to_variable = { which = senaptiCandidateMilTech value = mil_tech }
+				every_subject_country = {
+					limit = {
+						is_subject_of_type = daimyo_vassal
+						if = {
+							limit = { overlord = { has_country_modifier = raj_closed_senapti_ranks } }
+							if = {
+								limit = { overlord = { culture_group = harimari } }
+								ruler_is_harimari = yes
+							}
+							else = {
+								ruler_is_human = yes
+							}
+						}
+						NOT = { has_country_modifier = prabhi_promotion_rejected }
+						NOT = { has_country_modifier = senapti_recently_demoted }
+						NOT = { has_country_modifier = raj_mandate_extended_prabhi_privileges }
+						num_of_cities = 2
+					}
+					if = { limit = { ai = no }
+						country_event = { id = rahenraj.7 days = 1 }	#info event "a senapti rank is available"
+						set_country_flag = raj_player_senapti_candidate
+					}
+					else = {
+						set_country_flag = raj_senapti_candidate
+					}
+					
+					export_to_variable = { which = senaptiCandidateDev value = total_development }
+					divide_variable = { which = senaptiCandidateDev value = 4 }
+					
+					export_to_variable = { which = senaptiCandidateOpinion value = opinion who = PREV }
+					divide_variable = { which = senaptiCandidateOpinion value = 10 }
+					
+					export_to_variable = { which = senaptiCandidateMilTech value = mil_tech }
+					subtract_variable = { which = senaptiCandidateMilTech which = PREV }
+					multiply_variable = { which = senaptiCandidateMilTech value = 15 }
+					
+					export_to_variable = { which = senaptiCandidateForceLimit value = land_forcelimit }
+					
+					set_variable = { which = senaptiCandidateScore which = senaptiCandidateDev }
+					change_variable = { which = senaptiCandidateScore which = senaptiCandidateOpinion }
+					change_variable = { which = senaptiCandidateScore which = senaptiCandidateMilTech }
+					change_variable = { which = senaptiCandidateScore which = senaptiCandidateForceLimit }
+				}
+				
+				random_subject_country = {
+					limit = { has_country_flag = raj_senapti_candidate }
+					save_event_target_as = next_ai_senapti
+				}
+				every_subject_country = { 
+					limit = {
+						has_country_flag = raj_senapti_candidate
+						check_variable = { which = senaptiCandidateScore which = event_target:next_ai_senapti }
+					}
+					save_event_target_as = next_ai_senapti
+				}
+				every_subject_country = {
+					limit = {
+						OR = {
+							has_country_flag = raj_senapti_candidate
+							has_country_flag = raj_player_senapti_candidate
+						}
+					}
+					divide_variable = { which = senaptiCandidateScore which = event_target:next_ai_senapti }
+					clr_country_flag = raj_senapti_candidate
+					clr_country_flag = raj_player_senapti_candidate
+				}
+				
+				if = { limit = { ai = no }
+					country_event = { id = rahenraj.7 days = 1 }	#info event "a senapti rank is available"
+				}
+				else = {
+					event_target:next_ai_senapti = {	#The n�1 ai candidate will become senapti in 150 days if the raja is ai
+						overlord = { country_event = { id = rahenraj.4 days = 150 } }
+					}
+				}
+			}
+			else = {
+				remove_country_modifier = raj_got_senapti_info
+			}
+		}
+	}
+}
+
+raj_calc_vizier_shortlist = {
+	hidden_effect = {
+		every_subject_country = {
+			limit = {
+				OR = {
+					has_reform = prabhi_reform
+					has_reform = senapti_reform
+				}
+				NOT = { has_opinion_modifier = { who = PREV modifier = raj_dismissed_vizier_opinion } }
+			}
+			
+			if = { limit = { has_country_flag = raj_vizier }
+				save_event_target_as = current_vizier
+				capital_scope = { save_event_target_as = current_vizier_capital }
+			}
+			else = {
+				set_country_flag = raj_not_sorted
+			}
+			
+			export_to_variable = { which = rajaAdm value = ADM who = PREV }
+			export_to_variable = { which = rajaDip value = DIP who = PREV }
+			export_to_variable = { which = rajaMil value = MIL who = PREV }
+			export_to_variable = { which = vizierTotalDev value = total_development }
+			export_to_variable = { which = vizierDipRep value = modifier:diplomatic_reputation }
+			export_to_variable = { which = vizierAdm value = ADM }
+			export_to_variable = { which = vizierDip value = DIP }
+			export_to_variable = { which = vizierMil value = MIL }
+			export_to_variable = { which = rajaOpinion value = opinion who = PREV }
+			divide_variable = { which = rajaOpinion value = 5 }
+			
+			#Monthly Cohesion
+			if = { limit = { check_variable = { which = vizierAdm which = rajaAdm } }
+				set_variable = { which = vizierCohesion which = vizierAdm }
+			}
+			else = {
+				set_variable = { which = vizierCohesion which = rajaAdm }
+			}
+			if = { limit = { check_variable = { which = vizierDip which = rajaDip } }
+				change_variable = { which = vizierCohesion which = vizierDip }
+			}
+			else = {
+				change_variable = { which = vizierCohesion which = rajaDip }
+			}
+			if = { limit = { check_variable = { which = vizierMil which = rajaMil } }
+				change_variable = { which = vizierCohesion which = vizierMil }
+			}
+			else = {
+				change_variable = { which = vizierCohesion which = rajaMil }
+			}
+			subtract_variable = { which = vizierCohesion value = 9 }
+			divide_variable = { which = vizierCohesion value = 300 }
+			multiply_variable = { which = vizierCohesion value = 10 } #For rounding purposes
+			
+			#Yearly Sway
+			4411 = {
+				set_variable = { which = temp which = rajDev }
+				PREV = { set_variable = { which = temp which = PREV } }
+			}
+			divide_variable = { which = vizierTotalDev which = temp }
+			
+			set_variable = { which = vizierYearlySway which = vizierTotalDev }
+			multiply_variable = { which = vizierYearlySway value = 100 }
+			change_variable = { which = vizierYearlySway which = vizierAdm }
+			change_variable = { which = vizierYearlySway which = vizierDip }
+			change_variable = { which = vizierYearlySway which = vizierMil }
+			subtract_variable = { which = vizierYearlySway which = rajaAdm }
+			subtract_variable = { which = vizierYearlySway which = rajaDip }
+			subtract_variable = { which = vizierYearlySway which = rajaMil }
+			divide_variable = { which = vizierYearlySway value = 1000 }
+			multiply_variable = { which = vizierYearlySway value = 150 }			
+			
+			#Vizier Score
+			set_variable = { which = vizierScore which = vizierTotalDev }
+			multiply_variable = { which = vizierScore value = 200 }
+			change_variable = { which = vizierScore which = vizierAdm }
+			change_variable = { which = vizierScore which = vizierDip }
+			change_variable = { which = vizierScore which = vizierMil }
+			change_variable = { which = vizierScore which = rajaOpinion }
+			multiply_variable = { which = vizierDipRep value = 3 }
+			change_variable = { which = vizierScore which = vizierDipRep }
+		}
+		
+		random_subject_country = {
+			limit = { has_country_flag = raj_not_sorted }
+			save_event_target_as = shortlisted_vizier_1
+		}
+		every_subject_country = { 
+			limit = {
+				has_country_flag = raj_not_sorted
+				check_variable = { which = vizierScore which = event_target:shortlisted_vizier_1 }
+			}
+			save_event_target_as = shortlisted_vizier_1
+		}
+		event_target:shortlisted_vizier_1 = {
+			capital_scope = { save_event_target_as = shortlisted_vizier_1_capital }
+			clr_country_flag = raj_not_sorted
+		}
+		
+		random_subject_country = { 
+			limit = { has_country_flag = raj_not_sorted }
+			save_event_target_as = shortlisted_vizier_2
+		}
+		every_subject_country = { 
+			limit = {
+				has_country_flag = raj_not_sorted
+				check_variable = { which = vizierScore which = event_target:shortlisted_vizier_2 }
+			}
+			save_event_target_as = shortlisted_vizier_2
+		}
+		event_target:shortlisted_vizier_2 = {
+			capital_scope = { save_event_target_as = shortlisted_vizier_2_capital }
+			clr_country_flag = raj_not_sorted
+		}
+		
+		random_subject_country = { 
+			limit = { has_country_flag = raj_not_sorted }
+			save_event_target_as = shortlisted_vizier_3
+		}
+		every_subject_country = { 
+			limit = {
+				has_country_flag = raj_not_sorted
+				check_variable = { which = vizierScore which = event_target:shortlisted_vizier_3 }
+			}
+			save_event_target_as = shortlisted_vizier_3
+		}
+		event_target:shortlisted_vizier_3 = {
+			capital_scope = { save_event_target_as = shortlisted_vizier_3_capital }
+			clr_country_flag = raj_not_sorted
+		}
+		
+		random_subject_country = { 
+			limit = { has_country_flag = raj_not_sorted }
+			save_event_target_as = shortlisted_vizier_4
+		}
+		every_subject_country = { 
+			limit = {
+				has_country_flag = raj_not_sorted
+				check_variable = { which = vizierScore which = event_target:shortlisted_vizier_4 }
+			}
+			save_event_target_as = shortlisted_vizier_4
+		}
+		event_target:shortlisted_vizier_4 = {
+			capital_scope = { save_event_target_as = shortlisted_vizier_4_capital }
+			clr_country_flag = raj_not_sorted
+		}
+		
+		random_subject_country = { 
+			limit = { has_country_flag = raj_not_sorted }
+			save_event_target_as = shortlisted_vizier_5
+		}
+		every_subject_country = { 
+			limit = {
+				has_country_flag = raj_not_sorted
+				check_variable = { which = vizierScore which = event_target:shortlisted_vizier_5 }
+			}
+			save_event_target_as = shortlisted_vizier_5
+		}
+		event_target:shortlisted_vizier_5 = {
+			capital_scope = { save_event_target_as = shortlisted_vizier_5_capital }
+			clr_country_flag = raj_not_sorted
+		}
+		
+		random_subject_country = { 
+			limit = { has_country_flag = raj_not_sorted }
+			save_event_target_as = shortlisted_vizier_6
+		}
+		every_subject_country = { 
+			limit = {
+				has_country_flag = raj_not_sorted
+				check_variable = { which = vizierScore which = event_target:shortlisted_vizier_6 }
+			}
+			save_event_target_as = shortlisted_vizier_6
+		}
+		event_target:shortlisted_vizier_6 = {
+			capital_scope = { save_event_target_as = shortlisted_vizier_6_capital }
+			clr_country_flag = raj_not_sorted
+		}
+		
+		random_subject_country = { 
+			limit = { has_country_flag = raj_not_sorted }
+			save_event_target_as = shortlisted_vizier_7
+		}
+		every_subject_country = { 
+			limit = {
+				has_country_flag = raj_not_sorted
+				check_variable = { which = vizierScore which = event_target:shortlisted_vizier_7 }
+			}
+			save_event_target_as = shortlisted_vizier_7
+		}
+		event_target:shortlisted_vizier_7 = {
+			capital_scope = { save_event_target_as = shortlisted_vizier_7_capital }
+			clr_country_flag = raj_not_sorted
+		}
+		
+		every_subject_country = {
+			clr_country_flag = raj_not_sorted
+		}
+	}
+}
+
+raj_calc_vizier_ranking = {
+	hidden_effect = {
+		4411 = {
+			set_variable = { which = temp which = rajDev }
+			owner = {
+				set_variable = { which = numRajSubjects value = 0 }
+			
+				every_subject_country = {
+					limit = {
+						OR = {
+							has_reform = prabhi_reform
+							has_reform = senapti_reform
+						}
+					}
+					PREV = { change_variable = { which = numRajSubjects value = 1 } }
+					set_country_flag = raj_not_sorted
+					
+					export_to_variable = { which = vizierTotalDev value = total_development }
+					4411 = { PREV = { set_variable = { which = temp which = PREV } } }
+					divide_variable = { which = vizierTotalDev which = temp }
+					export_to_variable = { which = vizierDipRep value = modifier:diplomatic_reputation }
+					export_to_variable = { which = vizierAdm value = ADM }
+					export_to_variable = { which = vizierDip value = DIP }
+					export_to_variable = { which = vizierMil value = MIL }
+					export_to_variable = { which = rajaOpinion value = opinion who = PREV }
+					divide_variable = { which = rajaOpinion value = 5 }
+					set_variable = { which = vizierRanking value = 9 }		
+					
+					#Vizier Score
+					set_variable = { which = vizierScore which = vizierTotalDev }
+					multiply_variable = { which = vizierScore value = 200 }
+					change_variable = { which = vizierScore which = vizierAdm }
+					change_variable = { which = vizierScore which = vizierDip }
+					change_variable = { which = vizierScore which = vizierMil }
+					change_variable = { which = vizierScore which = rajaOpinion }
+					multiply_variable = { which = vizierDipRep value = 3 }
+					change_variable = { which = vizierScore which = vizierDipRep }
+				}
+				
+				set_variable = { which = vizierRanking value = 1 }
+				
+				random_subject_country = {
+					limit = { has_country_flag = raj_not_sorted }
+					save_event_target_as = ranked_vizier
+				}
+				
+				while = {
+					limit = {
+						NOT = { check_variable = { which = vizierRanking value = 9 } }
+						check_variable = { which = numRajSubjects which = vizierRanking }
+					}
+					
+					every_subject_country = { 
+						limit = {
+							has_country_flag = raj_not_sorted
+							check_variable = { which = vizierScore which = event_target:ranked_vizier }
+						}
+						save_event_target_as = ranked_vizier
+					}
+					event_target:ranked_vizier = {
+						clr_country_flag = raj_not_sorted
+						set_variable = { which = vizierScore value = 0 }
+						set_variable = { which = vizierRanking which = PREV }
+					}
+					
+					change_variable = { which = vizierRanking value = 1 }
+				}
+				
+				every_subject_country = {
+					clr_country_flag = raj_not_sorted
+				}
+			}
+		}
+	}
+}
+
+raj_vizier_nomination_effects = {
+	custom_tooltip = raj_reset_vizier_sway_tt
+	if = { limit = { overlord = { any_subject_country = { has_country_flag = raj_vizier } } }
+		if = { limit = { 4411 = { check_variable = { which = vizierSway value = 90 } } }
+			raj_cohesion_change_absolute = { amount = -50 }
+			event_target:current_vizier = { add_liberty_desire = 50 }
+		}
+		else_if = { limit = { 4411 = { check_variable = { which = vizierSway value = 80 } } }
+			raj_cohesion_change_absolute = { amount = -45 }
+			event_target:current_vizier = { add_liberty_desire = 45 }
+		}
+		else_if = { limit = { 4411 = { check_variable = { which = vizierSway value = 70 } } }
+			raj_cohesion_change_absolute = { amount = -40 }
+			event_target:current_vizier = { add_liberty_desire = 40 }
+		}
+		else_if = { limit = { 4411 = { check_variable = { which = vizierSway value = 60 } } }
+			raj_cohesion_change_absolute = { amount = -35 }
+			event_target:current_vizier = { add_liberty_desire = 35 }
+		}
+		else_if = { limit = { 4411 = { check_variable = { which = vizierSway value = 50 } } }
+			raj_cohesion_change_absolute = { amount = -30 }
+			event_target:current_vizier = { add_liberty_desire = 30 }
+		}
+		else_if = { limit = { 4411 = { check_variable = { which = vizierSway value = 40 } } }
+			raj_cohesion_change_absolute = { amount = -25 }
+			event_target:current_vizier = { add_liberty_desire = 25 }
+		}
+		else_if = { limit = { 4411 = { check_variable = { which = vizierSway value = 30 } } }
+			raj_cohesion_change_absolute = { amount = -20 }
+			event_target:current_vizier = { add_liberty_desire = 20 }
+		}
+		else_if = { limit = { 4411 = { check_variable = { which = vizierSway value = 20 } } }
+			raj_cohesion_change_absolute = { amount = -15 }
+			event_target:current_vizier = { add_liberty_desire = 15 }
+		}
+		else_if = { limit = { 4411 = { check_variable = { which = vizierSway value = 10 } } }
+			raj_cohesion_change_absolute = { amount = -10 }
+			event_target:current_vizier = { add_liberty_desire = 10 }
+		}
+		else = {
+			raj_cohesion_change_absolute = { amount = -5 }
+			event_target:current_vizier = { add_liberty_desire = 5 }
+		}
+	}
+	
+	custom_tooltip = raj_unhappy_big_vassals_tt
+	if = { limit = { $scope$ = { NOT = { check_variable = { which = vizierTotalDev which = event_target:shortlisted_vizier_1 } } } }
+		event_target:shortlisted_vizier_1 = { add_liberty_desire = 20 }
+	}
+	if = { limit = { $scope$ = { NOT = { check_variable = { which = vizierTotalDev which = event_target:shortlisted_vizier_2 } } } }
+		event_target:shortlisted_vizier_2 = { add_liberty_desire = 20 }
+	}
+	if = { limit = { $scope$ = { NOT = { check_variable = { which = vizierTotalDev which = event_target:shortlisted_vizier_3 } } } }
+		event_target:shortlisted_vizier_3 = { add_liberty_desire = 20 }
+	}
+	if = { limit = { $scope$ = { NOT = { check_variable = { which = vizierTotalDev which = event_target:shortlisted_vizier_4 } } } }
+		event_target:shortlisted_vizier_4 = { add_liberty_desire = 20 }
+	}
+	if = { limit = { $scope$ = { NOT = { check_variable = { which = vizierTotalDev which = event_target:shortlisted_vizier_5 } } } }
+		event_target:shortlisted_vizier_5 = { add_liberty_desire = 20 }
+	}
+	if = { limit = { $scope$ = { NOT = { check_variable = { which = vizierTotalDev which = event_target:shortlisted_vizier_6 } } } }
+		event_target:shortlisted_vizier_6 = { add_liberty_desire = 20 }
+	}
+	if = { limit = { $scope$ = { NOT = { check_variable = { which = vizierTotalDev which = event_target:shortlisted_vizier_7 } } } }
+		event_target:shortlisted_vizier_7 = { add_liberty_desire = 20 }
+	}
+	
+	hidden_effect = {
+		4411 = {
+			set_variable = { which = vizierSway value = 0 }
+			set_variable = { which = vizierYearlySway which = event_target:shortlisted_vizier_1 }
+		}
+		event_target:current_vizier = {
+			raj_clear_vizier = yes
+			country_event = { id = rahenraj.2103 days = 1 }
+		}
+		$scope$ = {
+			set_country_flag = raj_vizier
+			save_event_target_as = new_vizier
+			country_event = { id = rahenraj.2102 days = 1 }
+		}
+	}
+}
+
+raj_change_setting = {
+	4411 = {
+		if = { limit = { is_variable_equal = { which = raj$mandate$Setting value = 3 } }
+			set_variable = { which = raj$mandate$Setting value = 0 }
+		}
+		else = {
+			change_variable = { which = raj$mandate$Setting value = 1 }
+		}
+	}
 }
 
 ######################
@@ -3249,7 +4219,7 @@ command_dewuhyunization_effect = {
 			}
 			owner = {
 				NOT = {
-					culture_group = hobgoblin
+					culture = hobgoblin
 					culture_is_wuhyun = yes
 					is_subject_of = R62
 				}
@@ -3363,659 +4333,5 @@ end_suhans_reformation = {
 		clr_global_flag = suhan_secondary_sicko_mode
 		clear_global_event_target = suhan_center
 		set_global_flag = suhan_reformation_over
-	}
-}
-###############
-### Raj 3.0 ###
-###############
-rahen_raj_calc_cohesion = {
-	event_target:raj_raja_global_target = {
-		set_variable = { which = raj_var_cohesion value = 0 }
-		set_variable = { which = raj_var_cohesion_impact_num_senaptia value = 0 }
-
-		# Legitimacy
-		export_to_variable = { variable_name = raj_var_cohesion_impact_legitimacy value = trigger_value:legitimacy }
-		change_variable = { which = raj_var_cohesion_impact_legitimacy value = -50 }
-		divide_variable = { which = raj_var_cohesion_impact_legitimacy value = 3.5 }
-		change_variable = { which = raj_var_cohesion which = raj_var_cohesion_impact_legitimacy }
-		round_variable = { which = raj_var_cohesion_impact_legitimacy value = 0 }
-
-		# Prestige
-		export_to_variable = { variable_name = raj_var_cohesion_impact_prestige value = trigger_value:prestige }
-		divide_variable = { which = raj_var_cohesion_impact_prestige value = 10 }
-		change_variable = { which = raj_var_cohesion which = raj_var_cohesion_impact_prestige }
-		round_variable = { which = raj_var_cohesion_impact_prestige value = 0 }
-
-		# War exhaustion
-		export_to_variable = { variable_name = raj_var_cohesion_impact_war_exhaustion value = trigger_value:war_exhaustion }
-		subtract_variable = { which = raj_var_cohesion which = raj_var_cohesion_impact_war_exhaustion }
-		round_variable = { which = raj_var_cohesion_impact_war_exhaustion value = 0 }
-
-		# Stability
-		export_to_variable = { variable_name = raj_var_cohesion_impact_stability value = trigger_value:stability }
-		if = { limit = { NOT = { stability = 0 } }	 # For some reason the trigger value is one higher than it should be at negative stab?
-			subtract_variable = { which = raj_var_cohesion_impact_stability value = 1 }
-		}
-		multiply_variable = { which = raj_var_cohesion_impact_stability value = 4 }
-		change_variable = { which = raj_var_cohesion which = raj_var_cohesion_impact_stability }
-		
-		# Subject loyalty and number of senapti.
-		set_variable = { which = raj_var_subject_weighed_ld 		value = 0 }
-		set_variable = { which = raj_var_subject_development_total 	value = 0 }
-		every_subject_country = {
-            ROOT = {
-                export_to_variable = { which = raj_var_subject_ld_individual value = trigger_value:liberty_desire who = PREV }
-                export_to_variable = { which = raj_var_subject_dev_individual value = trigger_value:total_development who = PREV }
-                change_variable =     { which = raj_var_subject_development_total which = raj_var_subject_dev_individual }
-                multiply_variable = { which = raj_var_subject_ld_individual     which = raj_var_subject_dev_individual }
-                change_variable =     { which = raj_var_subject_weighed_ld         which = raj_var_subject_ld_individual }
-            }
-        }
-		divide_variable = { which = raj_var_subject_weighed_ld 	which = raj_var_subject_development_total }
-		if = { limit = { check_variable = { which = raj_var_subject_weighed_ld value = 100 } } # Need to investigate whether the LD can go beyond 0-100, just leave this in for now.
-			set_variable = { which = raj_var_subject_weighed_ld value = 100 }
-		}
-		if = { limit = { NOT = { check_variable = { which = raj_var_subject_weighed_ld value = 0 } } } 
-			set_variable = { which = raj_var_subject_weighed_ld value = 0 }
-		}
-		set_variable = 		{ which = raj_var_cohesion_impact_subject_loyalty value = 100 }
-		subtract_variable = { which = raj_var_cohesion_impact_subject_loyalty which = raj_var_subject_weighed_ld }
-		multiply_variable = { which = raj_var_cohesion_impact_subject_loyalty value = 0.4 }
-		
-		change_variable = { which = raj_var_cohesion which = raj_var_cohesion_impact_subject_loyalty }
-		round_variable = { which = raj_var_cohesion_impact_subject_loyalty value = 0 }
-
-		if = { 
-			limit = { raj_below_allowed_senaptia = yes }
-			change_variable = {	which = raj_var_cohesion_impact_num_senaptia value = -5 }
-			change_variable = { which = raj_var_cohesion value = -5 }
-		}
-
-		# Ministries loyalty
-		if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 50 } } # 50-100
-			if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 77 } } # 77-100
-				if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 90 } } # 90-100
-					if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 97 } }
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 100 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 30 } # 100
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 29 } # 97
-						}
-					}
-					else = { # 62-69
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 94 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 28 } # 94
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 27 } # 90
-						}
-					}
-				}
-				else = { # 77-89
-					if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 84 } } # 84-89
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 87 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 26 } # 87
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 25 } # 84
-						}
-					}
-					else = {
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 80 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 24 } # 80
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 23 } # 77
-						}
-					}
-				}
-			}
-			else = { # 50-76
-				if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 64 } } # 64-76
-					if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 70 } } # 70-76
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 74 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 22 } # 74
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 21 } # 70
-						}
-					}
-					else = { # 62-69
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 67 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 20 } # 67
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 19 } # 64
-						}
-					}
-				}
-				else = { # 50-62
-					if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 57 } } # 57-63
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 60 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 18 } # 60
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 17 } # 57
-						}
-					}
-					else = { # 50-57
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 67 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 16 } # 54
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 15 } # 50
-						}
-					}
-				}
-			}
-		}
-		else = { # Below 50
-			if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 24 } } # 24-49
-				if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 37 } }  # 37-49
-					if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 44 } }  # 37-49
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 47 } } # 44-49
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 14 } # 47
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 13 } # 44
-						}
-					}
-					else = { # 37-43
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 40 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 12 } # 40
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 11 } # 37
-						}
-					}
-				}
-				else = { # 24-36
-					if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 30 } }
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 34 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 10 } # 34
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 9 } # 30
-						}
-					}
-					else = {
-						if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 27 } }
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 8 } # 27
-						}
-						else = {
-							set_variable = { which = raj_var_cohesion_impact_ministries value = 7 } # 24
-						}
-					}
-				}
-			}
-			else = { # 0-23
-				if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 14 } } 
-					if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 20 } } 
-						set_variable = { which = raj_var_cohesion_impact_ministries value = 6 } # 20
-					}
-					else_if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 17 } } 
-						set_variable = { which = raj_var_cohesion_impact_ministries value = 5 } # 17
-					}
-					else = {
-						set_variable = { which = raj_var_cohesion_impact_ministries value = 4 } # 14
-					}
-				}
-				else = {
-					if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 10 } } 
-						set_variable = { which = raj_var_cohesion_impact_ministries value = 3 } # 10
-					}
-					else_if = { limit = { estate_loyalty = { estate = estate_raj_ministries loyalty = 7 } } 
-						set_variable = { which = raj_var_cohesion_impact_ministries value = 2 } # 7
-					}
-					else = {
-						set_variable = { which = raj_var_cohesion_impact_ministries value = 1 } # 4
-					}
-				}
-			}
-		}
-		change_variable = { which = raj_var_cohesion which = raj_var_cohesion_impact_ministries }
-		round_variable = { which = raj_var_cohesion_impact_ministries value = 0 }
-
-		# Power projection
-		export_to_variable = { variable_name = raj_var_cohesion_impact_power_projection value = trigger_value:power_projection }
-		divide_variable = { which = raj_var_cohesion_impact_power_projection value = 10 }
-		change_variable = { which = raj_var_cohesion which = raj_var_cohesion_impact_power_projection }
-		
-		#Bonus 
-		if = {
-			limit = {
-				has_country_flag = raj_agenda_cohesion_set
-				NOT = { has_country_modifier = raj_agenda_cohesion }
-			}
-			change_variable = { which = raj_var_cohesion_impact_bonus value = -5 }
-			clr_country_flag = raj_agenda_cohesion_set
-		}
-		if = {
-			limit = {
-				has_country_flag = raj_agenda_cohesion_bad_set
-				NOT = { has_country_modifier = raj_agenda_cohesion_bad }
-			}
-			change_variable = { which = raj_var_cohesion_impact_bonus value = 5 }
-			clr_country_flag = raj_agenda_cohesion_bad_set
-		}
-		change_variable = { which = raj_var_cohesion which = raj_var_cohesion_impact_bonus }
-
-		divide_variable = { which = raj_var_cohesion value = 100 }
-		multiply_variable = { which = raj_var_cohesion value = 100 }
-
-		if = {
-			limit = {
-				check_variable = { which = raj_var_cohesion value = 100 }
-			}
-			set_variable = { which = raj_var_cohesion value = 100 }
-		}
-
-		# Easier access for non-Raja tags.
-		4411 = {
-			set_variable = { which = raj_var_cohesion which = PREV }
-		}
-
-		# Ai Raj elevate an ai Prabhi if there are fewer than max Senaptia.
-		check_if_at_senaptia_cap_pick_best_if_not = yes
-	}
-}
-
-raj_cohesion_change_bonus = {	#might be useful later
-	hidden_effect = {
-		change_variable = { which = raj_var_cohesion_impact_bonus value = $amount$ }
-		rahen_raj_calc_cohesion = yes
-	}
-	tooltip = { change_variable = { which = raj_cohesion value = $amount$ } }
-}
-
-rahen_raj_variables_startup = {
-	every_subject_country = {
-		if = { limit = { is_subject_of_type = great_daimyo_vassal }
-			set_country_flag = senapti_flag
-			set_variable = { which = senapti_battles_won value = 0 }
-			set_variable = { which = senapti_external_expansion value = 0 }
-			4411 = { change_variable = { rajNbSenapti = 1 } }
-		}
-		else_if = { limit = { is_subject_of_type = vizier_vassal }
-			set_variable = { which = vizier_scholars_invited value = 0 }
-		}
-	}
-	save_global_event_target_as = raj_raja_global_target
-	R52 = { save_global_event_target_as = raj_vizier_global_target }
-	set_variable = { which = raj_var_cohesion_impact_bonus value = 0 }
-	rahen_raj_calc_cohesion = yes
-	country_event = {
-		id = rahenraj.0
-	}
-}
-
-# Mandates
-rahen_raj_mandate_apply_modifier_raja = {
-	custom_tooltip = $raj_mandate_tooltip$
-	event_target:raj_raja_global_target = {
-		add_country_modifier = { name = $modifier$ duration = $mod_duration$ }
-	}			
-}
-rahen_raj_mandate_apply_modifier_vizier = {
-	custom_tooltip = $raj_mandate_tooltip$
-	event_target:raj_vizier_global_target = {
-		add_country_modifier = { name = $modifier$ duration = $mod_duration$ }
-	}	
-}
-rahen_raj_mandate_apply_modifier_senapti = {
-	custom_tooltip = $raj_mandate_tooltip$
-	tooltip = {
-		event_target:raj_raja_global_target = {
-			random_subject_country = {
-				limit = { is_subject_of_type = great_daimyo_vassal }
-				add_country_modifier = { name = $modifier$ duration = $mod_duration$ }
-			}
-		}
-	}
-	hidden_effect = {
-		event_target:raj_raja_global_target = {
-			every_subject_country = { limit = { is_subject_of_type = great_daimyo_vassal }
-				add_country_modifier = { name = $modifier$ duration = $mod_duration$ }
-			}
-		}		
-	}
-}
-rahen_raj_mandate_apply_modifier_prabhi = {
-	custom_tooltip = $raj_mandate_tooltip$
-	tooltip = {
-		event_target:raj_raja_global_target = {
-			random_subject_country = {
-				limit = { is_subject_of_type = daimyo_vassal }
-				add_country_modifier = { name = $modifier$ duration = $mod_duration$ }
-			}
-		}
-	}
-	hidden_effect = {
-		event_target:raj_raja_global_target = {
-			every_subject_country = { limit = { is_subject_of_type = daimyo_vassal }
-				add_country_modifier = { name = $modifier$ duration = $mod_duration$ }
-			}
-		}		
-	}
-}
-
-rahen_raj_mandate_vizier_logistical_focus = {
-	rahen_raj_mandate_apply_modifier_raja 		= { raj_mandate_tooltip = rahen_raj_mandate_raja_tt 	modifier = rahen_raj_mandate_vizier_3_raja_mod 		mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_vizier 	= { raj_mandate_tooltip = rahen_raj_mandate_vizier_tt 	modifier = rahen_raj_mandate_vizier_3_vizier_mod 	mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_senapti 	= { raj_mandate_tooltip = rahen_raj_mandate_senapti_tt 	modifier = rahen_raj_mandate_vizier_3_senaptia_mod 	mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_prabhi 	= { raj_mandate_tooltip = rahen_raj_mandate_prabhi_tt 	modifier = rahen_raj_mandate_vizier_3_prabhia_mod 	mod_duration = 3650 }
-	hidden_effect = {
-		overlord = {
-			every_subject_country = {
-				limit = { NOT = { has_reform = oracular_order_reform is_subject_of_type = vizier_vassal } }
-				country_event = { id = rahenraj.5005 }
-			}
-			country_event = { id = rahenraj.5005 }
-		}
-	}
-}
-rahen_raj_mandate_vizier_prabhi_recruitment = {
-	rahen_raj_mandate_apply_modifier_raja 		= { raj_mandate_tooltip = rahen_raj_mandate_raja_tt 	modifier = rahen_raj_mandate_vizier_1_raja_mod 				mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_vizier 	= { raj_mandate_tooltip = rahen_raj_mandate_vizier_senapti_tt 	modifier = rahen_raj_mandate_vizier_1_vizier_senaptia_mod 	mod_duration = 3650 }
-	hidden_effect = {	#because the vizier modifier is the same. unhid if they diverge
-		rahen_raj_mandate_apply_modifier_senapti 	= { raj_mandate_tooltip = rahen_raj_mandate_vizier_senapti_tt 	modifier = rahen_raj_mandate_vizier_1_vizier_senaptia_mod 	mod_duration = 3650 }
-	}	
-	rahen_raj_mandate_apply_modifier_prabhi 	= { raj_mandate_tooltip = rahen_raj_mandate_prabhi_tt 	modifier = rahen_raj_mandate_vizier_1_prabhia_mod 			mod_duration = 3650 }
-	hidden_effect = {
-		overlord = {
-			every_subject_country = {
-				limit = { NOT = { has_reform = oracular_order_reform is_subject_of_type = vizier_vassal } }
-				country_event = { id = rahenraj.5006 }
-			}
-			country_event = { id = rahenraj.5006 }
-		}
-	}
-	custom_tooltip = rahen_raj_mandate_extra_tt
-	event_target:raj_vizier_global_target = { create_general = { tradition = 60 } }
-}
-rahen_raj_mandate_vizier_imperial_drills = {
-	rahen_raj_mandate_apply_modifier_raja 		= { raj_mandate_tooltip = rahen_raj_mandate_raja_tt 	modifier = rahen_raj_mandate_vizier_2_raja_mod 		mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_vizier 	= { raj_mandate_tooltip = rahen_raj_mandate_vizier_tt 	modifier = rahen_raj_mandate_vizier_2_vizier_mod 	mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_senapti 	= { raj_mandate_tooltip = rahen_raj_mandate_senapti_tt 	modifier = rahen_raj_mandate_vizier_2_senaptia_mod 	mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_prabhi 	= { raj_mandate_tooltip = rahen_raj_mandate_prabhi_tt 	modifier = rahen_raj_mandate_vizier_2_prabhia_mod 	mod_duration = 3650 }
-
-	# All "peace_mod" modifiers will be removed if a country declares war or has war declared on them.
-	rahen_raj_mandate_apply_modifier_vizier 	= { raj_mandate_tooltip = raj_mandate_peacetime_mod_vizier_senapti 	modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod 	mod_duration = 3650 }
-	hidden_effect = {
-		rahen_raj_mandate_apply_modifier_senapti 	= { raj_mandate_tooltip = raj_mandate_peacetime_mod_vizier_senapti modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod 	mod_duration = 3650 }
-		overlord = {
-			every_subject_country = {
-				limit = { NOT = { has_reform = oracular_order_reform is_subject_of_type = vizier_vassal } }
-				country_event = { id = rahenraj.5007 }
-			}
-			country_event = { id = rahenraj.5007 }
-		}
-	}
-}
-# Raja mandates, scope is assumed to be the Raja.
-rahen_raj_mandate_raja_imperial_tribute = {
-	rahen_raj_mandate_apply_modifier_raja 		= { raj_mandate_tooltip = rahen_raj_mandate_raja_tt 	modifier = rahen_raj_mandate_raja_2_raja_mod 		mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_vizier 	= { raj_mandate_tooltip = rahen_raj_mandate_vizier_tt 	modifier = rahen_raj_mandate_raja_2_vizier_mod 		mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_senapti 	= { raj_mandate_tooltip = rahen_raj_mandate_senapti_tt 	modifier = rahen_raj_mandate_raja_2_senaptia_mod 	mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_prabhi 	= { raj_mandate_tooltip = rahen_raj_mandate_prabhi_tt 	modifier = rahen_raj_mandate_raja_2_prabhia_mod 	mod_duration = 3650 }
-	hidden_effect = {
-		every_subject_country = {
-			limit = { NOT = { has_reform = oracular_order_reform } }
-			country_event = { id = rahenraj.5008 }
-		}
-	}
-}
-rahen_raj_mandate_raja_declaration_of_harmony = {
-	custom_tooltip = rahen_raj_mandate_raja_declaration_of_harmony_tt
-	rahen_raj_mandate_apply_modifier_raja 		= { raj_mandate_tooltip = rahen_raj_mandate_raja_tt 	modifier = rahen_raj_mandate_raja_3_raja_mod 			mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_vizier 	= { raj_mandate_tooltip = rahen_raj_mandate_vizier_tt 	modifier = rahen_raj_mandate_raja_3_vizier_peace_mod 	mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_senapti 	= { raj_mandate_tooltip = rahen_raj_mandate_senapti_tt 	modifier = rahen_raj_mandate_raja_3_senaptia_peace_mod 	mod_duration = 3650 }
-	rahen_raj_mandate_apply_modifier_prabhi 	= { raj_mandate_tooltip = rahen_raj_mandate_prabhi_tt 	modifier = rahen_raj_mandate_raja_3_prabhia_peace_mod 	mod_duration = 3650 }
-	hidden_effect = {
-		every_subject_country = {
-			limit = { NOT = { has_reform = oracular_order_reform } }
-			country_event = { id = rahenraj.5009 }
-		}
-	}
-}
-
-rahen_raj_mandate_raja_land_redistribution = {
-	# TODO LATER RAJ, this will be replaced with something else, because fuck coding the originally intended mandate. (+1)
-}
-
-rahen_raj_vizier_scholar_count_effect = {
-	hidden_effect = {
-		if = { limit = { is_subject_of_type = vizier_vassal }
-			change_variable = { which = vizier_scholars_invited value = 1 }
-		}
-	}
-}
-
-rahen_raj_remove_mandates = {
-	remove_country_modifier = rahen_raj_mandate_vizier_1_raja_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_1_vizier_senaptia_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_1_prabhia_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_2_raja_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_2_vizier_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_2_senaptia_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_2_prabhia_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_3_raja_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_3_vizier_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_3_senaptia_mod
-	remove_country_modifier = rahen_raj_mandate_vizier_3_prabhia_mod
-	remove_country_modifier = rahen_raj_mandate_raja_2_raja_mod
-	remove_country_modifier = rahen_raj_mandate_raja_2_vizier_mod
-	remove_country_modifier = rahen_raj_mandate_raja_2_senaptia_mod
-	remove_country_modifier = rahen_raj_mandate_raja_2_prabhia_mod
-	remove_country_modifier = rahen_raj_mandate_raja_3_raja_mod
-	remove_country_modifier = rahen_raj_mandate_raja_3_vizier_peace_mod
-	remove_country_modifier = rahen_raj_mandate_raja_3_senaptia_peace_mod
-	remove_country_modifier = rahen_raj_mandate_raja_3_prabhia_peace_mod
-}
-
-check_if_at_senaptia_cap_pick_best_if_not = {
-	4411 = {
-		#Based on your number of subjects divided by 5.5
-		export_to_variable = {
-			which = raj_max_allowed_senaptia
-			value = trigger_value:num_of_subjects
-			who = PREV
-		}
-		divide_variable = {
-			which = raj_max_allowed_senaptia
-			value = 5.5
-		}
-		if = {
-			limit = { owner = { num_of_subjects = 100 } }
-			multiply_variable = {
-				which = raj_max_allowed_senaptia
-				value = 0.8
-			}
-		}
-		if = {
-			limit = {
-				NOT = {
-					check_variable = {
-						which = raj_max_allowed_senaptia
-						value = 7
-					}
-				}
-			}
-			set_variable = {
-				which = raj_max_allowed_senaptia
-				value = 7
-			}
-		}
-			
-		if = {
-			limit = { owner = { has_estate_privilege = estate_raj_ministries_expanded_senaptia_ranks } }
-			multiply_variable = {
-				which = raj_max_allowed_senaptia
-				value = 1.2
-			}
-		}
-		if = {
-			limit = { owner = { has_estate_privilege = estate_raj_ministries_reduced_senaptia_ranks } }
-			divide_variable = {
-				which = raj_max_allowed_senaptia
-				value = 1.2
-			}
-		}
-
-		round_variable = {
-			which = raj_max_allowed_senaptia
-			value = 0
-		}
-				
-		# #Checking if you have too many Senaptia	hopefully I'm accounting for everything and this is not needed
-		# set_variable = { which = rajNbSenapti value = 0 }
-		# owner = {
-		# 	every_subject_country = {
-		# 		limit = { is_subject_of_type = great_daimyo_vassal }
-		# 		4411 = { change_variable = { rajNbSenapti = 1 } }
-		# 	}
-		# }
-			
-			#If a senapti rank is available
-		if = {
-			limit = { raj_below_allowed_senaptia = yes owner = { ai = yes } }
-			owner = {
-				pick_best_tag = {
-					scope = every_subject_country
-					scale = army_size
-					event_target_name = strongest_prabhi
-					global_trigger = "
-						is_subject_of_type = daimyo_vassal
-						ai = yes
-					"
-					number = 1
-				}
-			}
-			event_target:strongest_prabhi_1 = { raj_become_senapti = yes }	#prabhi with the biggest army, player escluded. make them fight cool war
-		}
-	}
-}
-
-raj_become_senapti = {
-	add_government_reform = senapti_reform
-	hidden_effect = {
-		set_country_flag = senapti_flag
-		set_variable = { which = senapti_battles_won 		value = 0 }
-		set_variable = { which = senapti_external_expansion value = 0 }
-		event_target:raj_raja_global_target = {
-			create_subject = {
-				subject_type = great_daimyo_vassal
-				subject = PREV
-			}			
-		}
-		4411 = { change_variable = { rajNbSenapti = 1 } }
-		if = {
-			limit = {
-				event_target:raj_raja_global_target = { has_country_modifier = R51_senaptia_banners_raja }
-			}
-			add_country_modifier = {
-				name = R51_senaptia_banners_senaptia
-				duration = -1
-			}
-		}
-	}
-	if = {
-		limit = { tag = event_target:raj_vizier_global_target }
-		country_event = { id = rahenraj.2103 }
-	}
-}
-
-raj_become_prabhi = {
-	if = {
-		limit = { NOT = { government = monarchy } }
-		change_government = monarchy
-	}
-	add_government_reform = prabhi_reform	
-	hidden_effect = {
-		if = {
-			limit = { is_subject_of_type = great_daimyo_vassal }
-			4411 = { change_variable = { rajNbSenapti = -1 } }
-		}
-		clr_country_flag = senapti_flag
-		event_target:raj_raja_global_target = {
-			create_subject = {
-				subject_type = daimyo_vassal
-				subject = PREV
-			}
-		}
-    }
-}
-
-raj_become_vizier = {
-	hidden_effect = {
-		if = {
-			limit = { event_target:raj_vizier_global_target = { exists = yes } }
-			event_target:raj_vizier_global_target = { raj_become_senapti = yes }
-		}
-	}
-	if = {
-		limit = { is_subject_of_type = great_daimyo_vassal }
-		hidden_effect = {
-			4411 = { change_variable = { rajNbSenapti = -1 } }
-			clr_country_flag = senapti_flag
-		}
-	}
-	event_target:raj_raja_global_target = {
-		create_subject = {
-			subject_type = vizier_vassal
-			subject = PREV
-		}
-	}
-	hidden_effect = {
-		save_global_event_target_as = raj_vizier_global_target
-		country_event = { id = rahenraj.2102 }
-		set_variable = { which = vizier_scholars_invited value = 0 }
-	}
-}
-
-allowed_to_restore_raj = {
-	set_country_flag = may_restore_raj
-	custom_tooltip = may_restore_raj_tt
-}
-
-raja_completed_ministries_agenda = {
-	if = {
-		limit = { has_government_attribute = is_raja }
-		hidden_effect = { 
-			if = {
-				limit = {
-					NOT = { has_country_modifier = raj_agenda_cohesion }
-				}
-				change_variable = { which = raj_var_cohesion_impact_bonus value = 5 }
-				set_country_flag = raj_agenda_cohesion_set
-			}
-			add_or_extend_country_modifier = {
-				name = raj_agenda_cohesion
-				duration = 3650
-			}			
-		}
-		custom_tooltip = raj_agenda_cohesion_tt
-	}
-}
-
-raja_failed_ministries_agenda = {
-	if = {
-		limit = { has_government_attribute = is_raja }
-		hidden_effect = {
-			if = {
-				limit = {
-					NOT = { has_country_modifier = raj_agenda_cohesion_bad }
-				}
-				change_variable = { which = raj_var_cohesion_impact_bonus value = -5 }
-				set_country_flag = raj_agenda_cohesion_bad_set
-			}
-			add_or_extend_country_modifier = {
-				name = raj_agenda_cohesion_bad
-				duration = 3650
-			}
-		}
-		custom_tooltip = raj_agenda_cohesion_bad_tt
 	}
 }
