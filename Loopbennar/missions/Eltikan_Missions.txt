@@ -1220,39 +1220,319 @@ G60_1_missions_reveal = {
 				has_country_flag = eltikan_taychendi_contact
 			}
 			army_size = 100
-			any_ally = {
-				NOT = { has_country_modifier = monstrous_nation }
+			dip_power = 200
+			treasury = 1000
+			any_known_country = {
 				capital_scope = { superregion = taychend_superregion }
-				has_opinion = {
-					who = ROOT
-					value = 170
+				NOT = { 
+					tag = G52 #Ameion
+					tag = J99 #Validaunea
+					total_development = 150
+					has_country_modifier = monstrous_nation
 				}
+				has_100_opinion_improved_relation = { target = ROOT }
 			}
 		}
 
 		effect = {
-			ROOT = { country_event = { id = G60_events.24 } }
+			country_event = { id = G60_events.24 }
+			set_country_flag = count_battles_won
+			set_country_flag = count_wars_won
 		}
 	}
 
-	G60_taychend_todo = {
-		icon = mission_aelantir
+	G60_prove_ourselves = {
+		icon = mission_heated_battle
 		position = 13
 		required_missions = {
 			G60_a_new_peoples
 		}
 
-		provinces_to_highlight = {
-		}
-
 		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = G60_prove_ourselves_tt
+				OR = {
+					num_of_battles = { amount = 15 }
+					num_of_wars = { amount = 5 }
+				}
+			}
 		}
 
 		effect = {
+			clr_country_flag = count_battles_won
+			clr_country_flag = count_wars_won
+			add_mil_power = 200
+			event_target:eltikan_taychend_vassal = {
+				add_mil_power = 200
+				add_manpower = 15
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						any_known_country = {
+							capital_scope = { superregion = taychend_superregion }
+							NOT = { 
+								tag = ROOT
+								is_subject_of = ROOT 
+							}
+						}
+					}
+					pick_best_tags = {
+						global_trigger = "
+							capital_scope = { superregion = taychend_superregion }
+							NOT = { 
+								tag = ROOT
+								is_subject_of = ROOT 
+							}
+						"
+						scale = army_size
+						1 = yes
+						event_target_name = strongest_in_taychend
+					}
+					event_target:strongest_in_taychend_1 = {
+						country_event = { id = G60_events.25 }
+					}
+				}
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						capital_scope = { superregion = taychend_superregion }
+						NOT = { 
+							tag = ROOT
+							is_subject_of = ROOT 
+						}
+					}
+				}
+				custom_tooltip = G60_prove_ourselves_ttt
+			}
+		}
+	}
+
+	G60_end_the_interloper = {
+		icon = mission_sunset
+		position = 14
+		required_missions = {
+			G60_prove_ourselves
+		}
+
+		trigger = {
+			OR = {
+				total_development = 750
+				any_subject_country = { total_development = 750 }
+			}
+			OR = {
+				kamryakvals_war_is_ended = yes
+				is_year = 1600
+			}
+			is_at_war = no
+		}
+
+		effect = {
+			event_target:eltikan_taychend_vassal = {
+				change_religion = gotiriei
+				change_primary_culture = eltikanized_taychendi
+				set_ruler_culture = eltikanized_taychendi
+				set_consort_culture = eltikanized_taychendi
+				set_heir_culture = eltikanized_taychendi
+				add_accepted_culture = eltikanized_taychendi
+				every_owned_province = {
+					limit = {
+						superregion = taychend_superregion
+						religion = gotiriei
+					}
+					change_culture = eltikanized_taychendi
+				}
+			}
+		}
+	}
+
+	G60_against_taychendi_night = {
+		icon = mission_swear_fealty_knight
+		position = 15
+		required_missions = {
+			G60_end_the_interloper
+			G60_from_their_ashes
+		}
+
+		provinces_to_highlight = {
+			superregion = taychend_superregion
+			is_city = yes
+			NOT = {
+				AND = {
+					religion = gotiriei
+					country_or_non_sovereign_subject_holds = ROOT 
+				}
+			}
+		}
+
+		trigger = {
+			taychend_superregion = {
+				type = all
+				OR = {
+					is_city = no
+					AND = {
+						religion = gotiriei
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = G60_events.26 }
 		}
 	}
 }
 
+G60_2_missions_reveal = { 
+	slot = 2
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { 
+		OR = {
+			tag = G60
+			was_tag = G60
+		}
+		has_country_flag = eltikan_second_mission_appear
+	}
+
+	G60_learning_from_the_warmongers = {
+		icon = mission_diplomacy_missive
+		position = 13
+		required_missions = {
+			G60_a_new_peoples
+		}
+
+		trigger = {
+			event_target:eltikan_taychend_vassal = {
+				has_opinion = {
+					who = ROOT
+					value = 180
+				}
+				NOT = { liberty_desire = 30 }
+				total_development = 500
+			}
+			has_mil_advisor_3 = yes
+		}
+
+		effect = {
+			add_army_tradition = 20
+			add_country_modifier = {
+				name = eltikan_taychendi_warstyle
+				duration = -1
+			}
+			event_target:eltikan_taychend_vassal = {
+				add_army_tradition = 20
+				add_country_modifier = {
+					name = eltikan_war_lords_of_taychend
+					duration = -1
+				}
+			}
+		}
+	}
+
+	G60_from_their_ashes = {
+		icon = mission_taychend_nanru_nakar_city
+		position = 14
+		required_missions = {
+			G60_prove_ourselves
+		}
+
+		provinces_to_highlight = {
+			superregion = taychend_superregion
+			has_terrain = city_terrain
+			NOT = {
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					development = 30
+					has_trade_building_trigger = yes
+					has_tax_building_trigger = yes
+					has_production_building_trigger = yes
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = G60_from_their_ashes_tt
+				taychend_superregion = {
+					type = all
+					OR = {
+						NOT = { has_terrain = city_terrain }
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT
+							development = 30
+							has_trade_building_trigger = yes
+							has_tax_building_trigger = yes
+							has_production_building_trigger = yes
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			2465 = {
+				change_religion = gotiriei
+				change_culture = eltikanized_taychendi
+				add_permanent_province_modifier = {
+					name = eltikan_patronate_support
+					duration = -1
+				}
+			}
+			2495 = {
+				change_religion = gotiriei
+				change_culture = eltikanized_taychendi
+				add_permanent_province_modifier = {
+					name = eltikan_patronate_support
+					duration = -1
+				}
+			}
+			2496 = {
+				change_religion = gotiriei
+				change_culture = eltikanized_taychendi
+				add_permanent_province_modifier = {
+					name = eltikan_patronate_support
+					duration = -1
+				}
+			}
+			2497 = {
+				change_religion = gotiriei
+				change_culture = eltikanized_taychendi
+				add_permanent_province_modifier = {
+					name = eltikan_patronate_support
+					duration = -1
+				}
+			}
+			2500 = {
+				change_religion = gotiriei
+				change_culture = eltikanized_taychendi
+				add_permanent_province_modifier = {
+					name = eltikan_patronate_support
+					duration = -1
+				}
+			}
+			2520 = {
+				change_religion = gotiriei
+				change_culture = eltikanized_taychendi
+				add_permanent_province_modifier = {
+					name = eltikan_patronate_support
+					duration = -1
+				}
+			}
+			6559 = {
+				change_religion = gotiriei
+				change_culture = eltikanized_taychendi
+				add_permanent_province_modifier = {
+					name = eltikan_patronate_support
+					duration = -1
+				}
+			}
+		}
+	}
+}
 
 G60_3_missions_first_reveal = { 
 	slot = 3
@@ -1314,7 +1594,7 @@ G60_3_missions_second_reveal = {
 		}
 
 		effect = {
-			ROOT = { country_event = { id = G60_events.25 } }
+			ROOT = { country_event = { id = G60_events.27 } }
 			define_explorer = {
 				shock = 1
 				fire = 2
@@ -1350,7 +1630,7 @@ G60_3_missions_second_reveal = {
 
 		effect = {
 			add_adm_power = -100
-			ROOT = { country_event = { id = G60_events.26 } }
+			ROOT = { country_event = { id = G60_events.28 } }
 		}
 	}
 
@@ -1438,7 +1718,7 @@ G60_4_missions_second_reveal = {
 		}
 
 		effect = {
-			ROOT = { country_event = { id = G60_events.29 days = 1825 } }
+			ROOT = { country_event = { id = G60_events.31 days = 1825 } }
 			2773 = {
 				add_province_modifier = {
 					name = eltikan_clan_forges
@@ -1488,7 +1768,7 @@ G60_5_missions_reveal = {
 		}
 
 		effect = {
-			ROOT = { country_event = { id = G60_events.27 } }
+			ROOT = { country_event = { id = G60_events.29 } }
 		}
 	}
 
@@ -1516,7 +1796,7 @@ G60_5_missions_reveal = {
 		}
 
 		effect = {
-			ROOT = { country_event = { id = G60_events.28 } }
+			ROOT = { country_event = { id = G60_events.30 } }
 		}
 	}
 
@@ -1580,7 +1860,7 @@ G60_5_missions_reveal = {
 				add_mil_power = 200
 				add_dip_power = 200 
 			}
-			country_event = { id = G60_events.30 }
+			country_event = { id = G60_events.32 }
 		}
 	}
 }
