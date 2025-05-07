@@ -14,128 +14,88 @@ province_event = { #province level interaction stage 1
 	}
 	option = { #back out
 		name = transmutative_path.1.a
+		highlight = yes
 		hidden_effect = {
 			owner = { clr_country_flag = transmutative_path_infuse_chi_menu_open }
 		}
 	}
-	option = { #create chi wellspring yes
+	option = { #Build Chi Wellspring
 		name = transmutative_path.1.b
-		trigger = {
-			NOT = { transmutative_path_has_chi_wellspring_trigger = yes }
-			NOT = { has_province_flag = no_chi_wellspring }
-			NOT = { transmutative_path_infuse_province_trigger = yes }
-			NOT = { is_capital = yes }
-			development = 10
-			owner = {
-				treasury = 100
-				adm_power = 25
-				dip_power = 25
-				mil_power = 25
-			}
-		}
-		owner = {
-			add_treasury = -100
-			add_adm_power = -25
-			add_dip_power = -25
-			add_mil_power = -25
-		}
-		add_chi_wellspring_to_size = yes
-	}
-	option = { #create chi wellspring no
-		name = transmutative_path.1.b
-		trigger = {
-			OR = {
-				transmutative_path_has_chi_wellspring_trigger = yes
-				has_province_flag = no_chi_wellspring
-				transmutative_path_infuse_province_trigger = yes
-				is_capital = yes
-				NOT = { development = 10 }
-				owner = { NOT = { treasury = 100 } }
-				owner = { NOT = { adm_power = 25 } }
-				owner = { NOT = { dip_power = 25 } }
-				owner = { NOT = { mil_power = 25 } }
-			}
-		}
-		custom_tooltip = cant_build_chi_wellspring_tt
-	}
-	option = { #change trade good yes
-		name = transmutative_path.1.c
-		trigger = {
-			owner = {
-				OR = {
-					AND = {
-						culture_group = kai
-						NOT = { tag = Y60 }
-					}
-					culture = naamjyut
-					culture = antmvura
-				}
-			}
-			transmutative_path_change_trade_good_trigger = yes
-			owner = {
-				church_power = 50
-				NOT = {
-					has_country_modifier = trade_good_change_cd
-				}
-			}
-		}
-		transmutative_path_change_trade_good_effect = yes
-		custom_tooltip = transmutative_path_trade_goods_change_cd_tt
-		owner = {
-			add_church_power = -50
-			hidden_effect = {
-				add_country_modifier = {
-					name = trade_good_change_cd
-					duration = 9125
-					hidden = yes
-				}
-			}
-		}
-	}
-	option = { #change trade good no
-		name = transmutative_path.1.c
-		trigger = {
-			owner = {
-				OR = {
-					AND = {
-						culture_group = kai
-						NOT = { tag = Y60 }
-					}
-					culture = naamjyut
-					culture = antmvura
-				}
-			}
-			OR = {
-				transmutative_path_change_trade_good_trigger = no
+		custom_tooltip = build_chi_wellspring_tt
+		if = {
+			limit = {
+				NOT = { transmutative_path_has_chi_wellspring_trigger = yes }
+				NOT = { has_province_flag = no_chi_wellspring }
+				NOT = { transmutative_path_infuse_province_trigger = yes }
+				NOT = { is_capital = yes }
+				development = 10
 				owner = {
-					OR = {
-						NOT = { church_power = 50 }
+					treasury = 100
+					adm_power = 25
+					dip_power = 25
+					mil_power = 25
+				}
+			}
+			custom_tooltip = " " #Linebreak
+			owner = {
+				add_treasury = -100
+				add_adm_power = -25
+				add_dip_power = -25
+				add_mil_power = -25
+			}
+			add_chi_wellspring_to_size = yes
+		}
+	}
+	option = { #Change Trade Goods
+		name = transmutative_path.1.c
+		trigger = {
+			owner = {
+				OR = {
+					AND = {
+						culture_group = kai
+						NOT = { tag = Y60 } #Lo Ngoen - Because transmuting gold is op
+					}
+					culture = naamjyut
+					culture = antmvura
+				}
+			}
+		}
+		custom_tooltip = transmutative_path_change_trade_good_tt
+		if = {
+			limit = {
+				transmutative_path_change_trade_good_trigger = yes
+				owner = {
+					church_power = 50
+					NOT = {
 						has_country_modifier = trade_good_change_cd
 					}
 				}
 			}
-		}
-		custom_tooltip = cant_change_trade_good_tt
-	}
-	option = { #infuse province yes
-		name = transmutative_path.1.1
-		trigger = {
-			transmutative_path_infuse_province_trigger = yes
-			owner = { church_power = 50 }
-		}
-		province_event = { id = transmutative_path.2 }
-	}
-	option = { #infuse province no
-		name = transmutative_path.1.1
-		trigger = {
-			NOT = {
-				AND = {
-					transmutative_path_infuse_province_trigger = yes
-					owner = { church_power = 50 }
+			custom_tooltip = " " #Linebreak
+			transmutative_path_change_trade_good_effect = yes
+			owner = {
+				add_church_power = -50
+				hidden_effect = {
+					add_country_modifier = {
+						name = trade_good_change_cd
+						duration = 9125
+						hidden = yes
+					}
 				}
 			}
 		}
-		custom_tooltip = cannot_infuse_province_tt
+	}
+
+	option = { #Infuse Province
+		name = transmutative_path.1.1
+		custom_tooltip = infuse_province_tt
+		if = {
+			limit = {
+				transmutative_path_infuse_province_trigger = yes
+				owner = { church_power = 50 }
+			}
+			province_event = { id = transmutative_path.2 }
+		}
 	}
 	
 	option = {
@@ -158,11 +118,7 @@ province_event = { #province level interaction stage 1
 			cultivate_province_xia_path = yes
 		}
 		else = {
-			if = {
-				limit = { owner = { church_power = 200 } }
-				custom_tooltip = transmutative_path_200_chi_yes_tt
-			}
-			else = { custom_tooltip = transmutative_path_200_chi_no_tt }
+			custom_tooltip = transmutative_path_200_chi_check_province_tt
 			if = {
 				limit = {
 					NOT = {
@@ -177,6 +133,7 @@ province_event = { #province level interaction stage 1
 	}
 	option = { #back out
 		name = transmutative_path.1.a
+		highlight = yes
 		hidden_effect = {
 			owner = { clr_country_flag = transmutative_path_infuse_chi_menu_open }
 		}

@@ -1,0 +1,214 @@
+
+namespace = devouring_path
+
+country_event = {
+	id = devouring_path.0
+	title = devouring_path.0.t
+	desc = devouring_path.0.d
+	picture = TIGER_BODYGUARD_eventPicture
+	
+	is_triggered_only = yes
+	trigger = {
+		religion = devouring_path
+		any_owned_province = {
+			religion = high_philosophy
+			nationalism = 1
+			is_core = ROOT
+		}
+		NOT = {
+			has_country_modifier = 50_year_cooldown
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					religion = high_philosophy
+					nationalism = 1
+					is_core = ROOT
+				}
+				save_event_target_as = event_province
+			}
+			add_country_modifier = {
+				name = 50_year_cooldown
+				duration = 18250 #50 years
+				hidden = yes
+			}
+		}
+	}
+	goto = event_province
+	
+	option = {
+		name = devouring_path.0.a #To the Shadow Realm
+		ai_chance = { factor = 1 }
+		
+		event_target:event_province = {
+			change_religion = devouring_path
+			add_nationalism = -100
+		}
+		if = {
+			limit = { event_target:event_province = { development = 21 } }
+			event_target:event_province = {
+				spawn_rebels = {
+					type = high_philosophy_rebels
+					size = 3
+				}
+			}
+		}
+		else_if = {
+			limit = { event_target:event_province = { development = 11 } } 
+			event_target:event_province = {
+				spawn_rebels = {
+					type = high_philosophy_rebels
+					size = 2
+				}
+			}
+		}
+		else = {
+			event_target:event_province = {
+				spawn_rebels = {
+					type = high_philosophy_rebels
+					size = 1
+				}
+			}
+		}
+	}
+	option = {
+		name = devouring_path.0.b #Save souls
+		ai_chance = { factor = 1 }
+		
+		event_target:event_province = {
+			add_nationalism = -100
+		}
+		if = {
+			limit = { event_target:event_province = { development = 21 } }
+			event_target:event_province = {
+				spawn_rebels = {
+					type = high_philosophy_rebels
+					size = 3
+				}
+			}
+			add_church_power = 55
+		}
+		else_if = {
+			limit = { event_target:event_province = { development = 11 } } 
+			event_target:event_province = {
+				spawn_rebels = {
+					type = high_philosophy_rebels
+					size = 2
+				}
+			}
+			add_church_power = 35
+		}
+		else = {
+			event_target:event_province = {
+				spawn_rebels = {
+					type = high_philosophy_rebels
+					size = 1
+				}
+			}
+			add_church_power = 15
+		}
+	}
+}
+
+country_event = {
+	id = devouring_path.1
+	title = devouring_path.1.t
+	desc = devouring_path.1.d
+	picture = CASTELLOS_IS_DEAD_eventPicture
+	
+	is_triggered_only = yes
+	trigger = {
+		religion = devouring_path
+		NOT = {
+			has_country_flag = devouring_path_1_had
+		}
+		any_owned_province = {
+			OR = {
+				AND = {
+					fast_has_pop_of_race = { race = dwarven }
+					NOT = {
+						religion = dwarven_pantheon
+						religion = runefather_worship
+					}
+				}
+				religion = ancestor_worship
+			}
+			is_core = ROOT
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					OR = {
+						AND = {
+							fast_has_pop_of_race = { race = dwarven }
+							NOT = {
+								religion = dwarven_pantheon
+								religion = runefather_worship
+							}
+						}
+						religion = ancestor_worship
+					}
+					is_core = ROOT
+				}
+				save_event_target_as = event_province
+			}
+		}
+	}
+	goto = event_province
+	
+	option = {
+		name = devouring_path.1.a #To the Shadow Realm
+		ai_chance = { factor = 1 }
+		add_dip_power = -40
+		set_country_flag = devouring_path_1_had
+		every_owned_province = {
+			limit = {
+				OR = {
+					AND = {
+						fast_has_pop_of_race = { race = dwarven }
+						NOT = {
+							religion = dwarven_pantheon
+							religion = runefather_worship
+						}
+					}
+					religion = ancestor_worship
+				}
+				is_core = ROOT
+			}
+			add_province_modifier = {
+				name = mourning_ancestors
+				duration = 3650 #10 years
+			}
+		}
+	}
+	option = {
+		name = devouring_path.1.b #Save souls
+		ai_chance = { factor = 1 }
+		set_country_flag = devouring_path_1_had
+		every_owned_province = {
+			limit = {
+				OR = {
+					AND = {
+						fast_has_pop_of_race = { race = dwarven }
+						NOT = {
+							religion = dwarven_pantheon
+							religion = runefather_worship
+						}
+					}
+					religion = ancestor_worship
+				}
+				is_core = ROOT
+			}
+			add_province_modifier = {
+				name = worshippers_ignored
+				duration = 3650 #10 years
+			}
+		}
+	}
+}

@@ -196,6 +196,8 @@ country_event = { #neutral to allied
 	option = {
 		name = merfolk_events.1.a
 		merfolk_change_modifiers_positive_effect = yes
+
+		custom_tooltip = can_build_merfolk_habitats
 	}
 }
 #province_event = { #event that un-angers merfolk--angered does not exist right now
@@ -874,14 +876,13 @@ country_event = {
 	}
 }
 
-country_event = {
-	id = merfolk_events.12 #Curious similarity
+country_event = { #Curious similarity
+	id = merfolk_events.12 
 	title = merfolk_events.12.t
 	desc = merfolk_events.12.d
 	picture = ADVISOR_eventPicture
 
 	is_triggered_only = yes
-	fire_only_once = yes
 
 	immediate = {
 		set_country_flag = merfolk_traveler
@@ -918,14 +919,13 @@ country_event = {
 	}
 }
 
-country_event = {
-	id = merfolk_events.13 #Curious similarity electric boogaloo
+country_event = { #Curious similarity electric boogaloo
+	id = merfolk_events.13
 	title = merfolk_events.13.t
 	desc = merfolk_events.13.d
 	picture = ADVISOR_eventPicture
 
 	is_triggered_only = yes
-	fire_only_once = yes
 
 	immediate = { set_country_flag = merfolk_scientist }
 
@@ -2457,5 +2457,89 @@ country_event = { #An Unusual Claim To Authority
 			}
 		}
 		merfolk_subtract_opinion_effect_medium = yes
+	}
+}
+
+country_event = { #checking flags positive - done to avoid PDX optimizations putting effects out of order
+	id = merfolk_events.100
+	title = merfolk_events.100.t
+	desc = merfolk_events.100.d
+	picture = BATTLE_VISTULA_LAGOON_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = merfolk_events.100.a
+		ai_chance = { factor = 1 }
+
+		if = {
+			limit = {
+				has_country_flag = merfolk_opinion_isolated
+				check_variable = {
+					which = merfolkOpinionVar
+					value = 30
+				}
+			}
+			clr_country_flag = merfolk_opinion_isolated
+			set_country_flag = merfolk_opinion_neutral
+			country_event = { id = merfolk_events.3 }
+		}
+		if = {
+			limit = {
+				has_country_flag = merfolk_opinion_neutral
+				check_variable = {
+					which = merfolkOpinionVar
+					value = 60
+				}
+			}
+			clr_country_flag = merfolk_opinion_neutral
+			set_country_flag = merfolk_opinion_allied
+			country_event = { id = merfolk_events.1 }
+		}
+	}
+}
+
+country_event = { #checking flags negative - done to avoid PDX optimizations putting effects out of order
+	id = merfolk_events.101
+	title = merfolk_events.101.t
+	desc = merfolk_events.101.d
+	picture = BATTLE_VISTULA_LAGOON_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = merfolk_events.101.a
+		ai_chance = { factor = 1 }
+
+		if = {
+			limit = {
+				has_country_flag = merfolk_opinion_allied
+				NOT = {
+					check_variable = {
+						which = merfolkOpinionVar
+						value = 60
+					}
+				}
+			}
+			clr_country_flag = merfolk_opinion_allied
+			set_country_flag = merfolk_opinion_neutral
+			country_event = { id = merfolk_events.4 }
+		}
+		if = {
+			limit = {
+				has_country_flag = merfolk_opinion_neutral
+				NOT = {
+					check_variable = {
+						which = merfolkOpinionVar
+						value = 30
+					}
+				}
+			}
+			clr_country_flag = merfolk_opinion_neutral
+			set_country_flag = merfolk_opinion_isolated
+			country_event = { id = merfolk_events.6 }
+		}
 	}
 }
