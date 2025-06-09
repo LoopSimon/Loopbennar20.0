@@ -1,0 +1,1535 @@
+shelokmengi_missions_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = S57 } 
+
+	S57_fields_of_fortune = {
+		icon = mission_a_million_rice_fields
+		position = 3
+		required_missions = { S57_long_live_the_king } 
+
+		provinces_to_highlight = { 
+			country_or_non_sovereign_subject_holds = ROOT
+			trade_goods = grain
+			NOT = { base_production = 6 }
+			ROOT = {
+				NOT = {
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						value = 5
+						base_production = 6
+						trade_goods = grain
+					}
+				}
+			}
+		}
+
+		trigger = { 
+			any_owned_province = { 
+				OR = { 
+					has_province_modifier = guided_rains
+					has_province_modifier = guided_rains_temple
+					has_province_modifier = guided_rains_cathedral
+				} 
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 5
+				base_production = 6
+				trade_goods = grain
+			}
+		}  
+
+		effect = { 
+			custom_tooltip = population_center_tt
+			hidden_effect = {
+				every_owned_province = { 
+					limit = {
+						trade_goods = grain 
+					}
+					add_province_modifier = { 
+						name = S57_the_population_center
+						duration = -1
+					}
+				} 
+			}
+			tilcakan_area = {
+				add_permanent_claim = ROOT
+			}
+			melakfan_area = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	S57_shepherd_of_rain = {
+		icon = mission_green_village
+		position = 4
+		required_missions = { S57_fields_of_fortune } 
+
+		trigger = { 
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 70
+			}
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 50
+			}
+			has_estate_privilege = estate_church_independent_inquisition
+			church_power = 200
+			num_of_owned_provinces_with = {
+				value = 2
+				has_tax_building_trigger = yes
+			}
+		}	 
+
+		effect = { 
+			add_church_power = -100 
+			custom_tooltip = S57_sunny_days_unlock_tt
+			set_country_flag = S57_sunny_days_unlock
+		} 
+		
+	}
+
+	S57_i_bless_the_rains = {
+		icon = mission_stormy_seas
+		position = 7
+		required_missions = { S57_amping_up_production } 
+		provinces_to_highlight = { 
+			area = keychashow_area 
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					has_tax_building_trigger = yes
+				}
+			}
+		} 
+
+		trigger = { 
+			keychashow_area = { 
+				type = all
+				owned_by = ROOT
+				has_tax_building_trigger = yes
+			} 
+			custom_trigger_tooltip = {
+				tooltip = S57_sunnydays_uses_tt
+				check_variable = {
+					which = sunnydaysvariable
+					value = 5
+				}
+			}
+		} 
+
+		effect = { 
+			5521 = { #Leenshelokt
+				add_or_upgrade_tax_building = yes
+				change_religion = sky_domain
+				add_province_modifier = {
+                    name = S57_the_leenshelok_holy_site
+                    duration = -1
+                }
+			}
+			custom_tooltip = S57_sudden_flood_unlock_tt
+			set_country_flag = S57_sudden_flood_unlock
+		} 
+	}
+}
+shelokmengi_missions_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = S57 } 
+
+	S57_friends_in_holy_places = {
+		icon = mission_priest_church
+		position = 1
+
+		trigger = { 
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 55
+			} 
+			estate_influence = {
+				estate = estate_church
+				influence = 50
+			}
+			has_estate_privilege = estate_church_clerical_ministers
+		} 
+
+		effect = { 
+			custom_tooltip = S57_clerical_ministers_tooltip
+			change_estate_land_share = {
+				estate = estate_church
+    			share = 2
+			} 
+			change_estate_land_share = {
+				estate = estate_nobles
+    			share = -5
+			} 
+		} 
+	}
+
+	S57_seize_the_semadami = {
+		icon = mission_sw_torquoise_mining
+		position = 5
+		required_missions = { S57_shepherd_of_rain } 
+
+		provinces_to_highlight = { 
+			province_id = 6118 #Senidmot
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					base_production = 3
+					has_tax_building_trigger = yes
+				}
+			}
+		} 
+
+		trigger = { 
+			6118 = { #Senidmot
+				owned_by = ROOT
+				base_production = 3
+				has_tax_building_trigger = yes
+			} 
+			treasury = 500
+		} 
+
+		effect = { 
+			add_country_modifier = {
+				name = S57_tropical_cooling_lvl1
+				duration = -1
+			}
+			6118 = { #Senidmot
+                add_or_upgrade_tax_building = yes
+                change_religion = sky_domain
+                add_province_modifier = {
+                    name = S57_the_senidmot_holy_site
+                    duration = -1
+                }
+            }
+			simple_dynamic_effect_without_alternative = {
+				first_custom_tooltip = seize_the_semadami1_tt   # "The Crater of Martyr is level 1"
+				first_limit = "
+					6118 = {
+						has_great_project = {
+							type = crater_of_the_martyr
+							tier = 1
+						}
+					}
+				"
+				first_effect = "add_treasury = 500"
+				second_custom_tooltip = seize_the_semadami2_tt    # "The Crater of Martyr is level 0 or higher"
+				second_limit = "
+					NOT = {
+						6118 = {
+							has_great_project = {
+								type = crater_of_the_martyr
+								tier = 1
+							}
+						}
+					}
+				"
+				second_effect = "
+					6118 = {
+						add_great_project_tier = {
+							type = crater_of_the_martyr
+							tier = 1
+						}
+					}
+					add_treasury = -500
+				"
+			}
+		} 
+	} 
+
+	S57_amping_up_production = {
+		icon = mission_pol_develop_countryside
+		position = 6
+		required_missions = { S57_seize_the_semadami } 
+
+		trigger = { 
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 15
+				has_tax_building_trigger = yes
+			} 
+			total_development = 300
+		} 
+
+		effect = { 
+			add_country_modifier = {
+				name = S57_amplify_the_grain
+				duration = 7300
+			} 
+			keychashow_area = {
+				add_permanent_claim = ROOT
+			} 
+			maikelok_area = {
+				add_permanent_claim = ROOT
+			}
+			custom_tooltip = amping_up_production_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						trade_goods = grain
+					}
+					add_base_manpower = 1
+				}
+			}
+		} 
+	}
+
+	S57_down_in_madriamilak = {
+		icon = prosperity_for_all
+		position = 8
+		required_missions = {
+			S57_i_bless_the_rains
+			S57_the_great_harvest
+		}
+
+		trigger = { 
+			custom_trigger_tooltip = {
+				tooltip = S57_down_in_madriamilak_tt
+				OR= {
+					has_country_modifier = S57_shelokmengi_breadbasketlv03
+					has_country_modifier = S57_shelokmengi_breadbasketlv04
+					has_country_modifier = S57_shelokmengi_breadbasketlv05
+					has_country_modifier = S57_shelokmengi_breadbasketlv06
+					has_country_modifier = S57_shelokmengi_breadbasketlv07
+					has_country_modifier = S57_shelokmengi_breadbasketlv08
+					has_country_modifier = S57_shelokmengi_breadbasketlv09
+					has_country_modifier = S57_shelokmengi_breadbasketlv10
+					has_country_modifier = S57_shelokmengi_breadbasketlv11
+				}
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 15
+				has_tax_building_trigger = yes
+			} 
+			custom_trigger_tooltip = {
+                tooltip = S57_cathedral_tt
+                cathedral = 3
+            }
+		} 
+
+		effect = { 
+			add_country_modifier = {
+				name = S57_tropical_cooling_lvl2
+				duration = -1
+			} 
+			emot_nepas_area = {
+				add_permanent_claim = ROOT
+			}
+			medifat_area = {
+				add_permanent_claim = ROOT
+			}
+			riyiwedeb_area = {
+				add_permanent_claim = ROOT
+			}
+			custom_tooltip = population_center_tt
+			hidden_effect = {
+				every_owned_province = { 
+					limit = {
+						trade_goods = grain 
+					}
+					add_province_modifier = { 
+						name = S57_the_population_center
+						duration = -1
+					} 
+				}
+				remove_country_modifier = S57_tropical_cooling_lvl1
+			} 
+		} 
+	}
+}
+
+shelokmengi_missions_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = S57 } 
+
+	S57_long_live_the_king = {
+		icon = mission_monarch_in_throne_room
+		position = 2
+		required_missions = {
+			S57_friends_in_holy_places
+			S57_love_and_war
+		}
+
+		trigger = { 
+			has_regency = no
+			OR = {
+				employed_advisor = { category = DIP }
+				employed_advisor = { category = MIL }
+			}
+		}	 
+
+		effect = { 
+			country_event = {
+				id = flavor_shelokmengi.2 
+			}
+		} 
+	}
+
+	S57_invitations_to_all = {
+		icon = mission_diplomacy_missive
+		position = 3
+		required_missions = { S57_long_live_the_king } 
+
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					area = berfan_area 
+					devastation = 0.01
+				}
+				AND = {
+					is_capital_of = ROOT
+					NOT = { has_state_edict = edict_advancement_effort }
+				}
+			}
+		} 
+
+		trigger = {
+			berfan_area = {
+				type = all
+				NOT = { devastation = 0.01 }
+			}
+			capital_scope = { has_state_edict = edict_advancement_effort }
+			diplomatic_reputation = 2
+			crown_land_share = 30
+			num_of_diplomats = 2
+		} 
+
+		effect = { 
+			country_event = {
+				id = flavor_shelokmengi.10
+			}
+		}
+	}
+
+	S57_the_seed_of_knowledge = {
+		icon = mission_tree_fishing
+		position = 4
+		required_missions = { S57_invitations_to_all }
+
+		provinces_to_highlight = {
+			province_id = 5555 #Berfan
+			NOT = {
+				AND = {
+					renaissance = 50
+					OR = { 
+						num_of_times_expanded_infrastructure = 1
+						development = 26
+					}
+				}
+			}
+		} 
+
+		trigger = { 
+			5555 = { #Berfan
+				current_institution = 50
+				OR = { 
+					num_of_times_expanded_infrastructure = 1
+					development = 26
+				}
+			}
+			any_known_country = {
+				capital_scope = { 
+					NOT = {
+						superregion = east_sarhal_superregion
+						superregion = taneyas_superregion
+						superregion = djinnakah_superregion
+					}
+				}
+				OR = {
+					has_100_opinion_improved_relation = { target = ROOT }
+					has_opinion = {
+						who = ROOT
+						value = 80
+					}
+				}
+			}
+		}
+	
+		effect = { 
+			5555 = { #Berfan
+				add_institution_embracement = {
+					which = renaissance
+					value = 50
+				}
+			} 
+			add_country_modifier = { 
+				name = S57_learning_from_all
+				duration = 1825  
+			}
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = seed_of_knowledge_tt
+				first_limit = "has_institution = renaissance"
+				first_effect = "
+					add_adm_power = 50
+					add_dip_power = 50
+					add_mil_power = 50
+					"
+			}
+		}
+	}
+
+	S57_up_the_river = {
+		icon = mission_se_along_the_river
+		position = 5
+		required_missions = {
+			S57_the_seed_of_knowledge
+			S57_the_safety_of_shelokmengi
+		}
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					OR = {
+						province_id = 5538 #Meretgeban
+						province_id = 5519 #Enikmesiki
+					}
+					NOT = {
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT
+							province_has_center_of_trade_of_level = 2
+						}
+					}
+				}
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					trade_goods = grain
+					NOT = {
+						AND = {
+							has_tax_building_trigger = yes
+							base_production = 6
+						}
+					}
+				}
+				AND = {
+					area = fetengaben_area
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
+		} 
+
+		trigger = { 
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 9
+				trade_goods = grain
+			 	base_production = 6
+				has_tax_building_trigger = yes
+			}
+			fetengaben_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			5538 = { #Meretgeban
+				province_has_center_of_trade_of_level = 2
+				country_or_non_sovereign_subject_holds = ROOT
+			} 
+			5519 = { #Enikmesiki
+				province_has_center_of_trade_of_level = 2
+				country_or_non_sovereign_subject_holds = ROOT
+			} 
+		}
+
+		effect = { 
+			custom_tooltip = population_center_tt
+			hidden_effect = {
+				every_owned_province = { 
+					limit = {
+						trade_goods = grain 
+					}
+					add_province_modifier = { 
+						name = S57_the_population_center
+						duration = -1
+					} 
+				}
+			} 
+			yetmesira_area = {
+				add_permanent_claim = ROOT
+			} 
+		}
+	}
+
+	S57_the_great_harvest = {
+		icon = mission_empire
+		position = 7
+		required_missions = {
+			S57_amping_up_production
+			S57_up_the_river
+		}
+		provinces_to_highlight = { 
+			area = yetmesira_area
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			} 
+		} 
+
+		trigger = { 
+			crown_land_share = 50 
+			NOT = {
+				has_estate_privilege = estate_nobles_command_of_the_military
+			}
+			yetmesira_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			reform_level = 2
+		} 
+
+		effect = {
+			country_event = {
+				id = flavor_shelokmengi.6
+			}
+		} 
+	}
+
+	S57_enemies_or_merchants = {
+		icon = mission_harimar
+		position = 8
+		required_missions = { S57_the_great_harvest } 
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					OR = {
+						area = berihrica_area 
+						area = pegosi_area
+					}
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					OR = {
+						province_id = 5529 #Yetmesira
+						province_id = 6658 #Neekshaff
+						province_id = 5527 #Venebratbiyt
+					}
+					NOT = { has_trade_building_trigger = yes }
+				}
+			}
+		} 
+
+		trigger = { 
+			berihrica_area = {
+				type = all
+				owned_by = ROOT
+			}
+			pegosi_area = {
+				type = all
+				owned_by = ROOT
+			}
+			OR = { 
+				AND = { 
+					low_tolerance_harimari_race_trigger = yes
+					has_country_modifier = racial_pop_harimari_expulsion
+				}
+				AND = {
+					high_tolerance_harimari_race_trigger = yes
+					has_country_modifier = racial_focus_harimari
+				}
+			}
+			5529 = { #Yetmesira
+				has_trade_building_trigger = yes
+			}
+			6658 = { #Neekshaff
+				has_trade_building_trigger = yes
+			}
+			5527 = { #Venebratbiyt
+				has_trade_building_trigger = yes
+			}
+		} 
+
+		effect = { 
+			if = {
+				limit = { low_tolerance_harimari_race_trigger = yes }
+				custom_tooltip = S57_enemies_or_merchants_effect_req_yes_tt
+				hidden_effect = {
+					every_owned_province = { remove_harimari_minority_size_effect = yes}
+					every_owned_province = {
+						limit = { culture_group = harimari }
+						change_culture = ROOT
+					}
+					add_treasury = 500
+				}
+			}
+			else = { custom_tooltip = S57_enemies_or_merchants_effect_req_no_tt }
+			tooltip = {
+				custom_tooltip = S57_harimari_decrease_tt
+				custom_tooltip = S57_harimari_convert_tt
+				add_treasury = 500
+			}
+			
+			if = {
+				limit = { high_tolerance_harimari_race_trigger = yes }
+				custom_tooltip = S57_enemies_or_merchants_effect_req_2_yes_tt
+				hidden_effect = {
+					every_known_country = { 
+						limit = { culture_group = harimari }
+						add_opinion = {
+							who = ROOT 
+							modifier = S57_friends_with_tigers
+						}
+					}
+					berihrica_area = {
+						add_harimari_minority_size_effect = yes
+					}	
+					5529 = { #Yetmesira
+						add_harimari_minority_size_effect = yes
+					}	
+					add_country_modifier = {
+						name = S57_merchants
+						duration = 7300
+					}
+				}
+			}
+			else = { custom_tooltip = S57_enemies_or_merchants_effect_req_2_no_tt }
+			tooltip = {
+				custom_tooltip = S57_harimari_opinion_tt
+				berihrica_area = {
+					add_harimari_minority_size_effect = yes
+				}	
+				5529 = { #Yetmesira
+					add_harimari_minority_size_effect = yes
+				}	
+				add_country_modifier = {
+					name = S57_merchants
+					duration = 7300
+				}
+			}		
+		} 
+	}
+
+	S57_lord_of_rain = {
+		icon = mission_feast
+		position = 9
+		required_missions = {
+			S57_enemies_or_merchants
+			S57_love_out_of_war
+			S57_down_in_madriamilak
+		}
+		provinces_to_highlight = {
+			OR = {
+				area = emot_nepas_area
+				area = riyiwedeb_area
+				area = medifat_area
+			}
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					has_tax_building_trigger = yes
+				}
+			}
+		}
+
+		trigger = { 
+			emot_nepas_area = { 
+				type = all
+				owned_by = ROOT
+				has_tax_building_trigger = yes
+			} 
+			riyiwedeb_area = {
+				type = all
+				owned_by = ROOT
+				has_tax_building_trigger = yes
+			}
+			medifat_area = {
+				type = all
+				owned_by = ROOT
+				has_tax_building_trigger = yes
+			}
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 70
+			}
+			if = {
+				limit = { has_dlc = "Domination" }
+				has_estate_privilege = estate_nobles_royal_court_tasks
+			}
+			custom_trigger_tooltip = {
+				tooltip = S57_sunnydays_uses_again_tt
+				check_variable = {
+					which = sunnydaysvariable
+					value = 8
+				}
+			}
+		}
+
+		effect = { 
+			5512 = { #Emot Nepas
+				add_or_upgrade_tax_building = yes
+				change_religion = sky_domain
+				add_province_modifier = {
+					name = S57_the_emot_nepas_holy_site
+					duration = -1
+				}
+			} 
+		} 
+	}
+
+	S57_my_empire_of_grain = {
+		icon = mission_pol_breadbasket_europe
+		position = 10
+		required_missions = {
+			S57_lord_of_rain
+			S57_wheat_from_the_chaff
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = yetefesefi_region
+				region = telekenid_region
+			}
+			NOT = {
+				area = telekenid_islands_area
+				owned_by = ROOT
+			}
+		}
+
+		trigger = { 
+			telekenid_region = {
+				type = all
+				OR = {
+					area = telekenid_islands_area
+					owned_by = ROOT
+				}
+			}
+			yetefesefi_region = {
+				type = all
+				owned_by = ROOT
+			}
+			crown_land_share = 65
+			NOT = { 
+				estate_territory = {
+					estate = estate_nobles
+					territory = 11 
+				}
+			}
+			if = {
+				limit = { has_estate = estate_nobles }
+				estate_loyalty = {
+					estate = estate_nobles
+					loyalty = 50
+				}
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavor_shelokmengi.7
+			}
+		}
+	}
+}
+
+shelokmengi_missions_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = S57 } 
+
+	S57_love_and_war = {
+		icon = mission_female_throne
+		position = 1
+		
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = { alliance_with = ROOT }
+			NOT = {
+				has_opinion = {
+					who = ROOT
+					value = 150
+				}
+			}
+			ROOT = {
+				NOT = {
+					calc_true_if = {
+						amount = 3
+						all_ally = {
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+						}
+					} 
+				}
+			}
+		}
+
+		trigger = { 
+			army_size_percentage = 0.9 
+			num_of_royal_marriages = 3
+			crown_land_share = 25
+			calc_true_if = {
+				amount = 3
+				all_ally = {
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+			} 
+		} 
+
+		effect = { 
+			add_prestige = 10
+			add_heir_claim = 10
+			every_ally = {
+				ROOT = {
+					add_favors = {
+						who = PREV
+						amount = 10
+					}
+				}
+  				add_trust = {
+   					who = ROOT
+    				value = 10
+ 				}
+			}
+			add_country_modifier = {
+				name = S57_the_many_people
+				duration = 3650
+			} 
+			5556 = { #Zusedar
+				add_permanent_claim = ROOT 
+			}
+			5552 = { #Sendrisht
+				add_permanent_claim = ROOT 
+			}
+			werikafan_area = {
+				add_permanent_claim = ROOT 
+			}
+		} 
+	}
+
+	S57_clearing_the_fields = {
+		icon = mission_confrontation
+		position = 3
+		required_missions = { S57_long_live_the_king } 
+
+		provinces_to_highlight = {
+			OR = {
+				is_capital_of = S56 #Enikmesiki
+				AND = {
+					is_capital_of = S58 #Werikgeta
+					ROOT = {
+						NOT = {
+							has_won_war_against = {
+								who = S58 #Werikgeta
+								max_years_since = -1
+							}
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 5551 #Pitamaberrat
+						province_id = 5519 #Enikmesiki
+					}
+					NOT = { owned_by = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			NOT = { exists = S56 } #Enikmesiki
+			OR = {
+				NOT = { exists = S58 } #Werikgeta
+				has_won_war_against = {
+					who = S58 #Werikgeta
+					max_years_since = -1
+				}
+			}
+			owns = 5551 #Pitamaberrat
+			owns = 5519 #Enikmesiki
+			NOT = { 
+				estate_influence = {
+					estate = estate_nobles
+					influence = 70
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavor_shelokmengi.4 
+			}
+		 } 
+	}
+
+	S57_the_safety_of_shelokmengi = {
+		icon = mission_fortify_rajputana
+		position = 4
+		required_missions = { S57_clearing_the_fields } 
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					OR = {
+						area = sedarachit_area
+						area = yakrae_area
+					}
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+				AND = {
+					OR = {
+						province_id = 5567 #Fettigeban
+						province_id = 6717 #Fetengoni
+					}
+					NOT = { has_fort_building_trigger = yes }
+				}
+			}
+		}
+
+		trigger = { 
+			yakrae_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			sedarachit_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			5567 = { #Fettigeban
+				has_fort_building_trigger = yes
+			}
+			6717 = { #Fetengoni
+				has_fort_building_trigger = yes
+			}
+		}
+
+		effect = { 
+			add_country_modifier = {
+				name = S57_the_many_people
+				duration = -1
+			} 
+			5567 = { #Fettigeban
+				add_province_modifier = { 
+				   name = S57_the_bulwarks_of_defense
+				   duration = -1  
+				}
+			}
+			6717 = { #Fetengoni
+				add_province_modifier = { 
+					name = S57_the_bulwarks_of_defense
+					duration = -1  
+				}
+			}
+			umsozandin_area = {
+				add_permanent_claim = ROOT
+			}
+			kahuwabonde_area = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	S57_the_lessons_learnt = {
+		icon = mission_mage_general
+		position = 7
+		required_missions = { S57_quelling_the_beasts } 
+		provinces_to_highlight = { 
+			province_id = 6118 #Senidmot
+			NOT = { has_manpower_building_trigger = yes }
+		} 
+
+		trigger = {
+			6118 = { #Senidmot
+				has_manpower_building_trigger = yes
+			} 
+			treasury = 300
+			has_mil_advisor_2 = yes
+			army_tradition = 30
+		}
+
+		effect = { 
+			change_government_reform_progress = 50
+			6118 = { #Senidmot
+				add_building = university
+			} 
+			add_treasury = -300
+			add_country_modifier = {
+				name = S57_the_lessons_learnt
+				duration = -1
+			}
+			wezingoni_area = {
+				add_permanent_claim = ROOT
+			} 
+			yezelshaff_area = {
+				add_permanent_claim = ROOT
+			}
+			define_general = {
+				fire = 5
+				shock = 5
+				manuever = 5
+				siege = 3
+				trait = planetouched_commander_personality
+			}
+			custom_tooltip = rakkaz_planetouched_general
+		}
+	}
+
+	S57_love_out_of_war = {
+		icon = mission_harpy_diplomats
+		position = 8
+		required_missions = {
+			S57_the_great_harvest
+			S57_the_lessons_learnt
+		}
+		provinces_to_highlight = { 
+			OR = { 
+				area = irkan_eparta_area
+				area = bedaphire_area
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		 } 
+
+		trigger = { 
+			irkan_eparta_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			bedaphire_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			OR = {
+				medium_tolerance_harpy_race_trigger = yes
+				high_tolerance_harpy_race_trigger = yes
+			}
+	 	} 
+
+		effect = { 
+			custom_tooltip = S57_harpy_manpower_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						culture_group = harpy
+					}
+					add_base_manpower = 1
+				}
+			}
+			add_country_modifier = {
+				name = S57_love_out_of_war
+				duration = -1
+			}
+			anb_add_accepted_culture_or_dip_power = { culture = naleni_harpy dip_reward = yes }
+		}
+	}
+
+
+
+	S57_wheat_from_the_chaff = {
+		icon = swiss_mercenaries
+		position = 9
+		required_missions = { S57_fear_of_the_dark } 
+		provinces_to_highlight = {
+			superregion = east_sarhal_superregion
+			is_capital = yes
+			owner = {
+				army_size = ROOT
+				NOT = { tag = ROOT }
+			}
+		}
+
+		trigger = { 
+			has_mil_advisor_3 = yes
+			OR = {
+				has_commanding_three_star = yes
+				army_professionalism = 0.30
+				custom_trigger_tooltip = {
+					tooltip = S57_smaller_army_tt
+					NOT = {
+						any_known_country = {
+							capital_scope = { superregion = east_sarhal_superregion }
+							army_size = ROOT
+						}
+					}
+				}
+			}
+			army_tradition = 40
+		} 
+
+		effect = { 
+			add_country_modifier = {
+				name = S57_wheat_from_the_chaff_mod
+				duration = -1
+			}
+		} 
+	}
+}
+shelokmengi_missions_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = S57 } 
+
+	S57_an_expedition_south = {
+		icon = mission_jungle
+		position = 5
+		required_missions = { S57_the_safety_of_shelokmengi } 
+		provinces_to_highlight = { 
+			OR = { 
+				trade_goods = copper
+				trade_goods = iron
+			}
+			country_or_non_sovereign_subject_holds = ROOT
+			NOT = {
+				AND = {
+					base_production = 5
+					base_manpower = 5
+				}
+			}
+			ROOT = {
+				NOT = {
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						value = 3
+						base_production = 5
+						base_manpower = 5
+						OR = {
+							trade_goods = iron
+							trade_goods = copper
+						}
+					} 
+				}
+			}
+		}
+
+		trigger = { 
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 3
+				base_production = 5
+				base_manpower = 5
+				OR = {
+					trade_goods = iron
+					trade_goods = copper
+				}
+			} 
+			army_tradition = 20
+		} 
+
+		effect = { 
+			country_event = {
+				id = flavor_shelokmengi.5
+			}
+		} 
+	}
+
+	S57_quelling_the_beasts = {
+		icon = per_sword_of_our_faith
+		position = 6
+		required_missions = { S57_an_expedition_south } 
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					is_capital = yes
+					owner = {
+						religion = beast_memory
+						NOT = {
+							is_enemy = ROOT
+        					has_been_insulted_by_root = yes
+						}
+					}
+				}
+				AND = {
+					OR = {
+						area = saposon_area
+						area = kirksanlashan_area
+					}
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+				AND = {
+					province_id = 5611 #Kirksanlashan
+					has_fort_building_trigger = no
+				}
+			}
+		} 
+
+		trigger = { 
+			OR = {
+				any_rival_country = {
+					religion = beast_memory
+				}
+				any_known_country = {
+        			religion = beast_memory
+        			has_been_insulted_by_root = yes
+    			}
+				custom_trigger_tooltip = {
+					tooltip = S57_beast_memory_tt
+					NOT = {
+						any_known_country = {
+							religion = beast_memory
+						}
+					}
+				}
+			}
+			5611 = { #Kirksanlashan
+				has_fort_building_trigger = yes
+			}
+			kirksanlashan_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			} 
+			saposon_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			} 
+		}
+
+		effect = { 
+			kadamuu_area = {
+				add_permanent_claim = ROOT
+			} 
+			kidfan_area = {
+				add_permanent_claim = ROOT
+			}
+			kahuwabonde_area = {
+				add_permanent_claim = ROOT
+			}
+			kukihombe_area = {
+				add_permanent_claim = ROOT
+			}
+			rimvuawuni_area = {
+				add_permanent_claim = ROOT
+			}
+			add_army_tradition = 10
+			add_country_modifier = {
+				name = S57_quelling_the_beasts
+				duration = 3650
+			}
+		} 
+	}
+
+	S57_the_safety_of_madriamilak = {
+		icon = alpine_fortifications
+		position = 7
+		required_missions = { S57_quelling_the_beasts } 
+		provinces_to_highlight = { 
+			OR = {
+				province_id = 5567 #Fettigeban
+				province_id = 5554 #Weriksedar
+				province_id = 6118 #Senidmot
+				province_id = 6655 #Walagnet
+				province_id = 5508 #Fwavate
+			}
+			NOT = {
+				AND = {
+					num_of_units_in_province = {
+						who = ROOT
+						type = infantry
+						amount = 5
+					}
+					has_fort_building_trigger = yes
+					has_tax_building_trigger = yes
+				}
+			}
+		 } 
+
+		trigger = { 
+			5567 = { #Fettigeban
+				num_of_units_in_province = {
+					who = ROOT
+					type = infantry
+					amount = 5
+			  	}
+				has_fort_building_trigger = yes
+				has_tax_building_trigger = yes
+			}
+			5554 = { #Weriksedar
+				num_of_units_in_province = {
+					who = ROOT
+					type = infantry
+					amount = 5
+			 	}
+				has_fort_building_trigger = yes
+				has_tax_building_trigger = yes
+			}
+			6118 = { #Senidmot
+				num_of_units_in_province = {
+					who = ROOT
+					type = infantry
+					amount = 5
+				}
+				has_fort_building_trigger = yes
+				has_tax_building_trigger = yes
+			}
+			6655 = { #Walagnet
+				num_of_units_in_province = {
+					who = ROOT
+					type = infantry
+					amount = 5
+			  	}
+				has_fort_building_trigger = yes
+				has_tax_building_trigger = yes
+			}
+			5508 = { #Fwavate
+				num_of_units_in_province = {
+					who = ROOT
+					type = infantry
+					amount = 5
+			  	}
+				has_fort_building_trigger = yes
+				has_tax_building_trigger = yes
+			}
+		} 
+
+		effect = { 
+			5567 = { #Fettigeban
+				kill_units = {
+					who = ROOT
+					type = infantry
+					amount = 5
+				}
+				add_province_modifier = { 
+					name = S57_the_bulwarks_of_defense
+					duration = -1  
+				}
+			}
+			5554 = { #Weriksedar
+				kill_units = {
+					who = ROOT
+					type = infantry
+					amount = 5
+				}
+				add_province_modifier = { 
+					name = S57_the_bulwarks_of_defense
+					duration = -1  
+				}
+			}
+			6118 = { #Senidmot
+				kill_units = {
+					who = ROOT
+					type = infantry
+					amount = 5
+				}
+				add_province_modifier = { 
+					name = S57_the_bulwarks_of_defense
+					duration = -1  
+				}
+			}
+			6655 = { #Walagnet
+				kill_units = {
+					who = ROOT
+					type = infantry
+					amount = 5
+				}
+				add_province_modifier = { 
+					name = S57_the_bulwarks_of_defense
+					duration = -1  
+				}
+			}
+			5508 = { #Fwavate
+				kill_units = {
+					who = ROOT
+					type = infantry
+					amount = 5
+				}
+				add_province_modifier = { 
+					name = S57_the_bulwarks_of_defense
+					duration = -1  
+				}
+			}
+			merekawi_area = {
+				add_permanent_claim = ROOT
+			}
+			medifat_area = {
+				add_permanent_claim = ROOT
+			}
+			pechuketema_area = {
+				add_permanent_claim = ROOT
+			}
+			dakmender_area = {
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+
+	S57_fear_of_the_dark = {
+		icon = mission_scepter_of_scepters
+		position = 8
+		required_missions = {
+			S57_the_safety_of_madriamilak
+			S57_the_lessons_learnt
+		}
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					is_capital_of = S70 #Yezel Mora
+					owner = {
+						NOT = {
+							is_enemy = ROOT
+        					has_been_insulted_by_root = yes
+						}
+					}
+				}
+				AND = {
+					OR = {
+						area = merekawi_area
+						area = pechuketema_area
+					}
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
+		} 
+
+		trigger = { 
+			OR = {
+				is_rival = S70 #Yezel Mora
+				S70 = { has_been_insulted_by_root = yes } #Yezel Mora
+				NOT = { exists = S70 } #Yezel Mora
+			} 
+			merekawi_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			} 
+			pechuketema_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			} 
+		}
+
+		effect = {
+			custom_tooltip = population_center_tt
+			hidden_effect = {
+				every_owned_province = { 
+					limit = {
+						trade_goods = grain 
+					}
+					add_province_modifier = { 
+						name = S57_the_population_center
+						duration = -1
+					}
+				} 
+			} 
+			simegesfan_area = {
+				add_permanent_claim = ROOT
+			}
+			kvathagis_area = {
+				add_permanent_claim = ROOT
+			}
+			tsudhagis_area = {
+				add_permanent_claim = ROOT
+			}
+			add_country_modifier = {
+				name = S57_fear_of_the_dark
+				duration = 7300
+			}
+			simple_dynamic_effect = {
+				first_custom_tooltip = population_center_effect_req_tt
+				first_limit = "is_defender_of_faith = yes"
+				first_effect = "add_prestige_or_monarch_power = {
+					amount = 50 
+				}"
+				second_limit = "is_defender_of_faith = no"
+				second_effect = "set_defender_of_the_faith = {
+					who = ROOT
+					religion = sky_domain
+				}"
+			}
+		} 
+	}
+}

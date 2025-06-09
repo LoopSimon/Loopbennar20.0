@@ -1,0 +1,2325 @@
+#coded by Liv
+column1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z88 } 
+
+	Z88_old_friends = {
+		icon = mission_diplomacy_missive
+		position = 1
+		provinces_to_highlight = { is_capital_of = Z09 } 
+
+		trigger = {
+			has_estate_privilege = estate_church_religious_diplomats
+			alliance_with = Z09
+			Z09 = { has_50_opinion_improved_relation = { target = ROOT }  } 
+		}
+
+		effect = {
+			define_advisor = {
+				type = theologian
+				skill = 1
+				discount = yes
+			}
+			set_country_flag = Z88_religious_diplomats_upgrade
+			custom_tooltip = Z88_religious_diplomats_upgrade_tt
+		}
+	}
+
+	Z88_offer_shelter = {
+		icon = mission_missive
+		position = 2
+		required_missions = { Z88_old_friends } 
+		provinces_to_highlight = {
+			OR = {
+				AND = { 
+					is_capital = yes 
+					owner = { overlord_of = Z11 } 
+				}
+				AND = {
+					is_core = Z11
+					NOT = {
+						owned_by = ROOT
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			if = {
+				limit = {
+					Z11 = {
+						exists = no
+					}
+				}
+				Z11 = {
+					all_core_province = {
+						owned_by = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+			else_if = {
+				limit = { 
+					Z11 = {
+						is_subject_of = ROOT
+					}
+				}
+				Z11 = {
+					is_subject_of = ROOT
+				}
+			}
+			else = {
+				Z11 = {
+					OR = {
+						overlord = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 25
+							}
+						}
+						has_spy_network_from = {
+							who = ROOT
+							value = 25
+						}
+					}
+					is_at_war = yes
+				}
+				NOT = {
+					war_with = Z08
+					war_with = Z11
+					truce_with = Z08
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = Z88_offer_shelter_tt
+			dalr_region = {
+				limit = {
+					NOT = {
+						owned_by = Z17
+					}
+				}
+				add_permanent_claim = ROOT
+				add_permanent_claim = Z11
+			}
+			hidden_effect = {
+				Z11 = {
+					country_event = {
+						id = vaengheim.1001
+					}
+				}
+			}
+		} 
+	}
+
+	Z88_ending_the_strife = {
+		icon = mission_rb_unite_the_clans
+		position = 3
+		required_missions = { Z88_offer_shelter } 
+		provinces_to_highlight = { is_capital_of = Z08 } 
+
+		trigger = {
+			has_won_war_against = { who = Z08 } 
+			land_forcelimit = 15
+			stability = 2
+			NOT = { war_exhaustion = 0.01 } 
+		}
+
+		effect = {
+			set_country_flag = Z88_subject_dev_refund
+			custom_tooltip = Z88_subject_dev_refund_tt
+			add_casus_belli = {
+				target = Z17
+				type = cb_vassalize_mission
+				months = -1
+			}
+		}
+	}
+
+	Z88_troll_troubles = {
+		icon = mission_frost_troll
+		position = 4
+		required_missions = { Z88_ending_the_strife } 
+		provinces_to_highlight = {  
+			is_capital_of = Z17
+		} 
+
+		trigger = {  
+			NOT = { has_country_modifier = racial_pop_troll_purge }
+			has_country_modifier = racial_focus_troll
+			Z17 = {
+				is_subject_of = Z88
+				NOT = {
+					liberty_desire = 50
+				}
+			}
+		} 
+
+		effect = {  
+			set_country_flag = Z88_tolerance_focus_booster
+			custom_tooltip = z88_troll_troubles_ttt
+			custom_tooltip = Z88_tolerance_focus_booster_tt
+			if = {
+				limit = {
+					Z17 = {
+						religion = skaldhyrric_faith 
+					}
+				}
+				add_manpower = 10
+				large_increase_of_troll_tolerance_effect = yes
+			}
+			else = {
+				Z17 = {
+					change_religion = skaldhyrric_faith
+				}
+			} 
+		} 
+	}
+
+	Z88_from_trouble_to_toil = {
+		icon = public_works
+		position = 6
+		required_missions = { Z88_all_gerudia } 
+		provinces_to_highlight = {  
+			superregion = gerudia_superregion
+			culture = fjord_troll
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					NOT = {
+						unrest = 0
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			OR = {
+				high_tolerance_troll_race_trigger = yes
+				medium_tolerance_troll_race_trigger = yes
+			}
+			gerudia_superregion = {
+				type = all
+				OR = {
+					NOT = {
+						culture = fjord_troll
+					}
+					AND = {
+						owned_by = ROOT
+						NOT = {
+							unrest = 0
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.1
+			}
+		} 
+	}
+
+	Z88_worrying_words = {
+		icon = mission_whisper
+		position = 8
+		required_missions = { Z88_distant_reach } 
+		provinces_to_highlight = {  
+			continent = europe
+			OR = {
+				culture = blue_reachman
+				culture = white_reachman
+			}
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					NOT = { unrest = 0 }
+				}
+			}
+		} 
+
+		trigger = {  
+			custom_trigger_tooltip = {
+				tooltip = Z88_disturbed_balance_hunt_complete_tt
+				has_country_flag = Z88_disturbed_balance_done
+			}
+			europe = {
+				type = all
+				OR = {
+					NOT = {
+						culture = blue_reachman
+						culture = white_reachman
+					}
+					AND = {
+						owned_by = ROOT
+						NOT = { unrest = 0 }
+					}
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.2
+			}
+		} 
+	}
+
+	Z88_magnate_menace = {
+		icon = tame_the_magnates
+		position = 9
+		required_missions = {
+			Z88_worrying_words
+			Z88_soothing_song
+		}
+		provinces_to_highlight = {  
+			OR = {
+				AND = {
+					region = alenic_frontier_region
+					NOT = {
+						is_part_of_hre = yes
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				AND = {
+					area = gawed_area
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							num_of_units_in_province = {
+								type = infantry
+								who = ROOT
+								amount = 5
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			has_estate_privilege = estate_church_one_faith_one_culture
+			alenic_frontier_region = {
+				type = all
+				OR = {
+					is_part_of_hre = yes
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+			gawed_area = {
+				type = all
+				owned_by = ROOT
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 5
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = Z88_new_hunt_tt
+			221 = {
+				add_province_modifier = {
+					name = Z88_equilibriums_end
+					duration = -1
+				}
+			}
+		} 
+	}
+
+	Z88_just_like_old_times = {
+		icon = prosper_in_piedmont
+		position = 11
+		required_missions = { Z88_magnate_menace } 
+		provinces_to_highlight = {  
+			region = alenic_frontier_region
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					harpy_roost_st_has_any_roost = yes
+				}
+			}
+		} 
+
+		trigger = {  
+			num_of_owned_provinces_with = {
+				value = 30
+				region = alenic_frontier_region
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				region = alenic_frontier_region
+				harpy_roost_st_has_any_roost = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = Z88_equilibriums_end_complete_tt
+				has_country_flag = Z88_equilibriums_end_done
+			}
+			diplomatic_reputation = 5
+		} 
+
+		effect = {
+			custom_tooltip = Z88_skamvin_in_parliament_tt
+			every_owned_province = {
+				limit = {
+					culture_group = alenic
+					OR = {
+						any_neighbor_province = {
+							harpy_roost_st_has_any_roost = yes
+						}
+						harpy_roost_st_has_any_roost = yes
+					}
+				}
+				change_culture = skamvin
+			}
+			set_country_flag = Z88_skamvin_in_parliament_f
+			add_country_modifier = {
+				name = Z88_skamvin_in_parliament
+				duration = -1
+			}
+			add_accepted_culture = skamvin
+			Z88_max_seat_increase = yes
+		} 
+	}
+}
+column2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z88 } 
+
+	Z88_descent = {
+		icon = the_alpine_wall
+		position = 2
+		required_missions = {
+			Z88_old_friends
+			Z88_rise_to_action
+		}
+		provinces_to_highlight = {  
+			area = nyrford_area
+			NOT = {
+				AND = {
+					is_core = ROOT
+					owned_by = ROOT
+					NOT = { unrest = 0 }
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 1
+					}
+				}
+			}
+		} 
+
+		trigger = { 
+			nyrford_area = {
+				type = all
+				is_core = ROOT
+				owned_by = ROOT
+				NOT = { unrest = 0 }
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 1
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.3
+			}
+		} 
+	}
+
+	Z88_ever_closer = {
+		icon = mission_princess_writing
+		position = 4
+		required_missions = {
+			Z88_ending_the_strife
+			Z88_eastern_reach
+		}
+		provinces_to_highlight = {  
+			is_core = Z09
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		} 
+
+		trigger = {
+			if = {
+				limit = {
+					Z09 = {
+						exists = yes
+					}
+				}
+				Z09 = {
+					trust = { who = ROOT value = 80 }
+					has_opinion = {
+						who = ROOT
+						value = 190
+					}
+				}
+				prestige = Z09
+			}  
+			else = {
+				Z09 = {
+					all_core_province = {
+						owned_by = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+		} 
+
+		effect = {  
+			if = {
+				limit = {
+					Z09 = {
+						exists = yes
+					}
+				}
+				vassalize = Z09
+			}
+			else = {
+				Z09 = {
+					every_core_province = {
+						add_nationalism = -10
+					}
+				}
+			}
+		} 
+	}
+
+	Z88_home_and_safe = {
+		icon = mission_city_prosperity
+		position = 6
+		required_missions = { Z88_all_gerudia } 
+		provinces_to_highlight = {  
+			is_core = Z91
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+		} 
+
+		trigger = {  
+			Z91 = {
+				all_core_province = {
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = Z09_num_of_issues_passed_1_tt
+				check_variable = {
+					which = issues_passed
+					value = 1
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = Z88_paradox_tooltip_replacement_tt
+				employed_advisor = {
+					category = ADM
+					skill = 3
+				}
+			}
+			
+		} 
+
+		effect = { 
+			custom_tooltip = Z88_taric_shift_tt 
+			set_country_flag = Z88_tarik_in_parliament_f
+			Z88_max_seat_increase = yes
+			every_owned_province = {
+				limit = {
+					culture = taric
+				}
+				change_culture = taric_gerudian
+			}
+			custom_tooltip = Z88_new_hunt_tt
+			random_owned_province = {
+				limit = {
+					region = gerudian_frontier_region
+					vaengheim_has_hunts = no
+				}
+				add_province_modifier = {
+					name = Z88_nacker_hunt
+					duration = -1
+				}
+			}
+		} 
+	}
+
+	Z88_distant_reach = {
+		icon = mission_rb_increase_our_reach
+		position = 7
+		required_missions = {
+			Z88_from_trouble_to_toil
+			Z88_home_and_safe
+			Z88_submit_to_strength
+		}
+		provinces_to_highlight = {
+			region = alenic_reach_region
+            OR = {
+                NOT = { country_or_non_sovereign_subject_holds = ROOT }
+                NOT = {
+                    area_for_scope_province = {
+                        num_of_units_in_province = {
+                            type = infantry
+                            who = ROOT
+                            amount = 2
+                        }
+                    }
+                }
+            } 
+		} 
+
+		trigger = {
+			alenic_reach_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}  
+			custom_trigger_tooltip = {
+				tooltip = Z88_troops_alen_tt
+				vrorenwall_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				vrorenmarch_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				cedesck_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				sondaar_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				wudhal_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				east_chillsbay_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				west_chillsbay_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				coast_of_vics_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				northern_greatwoods_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				serpentshead_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+				gulletpeak_area = {
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+			}
+			NOT = {
+				average_autonomy = 25
+			}
+		} 
+
+		effect = {  
+			custom_tooltip = Z88_unlock_buffer_zone_tt
+			set_country_flag = Z88_unlock_buffer_zone
+			custom_tooltip = Z88_new_hunt_tt
+			random_owned_province = {
+				limit = {
+					region = alenic_reach_region
+					vaengheim_has_hunts = no
+				}
+				add_province_modifier = {
+					name = Z88_roc_hunt
+					duration = -1
+				}
+			}
+			dragon_coast_region = {
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+
+	Z88_soothing_song = {
+		icon = mission_forest_shrine
+		position = 8
+		required_missions = { Z88_distant_reach } 
+		provinces_to_highlight = {  
+			region = alenic_reach_region
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					has_tax_building_trigger = yes
+					religion = skaldhyrric_faith
+				}
+			}
+		} 
+
+		trigger = {  
+			num_of_owned_provinces_with = {
+				value = 30
+				region = alenic_reach_region
+				religion = skaldhyrric_faith
+			}
+			num_of_owned_provinces_with = {
+				value = 15
+				region = alenic_reach_region
+				has_tax_building_trigger = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = Z88_expanded_skalds_tt
+				has_country_flag = skald_reform_2
+			}
+		} 
+
+		effect = {
+			custom_tooltip = Z88_tale_of_krja_unlock_tt
+			set_country_flag = Z88_tale_of_krja_unlock
+		} 
+	}
+
+	Z88_homecoming = {
+		icon = mission_new_dawn
+		position = 9
+		required_missions = { Z88_soothing_song } 
+		provinces_to_highlight = {  
+			region = dragon_coast_region
+			NOT = {
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					religion = skaldhyrric_faith
+				}
+			}
+		} 
+
+		trigger = {  
+			dragon_coast_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+				religion = skaldhyrric_faith
+			}
+			OR = {
+				high_tolerance_gnomish_race_trigger = yes
+				medium_tolerance_gnomish_race_trigger = yes
+			}
+			OR = {
+				high_tolerance_kobold_race_trigger = yes
+				medium_tolerance_kobold_race_trigger = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = Z88_true_faith_tol_tt
+				has_global_modifier_value = {
+					which = tolerance_own
+					value = 7
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.4
+			}
+		} 
+	}
+
+	Z88_what_is_best_for_all = {
+		icon = mission_women_prayer
+		position = 11
+		required_missions = { Z88_homecoming } 
+		provinces_to_highlight = { 
+			region = dragon_coast_region
+			NOT = {
+				AND = {
+					is_core = ROOT
+					owned_by = ROOT
+					OR = {
+						NOT = {
+							has_terrain = mountain
+							has_terrain = highlands
+							has_terrain = hills
+						}
+						harpy_roost_st_has_any_roost = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			dragon_coast_region = {
+				type = all
+				is_core = ROOT
+				owned_by = ROOT
+				OR = {
+					NOT = {
+						has_terrain = mountain
+						has_terrain = highlands
+						has_terrain = hills
+					}
+					harpy_roost_st_has_any_roost = yes
+				}
+			}
+			high_tolerance_gnomish_race_trigger = yes
+			high_tolerance_kobold_race_trigger = yes
+			custom_trigger_tooltip = {
+				tooltip = Z88_one_armed_skald_complete_tt
+				has_country_flag = Z88_skald_dragon_and_skald
+			}
+		} 
+
+		effect = {
+			custom_tooltip = Z88_kobolds_in_parliament_tt
+			custom_tooltip = Z88_gnomes_in_parliament_tt
+			Z88_max_seat_increase = yes
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						culture_group = gnomish
+						OR = {
+							any_neighbor_province = {
+								harpy_roost_st_has_any_roost = yes
+							}
+							harpy_roost_st_has_any_roost = yes
+						}
+					}
+					change_culture = glacier_gnome
+				}
+				every_owned_province = {
+					limit = {
+						culture_group = kobold
+						OR = {
+							any_neighbor_province = {
+								harpy_roost_st_has_any_roost = yes
+							}
+							harpy_roost_st_has_any_roost = yes
+						}
+					}
+					change_culture = whitescale_kobold
+				}
+				set_country_flag = Z88_kobolds_in_parliament_f
+				set_country_flag = Z88_gnomes_in_parliament_f
+				add_country_modifier = {
+					name = Z88_gnomes_in_parliament
+					duration = -1
+				}
+				add_country_modifier = {
+					name = Z88_kobolds_in_parliament
+					duration = -1
+				}
+				add_accepted_culture = whitescale_kobold
+				add_accepted_culture = glacier_gnome
+			}
+		} 
+	}
+}
+column3p1 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z88 } 
+
+	Z88_rise_to_action = {
+		icon = mission_arise_ashes
+		position = 1
+		provinces_to_highlight = {  } 
+
+		trigger = {  
+			army_size_percentage = 0.9
+			custom_trigger_tooltip = {
+				tooltip = Z88_has_diety_tt
+				OR = {
+					has_personal_deity = tale_of_leif_snaketongue
+					has_personal_deity = the_dragon_and_the_skald
+					has_personal_deity = voyage_of_the_north_raider
+					has_personal_deity = beralic_saga
+					has_personal_deity = dirge_of_the_deep
+					has_personal_deity = treasure_of_the_golden_forest
+					has_personal_deity = the_old_winter_lullaby
+					has_personal_deity = gjalund_and_the_giantslayers
+					has_personal_deity = master_boat_builders_of_far_gerudia_beyond
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = vaengheim.6
+			}
+		}
+	}
+
+	Z88_battlemaidens_of_gerudia = {
+		icon = mission_duel_snow
+		position = 2
+		required_missions = { Z88_rise_to_action } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			has_estate_privilege = estate_adventurers_heroes_in_the_army
+			estate_loyalty = {
+				estate = estate_adventurers
+				loyalty = 60
+			}
+			num_of_generals = 2
+		} 
+
+		effect = {  
+			set_country_flag = Z88_hunts_active
+			custom_tooltip = Z88_new_hunt_tt
+			random_owned_province = {
+				limit = {
+					vaengheim_has_hunts = no
+				}
+				add_province_modifier = {
+					name = Z88_white_wolf
+					duration = -1
+				}
+			}
+			random_owned_province = {
+				limit = {
+					vaengheim_has_hunts = no
+				}
+				add_province_modifier = {
+					name = Z88_terrible_troll
+					duration = -1
+				}
+			}
+		}
+	}
+
+	Z88_eastern_reach = {
+		icon = alpine_defenses
+		position = 3
+		required_missions = {
+			Z88_battlemaidens_of_gerudia
+			Z88_descent
+		}
+		provinces_to_highlight = {  
+			OR = {
+				area = naugsvol_area
+				area = esfjall_area
+				area = olavslund_area
+			}
+			NOT = {
+				AND = {
+					is_core = ROOT
+					owned_by = ROOT
+				}
+			}
+		} 
+
+		trigger = {  
+			custom_trigger_tooltip = {
+				tooltip = Z88_completed_hunt_tt
+				OR = {
+					has_country_flag = Z88_skald_dragon_and_skald
+					has_country_flag = Z88_disturbed_balance_done
+					has_country_flag = Z88_entering_equilibrium_done
+					has_country_flag = Z88_equilibriums_end_done
+					has_country_flag = Z88_mountain_depths_done
+					has_country_flag = Z88_precursor_ruin_done
+					has_country_flag = Z88_ficklesome_fey_done
+					has_country_flag = Z88_rampaging_roc_done
+					has_country_flag = Z88_horrible_hag_hunt_done
+					has_country_flag = Z88_woeful_werebear_done
+					has_country_flag = Z88_nacker_hunt_done
+					has_country_flag = Z88_terrible_troll_done
+					has_country_flag = Z88_white_wolf_done
+				}
+			}
+			naugsvol_area = {
+				type = all
+				is_core = ROOT
+				owned_by = ROOT
+			}
+			esfjall_area = {
+				type = all
+				is_core = ROOT
+				owned_by = ROOT
+			}
+			olavslund_area = {
+				type = all
+				OR = {
+					AND = {
+						is_core = ROOT
+						owned_by = ROOT
+					}
+					AND = {
+						is_core = Z09
+						owned_by = Z09
+					}
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.7
+			}
+		} 
+	}
+
+	Z88_orcish_incursions = {
+		icon = mission_orc_chillin
+		position = 4
+		required_missions = { Z88_eastern_reach } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = northern_giants_tears_area
+						area = southern_giants_tears_area
+					}
+					NOT = {
+						owned_by = Z91
+					}
+				}
+				AND = {
+					is_year = 1494
+					is_core = Z91
+					NOT = {
+						owned_by = ROOT
+					}
+				}
+			} 
+			
+		} 
+
+		trigger = {
+			OR = {
+				AND = {
+					Z91 = {
+						is_subject_of = ROOT
+					}
+					northern_giants_tears_area = {
+						type = all
+						owned_by = Z91
+					}
+					southern_giants_tears_area = {
+						type = all
+						owned_by = Z91
+					}
+					has_country_modifier = racial_focus_orcish
+					NOT = {
+						has_country_modifier = racial_pop_orcish_purge
+					}
+				}
+				AND = {
+					is_year = 1494
+					Z91 = {
+						all_core_province = {
+							owned_by = ROOT
+						}
+					}
+				}
+			}
+		}
+
+		effect = {  
+			add_casus_belli = {
+				type = cb_vassalize_mission
+				target = Z18
+				months = -1
+			}
+			if = {
+				limit = {
+					Z91 = {
+						exists = yes
+					}
+				}
+				Z91 = {
+					every_core_province = {
+						add_random_development = 1
+					}
+				}
+			}
+		} 
+	}
+
+	Z88_all_gerudia = {
+		icon = mission_arca_ore
+		position = 5
+		required_missions = {
+			Z88_troll_troubles
+			Z88_ever_closer
+			Z88_orcish_incursions
+			Z88_on_wings_of_healing
+		}
+		provinces_to_highlight = {  
+			culture_group = gerudian
+			NOT = {
+				owned_by = ROOT
+			}
+		} 
+
+		trigger = {  
+			num_of_owned_provinces_with = {
+				value = 20
+				culture_group = gerudian
+			}
+			accepted_culture = olavish
+			accepted_culture = east_dalr
+			accepted_culture = west_dalr
+			custom_trigger_tooltip = {
+				tooltip = Z88_organised_the_skalds_tt
+				has_country_flag = skald_reform_1
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.8
+			}
+			hidden_effect = {
+				country_event = {
+					id = vaengheim.9
+					days = 700
+				}
+			}
+		} 
+	}
+
+	Z88_submit_to_strength = {
+		icon = mission_swear_fealty_knight
+		position = 6
+		required_missions = { Z88_all_gerudia } 
+		provinces_to_highlight = {  
+			is_core = Z18
+			NOT = {
+				is_core = Z88
+			}
+		} 
+
+		trigger = {
+			OR = {
+				high_tolerance_orcish_race_trigger = yes
+				medium_tolerance_orcish_race_trigger = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = Z88_beatorcs_tt
+				check_variable = {
+					which = vaeng_orcbattlescount
+					value = 10
+				}
+			}
+			OR = {
+				Z18 = {
+					is_subject_of = ROOT
+				}
+				Z18 = {
+					all_core_province = {
+						owned_by = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+		} 
+
+		effect = {
+			set_country_flag = Z88_orcs_in_parliament_f
+			custom_tooltip = Z88_orcs_in_parliament_tt
+			Z88_max_seat_increase = yes
+			add_country_modifier = {
+				name = Z88_orcs_in_parliament
+				duration = -1
+			}
+			add_accepted_culture = gray_orc
+			alenic_reach_region = {
+				add_permanent_claim = Z18
+				add_permanent_claim = ROOT
+			}
+			custom_tooltip = Z88_new_hunt_tt
+			random_owned_province = {
+				limit = {
+					vaengheim_has_hunts = no
+				}
+				add_province_modifier = {
+					name = Z88_ficklesome_fey
+					duration = -1
+				}
+			}
+		} 
+	}
+
+	Z88_worthy_warriors = {
+		icon = mission_warrior_gold
+		position = 7
+		required_missions = {
+			Z88_submit_to_strength
+			Z88_ebonsteel_rekindling
+		}
+		provinces_to_highlight = {  
+			has_province_modifier = Z88_t3_roost
+			NOT = {
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 8
+				}
+			}
+		} 
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 5
+				has_province_modifier = Z88_t3_roost
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 8
+				}
+			}
+			num_of_regiments_at_full_drill = 40
+			OR = {
+				army_professionalism = 0.3
+				mil_power = 300
+			}
+			OR = {
+				army_tradition = 70
+				mil_power = 300
+			}
+		} 
+
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						army_tradition = 70
+					}
+				}
+				add_mil_power = -300
+			}
+			if = {
+				limit = {
+					NOT = {
+						army_professionalism = 0.3
+					}
+				}
+				add_mil_power = -300
+			}
+			country_event = {
+				id = vaengheim.21
+			}
+		} 
+	}
+
+	Z88_burgeoning_bay = {
+		icon = mission_trade_with_cathay
+		position = 9
+		required_missions = {
+			Z88_whales_of_west
+			Z88_soothing_song
+		}
+		provinces_to_highlight = {  
+			province_id = 1477
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = Z88_frostbridges_toll_tt
+				has_country_modifier = gerudia_northern_thalassocracy
+			}
+			OR = {
+				trading_bonus = {
+					trade_goods = incense
+					value = yes
+				}
+				trading_bonus = {
+					trade_goods = fur
+					value = yes
+				}
+			}
+			1477 = {
+				trade_node_value = 45
+			}
+		} 
+
+		effect = {
+			add_years_of_trade_income = {
+				years = 2
+			}
+			custom_tooltip = Z88_trade_bonus_bonus_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						trading_bonus = {
+							trade_goods = incense
+							value = yes
+						}
+					}
+					add_country_modifier = {
+						name = Z88_incense_monopoly
+						duration = -1
+					}
+				}
+				if = {
+					limit = {
+						trading_bonus = {
+							trade_goods = fur
+							value = yes
+						}
+					}
+					add_country_modifier = {
+						name = Z88_fur_monopoly
+						duration = -1
+					}
+				}
+			}
+		} 
+	}
+
+	Z88_faith_and_steel = {
+		icon = mission_norse_faith
+		position = 10
+		required_missions = { Z88_burgeoning_bay } 
+		provinces_to_highlight = {  
+			OR = {
+				has_province_modifier = small_ebonsteel_forge
+				has_province_modifier = medium_ebonsteel_forge
+				has_province_modifier = urviksten_ebonforge
+			}
+			NOT = {
+				AND = {
+					development = 15
+					has_building = mage_tower
+					if = {
+						limit = {
+							has_dlc = Leviathan
+						}
+						num_of_times_expanded_infrastructure = 1
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			europe = {
+				type = all
+				OR = {
+					AND = {
+						NOT = { has_province_modifier = small_ebonsteel_forge }
+						NOT = {	has_province_modifier = medium_ebonsteel_forge }	
+						NOT = { has_province_modifier = urviksten_ebonforge }
+					}
+					AND = {
+						development = 15
+						has_building = mage_tower
+						if = {
+							limit = {
+								has_dlc = Leviathan
+							}
+							num_of_times_expanded_infrastructure = 1
+						}
+					}
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 7
+				OR = {
+					has_province_modifier = Z88_t3_roost
+					has_province_modifier = Z88_t3_roost_upgraded
+				}
+			}
+		} 
+
+		effect = {  
+			add_country_modifier = {
+				name = Z88_ebonsteel_spirit
+				duration = -1
+			}
+		} 
+	}
+
+	Z88_worthy_of_legend = {
+		icon = mission_viking
+		position = 11
+		required_missions = { Z88_faith_and_steel } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = Z88_completed_9_hunts_tt
+				calc_true_if = {
+					amount = 9
+					has_country_flag = Z88_skald_dragon_and_skald
+					has_country_flag = Z88_disturbed_balance_done
+					has_country_flag = Z88_entering_equilibrium_done
+					has_country_flag = Z88_equilibriums_end_done
+					has_country_flag = Z88_mountain_depths_done
+					has_country_flag = Z88_precursor_ruin_done
+					has_country_flag = Z88_ficklesome_fey_done
+					has_country_flag = Z88_rampaging_roc_done
+					has_country_flag = Z88_horrible_hag_hunt_done
+					has_country_flag = Z88_woeful_werebear_done
+					has_country_flag = Z88_nacker_hunt_done
+					has_country_flag = Z88_terrible_troll_done
+					has_country_flag = Z88_white_wolf_done
+				}
+			}
+			num_of_battles = {
+				amount = 100
+			}
+			OR = {
+				army_tradition = 75
+				army_professionalism = 0.5
+			}
+			OR = {
+				has_global_modifier_value = {
+					which = discipline
+					value = 0.10
+				}
+				has_global_modifier_value = {
+					which = infantry_power
+					value = 0.20
+				}
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.11
+			}
+		} 
+	}
+
+	Z88_our_eternal_charge = {
+		icon = mission_jorgurem_the_frozen
+		position = 12
+		required_missions = {
+			Z88_just_like_old_times
+			Z88_what_is_best_for_all
+			Z88_worthy_of_legend
+			Z88_gerudian_golden_age
+		}
+		provinces_to_highlight = {  
+			is_capital_of = Z88
+			NOT = {
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 50
+				}
+			}
+		} 
+
+		trigger = {  
+			has_country_modifier = Z88_she_wakes
+			capital_scope = {
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 50
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = Z88_skald_reform_complete_tt
+				has_country_flag = skald_reform_3
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.12
+			}
+		} 
+	}
+}
+column4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z88 } 
+
+	Z88_towards_the_frozen_north = {
+		icon = mission_rb_settle_the_north
+		position = 1
+		provinces_to_highlight = {  } 
+
+		trigger = {  
+			estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 60
+			}
+			estate_influence = {
+				estate = estate_burghers
+				influence = 60
+			}
+			has_advisor = yes
+		} 
+
+		effect = {
+			6272 = {
+				add_siberian_construction = 400
+			}
+			2831 = {
+				add_siberian_construction = 400
+			}
+			add_casus_belli = {
+				type = cb_vassalize_mission
+				target = Z89
+				months = -1
+			}
+			set_country_flag = Z88_new_world_but_old
+			set_estate_privilege = estate_burghers_new_world_charter
+		} 
+	}
+
+	Z88_towers_of_today = {
+		icon = mission_magic_tower
+		position = 3
+		required_missions = {
+			Z88_battlemaidens_of_gerudia
+			Z88_towards_the_frozen_north
+		}
+		provinces_to_highlight = {  
+			is_capital_of = Z88
+			NOT = {
+				has_tax_building_trigger = yes
+			}
+		} 
+
+		trigger = {  
+			capital_scope = {
+				has_tax_building_trigger = yes
+				has_any_ongoing_construction = no
+			}
+			treasury = 250
+		} 
+
+		effect = {  
+			add_treasury = -250
+			capital_scope = {
+				add_province_triggered_modifier = mage_tower_ebonforge
+				add_building_construction = {
+					building = mage_tower
+					speed = 1.25
+					cost = 0
+				}
+			}
+		} 
+	}
+
+	Z88_on_wings_of_healing = {
+		icon = mission_harpy_diplomats
+		position = 4
+		required_missions = {
+			Z88_eastern_reach
+			Z88_oils_and_fat
+			Z88_towers_of_today
+		}
+		provinces_to_highlight = {  
+			owned_by = Z88
+			fast_has_pop_of_race = { race = human }
+			NOT = {
+				AND = {
+					has_building = temple
+					num_of_times_improved_by_owner = 1
+				}
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = Z88_completed_2_hunts_tt
+				calc_true_if = {
+					amount = 2
+					has_country_flag = Z88_skald_dragon_and_skald
+					has_country_flag = Z88_disturbed_balance_done
+					has_country_flag = Z88_entering_equilibrium_done
+					has_country_flag = Z88_equilibriums_end_done
+					has_country_flag = Z88_mountain_depths_done
+					has_country_flag = Z88_precursor_ruin_done
+					has_country_flag = Z88_ficklesome_fey_done
+					has_country_flag = Z88_rampaging_roc_done
+					has_country_flag = Z88_horrible_hag_hunt_done
+					has_country_flag = Z88_woeful_werebear_done
+					has_country_flag = Z88_nacker_hunt_done
+					has_country_flag = Z88_terrible_troll_done
+					has_country_flag = Z88_white_wolf_done
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 6
+				fast_has_pop_of_race = { race = human }
+				has_building = temple
+				num_of_times_improved_by_owner = 1
+			}
+		} 
+
+		effect = {
+			custom_tooltip = Z88_manpower_recovery_from_battles_tt
+			add_country_modifier = {
+				name = Z88_wings_of_healing
+				duration = -1
+			}
+			set_country_flag = Z88_manpower_recovery_from_battles
+		} 
+	}
+
+	Z88_at_home_in_the_heights = {
+		icon = mission_magnificent_castle
+		position = 5
+		required_missions = { Z88_on_wings_of_healing } 
+		provinces_to_highlight = {  
+			harpy_roost_st_has_any_roost = yes
+			NOT = {
+				has_manpower_building_trigger = yes
+			}
+		} 
+
+		trigger = {
+			capital_scope = {
+				harpy_roost_st_has_non_fledgling_roost = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 5
+				has_manpower_building_trigger = yes
+				harpy_roost_st_has_any_roost = yes
+			}
+			check_variable = {
+				which = vaengheim_land_units_recovered_total
+				value = 10000
+			}
+		} 
+
+		effect = {  
+			custom_tooltip = Z88_harpy_t3_roost_unlock_tt
+			capital_scope = {
+				remove_province_modifier = harpy_roost_mod_roost_flourishing_active
+				add_province_modifier = {
+					name = Z88_t3_roost
+					duration = -1
+				}
+			}
+			set_country_flag = harpy_roost_tier_3_unlocked #enables t3 roosts generically
+			set_country_flag = Z88_hero_halls_1 #enables first version of z88 roosts
+		}
+	}
+
+	Z88_ebonsteel_rekindling = {
+		icon = mission_forge
+		position = 6
+		required_missions = {
+			Z88_all_gerudia
+			Z88_at_home_in_the_heights
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 984
+					NOT = {
+						AND = {
+							has_building = mage_tower
+							OR = {
+								has_province_modifier = Z88_t3_roost
+								has_province_modifier = Z88_t3_roost_upgraded
+							}
+						}
+					}
+				}
+				AND = {
+					has_province_modifier = mage_tower_ebonforge
+					NOT = {
+						has_production_building_trigger = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {  
+			num_of_owned_provinces_with = {
+				value = 3
+				has_province_modifier = mage_tower_ebonforge
+				has_production_building_trigger = yes
+			}
+			984 = {
+				has_building = mage_tower
+				OR = {
+					has_province_modifier = Z88_t3_roost
+					has_province_modifier = Z88_t3_roost_upgraded
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = Z88_ebonsteel_rekindling_tt
+			custom_tooltip = Z88_ebonsteel_rekindling_tt_2
+			if = {
+				limit = {
+					has_country_modifier = ebonforging_rediscovered
+				}
+				capital_scope = {
+					carolean_infantry = ROOT
+					carolean_infantry = ROOT
+					carolean_infantry = ROOT
+					carolean_infantry = ROOT
+					carolean_infantry = ROOT
+					carolean_infantry = ROOT
+					carolean_infantry = ROOT
+					carolean_infantry = ROOT
+					carolean_infantry = ROOT
+					carolean_infantry = ROOT
+				}
+			}
+			else = {
+				set_country_flag = ebonsteel_rediscovery_unlock
+			}
+			set_country_flag = skald_ebonsteel_emp
+		} 
+	}
+
+	Z88_whales_of_west = {
+		icon = mission_look_west
+		position = 8
+		required_missions = { Z88_the_wind_of_wanderlust } 
+		provinces_to_highlight = {  
+			colonial_region = colonial_dalaire
+			has_port = yes
+			NOT = {
+				AND = {
+					has_dock_building_trigger = yes
+					base_production = 6
+					country_or_non_sovereign_subject_holds = ROOT
+				}
+			}
+		} 
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 10
+				colonial_region = colonial_dalaire
+				has_port = yes
+				has_dock_building_trigger = yes
+				base_production = 6
+			}
+		} 
+
+		effect = {
+			custom_tooltip = Z88_oil_industry_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						colonial_region = colonial_dalaire
+						has_port = yes
+						has_dock_building_trigger = yes
+						base_production = 6
+					}
+					change_trade_goods = incense
+					add_permanent_province_modifier = {
+						name = Z88_oil_industry
+						duration = -1
+					}
+				}
+				every_subject_country = {
+					every_owned_province = {
+						limit = {
+							colonial_region = colonial_dalaire
+							has_port = yes
+							has_dock_building_trigger = yes
+							base_production = 6
+						}
+						change_trade_goods = incense
+						add_permanent_province_modifier = {
+							name = Z88_oil_industry
+							duration = -1
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	Z88_the_other_north = {
+		icon = mission_protect_white_sea_trade
+		position = 9
+		required_missions = { Z88_whales_of_west } 
+		provinces_to_highlight = {  
+			OR = {
+				AND = {
+					OR = {
+						region = rzenta_region
+						region = randrunnse_region
+					}
+					NOT = {
+						has_discovered = ROOT
+					}
+				}
+				AND = {
+					region = broken_isles_region
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						has_country_modifier = ruinborn_administration
+					}
+					NOT = {
+						owner = {
+							has_opinion = {
+							who = ROOT
+							value = 100
+							}
+							has_opinion_modifier = {
+								who = ROOT
+								modifier = great_power_influence
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			owns_core_province = 952 
+			randrunnse_region = {
+				has_discovered = ROOT
+			}
+			rzenta_region = {
+				has_discovered = ROOT
+			}
+			broken_isles_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			calc_true_if = {
+				amount = 3
+				all_known_country = {
+					has_country_modifier = ruinborn_administration
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = great_power_influence
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = Z88_new_hunt_tt
+			952 = {
+				add_province_modifier = {
+					name = Z88_precursor_ruin
+					duration = -1
+				}
+			}
+			large_increase_of_ruinborn_tolerance_effect = yes
+		} 
+	}
+
+	Z88_gerudian_golden_age = {
+		icon = mission_the_golden_city
+		position = 11
+		required_missions = {
+			Z88_secrets_of_the_giants
+			Z88_faith_and_steel
+		}
+		provinces_to_highlight = {  
+			owned_by = ROOT
+			development = 20
+			NOT = {
+				AND = {
+					num_of_buildings_in_province = 2
+					has_manufactory_trigger = yes
+				}
+			}
+		} 
+
+		trigger = {  
+			OR = {
+				in_golden_age = yes
+				has_had_golden_age = yes
+			}
+			NOT = {
+				war_exhaustion = 0.01
+			}
+			num_of_owned_provinces_with = {
+				value = 15
+				development = 20
+				num_of_buildings_in_province = 2
+				has_manufactory_trigger = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 5
+				development = 20
+				num_of_buildings_in_province = 2
+				has_manufactory_trigger = yes
+				harpy_roost_st_has_any_roost = yes
+			}
+		} 
+
+		effect = {  
+			if = {
+				limit = {
+					has_had_golden_age = yes
+				}
+				reset_golden_age = yes
+			}
+			else = {
+				extend_golden_age = 600
+			}
+		} 
+	}
+}
+
+column5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z88 } 
+
+	Z88_settling_the_frontier = {
+		icon = mission_beyond_the_urals
+		position = 2
+		required_missions = { Z88_towards_the_frozen_north } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 6272
+						province_id = 2831  
+					}
+					NOT = {
+						AND = {
+							is_city = yes
+							owned_by = ROOT
+						}	
+					}
+				}
+				AND = {
+					is_capital_of = Z89
+					Z89 = {
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+			}
+		} 
+
+		trigger = {  
+			6272 = {
+				is_city = yes
+				owned_by = ROOT
+			}
+			2831 = {
+				is_city = yes
+				owned_by = ROOT
+			}
+			Z89 = {
+				is_subject_of = ROOT
+			}
+		} 
+
+		effect = {  
+			add_country_modifier = {
+				name = Z88_settling_frontier
+				duration = 14600
+			}
+			Z89 = {
+				add_country_modifier = {
+					name = Z88_settling_frontier_subject
+					duration = 14600
+				}
+			}
+		} 
+	}
+
+	Z88_oils_and_fat = {
+		icon = mission_mnd_maj_cloves
+		position = 3
+		required_missions = { Z88_settling_the_frontier } 
+		provinces_to_highlight = {  } 
+
+		trigger = {  
+			num_of_owned_provinces_with = {
+				value = 3
+				has_production_building_trigger = yes
+				base_production = 6
+			}
+		} 
+
+		effect = {
+			custom_tooltip = Z88_oils_and_fat_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						has_production_building_trigger = yes
+						base_production = 6
+					}
+					change_trade_goods = incense
+					add_permanent_province_modifier = {
+						name = Z88_oil_industry
+						duration = -1
+					}
+				}
+			}
+		}
+	}
+
+	Z88_settling_the_valley = {
+		icon = mission_develop_the_scandes
+		position = 4
+		required_missions = { Z88_oils_and_fat } 
+		provinces_to_highlight = {  
+			area = gullmork_area
+			NOT = {
+				AND = {
+					is_city = yes
+					num_of_times_improved_by_owner = 1
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 1
+					}
+				}
+			}
+		} 
+
+		trigger = {  
+			gullmork_area = {
+				type = all
+				is_city = yes
+				num_of_times_improved = 1
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 1
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = Z88_colonising_tt
+			set_country_flag = Z88_colonising
+			gullmork_area = {
+				add_human_minority_size_effect = yes
+				add_troll_minority_size_effect = yes
+			}
+		} 
+	}
+
+	Z88_in_the_mountains_shadow = {
+		icon = mission_mountain_castle
+		position = 6
+		required_missions = {
+			Z88_at_home_in_the_heights
+			Z88_settling_the_valley
+		}
+		provinces_to_highlight = {  
+			province_id = 2830
+			NOT = {
+				has_province_modifier = Z88_t3_roost
+				has_province_modifier = Z88_t3_roost_upgraded
+			}
+		} 
+
+		trigger = {  
+			2830 = {
+				OR = {
+					has_province_modifier = Z88_t3_roost
+					has_province_modifier = Z88_t3_roost_upgraded
+				}
+			}
+			OR = {
+				has_personal_deity = gjalund_and_the_giantslayers
+				has_personal_deity = emp_gjalund_and_the_giantslayers
+			}
+		} 
+
+		effect = {  
+			custom_tooltip = Z88_hunt_spawn
+			2830 = {
+				add_province_modifier = {
+					name = Z88_mountain_depths
+					duration = -1
+				}
+				add_province_modifier = {
+					name = Z88_excavation_efforts
+					duration = 3650
+				}
+			}
+		} 
+	}
+
+	Z88_the_wind_of_wanderlust = {
+		icon = mission_rb_scottish_north_sea_trade
+		position = 7
+		required_missions = {
+			Z88_in_the_mountains_shadow
+			Z88_ebonsteel_rekindling
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {  
+			OR = {
+				exploration_ideas = 1
+				expansion_ideas = 1
+			}
+			check_variable = {
+				which = Z88_colonised
+				value = 15
+			}
+			num_of_light_ship = 10
+			num_of_transport = 10
+		} 
+
+		effect = {  
+			add_country_modifier = {
+				name = Z88_wanderlust
+				duration = 18250 
+			}
+			create_explorer = {
+				tradition = 80
+			}
+		}
+	}
+
+	Z88_warm_in_the_winter = {
+		icon = mission_control_fur_trade
+		position = 8
+		required_missions = { Z88_the_wind_of_wanderlust } 
+		provinces_to_highlight = {  
+			country_or_non_sovereign_subject_holds = ROOT
+			trade_goods = fur
+			NOT = {
+				AND = {
+					has_production_building_trigger = yes
+					has_manufactory_trigger = yes
+					base_production = 4
+				}
+			}
+		} 
+
+		trigger = {  
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 10
+				trade_goods = fur
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				base_production = 4
+			}
+		} 
+
+		effect = {
+			set_country_flag = Z88_arctic_acc
+			custom_tooltip = Z88_arctic_acc_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						has_climate = arctic
+					}
+					add_province_modifier = {
+						name = Z88_artic_acclimitisation
+						duration = -1
+					}
+				}
+				every_subject_country = {
+					every_owned_province = {
+						limit = {
+							has_climate = arctic
+						}
+						add_province_modifier = {
+							name = Z88_artic_acclimitisation
+							duration = -1
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	Z88_secrets_of_the_giants = {
+		icon = mission_crystal_cave
+		position = 10
+		required_missions = {
+			Z88_the_other_north
+			Z88_warm_in_the_winter
+		}
+		provinces_to_highlight = {  
+			OR = {
+				province_id = 2830
+				province_id = 985
+				province_id = 707
+			}
+			NOT = {
+				AND = {
+					has_province_modifier = ancient_giant_tower
+					has_building = mage_tower
+					has_trade_building_trigger = yes
+					development = 20
+					num_of_units_in_province = {
+						type = infantry
+						who = ROOT
+						amount = 2
+					}
+				}
+			}
+			
+		} 
+
+		trigger = {  
+			2830 = {
+				has_province_modifier = ancient_giant_tower
+				has_building = mage_tower
+				has_trade_building_trigger = yes
+				development = 20
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 2
+				}
+			}
+			985 = {
+				has_province_modifier = ancient_giant_tower
+				has_building = mage_tower
+				has_trade_building_trigger = yes
+				development = 20
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 2
+				}
+			}
+			707 = {
+				has_province_modifier = ancient_giant_tower
+				has_building = mage_tower
+				has_trade_building_trigger = yes
+				development = 20
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 2
+				}
+			}
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 60
+			}
+			estate_influence = {
+				estate = estate_mages
+				influence = 50
+			}
+			custom_trigger_tooltip = {
+				tooltip = Z88_completed_depths_hunts_tt
+				has_country_flag = Z88_mountain_depths_done
+				has_country_flag = Z88_precursor_ruin_done
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.19
+			}
+		} 
+	}
+}
+column3p2 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z88 } 
+
+	Z88_to_last_all_time = {
+		icon = mission_manifest_destiny
+		position = 13
+		required_missions = { Z88_our_eternal_charge } 
+		provinces_to_highlight = {  } 
+
+		trigger = { 
+			custom_trigger_tooltip = {
+				tooltip = Z88_completed_all_hunts_tt
+				has_country_flag = Z88_skald_dragon_and_skald
+				has_country_flag = Z88_disturbed_balance_done
+				has_country_flag = Z88_entering_equilibrium_done
+				has_country_flag = Z88_equilibriums_end_done
+				has_country_flag = Z88_mountain_depths_done
+				has_country_flag = Z88_precursor_ruin_done
+				has_country_flag = Z88_ficklesome_fey_done
+				has_country_flag = Z88_rampaging_roc_done
+				has_country_flag = Z88_horrible_hag_hunt_done
+				has_country_flag = Z88_woeful_werebear_done
+				has_country_flag = Z88_nacker_hunt_done
+				has_country_flag = Z88_terrible_troll_done
+				has_country_flag = Z88_white_wolf_done
+			} 
+			calc_true_if = {
+				amount  = 400
+				all_province = {
+					religion = skaldhyrric_faith
+				}
+			}
+			NOT = {
+				great_power_rank = 3
+			}
+		} 
+
+		effect = {  
+			country_event = {
+				id = vaengheim.18
+			}
+		} 
+	}
+}

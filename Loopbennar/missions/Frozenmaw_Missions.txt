@@ -1,0 +1,951 @@
+z18_esmaryal = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z18 } 
+
+	z18_fridas_preaching = {
+		icon = misssion_russian_great_power
+		position = 2
+		required_missions = { z18_house_of_comfort } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			religion = regent_court
+			has_tax_building_trigger = no
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 3
+				religion = regent_court
+				num_of_times_improved_by_owner = 1
+			}
+			accepted_culture = white_reachman
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = z18_frida_consort_tt
+					has_country_flag = frida_vrorensson
+				}
+				any_owned_province = {
+					religion = regent_court
+					has_tax_building_trigger = yes
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = z18_other_believers_enabled_tt
+			if = {
+				limit = {
+					has_country_flag = frida_vrorensson
+				}
+				define_advisor = {
+					type = theologian
+					name = "Frida Vrorensson"
+					skill = 1
+					cost_multiplier = 0.25
+					female = yes
+					culture = white_reachman
+					religion = regent_court
+					location = 737
+				}
+			}
+		}
+	}
+
+	z18_take_care_of_victims_of_war = {
+		icon = kingdom_of_heaven
+		position = 3
+		required_missions = { z18_fridas_preaching } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			has_half_orcish_minority_trigger = yes
+			has_tax_building_trigger = no
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 5
+				has_half_orcish_minority_trigger = yes
+				has_tax_building_trigger = yes
+			}
+		}
+
+		effect = {
+			large_increase_of_half_orcish_tolerance_effect = yes
+			if = {
+				limit = { has_country_flag = frida_vrorensson } 
+				add_ruler_modifier = { name = "frozenmaw_avatar_of_esmaryal" } 
+			}
+			else = {
+				add_country_modifier = {
+					name = "frozenmaw_care_for_the_fallen"
+					duration = 9125
+				}
+			}
+		}
+	}
+
+	z18_cult_of_the_gentle_dawn = {
+		icon = mission_women_prayer
+		position = 4
+		required_missions = { z18_take_care_of_victims_of_war } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			culture = gray_orc
+			has_tax_building_trigger = no
+		}
+
+		trigger = {
+			has_adm_advisor_2 = yes
+			num_of_owned_provinces_with = {
+				value = 10
+				has_tax_building_trigger = yes
+				culture = gray_orc
+			}
+			crown_land_share = 30
+		}
+
+		effect = {
+			custom_tooltip = z18_cult_gentle_reward_tt
+			tooltip = { 
+						add_province_modifier = {
+							name = "frozenmaw_cult_gentle_dawn"
+							duration = 9125
+						}
+					}
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						has_tax_building_trigger = yes
+						culture = gray_orc
+					}
+					add_province_modifier = {
+						name = "frozenmaw_cult_gentle_dawn"
+						duration = 9125
+					}
+					change_religion = regent_court
+					if = {
+						limit = { has_large_half_orcish_minority_trigger = yes }
+						add_base_production = 1
+					}
+					else = { add_half_orcish_minority_size_effect = yes } 
+				}
+			}
+		}
+	}
+
+	z18_embrace_new_gods = {
+		icon = mission_seren_cathedral
+		position = 5
+		required_missions = { z18_cult_of_the_gentle_dawn } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			stability = 1
+			has_estate_privilege = estate_monstrous_tribes_other_believers
+			crown_land_share = 40
+			OR = {
+				has_reform = embrace_new_thoughts_reform
+				has_reform = forced_evolution_reform
+			}
+		}
+
+		effect = {
+			add_stability = -2
+			change_religion = regent_court
+			custom_tooltip = z18_semi_monster_tt
+			hidden_effect = {
+				start_demonsterization_effect = yes
+				monstrous_to_semi_monstrous_effect = yes
+			}
+			add_dip_power = 100
+			custom_tooltip = z18_end_crisis_tt
+			hidden_effect = {
+				remove_country_modifier = frozenmaw_crisis_of_faith_3
+				remove_country_modifier = frozenmaw_crisis_of_faith_2
+				remove_country_modifier = frozenmaw_crisis_of_faith_1
+			}
+			every_subject_country = { change_religion = regent_court } 
+		}
+	}
+}
+z18_settlement = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z18 } 
+
+	z18_house_of_comfort = {
+		icon = mission_land_of_churches
+		position = 1
+		provinces_to_highlight = { province_id = 737 } 
+
+		trigger = {
+			owns = 737
+			OR = {
+				treasury = 50
+				737 = { has_tax_building_trigger = yes }
+			}
+			if = {
+				limit = { ai = no } 
+				estate_loyalty = {
+					estate = estate_monstrous_tribes
+					loyalty = 60
+				}
+			}
+		}
+
+		effect = {
+			737 = {
+				if = { 
+					limit = { has_tax_building_trigger = no }
+					add_building_construction = {
+						building = temple
+						cost = 0
+					}
+					ROOT = { add_treasury = -50 }
+				}
+				else = {
+					Z18 = { add_adm_power = 25 }
+				}
+				add_half_orcish_minority_size_effect = yes
+				add_province_modifier = {
+					name = "frozenmaw_cult_gentle_dawn"
+					duration = 9125
+				}
+			}
+		}
+	}
+
+	z18_repopulate_mammoth_hall = {
+		icon = mission_elephant_war
+		position = 2
+		required_missions = { z18_house_of_comfort } 
+		provinces_to_highlight = {
+			province_id = 737
+			NOT = { base_manpower = 5 } 
+		}
+
+		trigger = {
+			is_institution_enabled = renaissance
+			737 = {
+				owned_by = ROOT
+				base_manpower = 5
+			}
+		}
+
+		effect = {
+			737 = {
+				add_building_construction = {
+					building = barracks
+					cost = 0
+				}
+				add_institution_embracement = {
+					which = renaissance
+					value = 30
+				}
+				if = {
+					limit = { culture = gray_orc } 
+					add_base_manpower = 1
+				}
+				else = { change_culture = gray_orc } 
+			}
+		}
+	}
+
+	z18_build_first_moskaran = {
+		icon = mission_rice_farming
+		position = 3
+		required_missions = { z18_repopulate_mammoth_hall } 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 738
+				province_id = 739
+			}
+		}
+
+		trigger = {
+			738 = {
+				owned_by = ROOT
+				base_manpower = 5
+				calc_true_if = {
+					amount = 2
+					has_manpower_building_trigger = yes
+					has_production_building_trigger = yes
+					has_trade_building_trigger = yes
+					has_tax_building_trigger = yes
+				}
+			}
+			739 = {
+				owned_by = ROOT
+				base_manpower = 5
+				calc_true_if = {
+					amount = 2
+					has_manpower_building_trigger = yes
+					has_production_building_trigger = yes
+					has_trade_building_trigger = yes
+					has_tax_building_trigger = yes
+				}
+			}
+		}
+
+		effect = {
+			738 = {
+				add_base_production = 1
+				add_base_tax = 1
+			}
+			739 = {
+				add_base_production = 1
+				add_base_tax = 1
+			}
+			custom_tooltip = z18_moskaran_enabled_tt
+			hidden_effect = {
+				remove_country_modifier = "moskaran_conscription_initial"
+				add_country_modifier = {
+					name = "moskaran_conscription_0"
+					duration = -1
+				}
+				set_variable = { moskaranCasualties = 0 }
+			}
+		}
+	}
+
+	z18_recovery_of_the_reach = {
+		icon = mission_seize_the_bengal_coast
+		position = 4
+		required_missions = {
+			z18_build_first_moskaran
+			z18_gray_orc_mercenaries
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			region = alenic_reach_region
+			OR = {
+				NOT = { development = 10 } 
+				NOT = {
+					culture = gray_orc
+					has_large_orcish_minority_trigger = yes
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				has_country_modifier = moskaran_conscription_1
+				has_country_modifier = moskaran_conscription_2
+			}
+			num_of_owned_provinces_with = {
+				value = 8
+				region = alenic_reach_region
+				development = 10
+				OR = {
+					culture = gray_orc
+					has_large_orcish_minority_trigger = yes
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = z18_recovery_reward_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = { 
+						base_manpower = 5
+						region = alenic_reach_region
+						culture = gray_orc 
+					}
+					add_base_production = 1
+					add_base_tax = 1
+				}
+				every_owned_province = {
+					limit = {
+						base_manpower = 5
+						region = alenic_reach_region
+						NOT = { culture = gray_orc }
+					}
+					random_list = {
+						50 = { add_base_production = 1 } 
+						50 = { add_base_tax = 1 } 
+					}
+				}
+			}
+		}
+	}
+
+	z18_prepare_for_the_great_push = {
+		icon = mission_rb_colonise_canada
+		position = 5
+		required_missions = {
+			z18_recovery_of_the_reach
+			z18_aftermath_of_crovis_invasion
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						region = gerudian_frontier_region
+						region = northern_pass_region
+					}
+					NOT = { owned_by = ROOT } 
+				}
+				AND = {
+					province_id = 4176
+					has_trade_building_trigger = no
+				}
+			}
+		}
+
+		trigger = {
+			treasury = 100
+			4176 = {
+				owned_by = ROOT
+				has_trade_building_trigger = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 8
+				OR = {
+					region = gerudian_frontier_region
+					region = northern_pass_region
+				}
+			}
+		}
+
+		effect = {
+			4176 = {
+				add_building_construction = {
+					building = fort_15th
+					cost = 0
+				}
+				add_base_production = 1
+				add_base_tax = 1
+				add_base_manpower = 1
+				add_province_modifier = {
+					name = "frozenmaw_tarug"
+					duration = -1
+				}
+			}
+			add_treasury = -100
+		}
+	}
+}
+z18_warriors = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z18 } 
+
+	z18_new_breed_of_warriors = {
+		icon = mission_armor_choice
+		position = 2
+		required_missions = {
+			z18_house_of_comfort
+			z18_claws_of_ice
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			region = alenic_reach_region
+			NOT = { base_manpower = 5 } 
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 5
+				region = alenic_reach_region
+				base_manpower = 5
+			}
+		}
+
+		effect = {
+			custom_tooltip = z18_artorian_tt
+			hidden_effect = {
+				create_general = {
+				name = "Artorian Pureblood"
+				tradition = 60
+				culture = half_orc
+				}
+
+				every_owned_province = {
+					limit = {
+						base_manpower = 5
+						region = alenic_reach_region
+					}
+					add_half_orcish_minority_size_effect = yes
+				}
+			}
+		}
+	}
+
+	z18_gray_orc_mercenaries = {
+		icon = gory_to_the_black_army
+		position = 3
+		required_missions = { z18_new_breed_of_warriors } 
+		provinces_to_highlight = { province_id = 740 } 
+
+		trigger = {
+			740 = {
+				has_manpower_building_trigger = yes
+				has_trade_building_trigger = yes
+				num_of_units_in_province = {
+					type = infantry
+					who = ROOT
+					amount = 10
+				}
+			}
+		}
+
+		effect = {
+			740 = {
+				kill_units = {
+					who = ROOT
+					type = infantry
+					amount = 10
+				}
+			}
+			set_global_flag = ironwall_enabled
+			custom_tooltip = z18_ironwall_enabled_tt
+			add_country_modifier = {
+				name = frozenmaw_mercenary_expertise
+				duration = 3650
+			}
+		}
+	}
+
+	z18_aftermath_of_crovis_invasion = {
+		icon = mission_vrorenmarch_kingdom
+		position = 4
+		required_missions = { z18_reunite_gray_orcs } 
+		provinces_to_highlight = {
+			OR = {
+				area = east_chillsbay_area
+				area = sondaar_area
+			}
+			NOT = { owned_by = ROOT }
+			NOT = {
+				AND = {
+					OR = {
+						owned_by = Z23
+						owned_by = Z49
+					}
+					owner = { is_subject_of = ROOT }
+				}
+			} 
+		}
+
+		trigger = {
+			stability = 2
+			custom_trigger_tooltip = {
+				tooltip = z18_crovis_defeated_tt
+				has_global_flag = crovis_defeated
+			}
+			OR = {
+				overlord_of = Z23
+				east_chillsbay_area = {
+					type = all
+					owned_by = ROOT
+				}
+			}
+			OR = {
+				overlord_of = Z49
+				sondaar_area = {
+					type = all
+					owned_by = ROOT
+				}
+			}
+		}
+
+		effect = {
+			every_subject_country = {
+				limit = { ruler_culture = half_orc } 
+				add_opinion = {
+					who = Z18
+					modifier = z18_one_gray_family
+				}
+			}
+			add_country_modifier = {
+				name = "frozenmaw_alenic_consolidation"
+				duration = 18250
+			}
+			707 = { add_permanent_claim = ROOT }
+		}
+	}
+
+	z18_centralized_kingdom = {
+		icon = mission_magnificent_castle
+		position = 6
+		required_missions = {
+			z18_embrace_new_gods
+			z18_prepare_for_the_great_push
+			z18_crush_ebonfrosts
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = ROOT
+					culture = white_reachman
+					local_autonomy = 35
+				}
+				owned_by = Z23
+				owned_by = Z49
+				owned_by = Z27
+				owned_by = Z48
+				AND = {
+					OR = {
+						area = cedesck_area
+						area = sondaar_area
+						area = east_chillsbay_area
+					}
+					NOT = { owned_by = ROOT } 
+				}
+			}
+		}
+
+		trigger = {
+			all_owned_province = {
+				OR = {
+					NOT = { culture = white_reachman } 
+					NOT = { local_autonomy = 35 } 
+				}
+			}
+			NOT = {
+				exists = Z23
+				exists = Z49
+				exists = Z27
+				exists = Z48
+			}
+			cedesck_area = {
+				type = all
+				owned_by = ROOT
+			}
+			sondaar_area = {
+				type = all
+				owned_by = ROOT
+			}
+			east_chillsbay_area = {
+				type = all
+				owned_by = ROOT
+			}
+		}
+
+		effect = {
+			change_estate_land_share = {
+				estate = all
+				share = -10
+			}
+			add_country_modifier = {
+				name = "orc_on_the_path_to_civilization"
+				duration = 18250
+			}
+			hidden_effect = { set_country_flag = orc_path_to_civil } 
+			custom_tooltip = orc_path_to_civil_tt
+		}
+	}
+}
+z18_conquest = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z18 } 
+
+	z18_claws_of_ice = {
+		icon = mission_underground_cave
+		position = 1
+		provinces_to_highlight = {
+			province_id = 740
+			NOT = { has_province_modifier = castanorian_citadel } 
+		}
+
+		trigger = {
+			740 = {
+				owned_by = ROOT
+				has_province_modifier = castanorian_citadel
+			}
+			prestige = 25
+		}
+
+		effect = {
+			gulletpeak_area = { add_permanent_claim = ROOT } 
+			middle_alen_area = { add_permanent_claim = ROOT } 
+			country_event = { id = flavor_frozenmaw.20 } 
+		}
+	}
+
+	z18_remove_goblin_threat = {
+		icon = mission_steppe_warriors
+		position = 2
+		required_missions = { z18_claws_of_ice } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = gulletpeak_area
+					NOT = { owned_by = ROOT }
+				}
+				owned_by = B45
+				owned_by = Z20
+			}
+		}
+
+		trigger = {
+			gulletpeak_area = {
+				type = all
+				owned_by = ROOT
+			}
+			NOT = {
+				exists = B45
+				exists = Z20
+			}
+			NOT = {
+				has_country_modifier = racial_pop_goblin_expulsion
+				has_country_modifier = racial_pop_goblin_purge
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_frozenmaw.3 } 
+			custom_tooltip = z18_goblin_purge_tt
+		}
+	}
+
+	z18_reunite_gray_orcs = {
+		icon = mission_swear_fealty_knight
+		position = 3
+		required_missions = { z18_remove_goblin_threat } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = northern_giants_tears_area
+						area = southern_giants_tears_area
+					}
+					OR = { 
+						NOT = { owned_by = ROOT }
+						NOT = { is_core = ROOT }
+					}
+				}
+				owned_by = Z47
+				owned_by = Z19
+			}
+		}
+
+		trigger = {
+			northern_giants_tears_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+			}
+			southern_giants_tears_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+			}
+			OR = {
+				NOT = { exists = Z47 } 
+				NOT = { exists = Z19 } 
+			}
+		}
+
+		effect = {
+			add_manpower = 10
+			extend_country_modifier = {
+				name = "frozenmaw_veterans_of_the_graytide"
+				duration = 3650
+			}
+			add_country_modifier = {
+				name = "frozenmaw_eastward_expansion"
+				duration = 18250
+			}
+			dwaroval_area = { discover_country = Z18 } 
+			lower_logr_area = { discover_country = Z18 } 
+			esfjall_area = { add_permanent_claim = ROOT } 
+			naugsvol_area = { add_permanent_claim = ROOT } 
+		}
+	}
+
+	z18_crush_ebonfrosts = {
+		icon = mission_viking
+		position = 5
+		required_missions = { z18_raid_along_alen } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = esfjall_area
+					OR = {
+						NOT = { owned_by = ROOT } 
+						NOT = { is_core = ROOT }
+						AND = {
+							NOT = { has_province_flag = z18_exploited_dev } 
+							development = 4
+						}
+					}
+				}
+				owned_by = Z15
+			}
+		}
+
+		trigger = {
+			NOT = { exists = Z15 } 
+			esfjall_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+				OR = {
+					NOT = { development = 4 } 
+					custom_trigger_tooltip = {
+						tooltip = urviksten_exploit_tt
+						has_province_flag = z18_exploited_dev
+					}
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = "frozenmaw_looted_ebonsteel"
+				duration = 9125
+			}
+			add_treasury = 100
+		}
+	}
+}
+z18_raiding = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = Z18 } 
+
+	z18_first_gray_reaver = {
+		icon = mission_longships
+		position = 2
+		provinces_to_highlight = { province_id = 740 } 
+
+		trigger = {
+			sailors = 1000
+			navy_size_percentage = 0.9
+			num_of_light_ship = 5
+			740 = { 
+				galleys_in_province = 5 
+				galleys_in_province = ROOT
+			} 
+		}
+
+		effect = {
+			740 = {
+				kill_units = {
+					who = ROOT
+					type = galley
+					amount = 5
+				}
+			}
+			country_event = { id = flavor_frozenmaw.30 } 
+			add_country_modifier = {
+				name = "frozenmaw_hungry_maws"
+				duration = 18250
+			}
+			add_permanent_claim = 985
+		}
+	}
+
+	z18_raiding_base = {
+		icon = mission_shipyards_of_gujarat
+		position = 3
+		required_missions = { z18_first_gray_reaver } 
+		provinces_to_highlight = { province_id = 985 } 
+
+		trigger = {
+			985 = {
+				is_core = ROOT
+				owned_by = ROOT
+				controlled_by = ROOT
+				culture = ROOT
+				has_trade_building_trigger = yes
+			}
+		}
+
+		effect = {
+			985 = {
+				add_province_modifier = {
+					name = "frozenmaw_raiding_base"
+					duration = -1
+				}
+			}
+		}
+	}
+
+	z18_raid_along_alen = {
+		icon = mission_se_along_the_river
+		position = 4
+		required_missions = {
+			z18_raiding_base
+			z18_reunite_gray_orcs
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = middle_alen_area
+					NOT = { owned_by = ROOT }
+				}
+				owned_by = B45
+				AND = {
+					NOT = { exists = A13 }
+					OR = {
+						area = balvord_area
+						area = alenvord_area
+					}
+					NOT = { owned_by = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { exists = A13 } 
+				NOT = { exists = B45 } 
+				middle_alen_area = {
+					type = all
+					owned_by = ROOT 
+				}
+				OR = {
+					army_tradition = 35
+					army_professionalism = 0.10
+				}
+				army_size = 25
+			}
+			else = {
+				NOT = { exists = B45 } 
+				middle_alen_area = {
+					type = all
+					owned_by = ROOT
+				}
+				balvord_area = {
+					type = all
+					owned_by = ROOT
+				}
+				alenvord_area = {
+					type = all
+					owned_by = ROOT
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { exists = A13 } 
+				add_manpower = -5
+				add_treasury = 500
+				A13 = { country_event = { id = flavor_frozenmaw.36 }  } 
+			}
+			else = {
+				add_mil_power = 50
+				add_power_projection = {
+					type = mission_rewards_power_projection
+					amount = 20
+				}
+			}
+		}
+	}
+}

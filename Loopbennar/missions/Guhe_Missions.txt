@@ -16,12 +16,13 @@ Guhe_2 = {
 	guhe_centralized_defense = {
 		icon = mission_non-western_soldiers
 		position = 1
+		
 		provinces_to_highlight = {
-
 			owner = {
 				OR = {
 					tag = Y10
 					tag = Y08
+					tag = V22
 					tag = Y06
 					tag = Y04
 				}
@@ -102,20 +103,32 @@ Guhe_2 = {
 					exists = no
 				}
 			}
-			
+			OR = {
+				hidden_trigger = {
+					AND = {
+						ai = yes
+						V22 = { ai = yes }
+					}
+				}
+				reverse_has_opinion = {
+					who = V22
+					value = 100
+				}
+				V22 = {
+					exists = no
+				}
+			}
 		} 
 
 		effect = {
-		
 			set_country_flag = guhe_allow_central
 			custom_tooltip = guhe_central_tt
-			
 			Y10 = { country_event = { id = guhe.4 } }
 			Y08 = { country_event = { id = guhe.4 } }
 			Y06 = { country_event = { id = guhe.4 } }
 			Y04 = { country_event = { id = guhe.4 } }
-			
-			}
+			V22 = { country_event = { id = guhe.4 } }
+		}
 		ai_weight = { factor = 500 }
 	}
 
@@ -126,15 +139,14 @@ Guhe_2 = {
 			guhe_centralized_defense
 			guhe_another_storm
 		}
-		provinces_to_highlight = {
 
+		provinces_to_highlight = {
 			owner = {
 				tag = Y06
 			}
 		}
 		
 		trigger = {
-			
 			OR = {
 				army_strength = {
 					who = Y06
@@ -151,8 +163,7 @@ Guhe_2 = {
 				name = guhe_strat_ed
 				duration = 3650
 			}
-		} 
-		
+		}
 	}
 
 	guhe_yanzhong_aid = {
@@ -163,23 +174,27 @@ Guhe_2 = {
 			guhe_favorable_ground
 		}
 		provinces_to_highlight = {
-
 			owner = {
-				tag = Y08
+				OR = {
+					tag = Y08
+					tag = V22
+				}
 			}
 		} 
 
 		trigger = {
-
-			OR = {
-				army_strength = {
-					who = Y08
-					value = 3
-				}
-				
+			army_strength = {
+				who = Y08
+				value = 3
+			}
+			army_strength = {
+				who = V22
+				value = 3
+			}
+			AND = {
 				Y08 = { exists = no	}
-			} 
-		
+				V22 = { exists = no	}
+			}
 		}
 
 		effect = {
@@ -195,10 +210,9 @@ Guhe_2 = {
 				}
 			}
 		} 
-		
 	}
-	
 }
+
 Guhe_3 = {
 	slot = 3
 	generic = no
@@ -217,12 +231,11 @@ Guhe_3 = {
 	guhe_another_storm = {
 		icon = Burn_Wooden_Wall
 		position = 1
-		provinces_to_highlight = {
 
+		provinces_to_highlight = {
 			owner = {
 				tag = Y16
 			}
-			
 		} 
 
 		trigger = {
@@ -237,14 +250,11 @@ Guhe_3 = {
 					who = Y16
 					value = 100
 				}
-				
 				Y16 = { exists = no	}
 			}
-
 		}
 
 		effect = {
-			
 			add_country_modifier = {
 				name = guhe_storm
 				duration = 5475
@@ -257,23 +267,19 @@ Guhe_3 = {
 		icon = mission_magnificent_castle
 		position = 2
 		required_missions = { guhe_another_storm } 
+
 		provinces_to_highlight = { 
-			
 			province_id = 4976
-			
 		} 
 
 		trigger = {
-			
-			owns = 4976
-			
+			owns = 4976		
 		} 
 
 		effect = {
-
 			add_government_reform = guhe_council_stripes_reform
-
 		}
+
 		ai_weight = { factor = 500 }
 	}
 
@@ -284,10 +290,11 @@ Guhe_3 = {
 			guhe_yanzhong_aid
 			guhe_shared_front
 		}
-		provinces_to_highlight = {
 
+		provinces_to_highlight = {
 			OR = {
 				owner = { tag = Y08 }
+				owner = { tag = V22 }
 				owner = { tag = Y06 }		
 			} 
 		}
@@ -297,6 +304,13 @@ Guhe_3 = {
 				limit = { exists = Y08 }
 				army_strength = {
 					who = Y08
+					value = 5
+				}
+			}
+			if = {
+				limit = { exists = V22 }
+				army_strength = {
+					who = Y06
 					value = 5
 				}
 			}
@@ -327,6 +341,16 @@ Guhe_3 = {
 				}
 				owns_core_province = 4859
 			}
+			OR = {
+				V22 = {
+					is_at_war = no
+					OR = {
+						is_subject = no
+						is_subject_of = ROOT
+					}
+				}
+				owns_core_province = 4855
+			}
 		}
 
 		effect = {
@@ -338,6 +362,10 @@ Guhe_3 = {
 				limit = { Y08 = { ai = yes } }
 				inherit = Y08
 			}
+			if = {
+				limit = { V22 = { ai = yes } }
+				inherit = V22
+			}
 			country_event = { id = guhe.2 }
 			clr_country_flag = guhe_allow_central
 		} 
@@ -347,14 +375,13 @@ Guhe_3 = {
 		icon = mission_crowning
 		position = 5
 		required_missions = { guhe_tighten_noose } 
-		provinces_to_highlight = {
 
+		provinces_to_highlight = {
 			province_group = original_yanszin
 			NOT = { owned_by = ROOT } 
 		}
 
 		trigger = {
-
 			original_yanszin = {
 				type = all
 				owned_by = ROOT
@@ -362,7 +389,6 @@ Guhe_3 = {
 		} 
 
 		effect = {
-
 			add_prestige = 30
 			add_country_modifier = {
 				name = guhe_master
@@ -372,6 +398,7 @@ Guhe_3 = {
 		ai_weight = { factor = 500 }
 	}
 }
+
 Guhe_4 = {
 	slot = 4
 	generic = no
@@ -391,15 +418,14 @@ Guhe_4 = {
 		icon = mission_chinese_general_riding
 		position = 3
 		required_missions = { guhe_favorable_ground } 
+
 		provinces_to_highlight = {
-			
 			owner = {
 				tag = Y16
 			}
 		} 
 
 		trigger = {
-			
 			OR = {
 				hidden_trigger = {
 					AND = {
@@ -412,7 +438,6 @@ Guhe_4 = {
 				is_enemy = Y16
 				Y16 = { exists = no	}
 			}
-			
 		}
 
 		effect = { 
@@ -423,7 +448,6 @@ Guhe_4 = {
 			liuminxiang_area = {
 				add_permanent_claim = ROOT
 			}
-			
 		}
 	}
 
@@ -431,18 +455,16 @@ Guhe_4 = {
 		icon = mission_great_wall
 		position = 4
 		required_missions = { guhe_shared_front } 
+
 		provinces_to_highlight = {
-			
 			OR = {
 				area = balrijin_area
 				area = liuminxiang_area
 			}
 			NOT = { owned_by = ROOT }
-		
 		}
 
 		trigger = {
-			
 			balrijin_area = {
 				type = all
 				owned_by = ROOT
@@ -452,7 +474,6 @@ Guhe_4 = {
 				owned_by = ROOT
 			}
 			army_professionalism = 0.2
-			
 		}
 
 		effect = { 
@@ -469,30 +490,32 @@ Guhe_4 = {
 		icon = mission_fire_judgement
 		position = 5
 		required_missions = { guhe_northern_wall } 
-		provinces_to_highlight = {
 
+		provinces_to_highlight = {
 			owner = {
 				OR = {
 					was_tag = Y91
 					tag = Y91
 				}
 			}
-			
 		}
 			
-		trigger = { 
-
+		trigger = {
 			OR = {
 				has_won_war_against = {
 					who = Y91
 					max_years_since = 200
-				}		
+				}
 				has_won_war_against = {
 					who = Y96
 					max_years_since = 200
 				}	
 				has_won_war_against = {
 					who = Y98
+					max_years_since = 200
+				}
+				has_won_war_against = {
+					who = V28
 					max_years_since = 200
 				}	
 				AND = {
@@ -505,19 +528,18 @@ Guhe_4 = {
 					Y98 = {
 						exists = no
 					}
+					V28 = {
+						exists = no
+					}
 				}
 			}
-		
-		}
-				
+		}		
 
 		effect = {
-
 			add_prestige = 25
 			set_country_flag = guhe_pulse
 			set_country_flag = yanszin_cities_pulse
 			custom_tooltip = guhe_pulse_tt
-			
 		} 
 	}
 }

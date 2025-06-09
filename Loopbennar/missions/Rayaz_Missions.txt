@@ -42,7 +42,7 @@ rayaz_1 = {
 				add_splendor = 200
 				add_country_modifier = {
 					name = rayaz_trusted_by_mercenaries
-					duration = 14600
+					duration = 7300
 				}
 			}
 			custom_tooltip = mission_alternatively_tt
@@ -248,7 +248,7 @@ rayaz_2 = {
 				name = rayaz_army_of_tribesmen
 				duration = 9125
 			}
-			add_army_tradition = 20
+			add_army_tradition = 10
 		} 
 	}
 
@@ -640,7 +640,7 @@ rayaz_3 = {
 				add_unit_construction = {
 					type = light_ship
 					amount = 10
-					speed = 0.01
+					speed = 0.2
 					cost = 0
 				}
 			} 
@@ -649,6 +649,10 @@ rayaz_3 = {
 			5947 = { add_base_tax = 1 add_base_production = 2 } #Zatsuti
 			add_sailors = -1000
 			add_treasury = -100
+			add_country_modifier = {
+				name = rayaz_confiscate_of_nazhni_harbor
+				duration = 7300
+			}
 		} 
 	}
 
@@ -755,16 +759,16 @@ rayaz_4 = {
 			rayaz_5_1
 		}
 		provinces_to_highlight = {  
-			area = kapashan_area
+			area = karashan_area
 			NOT = { religion = anzalkatsa }
 		} 
 
 		trigger = {  
-			kapashan_area = { 
+			karashan_area = { 
 				type = all
 				religion = anzalkatsa 
 			}
-			kapashan_area = {
+			karashan_area = {
 				type = any #Redundant, stays here for readability
 				has_tax_building_trigger = yes
 				num_of_units_in_province = {
@@ -805,7 +809,7 @@ rayaz_4 = {
 				}
 				random_owned_province = {
 					limit = {
-						area = kapashan_area
+						area = karashan_area
 						has_tax_building_trigger = yes
 						num_of_units_in_province = {
 							who = ROOT
@@ -883,16 +887,35 @@ rayaz_4 = {
 				}
 			}
 			has_estate_privilege = estate_church_independent_inquisition
-			has_estate_privilege = estate_church_clerical_education
+			if = {
+				limit = { has_dlc = "Domination" }
+				has_estate_privilege = estate_church_clerical_education
+			}
+			else = {  
+				num_of_provinces_owned_or_owned_by_subjects_with = {
+					has_tax_building_trigger = yes
+					value = 10
+				}
+			}
 		} 
 
 		effect = {  
 			nazhni_tressik_area = { add_permanent_claim = ROOT } #Rayaz
 			tressik_isles_area = { add_permanent_claim = ROOT } #Rayaz
 			set_country_flag = rayaz_upgraded_clerical_education
-			remove_estate_privilege = estate_church_independent_inquisition
-			remove_estate_privilege = estate_church_clerical_education
-			set_estate_privilege = estate_church_imperial_court
+			if = {
+				limit = { has_dlc = "Domination" }
+				remove_estate_privilege = estate_church_independent_inquisition
+				remove_estate_privilege = estate_church_clerical_education
+				set_estate_privilege = estate_church_imperial_court
+			}
+			else = {  
+				change_government_reform_progress = 100
+				add_estate_loyalty = {
+					estate = estate_church
+					loyalty = 20
+				}
+			}
 			custom_tooltip = rayaz_vassal_annex_cost_tt
 			hidden_effect = {
 				set_variable = {
@@ -951,13 +974,13 @@ rayaz_5 = {
 					value = 10
 				}
 			}
-			kapashan_area = { has_state_edict = edict_religious_unity }
+			karashan_area = { has_state_edict = edict_religious_unity }
 			has_estate_privilege = estate_church_enforced_one_faith
 			has_estate_privilege = estate_church_one_faith_one_culture
 		} 
 
 		effect = {  
-			kapashan_area = { 
+			karashan_area = { 
 				add_nationalism = -24
 				add_province_modifier = {
 					name = rayaz_remind_them_of_our_ways

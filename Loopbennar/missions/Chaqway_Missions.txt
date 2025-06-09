@@ -1,0 +1,1130 @@
+chaqway_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = G87 } 
+
+	banche_albatross = {
+		icon = mission_mayan_canoes
+		position = 2
+		required_missions = { qachuruy } 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2435
+				province_id = 2421
+				province_id = 2403
+			}
+			NOT = { development = 15 } 
+		}
+
+		trigger = {
+			2435 = { development = 15 } 
+			2421 = { development = 15 } 
+			2403 = { development = 15 } 
+			num_of_transport = 10
+		}
+		effect = { 
+			country_event = { id = chaqway.11 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = chaqway_exploration_tt
+		} 
+	}
+
+	rigoti_meadowlark = {
+		icon = mission_rb_conquer_the_isles
+		position = 3
+		required_missions = { banche_albatross } 
+		provinces_to_highlight = {
+			superregion = kheionai_superregion
+			is_capital = yes
+			owner = { navy_size = ROOT }
+		} 
+
+		trigger = {
+			OR = {
+				reverse_has_opinion = {
+					who = G60
+					value = 100
+				}
+				G60 = { exists = no } 
+			}
+			any_known_country = {
+				religion = kheionism
+				has_opinion = {
+					who = ROOT
+					value = 100
+				}
+			}
+			all_known_country = {
+				NOT = {
+					AND = {
+						capital_scope = { superregion = kheionai_superregion }
+						navy_size = ROOT
+					} 
+				}
+			}
+		}
+
+		effect = {
+			add_permanent_claim = 2719
+			random_known_country = {
+				limit = {
+					religion = kheionism
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+				add_historical_friend_mutual = { tag = ROOT } 
+			}
+			G30 = {
+				if = {
+					limit = { exists = yes } 
+					add_historical_friend_mutual = { tag = ROOT } 
+				}
+			}
+			2435 = {
+				add_permanent_province_modifier = {
+					name = "chaqway_gateway_south"
+					duration = -1
+				}
+			}
+			kheionai_superregion = { discover_country = ROOT } 
+		}
+	}
+
+	grey_gull = {
+		icon = mission_polynesian_navy_build
+		position = 4
+		required_missions = { rigoti_meadowlark } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 2719
+					NOT = {
+						AND = {
+							culture = banche
+							owned_by = ROOT
+							religion = rioqay_diu
+							has_fort_building_trigger = yes
+							has_trade_building_trigger = yes
+							has_production_building_trigger = yes
+							has_shipyard_building_trigger = yes
+						}
+					}
+				}
+				AND = {
+					superregion = kheionai_superregion
+					owner = { culture_is_ruinborn = no } 
+				}
+			}
+		}
+
+		trigger = {
+			1741 = { is_strongest_trade_power = ROOT }
+			2595 = { is_strongest_trade_power = ROOT } 
+			2719 = {
+				owned_by = ROOT
+				culture = banche
+				religion = rioqay_diu
+				has_fort_building_trigger = yes
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_shipyard_building_trigger = yes
+			}
+			NOT = { kheionai_superregion = { owner = { culture_is_not_ruinborn = yes }  }  } 
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = "chaqway_syncretic_shipbuilding"
+				duration = -1
+			}
+		}
+	}
+
+	tyrant_flycatcher = {
+		icon = mission_taychend_nanru_nakar_city
+		position = 5
+		required_missions = {
+			grey_gull
+			toothpick_plover
+		}
+		provinces_to_highlight = {
+			superregion = taychend_superregion
+			owner = { culture_is_ruinborn = no } 
+		}
+
+		trigger = {
+			NOT = { taychend_superregion = { owner = { culture_is_not_ruinborn = yes }  }  } 
+			OR = {
+				any_known_country = {
+					capital_scope = { superregion = taychend_superregion } 
+					total_development = 200
+					has_opinion = {
+						who = ROOT
+						value = 120
+					}
+					guaranteed_by = ROOT
+				}
+				any_subject_country = {
+					capital_scope = { superregion = taychend_superregion } 
+					total_development = 200
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					any_subject_country = {
+						capital_scope = { superregion = taychend_superregion } 
+						total_development = 200
+					}
+				}
+				random_subject_country = {
+					limit = {
+						capital_scope = { superregion = taychend_superregion } 
+						total_development = 200
+					}
+					add_historical_friend_mutual = { tag = ROOT } 
+				}
+			}
+			else = {
+				random_known_country = {
+					limit = {
+						capital_scope = { superregion = taychend_superregion } 
+						total_development = 200
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+						guaranteed_by = ROOT
+					}
+					create_alliance = ROOT
+					add_historical_friend_mutual = { tag = ROOT } 
+				}
+			}
+			capital_scope = {
+				change_trade_goods = damestear
+				set_province_flag = permanent_damestear
+				add_province_modifier = {
+					name = "chaqway_taychendi_district"
+					duration = -1
+				}
+			}
+		}
+	}
+}
+chaqway_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = G87 } 
+
+	qachuruy = {
+		icon = mission_ppolom
+		position = 1
+		provinces_to_highlight = {
+			OR = {
+				is_capital_of = G88
+				is_capital_of = J86
+			}
+			owner = {
+				NOT = {
+					alliance_with = ROOT
+					is_subject_of = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			G88 = {
+				OR = {
+					alliance_with = ROOT
+					is_subject_of = ROOT
+				}
+			}
+			J86 = {
+				OR = {
+					alliance_with = ROOT
+					is_subject_of = ROOT
+				}
+			}
+		}
+
+		effect = { country_event = { id = chaqway.7 }  } 
+	}
+
+	yesbali_sandpiper = {
+		icon = mission_retake_ceuta
+		position = 3
+		required_missions = {
+			banche_albatross
+			scarlet_macaw
+		}
+		provinces_to_highlight = {
+			region = haraf_region
+			owner = { culture_is_not_ruinborn = yes }
+		} 
+
+		trigger = {
+			if = {
+				limit = { torn_gates_superregion = { owner = { religion = jaakaiin }  }  } 
+				any_known_country = {
+					religion = jaakaiin
+					guaranteed_by = ROOT
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+			}
+			else = {
+				num_of_owned_provinces_with = {
+					value = 5
+					region = haraf_region
+				}
+			}
+			if = {
+				limit = { haraf_region = { owner = { culture_is_ruinborn = no }  }  } 
+				any_known_country = {
+					culture_is_not_ruinborn = yes
+					any_owned_province = { region = haraf_region } 
+					OR = {
+						is_enemy = ROOT
+						AND = {
+							has_been_insulted_by_root = yes
+							trade_embargo_by = ROOT
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					any_known_country = {
+						religion = jaakaiin
+						guaranteed_by = ROOT
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+					}
+				}
+				random_known_country = {
+					limit = {
+						religion = jaakaiin
+						guaranteed_by = ROOT
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+					}
+					country_event = { id = chaqway.20 }
+				}
+			}
+			haraf_region = { discover_country = ROOT }
+			custom_tooltip = chaqway_cot_claims_tt
+			hidden_effect = {
+				haraf_region = {
+					limit = { province_has_center_of_trade_of_level = 1 } 
+					add_permanent_claim = ROOT
+				}
+			}
+		}
+	}
+
+	toothpick_plover = {
+		icon = mission_conquer_air
+		position = 4
+		required_missions = {
+			yesbali_sandpiper
+			peregrine_falcon
+		}
+		provinces_to_highlight = {
+			superregion = torn_gates_superregion
+			owner = { culture_is_ruinborn = no } 
+		}
+
+		trigger = {
+			NOT = { torn_gates_superregion = { owner = { culture_is_not_ruinborn = yes }  }  } 
+			monthly_mil = 10
+		}
+
+		effect = { country_event = { id = chaqway.14 }  } 
+	}
+
+	fey_ptarmigan = {
+		icon = mission_the_surge
+		position = 5
+		required_missions = { toothpick_plover } 
+		provinces_to_highlight = {
+			superregion = eordand_superregion
+			trade_goods = precursor_relics
+			owner = { culture_is_ruinborn = no } 
+		}
+
+		trigger = {
+			1690 = {
+				trade_share = {
+					country = ROOT
+					share = 10
+				}
+			}
+			1683 = {
+				trade_share = {
+					country = ROOT
+					share = 10
+				}
+			}
+			1693 = {
+				trade_share = {
+					country = ROOT
+					share = 10
+				}
+			}
+			OR = {
+				any_ally = {
+					capital_scope = { superregion = eordand_superregion } 
+					total_development = 100
+				}
+				any_subject_country = {
+					capital_scope = { superregion = eordand_superregion } 
+					total_development = 100
+				}
+			}
+			NOT = {
+				eordand_superregion = {
+					trade_goods = precursor_relics
+					owner = { culture_is_not_ruinborn = yes } 
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					any_subject_country = {
+						capital_scope = { superregion = eordand_superregion } 
+						total_development = 100
+					}
+				}
+				random_subject_country = {
+					limit = {
+						capital_scope = { superregion = eordand_superregion } 
+						total_development = 100
+					}
+					add_historical_friend_mutual = { tag = ROOT } 
+				}
+			}
+			else = {
+				random_ally = {
+					limit = {
+						capital_scope = { superregion = eordand_superregion } 
+						total_development = 100
+					}
+					add_historical_friend_mutual = { tag = ROOT } 
+				}
+			}
+			2164 = {
+				change_trade_goods = damestear
+				set_province_flag = permanent_damestear
+			}
+		}
+	}
+}
+chaqway_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = G87 } 
+
+	tanaqi = {
+		icon = mission_cocoa
+		position = 1
+		provinces_to_highlight = {
+			province_group = umas_fulcra
+			NOT = { has_province_modifier = chaqway_markets } 
+		}
+
+		trigger = {
+			umas_fulcra = {
+				type = all
+				has_province_modifier = chaqway_markets
+			}
+			capital_scope = {
+				province_group = umas_fulcra
+				tribal_land_of = ROOT
+			}
+			reform_level = 2
+		}
+
+		effect = {
+			add_government_reform = native_settle_down_reform
+			umas_fulcra = {
+				limit = { is_empty = yes }
+				settle_province = ROOT
+			}
+			set_capital = 2403
+			4328 = { center_of_trade = 1 }
+			2457 = { center_of_trade = 1 } 
+		}
+	}
+
+	scarlet_macaw = {
+		icon = mission_aztec_city_alliance
+		position = 2
+		required_missions = {
+			qachuruy
+			tanaqi
+		}
+		provinces_to_highlight = {
+			province_group = umas_fulcra
+			NOT = {
+				AND = {
+					development = 8
+					OR = {
+						has_building = native_three_sisters_field
+						has_building = native_storehouse
+					}
+				}
+			}
+		}
+
+		trigger = {
+			1553 = { is_strongest_trade_power = ROOT } 
+			umas_fulcra = {
+				type = all
+				development = 8
+				OR = {
+					has_building = native_three_sisters_field
+					has_building = native_storehouse
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = chaqway.8 }
+			custom_tooltip = EVENT_INSIGHT_INTRO
+			custom_tooltip = chaqway_tribal_tt
+		} 
+	}
+
+	peregrine_falcon = {
+		icon = mission_sailor_boat
+		position = 3
+		required_missions = { scarlet_macaw } 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 1725
+				province_id = 1695
+				province_id = 1595
+				province_id = 1583
+			}
+			NOT = { has_discovered = ROOT }
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = four_corners_of_aelantir
+				has_discovered = 1725
+				has_discovered = 1695
+				has_discovered = 1595
+				has_discovered = 1583
+			}
+			num_of_heavy_ship = 5
+		}
+
+		effect = { country_event = { id = chaqway.13 }  } 
+	}
+
+	alunguin_hummingbird = {
+		icon = mission_shipyards_of_gujarat
+		position = 4
+		required_missions = {
+			wandering_tern
+			peregrine_falcon
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_group = umas_fulcra
+					province_has_current_tech_fort_trigger = no
+				}
+				AND = {
+					province_id = 2170
+					OR = {
+						NOT = { base_production = 8 } 
+						has_production_building_trigger = no
+						has_trade_building_trigger = no
+						AND = {
+							has_shipyard_building_trigger = no
+							has_dock_building_trigger = no
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			umas_fulcra = {
+				type = all
+				province_has_current_tech_fort_trigger = yes
+			}
+			2170 = {
+				has_production_building_trigger = yes
+				has_trade_building_trigger = yes
+				OR = {
+					has_shipyard_building_trigger = yes
+					has_dock_building_trigger = yes
+				}
+				base_production = 8
+			}
+		}
+
+		effect = {
+			2170 = {
+				center_of_trade = 1
+				change_trade_goods = glass
+			}
+			custom_tooltip = qhatuway_everywhere
+			set_country_flag = qhatuway_everywhere
+			add_government_reform = chaqway_qhatuway
+		}
+	}
+
+	huyaqsi = {
+		icon = reform_the_nomocanon
+		position = 5
+		required_missions = {
+			alunguin_hummingbird
+			horned_screamer
+		}
+		provinces_to_highlight = {
+			is_capital = yes
+			OR = {
+				continent = north_america
+				continent = south_america
+			}
+			owner = {
+				OR = {
+					AND = {
+						tag = H39
+						NOT = {
+							AND = {
+								has_opinion = {
+									who = ROOT
+									value = 150
+								}
+								OR = {
+									alliance_with = ROOT
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					num_of_heavy_ship = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			NOT = {
+				any_known_country = {
+					capital_scope = {
+						OR = {
+							continent = north_america
+							continent = south_america
+						}
+					}
+					num_of_heavy_ship = ROOT
+				}
+			}
+			if = {
+				limit = { H39 = { exists = yes }  } 
+				H39 = {
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+					OR = {
+						alliance_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			OR = {
+				artist = 3
+				statesman = 3
+				philosopher = 3
+			}
+		}
+
+		effect = { country_event = { id = chaqway.17 }  } 
+	}
+
+	blueeared_yanfisher = {
+		icon = qng_high_qing_era
+		position = 6
+		required_missions = {
+			fey_ptarmigan
+			huyaqsi
+			amadian_toucan
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			1683 = { is_strongest_trade_power = ROOT } 
+			1690 = { is_strongest_trade_power = ROOT } 
+			1445 = { is_strongest_trade_power = ROOT } 
+			1681 = { is_strongest_trade_power = ROOT } 
+			1553 = { is_strongest_trade_power = ROOT } 
+			2595 = { is_strongest_trade_power = ROOT } 
+			1741 = { is_strongest_trade_power = ROOT } 
+			1372 = {
+				trade_share = {
+					country = ROOT
+					share = 15
+				}
+			}
+			1374 = {
+				trade_share = {
+					country = ROOT
+					share = 15
+				}
+			}
+			4990 = {
+				trade_share = {
+					country = ROOT
+					share = 15
+				}
+			}
+		}
+
+		effect = { country_event = { id = chaqway.19 }  } 
+	}
+}
+chaqway_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = G87 } 
+
+	chakantu_cormorant = {
+		icon = mission_lake_texcoco
+		position = 2
+		required_missions = {
+			tanaqi
+			hearthash_harrier
+		}
+		provinces_to_highlight = {
+			OR = {
+				area = chaka_nelir_area
+				area = claltrun_area
+				area = oomu_nelir_area
+				area = culefchas_area
+			}
+			NOT = {
+				AND = {
+					NOT = { devastation = 0.1 }
+					country_or_subject_holds = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			chaka_nelir_area = {
+				type = all
+				country_or_subject_holds = ROOT
+				NOT = { devastation = 0.1 } 
+			}
+			claltrun_area = {
+				type = all
+				country_or_subject_holds = ROOT
+				NOT = { devastation = 0.1 } 
+			}
+			oomu_nelir_area = {
+				type = all
+				country_or_subject_holds = ROOT
+				NOT = { devastation = 0.1 } 
+			}
+			culefchas_area = {
+				type = all
+				country_or_subject_holds = ROOT
+				NOT = { devastation = 0.1 } 
+			}
+		}
+
+		effect = { country_event = { id = chaqway.9 }  } 
+	}
+
+	wandering_tern = {
+		icon = mission_look_west
+		position = 3
+		required_missions = {
+			scarlet_macaw
+			chakantu_cormorant
+		}
+		provinces_to_highlight = {
+			owner = { tag = A62 }
+		} 
+
+		trigger = {
+			OR = {
+				A62 = {
+					has_80_opinion_improved_relation = { target = ROOT }
+				}
+				AND = {
+					is_year = 1525
+					has_institution = new_world_i
+					any_known_country = {
+						capital_scope = { continent = europe } 
+						has_80_opinion_improved_relation = { target = ROOT } 
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					A62 = {
+						has_80_opinion_improved_relation = { target = ROOT }
+					}
+				}
+				A62 = {
+					if = {
+						limit = { NOT = { alliance_with = ROOT } }
+						create_alliance = ROOT
+					}
+					if = {
+						limit = { NOT = { marriage_with = ROOT } }
+						force_create_marriage = ROOT
+					}
+					hidden_effect = { save_event_target_as = colonialist_scum }
+				}
+			}
+			else = {
+				random_known_country = {
+					limit = {
+						has_80_opinion_improved_relation = { target = ROOT }
+						culture_is_ruinborn = no
+						capital_scope = { continent = europe }
+					}
+					if = {
+						limit = { NOT = { alliance_with = ROOT } }
+						create_alliance = ROOT
+					}
+					if = {
+						limit = { NOT = { marriage_with = ROOT } }
+						force_create_marriage = ROOT
+					}
+					hidden_effect = { save_event_target_as = colonialist_scum }
+				}
+			}
+			country_event = { id = chaqway.12 }
+		} 
+	}
+
+	horned_screamer = {
+		icon = mission_stormy_seas
+		position = 3
+		required_missions = {
+			wandering_tern
+			huythuyt
+		}
+		provinces_to_highlight = {
+			region = tor_nayyi_region
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					culture = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			tor_nayyi_region = {
+				type = all
+				owned_by = ROOT
+				culture = ROOT
+			}
+			G97 = {
+				NOT = {
+					num_of_owned_provinces_with = {
+						value = 5
+						is_core = PREV
+					}
+				}
+			} 
+		}
+
+		effect = { country_event = { id = chaqway.15 }  } 
+	}
+
+	amadian_toucan = {
+		icon = mission_pue_chaco_roads
+		position = 5
+		required_missions = { horned_screamer } 
+		provinces_to_highlight = {
+			OR = {
+				region = amadia_region
+				region = tor_nayyi_region
+			}
+			province_has_center_of_trade_of_level = 1
+			NOT = {
+				AND = {
+					development = 20
+					has_trade_building_trigger = yes
+					has_courthouse_building_trigger = yes
+					OR = {
+						has_port = no
+						has_dock_building_trigger = yes
+						has_shipyard_building_trigger = yes
+					}
+					country_or_subject_holds = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			amadia_region = {
+				type = all
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = no_trade_center
+						NOT = { province_has_center_of_trade_of_level = 1 } 
+					}
+					AND = {
+						development = 20
+						has_trade_building_trigger = yes
+						has_courthouse_building_trigger = yes
+						OR = {
+							has_port = no
+							has_dock_building_trigger = yes
+							has_shipyard_building_trigger = yes
+						}
+						country_or_subject_holds = ROOT
+					}
+				}
+			}
+			tor_nayyi_region = {
+				type = all
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = no_trade_center
+						NOT = { province_has_center_of_trade_of_level = 1 } 
+					}
+					AND = {
+						development = 20
+						has_trade_building_trigger = yes
+						has_courthouse_building_trigger = yes
+						OR = {
+							has_port = no
+							has_dock_building_trigger = yes
+							has_shipyard_building_trigger = yes
+						}
+						country_or_subject_holds = ROOT
+					}
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = "chaqway_toucan"
+				duration = -1
+			}
+		}
+	}
+}
+chaqway_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = G87 } 
+
+	hearthash_harrier = {
+		icon = mission_head_on_spike
+		position = 1
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			army_size_percentage = 0.9
+			army_size = G89
+			G89 = { is_subject_of = ROOT } 
+		}
+
+		effect = {
+			custom_tooltip = exile_to_fung_tt
+			hidden_effect = {
+				G89 = {
+					add_government_reform = native_settle_down_reform
+					2379 = {
+						cede_province = PREV
+						add_core = PREV
+						change_religion = PREV
+						change_culture = PREV
+					}
+					2374 = {
+						cede_province = PREV
+						add_core = PREV
+						change_religion = PREV
+						change_culture = PREV
+					}
+					2372 = {
+						cede_province = PREV
+						add_core = PREV
+						change_religion = PREV
+						change_culture = PREV
+					}
+					mushroom_forest_region = { discover_country = PREV }
+					capital_scope = { decolonize = yes } 
+					every_tribal_land_province = {
+						limit = { NOT = { owned_by = PREV } }
+						change_tribal_land = none
+					}
+				}				
+			}
+			add_country_modifier = {
+				name = "chaqway_sent_to_fung"
+				duration = -1
+			}
+			mushroom_forest_region = { discover_country = ROOT }
+			add_permanent_claim = 2388
+			add_permanent_claim = 2392
+			add_permanent_claim = 3205
+			add_permanent_claim = 2361
+			add_permanent_claim = 2384
+		}
+	}
+
+	huythuyt = {
+		icon = mission_che_botanical_exports
+		position = 3
+		required_missions = {
+			chakantu_cormorant
+			hearthash_harrier
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = mushroom_forest_region
+					NOT = { country_or_subject_holds = ROOT	}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						is_neighbor_of = ROOT
+						tech_difference = 0
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				all_neighbor_country = { NOT = { tech_difference = 0 }  } 
+				innovativeness_ideas = 1
+			}
+			owns_or_subject_of = 2371
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 5
+				region = mushroom_forest_region
+			}
+		}
+
+		effect = { country_event = { id = chaqway.10 }  } 
+	}
+
+	kaydhano_condor = {
+		icon = mission_hunting
+		position = 5
+		required_missions = {
+			huythuyt
+			horned_screamer
+		}
+		provinces_to_highlight = {
+			province_id = 4328
+			NOT = {
+				AND = {
+					has_manufactory_trigger = yes
+					base_manpower = 8
+					province_has_center_of_trade_of_level = 2
+					province_has_current_tech_fort_trigger = yes
+				}
+			}
+		}
+
+		trigger = {
+			4328 = {
+				has_manufactory_trigger = yes
+				base_manpower = 8
+				province_has_center_of_trade_of_level = 2
+				province_has_current_tech_fort_trigger = yes
+			}
+			num_of_completed_idea_groups_by_category = {
+				mil_ideas = yes
+				amount = 1
+			}
+		}
+
+		effect = { country_event = { id = chaqway.16 }  } 
+	}
+
+	cocaire_flamingo = {
+		icon = mission_son_back_to_the_roots
+		position = 6
+		required_missions = {
+			amadian_toucan
+			kaydhano_condor
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2456
+				province_id = 2457
+				province_id = 2382
+			}
+			NOT = {
+				AND = {
+					base_manpower = 12
+					has_manpower_building_trigger = yes
+					has_forcelimit_building_trigger = yes
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { has_dlc = "Cradle of Civilization" } 
+				army_professionalism = 0.4
+			}
+			else = { army_tradition = 30 } 
+			2456 = {
+				base_manpower = 12
+				has_manpower_building_trigger = yes
+				has_forcelimit_building_trigger = yes
+			}
+			2382 = {
+				base_manpower = 12
+				has_manpower_building_trigger = yes
+				has_forcelimit_building_trigger = yes
+			}
+			2457 = {
+				base_manpower = 12
+				has_manpower_building_trigger = yes
+				has_forcelimit_building_trigger = yes
+			}
+		}
+
+		effect = { country_event = { id = chaqway.18 }  } 
+	}
+}
