@@ -18,7 +18,19 @@ queens_throne = {
 	#project type
 	type = monument
 
-	build_trigger = { NOT = { has_province_flag = queens_throne_skewered_drake_can_build } }
+	build_trigger = {
+		NOT = {
+			has_province_flag = queens_throne_skewered_drake_can_build
+			has_province_flag = crimson_height_flag # Masked Butcher destroyed it
+		}
+		if = {
+            limit = { has_province_flag = queens_throne_destroyed_flag }
+            custom_trigger_tooltip = {
+                tooltip = monument_destroyed_tt
+                NOT = { has_province_flag = queens_throne_destroyed_flag }
+            }
+        }
+	}
 
 	on_built = {
 	}
@@ -113,7 +125,15 @@ queens_throne = {
 		}
 
 		on_upgraded = {
-			custom_tooltip = harpy_roost_2_more_monument_tt
+			custom_tooltip = harpy_roost_1_more_monument_tt
+			hidden_effect = { 
+				owner = {
+					if = { limit = { NOT = { has_country_flag = harpy_roost_queens_throne_has_tier_1_free_roost } }
+						set_country_flag = harpy_roost_queens_throne_has_tier_1_free_roost
+						harpy_roost_se_allow_construction_of_extra_roost = yes
+					}
+				}
+			}
 		}
 	}
 
@@ -145,6 +165,14 @@ queens_throne = {
 		
 		on_upgraded = {
 			custom_tooltip = harpy_roost_2_more_monument_tt
+			hidden_effect = { 
+				owner = {
+					if = { limit = { NOT = { has_country_flag = harpy_roost_queens_throne_has_tier_2_free_roost } }
+						set_country_flag = harpy_roost_queens_throne_has_tier_2_free_roost
+						harpy_roost_se_allow_construction_of_extra_roost = yes
+					}
+				}
+			}
 		}
 	}
 
@@ -175,7 +203,15 @@ queens_throne = {
 		}
 		
 		on_upgraded = {
-			custom_tooltip = harpy_roost_2_more_monument_tt
+			custom_tooltip = harpy_roost_3_more_monument_tt
+			hidden_effect = { 
+				owner = {
+					if = { limit = { NOT = { has_country_flag = harpy_roost_queens_throne_has_tier_3_free_roost } }
+						set_country_flag = harpy_roost_queens_throne_has_tier_3_free_roost
+						harpy_roost_se_allow_construction_of_extra_roost = yes
+					}
+				}
+			}
 			owner = {
 				every_known_country = {
 					limit = {
@@ -210,7 +246,15 @@ mount_lazzaward = {
 	#project type
 	type = monument
 
-	build_trigger = { }
+	build_trigger = {
+        if = {
+            limit = { has_province_flag = lazzaward_destroyed_flag }
+            custom_trigger_tooltip = {
+                tooltip = monument_destroyed_tt
+                NOT = { has_province_flag = lazzaward_destroyed_flag }
+            }
+        }
+    }
 
 	on_built = {
 	}
@@ -219,43 +263,61 @@ mount_lazzaward = {
 	}
 
 	can_use_modifiers_trigger = {
-		owner = {
-			OR = {
-				culture_group = bulwari
-				primary_culture = sun_elf
-				primary_culture = desert_elf
-				primary_culture = dawn_elf
-				primary_culture = zanlibi
+		if = {
+			limit = { owner = { tag = F29 } }
+			custom_trigger_tooltip = {
+				tooltip = zokka_lazzaward_usage_tt
+				owner = { has_country_flag = zokka_lazzaward_flag }
 			}
 		}
-		owner = {
-			has_estate = estate_mages
+		else = {
+			owner = {
+				OR = {
+					culture_group = bulwari
+					primary_culture = sun_elf
+					primary_culture = desert_elf
+					primary_culture = dawn_elf
+					primary_culture = zanlibi
+				}
+			}
+			owner = {
+				has_estate = estate_mages
+			}
+			OR = {
+				has_owner_accepted_culture = yes
+				has_owner_culture = yes
+			}
+			has_building = mage_tower
 		}
-		OR = {
-			has_owner_accepted_culture = yes
-			has_owner_culture = yes
-		}
-		has_building = mage_tower
 	}
 
 	can_upgrade_trigger = {
-		owner = {
-			OR = {
-				culture_group = bulwari
-				primary_culture = sun_elf
-				primary_culture = desert_elf
-				primary_culture = dawn_elf
-				primary_culture = zanlibi
+		if = {
+			limit = { owner = { tag = F29 } }
+			custom_trigger_tooltip = {
+				tooltip = zokka_lazzaward_usage_tt
+				owner = { has_country_flag = zokka_lazzaward_flag }
 			}
 		}
-		owner = {
-			has_estate = estate_mages
+		else = {
+			owner = {
+				OR = {
+					culture_group = bulwari
+					primary_culture = sun_elf
+					primary_culture = desert_elf
+					primary_culture = dawn_elf
+					primary_culture = zanlibi
+				}
+			}
+			owner = {
+				has_estate = estate_mages
+			}
+			OR = {
+				has_owner_accepted_culture = yes
+				has_owner_culture = yes
+			}
+			has_building = mage_tower
 		}
-		OR = {
-			has_owner_accepted_culture = yes
-			has_owner_culture = yes
-		}
-		has_building = mage_tower
 	}
 
 	keep_trigger = {
@@ -341,10 +403,13 @@ mount_lazzaward = {
 
 		
 		on_upgraded = {
-			owner = {
-				country_event = {
-					id = bulwar_flavour.137
-					days = 1
+			if = {
+				limit = { owner = { NOT = { tag = F29 } } }
+				owner = {
+					country_event = {
+						id = bulwar_flavour.137
+						days = 1
+					}
 				}
 			}
 		}
@@ -377,14 +442,191 @@ mount_lazzaward = {
 		}
 		
 		on_upgraded = {
-			custom_tooltip = mount_lazzaward_tt
-			hidden_effect = {
-				owner = {
-					set_country_flag = mount_lazzaward_mage_reward_flag
-					set_country_flag = mount_lazzaward_artificer_reward_flag
+			if = {
+				limit = { owner = { NOT = { tag = F29 } } }
+				custom_tooltip = mount_lazzaward_tt
+				hidden_effect = {
+					owner = {
+						set_country_flag = mount_lazzaward_mage_reward_flag
+						set_country_flag = mount_lazzaward_artificer_reward_flag
+					}
 				}
 			}
 		}
 	}
 }
 
+
+#Great Black Circle
+ger_bexamurr = {
+	start = 6104		#Windsculpt Pass
+
+	date = 1.1.1
+
+	time = {
+		months = 120
+	}
+
+	build_cost = 0
+
+	can_be_moved = no
+
+	starting_tier = 0
+
+	#project type
+	type = monument
+
+	build_trigger = {
+		owner = {
+			culture_group = gnollish
+			religion = xhazobkult
+		}
+	}
+
+	on_built = {
+	}
+
+	on_destroyed = {
+	}
+
+	can_use_modifiers_trigger = {
+		owner = {
+			culture_group = gnollish
+			religion = xhazobkult
+		}
+	}
+
+	can_upgrade_trigger = {
+		owner = {
+			culture_group = gnollish
+			religion = xhazobkult
+			is_subject = no #prevent abusing subject to avoid the demonic power malus
+		}
+	}
+
+	keep_trigger = {
+	}
+
+	#tier data
+	tier_0 = {
+		upgrade_time = {
+			months = 0
+		}
+
+		cost_to_upgrade = {
+			factor = 0
+		}
+
+		province_modifiers = {
+		}
+
+		area_modifier = {
+		}
+
+		country_modifiers = {
+		}
+
+		on_upgraded = {
+		}
+	}
+
+	tier_1 = {
+		upgrade_time = {
+			months = 120
+		}
+
+		cost_to_upgrade = {
+			factor = 1000
+		}
+
+		province_modifiers = {
+			local_garrison_size = 0.1
+		}
+
+		area_modifier = {	
+		}
+		
+		region_modifier = {
+		}
+		
+		country_modifiers = {
+			missionaries = 1
+		}
+
+		on_upgraded = {
+			if = {
+				limit = { owner = { has_estate_privilege = estate_mages_moment_of_felflame } }
+				custom_tooltip = zokka_ger_bexamurr_1_tt
+			}
+			else = { custom_tooltip = ger_bexamurr_1_tt }
+			owner = {
+				add_or_extend_country_modifier_indefinitely = { name = ger_bexamurr_reach_across_the_talazdvoger duration = 3650 }
+			}
+		}
+	}
+
+	tier_2 = {
+		upgrade_time = {
+			months = 120
+		}
+
+		cost_to_upgrade = {
+			factor = 2500
+		}
+
+		province_modifiers = {
+			local_garrison_size = 0.15
+		}
+
+		area_modifier = {
+		}
+
+		region_modifier = {
+		}
+		
+		country_modifiers = {
+			missionaries = 1
+			tolerance_own = 1
+		}
+		
+		on_upgraded = {
+			custom_tooltip = ger_bexamurr_2_tt
+			owner = {
+				add_or_extend_country_modifier_indefinitely = { name = ger_bexamurr_reach_across_the_talazdvoger duration = 3650 }
+			}
+		}
+	}
+
+	tier_3 = {
+		upgrade_time = {
+			months = 120
+		}
+
+		cost_to_upgrade = {
+			factor = 5000
+		}
+
+		province_modifiers = {
+			local_garrison_size = 0.25
+		}
+
+		area_modifier = {
+		}
+
+		region_modifier = {
+		}
+
+		country_modifiers = {
+			missionaries = 1
+			tolerance_own = 2
+			global_heathen_missionary_strength = 0.02
+		}
+
+		on_upgraded = {
+			custom_tooltip = ger_bexamurr_3_tt
+			owner = {
+				add_or_extend_country_modifier_indefinitely = { name = ger_bexamurr_reach_across_the_talazdvoger duration = 3650 }
+			}
+		}
+	}
+}

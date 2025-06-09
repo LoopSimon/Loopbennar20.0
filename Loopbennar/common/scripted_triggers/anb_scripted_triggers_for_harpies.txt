@@ -1,0 +1,155 @@
+### If you have any questions, please contact @Magnive on Discord.
+
+# Instructions for allowing roosts to be built in new types of terrain:
+# 1. Add another set of if-else statements in the trigger below, following the same format as the example for coastline and city_terrain.
+#    Please ensure that the country flag is named as harpy_roost_terrain_allow_X, where X is the name of the terrain, as defined in map/terrain.txt.
+#    This is to make it easy to reuse across multiple MTs.
+# 2. In common\event_modifiers\anb_harpy_modifiers.txt, add a new modifier for the terrain type (if it has local dev cost penalty), following the 
+#    format of the existing modifiers.
+# 3. In common\scripted_effects\anb_scripted_effects_for_harpies.txt, extend the trigger switch in harpy_roost_se_roost_terrain_offset_add and
+#    harpy_roost_se_roost_terrain_offset_clear to include the new terrain type. 
+# Province scope
+harpy_roost_st_terrain_is_valid = {
+    OR = {
+        has_terrain = mountain
+        has_terrain = highlands
+        has_terrain = hills
+        # if = { limit = { owner = { has_country_flag = harpy_roost_terrain_allow_coastline } }
+        #     has_terrain = coastline
+        # }
+        # else = {
+        #     hidden_trigger = { always = no }
+        # }
+        # if = { limit = { owner = { has_country_flag = harpy_roost_terrain_allow_city_terrain } }
+        #     has_terrain = city_terrain
+        # }
+        # else = {
+        #     hidden_trigger = { always = no }
+        # }
+    }
+}
+
+# Level 3 roosts are not available by default, but may be unlocked as part of a MT, such as Mulen and their Hanging Cities. 
+# Note that if it's possible a country to get tier 3 roosts through two methods, such as Harpylen MT giving it, and Mulen
+# forming Harpylen after accessing their T3 roosts, then it must be accounted for.
+# Instructions for allowing a country to build tier 3 roosts:
+# 1. In your MT, set the country flag harpy_roost_tier_3_unlocked when the player should be able to build tier 3 roosts, and
+#    create the province modifier that will replace the tier 2 roost modifier.
+# 2. In harpy_roost_st_can_build_tier_3_roost_potential in this file, add a new statement to the OR block that checks for the 
+#    new method.
+# 3. In harpy_roost_st_can_build_tier_3_roost_allow in this file, add a new if statement that checks for the relevant costs 
+#    for upgrading to a tier 3 roost.
+# 4. In common\scripted_effects\anb_scripted_effects_for_harpies.txt, modify harpy_roost_se_add_roost_tier_3 to include the 
+#    costs/effects of upgrading to a tier 3 roost.
+# Province scope, when can the player see the option to upgrade?
+harpy_roost_st_can_build_tier_3_roost_potential = {
+    FROM = { has_country_flag = harpy_roost_tier_3_unlocked }
+    has_province_modifier = harpy_roost_mod_roost_flourishing_active
+    OR = {
+        AND = { #mulen
+            FROM = {
+                has_country_flag = mulen_can_build_foundations
+                OR = {
+                    was_tag = F50
+                    tag = F50
+                }
+                has_country_modifier = harpy_administration
+            }
+            NOT = { has_province_modifier = mulen_hanging_city_foundation }
+            NOT = { is_a_hanging_city = yes }
+        }
+        AND = { #vaengheim
+            FROM = {
+                OR = {
+                    has_country_flag = Z88_hero_halls_1
+                    has_country_flag = Z88_hero_halls_2
+                }
+                has_country_modifier = harpy_administration
+            }
+            NOT = { 
+                has_province_modifier = Z88_t3_roost
+                has_province_modifier = Z88_t3_roost_upgraded
+            }
+        }
+    }
+}
+# Province scope, what must be fulfilled for the player to upgrade the roost?
+harpy_roost_st_can_build_tier_3_roost_allow = {
+    has_province_modifier = harpy_roost_mod_roost_flourishing_active
+    if = { limit = { FROM = { has_country_flag = mulen_can_build_foundations } }
+        FROM = {
+            treasury = 500
+        }
+    }
+    else_if = { #vaengheim
+        limit = {
+            FROM = {
+                OR = {
+                    has_country_flag = Z88_hero_halls_1
+                    has_country_flag = Z88_hero_halls_2
+                }
+            }
+        }
+        FROM = {
+            mil_power = 50
+            years_of_income = 0.25
+            years_of_manpower = 0.25
+            custom_trigger_tooltip = {
+                tooltip = Z88_roost_count_tt
+                NOT = {
+                    check_variable = {
+                        which = Vaengheim_t3_roost_count
+                        which = Vaengheim_land_units_num_roosts_allowed
+                    }
+                }
+            }
+        }
+    }
+    else = {
+        always = no
+    }
+}
+
+### Please do not touch anything below this line without discussing it with Magnive first.
+
+# Province scope
+harpy_roost_st_has_any_roost = {
+    custom_trigger_tooltip = {
+        tooltip = harpy_roost_st_has_any_roost_tt
+        has_province_flag = harpy_roost_present     
+    }
+}
+
+# Province scope
+harpy_roost_st_has_non_fledgling_roost = {
+    custom_trigger_tooltip = {
+        tooltip = harpy_roost_st_has_non_fledgling_roost_tt
+        has_province_flag = harpy_roost_present 
+        NOT = { has_province_modifier = harpy_roost_mod_roost_fledgling }
+    }
+}
+
+# Province scope
+harpy_roost_st_has_no_or_fledgling_roost = {
+    custom_trigger_tooltip = {
+        tooltip = harpy_roost_st_has_no_or_fledgling_roost_tt
+        OR = {
+            NOT = { has_province_flag = harpy_roost_present }
+            has_province_modifier = harpy_roost_mod_roost_fledgling
+        }
+    }
+}
+
+# Province scope
+harpy_roost_st_has_active_flourishing_roost = {
+    has_province_modifier = harpy_roost_mod_roost_flourishing_active
+}
+
+# Province scope
+harpy_roost_st_has_built_or_is_building_tier_2_roost = {
+    OR = {
+        has_province_modifier = harpy_roost_mod_roost_flourishing_active
+        has_province_modifier = harpy_roost_mod_roost_flourishing_inactive
+        has_province_modifier = harpy_roost_under_construction
+    }
+}

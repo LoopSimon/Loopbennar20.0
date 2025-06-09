@@ -152,3 +152,97 @@ hunt_lord_cleanup = {
 		clear_global_event_target = hunt_location
 	}
 }
+
+#Rangers
+estate_action_CALL_THE_HUNT_ACTION = {
+	add_estate_loyalty = {
+		estate = estate_adventurers
+		loyalty = -15
+	}
+	custom_tooltip = call_the_hunt_effect_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				num_of_owned_provinces_with = {
+					value = 20
+					has_province_modifier = deepwoods_rangers_camp
+				}
+			}
+			add_yearly_manpower = 2
+		}
+		else = {
+			every_owned_province = {
+				limit = {
+					has_province_modifier = deepwoods_rangers_camp
+				}
+				owner = { add_yearly_manpower = 0.1 }
+			}
+		}
+	}
+}
+
+apply_strategy_effect = {
+	custom_tooltip = deepwoods_rangers_strategy_effect_tt
+	hidden_effect = {
+		if = {
+			limit = {
+				owner = { has_estate_privilege = estate_adventurers_rangers_ayeth_strategy }
+			}
+			add_province_modifier = {
+				name = deepwoods_rangers_ayeth_strategy_mod
+				duration = -1
+			}
+			every_neighbor_province = {
+				limit = { owned_by = FROM }
+				add_province_modifier = {
+					name = deepwoods_rangers_ayeth_strategy_mod
+					duration = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				owner = { has_estate_privilege = estate_adventurers_rangers_scotha_strategy }
+				OR = {
+					trade_goods = dyes
+					trade_goods = ivory
+					trade_goods = cloth
+					trade_goods = spices
+					trade_goods = silk
+					trade_goods = sugar
+				}
+			}
+			add_province_modifier = {
+				name = deepwoods_rangers_scotha_strategy_mod
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				owner = { has_estate_privilege = estate_mages_rangers_drennen_strategy }
+			}
+			add_province_modifier = {
+				name = deepwoods_rangers_drennen_strategy_mod
+				duration = -1
+			}
+		}
+	}
+}
+
+remove_strategy_effect = {
+	remove_province_modifier = deepwoods_rangers_ayeth_strategy_mod
+	every_neighbor_province = {
+    limit = {
+        owned_by = FROM 
+        NOT = {
+            any_neighbor_province = {
+                owned_by = FROM
+                has_province_modifier = deepwoods_rangers_camp
+            }
+        }
+    }
+    remove_province_modifier = deepwoods_rangers_ayeth_strategy_mod
+}
+	remove_province_modifier = deepwoods_rangers_scotha_strategy_mod
+	remove_province_modifier = deepwoods_rangers_drennen_strategy_mod
+}

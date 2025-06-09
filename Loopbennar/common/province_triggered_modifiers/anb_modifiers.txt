@@ -46,64 +46,6 @@ dwarf_birthplace = {
 	}
 }
 
-harpy_roost = {
-	picture = "harpy_roost"
-
-	trigger = {
-		fort_level = 1
-		culture_group = harpy
-		controller = {
-			has_country_modifier = harpy_administration
-			has_country_modifier = harpy_military
-		}
-	}
-	local_development_cost = -0.25
-	local_defensiveness = 0.5
-	province_trade_power_value = 5
-
-	#Province scope
-	on_activation = {
-		#if = { limit = { NOT = { has_province_modifier = same_roost_owner } }
-		#	save_event_target_as = roost_province
-		#	owner = {
-		#		update_roost_count = yes
-		#		every_known_country = {
-		#			limit = {
-		#				has_country_modifier = harpy_administration
-		#				event_target:roost_province = { previous_owner = PREV }
-		#			}
-		#			update_roost_count = yes
-		#		}
-		#	}
-		#	add_province_modifier = { name = same_roost_owner duration = -1 hidden = yes }
-		#}
-	}
-
-	on_deactivation = {
-		#if = { limit = { NOT = { has_province_modifier = same_roost_owner } }
-		#	save_event_target_as = roost_province
-		#	owner = {
-		#		update_roost_count = yes
-		#		every_known_country = {
-		#			limit = {
-		#				has_country_modifier = harpy_administration
-		#				event_target:roost_province = { previous_owner = PREV }
-		#			}
-		#			update_roost_count = yes
-		#		}
-		#	}
-		#	add_province_modifier = { name = same_roost_owner duration = -1 hidden = yes }
-		#}
-
-		#Mulen
-		if = { limit = { has_province_modifier = mulen_hanging_city_foundation } remove_province_modifier = mulen_hanging_city_foundation }
-		if = { limit = { has_province_modifier = mulen_hanging_city } remove_province_modifier = mulen_hanging_city }
-		if = { limit = { has_province_modifier = mulen_hanging_city_baths } remove_province_modifier = mulen_hanging_city_baths }
-		if = { limit = { has_province_modifier = mulen_hanging_city_gardens } remove_province_modifier = mulen_hanging_city_gardens }
-		if = { limit = { has_province_modifier = mulen_hanging_city_libraries } remove_province_modifier = mulen_hanging_city_libraries }
-	}
-}
-
 sareyand_the_ash_palace = {
 	potential = {
 		always = yes
@@ -2664,51 +2606,6 @@ azkare_parliament_calculations_pulse = {
 	}
 }
 
-#raj_cohesion_pulse = {
-#	potential = {
-#		always = yes
-#	}
-#
-#	hidden = yes
-#
-#	trigger = {
-#		OR = {
-#			AND = {
-#				is_month = 0
-#				NOT = { is_month = 1 }
-#			}
-#			AND = {
-#				is_month = 2
-#				NOT = { is_month = 3 }
-#			}
-#			AND = {
-#				is_month = 4
-#				NOT = { is_month = 5 }
-#			}
-#			AND = {
-#				is_month = 6
-#				NOT = { is_month = 7 }
-#			}
-#			AND = {
-#				is_month = 8
-#				NOT = { is_month = 9 }
-#			}
-#			AND = {
-#				is_month = 10
-#				NOT = { is_month = 11 }
-#			}
-#		}
-#	}
-#
-#	on_activation = {
-#		raj_monthy_calc = yes
-#	}
-#
-#	on_deactivation = {
-#		raj_monthy_calc = yes
-#	}
-#}
-
 raj_ai_raja_help = {
 	potential = {
 		always = yes
@@ -5167,6 +5064,42 @@ B34_rebellious_elves = {
 	}
 }
 
+I30_abberant_corruption_1 = {
+	potential = {
+		I30 = {
+			exists = yes
+			mission_completed = a_lordly_challenge
+		}
+	}
+
+	trigger = {
+		country_or_non_sovereign_subject_holds = I30
+        I30 = {
+            NOT = { fey_court_unaligned_fey_pleased_trigger = yes }
+        }
+        NOT = {
+            num_of_units_in_province = {
+                who = I30
+                type = cavalry
+                amount = 1
+            }
+        }
+	}
+	# Modifiers
+	global_unrest = 3
+
+	on_activation = {
+		spawn_rebels = {
+			type = abberant_rebels
+			size = 2
+		}
+	}
+
+	on_deactivation = {
+		
+	}
+}
+
 vacyntassi_eduz_satkuza_province_triggered_modifier = {
 	potential = {
 		always = yes
@@ -6565,5 +6498,142 @@ asarta_randomness_ptm_mod = {
 	on_deactivation = {
 	}
 
+	hidden = yes
+}
+
+noukahi_pantheon_randomness_ptm = {
+	potential = {
+		always = yes
+	}
+
+	trigger = {
+		always = yes
+	}
+
+	#Province scope
+	on_activation = {
+		owner = {
+			if = {
+				limit = {
+					has_ruler_flag = np_on_pilgrimage
+					NOT = { had_ruler_flag = { flag = np_on_pilgrimage days = 7 } }
+				}
+				country_event = { 
+					id = noukahi_pantheon.0
+					days = 180
+				}
+			}
+		}
+		remove_province_triggered_modifier = noukahi_pantheon_randomness_ptm
+	}
+
+	on_deactivation = {
+	}
+
+	hidden = yes
+}
+
+# Harpy roosts
+harpy_roost_ptm_mod_initial_setup_randomizer = {
+	potential = {
+		always = yes
+	}
+
+	trigger = {
+	}
+
+	#Province scope
+	on_activation = {
+		if = { limit = { has_province_modifier = harpy_roost_under_construction }
+			# account for the very rare case that the province is conquered on the exact day the roost is placed - PTM doesn't fire if the modifier isn't there
+				
+			province_event = { id = harpy_events.3 days = 180 random = 180 }
+			province_event = { id = harpy_events.12 days = 1825 }
+		}
+		remove_province_triggered_modifier = harpy_roost_ptm_mod_initial_setup_randomizer
+	}
+
+	on_deactivation = {
+	}
+
+	hidden = yes
+}
+
+#Zokka
+zokka_hellfire_ptm = {
+	trigger = { owner = { tag = F29 current_icon = invocation_of_hellfire } }
+
+	movement_speed = 0.15
+	siege_ability = 0.15
+}
+zokka_chains_ptm = {
+	trigger = { owner = { tag = F29 current_icon = invocation_of_chains } }
+
+	global_missionary_strength = 0.03
+	global_unrest = -3
+}
+zokka_blood_ptm = {
+	trigger = { owner = { tag = F29 current_icon = invocation_of_blood } }
+
+	max_general_fire = 1
+	max_general_siege = 1
+	leader_cost = -0.1
+}
+zokka_gold_ptm = {
+	trigger = { owner = { tag = F29 current_icon = invocation_of_gold } }
+
+	ae_impact = -0.1
+	idea_cost = -0.1
+}
+zokka_eyes_ptm = {
+	trigger = { owner = { tag = F29 current_icon = invocation_of_eyes } }
+
+	monthly_reform_progress = 0.5
+	on_activation = {
+		owner = { every_neighbor_country = { remove_fow = 60 } }
+		owner = { every_rival_country = { remove_fow = 60 } }
+	}
+}
+#Brrtekuh
+U10_trial_taking_place_ptm = {
+	potential = {
+		always = yes
+	}
+
+	trigger = {
+	}
+
+	#Province scope
+	on_activation = {
+		owner = { country_event = { id = flavour_brrtekuh.4 } }
+		remove_province_triggered_modifier = U10_trial_taking_place_ptm
+	}
+
+	on_deactivation = {
+	}
+
+	hidden = yes
+}
+vaengheim_randomness_ptm = {
+	potential = {
+		always = yes
+	}
+
+	trigger = {
+		always = yes
+	}
+
+	#Province scope
+	on_activation = {
+		owner = {
+			country_event = {
+				id = vaengheim.102
+				days = 100
+			}
+		}
+		remove_province_triggered_modifier = vaengheim_randomness_ptm
+	}
+	on_deactivation = {
+	}
 	hidden = yes
 }
