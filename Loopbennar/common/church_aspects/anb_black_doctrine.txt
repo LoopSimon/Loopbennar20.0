@@ -1,124 +1,717 @@
 
-one_people_under_magic = {
+absolute_servitude = {
 	cost = 100
-	modifier = {
-		num_accepted_cultures = 2
+	trigger = {
+		has_ruler_flag = enchantment_1
+		NOT = { has_country_modifier = bd_edict_of_absolute_servitude }
 	}
 	ai_will_do = {
-		factor = 15
+		factor = 10
 		modifier = {
-			factor = 2
-			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-				value = 20
-				has_owner_accepted_culture = no
+			factor = 5
+			rebel_progress_at_least = { value = 50 }
+		}
+		modifier = {
+			factor = 3
+			average_autonomy_above_min = 10
+		}
+	}
+	effect = {
+		if = {
+			limit = {
+				absolutism = 80
+				is_enchantment_3 = yes
+			}
+			add_rebel_progress = { value = -40 }
+		}
+		else_if = {
+			limit = {
+				absolutism = 40
+				has_ruler_flag = enchantment_2
+			}
+			add_rebel_progress = { value = -20 }
+		}
+		else = {
+			add_rebel_progress = { value = -10 }
+		}
+
+		custom_tooltip = bd_absolute_servitude_effect_tt 
+		hidden_effect = {
+			add_country_modifier = {
+				name = bd_edict_of_absolute_servitude
+				duration = 3650
 			}
 		}
 	}
+	modifier = {}
 }
 
-bonds_of_tolerance = {	
+verdict_upon_treacherous = {
 	cost = 100
 	trigger = {
-		NOT = { has_church_aspect = no_gods_only_mages }
-	}
-	modifier = {
-		tolerance_heathen = 2
+		has_ruler_flag = divination_1
+		NOT = { has_country_modifier = bd_verdict_upon_the_treacherous }
 	}
 	ai_will_do = {
-		factor = 15
+		factor = 10
 		modifier = {
-			factor = 2
-			NOT = { religious_unity = 0.75 }
+			factor = 3
+			yearly_corruption_increase = 0.1
+		}
+		modifier = {
+			factor = 3
+			average_autonomy_above_min = 10
 		}
 	}
+	effect = {
+		if = {
+			limit = {
+				absolutism = 80
+				is_enchantment_3 = yes
+			}
+			custom_tooltip = verdict_upon_neighbors_4_effect_tt
+			hidden_effect = {
+				every_neighbor_country = {
+					add_spy_network_from = {
+						who = ROOT
+						value = 40
+					}
+					add_spy_network_in = {
+						who = ROOT
+						value = -40
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				absolutism = 40
+				has_ruler_flag = divination_2
+			}
+			custom_tooltip = verdict_upon_neighbors_2_effect_tt
+			hidden_effect = {
+				every_neighbor_country = {
+					add_spy_network_from = {
+						who = ROOT
+						value = 20
+					}
+					add_spy_network_in = {
+						who = ROOT
+						value = -20
+					}
+				}
+			}
+		}
+		else = {
+			custom_tooltip = verdict_upon_neighbors_1_effect_tt
+			hidden_effect = {
+				every_neighbor_country = {
+					add_spy_network_from = {
+						who = ROOT
+						value = 10
+					}
+					add_spy_network_in = {
+						who = ROOT
+						value = -10
+					}
+				}
+			}
+		}
+		#custom_tooltip = bd_verdict_upon_treacherous_effect_tt 
+		hidden_effect = {
+			add_country_modifier = {
+				name = bd_verdict_upon_the_treacherous
+				duration = 3650
+			}
+		}
+	}
+	modifier = {}
 }
 
-no_gods_only_mages = {
+bonewrought_legions = {
 	cost = 100
-	trigger = {
-		NOT = { has_church_aspect = bonds_of_tolerance }
+	potential = {
+		has_country_modifier = undead_military
 	}
-	modifier = {
-		global_missionary_strength = 0.02
+	trigger = {
+		has_ruler_flag = necromancy_1
+		NOT = { has_country_modifier = bd_covenant_of_bonewrought_legions }
+		NOT = { has_country_modifier = bd_covenant_of_corpsetilled_lands }
 	}
 	ai_will_do = {
-		factor = 15
+		factor = 80
+		modifier = {
+			factor = 10
+			NOT = { manpower_percentage = 50 }
+		}
+		modifier = {
+			factor = 0
+			NOT = { has_country_modifier = undead_military }
+		}
+	}
+	effect = {
+		if = {
+			limit = {
+				absolutism = 80
+				is_necromancy_3 = yes
+			}
+			custom_tooltip = bd_covenant_of_bonewrought_legions_4_effect_tt 
+			hidden_effect = {
+				define_random_mil_advisor_effect = {
+					#name = "Soul of Bygone General" #apparently, name breaks this
+					skill = 4
+					cost_multiplier = 0.25
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				absolutism = 40
+				has_ruler_flag = necromancy_2
+			}
+			custom_tooltip = bd_covenant_of_bonewrought_legions_2_effect_tt 
+			hidden_effect = {
+				define_random_mil_advisor_effect = {
+					skill = 2
+					cost_multiplier = 0.25
+				}
+			}
+		}
+		else = {
+			custom_tooltip = bd_covenant_of_bonewrought_legions_1_effect_tt 
+			hidden_effect = {
+				define_random_mil_advisor_effect = {
+					skill = 1
+					cost_multiplier = 0.25
+				}
+			}
+		}
+		
+		custom_tooltip = bd_covenant_of_bonewrought_legions_effect_tt 
+		hidden_effect = {
+			add_country_modifier = {
+				name = bd_covenant_of_bonewrought_legions
+				duration = 3650
+			}
+		}
+	}
+	modifier = {}
+}
+
+corpsetilled_lands = {
+	cost = 100
+	potential = {
+		NOT = { has_country_modifier = undead_military }
+	}
+	ai_will_do = {
+		factor = 20
+		modifier = {
+			factor = 0
+			has_country_modifier = undead_military
+		}
+	}
+	trigger = {
+		has_ruler_flag = necromancy_1
+		NOT = { has_country_modifier = bd_covenant_of_corpsetilled_lands }
+		NOT = { has_country_modifier = bd_covenant_of_bonewrought_legions }
+	}
+	effect = {
+		if = {
+			limit = {
+				absolutism = 80
+				is_necromancy_3 = yes
+			}
+			custom_tooltip = bd_covenant_of_corpsetilled_lands_4_effect_tt
+			hidden_effect = {
+				every_owned_province = { add_devastation = -40 }
+			}
+		}
+		else_if = {
+			limit = {
+				absolutism = 40
+				has_ruler_flag = necromancy_2
+			}
+			custom_tooltip = bd_covenant_of_corpsetilled_lands_2_effect_tt
+			hidden_effect = {
+				every_owned_province = { add_devastation = -20 }
+			}
+		}
+		else = {
+			custom_tooltip = bd_covenant_of_corpsetilled_lands_1_effect_tt
+			hidden_effect = {
+				every_owned_province = { add_devastation = -10 }
+			}
+		}
+		
+		custom_tooltip = bd_covenant_of_corpsetilled_lands_effect_tt 
+		hidden_effect = {
+			add_country_modifier = {
+				name = bd_covenant_of_corpsetilled_lands
+				duration = 3650
+			}
+		}
+	}
+	modifier = {}
+}
+
+leashed_supplications = {
+	cost = 100
+	trigger = {
+		has_ruler_flag = conjuration_1
+		NOT = { has_country_modifier = bd_act_of_leashed_supplications }
+		NOT = { has_country_modifier = bd_act_of_leashed_supplications_witch_king }
+	}
+	ai_will_do = {
+		factor = 2
+		modifier = {
+			factor = 10
+			num_of_subjects = 1
+		}
+		modifier = {
+			factor = 10
+			has_ruler_modifier = witch_king_modifier
+		}
+	}
+	effect = {
+		if = {
+			limit = {
+				absolutism = 80
+				is_conjuration_3 = yes
+			}
+			custom_tooltip = bd_leashed_supplications_legendary_effect_tt
+			hidden_effect = {
+				every_subject_country = {
+					add_opinion = {
+						who = overlord
+						modifier = bd_leashed_supplications_legendary
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				absolutism = 40
+				has_ruler_flag = conjuration_2
+			}
+			custom_tooltip = bd_leashed_supplications_renowned_effect_tt
+			hidden_effect = {
+				every_subject_country = {
+					add_opinion = {
+						who = overlord
+						modifier = bd_leashed_supplications_renowned
+					}
+				}
+			}
+		}
+		else = {
+			custom_tooltip = bd_leashed_supplications_talented_effect_tt
+			hidden_effect = {
+				every_subject_country = {
+					add_opinion = {
+						who = overlord
+						modifier = bd_leashed_supplications_talented
+					}
+				}
+			}
+		}
+		
+		if = {
+			limit = { has_ruler_modifier = witch_king_modifier }
+			custom_tooltip = bd_act_of_leashed_supplications_witch_king_effect_tt
+			hidden_effect = {
+				add_country_modifier = {
+					name = bd_act_of_leashed_supplications_witch_king
+					duration = 3650
+				}
+			}
+		}
+		else = {
+			custom_tooltip = bd_act_of_leashed_supplications_effect_tt 
+			hidden_effect = {
+				add_country_modifier = {
+					name = bd_act_of_leashed_supplications
+					duration = 3650
+				}
+			}
+		}
+	}
+	modifier = {}
+}
+
+forced_malleability = {
+	cost = 100
+	trigger = {
+		has_ruler_flag = transmutation_1
+		NOT = { has_country_modifier = bd_law_of_forced_malleability }
+	}
+	ai_will_do = {
+		factor = 10
 		modifier = {
 			factor = 5
-			ruler_has_personality = zealot_personality
+			inflation = 5
 		}
-	}
-}
-
-good_works_of_bureaucracy = {
-	cost = 100
-	modifier = {
-		yearly_corruption = -0.1
-	}
-	ai_will_do = {
-		factor = 15
-	}
-}
-
-morning_prostrations = {
-	cost = 100
-	modifier = {
-		global_autonomy = -0.03
-	}
-	ai_will_do = {
-		factor = 15
 		modifier = {
-			factor = 2
-			average_autonomy = 33
+			factor = 0.5
+			NOT = { religious_unity = 0.95 }
 		}
 	}
+	effect = {
+		if = {
+			limit = {
+				absolutism = 80
+				is_transmutation_3 = yes
+			}
+			custom_tooltip = bd_law_of_forced_malleability_4_effect_tt 
+			hidden_effect = {
+				random_owned_province = {
+					limit = { religion = black_doctrine }
+					add_random_development = 1
+				}
+				random_owned_province = {
+					limit = { religion = black_doctrine }
+					add_random_development = 1
+				}
+				random_owned_province = {
+					limit = { religion = black_doctrine }
+					add_random_development = 1
+				}
+				random_owned_province = {
+					limit = { religion = black_doctrine }
+					add_random_development = 1
+				}
+
+				random_owned_province = {
+					limit = {
+						OR = {
+							trade_goods = precursor_relics
+							trade_goods = damestear
+							has_building = mage_tower
+						}
+					}
+					add_base_production = 1
+				}
+				random_owned_province = {
+					limit = {
+						OR = {
+							trade_goods = precursor_relics
+							trade_goods = damestear
+							has_building = mage_tower
+						}
+					}
+					add_base_production = 1
+				}
+				random_owned_province = {
+					limit = {
+						OR = {
+							trade_goods = precursor_relics
+							trade_goods = damestear
+							has_building = mage_tower
+						}
+					}
+					add_base_production = 1
+				}
+				random_owned_province = {
+					limit = {
+						OR = {
+							trade_goods = precursor_relics
+							trade_goods = damestear
+							has_building = mage_tower
+						}
+					}
+					add_base_production = 1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				absolutism = 40
+				has_ruler_flag = transmutation_2
+			}
+			custom_tooltip = bd_law_of_forced_malleability_2_effect_tt 
+			hidden_effect = {
+				random_owned_province = {
+					limit = { religion = black_doctrine }
+					add_random_development = 1
+				}
+				random_owned_province = {
+					limit = { religion = black_doctrine }
+					add_random_development = 1
+				}
+
+				random_owned_province = {
+					limit = {
+						OR = {
+							trade_goods = precursor_relics
+							trade_goods = damestear
+							has_building = mage_tower
+						}
+					}
+					add_base_production = 1
+				}
+				random_owned_province = {
+					limit = {
+						OR = {
+							trade_goods = precursor_relics
+							trade_goods = damestear
+							has_building = mage_tower
+						}
+					}
+					add_base_production = 1
+				}
+			}
+		}
+		else = {
+			custom_tooltip = bd_law_of_forced_malleability_1_effect_tt 
+			hidden_effect = {
+				random_owned_province = {
+					limit = { religion = black_doctrine }
+					add_random_development = 1
+				}
+
+				random_owned_province = {
+					limit = {
+						OR = {
+							trade_goods = precursor_relics
+							trade_goods = damestear
+							has_building = mage_tower
+						}
+					}
+					add_base_production = 1
+				}
+			}
+		}
+		
+		custom_tooltip = bd_law_of_forced_malleability_effect_tt #There's just not room
+		hidden_effect = {
+			add_country_modifier = {
+				name = bd_law_of_forced_malleability
+				duration = 3650
+			}
+		}
+	}
+	modifier = {}
 }
 
-cult_of_personality = {
+forbidden_breach = {
 	cost = 100
-	modifier = {
-		yearly_absolutism = 0.25
+	trigger = {
+		has_ruler_flag = abjuration_1
+		NOT = { has_country_modifier = bd_command_of_forbidden_breach }
 	}
 	ai_will_do = {
-		factor = 15
-
-	}
-}
-
-the_mages_peace = {
-	cost = 100
-	modifier = {
-		stability_cost_modifier = -0.5
-	}
-	ai_will_do = {
-		factor = 15
-
-	}
-}
-
-schools_of_history = {
-	cost = 100
-	modifier = {
-		global_unrest = -2
-	}
-	ai_will_do = {
-		factor = 15
+		factor = 10
 		modifier = {
-			factor = 2
-			average_unrest = 4
+			factor = 0.01
+			mercantilism = 100
+		}
+		modifier = {
+			factor = 10
+			num_of_trade_embargos = 3
 		}
 	}
+	effect = {
+		if = {
+			limit = {
+				absolutism = 80
+				is_abjuration_3 = yes
+			}
+			if = {
+				limit = { has_estate = estate_burghers }
+				custom_tooltip = bd_command_of_forbidden_breach_4_e_effect_tt 
+			}
+			else = {
+				custom_tooltip = bd_command_of_forbidden_breach_4_effect_tt
+			}
+			hidden_effect = {
+				add_mercantilism = 4
+				add_estate_loyalty = {
+					estate = estate_burghers
+					loyalty = 20
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				absolutism = 40
+				has_ruler_flag = abjuration_2
+			}
+			if = {
+				limit = { has_estate = estate_burghers }
+				custom_tooltip = bd_command_of_forbidden_breach_2_e_effect_tt 
+			}
+			else = {
+				custom_tooltip = bd_command_of_forbidden_breach_2_effect_tt
+			}
+			hidden_effect = {
+				add_mercantilism = 2
+				add_estate_loyalty = {
+					estate = estate_burghers
+					loyalty = 10
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = { has_estate = estate_burghers }
+				custom_tooltip = bd_command_of_forbidden_breach_1_e_effect_tt 
+			}
+			else = {
+				custom_tooltip = bd_command_of_forbidden_breach_1_effect_tt
+			}
+			hidden_effect = {
+				add_mercantilism = 1
+				add_estate_loyalty = {
+					estate = estate_burghers
+					loyalty = 5
+				}
+			}
+		}
+		
+		custom_tooltip = bd_command_of_forbidden_breach_effect_tt 
+		hidden_effect = {
+			add_country_modifier = {
+				name = bd_command_of_forbidden_breach
+				duration = 3650
+			}
+		}
+	}
+	modifier = {}
 }
 
-
-
-damnation_of_industry = {	#not sure about this one as this should give a malus and a buff
+illusory_chains = {
 	cost = 100
-	modifier = {
-		technology_cost = 0.1
+	trigger = {
+		has_ruler_flag = illusion_1
+		NOT = { has_country_modifier = bd_mandate_of_illusory_chains }
 	}
 	ai_will_do = {
-		factor = 15
-
+		factor = 100
+		modifier = {
+			factor = 0
+			religious_unity = 1
+		}
 	}
+	effect = {
+		if = {
+			limit = {
+				absolutism = 80
+				is_illusion_3 = yes
+			}
+			custom_tooltip = bd_mandate_of_illusory_chains_4_effect_tt 
+			hidden_effect = {
+				every_owned_province = {
+					limit = { has_missionary = yes }
+					add_province_modifier = {
+						name = bd_illusory_conversion_helper
+						duration = 13
+						hidden = yes
+					}
+					province_event = { id = witch_king.66 days = 12 }
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				absolutism = 40
+				has_ruler_flag = illusion_2
+			}
+			custom_tooltip = bd_mandate_of_illusory_chains_2_effect_tt 
+			hidden_effect = {
+				every_owned_province = {
+					limit = { has_missionary = yes }
+					add_province_modifier = {
+						name = bd_illusory_conversion_helper
+						duration = 7
+						hidden = yes
+					}
+					province_event = { id = witch_king.66 days = 6 }
+				}
+			}
+		}
+		else = {
+			custom_tooltip = bd_mandate_of_illusory_chains_1_effect_tt 
+			hidden_effect = {
+				every_owned_province = {
+					limit = { has_missionary = yes }
+					add_province_modifier = {
+						name = bd_illusory_conversion_helper
+						duration = 4
+						hidden = yes
+					}
+					province_event = { id = witch_king.66 days = 3 }
+				}
+			}
+		}
+		
+		custom_tooltip = bd_mandate_of_illusory_chains_effect_tt 
+		hidden_effect = {
+			add_country_modifier = {
+				name = bd_mandate_of_illusory_chains
+				duration = 3650
+			}
+		}
+	}
+	modifier = {}
+}
+
+anointment_of_wrath = {
+	cost = 100
+	trigger = {
+		has_ruler_flag = evocation_1
+		is_at_war = yes
+		NOT = { has_country_modifier = bd_anointment_of_wrath }
+	}
+	ai_will_do = {
+		factor = 1000
+		modifier = {
+			factor = 0
+			is_at_war = no
+		}
+	}
+	effect = {
+		if = {
+			limit = {
+				absolutism = 80
+				is_evocation_3 = yes
+			}
+			custom_tooltip = bd_anointment_of_wrath_4_effect_tt 
+			hidden_effect = {
+				create_general = {
+					tradition = 80
+					add_shock = 4
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				absolutism = 40
+				has_ruler_flag = evocation_2
+			}
+			custom_tooltip = bd_anointment_of_wrath_2_effect_tt 
+			hidden_effect = {
+				create_general = {
+					tradition = 40
+					add_shock = 2
+				}
+			}
+		}
+		else = {
+			custom_tooltip = bd_anointment_of_wrath_1_effect_tt 
+			hidden_effect = {
+				create_general = {
+					tradition = 20
+					add_shock = 1
+				}
+			}
+		}
+		
+		custom_tooltip = bd_anointment_of_wrath_effect_tt 
+		hidden_effect = {
+			add_country_modifier = {
+				name = bd_anointment_of_wrath
+				duration = 3650
+			}
+		}
+	}
+	modifier = {}
 }

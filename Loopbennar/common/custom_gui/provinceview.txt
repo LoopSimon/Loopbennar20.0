@@ -572,7 +572,7 @@ custom_button = { #Sedentarization closed
 		# Show the system explainer instead. (TODO probably temporary)
 		else = {
 			custom_trigger_tooltip = {
-				tooltip = sedentarization.explainer
+				tooltip = sedentarization_explainer_tt
 				always = no
 			}
 		}
@@ -584,74 +584,84 @@ custom_button = { #Sedentarization closed
 		}
 	}
 }
-custom_button = {
-	name = merfolk_entreat_settlement_button
-	tooltip = merfolk_entreat_settlement_tt
+custom_button = { #Merfolk Settlements
+	name = merfolk_settlement_button
+	tooltip = merfolk_settlement_tt
 	potential = {
-		has_province_flag = merfolk_settlement
-		owner = { NOT = { has_country_flag = merfolk_opinion_allied } }
+		owner = {
+			tag = FROM
+		}
+		if = { #generate
+			limit = { owner = { has_country_flag = merfolk_opinion_allied } }
+			province_group = dynamic_merfolk_region
+			NOT = { has_province_flag = merfolk_settlement }
+		}
+		else = { #interact
+			has_province_flag = merfolk_settlement
+			owner = { NOT = { has_country_flag = merfolk_opinion_allied } }
+		}
 	}
 	trigger = {
-		custom_trigger_tooltip = {
-			tooltip = improve_merfolk_five_years_tt
-			NOT = { has_province_modifier = merfolk_recently_interacted }
+		if = { #generate
+			limit = { owner = { has_country_flag = merfolk_opinion_allied } }
+			province_group = dynamic_merfolk_region
+			NOT = { has_province_flag = merfolk_settlement }
+			owner = { has_country_flag = merfolk_opinion_allied }
+			development = 15
+			has_trade_building_trigger = yes
+			OR = { has_shipyard_building_trigger = yes has_dock_building_trigger = yes }
+			
+			if = {
+				limit = { region = fahvanosy_region }
+				NOT = { 6678 = { check_variable = { which = fahvanosyMerfolkCap value = 2 } } }
+			}
+			else_if = {
+				limit = { region = odu_kherass_region }
+				NOT = { 6678 = { check_variable = { which = oduKherassMerfolkCap value = 2 } } }
+			}
+			else_if = {
+				limit = { region = ishyamtumu_region }
+				NOT = { 6678 = { check_variable = { which = ishyamtumuMerfolkCap value = 1 } } }
+			}
+			else_if = {
+				limit = { region = ringlet_isles_region }
+				NOT = { 6678 = { check_variable = { which = ringletIslesMerfolkCap value = 3 } } }
+			}
+			else_if = {
+				limit = { region = bamaliwuni_region }
+				NOT = { 6678 = { check_variable = { which = bamaliwuniMerfolkCap value = 1 } } }
+			}
+			else_if = {
+				limit = { region = throden_gokad_region }
+				NOT = { 6678 = { check_variable = { which = throdenGokadMerfolkCap value = 4 } } }
+			}
+			else_if = {
+				limit = { region = ardimya_region }
+				NOT = { 6678 = { check_variable = { which = ardimyaMerfolkCap value = 7 } } }
+			}
+			else_if = {
+				limit = { region = jasiir_jadid_region }
+				NOT = { 6678 = { check_variable = { which = jasiirJadidMerfolkCap value = 7 } } }
+			}
 		}
-	}
-	effect = {
-		hidden_effect = { add_permanent_province_modifier = { name = merfolk_recently_interacted duration = 1825 } }
-		province_event = { id = merfolk_events.0 }
-	}
-}
-custom_button = {
-	name = merfolk_generate_settlement_button
-	tooltip = merfolk_generate_settlement_tt
-	potential = {
-		province_group = dynamic_merfolk_region
-		NOT = { has_province_flag = merfolk_settlement }
-	}
-	trigger = {
-		province_group = dynamic_merfolk_region
-		NOT = { has_province_flag = merfolk_settlement }
-		owner = { has_country_flag = merfolk_opinion_allied }
-		development = 15
-		has_trade_building_trigger = yes
-		OR = { has_shipyard_building_trigger = yes has_dock_building_trigger = yes }
-		
-		if = {
-			limit = { region = fahvanosy_region }
-			NOT = { 6678 = { check_variable = { which = fahvanosyMerfolkCap value = 2 } } }
-		}
-		else_if = {
-			limit = { region = odu_kherass_region }
-			NOT = { 6678 = { check_variable = { which = oduKherassMerfolkCap value = 2 } } }
-		}
-		else_if = {
-			limit = { region = ishyamtumu_region }
-			NOT = { 6678 = { check_variable = { which = ishyamtumuMerfolkCap value = 1 } } }
-		}
-		else_if = {
-			limit = { region = ringlet_isles_region }
-			NOT = { 6678 = { check_variable = { which = ringletIslesMerfolkCap value = 3 } } }
-		}
-		else_if = {
-			limit = { region = bamaliwuni_region }
-			NOT = { 6678 = { check_variable = { which = bamaliwuniMerfolkCap value = 1 } } }
-		}
-		else_if = {
-			limit = { region = throden_gokad_region }
-			NOT = { 6678 = { check_variable = { which = throdenGokadMerfolkCap value = 4 } } }
-		}
-		else_if = {
-			limit = { region = ardimya_region }
-			NOT = { 6678 = { check_variable = { which = ardimyaMerfolkCap value = 7 } } }
-		}
-		else_if = {
-			limit = { region = jasiir_jadid_region }
-			NOT = { 6678 = { check_variable = { which = jasiirJadidMerfolkCap value = 7 } } }
+		else = { #interact
+			custom_trigger_tooltip = {
+				tooltip = improve_merfolk_five_years_tt
+				NOT = { has_province_modifier = merfolk_recently_interacted }
+			}
 		}
 	}
 
-	effect = { province_event = { id = merfolk_events.7 } }
+	effect = {
+		if = { #generate
+			limit = { owner = { has_country_flag = merfolk_opinion_allied } }
+			province_event = { id = merfolk_events.7 } 
+		}
+		else = { #interact
+			hidden_effect = { add_permanent_province_modifier = { name = merfolk_recently_interacted duration = 1825 } }
+			province_event = { id = merfolk_events.0 }
+		}
+	}
 }
 
 #Slot 2 - Province type button
@@ -975,6 +985,147 @@ custom_button = { #Dummy closed
 	tooltip = unified_province_ui_no_culture_button_tt
 }
 
+custom_button = {
+	name = harpy_roost_button
+	tooltip = harpy_roost_tt
+	potential = { 
+		owner = {
+			tag = FROM
+			culture_group = harpy
+			has_country_flag = harpy_roost_setup_completed # Won't work properly if setup hasn't been completed.
+		}
+		OR = {
+			NOT = { has_province_flag = harpy_roost_present }
+			AND = {
+				has_province_modifier = harpy_roost_mod_roost_fledgling
+				NOT = { has_province_modifier = harpy_roost_under_construction }
+			}
+			harpy_roost_st_can_build_tier_3_roost_potential = yes
+		}
+	}
+	frame = {
+		number = 1
+		trigger = {
+			NOT = { has_province_flag = harpy_roost_present }
+		}
+	}
+	frame = {
+		number = 2
+		trigger = {
+			has_province_modifier = harpy_roost_mod_roost_fledgling 
+		}
+	}
+	frame = {
+		number = 3
+		trigger = {
+			has_province_modifier = harpy_roost_mod_roost_flourishing_active
+			owner = {
+				has_country_flag = harpy_roost_tier_3_unlocked
+				NOT = {
+					is_or_was_tag = {
+						tag = Z88
+					}
+				}
+			}
+		}
+	}
+	frame = {
+		number = 4
+		trigger = {
+			has_province_modifier = harpy_roost_mod_roost_flourishing_active
+			owner = {
+				has_country_flag = harpy_roost_tier_3_unlocked
+				is_or_was_tag = {
+					tag = Z88
+				}
+			}
+		}
+	}
+	trigger = { 
+		if = { limit = { NOT = { has_province_flag = harpy_roost_present } }
+			harpy_roost_st_terrain_is_valid = yes
+			FROM = { adm_power = 20 }
+		}
+		else_if = { limit = { has_province_modifier = harpy_roost_mod_roost_fledgling NOT = { has_province_modifier = harpy_roost_under_construction } } 
+			harpy_roost_st_terrain_is_valid = yes
+			FROM = { 
+				hidden_trigger = { adm_power = 50 } # Tooltip becomes cleaner like this.
+				variable_arithmetic_trigger = {
+					custom_tooltip = harpy_roost_st_dev_threshold_tt
+					export_to_variable = {
+						which = harpy_roost_own_and_subject_development
+						value = trigger_value:total_own_and_non_tributary_subject_development
+					}
+					check_variable = { which = harpy_roost_own_and_subject_development which = harpy_roost_var_next_threshold }
+				}
+			}
+		}
+		else = {
+			harpy_roost_st_can_build_tier_3_roost_allow = yes
+		}
+	}
+	effect = { 
+		if = { limit = { NOT = { has_province_flag = harpy_roost_present } }
+			harpy_roost_se_add_roost_tier_1 = yes
+		}
+		else_if = { limit = { has_province_modifier = harpy_roost_mod_roost_fledgling NOT = { has_province_modifier = harpy_roost_under_construction } } 
+			harpy_roost_se_add_roost_tier_2 = yes 
+		}
+		else = {
+			harpy_roost_se_add_roost_tier_3 = yes
+		}
+	}
+}
+
+custom_button = { #Wood Elf Ranger Camps
+	name = deepwoods_rangers_button
+	potential = {
+		owner = {
+			tag = FROM
+			primary_culture = wood_elf
+			has_reform = wood_elf_salla
+		}
+		OR = {
+			superregion = deepwoods_superregion
+			region = domandrod_region
+		}
+		NOT = { has_terrain = fey_gladeway }
+		NOT = { has_terrain = gladeway }
+	}
+	trigger = {
+		if = { #If/Else for proper tooltips
+			limit = { NOT = { has_province_modifier = deepwoods_rangers_camp } }
+			is_below_grove_limit_trigger = yes
+			owner = {
+				mil_power = 10
+				treasury = 25
+			}
+			base_manpower = 5
+		}
+		else = { has_province_modifier = deepwoods_rangers_camp }
+	}
+	effect = {
+		if = {
+			limit = { NOT = { has_province_modifier = deepwoods_rangers_camp } }
+			owner = {
+				add_mil_power = -10
+				add_treasury = -25
+			}
+			add_province_modifier = {
+				name = deepwoods_rangers_camp
+				duration = -1
+			}
+			apply_strategy_effect = yes
+		}
+		else = {
+			owner = { add_mil_power = 5 }
+			remove_province_modifier = deepwoods_rangers_camp
+			remove_strategy_effect = yes
+		}
+	}
+	tooltip = deepwoods_rangers_button_tt
+}
+
 #Slot 5 - Tag specific button
 custom_button = { #Dummy closed
 	name = GFX_province_button_dummy_5
@@ -996,7 +1147,7 @@ custom_button = { #Xanzerbexis Wyvern Farms
 		A49_valid_wyvern_farm_province = yes
 	}
 	trigger = {
-		owner = { 
+		owner = {
 			treasury = 500
 		}
 		if = {
@@ -1009,13 +1160,21 @@ custom_button = { #Xanzerbexis Wyvern Farms
 		}
 	}
 	effect = {
-		add_treasury = -500
+		owner = { 
+			add_treasury = -500
+		}
 		set_province_flag = A49_created_wyvern_farm
 		add_province_modifier = {
 			name = A49_makeshift_hatchery
 			duration = 3650
 		}
 		custom_tooltip = A49_decision_wyvern_farm_tt
+		tooltip = {
+			add_province_modifier = {
+				name = A49_wyvern_farm
+				duration = -1
+			}
+		}
 		if = {
 			limit = { owner = { has_country_flag = A49_wyvern_farm_upgrade_unlocked } }
 			custom_tooltip = A49_decision_wyvern_farm_upgrade_tt
@@ -1028,7 +1187,6 @@ custom_button = { #Xanzerbexis Wyvern Farms
 		}
 	}
 }
-
 custom_button = { #Arawkelin Deforestation
 	name = arawkelin_deforestation_button
 	tooltip = arawkelin_deforestation_button_title_tt

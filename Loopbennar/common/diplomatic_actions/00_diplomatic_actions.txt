@@ -335,58 +335,6 @@ declarewar = {
 			FROM = { NOT = { has_country_modifier = ultakal_decree } }
 		}
 	}
-	
-	condition = {
-		tooltip = RAJ_HIGH_COHESION
-		potential = {
-			OR = {
-				has_reform = prabhi_reform
-				has_reform = senapti_reform
-			}
-			NOT = { has_country_flag = raj_vizier }
-			4411 = {
-				check_variable = {
-					which = raj_cohesion
-					value = 80
-				}
-			}
-		}
-		allow = {
-			OR = {
-				has_country_modifier = raj_mandate_right_to_expansion
-				FROM = { has_government_attribute = is_raja }
-			}
-		}
-	}
-	
-	condition = {
-		tooltip = RAJ_NEED_RIGHT_TO_EXPANSION
-		potential = {
-			has_reform = senapti_reform
-		}
-		allow = {
-			OR = {
-				has_country_modifier = raj_mandate_right_to_expansion
-				FROM = { has_reform = prabhi_reform }
-				FROM = { has_reform = senapti_reform }
-				FROM = { has_government_attribute = is_raja }
-				has_country_flag = raj_vizier
-			}
-		}
-	}
-	
-	condition = {
-		tooltip = RAJ_ALREADY_AT_WAR
-		potential = {
-			OR = {
-				has_reform = prabhi_reform
-				has_reform = senapti_reform
-			}
-		}
-		allow = {
-			is_at_war = no
-		}
-	}
 
 	# Can't declare on subjects of the Raja if you are at war with them
 	condition = {
@@ -403,36 +351,6 @@ declarewar = {
 					has_government_attribute = is_raja
 				}
 			}
-		}
-	}
-	
-	condition = {
-		tooltip = RAJ_PROTECTED_BY_THE_RAJA
-		potential = {
-			OR = {
-				has_reform = prabhi_reform
-				has_reform = senapti_reform
-			}
-		}
-		allow = {
-			NOT = { FROM = { has_country_modifier = raj_mandate_raja_protection } }
-		}
-	}
-	
-	condition = {
-		tooltip = RAJ_RAJA_LIMITED_TERRITORY
-		potential = {
-			OR = {
-				has_reform = prabhi_reform
-				has_reform = senapti_reform
-			}
-		}
-		allow = {
-			OR = {
-				NOT = { has_country_modifier = raj_mandate_territorial_limits }
-				FROM = { has_government_attribute = is_raja }
-			}
-			NOT = { has_country_modifier = raj_ai_introspecting }
 		}
 	}
 	
@@ -581,16 +499,6 @@ declarewar = {
 			ai = yes
 		}
 		allow = { always = no }
-	}
-	
-	condition = {
-		tooltip = ISOLATIONIST_DAENGUN
-		potential = {
-			tag = Y93
-		}
-		allow = {
-			NOT = { has_reform = isolated_kingdom_reform }
-		}
 	}
 
 	condition = {
@@ -769,7 +677,7 @@ declarewar = {
 				has_country_modifier = monstrous_nation
 				has_country_flag = removing_monstrous
 			}
-			increase_monstrous_1 = yes
+			country_event = { id = monstrous.8 }
 		}
 		
 		if = { # Xiaken becomes Indipendent Xiaken if declare war at Wulin
@@ -780,36 +688,6 @@ declarewar = {
 			add_government_reform = indep_xiaken
 		}
 		
-		if = {
-			limit = {
-				OR = {
-					has_reform = prabhi_reform
-					has_reform = senapti_reform
-					has_government_attribute = is_raja
-				}
-				FROM = {
-					OR = {
-						has_reform = prabhi_reform
-						has_reform = senapti_reform
-						has_government_attribute = is_raja
-					}
-				}
-			}
-			raj_calc_internal_wars = yes
-			# raj_cohesion_change = { amount = 30 non_monthly = yes }
-			# FROM = { raj_cohesion_change = { amount = 10 } non_monthly = yes }
-		}
-		if = {
-			limit = { 
-				has_country_modifier = raj_mandate_right_to_expansion
-			}
-			remove_country_modifier = raj_mandate_right_to_expansion
-			add_country_modifier = {
-				name = raj_mandate_sactioned_conquest
-				duration = 3650
-				hidden = yes
-			}
-		}
 		if = {
 			limit = {
 				has_country_modifier = dwarovar_claimer
@@ -1265,19 +1143,47 @@ declarewar = {
 			}
 		}
 
+		#Oberon Fealgarn Spawn
 		if = {
-			limit = { FROM = { tag = R62 } }
-			if = {
-				limit = { FROM = { has_country_flag = command_sir_revolt_started } }
-				4348 = { remove_building = fort_15th remove_province_modifier = command_fake_fort }
-				4354 = { remove_building = fort_15th remove_province_modifier = command_fake_fort }
+			limit = {
+				has_estate_privilege = estate_nobles_oberons_watchful_eye
+				NOT = { has_ruler_flag = oberon_is_ruling }
+				NOT = { has_leader = "Oberon Fealgarn" }
 			}
+			define_general = {
+				name = "Oberon Fealgarn"
+				fire = 2
+				shock = 5
+				manuever = 5
+				siege = 0
+				trait = born_to_the_saddle_personality
+			}
+		}
+
+		# Raja mandate buffs, declaration of harmony
+		if = {
+			limit = {
+				overlord = { has_government_attribute = is_raja }
+				FROM = {
+					OR = { 
+						overlord = { has_government_attribute = is_raja }
+						has_government_attribute = is_raja
+					}
+				}
+			}
+			remove_country_modifier = rahen_raj_mandate_raja_3_vizier_peace_mod
+			remove_country_modifier = rahen_raj_mandate_raja_3_senaptia_peace_mod
+			remove_country_modifier = rahen_raj_mandate_raja_3_prabhia_peace_mod
 		}
 		if = {
 			limit = {
-				FROM = { is_in_war = { casus_belli = cb_revolt_of_the_north } }
+				OR = {
+					has_country_modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod
+					FROM = { has_country_modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod }
+				}
 			}
-			FROM = { capital_scope = { remove_province_modifier = command_defensiveness_for_ai } every_subject_country = { capital_scope = { remove_province_modifier = command_defensiveness_for_ai } } }
+			remove_country_modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod
+			FROM = { remove_country_modifier = rahen_raj_mandate_vizier_2_vizier_senaptia_peace_mod }
 		}
 
 		#Revoke nekhei war rights after they declare a war
@@ -1688,12 +1594,12 @@ allianceaction = {
 	condition = {
 		tooltip = NO_CENTAUR_ALLY #Proud Horse!
 		potential = {
-				has_reform = centaur_horde
+			has_country_modifier = centaur_administration
 		}
 		allow = {
 			FROM = {
 				OR = {
-					NOT = { has_reform = centaur_horde }
+					NOT = { has_country_modifier = centaur_administration }
 					AND = {
 						is_subject = yes
 						overlord = { overlord_of = ROOT }
@@ -1793,16 +1699,6 @@ allianceaction = {
 					mission_completed = G32_with_two_companions
 				}
 			}
-		}
-	}
-	
-	condition = {
-		tooltip = ISOLATIONIST_DAENGUN
-		potential = {
-			tag = Y93
-		}
-		allow = {
-			NOT = { has_reform = isolated_kingdom_reform }
 		}
 	}
 
@@ -2007,6 +1903,7 @@ royal_marriage = {
 		potential = {
 			ruler_culture = sun_elf
 			primary_culture = sun_elf #Sun Elf rulers ruling non Sun Elf countries shouldn't care as much
+			NOT = { religion = the_jadd }
 		}
 		allow = {
 			OR = {
@@ -2022,6 +1919,7 @@ royal_marriage = {
 		potential = {
 			FROM = { ruler_culture = sun_elf } 
 			FROM = { primary_culture = sun_elf } #Sun Elf rulers ruling non Sun Elf countries shouldn't care as much
+			FROM = { NOT = { religion = the_jadd } }
 		}
 		allow = {
 			OR = {
@@ -2041,6 +1939,8 @@ royal_marriage = {
 				culture_group = elven
 				NOT = { ruler_culture = desert_elf }
 				NOT = { primary_culture = desert_elf }
+				NOT = { ruler_culture = sun_elf }
+				NOT = { primary_culture = sun_elf }
 			}
 		}
 		allow = {
@@ -2059,6 +1959,9 @@ royal_marriage = {
 			culture_group = elven
 			NOT = { ruler_culture = desert_elf }
 			NOT = { primary_culture = desert_elf }
+			NOT = { ruler_culture = sun_elf }
+			NOT = { primary_culture = sun_elf }
+			
 		}
 		allow = {
 			OR = {
@@ -2499,14 +2402,38 @@ royal_marriage = {
 			}
 		}
 	}
-	
-	condition = {
-		tooltip = ISOLATIONIST_DAENGUN
-		potential = {
-			tag = Y93
+	effect = {
+		if = {
+			limit = {
+				ROOT = {
+					owns_ruby_gardens = { tier = 2 }
+					NOT = { has_country_modifier = ruby_gardens_tier_2_marriage }
+					NOT = { has_country_modifier = ruby_gardens_tier_3_marriage }
+				}
+			}
+			if = {
+				limit = { ROOT = { owns_ruby_gardens = { tier = 3 } } }
+				ruby_gardens_wedding_effect = { owner = ROOT target = FROM tier = 3 ae = -20 }
+			}
+			else = {
+				ruby_gardens_wedding_effect = { owner = ROOT target = FROM tier = 2 ae = -10 }
+			}
 		}
-		allow = {
-			NOT = { has_reform = isolated_kingdom_reform }
+		else_if = {
+			limit = {
+				FROM = {
+					owns_ruby_gardens = { tier = 2 }
+					NOT = { has_country_modifier = ruby_gardens_tier_2_marriage }
+					NOT = { has_country_modifier = ruby_gardens_tier_3_marriage }
+				}
+			}
+			if = {
+				limit = { FROM = { owns_ruby_gardens = { tier = 3 } } }
+				ruby_gardens_wedding_effect = { owner = FROM target = ROOT tier = 3 ae = -20 }
+			}
+			else = {
+				ruby_gardens_wedding_effect = { owner = FROM target = ROOT tier = 2 ae = -10 }
+			}
 		}
 	}
 }
@@ -2537,15 +2464,6 @@ annexationaction = {
 	}
 	
 	condition = {
-		tooltip = RAJ_INDEPENDENCE_GUARANTEED
-		potential = {
-			has_government_attribute = is_raja
-		}
-		allow = {
-			NOT = { FROM = { has_country_modifier = raj_mandate_guaranteed_autonomy } }
-		}
-	}
-	condition = {
 		tooltip = RAJ_COHESION_TOO_LOW
 		potential = {
 			has_government_attribute = is_raja
@@ -2553,8 +2471,8 @@ annexationaction = {
 		allow = {
 			4411 = {
 				check_variable = {
-					which = raj_cohesion
-					value = 80
+					which = raj_var_cohesion
+					value = 70
 				}
 			}
 		}
@@ -2964,25 +2882,6 @@ form_coalition = {
 			NOT = { has_country_flag = nsc_was_at_samartal }
 		}
 	}
-	
-	condition = { #Raja subjects can't join external coalitions
-		tooltip = RAJ_EXTERNAL_COALITIONS
-		potential = {
-			overlord = { has_government_attribute = is_raja }
-		}
-		allow = {
-			FROM = { overlord = { has_government_attribute = is_raja } }
-		}
-	}
-	
-	condition = { #External tags can't coalition Raja subjects
-		tooltip = RAJ_COALITIONS_EXTERNALS
-		potential = {
-		}
-		allow = {
-			FROM = { NOT = { overlord = { has_government_attribute = is_raja } } }
-		}
-	}
 }
 
 request_to_join_trade_league = {
@@ -3279,18 +3178,6 @@ callaction = {
 			set_country_flag = ach_called_allies_againt_the_command
 		}
 	}
-
-	effect = {
-		if = {
-			limit = {
-				FROM = { is_in_war = { casus_belli = cb_revolt_of_the_north } }
-				any_war_enemy_country = {
-					NOT = { is_in_war = { casus_belli = cb_revolt_of_the_north } }
-				}
-			}
-			FROM = { capital_scope = { remove_province_modifier = command_defensiveness_for_ai } }
-		}
-	}
 	
 	effect = {
 		if = {
@@ -3379,6 +3266,56 @@ callaction = {
 			FROM = { NOT = { capital_scope = { continent = europe } } }
 		}
 	}
+
+	condition = { #raj
+		tooltip = NO_SENAPTI_VS_RAJA
+		potential = {
+			FROM = {
+				OR = {
+					is_subject_of_type = great_daimyo_vassal
+					is_subject_of_type = vizier_vassal
+				}
+			}
+			NOT = {
+				has_government_attribute = is_raja_subject
+				has_reform = indep_prabhi_reform
+			}
+		}
+		allow = {
+			NOT = {
+				event_target:raj_raja_global_target = {	war_with = ROOT }
+			}
+		}
+	}
+
+	effect = {		#make ai use some raj mandates. might need better control in the future (i.e. only if the enemy is strong?)
+		if = {
+			limit = {
+				has_saved_global_event_target = raj_raja_global_target
+				tag = event_target:raj_raja_global_target
+				FROM = { tag = event_target:raj_vizier_global_target }
+			}
+			if = {
+				limit = {
+					event_target:raj_vizier_global_target = {
+						ai = yes
+						NOT = { liberty_desire = 50 }
+					}
+				}
+				event_target:raj_vizier_global_target = {
+					add_adm_power = -100
+					rahen_raj_mandate_vizier_logistical_focus = yes
+					add_dip_power = -100
+					rahen_raj_mandate_vizier_prabhi_recruitment = yes
+				}
+			}
+			if = {
+				limit = { ai = yes }
+				add_adm_power = -100
+				rahen_raj_mandate_raja_imperial_tribute = yes
+			}			
+		}
+	}
 }
 
 designate_march = {
@@ -3420,23 +3357,9 @@ ask_for_march = {
 }
 
 milaccess = {
-	condition = {
-		tooltip = AZJAKUMA_NO_MIL_ACCESS
-		potential = {
-			FROM = { tag = Y01 }
-		}
-		allow = { always = no }
-	}
 }
 
 offermilaccess = {
-	condition = {
-		tooltip = AZJAKUMA_NO_MIL_ACCESS
-		potential = {
-			tag = Y01
-		}
-		allow = { always = no }
-	}
 }
 
 insultaction = {
@@ -3536,7 +3459,7 @@ requestpeace = {
         potential = {
 			FROM = {
 				OR = {
-					is_subject_of_type = daimyo_vassal
+					is_subject_of_type = vizier_vassal
 					is_subject_of_type = great_daimyo_vassal
 				}
 				overlord = {
@@ -3715,10 +3638,7 @@ requestpeace = {
 		allow = {
 			if = {
 				limit = { R62 = { has_country_flag = command_sir_revolt_started } }
-				NOT = {
-					has_country_flag = command_sir_revolt_started
-					FROM = { has_country_flag = command_sir_revolt_started }
-				}
+				NOT = { is_in_war = { casus_belli = cb_revolt_of_the_north } }
 			}
 			else_if = {
 				limit = { R62 = { has_country_flag = insubordination_active_flag } }
@@ -3743,6 +3663,35 @@ requestpeace = {
 		}
 		allow = {
 			always = no
+		}
+	}
+	condition = {
+		tooltip = F29_NO_PEACE_TT
+		potential = {
+			ROOT = {
+				has_country_flag = zokka_final_war
+			}
+		}
+		allow = {
+			always = no
+        }
+	}
+	
+	condition = { #Rinta seekers Alefisol disaster war after Magicks incident
+		tooltip = ALEFISOL_INVASION_WAR_NAME_tt
+		potential = {
+			OR = {
+				tag = S93
+				FROM = { tag = S93 }
+			}
+		}
+		allow = {
+			NOT = {
+				AND = {
+					is_in_war = { casus_belli = cb_alefisol_war }
+					FROM = { is_in_war = { casus_belli = cb_alefisol_war } }
+				}
+			}
 		}
 	}
 }
@@ -3802,6 +3751,33 @@ guaranteeaction = {
 		}
 		allow = {
 			always = no
+		}
+	}
+	effect = {
+		if = {
+			limit = {
+				is_or_was_tag = { tag = G87 }
+				has_country_flag = chaqway_marriages_unlocked
+				NOT = {
+					FROM = {
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = chaqway_fake_marriage
+						}
+					}
+				}
+			}
+			FROM = {
+				add_opinion = {
+					who = ROOT
+					modifier = chaqway_fake_marriage
+				}
+				add_trust = {
+					who = ROOT
+					value = 10
+					mutual = yes
+				}
+			}
 		}
 	}
 }
@@ -3889,4 +3865,43 @@ trade_favors_for_sailors = {
 		}
 	}
 }
+
+grant_electorate = {
+    effect = {
+        if = {
+            limit = {
+                FROM = {
+                    tag = A77
+                    is_subject_of_type = imperial_bodyguard
+                }
+                emperor = { NOT = { has_country_modifier = A77_preatorian_electors } }
+            }
+            emperor = {
+                add_country_modifier = {
+                    name = A77_preatorian_electors
+                    duration = -1
+                }
+            }
+        }
+    }
+}
+
+remove_electorate = {
+    effect = {
+        if = {
+            limit = {
+                FROM = {
+                    tag = A77
+                    is_subject_of_type = imperial_bodyguard
+					is_elector = yes
+                }
+                emperor = { has_country_modifier = A77_preatorian_electors }
+            }
+            emperor = {
+				remove_country_modifier = A77_preatorian_electors
+            }
+        }
+    }
+}
+
 
