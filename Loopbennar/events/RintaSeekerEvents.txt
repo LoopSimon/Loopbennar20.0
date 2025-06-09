@@ -1123,3 +1123,3915 @@ country_event = {
 		change_innovativeness = 2
 	}
 }
+#####################################################################
+####################RINTA SEEKER INCIDENTS EVENTS####################
+#####################################################################
+#Dark Magicks
+country_event = {
+	id = rinta_seeker_events.200 #No other country can have incident after incident already occured
+	title = rinta_seeker_events.200.t
+	desc = rinta_seeker_events.200.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+	option = {
+		name = rinta_seeker_events.200.a
+		set_global_flag = rinta_seeker_dark_activated
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.201 #Start incident
+	title = rinta_seeker_events.201.t
+	desc = rinta_seeker_events.201.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.201.a
+
+		country_event = {
+			id = rinta_seeker_events.202
+		}
+
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.202 #Start of disaster for everyone
+	title = rinta_seeker_events.202.t
+	desc = rinta_seeker_events.202.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.202.a
+		custom_tooltip = rinta_seeker_events.202_tt
+		goto = 6679
+		tooltip = {
+			6679 = {
+				add_permanent_province_modifier = {
+					name = rinta_infernal_resonance_dummy
+					duration = -1
+				}
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					6679 = { NOT = {  has_province_modifier = rinta_infernal_resonance } }
+				}
+				REB = {
+					set_variable = {
+						which = rinta_factor
+						value = 1
+					}
+				}
+				6679 = {
+					add_permanent_province_modifier = {
+						name = rinta_infernal_resonance
+						duration = -1
+					}
+				}
+				set_global_flag = darkmagicks_flag
+			}
+			country_event = {
+				id = rinta_seeker_events.203
+				days = 365
+				random = 10
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.203 #After one year
+	title = rinta_seeker_events.203.t
+	desc = rinta_seeker_events.203.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		is_incident_active = incident_rinta_dark_magic
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				save_event_target_as = rinta_tar1
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+				}
+				save_event_target_as = rinta_tar2
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+					NOT = { province_id = event_target:rinta_tar2 }
+				}
+				save_event_target_as = rinta_tar3
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+					NOT = {province_id = event_target:rinta_tarrem1 }
+				}
+				save_event_target_as = rinta_tarrem2
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+					NOT = { province_id = event_target:rinta_tarrem1 }
+					NOT = { province_id = event_target:rinta_tarrem2 }
+				}
+				save_event_target_as = rinta_tarrem3
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.203.a
+		goto = rinta_tar2
+		add_legitimacy = 10
+		random_list = {
+			8 = {
+				if = {
+					limit = { has_saved_event_target = rinta_tarrem1 }
+					event_target:rinta_tarrem1 = { remove_infernal_resonance = yes }
+					if = {
+						limit = { has_saved_event_target = rinta_tarrem2 }
+						event_target:rinta_tarrem2 = { remove_infernal_resonance = yes }
+						if = {
+							limit = { has_saved_event_target = rinta_tarrem3 }
+							event_target:rinta_tarrem3 = { remove_infernal_resonance = yes }
+						}
+					}
+				}
+			}
+			2 = {
+				if = {
+					limit = { has_saved_event_target = rinta_tar1 }
+					event_target:rinta_tar1 = { add_infernal_resonance = yes }
+					if = {
+						limit = { has_saved_event_target = rinta_tar2 }
+						event_target:rinta_tar2 = { add_infernal_resonance = yes }
+						if = {
+							limit = { has_saved_event_target = rinta_tar3 }
+							event_target:rinta_tar3 = { add_infernal_resonance = yes }
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = free_thinker_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = intricate_web_weaver_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = conqueror_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = bold_fighter_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = greedy_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = naive_personality
+			}
+			modifier = {
+				factor = 20
+				ruler_has_personality = sinner_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.203.b
+		goto = rinta_tar1
+		add_prestige = 25
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { add_infernal_resonance = yes }
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = careful_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = craven_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = malevolent_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = incorruptible_personality
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.204 #After 10 years Victory
+	title = rinta_seeker_events.204.t
+	desc = rinta_seeker_events.204.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.204.a
+		country_event = {
+			id = rinta_seeker_events.205
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.205 #Victory solution found
+	title = rinta_seeker_events.205.t
+	desc = rinta_seeker_events.205.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.205.a
+		if = {
+			limit = {
+				monthly_income = 83
+			}
+			add_treasury = 2000
+		}
+		else = {
+			add_years_of_income = 2
+		}
+		add_accepted_culture = guryadagga
+		add_country_modifier = {
+			name = rinta_mastery_over_magic
+			duration = -1
+		}
+		define_advisor = {
+			type = court_mage
+			skill = 5
+			cost_multiplier = 0
+			culture = guryadagga
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Disaster start
+	id = rinta_seeker_events.206
+	title = rinta_seeker_events.206.t
+	desc = rinta_seeker_events.206.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.206.a
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.206.b
+		switch_tag = S93
+		ai_chance = { factor = 0 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.207
+	title = rinta_seeker_events.207.t
+	desc = rinta_seeker_events.207.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.207.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.208
+	title = rinta_seeker_events.208.t
+	desc = rinta_seeker_events.208.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.208.a
+		ai_chance = { factor = 1 }
+	}
+}
+#Menager before disaster random events
+country_event = {
+	id = rinta_seeker_events.209
+	title = rinta_seeker_events.209.t
+	desc = rinta_seeker_events.209.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		is_incident_active = incident_rinta_dark_magic
+	}
+
+	option = {
+		name = rinta_seeker_events.209.a
+		random_list = {
+			1 = { 
+				country_event = {
+					id = rinta_seeker_events.250
+				}
+			}
+			1 = { 
+				country_event = {
+					id = rinta_seeker_events.251
+				}
+			}
+			1 = { 
+				country_event = {
+					id = rinta_seeker_events.252
+				}
+			}
+			3 = { 
+				trigger = {
+					NOT = { ai = yes }
+				}
+				country_event = {
+					id = rinta_seeker_events.255
+				}
+			}
+			1 = { 
+				country_event = {
+					id = rinta_seeker_events.256
+				}
+			}
+			1 = {
+				trigger = {
+					any_neighbor_country = {
+						religion = rinta_seekers
+						num_of_cities = 8
+					}
+				}
+				country_event = {
+					id = rinta_seeker_events.257
+				}
+			}
+			1 = { 
+				country_event = {
+					id = rinta_seeker_events.258
+				}
+			}
+			1 = {
+				trigger = {
+					any_owned_province = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				country_event = {
+					id = rinta_seeker_events.259
+				}
+			}
+			1 = { 
+				country_event = {
+					id = rinta_seeker_events.260
+				}
+			}
+			1 = { 
+				country_event = {
+					id = rinta_seeker_events.261
+				}
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+#War with Coalition vs Alefisol
+country_event = {
+	id = rinta_seeker_events.210
+	title = rinta_seeker_events.210.t
+	desc = rinta_seeker_events.210.desc
+	picture = BUDDHISM_GOOD_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			random_country = {
+				limit = {
+					religion = rinta_seekers
+					has_disaster = darkmagicks
+					ai = no
+				}
+				save_event_target_as = coalition_vs_alefisol_leader
+				every_war_enemy_country = {
+					limit = {
+						has_disaster = darkmagicks
+					}
+					white_peace = PREV
+				}
+			}
+			if = {
+				limit = { NOT = { has_saved_event_target = coalition_vs_alefisol_leader } }
+				random_country = {
+					limit = {
+						religion = rinta_seekers
+						has_disaster = darkmagicks
+					}
+					save_event_target_as = coalition_vs_alefisol_leader
+					every_war_enemy_country = {
+						limit = {
+							has_disaster = darkmagicks
+						}
+						white_peace = PREV
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.210.a
+		custom_tooltip = rinta_seeker_events.210.tt
+		hidden_effect = {
+			declare_war_with_cb = {
+				who = event_target:coalition_vs_alefisol_leader
+				casus_belli = cb_alefisol_war
+			} 
+		}
+	}
+	after = {
+		every_country = {
+			limit = {
+				religion = rinta_seekers
+				has_disaster = darkmagicks
+				NOT = { tag = event_target:coalition_vs_alefisol_leader }
+			}
+			every_war_enemy_country = {
+				limit = {
+					has_disaster = darkmagicks
+				}
+				white_peace = PREV
+			}
+			join_all_defensive_wars_of = event_target:coalition_vs_alefisol_leader
+		}
+	}
+}
+#Peace after the war
+#Coalition Victory
+country_event = {
+	id = rinta_seeker_events.211
+	title = rinta_seeker_events.211.t
+	desc = rinta_seeker_events.211.desc
+	picture = REFORM_eventPicture
+
+	is_triggered_only = yes
+
+	#Sadge Demons lost
+	option = {
+        name = rinta_seeker_events.211.a
+		add_treasury = 500
+		add_country_modifier = {
+			name = end_to_alefisol
+			duration = -1
+		}
+		
+		ai_chance = { factor = 100 }
+	}
+}
+
+#Alefisol victory
+country_event = {
+	id = rinta_seeker_events.212
+	title = rinta_seeker_events.212.t
+	desc = rinta_seeker_events.212.desc
+	picture = REFORM_eventPicture
+
+	is_triggered_only = yes
+	major = yes
+
+	immediate = {
+		hidden_effect = {
+			every_war_enemy_country = {
+				limit = { 
+					is_in_war = {
+						casus_belli = cb_alefisol_war
+					}
+				}
+				every_owned_province = {
+					add_core = S93
+					cede_province = S93
+				}
+			}
+			S93 = {
+				remove_country_modifier = alefisol_modifier
+			}
+		}
+	}
+
+	#Yay!!!
+	option = {
+        name = rinta_seeker_events.212.a
+
+		custom_tooltip = rinta_seeker_events.212.a_tt
+		tooltip = {
+			add_province_modifier = {
+				name = rinta_infernal_hotspot
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				remove_province_modifier = rinta_infernal_resonance
+				add_province_modifier = {
+					name = rinta_infernal_hotspot
+					duration = -1
+				}
+			}
+		}
+		ai_chance = { factor = 100 }
+	}
+	after = {
+		hidden_effect = {
+			every_province = {
+				remove_province_modifier = rinta_infernal_resonance
+			}
+		}
+	}
+}
+country_event = {
+	id = rinta_seeker_events.213
+	title = rinta_seeker_events.213.t
+	desc = rinta_seeker_events.213.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		NOT = { has_ruler_flag = alefisol }
+	}
+	option = {
+		name = rinta_seeker_events.213.a
+		#Ruler
+		define_ruler = {
+			adm = 6
+			dip = 6
+			mil = 6
+			age = 66
+			claim = 100
+			male = yes
+			culture = guryadagga
+			religion = genie_cult
+			name = "Almadhab"
+			dynasty = "'Of Past Eons'"
+		}
+		#Ruler traits
+		add_ruler_personality = wind_planetouched_personality
+		add_ruler_personality = conqueror_personality
+		add_ruler_personality = strict_personality
+		#Immortal
+		set_ruler_flag = immortal_ruler
+		set_ruler_flag = alefisol
+	}
+}
+country_event = { #Spawn of Alefisol
+	id = rinta_seeker_events.214
+	title = rinta_seeker_events.214.t
+	desc = rinta_seeker_events.214.desc
+	picture = REFORM_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+	immediate = {
+		every_country = {
+			limit = {
+				religion = rinta_seekers
+				has_disaster_progress = {
+					disaster = darkmagicks
+					value = 1
+				}
+			}
+			add_disaster_progress = {
+                 disaster = darkmagicks
+                 value = 100
+             }
+		}
+	}
+
+	option = {
+        name = rinta_seeker_events.214.a
+		#Stop events and icident for everyone
+		if = { 
+			limit = { is_incident_active = incident_rinta_dark_magic }
+			end_incident = incident_rinta_dark_magic
+		}
+		every_country = {
+			limit = { 
+				religion = rinta_seekers
+				is_incident_active = incident_rinta_dark_magic
+			}
+			end_incident = incident_rinta_dark_magic
+		}
+		#difficulty
+		if = {
+			limit = {
+				any_country = {
+					religion = rinta_seekers
+					total_development = 800
+				} 
+			}
+			set_global_flag = rinta_boss_music
+		}
+		else_if = {
+			limit = { 
+				any_country = {
+				religion = rinta_seekers
+				total_development = 400
+				} 
+			}
+			set_global_flag = rinta_double
+		}
+		#Startup
+		every_owned_province = {
+			limit = { has_province_modifier = rinta_infernal_resonance }
+			add_core = S93
+		}
+		release = S93
+		every_province = {
+			limit = { has_province_modifier = rinta_infernal_resonance }
+			add_core = S93
+			cede_province = S93
+			set_local_autonomy = 0
+		}
+		#Alefisol
+		S93 = {
+			clear_racial_military = yes
+			add_country_modifier = {
+				name = human_military
+				duration = -1
+				hidden = yes
+			}
+			set_variable = { #6 for victory
+				which = alefisol_lost_6
+				value = 0
+			}
+			change_technology_group = tech_baashidi
+			change_unit_type = tech_baashidi
+			change_government = monarchy
+			change_religion = genie_cult
+			change_primary_culture = guryadagga
+			add_manpower = 50
+			add_treasury = 3000
+			add_prestige = 100
+			add_army_tradition = 50
+			change_government_reform_progress = 300
+			add_idea_group = quantity_ideas
+			add_idea_group = offensive_ideas
+			#Ruler
+			define_ruler = {
+				adm = 6
+				dip = 6
+				mil = 6
+				age = 66
+				claim = 100
+				male = yes
+				culture = guryadagga
+				religion = genie_cult
+				name = "Almadhab"
+				dynasty = "'Of Past Eons'"
+			}
+			#Ruler traits
+			add_ruler_personality = wind_planetouched_personality
+			add_ruler_personality = conqueror_personality
+			add_ruler_personality = strict_personality
+			#Immortal
+			set_ruler_flag = immortal_ruler
+			set_ruler_flag = alefisol
+			#Choosing Capital 
+			if = {
+				limit = {
+					any_owned_province = { development = 20 }
+				}
+				random_owned_province = {
+					limit = { development = 20 }
+					S93 = { set_capital = PREV }
+				}
+			}
+			else = {
+				capital_scope = {
+					add_base_tax = 2
+					add_base_production = 2
+					add_base_manpower = 2
+				}
+			}
+			#Starting for Capital
+			capital_scope = {
+				if = {
+					limit = { NOT = { province_has_current_tech_fort_trigger = yes } }
+					add_latest_building = { builder = ROOT fort = yes }
+				}
+				if = {
+					limit = { NOT = { has_building = ramparts } }
+					add_building = ramparts
+				}
+				spawn_alefisol_army = yes
+				change_religion = genie_cult
+			}
+			#Forts if dont have many
+			if = {
+				limit = { 
+					NOT = {
+						num_of_owned_provinces_with = {
+							province_has_current_tech_fort_trigger = yes
+							value = 3
+						} 
+					}
+				}
+				random_owned_province = {
+					limit = { NOT = { province_has_current_tech_fort_trigger = yes } }
+					add_latest_building = { builder = ROOT fort = yes }
+				}
+				random_owned_province = {
+					limit = { NOT = { province_has_current_tech_fort_trigger = yes } }
+					add_latest_building = { builder = ROOT fort = yes }
+				}
+			}
+			#####################
+			#Armies
+			random_owned_province = {
+				limit = { province_has_current_tech_fort_trigger = yes }
+				spawn_alefisol_army = yes
+			}
+			#Generals
+			create_general = {
+				tradition = 10
+			}
+			create_war_wizard_effect = yes
+			define_ruler_to_general = {
+				fire = 3
+				shock = 10
+				manuever = 8
+				siege = 0
+			}
+			#Fleet
+			if = {
+				limit = { num_of_total_ports = 1 }
+				random_owned_province = {
+					limit = {
+						has_port = yes
+					}
+					spawn_alefisol_fleet = yes
+				}
+			}
+			#####################
+			if = { #Max potencial 
+				limit = { has_global_flag = rinta_boss_music }
+				#Armies
+				random_owned_province = { 
+					spawn_alefisol_army = yes
+				}
+				random_owned_province = {
+					spawn_alefisol_army = yes
+				}
+				#Generals
+				define_general = {
+					shock = 0
+					fire = 6
+					manuever = 0
+					siege = 6
+					trait = siege_specialist_personality
+					female = yes
+					name = "Kiviz Nahte 'the Opposed'"
+				}
+				create_general = {
+					tradition = 100
+				}
+				#Fleet
+				if = { 
+					limit = { num_of_total_ports = 1 }
+					random_owned_province = {
+						limit = {
+							has_port = yes
+						}
+						spawn_alefisol_fleet = yes
+						spawn_alefisol_fleet = yes
+					}
+				}
+				#Resources
+				add_treasury = 3000
+				add_manpower = 50
+				change_government_reform_progress = 300
+			}
+			#####################
+			if = { #Medium
+				limit = { OR = { has_global_flag = rinta_double has_global_flag = rinta_boss_music } }
+				#Armies
+				random_owned_province = {
+					limit = { province_has_current_tech_fort_trigger = yes }
+					if = {
+						limit = { NOT = { has_building = ramparts } }
+						add_building = ramparts
+					}
+					spawn_alefisol_army = yes
+				}
+				#General
+				create_general = {
+					tradition = 66
+				}
+				#Resources
+				add_treasury = 3000
+				add_manpower = 50
+				change_government_reform_progress = 300
+			}
+			#####################
+			if = { #Small bonus for number of resonance
+				limit = { 
+					num_of_owned_provinces_with = {
+						has_province_modifier = rinta_infernal_resonance
+						value = 10
+					}
+				}
+				random_owned_province = {
+					spawn_alefisol_army = yes
+				}
+			}
+			if = { #Bonus for number of resonance
+				limit = { 
+					num_of_owned_provinces_with = {
+						has_province_modifier = rinta_infernal_resonance
+						value = 16
+					}
+				}
+				random_owned_province = {
+					spawn_alefisol_army = yes
+				}
+			}
+			##################### Modifiers
+			add_country_modifier = {
+				name = rinta_hell_rising
+				duration = 5475
+			}
+			add_country_modifier = {
+				name = alefisol_modifier
+				duration = -1
+			}
+			#####################
+			country_event = { #War on everyone
+				id = rinta_seeker_events.210
+				days = 2
+			}
+			update_unit_sprites_for_racial_mil = yes
+			remove_country_modifier = restructuring_military
+			remove_country_modifier = restructuring_administration
+		}
+		ai_chance = { factor = 100 }
+	}
+	after = {
+		random_country = {
+			limit = {
+				NOT = { ai = yes }
+				religion = rinta_seekers
+				has_disaster_progress = {
+					disaster = darkmagicks
+					value = 1
+				}
+			}
+			country_event = {
+				id = rinta_seeker_events.206
+			}
+		}
+	}
+}
+country_event = {
+	id = rinta_seeker_events.215
+	title = rinta_seeker_events.215.t
+	desc = rinta_seeker_events.215.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	hidden = yes
+
+	trigger = {
+		tag = S93
+		has_global_flag = darkmagicks_flag
+		is_in_war = {
+			casus_belli = cb_alefisol_war
+			duration = 365
+		}
+		OR = {
+			NOT = { war_score = -98 } # lose!
+			AND = { # also lose!
+				check_variable = {
+					which = alefisol_lost_6
+					value = 6
+				}
+				OR = {
+					capital_scope = {
+						NOT = { controlled_by = S93 }
+					}
+					NOT = { war_score = -74 }
+				}
+			}
+			war_score = 95 # win!
+		}
+	}
+	option = {
+		name = rinta_seeker_events.215.a
+		if = {
+			limit = { #Alefisol win
+				war_score = 95
+			}
+			country_event = { id = rinta_seeker_events.212 }
+		}
+		else = {
+			every_province = {
+				remove_province_modifier = rinta_infernal_resonance
+			}
+			every_known_country = {
+				limit = { has_disaster = darkmagicks }
+				country_event = { id = rinta_seeker_events.211 }
+			}
+			remove_country_modifier = alefisol_modifier
+			every_owned_province = {
+				remove_core = ROOT
+				cede_province = previous_owner
+			}
+			remove_country = yes
+		}
+		clr_global_flag = darkmagicks_flag
+		clr_global_flag = incident_rinta_dark_magic_ongoing_flag
+	}
+}
+country_event = {
+	id = rinta_seeker_events.216
+	title = rinta_seeker_events.216.t
+	desc = rinta_seeker_events.216.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = {
+			any_country = {
+				has_disaster = darkmagicks
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.216.a
+		every_province = {
+			remove_province_modifier = rinta_infernal_resonance
+		}
+		every_country = {
+			limit = {
+				is_incident_active = incident_rinta_dark_magic
+			}
+			country_event = {
+				id = rinta_seeker_events.204
+			}
+			end_incident = incident_rinta_dark_magic
+		}
+		clr_global_flag = darkmagicks_flag
+		clr_global_flag = incident_rinta_dark_magic_ongoing_flag
+	}
+}
+
+#All the random events
+#Random Events
+country_event = {
+	id = rinta_seeker_events.250
+	title = rinta_seeker_events.250.t
+	desc = rinta_seeker_events.250.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				save_event_target_as = rinta_tar1
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+				}
+				save_event_target_as = rinta_tar2
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+		}
+	}
+
+	option = {
+		goto = rinta_tar1
+		name = rinta_seeker_events.250.a
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { add_infernal_resonance = yes }
+			if = {
+				limit = { has_saved_event_target = rinta_tar2 }
+				event_target:rinta_tar2 = { add_infernal_resonance = yes }
+			}
+		}
+		add_adm_power = 60
+		add_dip_power = 60
+		add_mil_power = 60
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = free_thinker_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = conqueror_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = bold_fighter_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = greedy_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = malevolent_personality
+			}
+			modifier = {
+				factor = 20
+				ruler_has_personality = sinner_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = naive_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.250.b
+		add_prestige = 10
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 10
+				ruler_has_personality = craven_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.250.c
+		goto = rinta_tarrem1
+		if = {
+			limit = { has_saved_event_target = rinta_tarrem1 }
+			event_target:rinta_tarrem1 = { remove_infernal_resonance = yes }
+		}
+		add_adm_power = -75
+		add_dip_power = -75
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = craven_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = strict_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = careful_personality
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.251
+	title = rinta_seeker_events.251.t
+	desc = rinta_seeker_events.251.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				save_event_target_as = rinta_tar1
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+				}
+				save_event_target_as = rinta_tar2
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.251.a
+		goto = rinta_tar1
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { 
+				add_infernal_resonance = yes
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+			}
+			if = {
+				limit = { has_saved_event_target = rinta_tar2 }
+				event_target:rinta_tar2 = { 
+					add_infernal_resonance = yes
+					add_base_tax = 1
+					add_base_production = 1
+					add_base_manpower = 1
+				}
+			}
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = free_thinker_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = bold_fighter_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = greedy_personality
+			}
+			modifier = {
+				factor = 3
+				ruler_has_personality = malevolent_personality
+			}
+			modifier = {
+				factor = 20
+				ruler_has_personality = sinner_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = naive_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.251.b
+		goto = rinta_tarrem1
+		if = {
+			limit = { has_saved_event_target = rinta_tarrem1 }
+			event_target:rinta_tarrem1 = { remove_infernal_resonance = yes }
+		}
+		add_country_modifier = {
+			name = rinta_advisor_gone
+			duration = 3650
+		}
+		kill_advisor = random
+		ai_chance = {
+			factor = 6
+			modifier = {
+				factor = 10
+				ruler_has_personality = craven_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = strict_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = careful_personality
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.252
+	title = rinta_seeker_events.252.t
+	desc = rinta_seeker_events.252.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				save_event_target_as = rinta_tar1
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.252.a
+		random_list = {
+			6 = {
+				country_event = {
+					id = rinta_seeker_events.253
+				}
+			}
+			4 = {
+				country_event = {
+					id = rinta_seeker_events.254
+				}
+			}
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = free_thinker_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = bold_fighter_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = greedy_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = naive_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.252.b
+		goto = rinta_tar1
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { add_infernal_resonance = yes }
+		}
+		add_mil_power = 50
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 3
+				ruler_has_personality = malevolent_personality
+			}
+			modifier = {
+				factor = 20
+				ruler_has_personality = sinner_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.252.c
+		goto = rinta_tarrem1
+		if = {
+			limit = { has_saved_event_target = rinta_tarrem1 }
+			event_target:rinta_tarrem1 = { remove_infernal_resonance = yes }
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 10
+				ruler_has_personality = craven_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = strict_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = careful_personality
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.253
+	title = rinta_seeker_events.253.t
+	desc = rinta_seeker_events.253.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+					NOT = {province_id = event_target:rinta_tarrem1 }
+				}
+				save_event_target_as = rinta_tarrem2
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.253.a
+		goto = rinta_tarrem1
+		if = {
+			limit = { has_saved_event_target = rinta_tarrem1 }
+			event_target:rinta_tarrem1 = { remove_infernal_resonance = yes }
+			if = {
+				limit = { has_saved_event_target = rinta_tarrem2 }
+				event_target:rinta_tarrem2 = { remove_infernal_resonance = yes }
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.254
+	title = rinta_seeker_events.254.t
+	desc = rinta_seeker_events.254.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				save_event_target_as = rinta_tar1
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+				}
+				save_event_target_as = rinta_tar2
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.254.a
+		goto = rinta_tar1
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { add_infernal_resonance = yes }
+			if = {
+				limit = { has_saved_event_target = rinta_tar2 }
+				event_target:rinta_tar2 = { add_infernal_resonance = yes }
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.255
+	title = rinta_seeker_events.255.t
+	desc = rinta_seeker_events.255.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		NOT = { ai = yes }
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				save_event_target_as = rinta_tar1
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+				}
+				save_event_target_as = rinta_tar2
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+					NOT = { province_id = event_target:rinta_tar2 }
+				}
+				save_event_target_as = rinta_tar3
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+					NOT = { province_id = event_target:rinta_tar2 }
+					NOT = { province_id = event_target:rinta_tar3 }
+				}
+				save_event_target_as = rinta_tar4
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+					NOT = { province_id = event_target:rinta_tar2 }
+					NOT = { province_id = event_target:rinta_tar3 }
+					NOT = { province_id = event_target:rinta_tar4 }
+				}
+				save_event_target_as = rinta_tar5
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.255.a
+		goto = rinta_tarrem1
+		if = {
+			limit = { has_saved_event_target = rinta_tarrem1 }
+			event_target:rinta_tarrem1 = { remove_infernal_resonance = yes }
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = craven_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = strict_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = careful_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.255.b
+		goto = rinta_tar1
+		change_adm = 1
+		change_dip = 1
+		change_mil = 1
+		add_country_modifier = {
+			name = rinta_dark_magicks_ruler
+			duration = -1
+		}
+		custom_tooltip = rinta_dark_magicks_ruler_tt
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { add_infernal_resonance = yes }
+			if = {
+				limit = { has_saved_event_target = rinta_tar2 }
+				event_target:rinta_tar2 = { add_infernal_resonance = yes }
+				if = {
+					limit = { has_saved_event_target = rinta_tar3 }
+					event_target:rinta_tar3 = { add_infernal_resonance = yes }
+					if = {
+						limit = { has_saved_event_target = rinta_tar4 }
+						event_target:rinta_tar4 = { add_infernal_resonance = yes }
+						if = {
+							limit = { has_saved_event_target = rinta_tar5 }
+							event_target:rinta_tar5 = { add_infernal_resonance = yes }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.256
+	title = rinta_seeker_events.256.t
+	desc = rinta_seeker_events.256.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				save_event_target_as = rinta_tar1
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.256.a
+		goto = rinta_tar1
+		add_adm_power = 50
+		random_list = {
+			5 = {
+				trigger = {
+					has_saved_event_target = rinta_tar1
+				}
+				if = {
+					limit = { has_saved_event_target = rinta_tar1 }
+					event_target:rinta_tar1 = { add_infernal_resonance = yes }
+				}
+			}
+			5 = { 
+				trigger = {
+					has_saved_event_target = rinta_tarrem1
+				}
+				if = {
+					limit = { has_saved_event_target = rinta_tarrem1 }
+					event_target:rinta_tarrem1 = { remove_infernal_resonance = yes }
+				}
+			}
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 10
+				ruler_has_personality = greedy_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = malevolent_personality
+			}
+			modifier = {
+				factor = 20
+				ruler_has_personality = sinner_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.256.b
+		add_prestige = 30
+		add_legitimacy = 10
+		add_country_modifier = {
+			name = rinta_helping_hand_den
+			duration = 5475
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = craven_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = strict_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = careful_personality
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.257
+	title = rinta_seeker_events.257.t
+	desc = rinta_seeker_events.257.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+
+			random_neighbor_country = {
+				limit = {
+					religion = rinta_seekers
+					num_of_cities = 8
+				}
+				save_event_target_as = rinta_ruin_found
+			}
+
+			event_target:rinta_ruin_found = {
+				random_owned_province = {
+					limit = {
+						NOT = {
+							has_province_modifier = rinta_infernal_resonance
+						}
+					}
+					save_event_target_as = rinta_tar1
+				}
+				random_owned_province = {
+					limit = {
+						NOT = { has_province_modifier = rinta_infernal_resonance }
+						NOT = { province_id = event_target:rinta_tar1 }
+					}
+					save_event_target_as = rinta_tar2
+				}
+				random_owned_province = {
+					limit = {
+						NOT = { has_province_modifier = rinta_infernal_resonance }
+						NOT = { province_id = event_target:rinta_tar1 }
+						NOT = { province_id = event_target:rinta_tar2 }
+					}
+					save_event_target_as = rinta_tar3
+				}
+				random_owned_province = {
+					limit = {
+						NOT = { has_province_modifier = rinta_infernal_resonance }
+						NOT = { province_id = event_target:rinta_tar1 }
+						NOT = { province_id = event_target:rinta_tar2 }
+						NOT = { province_id = event_target:rinta_tar3 }
+					}
+					save_event_target_as = rinta_tar4
+				}
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.257.a
+		goto = rinta_tar1
+		if = {
+			limit = {
+				monthly_income = 25
+			}
+			add_treasury = 300
+		}
+		else = {
+			add_years_of_income = 1
+		}
+		event_target:rinta_ruin_found = { 
+			country_event = {
+				id = rinta_seeker_events.208
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = rinta_ruins_looted
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { add_infernal_resonance = yes }
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = free_thinker_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = conqueror_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = bold_fighter_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = greedy_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = malevolent_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = sinner_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = naive_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.257.b
+		goto = rinta_tarrem1
+		event_target:rinta_ruin_found = { 
+			add_opinion = {
+				who = ROOT
+				modifier = rinta_ruins_examined
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = rinta_tarrem1 }
+			event_target:rinta_tarrem1 = { remove_infernal_resonance = yes }
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = craven_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = strict_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = careful_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.257.c
+		goto = rinta_tar2
+		event_target:rinta_ruin_found = { 
+			country_event = {
+				id = rinta_seeker_events.207
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = rinta_ruins_desecrated
+			}
+		}
+		if = {
+			limit = {
+				monthly_income = 42
+			}
+			add_treasury = 1000
+		}
+		else = {
+			add_years_of_income = 2
+		}
+		random = {
+			chance = 10
+			add_adm_power = 300
+		}
+		random = {
+			chance = 10
+			add_dip_power = 300
+		}
+		random = {
+			chance = 10
+			add_mil_power = 300
+		}
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { add_infernal_resonance = yes }
+			if = {
+				limit = { has_saved_event_target = rinta_tar2 }
+				event_target:rinta_tar2 = { add_infernal_resonance = yes }
+				if = {
+					limit = { has_saved_event_target = rinta_tar3 }
+					event_target:rinta_tar3 = { add_infernal_resonance = yes }
+					if = {
+						limit = { has_saved_event_target = rinta_tar4 }
+						event_target:rinta_tar4 = { add_infernal_resonance = yes }
+					}
+				}
+			}
+		}
+		
+		every_known_country = {
+			limit = {
+				religion = rinta_seekers
+			}
+			add_aggressive_expansion = {
+				who = ROOT
+				value = 50
+				apply_calc = no
+			}
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 2
+				ruler_has_personality = conqueror_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = bold_fighter_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = greedy_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = malevolent_personality
+			}
+			modifier = {
+				factor = 20
+				ruler_has_personality = sinner_personality
+			}
+			modifier = {
+				factor = 0
+				ruler_has_personality = craven_personality
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.258
+	title = rinta_seeker_events.258.t
+	desc = rinta_seeker_events.258.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.258.a
+		goto = rinta_tarrem1
+		random_list = {
+			5 = {	
+				if = {
+					limit = {
+						monthly_income = 12
+					}
+					add_treasury = 300
+				}
+				else = {
+					add_years_of_income = 2
+				}
+			}
+			5 = {
+				if = {
+					limit = {
+						monthly_income = 50
+					}
+					add_treasury = -300
+				}
+				else = {
+					add_years_of_income = -0.5
+				}
+			}
+			5 = {
+				add_manpower = 30
+			}
+			5 = {
+				add_stability = -1
+			}
+			5 = {
+				create_general = {
+					tradition = 70
+				}
+			}
+
+			5 = {
+				create_explorer = {
+					tradition = 70
+				}
+			}
+			5 = {
+				increase_ruler_adm_effect = yes
+			}
+			5 = {
+				increase_ruler_dip_effect = yes
+			}
+			5 = {
+				increase_ruler_mil_effect = yes
+			}
+			5 = {
+				add_adm_power = -100
+				add_dip_power = -100
+				add_mil_power = -100
+			}
+			5 = {
+				add_adm_power = 200
+				add_dip_power = 200
+				add_mil_power = 200
+			}
+			5 = {
+				trigger = {
+					has_advisor = yes
+				}
+				kill_advisor = random
+			}
+			5 = {
+				if = {
+					limit = { ruler_has_personality = infertile_personality }
+					decrease_ruler_adm_effect = yes
+				}
+				else = {
+					force_add_ruler_personality = { personality = infertile_personality }
+				}
+			}
+			5 = {
+				if = {
+					limit = { ruler_has_personality = cruel_personality }
+					decrease_ruler_dip_effect = yes
+				}
+				else = {
+					force_add_ruler_personality = { personality = cruel_personality }
+				}
+			}
+			5 = {
+				if = {
+					limit = { ruler_has_personality = craven_personality }
+					decrease_ruler_mil_effect = yes
+				}
+				else = {
+					force_add_ruler_personality = { personality = craven_personality }
+				}
+			}
+			5 = {
+				trigger = {
+					has_heir = yes
+				}
+				kill_heir = {
+					allow_new_heir = no
+				}
+			}
+			5 = {
+				trigger = {
+					NOT = { has_heir = yes }
+				}
+				define_heir = {
+					claim = 70
+					female = yes
+					age = 20
+				}
+				set_heir_mage_effect = yes
+			}
+			5 = {
+				trigger = {
+					has_saved_event_target = rinta_tarrem1
+				}
+				if = {
+					limit = { has_saved_event_target = rinta_tarrem1 }
+					event_target:rinta_tarrem1 = {
+						add_base_tax =  -1
+						add_base_production  = -1
+						add_base_manpower = -1
+					}
+				}
+			}
+			10 = {}
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.259
+	title = rinta_seeker_events.259.t
+	desc = rinta_seeker_events.259.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.259.a
+		goto = rinta_tarrem1
+		if = {
+			limit = { has_saved_event_target = rinta_tarrem1 }
+			event_target:rinta_tarrem1 = { remove_infernal_resonance = yes }
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.260
+	title = rinta_seeker_events.260.t
+	desc = rinta_seeker_events.260.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				save_event_target_as = rinta_tar1
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+				}
+				save_event_target_as = rinta_tar2
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { has_province_modifier = rinta_infernal_resonance }
+					NOT = { province_id = event_target:rinta_tar1 }
+					NOT = { province_id = event_target:rinta_tar2 }
+				}
+				save_event_target_as = rinta_tar3
+			}
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tarrem1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.260.a
+		goto = rinta_tarrem1
+		if = {
+			limit = { NOT = { ai = yes }}
+			add_treasury = -150
+		}
+		if = {
+			limit = { has_saved_event_target = rinta_tarrem1 }
+			event_target:rinta_tarrem1 = { 
+				remove_infernal_resonance = yes
+				add_province_modifier = {
+					name = rinta_magical_purity
+					duration = 3650
+				}
+			}
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 10
+				ruler_has_personality = craven_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = strict_personality
+			}
+			modifier = {
+				factor = 2
+				ruler_has_personality = careful_personality
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.260.b
+		goto = rinta_tar1
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { add_infernal_resonance = yes }
+			if = {
+				limit = { has_saved_event_target = rinta_tar2 }
+				event_target:rinta_tar2 = { add_infernal_resonance = yes }
+				if = {
+					limit = { has_saved_event_target = rinta_tar3 }
+					event_target:rinta_tar3 = { add_infernal_resonance = yes }
+				}
+			}
+		}
+		ai_chance = {
+			factor = 2
+			modifier = {
+				factor = 10
+				ruler_has_personality = greedy_personality
+			}
+			modifier = {
+				factor = 10
+				ruler_has_personality = malevolent_personality
+			}
+			modifier = {
+				factor = 20
+				ruler_has_personality = sinner_personality
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.261
+	title = rinta_seeker_events.261.t
+	desc = rinta_seeker_events.261.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_province_modifier = rinta_infernal_resonance
+					}
+				}
+				save_event_target_as = rinta_tar1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.261.a
+		goto = rinta_tar1
+		if = {
+			limit = { has_saved_event_target = rinta_tar1 }
+			event_target:rinta_tar1 = { add_infernal_resonance = yes }
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+#####################################################################
+#Rise of the Adeen
+country_event = { #After 2 years
+	id = rinta_seeker_events.300
+	title = rinta_seeker_events.300.t
+	desc = rinta_seeker_events.300.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+	option = {
+		name = rinta_seeker_events.300.a
+		every_country = {
+			limit = {
+				is_incident_active = incident_rinta_rise_of_the_adeen 
+			}
+			country_event = {
+				id = rinta_seeker_events.306
+			}
+		}
+		REB = {
+			country_event = {
+				id = rinta_seeker_events.301
+				days = 730
+			}
+		}
+
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #After 4 years
+	id = rinta_seeker_events.301
+	title = rinta_seeker_events.301.t
+	desc = rinta_seeker_events.301.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+	option = {
+		name = rinta_seeker_events.301.a
+		every_country = {
+			limit = {
+				is_incident_active = incident_rinta_rise_of_the_adeen 
+			}
+			country_event = {
+				id = rinta_seeker_events.307
+			}
+		}
+		REB = {
+			country_event = {
+				id = rinta_seeker_events.302
+				days = 730
+			}
+		}
+
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #After 6 years
+	id = rinta_seeker_events.302
+	title = rinta_seeker_events.302.t
+	desc = rinta_seeker_events.302.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+
+	option = {
+		name = rinta_seeker_events.302.a
+		every_country = {
+			limit = {
+				is_incident_active = incident_rinta_rise_of_the_adeen 
+			}
+			country_event = {
+				id = rinta_seeker_events.308
+			}
+		}
+		REB = {
+			country_event = {
+				id = rinta_seeker_events.303
+				days = 730
+			}
+		}
+
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #After 8 years
+	id = rinta_seeker_events.303
+	title = rinta_seeker_events.303.t
+	desc = rinta_seeker_events.303.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+	option = {
+		name = rinta_seeker_events.303.a
+		every_country = {
+			limit = {
+				is_incident_active = incident_rinta_rise_of_the_adeen 
+			}
+			country_event = {
+				id = rinta_seeker_events.309
+			}
+		}
+		REB = {
+			country_event = {
+				id = rinta_seeker_events.304
+				days = 730
+			}
+		}
+
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #After 10 years
+	id = rinta_seeker_events.304
+	title = rinta_seeker_events.304.t
+	desc = rinta_seeker_events.304.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+	option = {
+		name = rinta_seeker_events.304.a
+		6040 = {
+			owner = {
+				country_event = { id = rinta_seeker_events.310 }
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Starting
+	id = rinta_seeker_events.305
+	title = rinta_seeker_events.305.t
+	desc = rinta_seeker_events.305.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.305.a
+
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Adeeni Magi
+	id = rinta_seeker_events.306
+	title = rinta_seeker_events.306.t
+	desc = rinta_seeker_events.306.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+		}
+	}
+	#Centralization
+	option = {
+		name = rinta_seeker_events.306.a
+		if = {
+			limit = {
+				NOT = {
+					estate_loyalty = {
+						estate = estate_mages
+						loyalty = 30
+					}
+				}
+			}
+			custom_tooltip = rinta_mages_loyalty_30_tt #Harsher option for lack of loyalty
+			add_adm_power = -50
+			add_dip_power = -50
+			add_mil_power = -50
+		}
+		add_estate_loyalty = {
+			estate = estate_mages
+			loyalty = -10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_mages
+			influence = -10
+			duration = 3650
+		}
+		capital_scope = {
+			spawn_rebels = {
+				size = 1
+				type = mage_rebels
+			}
+		}
+		increase_rinta_seekers_isolation_level = yes
+		ai_chance = { factor = 1 }
+	}
+	#To Mages
+	option = {
+		name = rinta_seeker_events.306.b
+		trigger = {
+			estate_loyalty = {
+				estate = estate_adeen
+				loyalty = 30
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_adeen
+			influence = -10
+			duration = 3650
+		}
+		set_estate_privilege = estate_mages_adeeni_magi
+		hidden_effect = {
+			set_country_flag = rinta_seeker_mages_control_adeen
+		}
+		ai_chance = { factor = 1 }
+	}
+	#Effects on low loyalty
+	option = {
+		name = rinta_seeker_events.306.b
+		goto = adeeni_target_1
+		trigger = {
+			NOT = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+		}
+		custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_adeen
+			influence = -10
+			duration = 3650
+		}
+		set_estate_privilege = estate_mages_adeeni_magi
+		hidden_effect = {
+			set_country_flag = rinta_seeker_mages_control_adeen
+		}
+		if = {
+			limit = { has_saved_event_target = adeeni_target_1 }
+			event_target:adeeni_target_1 = {
+				spawn_rebels = {
+					type = adeen_coupists
+					size = 1
+				}
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+	#Freedom
+	option = { 
+		name = rinta_seeker_events.306.c
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = 20
+		}
+		decrease_rinta_seekers_isolation_level = yes
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Adeeni Faith
+	id = rinta_seeker_events.307
+	title = rinta_seeker_events.307.t
+	desc = rinta_seeker_events.307.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.307.a
+		add_country_modifier = {
+			name = rinta_religious_conflict_adeen
+			duration = 3650
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = 20
+		}
+		ai_chance = { factor = 1 }
+	}
+
+	option = {
+		name = rinta_seeker_events.307.b
+		trigger = {
+			estate_loyalty = {
+				estate = estate_adeen
+				loyalty = 30
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -20
+		}
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_church
+			influence = 10
+			duration = 3650
+		}
+		increase_rinta_seekers_isolation_level = yes
+		ai_chance = { factor = 1 }
+	}
+
+	#Effects on low loyalty
+	option = {
+		name = rinta_seeker_events.307.b
+		goto = adeeni_target_1
+		trigger = {
+			NOT = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+		}
+		custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -20
+		}
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_church
+			influence = 10
+			duration = 3650
+		}
+		increase_rinta_seekers_isolation_level = yes
+		if = {
+			limit = { has_saved_event_target = adeeni_target_1 }
+			event_target:adeeni_target_1 = {
+				spawn_rebels = {
+					type = adeen_coupists
+					size = 1
+				}
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+	#Freedom
+	option = { 
+		name = rinta_seeker_events.307.c
+		if = {
+			limit = {
+				NOT = {
+					estate_loyalty = {
+						estate = estate_church
+						loyalty = 30
+					}
+				}
+			}
+			custom_tooltip = rinta_church_loyalty_30_tt #Harsher option for lack of loyalty general
+			add_stability = -1
+		}
+		add_estate_influence_modifier = {
+			estate = estate_church
+			influence = -10
+			duration = 3650
+		}
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -15
+		}
+		add_country_modifier = {
+			name = rinta_religious_freedom
+			duration = 3650
+		}
+		decrease_rinta_seekers_isolation_level = yes
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Adeeni Wealth
+	id = rinta_seeker_events.308
+	title = rinta_seeker_events.308.t
+	desc = rinta_seeker_events.308.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			pick_best_provinces = {
+				scope = every_owned_province
+				scale = higher_development_than
+				global_trigger = "
+					NOT = { is_capital_of = ROOT }
+				"
+				event_target_name = rinta_adeen_rebel_location
+				2 = yes # I still cant believe its just "2"
+			}
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.308.a
+		goto = rinta_adeen_rebel_location_1
+		if = {
+			limit = {
+				NOT = {
+					estate_loyalty = {
+						estate = estate_adeen
+						loyalty = 30
+					}
+				}
+			}
+			custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+			event_target:adeeni_target_1 = {
+				spawn_rebels = {
+					type = adeen_coupists
+					size = 1
+				}
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 20
+		}
+		if = {
+			limit = { monthly_income = 41 }
+			add_treasury = 500
+		}
+		else = {
+			add_years_of_income = 1
+		}
+
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -20
+		}
+		if = {
+			limit = { has_saved_event_target = rinta_adeen_rebel_location_1 }
+			event_target:rinta_adeen_rebel_location_1 = {
+				spawn_rebels = {
+					type = adeen_rebels
+					size = 2
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = rinta_adeen_rebel_location_2 }
+				event_target:rinta_adeen_rebel_location_2 = {
+					spawn_rebels = {
+						type = adeen_rebels
+						size = 2
+					}
+				}
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+	#Restrict Adeen from hiring Adeen
+	option = {
+		name = rinta_seeker_events.308.b
+		trigger = {
+			estate_loyalty = {
+				estate = estate_adeen
+				loyalty = 30
+			}
+		}
+		if = {
+			limit = {  
+				NOT = {
+					estate_loyalty = {
+						estate = estate_burghers
+						loyalty = 30
+					}
+				}
+			}
+			custom_tooltip = rinta_burghers_loyalty_30_tt #Harsher option for lack of loyalty 
+			add_treasury = -40
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_adeen
+			influence = 10
+			duration = 3650
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_burghers
+			influence = -10
+			duration = 3650
+		}
+		ai_chance = { factor = 1 }
+	}
+	#Effects on low loyalty
+	option = {
+		name = rinta_seeker_events.308.b
+		goto = adeeni_target_1
+		trigger = {
+			NOT = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+		}
+		if = {
+			limit = {  
+				NOT = {
+					estate_loyalty = {
+						estate = estate_burghers
+						loyalty = 30
+					}
+				}
+			}
+			custom_tooltip = rinta_burghers_loyalty_30_tt #Harsher option for lack of loyalty 
+			add_treasury = -40
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_adeen
+			influence = 10
+			duration = 3650
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_burghers
+			influence = -10
+			duration = 3650
+		}
+		custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+		event_target:adeeni_target_1 = {
+			spawn_rebels = {
+				type = adeen_coupists
+				size = 1
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.308.c
+		if = {
+			limit = {
+				NOT = {
+					estate_loyalty = {
+						estate = estate_burghers
+						loyalty = 30
+					}
+				}
+			}
+			custom_tooltip = rinta_burghers_loyalty_30_tt #Harsher option for lack of loyalty 
+			add_years_of_income = -1
+		}
+		else = {
+			add_years_of_income = -0.5
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = 20
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -20
+		}
+		add_estate_influence_modifier = {
+			estate = estate_burghers
+			influence = -10
+			duration = 3650
+		}
+		add_country_modifier = {
+			name = rinta_adeen_unrestricted
+			duration = 3650
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Adeeni Land
+	id = rinta_seeker_events.309
+	title = rinta_seeker_events.309.t
+	desc = rinta_seeker_events.309.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+			random_owned_province = {
+				limit = {
+					NOT = {
+						province_id = event_target:adeeni_target_1
+					}
+				}
+				save_event_target_as = adeeni_target_2
+			}
+			random_owned_province = {
+				limit = {
+					NOT = {
+						province_id = event_target:adeeni_target_1
+						province_id = event_target:adeeni_target_2
+					}
+				}
+				save_event_target_as = adeeni_target_3
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.309.a
+		add_years_of_income = -1.5
+		add_legitimacy = -20
+
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.309.b
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -20
+		}
+		add_estate_influence_modifier = {
+			estate = estate_nobles
+			influence = -10
+			duration = 3650
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = 5
+		}
+		add_estate_influence_modifier = {
+			estate = estate_adeen
+			influence = 10
+			duration = 3650
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.309.c
+		goto = adeeni_target_1
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -20
+		}
+		add_estate_influence_modifier = {
+			estate = estate_nobles
+			influence = 10
+			duration = 3650
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = 15
+		}
+		add_estate_influence_modifier = {
+			estate = estate_adeen
+			influence = 20
+			duration = 3650
+		}
+		if = {
+			limit = { has_saved_event_target = adeeni_target_1 }
+			event_target:adeeni_target_1 = {
+				spawn_rebels = {
+					type = pretender_rebels
+					size = 2
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = adeeni_target_2 }
+				event_target:adeeni_target_2 = {
+					spawn_rebels = {
+						type = pretender_rebels
+						size = 2
+					}
+				}
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.309.d
+		goto = adeeni_target_3
+		if = {
+			limit = { 
+				has_saved_event_target = adeeni_target_2
+				NOT = {
+					estate_loyalty = {
+						estate = estate_adeen
+						loyalty = 30
+					}
+				}
+			}
+			custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+			event_target:adeeni_target_2 = {
+				spawn_rebels = {
+					type = adeen_coupists
+					size = 2
+				}
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = adeeni_target_3 }
+			event_target:adeeni_target_3 = {
+				spawn_rebels = {
+					type = adeen_coupists
+					size = 2
+				}
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 20
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -15
+		}
+		add_estate_influence_modifier = {
+			estate = estate_adeen
+			influence = -10
+			duration = 3650
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #Start of ending
+	id = rinta_seeker_events.310
+	title = rinta_seeker_events.310.t
+	desc = rinta_seeker_events.310.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	major = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = rinta_adeen_overlord
+			6040 = {
+				add_core = S78
+				save_event_target_as = rinta_adeen_capital
+			}
+			create_vassal_with_religion_and_culture = { tag = S78 religion = rinta_seekers culture = event_target:rinta_adeen_capital  }
+			create_march = S78
+			S78 = {
+				change_government = republic
+				add_army_tradition = 64
+				add_army_professionalism = 0.23
+			}
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { 
+						province_has_current_tech_fort_trigger = yes
+						province_id = event_target:adeeni_target_1
+					}
+				}
+				save_event_target_as = adeeni_target_2
+			}
+			random_owned_province = {
+				limit = {
+					NOT = { 
+						province_has_current_tech_fort_trigger = yes 
+						province_id = event_target:adeeni_target_1
+						province_id = event_target:adeeni_target_2
+					}
+				}
+				save_event_target_as = adeeni_target_3
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.310.a
+		S78 = {
+			declare_war_with_cb = {
+				casus_belli = cb_independence_war
+				who = ROOT
+			}
+			hidden_effect = {
+				capital_scope = {
+					if = {
+						limit = { NOT = { province_has_current_tech_fort_trigger = yes } }
+						add_latest_building = { builder = ROOT fort = yes }
+					}
+					if = {
+						limit = {
+							NOT = {
+								OR = {
+									has_building = coastal_defence
+									has_building = naval_battery
+								}
+							}
+						}
+						add_latest_building = { builder = ROOT coastal = yes }
+					}
+				}
+				create_unit_forcelimit_percentage = {
+					type = infantry
+					special_unit_category = marines
+					force_limit_percentage = 1
+				}
+				create_unit_forcelimit_percentage = {
+					type = galley
+					force_limit_percentage = 1
+				}
+				add_years_of_income = 10
+				add_yearly_manpower = 10
+				add_yearly_sailors = 10
+				set_country_flag = rinta_adeen_rise_war
+			}
+			country_event = {
+				id = rinta_seeker_events.315
+				days = 2
+			}
+		}
+		custom_tooltip = rinta_seeker_events.310_tt
+		hidden_effect = {
+			set_country_flag = disables_estate_adeen_flag
+		}
+		if = {
+			limit = { has_saved_event_target = adeeni_target_1 }
+			event_target:adeeni_target_1 = {
+				spawn_rebels = {
+					type = adeen_rebels
+					female = yes
+					size = 2
+					friend = S78
+					separatists_target = S78
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = adeeni_target_2 }
+				event_target:adeeni_target_2 = {
+					spawn_rebels = {
+						type = adeen_rebels
+						size = 2
+						friend = S78
+						separatists_target = S78
+						win = yes
+					}
+				}
+				if = {
+					limit = { has_saved_event_target = adeeni_target_3 }
+					event_target:adeeni_target_3 = {
+						spawn_rebels = {
+							type = adeen_rebels
+							size = 2
+							friend = S78
+							separatists_target = S78
+							win = yes
+						}
+					}
+				}
+			}
+		}
+		every_known_country = {
+			limit = {
+				is_incident_active = incident_rinta_rise_of_the_adeen
+			}
+			country_event = {
+				id = rinta_seeker_events.311
+				days = 30
+			}
+		}
+		ai_chance = { factor = 100 }
+	}
+
+	option = {
+		name = rinta_seeker_events.310.b
+		hidden_effect = {
+			clr_global_flag = incident_rinta_rise_of_the_adeen_ongoing_flag
+		}
+		end_incident = incident_rinta_rise_of_the_adeen
+		every_country = {
+			limit = {
+				is_incident_active = incident_rinta_rise_of_the_adeen
+			}
+			set_estate_privilege = estate_adeen_relations_with_adeen
+			end_incident = incident_rinta_rise_of_the_adeen
+		}
+		ai_chance = { factor = 0 }
+	}
+	option = {
+		name = rinta_seeker_events.310.c
+		hidden_effect = {
+			S78 = {
+				country_event = {
+					id = rinta_seeker_events.315
+					days = 2
+				}
+				declare_war_with_cb = {
+					casus_belli = cb_independence_war
+					who = ROOT
+				}
+				hidden_effect = {
+					capital_scope = {
+						if = {
+							limit = { NOT = { province_has_current_tech_fort_trigger = yes } }
+							add_latest_building = { builder = ROOT fort = yes }
+						}
+						if = {
+							limit = {
+								NOT = {
+									OR = {
+										has_building = coastal_defence
+										has_building = naval_battery
+									}
+								}
+							}
+							add_latest_building = { builder = ROOT coastal = yes }
+						}
+					}
+					create_unit_forcelimit_percentage = {
+						type = infantry
+						special_unit_category = marines
+						force_limit_percentage = 1
+					}
+					create_unit_forcelimit_percentage = {
+						type = galley
+						force_limit_percentage = 1
+					}
+					add_years_of_income = 10
+					add_yearly_manpower = 10
+					add_yearly_sailors = 10
+					set_country_flag = rinta_adeen_rise_war
+				}
+			}
+			custom_tooltip = rinta_seeker_events.310_tt
+			hidden_effect = {
+				set_country_flag = disables_estate_adeen_flag
+			}
+			if = {
+				limit = { has_saved_event_target = adeeni_target_1 }
+				event_target:adeeni_target_1 = {
+					spawn_rebels = {
+						type = adeen_rebels
+						female = yes
+						size = 2
+						friend = S78
+						separatists_target = S78
+					}
+				}
+				if = {
+					limit = { has_saved_event_target = adeeni_target_2 }
+					event_target:adeeni_target_2 = {
+						spawn_rebels = {
+							type = adeen_rebels
+							size = 2
+							friend = S78
+							separatists_target = S78
+							win = yes
+						}
+					}
+					if = {
+						limit = { has_saved_event_target = adeeni_target_3 }
+						event_target:adeeni_target_3 = {
+							spawn_rebels = {
+								type = adeen_rebels
+								size = 2
+								friend = S78
+								separatists_target = S78
+								win = yes
+							}
+						}
+					}
+				}
+			}
+			every_known_country = {
+				limit = {
+					is_incident_active = incident_rinta_rise_of_the_adeen
+				}
+				country_event = {
+					id = rinta_seeker_events.311
+					days = 30
+				}
+			}
+		}
+		
+		switch_tag = S78
+	}
+}
+country_event = { #for other countries
+	id = rinta_seeker_events.311
+	title = rinta_seeker_events.311.t
+	desc = rinta_seeker_events.311.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = {
+			random_known_country = {
+				limit = {
+					has_country_flag = rinta_adeen_overlord
+				}
+				save_event_target_as = rinta_adeen_overlord_target
+			}
+		}
+	}
+
+
+	option = {
+		name = rinta_seeker_events.311.a
+		join_all_offensive_wars_of = S78
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = 10
+		}
+		hidden_effect = {
+			set_country_flag = rinta_adeen_side_of_war
+		}
+		disband_rebels = adeen_coupists
+		disband_rebels = adeen_rebels
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 4
+				is_rival = event_target:rinta_adeen_overlord_target
+			}
+			modifier = {
+				factor = 2
+				is_enemy = event_target:rinta_adeen_overlord_target
+			}
+			modifier = {
+				factor = 2
+				NOT = {
+					estate_loyalty = {
+						estate = estate_adeen
+						loyalty = 40
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.311.b
+
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 10
+				war_exhaustion = 5
+			}
+			modifier = {
+				factor = 2
+				is_in_large_debt = yes
+			}
+			modifier = {
+				factor = 2
+				manpower_percentage = 0.2
+			}
+			modifier = {
+				factor = 2
+				army_size_percentage = 0.6
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.311.c
+		join_all_defensive_wars_of = event_target:rinta_adeen_overlord_target
+		hidden_effect = {
+			set_country_flag = rinta_overlord_side_of_war
+		}
+		ai_chance = { 
+			factor = 1
+			modifier = {
+				factor = 5
+				any_ally = {
+					has_country_flag = rinta_adeen_overlord
+				}
+			}
+		}
+	}
+}
+country_event = { #The end Adeen victory
+	id = rinta_seeker_events.312
+	title = rinta_seeker_events.312.t
+	desc = rinta_seeker_events.312.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = rinta_seeker_events.312.a
+		end_incident = incident_rinta_rise_of_the_adeen
+		every_country = {
+			limit = {
+				is_incident_active = incident_rinta_rise_of_the_adeen
+			}
+			hidden_effect = {
+				if = {
+					limit = { has_country_flag = rinta_adeen_side_of_war }
+					set_estate_privilege = estate_adeen_relations_with_adeen
+					set_country_flag = rinta_adeen_hardliners_unlocked
+					clr_country_flag = rinta_adeen_side_of_war
+				}
+				end_incident = incident_rinta_rise_of_the_adeen
+				clr_country_flag = rinta_overlord_side_of_war
+			}
+		}
+		hidden_effect = {
+			clr_global_flag = incident_rinta_rise_of_the_adeen_ongoing_flag
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #The end Overlord victory
+	id = rinta_seeker_events.313
+	title = rinta_seeker_events.313.t
+	desc = rinta_seeker_events.313.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	major = yes
+
+	immediate = {
+		clr_country_flag = disables_estate_adeen_flag
+	}
+
+	option = {
+		name = rinta_seeker_events.313.a
+		add_country_modifier = {
+			name = rinta_victory_over_the_adeen
+			duration = -1
+		}
+		add_country_modifier = {
+			name = rinta_victory_over_the_adeen_disaster_timer
+			duration = 18250
+		}
+		end_incident = incident_rinta_rise_of_the_adeen
+		hidden_effect = {
+			clr_global_flag = incident_rinta_rise_of_the_adeen_ongoing_flag
+			every_country = {
+				limit = {
+					has_country_flag = rinta_overlord_side_of_war
+				}
+				add_country_modifier = {
+					name = rinta_victory_over_the_adeen
+					duration = -1
+				}
+			}
+			every_country = {
+				limit = {
+					is_incident_active = incident_rinta_rise_of_the_adeen
+				}
+				end_incident = incident_rinta_rise_of_the_adeen
+				clr_country_flag = rinta_adeen_side_of_war
+				clr_country_flag = rinta_overlord_side_of_war
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+ #FREE SPACE FOR FUTURE event .314
+
+country_event = { #The Grand Halqa
+	id = rinta_seeker_events.315
+	title = rinta_seeker_events.315.t
+	desc = rinta_seeker_events.315.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					6041 = {
+						NOT = {
+							province_has_current_tech_fort_trigger = yes
+						}
+					}
+				}
+				6041 = { add_or_upgrade_fort_building = yes }
+			}
+			6041 = {
+				change_controller = ROOT
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.315.a
+		add_country_modifier = {
+			name = rinta_adeen_at_war_buff
+			duration = 3650
+		}
+		if = {
+			limit = { ai = no }
+			add_treasury = 200
+		}
+		else = {
+			add_treasury = 500
+		}
+		custom_tooltip = rinta_adeen_spawn_army
+		hidden_effect = {
+			capital_scope = {
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				infantry = S78
+				artillery = S78
+				artillery = S78
+				artillery = S78
+				artillery = S78
+				artillery = S78
+				artillery = S78
+				artillery = S78
+				artillery = S78
+			}
+			if = {
+				limit = { 
+					any_owned_province = {
+						has_port = yes
+					}
+				}
+				random_owned_province = {
+					limit = { has_port = yes }
+					heavy_ship = S78
+					heavy_ship = S78
+					heavy_ship = S78
+
+					galley = S78
+					galley = S78
+					galley = S78
+					galley = S78
+					galley = S78
+
+					galley = S78
+					galley = S78
+					galley = S78
+					galley = S78
+					galley = S78
+
+					galley = S78
+					galley = S78
+					galley = S78
+					galley = S78
+					galley = S78
+				}
+			}
+		}
+		define_general = {
+			shock = 2
+			fire = 5
+			manuever = 3
+			siege = 3
+			name = "Blindblind"
+		}
+		define_admiral = {
+			shock = 3
+			fire = 1
+			manuever = 3
+			siege = 1
+			name = "Blindbling II"
+		}
+		
+		ai_chance = { factor = 1 }
+	}
+}
+#Random events
+country_event = { #Menager
+	id = rinta_seeker_events.350
+	title = rinta_seeker_events.350.t
+	desc = rinta_seeker_events.350.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+	trigger = {
+		is_incident_active = incident_rinta_rise_of_the_adeen
+		NOT = { has_country_flag = rinta_adeen_side_of_war }
+	}
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_global_flag = rinta_seeker_adeen_activated } }
+				set_global_flag = rinta_seeker_adeen_activated
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.350.a
+		random_list = {
+			1 = { country_event = { id = rinta_seeker_events.351 } }
+			1 = { country_event = { id = rinta_seeker_events.352 } }
+			1 = { country_event = { id = rinta_seeker_events.353 } }
+			1 = { country_event = { id = rinta_seeker_events.354 } }
+			1 = { country_event = { id = rinta_seeker_events.355 } }
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #Factional Skirmish
+	id = rinta_seeker_events.351
+	title = rinta_seeker_events.351.t
+	desc = rinta_seeker_events.351.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.351.a
+		if = {
+			limit = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+			add_manpower = -1
+		}
+		else = {
+			custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+			add_manpower = -4
+		}
+		
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.351.b
+		goto = adeeni_target_1
+		trigger = {
+			estate_loyalty = {
+				estate = estate_adeen
+				loyalty = 30
+			}
+		}
+		add_sailors = -500
+		event_target:adeeni_target_1 = {
+			add_devastation = 15
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.351.b
+		trigger = {
+			NOT = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+		}
+		custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+		add_sailors = -1000
+		capital_scope = {
+			add_devastation = 15
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #Officer Assassinated
+	id = rinta_seeker_events.352
+	title = rinta_seeker_events.352.t
+	desc = rinta_seeker_events.352.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.352.a
+		trigger = {
+			estate_loyalty = {
+				estate = estate_adeen
+				loyalty = 30
+			}
+		}
+		custom_tooltip = rinta_seeker_events.351_tt
+		hidden_effect = {
+			kill_leader = {
+				type = random
+			}
+		}
+
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -10
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.352.a
+		goto = adeeni_target_1
+		trigger = {
+			NOT = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+		}
+		custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+		custom_tooltip = rinta_seeker_events.351_tt
+		hidden_effect = {
+			kill_leader = {
+				type = random
+			}
+		}
+
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -10
+		}
+		event_target:adeeni_target_1 = {
+			spawn_rebels = {
+				type = adeen_coupists
+				size = 1
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.352.b
+		custom_tooltip = rinta_seeker_events.351_tt
+		hidden_effect = {
+			kill_leader = {
+				type = random
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -10
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #Refusal to Train
+	id = rinta_seeker_events.353
+	title = rinta_seeker_events.353.t
+	desc = rinta_seeker_events.353.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.353.a
+		trigger = {
+			estate_loyalty = {
+				estate = estate_adeen
+				loyalty = 30
+			}
+		}
+		add_army_professionalism = 0.01
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -10
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.353.a
+		goto = adeeni_target_1
+		trigger = {
+			NOT = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+		}
+		custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+		add_army_professionalism = 0.01
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -10
+		}
+		event_target:adeeni_target_1 = {
+			spawn_rebels = {
+				type = adeen_coupists
+				size = 1
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.353.b
+		if = {
+			limit = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+			add_army_professionalism = -0.05
+		}
+		else = {
+			custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+			add_army_professionalism = -0.075
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #Local Secession
+	id = rinta_seeker_events.354
+	title = rinta_seeker_events.354.t
+	desc = rinta_seeker_events.354.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.354.a
+		goto = adeeni_target_1
+
+		event_target:adeeni_target_1 = {
+			add_devastation = 10
+			if = {
+				limit = {
+					NOT = {
+						estate_loyalty = {
+							estate = estate_adeen
+							loyalty = 30
+						}
+					}
+				}
+				custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+				spawn_rebels = {
+					type = adeen_coupists
+					size = 1
+				}
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = -5
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.354.b
+		goto = adeeni_target_1
+		event_target:adeeni_target_1 = {
+			add_local_autonomy = 20
+		}
+		if = {
+			limit = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+			add_manpower = -1
+		}
+		else = {
+			custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+			add_manpower = -2
+		}
+		add_estate_loyalty = {
+			estate = estate_adeen
+			loyalty = 5
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #Hardliners Take Up Arms
+	id = rinta_seeker_events.355
+	title = rinta_seeker_events.355.t
+	desc = rinta_seeker_events.355.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = adeeni_target_1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.355.a
+		goto = adeeni_target_1
+		if = {
+			limit = {
+				estate_loyalty = {
+					estate = estate_adeen
+					loyalty = 30
+				}
+			}
+			event_target:adeeni_target_1 = {
+				spawn_rebels = {
+					type = adeen_coupists
+					size = 1
+				}
+			}
+		}
+		else = {
+			custom_tooltip = rinta_adeen_loyalty_30_tt #Harsher option for lack of loyalty
+			event_target:adeeni_target_1 = {
+				spawn_rebels = {
+					type = adeen_coupists
+					size = 3
+				}
+			}
+		}
+	}
+}
+#####################################################################

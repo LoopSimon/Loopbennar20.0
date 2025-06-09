@@ -169,11 +169,11 @@ province_event = {	#Handler event, determines which spirit event the country get
 				province_event = { id = spirits.126 } #Kirin bad
 			}
 			10 = {
-				trigger = { owner = { any_owned_province = { OR = { superregion = yanshen_superregion region = odheongu_region  } } } }
+				trigger = { owner = { any_owned_province = { OR = { superregion = yanshen_superregion region = gowon_region  } } } }
 				province_event = { id = spirits.127 } #Wului good
 			}
 			10 = {
-				trigger = { owner = { any_owned_province = { OR = { superregion = yanshen_superregion region = odheongu_region } } } }
+				trigger = { owner = { any_owned_province = { OR = { superregion = yanshen_superregion region = gowon_region } } } }
 				province_event = { id = spirits.128 } #Wului bad
 			}
 			10 = {
@@ -336,11 +336,11 @@ province_event = {	#Handler event, determines which spirit event the country get
 				owner = { country_event = { id = spirits.171 } }	#ngoho 2
 			}
 			10 = {
-				trigger = { region = odheongu_region }
+				trigger = { region = gowon_region }
 				province_event = { id = spirits.172 }	#pyolsong
 			}
 			10 = {
-				trigger = { region = odheongu_region }
+				trigger = { region = gowon_region }
 				province_event = { id = spirits.173 }	#pyolsong 2
 			}
 			10 = {
@@ -352,11 +352,11 @@ province_event = {	#Handler event, determines which spirit event the country get
 				province_event = { id = spirits.175 }	#vanyara 2
 			}
 			10 = {
-				trigger = { OR = { superregion = yanshen_superregion region = odheongu_region region = xianjie_region } }
+				trigger = { OR = { superregion = yanshen_superregion region = gowon_region region = xianjie_region } }
 				province_event = { id = spirits.176 }	#protector of children
 			}
 			10 = {
-				trigger = { OR = { superregion = yanshen_superregion region = odheongu_region region = xianjie_region } }
+				trigger = { OR = { superregion = yanshen_superregion region = gowon_region region = xianjie_region } }
 				province_event = { id = spirits.177 }	#protector of children 2
 			}
 			10 = {
@@ -5884,7 +5884,7 @@ country_event = {
 		ai_chance = {
 			factor = 1
 		}
-		custom_tooltip = "Our heir will remain, enlightened by the experience."
+		custom_tooltip = spirits.234.a_tt
 	}
 
 	option = {	#should I stay or should I go
@@ -11124,71 +11124,6 @@ country_event = { #Roll to pick an event description
 	}
 }
 
-country_event = { #Quest Preparations - Devouring Version
-	id = spirits.520
-	title = spirits.520.t
-	picture = EXPLORERS_eventPicture
-	desc = {
-		trigger = {
-			event_target:temple_quest_target = { NOT = { has_province_modifier = temple_heart_trail } }
-		}
-		desc = spirits.520.da
-	}
-	desc = {
-		trigger = {
-			event_target:temple_quest_target = { has_province_modifier = temple_heart_trail }
-		}
-		desc = spirits.520.db
-	}
-	goto = temple_quest_target
-	
-	is_triggered_only = yes
-	
-	trigger = { 
-		always = yes
-	}
-	
-	immediate = {
-		hidden_effect = {
-			set_country_flag = temple_quest_start_count
-			set_country_flag = temple_quest_ongoing
-			set_variable = { which = TempleQuestFloor value = 0 }
-			set_variable = { which = TempleQuestPartySize value = 4 }
-			set_variable = { which = WoundedPartyMembers value = 0 }
-			set_variable = { which = RestsRemaining value = 2 }
-			set_variable = { which = RaiseDeadRemaining value = 0 }
-		}
-	}
-	
-	option = { #Evoker - formidable bonus to combat
-		name = spirits.520.a
-		custom_tooltip = temple_quest_evoker_tooltip
-		hidden_effect = { 
-			temple_quest_roll_next_encounter = yes
-			set_country_flag = party_leader_is_evoker
-		}
-	}
-	
-	option = { #Diviner - formidable bonus vs traps
-		name = spirits.520.b
-		custom_tooltip = temple_quest_diviner_tooltip
-		hidden_effect = { 
-			temple_quest_roll_next_encounter = yes
-			set_country_flag = party_leader_is_diviner
-		}
-	}
-	
-	option = { #Necromancer - 3 uses of Raise Dead
-		name = spirits.520.c
-		custom_tooltip = temple_quest_necromancer_tooltip
-		hidden_effect = { 
-			temple_quest_roll_next_encounter = yes
-			set_country_flag = party_leader_is_necromancer
-			change_variable = { which = RaiseDeadRemaining value = 3 }
-		}
-	}
-}
-
 country_event = { #Update event - Discovered Heart Chamber, Devouring version
 	id = spirits.601
 	title = spirits.601.t
@@ -11200,8 +11135,73 @@ country_event = { #Update event - Discovered Heart Chamber, Devouring version
 	
 	option = { #Great
 		name = spirits.601.a
+		ai_chance = { factor = 1 }
 		custom_tooltip = temple_quest_discovered_heart_chamber_devouring_tooltip
 		discover_heart_chamber = yes
+
+		if = {
+			limit = { has_estate_privilege = estate_mages_temple_desecrators }
+			remove_estate_privilege = estate_mages_temple_desecrators
+		}
+		else = { remove_estate_privilege = estate_khelorvalshi_temple_desecrators }
+	}
+	
+	option = { #Great, reapply privilege
+		name = spirits.601.b
+		ai_chance = { factor = 1 }
+		trigger = {
+			OR = {
+				has_estate_privilege = estate_mages_temple_desecrators
+				has_estate_privilege = estate_khelorvalshi_temple_desecrators
+			}
+			any_owned_province = {
+				province_group = temple_province_group
+				OR = {
+					has_province_modifier = temple_complex 
+					has_province_modifier = damaged_temple_complex 
+					has_province_modifier = derelict_temple_complex 
+				}
+				hidden_trigger = {
+					NOT = {
+						has_province_modifier = temple_heart_discovered
+						province_id = event_target:temple_quest_target
+					}
+				}
+				is_core = ROOT
+			}
+		}
+		highlight = yes
+		custom_tooltip = temple_quest_discovered_heart_chamber_devouring_tooltip
+		discover_heart_chamber = yes
+
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						treasury = 100
+						adm_power = 50
+						dip_power = 50
+						mil_power = 50
+					}
+				}
+			}
+			custom_tooltip = temple_quest_not_enough_resources_tt
+			if = {
+				limit = { has_estate_privilege = estate_mages_temple_desecrators }
+				remove_estate_privilege = estate_mages_temple_desecrators
+			}
+			else = { remove_estate_privilege = estate_khelorvalshi_temple_desecrators }
+		}
+		else_if = {
+			limit = { has_estate_privilege = estate_mages_temple_desecrators }
+			hidden_effect = { remove_estate_privilege =  estate_mages_temple_desecrators }
+			set_estate_privilege =  estate_mages_temple_desecrators
+		}
+		else_if = {
+			limit = { has_estate_privilege = estate_khelorvalshi_temple_desecrators }
+			hidden_effect = { remove_estate_privilege = estate_khelorvalshi_temple_desecrators }
+			set_estate_privilege = estate_khelorvalshi_temple_desecrators
+		}
 	}
 }
 
@@ -12084,7 +12084,7 @@ country_event = {
 	option = {
 		name = spirits.701.a
 		ai_chance = { factor = 100 }
-		custom_tooltip = "I'm certain this is no cause for concern."
+		custom_tooltip = spirits.701.a_tt
 	}
 	option = {
         name = spirits.701.b
@@ -12175,7 +12175,7 @@ country_event = {
 			if = {
 				limit = {
 					OR = {
-						religion = bangujonsi
+						religion = neokttareum
 						religion = mystic_accord
 					}
 				}
@@ -16249,240 +16249,6 @@ country_event = {
 		ai_chance = {
 			factor = 1
 		}
-	}
-}
-
-#Hokuma
-country_event = {
-	id = spirits.830
-	title = spirits.830.t
-	desc = spirits.830.d
-	picture = GREAT_SPIRIT_HOKUMA_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.830.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = hokuma_interact_flag
-	}
-}
-
-#Yanhe
-country_event = {
-	id = spirits.831
-	title = spirits.831.t
-	desc = spirits.831.d
-	picture = GREAT_SPIRIT_YANHE_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.831.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = yanhe_interact_flag
-	}
-}
-
-#Kharunyana
-country_event = {
-	id = spirits.832
-	title = spirits.832.t
-	desc = spirits.832.d
-	picture = GREAT_SPIRIT_KHARUNYANA_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.832.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = kharunyana_interact_flag
-	}
-}
-
-#Phokhao
-country_event = {
-	id = spirits.833
-	title = spirits.833.t
-	desc = spirits.833.d
-	picture = GREAT_SPIRIT_PHOKHAO_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.833.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = phokhao_interact_flag
-	}
-}
-
-#Hengdu Bowu
-country_event = {
-	id = spirits.834
-	title = spirits.834.t
-	desc = spirits.834.d
-	picture = GREAT_SPIRIT_HENGDU_BOWU_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {	#wassh wassh froge
-		name = spirits.834.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = hengdu_bowu_interact_flag
-	}
-}
-
-#Cinulau
-country_event = {
-	id = spirits.835
-	title = spirits.835.t
-	desc = spirits.835.d
-	picture = GREAT_SPIRIT_CINULAU_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.835.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = cinulau_interact_flag
-	}
-}
-
-#Lupulan
-country_event = {
-	id = spirits.836
-	title = spirits.836.t
-	desc = spirits.836.d
-	picture = GREAT_SPIRIT_LUPULAN_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.836.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = lupulan_interact_flag
-	}
-}
-
-#Dhenbasana
-country_event = {
-	id = spirits.837
-	title = spirits.837.t
-	desc = spirits.837.d
-	picture = GREAT_SPIRIT_DHENBASANA_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.837.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = dhenbasana_interact_flag
-	}
-}
-
-#Marutha
-country_event = {
-	id = spirits.838
-	title = spirits.838.t
-	desc = spirits.838.d
-	picture = GREAT_SPIRIT_MARUTHA_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.838.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = marutha_interact_flag
-	}
-}
-
-#Gehet Ketine
-country_event = {
-	id = spirits.839
-	title = spirits.839.t
-	desc = spirits.839.d
-	picture = GREAT_SPIRIT_GEHET_KETINE_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.839.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = gehet_ketine_interact_flag
-	}
-}
-
-#Hukai and Telebei
-country_event = {
-	id = spirits.840
-	title = spirits.840.t
-	desc = spirits.840.d
-	picture = GREAT_SPIRIT_HUKAI_TELEBEI_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.840.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = hukai_telebei_interact_flag
-	}
-}
-
-#Huszien
-country_event = {
-	id = spirits.841
-	title = spirits.841.t
-	desc = spirits.841.d
-	picture = GREAT_SPIRIT_HUSZIEN_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.841.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = huszien_interact_flag
-	}
-}
-
-#Tughayasa
-country_event = {
-	id = spirits.842
-	title = spirits.842.t
-	desc = spirits.842.d
-	picture = GREAT_SPIRIT_TUGHAYASA_EVIL_eventPicture
-
-	is_triggered_only = yes
-
-	option = {
-		name = spirits.842.a
-		ai_chance = {
-			factor = 1
-		}
-		set_country_flag = tughayasa_interact_flag
 	}
 }
 

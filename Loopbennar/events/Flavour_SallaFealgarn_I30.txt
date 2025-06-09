@@ -1,0 +1,1162 @@
+namespace = flavor_salla_fealgarn
+
+
+country_event = { #Salla Fealgarn Start Event
+	id = flavor_salla_fealgarn.1
+	title = flavor_salla_fealgarn.1.t
+	desc = flavor_salla_fealgarn.1.d
+	picture = northamericagfx_COMET_SIGHTED_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		tag = I30
+		NOT = { is_year = 1445 }
+	}
+	
+
+	option = { # The Clans Regain Authority
+		name = flavor_salla_fealgarn.1.a
+		ai_chance = {
+			factor = 0
+		}
+		custom_tooltip = oberon_salla_info
+		custom_tooltip = oberon_pop_info
+		set_variable = {
+			which = oberon_popularity
+			value = 0
+		}
+		hidden_effect = {
+			add_government_reform = the_great_salla
+        	change_statists_vs_monarchists = -2
+		}
+        
+        exile_ruler_as = { name = oberon_fealgarn }
+		define_ruler = {
+			name = "Great"
+            dynasty = "Salla"
+		}
+		set_ruler_flag = the_great_salla_is_ruling
+        add_power_projection = {
+			type = mission_rewards_power_projection
+			amount = 10
+		}
+		set_estate_privilege = estate_nobles_oberons_watchful_eye
+	}
+
+    option = { # Oberon Triumphant
+		name = flavor_salla_fealgarn.1.b
+		ai_chance = {
+			factor = 1
+		}
+		custom_tooltip = oberon_salla_info
+		custom_tooltip = oberon_pop_info
+		set_variable = {
+			which = oberon_popularity
+			value = 1
+		}
+		hidden_effect = {
+			add_government_reform = the_great_salla
+        	change_statists_vs_monarchists = 2
+		}
+        define_ruler_to_general = {
+            fire = 2
+            shock = 5
+            manuever = 5
+            siege = 0
+        }
+		country_event = { id = flavor_salla_fealgarn.2 days = 1460 }
+        add_mil_power = 100
+		set_estate_privilege = estate_nobles_oberons_iron_rule
+	}
+}
+
+
+country_event = {
+    id = flavor_salla_fealgarn.2
+    title =  flavor_salla_fealgarn.2.t
+    desc =  flavor_salla_fealgarn.2.d
+    picture = ELECTION_REPUBLICAN_eventPicture
+    
+    is_triggered_only = yes
+    
+    trigger = {
+        has_reform = the_great_salla
+		NOT = { has_country_flag = in_salla_fealgarn_election }
+    }
+
+	immediate = {
+		clr_country_flag = salla_fealgarn_election_time 
+		set_country_flag = in_salla_fealgarn_election
+	}
+
+	
+	#Keep Oberon
+	option = {
+        trigger = { is_monarchists_in_power = yes }
+		name = flavor_salla_fealgarn.2.a
+		ai_chance = {
+			factor = 1
+		}
+        hidden_effect = {
+            if = {
+                limit = { NOT = { has_ruler_flag = oberon_is_ruling }}
+                define_ruler = {
+                    name = "Oberon"
+                    dynasty = "Fealgarn"
+					min_age = 140
+					max_age = 170
+                    adm = 2
+                    dip = 1
+                    mil = 6
+                }
+                add_ruler_personality = bold_fighter_personality
+                add_ruler_personality = cruel_personality
+                add_ruler_personality = tactical_genius_personality
+                set_ruler_flag = long_lived_ruler
+				set_ruler_flag = oberon_is_ruling
+            }
+        }
+		custom_tooltip = oberon_remains_ruler
+		add_scaled_republican_tradition = -10
+		set_country_flag = salla_fealgarn_election_time 
+		random_list = {
+			10 = {
+				add_adm_power = 50
+			}
+			10 = {
+				add_dip_power = 50
+			}
+			10 = {
+				add_mil_power = 50
+			}
+		}
+	}
+	
+	#Power to the-...err...nobility?
+	option = {
+		ai_chance = {
+			factor = 0
+		}
+        trigger = { is_monarchists_in_power = yes }
+		name = flavor_salla_fealgarn.2.b
+         hidden_effect = {
+            if = {
+                limit = { NOT = { has_ruler_flag = oberon_is_ruling }}
+                define_ruler = {
+                    name = "Oberon"
+                    dynasty = "Fealgarn"
+                    adm = 2
+                    dip = 1
+                    mil = 6
+					min_age = 140
+					max_age = 170
+                }
+                add_ruler_personality = bold_fighter_personality
+                add_ruler_personality = cruel_personality
+                add_ruler_personality = tactical_genius_personality
+                set_ruler_flag = long_lived_ruler
+				set_ruler_flag = oberon_is_ruling
+            }
+        }
+        exile_ruler_as = { name = oberon_fealgarn }
+		remove_estate_privilege = estate_nobles_oberons_iron_rule
+		set_estate_privilege = estate_nobles_oberons_watchful_eye
+        change_statists_vs_monarchists = -2
+        custom_tooltip = oberon_ousted
+        define_ruler = {
+			name = "Great"
+            dynasty = "Salla"
+            random_gender = yes # Allows random gender for republics
+		}
+		set_ruler_flag = the_great_salla_is_ruling
+	}
+
+    option = {
+        trigger = { 
+			is_statists_in_power = yes
+			NOT = { has_ruler_flag = oberon_is_ruling }
+		}
+		name = flavor_salla_fealgarn.2.c
+		ai_chance = {
+			factor = 0
+		}
+		custom_tooltip = remains_ruler
+        custom_tooltip = oberon_rebuffed
+		random_list = {
+			10 = {
+				add_adm_power = 50
+			}
+			10 = {
+				add_dip_power = 50
+			}
+			10 = {
+				add_mil_power = 50
+			}
+		}
+	}
+
+    option = {
+        trigger = { is_statists_in_power = yes }
+		name = flavor_salla_fealgarn.2.e
+		ai_chance = {
+			factor = 1
+		}
+		remove_estate_privilege = estate_nobles_oberons_watchful_eye
+		set_estate_privilege = estate_nobles_oberons_iron_rule
+        custom_tooltip = oberon_returns
+        change_statists_vs_monarchists = 2
+        set_ruler = oberon_fealgarn
+        add_scaled_republican_tradition = -10
+		set_country_flag = salla_fealgarn_election_time
+	}
+
+	after = {
+		clr_country_flag = in_salla_fealgarn_election
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.4
+    title =  flavor_salla_fealgarn.4.t
+    desc =  flavor_salla_fealgarn.4.d
+    picture = MILITARISTICALLY_TALENTED_RULER_eventPicture
+    
+    is_triggered_only = yes
+
+
+	option = {
+		name = flavor_salla_fealgarn.4.a
+		add_army_professionalism = 0.05
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.5
+    title =  flavor_salla_fealgarn.5.t
+    desc =  flavor_salla_fealgarn.5.d
+    picture = DEBATE_REPUBLICAN_eventPicture
+    
+    is_triggered_only = yes
+
+
+	option = {
+		name = flavor_salla_fealgarn.5.a
+		add_country_modifier = {
+			name = I30_salla_assailment
+			duration = 3650
+		}
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.6
+    title =  flavor_salla_fealgarn.6.t
+    desc =  flavor_salla_fealgarn.6.d
+    picture = COUNCIL_TRENT_eventPicture
+    
+    is_triggered_only = yes
+
+
+	option = {
+		name = flavor_salla_fealgarn.6.a
+		capital_scope = {
+			add_permanent_province_modifier = {
+				name = I30_fledgling_cavalary_institute
+				duration = -1
+			}
+			add_building_construction = {
+				building = barracks
+				speed = 0.5
+				cost = 0
+			}
+		}
+		add_treasury = -50
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.7
+    title =  flavor_salla_fealgarn.7.t
+    desc =  flavor_salla_fealgarn.7.d
+    picture = DIPLOMACY_eventPicture
+    
+    is_triggered_only = yes
+
+
+	option = {
+		name = flavor_salla_fealgarn.7.a 
+		random_known_country = {
+			limit = { primary_culture = wood_elf }
+			I30 = {
+				add_favors = {
+					who = PREV
+					amount = 10
+				}
+			}
+		}
+	}
+}
+
+#Monarchy
+country_event = {
+    id = flavor_salla_fealgarn.8
+    title =  flavor_salla_fealgarn.8.t
+    desc =  flavor_salla_fealgarn.8.d
+    picture = ROYAL_COUPLE_FUTURE_eventPicture
+    
+    is_triggered_only = yes
+
+
+	option = {
+		name = flavor_salla_fealgarn.8.a
+		add_stability = -2
+		remove_government_reform = the_great_salla
+		change_government = monarchy
+		add_government_reform = autocracy_reform
+		add_country_modifier = {
+			name = I30_king_of_hunters
+			duration = -1
+		}
+		capital_scope = {
+			spawn_rebels = {
+				type = revolutionary_rebels
+				size = 2
+			}
+			spawn_rebels = {
+				type = revolutionary_rebels
+				size = 2
+			}
+			spawn_rebels = {
+				type = revolutionary_rebels
+				size = 2
+			}
+		}
+	}
+
+	option = {
+		trigger = { NOT = { check_variable = { which = oberon_popularity value = 5 } } }
+		name = flavor_salla_fealgarn.8.b
+		highlight = yes
+		remove_government_reform = the_great_salla
+		change_government = republic
+		add_government_reform = noble_elite_reform
+		add_stability = -2
+		add_country_modifier = {
+			name = I30_sic_semper_tyrannus
+			duration = -1
+		}
+	}
+}
+
+#Republic
+country_event = {
+    id = flavor_salla_fealgarn.9
+    title =  flavor_salla_fealgarn.9.t
+    desc =  flavor_salla_fealgarn.9.d
+    picture = GUILLOTINE_eventPicture
+    
+    is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			remove_government_reform = the_great_salla 
+			change_government = republic
+			add_government_reform = noble_elite_reform
+		}
+	}
+
+
+	option = {
+		trigger = { NOT = { check_variable = { which = oberon_popularity value = 5 } } }
+		name = flavor_salla_fealgarn.9.a
+		add_stability = -3
+		add_country_modifier = {
+			name = I30_sic_semper_tyrannus
+			duration = -1
+		}
+		
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.9.b
+		add_country_modifier = {
+			name = I30_king_of_hunters
+			duration = -1
+		}
+		add_prestige = 50
+	}
+}
+
+
+#Lord of Beasts
+country_event = {
+    id = flavor_salla_fealgarn.10
+    title =  flavor_salla_fealgarn.10.t
+    desc =  flavor_salla_fealgarn.10.d
+    picture = END_OF_TIME_eventPicture
+    
+    is_triggered_only = yes
+
+
+	option = {
+		name = flavor_salla_fealgarn.10.a
+		3030 = {
+			add_province_modifier = {
+				name = I30_lord_of_beasts_boon
+				duration = 90
+			}
+		}
+		3030 = {
+			spawn_rebels = {
+				type = abberant_rebels
+				size = 2
+			}
+		}	
+		country_event = { id = flavor_salla_fealgarn.11 days = 30 }
+	}
+}
+
+#Lord of Beasts
+country_event = {
+    id = flavor_salla_fealgarn.11
+    title =  flavor_salla_fealgarn.11.t
+    desc =  flavor_salla_fealgarn.11.d
+    picture = GOOD_WITH_MONARCH_eventPicture
+    
+    is_triggered_only = yes
+
+
+	option = {
+		name = flavor_salla_fealgarn.11.a
+		capital_scope = {
+			add_province_modifier = {
+				name = I30_messenger_wing
+				duration = 7300
+			}
+		}
+		
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.11.b
+		capital_scope = {
+			add_province_modifier = {
+				name = I30_supply_wing
+				duration = 7300
+			}
+		}
+
+	}
+}
+
+#Sentinel Academy
+country_event = {
+    id = flavor_salla_fealgarn.12
+    title =  flavor_salla_fealgarn.12.t
+    desc =  flavor_salla_fealgarn.12.d
+    picture = UNIVERSITY_eventPicture
+    
+    is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = { 
+			if = {
+				limit = { ai = no }
+				krazho_area = {
+					add_province_triggered_modifier = I30_abberant_corruption_1 
+				}
+				criodharka_area = {
+					add_province_triggered_modifier = I30_abberant_corruption_1 
+				}
+				ghul_area = {
+					add_province_triggered_modifier = I30_abberant_corruption_1 
+				}
+				arsydpydru_area = {
+					add_province_triggered_modifier = I30_abberant_corruption_1 
+				}
+			}
+		}
+	}
+
+
+	option = {
+		name = flavor_salla_fealgarn.12.a
+		ghul_area = {
+			add_permanent_claim = ROOT
+		}
+		arsydpydru_area = {
+			add_permanent_claim = ROOT
+		}
+		3045 = {
+			add_permanent_claim = ROOT
+		}
+		3063 = {
+			add_permanent_claim = ROOT
+		}
+		3057 = {
+			add_permanent_claim = ROOT
+		}
+		capital_scope = {
+			remove_province_modifier = I30_fledgling_cavalary_institute
+			add_permanent_province_modifier = {
+				name = I30_the_sentinel_academy_a
+				duration = -1
+			}
+			add_building = university
+		}
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.12.b
+		ghul_area = {
+			add_permanent_claim = ROOT
+		}
+		arsydpydru_area = {
+			add_permanent_claim = ROOT
+		}
+		3045 = {
+			add_permanent_claim = ROOT
+		}
+		3063 = {
+			add_permanent_claim = ROOT
+		}
+		3057 = {
+			add_permanent_claim = ROOT
+		}
+		capital_scope = {
+			remove_province_modifier = I30_fledgling_cavalary_institute
+			add_permanent_province_modifier = {
+				name = I30_the_sentinel_academy_b
+				duration = -1
+			}
+			add_building = university
+		}
+	}
+}
+
+#Start Coalition War
+country_event = {
+    id = flavor_salla_fealgarn.13
+    title =  flavor_salla_fealgarn.13.t
+    desc =  flavor_salla_fealgarn.13.d
+    picture = CIVIL_WAR_eventPicture
+    
+    is_triggered_only = yes
+
+
+	option = {
+		name = flavor_salla_fealgarn.13.a
+		break_alliance = I26
+		break_alliance = I27
+		break_alliance = I28
+		break_alliance = I29
+		break_alliance = I31
+		break_alliance = I32
+		break_alliance = I33
+		break_alliance = I34
+		random_known_country = {
+			limit = { primary_culture = wood_elf }
+			add_aggressive_expansion = {
+				who = I30
+				value = 65
+			}
+			add_casus_belli = {
+				target = I30
+				type = cb_super_badboy
+				months = 12
+			}
+			save_global_event_target_as = anti_fealgarn_war_leader
+			declare_war_with_cb = {
+				who = I30
+				casus_belli = cb_super_badboy
+			}
+		}
+		every_known_country = {
+			limit = { 
+				primary_culture = wood_elf 
+				NOT = { tag = event_target:anti_fealgarn_war_leader }
+			}
+			join_all_offensive_wars_of = event_target:anti_fealgarn_war_leader
+		}
+		set_country_flag = hunters_gambit_war
+		add_country_modifier = {
+			name = I30_coalition_war
+			duration = 7300
+		}
+	}
+}
+
+#End Coalition War
+country_event = {
+    id = flavor_salla_fealgarn.14
+    title =  flavor_salla_fealgarn.14.t
+    desc =  flavor_salla_fealgarn.14.d
+    picture = VIKING_KING_eventPicture
+    
+    is_triggered_only = yes
+
+
+	option = {
+		name = flavor_salla_fealgarn.14.a
+		event_target:anti_fealgarn_war_leader = {
+			white_peace = I30
+		}
+		vassalize = I26
+		vassalize = I27
+		vassalize = I28
+		vassalize = I29
+		vassalize = I31
+		vassalize = I32
+		vassalize = I33
+		vassalize = I34
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.15
+    title =  flavor_salla_fealgarn.15.t
+    desc =  flavor_salla_fealgarn.15.d
+    picture = CROSSROAD_eventPicture
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { area = krazho_area }
+				spawn_rebels = {
+					type = abberant_rebels
+					size = 2
+				}
+			}
+			random_owned_province = {
+				limit = { area = krazho_area }
+				spawn_rebels = {
+					type = abberant_rebels
+					size = 2
+				}
+			}
+		}
+	}
+    
+    is_triggered_only = yes
+
+	option = {
+		name = flavor_salla_fealgarn.15.a
+		add_country_modifier = {
+			name = I30_burn_it
+			duration = 60
+		}
+		set_country_flag = soala_path
+		country_event = { id = flavor_salla_fealgarn.16 days = 60 }	
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.15.b
+		add_country_modifier = {
+			name = I30_chase_it
+			duration = 60
+		}
+		set_country_flag = dorca_path
+		country_event = { id = flavor_salla_fealgarn.16 days = 60 }	
+	}
+}
+
+
+country_event = {
+    id = flavor_salla_fealgarn.16
+    title =  flavor_salla_fealgarn.16.t
+    desc =  flavor_salla_fealgarn.16.d
+    picture = UNIVERSITY_eventPicture
+    
+    is_triggered_only = yes
+
+	option = {
+		name = flavor_salla_fealgarn.16.a
+		capital_scope = {
+			add_province_modifier = {
+				name = I30_guerilla_warfare
+				duration = 9125
+			}
+		}
+
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.16.b
+		every_owned_province = {
+			add_province_modifier = {
+				name = I30_environmental_warfare
+				duration = 9125
+			}
+		}
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.17
+    title =  flavor_salla_fealgarn.17.t
+    desc =  flavor_salla_fealgarn.17.d
+    picture = CROSSROAD_eventPicture
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { area = arsydpydru_area }
+				spawn_rebels = {
+					type = abberant_rebels
+					size = 3
+				}
+			}
+		}	
+	}
+    
+    is_triggered_only = yes
+
+	option = {
+		name = flavor_salla_fealgarn.17.a
+		add_country_modifier = {
+			name = I30_silent_but_deadly
+			duration = 60
+		}
+		set_country_flag = dorca_2_path
+		country_event = { id = flavor_salla_fealgarn.18 days = 60 }	
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.17.b
+		add_country_modifier = {
+			name = I30_accuate_arrows
+			duration = 60
+		}
+		set_country_flag = eira_2_path
+		country_event = { id = flavor_salla_fealgarn.18 days = 60 }	
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.18
+    title =  flavor_salla_fealgarn.18.t
+    desc =  flavor_salla_fealgarn.18.d
+    picture = UNIVERSITY_eventPicture
+    
+    is_triggered_only = yes
+
+	option = {
+		name = flavor_salla_fealgarn.18.a
+		capital_scope = {
+			add_province_modifier = {
+				name = I30_school_of_stealth
+				duration = 9125
+			}
+		}
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.18.b
+		capital_scope = {
+			add_province_modifier = {
+				name = I30_school_of_rifle
+				duration = 9125
+			}
+		}
+	}
+}
+
+
+country_event = {
+    id = flavor_salla_fealgarn.19
+    title =  flavor_salla_fealgarn.19.t
+    desc =  flavor_salla_fealgarn.19.d
+    picture = CROSSROAD_eventPicture
+    
+    is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = { 
+			deepwoods_superregion = {
+				remove_province_triggered_modifier = I30_abberant_corruption_1 
+			}
+		}
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.19.a
+		add_country_modifier = {
+			name = I30_local_help
+			duration = 120
+		}
+		country_event = { id = flavor_salla_fealgarn.20 days = 30 }	
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.19.b
+		add_country_modifier = {
+			name = I30_request_lord_help
+			duration = 120
+		}
+		country_event = { id = flavor_salla_fealgarn.20 days = 30 }	
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.20
+    title =  flavor_salla_fealgarn.20.t
+    desc =  flavor_salla_fealgarn.20.d
+    picture = COMET_SIGHTED_eventPicture
+
+	immediate = {
+		hidden_effect = {
+			capital_scope = {
+				spawn_rebels = {
+					type = abberant_rebels
+					size = 5
+				}
+			}	
+		}
+	}
+    is_triggered_only = yes
+
+	option = {
+		name = flavor_salla_fealgarn.20.a
+		set_country_flag = sacrifice_soala
+		country_event = { id = flavor_salla_fealgarn.21 days = 30 }	
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.20.b
+		set_country_flag = sacrifice_dorca
+		country_event = { id = flavor_salla_fealgarn.21 days = 30 }	
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.21
+    title =  flavor_salla_fealgarn.21.t
+    desc =  flavor_salla_fealgarn.21.d
+    picture = BAD_WITH_MONARCH_eventPicture
+
+    
+    is_triggered_only = yes
+
+	option = {
+		name = flavor_salla_fealgarn.21.a
+		add_country_modifier = {
+			name = I30_fight_till_death
+			duration = 7300
+		}	
+	}
+
+	option = {
+		name = flavor_salla_fealgarn.21.b
+		add_country_modifier = {
+			name = I30_every_soldier
+			duration = 7300
+		}	
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.22
+    title =  flavor_salla_fealgarn.22.t
+    desc =  flavor_salla_fealgarn.22.d
+    picture = END_OF_TIME_eventPicture
+
+    is_triggered_only = yes
+
+	option = {
+		name = flavor_salla_fealgarn.22.a
+		7012 = {
+			spawn_rebels = {
+				type = abberant_rebels 
+				size = 2
+			}
+		}
+		7013 = { 
+			spawn_rebels = {
+				type = abberant_rebels 
+				size = 2
+			}
+		}
+		7011 = {
+			spawn_rebels = {
+				type = abberant_rebels 
+				size = 2
+			}
+		}
+		every_owned_province = {
+			limit = {
+				 NOT = {
+					province_group = deepwoods_hunter_grove 
+				}
+			}
+			cede_province = H99
+		}
+		add_country_modifier = {
+			name = I30_crescent_rose
+			duration = -1
+		}
+		set_country_flag = heart_darkness_war_start
+		hidden_effect = {
+			H99 = {
+				capital_scope = {
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					add_province_modifier = {
+						name = I30_unthroned_queens_throne
+						duration = -1
+					}
+				}
+				add_treasury = 3000
+				country_event = { id = anbennar_setup.3 }
+				define_general = {
+					shock = 8
+					fire = 6
+					manuever = 6
+					siege = 6
+					trait = planetouched_commander_personality
+					name = "Knight of the Unthroned Queen"
+				}
+				declare_war_with_cb = {
+					who = I30
+					casus_belli = cb_heart_of_darkness_war
+				}
+			}
+			country_event = { id = flavor_salla_fealgarn.23 days = 365 }
+		}
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.23
+    title =  flavor_salla_fealgarn.23.t
+    desc =  flavor_salla_fealgarn.23.d
+    picture = COUNCIL_TRENT_eventPicture
+
+    is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = flavor_salla_fealgarn.23.a
+		
+		hidden_effect = {
+			H99 = {
+				capital_scope = {
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+				}
+				add_treasury = 3000
+			}
+		}
+	}
+}
+
+country_event = {
+    id = flavor_salla_fealgarn.24
+    title =  flavor_salla_fealgarn.24.t
+    desc =  flavor_salla_fealgarn.24.d
+    picture = END_OF_TIME_eventPicture
+
+    is_triggered_only = yes
+
+	option = {
+		name = flavor_salla_fealgarn.24.a
+		
+		hidden_effect = {
+			H99 = {
+				capital_scope = {
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					infantry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+					cavalry = H99
+				}
+				add_treasury = 3000
+			}
+		}
+	}
+}
+
+
+
+country_event = {
+    id = flavor_salla_fealgarn.25
+    title =  flavor_salla_fealgarn.25.t
+    desc =  flavor_salla_fealgarn.25.d
+    picture = GOOD_WITH_MONARCH_eventPicture
+
+    is_triggered_only = yes
+
+	option = {
+		name = flavor_salla_fealgarn.25.a
+
+		if = {
+			limit = { 
+				capital_scope = { 
+					has_province_modifier = I30_the_sentinel_academy_a
+				}
+			}
+			capital_scope = {
+				remove_province_modifier = I30_the_sentinel_academy_a
+				add_permanent_province_modifier = {
+					name = I30_the_auralarn_academy_a 
+					duration = -1
+				}
+			}
+		}
+
+		if = {
+			limit = { 
+				capital_scope = { 
+					has_province_modifier = I30_the_sentinel_academy_b
+				}
+			}
+			capital_scope = {
+				remove_province_modifier = I30_the_sentinel_academy_b
+				add_permanent_province_modifier = {
+					name = I30_the_auralarn_academy_b
+					duration = -1
+				}
+			}
+		}
+		
+		change_tag = I45
+			hidden_effect = { restore_country_name = yes }
+			swap_non_generic_missions = yes
+			remove_non_electors_emperors_from_empire_effect = yes
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
+			every_subject_country = {
+                limit = {
+                    primary_culture = wood_elf
+                    capital_scope = { superregion = deepwoods_superregion }
+                }
+                I45 = { inherit = PREV }
+            }
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			add_prestige = 25
+			country_event = { id = ideagroups.1 } #Swap Ideas
+			lock_racial_admin = yes
+		
+	}
+}
+
+

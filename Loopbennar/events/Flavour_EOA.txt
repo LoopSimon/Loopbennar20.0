@@ -1,0 +1,604 @@
+namespace = flavor_empire
+
+# Empire Pulse Events
+# Modifiers in anb_event_modifers under: Empire Pulse Event Modifiers (ctrl + f)
+# Loc in Flavour_EOA_I_english.yml: Empire Pulse Event Loc (ctrl + f)
+
+country_event = { # Opportunistic Grandmaster!
+	id = flavor_empire.1
+	title = flavor_empire.1.t
+	desc = flavor_empire.1.d
+	picture = DHOW_AT_SEA_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes 
+
+	trigger = {
+    	is_emperor = yes 
+    	# has_reform_passed = anbennar_expand_marquis_rank
+		A77 = {
+			exists = yes 
+			has_opinion = {
+				who = ROOT
+				value = 0
+			}
+			OR = {
+				ruler_has_personality = well_connected_personality
+				ruler_has_personality = secretive_personality
+				ruler_has_personality = intricate_web_weaver_personality
+				ruler_has_personality = silver_tongue_personality
+				ruler_has_personality = fierce_negotiator_personality
+				ruler_has_personality = embezzler_personality
+				ruler_has_personality = sinner_personality
+			}
+			NOT = {
+				ruler_has_personality = incorruptible_personality
+				ruler_has_personality = righteous_personality
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_empire.1.a # 
+		add_imperial_influence = -5
+		every_known_country = {
+			limit = { is_part_of_hre = yes }
+			add_country_modifier = { 
+				name = EOA_pulse_1_empire_wide_scandals
+				duration = 3650
+			}
+		}
+		A77 = { 
+			add_favors = {
+				who = ROOT
+				amount = 10
+			}
+		}
+	}
+
+	option = {
+		name = flavor_empire.1.b # 
+		add_imperial_influence = -5
+
+		every_known_country = {
+			limit = { is_part_of_hre = yes }
+			add_country_modifier = { 
+				name = EOA_pulse_1_aldresian_administrators
+				duration = 3650
+			}
+		}
+
+		A77 = { 
+			add_favors = {
+				who = ROOT
+				amount = 10
+			}
+		}
+	}
+
+	option = {
+		name = flavor_empire.1.c # 
+		add_imperial_influence = 5
+		A77 = {
+			add_opinion = {
+				who  = ROOT
+				modifier = EOA_pulse_1_reminded_of_our_place
+			}
+		}
+	}
+
+	option = {
+		name = flavor_empire.1.e # 
+		add_imperial_influence = -5
+
+		A77 = { 
+			add_favors = {
+				who = ROOT
+				amount = 10
+			}
+		}
+
+		every_rival_country = {
+			add_spy_network_from = {
+				who = emperor
+				value = 80
+			}
+		}
+	}
+}
+
+
+country_event = { # Paladins Accuse Local of Heresy
+	id = flavor_empire.2
+	title = flavor_empire.2.t
+	desc = flavor_empire.2.d
+	picture = DHOW_AT_SEA_eventPicture
+
+	is_triggered_only = yes 
+
+	trigger = {
+		is_part_of_hre = yes
+		hre_heretic_religion = corinite
+		any_owned_province = {
+			religion = corinite
+		}
+		current_age = age_of_reformation
+		estate_influence = {
+			estate = estate_church
+			influence = 50
+		}
+		NOT = {
+			OR = {
+				has_country_modifier = EOA_pulse_2_release_prisoners
+				has_country_modifier = EOA_pulse_2_bless_paladins
+				has_country_modifier = EOA_pulse_2_common_ground
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_empire.2.a # 
+		add_country_modifier = { 
+			name = EOA_pulse_2_release_prisoners
+			duration = 3650
+		}	
+	}
+
+	option = {
+		name = flavor_empire.2.b # 
+		add_country_modifier = { 
+			name = EOA_pulse_2_bless_paladins
+			duration = 3650
+		}
+	}
+
+	option = {
+		name = flavor_empire.2.c # 
+		trigger = { religion = infernal_court }
+		highlight = yes
+		add_army_professionalism = 0.02
+		add_corruption = 2
+	
+	}
+
+	option = {
+		name = flavor_empire.2.e # 
+		trigger = { 
+			OR = {
+				ruler_has_personality = silver_tongue_personality
+				ruler_has_personality = tolerant_personality
+			}
+		}
+		highlight = yes
+		add_country_modifier = { 
+			name = EOA_pulse_2_common_ground
+			duration = 3650
+		}
+	}
+}
+
+
+country_event = { # Imperial Politicking
+	id = flavor_empire.3
+	title = flavor_empire.3.t
+	desc = flavor_empire.3.d
+	picture = DHOW_AT_SEA_eventPicture
+
+	is_triggered_only = yes 
+
+	trigger = {
+        is_part_of_hre = yes 
+		NOT = { has_country_modifier = EOA_pulse_3_honest }
+		any_elector = {
+			OR = {
+				alliance_with = ROOT
+				is_rival = ROOT
+			}
+			NOT = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = EOA_pulse_3_spill_beans
+				}
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = EOA_pulse_3_hidden_beans
+				}
+			}
+		}
+	}
+
+	immediate = { 
+		hidden_effect = {
+			random_elector = {
+				limit = {
+					OR = {
+						alliance_with = ROOT
+						is_rival = ROOT
+					}
+					NOT = {
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = EOA_pulse_3_spill_beans
+						}
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = EOA_pulse_3_hidden_beans
+						}
+					} 
+				}
+				save_event_target_as = elector_politicking
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_empire.3.a # 
+		trigger = { event_target:elector_politicking = { alliance_with = ROOT } }
+		if = {
+			limit = { ai = yes }
+			break_alliance = event_target:elector_politicking
+		}
+		event_target:elector_politicking = {
+			add_opinion = {
+				who  = ROOT
+				modifier = EOA_pulse_3_spill_beans
+			}
+		}
+		add_country_modifier = {
+			name = EOA_pulse_3_honest
+			duration = 1825
+		}
+	}
+
+	option = {
+		name = flavor_empire.3.b # 
+		trigger = { event_target:elector_politicking = { is_rival = ROOT } }
+		event_target:elector_politicking = {
+			add_opinion = {
+				who  = ROOT
+				modifier = EOA_pulse_3_spill_beans
+			}
+			add_casus_belli = {
+				target = ROOT
+				type = cb_insult
+				months = 120
+			}
+		}
+		add_power_projection = { 
+			type = mission_rewards_power_projection 
+			amount = 10
+		}
+	}
+
+	option = {
+		name = flavor_empire.3.c # 
+		add_opinion = {
+			who  = event_target:elector_politicking
+			modifier = EOA_pulse_3_hidden_beans
+		}
+		add_favors = {
+			who =  event_target:elector_politicking
+			amount = 10
+		}
+	}
+}
+
+
+country_event = { # Romeo and Juliet / Lilac Wars Edition
+	id = flavor_empire.4
+	title = flavor_empire.4.t
+	desc = flavor_empire.4.d
+	picture = DHOW_AT_SEA_eventPicture
+
+	is_triggered_only = yes 
+
+	trigger = {
+        is_part_of_hre = yes 
+        NOT = { is_year = 1500 }
+		ai = no
+		any_enemy_country = {
+			OR = {
+				has_opinion_modifier = {
+					modifier = lilac_wars_rose_party_enemy
+					who = ROOT
+				}
+				has_opinion_modifier = {
+					modifier = lilac_wars_moon_party_enemy
+					who = ROOT
+				}
+			}
+    		NOT = { has_country_modifier = EOA_4_taken_heir }
+			NOT = { has_country_modifier = EOA_4_exiled_heir }
+		}
+		NOT = { has_country_modifier = EOA_4_exiled_heir }
+		NOT = { has_country_modifier = EOA_4_taken_heir }
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_enemy_country = {
+				limit = {
+					OR = {
+						has_opinion_modifier = {
+							modifier = lilac_wars_rose_party_enemy
+							who = ROOT
+						}
+						has_opinion_modifier = {
+							modifier = lilac_wars_moon_party_enemy
+							who = ROOT
+						}
+					}
+					NOT = { has_country_modifier = EOA_4_taken_heir }
+					NOT = { has_country_modifier = EOA_4_exiled_heir }
+				}
+				save_event_target_as = sins_of_father
+			}
+		}
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_empire.4.a # 
+		ai_chance = {
+			factor = 0
+		}
+		custom_tooltip = flavor_empire.4.a.tt
+		add_opinion = {
+			who  = event_target:sins_of_father
+			modifier = EOA_pulse_4_sins_of_father
+		}
+		add_country_modifier = {
+			name = EOA_4_exiled_heir 
+			duration = 7300
+			hidden = yes
+		}
+		exile_heir_as = EOA_4_pulse_sins_of_father_heir
+		add_casus_belli = {
+			type = cb_insult
+			months = 240
+			target =  event_target:sins_of_father
+		}
+		event_target:sins_of_father = {
+			add_country_modifier = {
+				name = EOA_4_taken_heir 
+				duration = 7300
+				hidden = yes
+			}
+		}
+	}
+
+	option = {
+		name = flavor_empire.4.b # 
+		ai_chance = {
+			factor = 1 #AI will not understand they must go to war to get back heir so they auto choose b
+		}
+		add_opinion = {
+			who  = event_target:sins_of_father
+			modifier = EOA_pulse_4_sins_of_father_friend
+		}
+		add_legitimacy = -20
+		create_marriage = event_target:sins_of_father
+	}
+}
+
+
+
+
+
+
+
+country_event = { # Dockyard Gangs
+	id = flavor_empire.5
+	title = flavor_empire.5.t
+	desc = flavor_empire.5.d
+	picture = DHOW_AT_SEA_eventPicture
+
+	is_triggered_only = yes 
+
+	trigger = {
+        is_part_of_hre = yes
+		any_owned_province = {
+			OR = {
+				region = west_dameshead_region
+				region = east_dameshead_region
+				region = damescrown_region
+			}
+			has_port = yes
+		}
+		is_year = 1480
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { 
+					OR = {
+						region = west_dameshead_region
+						region = east_dameshead_region
+						region = damescrown_region
+					}
+					has_port = yes
+				}
+				save_event_target_as = dockyard_province
+			}
+		}
+	}
+
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = flavor_empire.5.a # 
+		event_target:dockyard_province = {
+			add_province_modifier = {
+				name = EOA_5_pulse_organized_gangs
+				duration = 3650
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					ruler_has_personality = greedy_personality
+					ruler_has_personality = fierce_negotiator_personality
+					ruler_has_personality = embezzler_personality
+				}
+			}
+			add_adm_power = 50
+			add_treasury = 250
+		}
+	}
+
+	option = {
+		name = flavor_empire.5.b # 
+		event_target:dockyard_province = {
+			add_province_modifier = {
+				name = EOA_5_pulse_port_guards
+				duration = 3650
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					ruler_has_personality = lawgiver_personality 
+					ruler_has_personality = strict_personality
+					ruler_has_personality = zealot_personality
+				}
+			}
+			add_adm_power = 50
+			add_treasury = 250
+		}
+	}
+}
+
+
+
+
+
+country_event = { # Intervice Rivalry
+	id = flavor_empire.6
+	title = flavor_empire.6.t
+	desc = flavor_empire.6.d
+	picture = DHOW_AT_SEA_eventPicture
+
+	is_triggered_only = yes 
+
+	trigger = {
+        is_part_of_hre = yes
+		exists = A77
+		exists = A85
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	
+
+	immediate = {
+		hidden_effect = { 
+			random_owned_province = {
+				save_event_target_as = mage_clash_province
+			}
+		}
+	}
+
+	option = {
+		name = flavor_empire.6.a # 
+		event_target:mage_clash_province = {
+			add_devastation = 30
+		}
+		A85 = {
+			add_opinion = {
+				who  = ROOT
+				modifier = EOA_pulse_6_support 
+			}
+		}
+		A77 = {
+			add_opinion = {
+				who  = ROOT
+				modifier = EOA_pulse_6_assail
+			}
+		}
+		define_advisor = {
+			type = court_mage
+			skill = 2
+			discount = yes
+		}
+	}
+
+	option = {
+		name = flavor_empire.6.b # 
+		event_target:mage_clash_province = {
+			add_devastation = 30
+		}
+		A77 = {
+			add_opinion = {
+				who  = ROOT
+				modifier = EOA_pulse_6_support 
+			}
+		}
+		A85 = {
+			add_opinion = {
+				who  = ROOT
+				modifier = EOA_pulse_6_assail
+			}
+		}
+		define_advisor = {
+			type = commandant
+			skill = 2
+			discount = yes
+		}
+	}
+
+	option = {
+		name = flavor_empire.6.c # 
+		event_target:mage_clash_province = {
+			add_devastation = 30
+		}
+		A85 = {
+			add_opinion = {
+				who  = ROOT
+				modifier = EOA_pulse_6_assail
+			}
+		}
+		A77 = {
+			add_opinion = {
+				who  = ROOT
+				modifier = EOA_pulse_6_assail
+			}
+		}
+		define_advisor = {
+			type = diplomat
+			skill = 2
+			discount = yes
+		}
+		add_country_modifier = {
+			name = EOA_6_pulse_stalwart
+			duration = 1825
+		}
+	}
+}
+
+
+
+
+
+
+

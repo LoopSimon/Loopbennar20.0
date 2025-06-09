@@ -12,7 +12,6 @@ country_event = { #Starting event - Depletion of the Khenak Wyvern
 
 	trigger = { tag = A49 } #Xanzerbexis
 
-	hidden = yes
 	is_triggered_only = yes
 	fire_only_once = yes
 
@@ -321,7 +320,6 @@ country_event = { #Question of Faith
 			limit = { NOT = { religion = corinite } }
 			change_religion = corinite
 		}
-		change_religion = corinite
 		add_country_modifier = {
 			name = A49_faith_corinite
 			duration = -1
@@ -491,6 +489,12 @@ country_event = { #Human Migrants Arrive
 			factor = 1
 		}
 		custom_tooltip = A49_migrants_arrive_buff_tt
+		tooltip = {
+			add_province_modifier = {
+				name = A49_migrants_arrive_buff
+				duration = -1
+			}
+		}
 		hidden_effect = {
 			set_country_flag = A49_human_migrants_arrive_minority_buff
 			every_owned_province = {
@@ -566,6 +570,8 @@ country_event = { #Axatala! (Visible)
 		ai_chance = {
 			factor = 1
 		}
+		
+		custom_tooltip = A49_axatala_explanation_tt
 		for = {
 			amount = 10
 			effect = "
@@ -586,6 +592,7 @@ country_event = { #Axatala! (Visible)
 			factor = 1
 		}
 		
+		custom_tooltip = A49_axatala_explanation_tt
 		for = {
 			amount = 10
 			effect = "
@@ -836,6 +843,7 @@ country_event = { #Fallen Empire
 		ai_chance = {
 			factor = 1
 		}
+		east_dameshead_region = { add_permanent_claim = ROOT }
 		west_dameshead_region = { add_permanent_claim = ROOT }
 		esmaria_region = { add_permanent_claim = ROOT }
 		damescrown_region = { add_permanent_claim = ROOT }
@@ -864,7 +872,7 @@ country_event = { #Spectators From Afar
 		
 		country_event = {
 			id = flavour_xanzerbexis.21 #Lorentish Chivalry
-			days = 4380
+			days = 730
 		}
 	}
 }
@@ -887,7 +895,7 @@ country_event = { #Lorentish Chivalry
 		}
 		country_event = {
 			id = flavour_xanzerbexis.22 #Elven Showmanship
-			days = 4380
+			days = 730
 		}
 	}
 }
@@ -910,7 +918,7 @@ country_event = { #Elven Showmanship
 		}
 		country_event = {
 			id = flavour_xanzerbexis.23 #Skaldhyrric Talent Contests
-			days = 4380
+			days = 730
 		}
 	}
 }
@@ -931,7 +939,7 @@ country_event = { #Skaldhyrric Talent Contests
 		add_prestige = 10
 		country_event = {
 			id = flavour_xanzerbexis.24 #Inventors Day
-			days = 4380
+			days = 730
 		}
 
 	}
@@ -998,49 +1006,41 @@ country_event = { #Artificery Born
 	fire_only_once = yes
 	trigger = {
 		tag = A49
-		NOT = { has_country_flag = artifice_set_up }
 		OR = {
-			AND = {
-				check_variable = {
-					which = ArtificeryEarlyMissions
-					value = 6
-				}
-				is_year = 1620
-			}
 			AND = {
 				check_variable = {
 					which = ArtificeryEarlyMissions
 					value = 5
 				}
-				is_year = 1625
+				is_year = 1600
 			}
 			AND = {
 				check_variable = {
 					which = ArtificeryEarlyMissions
 					value = 4
 				}
-				is_year = 1630
+				is_year = 1610
 			}
 			AND = {
 				check_variable = {
 					which = ArtificeryEarlyMissions
 					value = 3
 				}
-				is_year = 1635
+				is_year = 1620
 			}
 			AND = {
 				check_variable = {
 					which = ArtificeryEarlyMissions
 					value = 2
 				}
-				is_year = 1640
+				is_year = 1630
 			}
 			AND = {
 				check_variable = {
 					which = ArtificeryEarlyMissions
 					value = 1
 				}
-				is_year = 1645
+				is_year = 1640
 			}
 		}
 	}
@@ -1230,6 +1230,61 @@ country_event = { #Migrants Arrive human minority buff updater
 			else = {
 				remove_province_modifier = A49_migrants_arrive_buff
 			}
+		}
+	}
+}
+
+country_event = { #Update religious buff if player swaps religion
+	id = flavour_xanzerbexis.1006
+	title = flavour_xanzerbexis.1006.t
+	desc = flavour_xanzerbexis.1006.d
+	picture = MILITARY_CAMP_eventPicture 
+
+	hidden = yes
+	is_triggered_only = yes
+	
+	immediate = { #Remove old religion modifiers
+		remove_country_modifier = A49_faith_regent_court
+		remove_country_modifier = A49_faith_corinite
+		remove_country_modifier = A49_faith_ravelian
+		remove_country_modifier = A49_faith_infernal_court
+	}
+	
+	option = { #Modifiers are the same as change religion event (Question of Faith)
+		name = flavour_xanzerbexis.1006.a
+		ai_chance = {
+			factor = 1
+		}
+		if = {
+			limit = { religion = regent_court }
+			add_country_modifier = {
+				name = A49_faith_regent_court
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = { religion = A49_faith_corinite }
+			add_country_modifier = {
+				name = A49_faith_corinite
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = { religion = A49_faith_ravelian }
+			add_country_modifier = {
+				name = A49_faith_ravelian
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = { religion = A49_faith_infernal_court }
+			add_country_modifier = {
+				name = A49_faith_infernal_court
+				duration = -1
+			}
+		}
+		else = {
+			add_prestige = 25
 		}
 	}
 }

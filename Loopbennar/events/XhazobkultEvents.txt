@@ -1,7 +1,5 @@
 namespace = xhazobkult_events
 
-
-
 ###########################
 ###      Systems        ###
 ###########################
@@ -268,8 +266,232 @@ country_event = { #Local gnolls do their own ritual
 	}
 }
 
+###########################
+###   Ger-Bexamurr    ###
+###########################
 
+#"The Phylactery was the friends we ate along the way" event chain
 
+province_event = { #Check for current hunt
+	id = xhazobkult_events.201
+	title = xhazobkult_events.201.t
+	desc = xhazobkult_events.201.d
+	picture = END_OF_TIME_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		controller = {
+			owns = 6104
+			6104 = { has_great_project = { type = ger_bexamurr tier = 2 } }
+			culture_group = gnollish
+			religion = xhazobkult
+			NOT = { has_country_flag = active_hunt_for_powerful_mages }
+		}
+		owner = {
+			ruler_has_mage_personality = yes
+			NOT = { has_country_flag = hunt_for_powerful_mages_happened_to_us }
+		}
+		is_capital = yes
+		NOT = { controlled_by = owner }
+	}
+
+	option = { 
+		name = xhazobkult_events.201.a
+		ai_chance = { factor = 1 }
+		owner = { 
+			save_event_target_as = hunt_for_powerful_mages_victim
+			country_event = { id = xhazobkult_events.202 } #Notice for owner
+			set_country_flag = hunt_for_powerful_mages_happened_to_us #Once a war
+		}
+		controller = {
+			save_event_target_as = hunt_for_powerful_mages_gnoll
+			country_event = { id = xhazobkult_events.203 } #Notice for besieger
+			set_country_flag = active_hunt_for_powerful_mages #Only one active hunt at a time
+		} 
+		save_event_target_as = hunt_for_powerful_mages_capital
+		province_event = { id = xhazobkult_events.204 days = 120 random = 60 } #Outcome
+	}
+}
+
+country_event = { #A death by inches
+	id = xhazobkult_events.202
+	title = xhazobkult_events.202.t
+	desc = xhazobkult_events.202.d
+	picture = LOOMING_DEATH_eventPicture
+	goto = hunt_for_powerful_mages_capital
+
+	is_triggered_only = yes
+
+	option = { #There is no escape
+		name = xhazobkult_events.202.a
+		add_prestige = -10
+		custom_tooltip = hunt_for_powerful_mages_notice_tt
+	}
+}
+
+country_event = { #Chasing shadows
+	id = xhazobkult_events.203
+	title = xhazobkult_events.203.t
+	desc = xhazobkult_events.203.d
+	picture = THE_COVENANT_eventPicture
+	goto = hunt_for_powerful_mages_capital
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_country_flag = hunt_for_powerful_mages_story_skipper }
+	}
+
+	option = { #The hunt is on
+		name = xhazobkult_events.203.a
+		ai_chance = { factor = 1 }
+	}
+
+	option = { #The hunt is on, so don't tell me again
+		name = xhazobkult_events.203.b
+		ai_chance = { factor = 0 }
+		set_country_flag = hunt_for_powerful_mages_story_skipper
+	}
+}
+
+province_event = { #Hunt outcome
+	id = xhazobkult_events.204
+	title = xhazobkult_events.204.t
+	desc = xhazobkult_events.204.d
+	picture = END_OF_TIME_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = xhazobkult_events.204.a
+		ai_chance = { factor = 1 }
+		if = { #Successful
+			limit = {
+				controller = {
+					owns = 6104
+					6104 = { has_great_project = { type = ger_bexamurr tier = 2 } }
+					culture_group = gnollish
+					religion = xhazobkult
+				}
+				owner = { ruler_has_mage_personality = yes }
+				is_capital = yes
+				NOT = { controlled_by = owner }
+			}
+			controller = { country_event = { id = xhazobkult_events.205 } }
+		}
+		else = { #Failed, check for next hunt
+			event_target:hunt_for_powerful_mages_gnoll = {
+				clr_country_flag = active_hunt_for_powerful_mages
+				random_war_enemy_country = {
+					limit = {
+						ruler_has_mage_personality = yes
+						NOT = { has_country_flag = hunt_for_powerful_mages_happened_to_us }
+						capital_scope = { controlled_by = event_target:hunt_for_powerful_mages_gnoll }
+					}
+					capital_scope = { province_event = { id = xhazobkult_events.201 days = 30 } }
+				}
+			}
+		}
+	}
+}
+
+country_event = { #The Abyss
+	id = xhazobkult_events.205
+	title = xhazobkult_events.205.t
+	desc = xhazobkult_events.205.d
+	picture = THE_COVENANT_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Where am I?
+		name = xhazobkult_events.205.a
+		hidden_effect = {
+			set_variable = {
+				which = SacrificeRulerAdm
+				value = 0
+			}
+			set_variable = {
+				which = SacrificeRulerDip
+				value = 0
+			}
+			set_variable = {
+				which = SacrificeRulerMil
+				value = 0
+			}
+			export_to_variable = {
+				which = SacrificeRulerAdm
+				value = ADM
+				who = event_target:hunt_for_powerful_mages_victim
+			}
+			export_to_variable = {
+				which = SacrificeRulerDip
+				value = DIP
+				who = event_target:hunt_for_powerful_mages_victim
+			}
+			export_to_variable = {
+				which = SacrificeRulerMil
+				value = MIL
+				who = event_target:hunt_for_powerful_mages_victim
+			}
+			while = {
+				limit = { check_variable = { which = SacrificeRulerAdm value = 1 } }
+				add_adm_power = 10
+				subtract_variable = { which = SacrificeRulerAdm value = 1 }
+			}
+			while = {
+				limit = { check_variable = { which = SacrificeRulerDip value = 1 } }
+				add_dip_power = 10
+				subtract_variable = { which = SacrificeRulerDip value = 1 }
+			}
+			while = {
+				limit = { check_variable = { which = SacrificeRulerMil value = 1 } }
+				add_mil_power = 10
+				subtract_variable = { which = SacrificeRulerMil value = 1 }
+			}
+		}
+		custom_tooltip = hunt_for_powerful_mages_sacrifice_tt
+		add_stability = 1
+		add_patriarch_authority = 0.1
+		event_target:hunt_for_powerful_mages_victim = {
+			tooltip = {
+				kill_ruler = yes
+			}
+			country_event = { id = xhazobkult_events.206 } 
+		}
+		hidden_effect = {
+			clr_country_flag = active_hunt_for_powerful_mages
+			random_war_enemy_country = {
+				limit = {
+					ruler_has_mage_personality = yes
+					NOT = { has_country_flag = hunt_for_powerful_mages_happened_to_us }
+					capital_scope = {
+						controlled_by = event_target:hunt_for_powerful_mages_gnoll
+					}
+				}
+				capital_scope = {
+					province_event = { id = xhazobkult_events.201 days = 30	}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Gone
+	id = xhazobkult_events.206
+	title = xhazobkult_events.206.t
+	desc = xhazobkult_events.206.d
+	picture = LOOMING_DEATH_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Ashen skies!
+		name = xhazobkult_events.203.a
+		kill_ruler = yes
+	}
+}
 
 ###########################
 ###   Great Xhaz    ###
@@ -297,11 +519,19 @@ country_event = {
 	option = {
 		name = xhazobkult_events.3000.a
 		if = {
-			limit = { ai = no }
+			limit = { ai = no NOT = { has_country_flag = zokka_xhaz_buff_flag } }
 			add_patriarch_authority = -0.65
 		}
+		else_if = {
+			limit = { ai = no has_country_flag = zokka_xhaz_buff_flag }
+			add_patriarch_authority = -0.35
+		}
 		custom_tooltip = xhazobkult_events.3000.tooltip
-		add_ruler_modifier = { name = xhazobkult_great_xhaz_ritual duration = 3650 }
+		if = {
+			limit = { has_country_flag = zokka_xhaz_buff_flag }
+			add_ruler_modifier = { name = zokka_greater_xhaz_ritual duration = 3650 }
+		}
+		else = { add_ruler_modifier = { name = xhazobkult_great_xhaz_ritual duration = 3650 } }
 		
 		
 
@@ -317,7 +547,11 @@ country_event = {
 			add_patriarch_authority = 0.5
 		}
 
-		hidden_effect = { country_event = { id = xhazobkult_events.3001 days = 3650 } } #10 year timer
+		if = { 
+			limit = { tag = F29 NOT = { has_country_flag = zokka_unique_xhaz_flag } }
+			hidden_effect = { country_event = { id = flavour_zokka.8 days = 3650 } }
+		}
+		else = { hidden_effect = { country_event = { id = xhazobkult_events.3001 days = 3650 } } } #10 year timer
 	}
 }
 
@@ -351,6 +585,7 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+			xhazobine_name_generator = yes
 			clr_ruler_flag = undergoing_xhazob_ritual
 			set_country_flag = is_great_xhaz
 			set_country_flag = supernaturally_bound_faith
@@ -361,28 +596,289 @@ country_event = {
 		}
 	}
 
+	after = {
+		hidden_effect = { become_xhazobine_effects = yes }
+	}
+
 	option = {
 		name = xhazobkult_events.3001.a
+		trigger = { has_ruler_flag = arcane_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = ARCANE_XHAZ
+		set_global_flag = arcane_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.b
+		trigger = { has_ruler_flag = burning_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = BURNING_XHAZ
+		set_global_flag = burning_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.c
+		trigger = { has_ruler_flag = obsidian_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = OBSIDIAN_XHAZ
+		set_global_flag = obsidian_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.dd
+		trigger = { has_ruler_flag = dragonfire_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = DRAGONFIRE_XHAZ
+		set_global_flag = dragonfire_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.e
+		trigger = { has_ruler_flag = abyssal_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = ABYSSAL_XHAZ
+		set_global_flag = abyssal_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.f
+		trigger = { has_ruler_flag = ruinous_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = RUINOUS_XHAZ
+		set_global_flag = ruinous_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.g
+		trigger = { has_ruler_flag = rimewind_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = RIMEWIND_XHAZ
+		set_global_flag = rimewind_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.h
+		trigger = { has_ruler_flag = dovetearer_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = DOVETEARER_XHAZ
+		set_global_flag = dovetearer_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.i
+		trigger = { has_ruler_flag = lucent_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = LUCENT_XHAZ
+		set_global_flag = lucent_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.j
+		trigger = { has_ruler_flag = howling_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = HOWLING_XHAZ
+		set_global_flag = howling_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.k
+		trigger = { has_ruler_flag = tigrine_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = TIGRINE_XHAZ
+		set_global_flag = tigrine_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.l
+		trigger = { has_ruler_flag = darkfang_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = DARKFANG_XHAZ
+		set_global_flag = darkfang_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.m
+		trigger = { has_ruler_flag = skybound_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = SKYBOUND_XHAZ
+		set_global_flag = skybound_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.n
+		trigger = { has_ruler_flag = hungering_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = HUNGERING_XHAZ
+		set_global_flag = hungering_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.o
+		trigger = { has_ruler_flag = worldrider_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = WORLDRIDER_XHAZ
+		set_global_flag = worldrider_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.p
+		trigger = { has_ruler_flag = moonripper_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = MOONRIPPER_XHAZ
+		set_global_flag = moonripper_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.q
+		trigger = { has_ruler_flag = pretender_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = PRETENDER_XHAZ
+		set_global_flag = pretender_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.r
+		trigger = { has_ruler_flag = seadrinker_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = SEADRINKER_XHAZ
+		set_global_flag = seadrinker_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.s
+		trigger = { has_ruler_flag = faithskinner_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = FAITHSKINNER_XHAZ
+		set_global_flag = faithskinner_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.tt
+		trigger = { has_ruler_flag = weeping_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = WEEPING_XHAZ
+		set_global_flag = weeping_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.u
+		trigger = { has_ruler_flag = godkiller_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = GODKILLER_XHAZ
+		set_global_flag = godkiller_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.v
+		trigger = { has_ruler_flag = nameless_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = NAMELESS_XHAZ
+		set_global_flag = nameless_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.w
+		trigger = { has_ruler_flag = tyrant_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = TYRANT_XHAZ
+		set_global_flag = tyrant_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.x
+		trigger = { has_ruler_flag = manflenser_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = MANFLENSER_XHAZ
+		set_global_flag = manflenser_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.y
+		trigger = { has_ruler_flag = golden_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = GOLDEN_XHAZ
+		set_global_flag = golden_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.z
+		trigger = { has_ruler_flag = mystic_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = MYSTIC_XHAZ
+		set_global_flag = mystic_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.aa
+		trigger = { has_ruler_flag = deepterror_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = DEEPTERROR_XHAZ
+		set_global_flag = deepterror_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.bb
+		trigger = { has_ruler_flag = riparian_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = RIPARIAN_XHAZ
+		set_global_flag = riparian_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.cc
+		trigger = { has_ruler_flag = hunting_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = HUNTING_XHAZ
+		set_global_flag = hunting_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.ddd
+		trigger = { has_ruler_flag = scalecleaver_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = SCALECLEAVER_XHAZ
+		set_global_flag = scalecleaver_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.ee
+		trigger = { has_ruler_flag = lighteater_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = LIGHTEATER_XHAZ
+		set_global_flag = lighteater_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.ff
+		trigger = { has_ruler_flag = wavetreader_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = WAVETREADER_XHAZ
+		set_global_flag = wavetreader_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.gg
+		trigger = { has_ruler_flag = geniehoard_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = GENIEHOARD_XHAZ
+		set_global_flag = geniehoard_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.hh
+		trigger = { has_ruler_flag = wyrmslayer_xhaz }
+		ai_chance = { factor = 1 }
+		override_country_name = WYRMSLAYER_XHAZ
+		set_global_flag = wyrmslayer_xhaz_happened
+		become_xhazobine_effect_only_tt = yes
+	}
+	option = {
+		name = xhazobkult_events.3001.ii
+		ai_chance = { factor = 0 }
 		override_country_name = GREAT_XHAZ
-		tooltip = {
-			add_ruler_personality = xhazobs_chosen_personality
-			add_ruler_personality = mage_personality
-		}
-		hidden_effect = {
-			force_add_ruler_personality = { personality = mage_personality }
-			force_add_ruler_personality = { personality = xhazobs_chosen_personality }
-		}
-		hidden_effect = {
-			country_event = { id = magic_ruler.102 } #magic schools
-			country_event = { id = magic_ruler.100 } #make them a mage general
-			change_country_color = { color = { 181 230 29 } }
-			set_global_flag = xhaz_active
-		}
-		country_event = { id = patrons_events.6 } #get xhazob patron
+		become_xhazobine_effect_only_tt = yes
 	}
 }
-
-
 
 #xhaz failed
 country_event = {
@@ -459,6 +955,8 @@ country_event = {
 	
 	trigger = {
 		has_country_flag = is_great_xhaz
+		NOT = { has_country_modifier = zokka_invocation_ultima }
+		NOT = { has_country_flag = zokka_zokka_heir_of_zokka_flag }
 	}
 	
 	immediate = {

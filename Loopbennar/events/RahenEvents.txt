@@ -35,80 +35,6 @@ country_event = { #Event to make Rajnadhaga and dwarven adventurers friends
 	}
 }
 
-# province_event = { #Event to make Rajnadhaga and dwarven adventurers friends
-# 	id = rahen.1
-# 	title = rahen.1.t
-# 	desc = rahen.1.d
-# 	picture = WESTERNISATION_eventPicture
-
-# 	is_triggered_only = yes
-# 	fire_only_once = yes
-	
-# 	trigger = {
-# 		province_id = 4266
-# 		owner = { culture_group = dwarven has_reform = dwarovar_adventurer_reform }
-# 		4462 = {
-# 			owner = {
-# 				NOT = {
-# 					tag = R62
-# 					is_rival = ROOT
-# 					is_subject = yes
-# 				}
-# 			}
-# 		}
-# 	}
-
-# 	option = { #Reach out to Rajnadhaga to strike a deal
-# 		name = rahen.1.a
-# 		ai_chance = {
-# 			factor = 1
-# 		}
-# 		4462 = {
-# 			owner = {
-# 				country_event = {
-# 					id = rahen.2
-# 					days = 1
-# 				}
-# 			}
-# 		}
-# 		owner = { add_treasury = -50 }
-# 	}
-# 	option = { #We don't need them
-# 		name = rahen.1.b
-# 		ai_chance = {
-# 			factor = 0
-# 		}
-# 		owner = { add_prestige = 10 }
-# 	}
-# }
-# country_event = { #Rajnadhaga's response
-# 	id = rahen.2
-# 	title = rahen.2.t
-# 	desc = rahen.2.d
-# 	picture = WESTERNISATION_eventPicture
-
-# 	is_triggered_only = yes
-
-# 	option = { #Reach out to Rajnadhaga to strike a deal
-# 		name = rahen.2.a
-# 		ai_chance = {
-# 			factor = 1
-# 		}
-# 		add_treasury = 50
-# 		create_alliance = FROM
-# 		add_historical_friend = FROM
-# 		FROM = { owner = { add_historical_friend = ROOT } }
-# 	}
-# 	option = { #Take their gifts but refuse the deal
-# 		name = rahen.2.b
-# 		ai_chance = {
-# 			factor = 0
-# 		}
-# 		add_treasury = 50
-# 		FROM = { add_casus_belli = { target = ROOT type = cb_insult months = 12 } }
-# 	}
-# }
-
 country_event = { #Event giving Raghamideshi with Shenral nobles trade power in Raj
 	id = rahen.3
 	title = rahen.3.t
@@ -1149,7 +1075,7 @@ country_event = {
 				type = random
 				amount = 1
 				limit = { religion = high_philosophy region = rakhadesh_region is_island = no }
-				province_event = { id = rahen.5 random = 180 }
+				province_event = { id = rahen.5 days = 1 random = 180 }
 			}
 		}
 	}
@@ -1269,6 +1195,246 @@ country_event = {
 		}
 		else = {
 			4411 = { province_event = { id = rahen.10 } }
+		}
+	}
+}
+
+country_event = { #Ruby Gardens Big Wedding
+	id = rahen.100
+	title = rahen.100.t
+	desc = rahen.100.d
+	picture = COURT_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			select_highest_dev_known_country_with_limit = {
+				index = 1
+				limit = "
+					capital_scope = { superregion = rahen_superregion }
+					NOT = {
+						tag = ROOT
+						is_enemy = ROOT
+						is_rival = ROOT
+						has_country_modifier = monstrous_nation
+					}
+				"
+				effect = " save_event_target_as = first_marriage_target "
+			}
+			
+			if = {
+				limit = { has_saved_event_target = first_marriage_target }
+				event_target:first_marriage_target = { capital_scope = { save_event_target_as = first_marriage_target_capital } }
+
+				select_highest_dev_known_country_with_limit = {
+					index = 2
+					limit = "
+						capital_scope = { superregion = rahen_superregion }
+						NOT = {
+							tag = ROOT
+							tag = event_target:first_marriage_target
+							is_enemy = ROOT
+							is_rival = ROOT
+							has_country_modifier = monstrous_nation
+						}
+					"
+					effect = " save_event_target_as = second_marriage_target "
+				}
+
+				if = {
+					limit = { has_saved_event_target = second_marriage_target }
+					event_target:second_marriage_target = { capital_scope = { save_event_target_as = second_marriage_target_capital } }
+
+					select_highest_dev_known_country_with_limit = {
+						index = 3
+						limit = "
+							capital_scope = { superregion = rahen_superregion }
+							NOT = {
+								tag = ROOT
+								tag = event_target:first_marriage_target
+								tag = event_target:second_marriage_target
+								is_enemy = ROOT
+								is_rival = ROOT
+								has_country_modifier = monstrous_nation
+							}
+						"
+						effect = "save_event_target_as = third_marriage_target"
+					}
+					
+					if = {
+						limit = { has_saved_event_target = third_marriage_target }
+						event_target:third_marriage_target = { capital_scope = { save_event_target_as = third_marriage_target_capital } }
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = rahen.100.a
+		ai_chance = { factor = 1 }
+		trigger = { has_saved_event_target = first_marriage_target }
+		goto = first_marriage_target_capital
+
+		add_historical_friend = event_target:first_marriage_target
+		event_target:first_marriage_target = {
+			force_create_marriage = ROOT
+			add_historical_friend = ROOT
+		}
+		ruby_gardens_wedding_effect = { target = event_target:first_marriage_target owner = ROOT tier = 2 ae = -10 }
+	}
+
+	option = {
+		name = rahen.100.b
+		ai_chance = { factor = 1 }
+		trigger = { has_saved_event_target = second_marriage_target }
+		goto = second_marriage_target_capital
+
+		add_historical_friend = event_target:second_marriage_target
+		event_target:second_marriage_target = {
+			force_create_marriage = ROOT
+			add_historical_friend = ROOT
+		}
+		ruby_gardens_wedding_effect = { target = event_target:second_marriage_target owner = ROOT tier = 2 ae = -10 }
+	}
+
+	option = {
+		name = rahen.100.c
+		ai_chance = { factor = 1 }
+		trigger = { has_saved_event_target = third_marriage_target }
+		goto = third_marriage_target_capital
+
+		add_historical_friend = event_target:third_marriage_target
+		event_target:third_marriage_target = {
+			force_create_marriage = ROOT
+			add_historical_friend = ROOT
+		}
+		ruby_gardens_wedding_effect = { target = event_target:third_marriage_target owner = ROOT tier = 2 ae = -10 }
+	}
+}
+
+country_event = { #Ruby Gardens Second Event
+	id = rahen.101
+	title = rahen.101.t
+	desc = rahen.101.d
+	picture = FEAST_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = { NOT = { has_country_flag = ruby_gardens_cheese } } #no getting this multiple times
+
+	option = {
+		name = rahen.101.a
+		ai_chance = { factor = 1 }
+
+		set_country_flag = ruby_gardens_cheese
+
+		every_country = {
+			limit = {
+				capital_scope = { superregion = rahen_superregion }
+				NOT = {
+					is_rival = ROOT
+					is_enemy = ROOT
+					has_country_modifier = monstrous_nation
+				}
+			}
+			add_aggressive_expansion = { who = ROOT value = -50 apply_calc = no }
+		}
+	}
+}
+
+province_event = { #Iron Palace Tier 1
+	id = rahen.102
+	title = rahen.102.t
+	desc = rahen.102.d
+	picture = GREAT_BUILDING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rahen.102.a
+		ai_chance = { factor = 1 }
+
+		add_latest_building = {
+			production = yes
+			trade = yes
+			manpower = yes
+			builder = owner
+		}
+		owner = { add_power_projection = { type = pillaged_rival_capital_state amount = 25 } }
+	}
+}
+
+province_event = { #Iron Palace Tier 2
+	id = rahen.103
+	title = rahen.103.t
+	desc = rahen.103.d
+	picture = GREAT_BUILDING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rahen.103.a
+		ai_chance = { factor = 1 }
+
+		if = {
+			limit = { trade_goods = iron }
+			add_building = weapons
+		}
+		add_building = state_house
+		add_latest_building = {
+			government = yes
+			builder = owner
+		}
+		owner = { add_power_projection = { type = pillaged_rival_capital_state amount = 25 } }
+	}
+}
+
+province_event = { #Iron Palace Tier 3
+	id = rahen.104
+	title = rahen.104.t
+	desc = rahen.104.d
+	picture = GREAT_BUILDING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rahen.104.a
+		ai_chance = { factor = 1 }
+
+		if = {
+			limit = { NOT = { has_building = fort_16th has_building = fort_17th } }
+			add_building = fort_15th
+		}
+		add_building = soldier_households
+		add_building = university
+		owner = { add_power_projection = { type = pillaged_rival_capital_state amount = 25 } }
+	}
+}
+country_event = {
+	id = rahen.105
+	title = rahen.105.t
+	desc = rahen.105.d
+	picture = TIGER_THRONE_eventPicture
+
+	is_triggered_only = yes
+	
+
+	option = {
+		name = rahen.105.a
+		ai_chance = { factor = 1 }
+		if = {
+			limit = { NOT = { tag = R00 } } 
+			add_country_modifier = {
+				name = R00_return_of_lohanparayan
+				duration = 9125
+			}
+		}
+		if = {
+			limit = { tag = R00 }
+			add_prestige = 25
 		}
 	}
 }
