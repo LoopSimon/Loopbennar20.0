@@ -1,50 +1,43 @@
 country_decisions = {
 
-	heirs_of_bhengudak = {
+	heirs_of_bhengudak = { #Guwaamud
 		major = yes
 		potential = {
-			NOT = { tag = Y98 }
-			NOT = { has_country_flag = formed_guwaamud_flag }
 			OR = {
 				primary_culture = shuvuush
+				primary_culture = kuuldaar
 				primary_culture = guwaadun
 			}
-			was_never_end_game_tag_trigger = yes
+			NOT = { has_country_flag = formed_guwaamud_flag }
+			#was_never_end_game_tag_trigger = yes
 		}
 		provinces_to_highlight = {
-			OR = {
-				province_id = 5348
-				province_id = 5355
-			}
+			region = gowon_region
+			NOT = { owned_by = ROOT }
 		}
 		allow = {
-			owns_core_province = 5348
-			owns = 5355
+			gowon_region = {
+				type = all
+				OR = {
+					NOT = { is_city = yes }
+					owned_by = ROOT
+				}
+			}
 			is_free_or_tributary_trigger = yes
 			is_at_war = no
 			has_regency = no
 			NOT = { exists = Y96 }
-			total_development = 140
-			num_of_owned_provinces_with = {
-				value = 12
-				region = odheongu_region
-			}
-			NOT = { has_ruler_modifier = faceless_queen_modifier }
+			NOT = { has_ruler_modifier = faceless_queen_modifier } #Might need to remove when MT is changed
 		}
 		effect = {
 			set_country_flag = formed_guwaamud_flag
 			set_ruler_flag = guwaamud_former
-			add_ruler_modifier = { 
-				name = Y91_guwaamud_fomer_mod
-				duration = -1  
-			}
 			change_tag = Y96
 			hidden_effect = { restore_country_name = yes }
-			if = {
-				limit = { primary_culture = guwaadun }
-				override_country_name = GUNGAMU
-			}
-			remove_non_electors_emperors_from_empire_effect = yes
+			#if = { #This was part of the old thing, unsure if the Nhaless rework wants renames or not. If so uncomment
+			#	limit = { primary_culture = guwaadun }
+			#	override_country_name = GUNGEOMU
+			#}
 			swap_non_generic_missions = yes
 			add_prestige = 20
 			if = {
@@ -63,40 +56,37 @@ country_decisions = {
 				name = "centralization_modifier"
 				duration = 7300
 			}
+			remove_estate_privilege = estate_nomadic_tribes_leadership_of_yomod_rush
 			if = {
-				limit = { NOT = { primary_culture = guwaadun } }
-				custom_tooltip = Y91_horde_heritage_tt
-				hidden_effect = {
-					add_country_modifier = {
-						name = Y91_horde_heritage_1
-						duration = -1
-					}
+				limit = { was_tag = Y91 }
+				add_ruler_modifier = { 
+					name = Y91_guwaamud_fomer_mod
+					duration = -1  
 				}
 			}
-			jaddempire_move_court_minorities_from_to = {
-				from = capital_scope
-				province_id = 5348
-			}
+			primary_and_ruler_culture_change = { race = human new_culture = guwaadun }
 			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						OR = { 
+							culture = shuvuush
+							culture = kuuldaar
+						} 
+					}
+					change_culture = guwaadun
+				}
 				jaddempire_move_court_minorities_from_to = {
 					from = 5406
 					province_id = 5348
 				}
-			}
-			if = {
-				limit = { NOT = { primary_culture = guwaadun } }
-				5348 = {
-					move_capital_effect = yes
-					change_culture = shuvuush
-					change_province_name = "Bhengutai"
+				if = {
+					limit = { NOT = { primary_culture = guwaadun } }
+					5348 = {
+						move_capital_effect = yes
+						change_culture = shuvuush
+						change_province_name = "Bhengutai"
+					}
 				}
-			}
-			odheongu_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { owned_by = ROOT }
-				}
-				add_permanent_claim = ROOT
 			}
 		}
 		ai_will_do = {
@@ -108,36 +98,28 @@ country_decisions = {
 	the_great_empire = {
 		major = yes
 		potential = {
-			NOT = { has_country_flag = formed_daxugo_flag }
 			OR = {
 				primary_culture = shuvuush
+				primary_culture = kuuldaar
 				primary_culture = guwaadun
 			}
+			NOT = { has_country_flag = formed_daxugo_flag }
+			#was_never_end_game_tag_trigger = yes
 		}
 		provinces_to_highlight = {
-			OR = {
-				province_id = 4925
-				province_id = 4859
-				province_id = 4879
-				province_id = 4871
-				province_id = 4868
-			}
+			superregion = yanshen_superregion
+			NOT = { owned_by = ROOT }
 		}
 		allow = {
-			owns_core_province = 4925
-			owns_core_province = 4859
-			owns_core_province = 4879
 			owns_core_province = 4871
-			owns_core_province = 4868
+			num_of_owned_provinces_with = {
+				value = 25
+				superregion = yanshen_superregion
+			}
 			is_subject = no
 			is_at_war = no
 			has_regency = no
 			NOT = { exists = Y98 }
-			adm_tech = 7
-			num_of_owned_provinces_with = {
-				value = 100
-				superregion = yanshen_superregion
-			}
 			NOT = { has_ruler_modifier = faceless_queen_modifier }
 			custom_trigger_tooltip = {
 				tooltip = not_guwaamud_former
@@ -147,54 +129,34 @@ country_decisions = {
 		effect = {
 			change_tag = Y98
 			hidden_effect = { restore_country_name = yes }
-			remove_non_electors_emperors_from_empire_effect = yes
 			swap_non_generic_missions = yes
 			add_prestige = 25
 			set_country_flag = formed_daxugo_flag
 			set_ruler_flag = daxugo_former
-			add_ruler_modifier = {
-				name = Y91_daxugo_fomer_mod
-				duration = -1  
+			if = {
+				limit = { NOT = { has_reform = guwaamud_harem_reform } }
+				add_government_reform = autocracy_reform
+			}
+			if = {
+				limit = { was_tag = Y91 }
+				add_ruler_modifier = {
+					name = Y91_daxugo_fomer_mod
+					duration = -1  
+				}
 			}
 			if = {
 				limit = { has_custom_ideas = no }
 				country_event = { id = ideagroups.1 } #Swap Ideas
 			}
 			change_government = monarchy
-			if = {
-				limit = { 
-					NOT = { 
-						has_reform = guwaamud_harem_reform
-					}
-				}
-				add_government_reform = autocracy_reform
-			}
 			add_country_modifier = {
 				name = "centralization_modifier"
 				duration = 7300
 			}
-			hidden_effect = {
-				if = {
-					limit = {
-						has_country_modifier = Y91_horde_heritage_1
-					}
-					remove_country_modifier = Y91_horde_heritage_1
-				}
-			}
-			custom_tooltip = Y91_horde_heritage_tt
-			hidden_effect = {
-				add_country_modifier = {
-					name = Y91_horde_heritage_2
-					duration = -1
-				}
-			}
 			yanshen_superregion = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { owned_by = ROOT }
-				}
 				add_permanent_claim = ROOT
 			}
+			remove_estate_privilege = estate_nomadic_tribes_leadership_of_yomod_rush
 			primary_and_ruler_culture_change = { race = human new_culture = daxug }
 			if = {
 				limit = {
@@ -204,7 +166,12 @@ country_decisions = {
 			}
 			hidden_effect = {
 				every_owned_province = {
-					limit = { culture = shuvuush }
+					limit = { 
+						OR = { 
+							culture = shuvuush
+							culture = kuuldaar
+						}
+					}
 					change_culture = daxug
 				}
 				if = {
@@ -244,7 +211,6 @@ country_decisions = {
 				from = capital_scope
 				province_id = 4871
 			}
-			country_event = { id = flavor_nuugdan_tsarai.67 days = 30 }
 			4871 = {
 				move_capital_effect = yes 
 				if = {
@@ -258,10 +224,14 @@ country_decisions = {
 				change_province_name = "Duzhekho"
 				change_religion = ROOT
 			}
-			hidden_effect = {
-				country_event = {
-					id = flavor_nuugdan_tsarai.103
-					days = 3
+			if = {
+				limit { was_tag = Y91 } #Nuugdan
+				country_event = { id = flavor_nuugdan_tsarai.67 days = 30 }
+				hidden_effect = {
+					country_event = {
+						id = flavor_nuugdan_tsarai.103
+						days = 3
+					}
 				}
 			}
 		}
@@ -1144,6 +1114,11 @@ country_decisions = {
 				}
 				add_permanent_claim = ROOT
 			}
+			add_prestige = 25
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
 
 			custom_tooltip = eagle_hobgoblin_ruler_rises_tt
 			hidden_effect = {
@@ -1219,6 +1194,11 @@ country_decisions = {
 				country_event = { id = ideagroups.1 } #Swap Ideas
 			}
 			set_government_rank = 2
+			add_prestige = 25
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
 			nomsyulhan_region = {
 				limit = {
 					NOT = { is_core = ROOT }
@@ -1274,6 +1254,59 @@ country_decisions = {
 		}
 		ai_will_do = {
 			factor = 1
+		}
+	}
+
+	form_baztungh_khayus = {
+		major = yes
+		potential = {
+			OR = {
+				primary_culture = shuvuush
+				primary_culture = kuuldaar
+			}
+			was_never_end_game_tag_trigger = yes
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = shuvuushudi_region
+				AND = {
+					superregion = gozengun_superregion
+					OR = {
+						culture = plateau_runsukhi
+						culture = runsukhi
+					}
+				}
+			}
+			NOT = { owned_by = ROOT }
+		}
+		allow = {
+			shuvuushudi_region = {
+				type = all
+				owned_by = ROOT
+			}
+			gozengun_superregion = {
+				type = all
+				OR = {
+					NOT = { 
+						culture = plateau_runsukhi
+						culture = runsukhi
+					}
+					owned_by = ROOT
+				}
+			}
+		}
+		effect = {
+			change_tag = V28
+			hidden_effect = { restore_country_name = yes }
+			#if = {
+			#	limit = { has_custom_ideas = no }
+			#	country_event = { id = ideagroups.1 } #Swap Ideas
+			#}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			enable_tributary_state_use = yes
 		}
 	}
 }

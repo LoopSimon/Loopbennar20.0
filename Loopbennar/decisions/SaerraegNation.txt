@@ -19,10 +19,29 @@ country_decisions = {
 		}
 
 		provinces_to_highlight = {
-			region = chendhya_region
 			OR = {
-				NOT = { owned_by = ROOT }
-				NOT = { is_core = ROOT }
+				region = chendhya_region
+				region = gauraddhi_region
+			}
+			NOT = {
+				country_or_subject_holds = ROOT
+				AND = {
+					OR = {
+						tribal_land_of = ROOT
+						tribal_owner = { is_subject_of = ROOT }
+					}
+					NOT = { 
+						is_city = yes 
+						is_colony = yes
+					}
+				}
+				owner = {
+					alliance_with = ROOT
+					trust = {
+						who = ROOT
+						value = 75
+					}
+				}
 			}
 		}
 		allow = {
@@ -30,14 +49,59 @@ country_decisions = {
 			primary_culture = chendhyan
 			is_free_or_tributary_trigger = yes
 			is_at_war = no
-			num_of_owned_provinces_with = {
-				value = 20
-				region = chendhya_region
-				is_core = ROOT
+			chendhya_region = {
+				type = all
+				OR = {
+					country_or_subject_holds = ROOT
+					custom_trigger_tooltip = {
+						tooltip = saerraeg_tribal_req_tt
+						NOT = { 
+							is_city = yes 
+							is_colony = yes
+						}
+						OR = {
+							tribal_land_of = ROOT
+							tribal_owner = { is_subject_of = ROOT }
+						}
+					}
+					owner = {
+						alliance_with = ROOT
+						trust = {
+							who = ROOT
+							value = 75
+						}
+					}
+				}
+			}
+			gauraddhi_region = {
+				type = all
+				OR = {
+					country_or_subject_holds = ROOT
+					custom_trigger_tooltip = {
+						tooltip = saerraeg_tribal_req_tt
+						NOT = { 
+							is_city = yes 
+							is_colony = yes
+						}
+						OR = {
+							tribal_land_of = ROOT
+							tribal_owner = { is_subject_of = ROOT }
+						}
+					}
+					owner = {
+						alliance_with = ROOT
+						trust = {
+							who = ROOT
+							value = 75
+						}
+					}
+				}
 			}
 		}
 		effect = {
 			change_tag = H00
+			custom_tooltip = chendhya_settle_subjects_tt
+			custom_tooltip = chendhya_integrate_subjects_tt
 			hidden_effect = { restore_country_name = yes }
 			remove_non_electors_emperors_from_empire_effect = yes
 			if = {
@@ -45,9 +109,13 @@ country_decisions = {
 					government = native
 				}
 				every_tribal_land_province = {
-					limit = { NOT = { owner = { exists = yes } } }
+					limit = { is_empty = yes }
 					settle_province = ROOT
 				}
+			}
+			add_country_modifier = {
+				name = chendhya_the_steppe_awakens
+				duration = 9125 #25 years
 			}
 			change_government = tribal
 			add_government_reform = steppe_horde
@@ -57,14 +125,44 @@ country_decisions = {
 				}
 				set_government_rank = 2
 			}
-			#swap_non_generic_missions = yes
-			#Claims
-			chendhya_region = {
-				limit = {
-					NOT = { owned_by = ROOT }
+			hidden_effect = {
+				every_subject_country = {
+					limit = {
+						is_migratory_tribe = yes
+					}
+					every_tribal_land_province = {
+						limit = { is_empty = yes }
+						settle_province = ROOT
+					}
 				}
-				add_permanent_claim = H00
+				every_subject_country = {
+					limit = {
+						primary_culture = chendhyan
+						trust = {
+							who = ROOT
+							value = 75
+						}
+					}
+					ROOT = { inherit = PREV }
+				}
+				every_ally = {
+					limit = {
+						primary_culture = chendhyan
+						trust = {
+							who = ROOT
+							value = 75
+						}
+					}
+					ROOT = { inherit = PREV }
+				}
 			}
+			remove_country_modifier = chendhya_ramping_up_1
+			remove_country_modifier = chendhya_ramping_up_2
+			remove_country_modifier = chendhya_ramping_up_3
+			remove_country_modifier = chendhya_ramping_up_4
+			remove_country_modifier = chendhya_ramping_up_5
+			remove_country_modifier = chendhya_ai_modifier
+			#swap_non_generic_missions = yes
 			if = {
 				limit = { has_custom_ideas = no }
 				country_event = { id = ideagroups.1 } #Swap Ideas
