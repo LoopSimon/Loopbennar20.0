@@ -1,3 +1,6 @@
+#Dev: TheLoneTexan
+#Writers: Georgius Agricola (Missions), TheLoneTexan (Events)
+
 clouded_eye_1_missions = {
 	slot = 1
 	generic = no
@@ -46,6 +49,7 @@ clouded_eye_1_missions = {
 					has_ruler_flag = arosha_oakbreaker
 					exists = B21
 				}
+				custom_tooltip = ce_orcs_with_a_heart_tooltip
 				country_event = {
 					id = flavor_clouded_eye.5
 				}
@@ -70,14 +74,24 @@ clouded_eye_1_missions = {
 		}
 
 		trigger = {
-			865 = {
-				has_building = native_ceremonial_fire_pit
+			OR = {
+				any_owned_province = {
+					has_building = native_ceremonial_fire_pit
+				}
+				AND = {
+					is_tribal = no
+					dip_power = 100
+				}
 			}
+			
+			
 			OR = {
 				alliance_with = B21
+				overlord_of = B21
 				AND = {
-					NOT = {
-						exists = B21
+					OR = {
+						NOT = { exists = B21 }
+						B21 = { is_rival = ROOT }
 					}
 					num_of_allies = 2
 				}
@@ -89,6 +103,10 @@ clouded_eye_1_missions = {
 			add_country_modifier = {
 				name = pen_mightier_than_axe
 				duration = -1
+			}
+			if = {
+				limit = { is_tribal = no }
+				add_dip_power = -100
 			}
 			hidden_effect = {
 				start_demonsterization_effect = yes #Early Demonsterization
@@ -114,22 +132,27 @@ clouded_eye_1_missions = {
 			if = {
 				limit = {
 					exists = B21
+					B21 = {
+						NOT = { is_rival = ROOT }
+					}
 				}
 				B21 = {
 					has_100_opinion_improved_relation = { target = ROOT }
 				}
-				any_ally = {
-					tag = B21
+				OR = {
+					alliance_with = B21
+					overlord_of = B21
 				}
 				treasury = 150
 			}
 			else_if = {
-				limit = {
-					884 = {
-						owned_by = ROOT
-					}
-				}
-			}
+                limit = {
+                    884 = {
+                        owned_by = ROOT
+                    }
+                }
+                884 = { owned_by = ROOT }
+            }
 			else = {
 				884 = { #Owner of Farhyl insulted
 					owner = {
@@ -193,11 +216,22 @@ clouded_eye_1_missions = {
 				type = all
 				owned_by = root
 			}
-			num_of_owned_provinces_with = {
-				value = 2
-				area = esshyl_area
-				has_building = native_earthwork
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 2
+					area = esshyl_area
+					has_building = native_earthwork
+				}
+				AND = {
+					is_tribal = no
+					num_of_owned_provinces_with = {
+						value = 2
+						area = esshyl_area
+						has_fort_building_trigger = yes
+					}
+				}
 			}
+			
 		}
 
 		effect = {
@@ -524,11 +558,19 @@ clouded_eye_3_missions = {
 		}
 
 		trigger = {
-			sarwood_area = {
-				type = all
-				OR = {
-					owned_by = root
-					tribal_land_of = ROOT
+			if = {
+				limit = {
+					ai = yes
+				}
+				manpower_percentage = 1
+			}
+			else = {
+				sarwood_area = {
+					type = all
+					OR = {
+						owned_by = root
+						tribal_land_of = ROOT
+					}
 				}
 			}
 		}
@@ -637,7 +679,10 @@ clouded_eye_3_missions = {
 			871 = { #Gulenhyl
 				owned_by = ROOT
 				base_production = 5
-				has_building = native_three_sisters_field
+				OR = {
+					has_building = native_three_sisters_field
+					has_tax_building_trigger = yes
+				}
 			}
 		}
 
@@ -742,30 +787,7 @@ clouded_eye_3_missions = {
 		effect = {
 			if = {
 				limit = { has_ruler_flag = arosha_oakbreaker }
-				random_owned_province = {
-					limit = { 
-						OR = {
-							AND = {
-								culture = green_orc
-								OR = {
-									has_large_human_minority_trigger = yes
-									has_large_half_orcish_minority_trigger = yes
-								}
-							}
-							AND = {
-								OR = {
-									culture = castellyrian
-									culture = marrodic
-								}
-								OR = {
-									has_large_orcish_minority_trigger = yes
-									has_large_half_orcish_minority_trigger = yes
-								}
-							}
-						}
-					}
-					save_event_target_as = first_half_orc_province
-				}
+				
 				country_event = {
 					id = flavor_clouded_eye.12
 				}
@@ -1045,7 +1067,10 @@ clouded_eye_4_missions = {
 		trigger = {
 			num_of_owned_provinces_with = {
 				trade_goods = grain
-				has_building = native_three_sisters_field
+				OR = {
+					has_production_building_trigger = yes
+					has_building = native_three_sisters_field
+				}
 				value = 3
 			}
 		}

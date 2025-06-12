@@ -1,0 +1,2138 @@
+namespace = flavor_unguldavor
+
+country_event = { #The First Clan Council
+    id = flavor_unguldavor.1
+    title = flavor_unguldavor.1.t
+    desc = flavor_unguldavor.1.d
+    picture = LIBERUM_VETO_eventPicture
+
+    is_triggered_only = yes
+
+    option = { #Only available option
+        name = flavor_unguldavor.1.a
+
+        every_known_country = {
+            limit = {
+                primary_culture = green_orc
+                NOT = { num_of_cities = 10 }
+                ai = yes
+                any_owned_province = { region = inner_castanor_region }
+            }
+            every_owned_province = {
+                limit = { region = inner_castanor_region }
+                set_province_flag = inherited_clan
+            }
+            ROOT = { inherit = PREV }
+        }
+
+		every_owned_province = {
+			limit = {
+				has_province_flag = inherited_clan
+			}
+			add_province_modifier = {
+				name = ung_autonomous_clans
+				duration = -1
+			}
+			clr_province_flag = inherited_clan
+		}
+    }
+}
+
+country_event = { #Place of Patricians
+	id = flavor_unguldavor.2
+	title = flavor_unguldavor.2.t
+	desc = flavor_unguldavor.2.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #No Patricians
+		name = flavor_unguldavor.2.a
+
+		castonath_area = {
+			add_local_autonomy = -25
+			remove_province_modifier = ung_autonomous_clans
+			remove_province_modifier = ung_autonomous_clans2
+		}
+	}
+
+	option = { #New Patricians
+		name = flavor_unguldavor.2.b
+
+		castonath_area = {
+			add_province_modifier = {
+				name = ung_restructuring_patricians
+				duration = 7300
+			}
+		}
+		hidden_effect = {
+			country_event = {
+				id = flavor_unguldavor.200
+				days = 7300
+			}
+		}
+		custom_tooltip = flavor_unguldavor.2.tt
+	}
+}
+
+country_event = { #Friend or Foe
+	id = flavor_unguldavor.3
+	title = flavor_unguldavor.3.t
+	desc = flavor_unguldavor.3.d
+	picture = DIPLOMACY_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Measured Expansion
+		name = flavor_unguldavor.3.a
+
+		add_country_modifier = {
+			name = ung_measured_expansion
+			duration = 7300
+		}
+
+		define_advisor = {
+			type = diplomat
+			skill = 2
+		}
+	}
+
+	option = { #Justified Demands
+		name = flavor_unguldavor.3.b
+
+		add_country_modifier = {
+			name = ung_justified_demands
+			duration = 7300
+		}
+
+		define_advisor = {
+			type = diplomat
+			skill = 2
+		}
+	}
+}
+
+country_event = { #Clan Religious Traditions
+	id = flavor_unguldavor.4
+	title = flavor_unguldavor.4.t
+	desc = flavor_unguldavor.4.d
+	picture = CORINITE_WAR_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.4.a
+
+		every_owned_province = {
+			limit = {
+				has_province_modifier = ung_autonomous_clans
+			}
+			remove_province_modifier = ung_autonomous_clans
+			add_province_modifier = {
+				name = ung_autonomous_clans2
+				duration = -1
+			}
+		}
+	}
+}
+
+country_event = { #New Clan Capitals
+	id = flavor_unguldavor.5
+	title = flavor_unguldavor.5.t
+	desc = flavor_unguldavor.5.d
+	picture = CITY_DEVELOPMENT_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.5.a
+
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 10
+		}
+
+		754 = {
+			remove_building = courthouse
+			add_building = town_hall
+		}
+		839 = {
+			remove_building = courthouse
+			add_building = town_hall
+		}
+		860 = {
+			remove_building = courthouse
+			add_building = town_hall
+		}
+		871 = {
+			remove_building = courthouse
+			add_building = town_hall 
+		}
+		872 = {
+			remove_building = courthouse
+			add_building = town_hall
+		}
+	}
+}
+
+country_event = { #Our Southern Ally
+	id = flavor_unguldavor.6
+	title = flavor_unguldavor.6.t
+	desc = flavor_unguldavor.6.d
+	picture = ORC_WITH_AXE_eventPicture
+
+	is_triggered_only = yes
+
+
+	immediate = {
+		hidden_effect = {
+			random_known_country = {
+				limit = {
+					low_tolerance_orcish_race_trigger = yes
+					any_owned_province = {
+						region = south_castanor_region
+						culture_group = orcish
+					}
+				}
+				save_event_target_as = enemy_country
+			}
+			random_ally = {
+				limit = { 
+					any_owned_province = {
+						region = south_castanor_region
+					}
+				}
+				save_event_target_as = ally_country
+			}
+		}
+		
+	}
+	
+
+	option = {
+		name = flavor_unguldavor.6.a
+
+		trigger = {
+			has_saved_event_target = enemy_country
+			has_saved_event_target = ally_country
+		}
+
+		event_target:enemy_country = {
+			every_owned_province = {
+				limit = {
+					region = south_castanor_region
+					OR = {
+						culture_group = orcish
+						has_large_orcish_minority_trigger = yes
+					}
+				}
+				add_core = event_target:ally_country
+			}
+		}
+
+		hidden_effect = {
+			event_target:ally_country = {
+				declare_war_with_cb = {
+					who = event_target:enemy_country
+					casus_belli = cb_annex
+				}
+			}
+			join_all_offensive_wars_of = event_target:ally_country
+		}
+		custom_tooltip = ung_join_war
+	}
+
+	option = {
+		name = flavor_unguldavor.6.b
+
+		burnoll_area = {
+			add_permanent_claim = ROOT
+		}
+		humacvord_area = {
+			add_permanent_claim = ROOT
+		} 
+		escerfork_area = {
+			add_permanent_claim = ROOT
+		}
+		medirleigh_area = {
+			add_permanent_claim = ROOT
+		}
+		
+	}
+}
+
+country_event = { #Royal City Proclamation
+	id = flavor_unguldavor.7
+	title = flavor_unguldavor.7.t
+	desc = flavor_unguldavor.7.d
+	picture = REFORM_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.7.a
+
+		831 = {
+			add_permanent_province_modifier = {
+				name = ung_royal_city
+			}
+			remove_province_modifier = ung_autonomous_clans2
+		}
+		832 = {
+			add_permanent_province_modifier = {
+				name = ung_royal_city
+			}
+			remove_province_modifier = ung_autonomous_clans2
+		}
+		833 = {
+			add_permanent_province_modifier = {
+				name = ung_royal_city
+			}
+			remove_province_modifier = ung_autonomous_clans2
+		}
+		865 = {
+			add_permanent_province_modifier = {
+				name = ung_royal_city
+			}
+			remove_province_modifier = ung_autonomous_clans2
+		}
+		830 = {
+			add_permanent_province_modifier = {
+				name = ung_royal_city
+			}
+			remove_province_modifier = ung_autonomous_clans2
+		}
+		841 = {
+			add_permanent_province_modifier = {
+				name = ung_royal_city
+			}
+			remove_province_modifier = ung_autonomous_clans2
+		}
+		834 = {
+			add_permanent_province_modifier = {
+				name = ung_royal_city
+			}
+			remove_province_modifier = ung_autonomous_clans2
+		}
+
+		add_country_modifier = {
+			name = ung_clans_angered
+			duration = 3650
+		}
+	}
+}
+
+country_event = { #Fire Away!
+	id = flavor_unguldavor.8
+	title = flavor_unguldavor.8.t
+	desc = flavor_unguldavor.8.d
+	picture = MILITARY_CAMP_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.8.a
+
+		863 = {
+			add_devastation = 50
+		}
+		add_manpower = -0.01
+		add_country_modifier = {
+			name = ung_experimental_cannonballs
+			duration = -1
+		}
+	}
+}
+
+country_event = { #Black Sheep
+	id = flavor_unguldavor.9
+	title = flavor_unguldavor.9.t
+	desc = flavor_unguldavor.9.d
+	picture = ORC_WITH_AXE_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Rugan Emulation
+		name = flavor_unguldavor.9.a
+
+		add_country_modifier = {
+			name = ung_rugan_emulation
+			duration = 7300
+		}
+	}
+
+	option = { #White Sheep
+		name = flavor_unguldavor.9.b
+
+		add_country_modifier = {
+			name = ung_white_sheep
+			duration = 7300
+		}
+	}
+}
+
+country_event = { #Unguldavor Academy
+	id = flavor_unguldavor.10
+	title = flavor_unguldavor.10.t
+	desc = flavor_unguldavor.10.d
+	picture = UNIVERSITY_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Arodar Rename in honor of Arosha
+		name = flavor_unguldavor.10.a
+
+		trigger = {
+			was_tag = B24
+		}
+
+		833 = {
+			change_trade_goods = paper
+			add_building_construction = {
+				building = university
+				speed = 1
+				cost = 0
+			}
+			change_province_name = "Nuhr Arodar"
+			rename_capital = "Nuhr Arodar"
+		}
+		831 = {
+			change_province_name = "Sugh Arodar"
+			rename_capital = "Sugh Arodar"
+		}
+		832 = {
+			change_province_name = "Takhton Arodar"
+			rename_capital = "Takhton Arodar"
+		}
+	}
+
+	option = { #Kaztundar Rename to just translate into orcish the city's existing name
+		name = flavor_unguldavor.10.b
+
+		833 = {
+			change_trade_goods = paper
+			add_building_construction = {
+				building = university
+				speed = 1
+				cost = 0
+			}
+			change_province_name = "Nuhr Kaztundar"
+			rename_capital = "Nuhr Kaztundar"
+		}
+		831 = {
+			change_province_name = "Sugh Kaztundar"
+			rename_capital = "Sugh Kaztundar"
+		}
+		832 = {
+			change_province_name = "Takhton Kaztundar"
+			rename_capital = "Takhton Kaztundar"
+		}
+	}
+
+	option = { #Korgodar in case you still want to name it after Korgus
+		name = flavor_unguldavor.10.c
+
+		833 = {
+			change_trade_goods = paper
+			add_building_construction = {
+				building = university
+				speed = 1
+				cost = 0
+			}
+			change_province_name = "Nuhr Korgodar"
+			rename_capital = "Nuhr Korgodar"
+		}
+		831 = {
+			change_province_name = "Sugh Korgodar"
+			rename_capital = "Sugh Korgodar"
+		}
+		832 = {
+			change_province_name = "Takhton Korgodar"
+			rename_capital = "Takhton Korgodar"
+		}
+	}
+
+	option = { #Garmodar because maybe you formed it as Severed Ear
+		name = flavor_unguldavor.10.e
+
+		trigger = {
+			was_tag = B26
+		}
+
+		833 = {
+			change_trade_goods = paper
+			add_building_construction = {
+				building = university
+				speed = 1
+				cost = 0
+			}
+			change_province_name = "Nuhr Garmodar"
+			rename_capital = "Nuhr Garmodar"
+		}
+		831 = {
+			change_province_name = "Sugh Garmodar"
+			rename_capital = "Sugh Garmodar"
+		}
+		832 = {
+			change_province_name = "Takhton Garmodar"
+			rename_capital = "Takhton Garmodar"
+		}
+	}
+}
+
+country_event = { #Slavery
+	id = flavor_unguldavor.11
+	title = flavor_unguldavor.11.t
+	desc = flavor_unguldavor.11.d
+	picture = TRADE_GOODS_PLANTATION_GOODS_IN_WAREHOUSE_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Ban Slavery
+		name = flavor_unguldavor.11.a
+
+		add_stability = -1
+
+		#Add correct flag to ban slavery
+
+		random_owned_province = {
+			limit = {
+				trade_goods = slaves
+			}
+			change_trade_goods = cloth
+		}
+
+		set_country_flag = ung_abolish_slavery
+		abolish_slavery_effect = yes
+	}
+
+	option = { #Embrace Slavery
+		name = flavor_unguldavor.11.b
+
+		random_owned_province = {
+			limit = {
+				OR = {
+					has_human_majority_trigger = yes
+					has_large_human_minority_trigger = yes
+				}
+			}
+			change_trade_goods = slaves
+		}
+	}
+}
+
+country_event = { #Whoops!
+	id = flavor_unguldavor.12
+	title = flavor_unguldavor.12.t
+	desc = flavor_unguldavor.12.d
+	picture = VILLAGE_BURNING_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					OR = {
+						has_terrain = woods
+						has_terrain = forest
+					}
+					has_building = mage_tower
+				}
+				save_event_target_as = whoops_province
+			}
+		}
+	}
+
+	option = {
+		name = flavor_unguldavor.12.a
+
+		event_target:whoops_province = {
+			add_devastation = 50
+			change_trade_goods = incense
+			add_province_modifier = {
+				name = ung_cleared_forest
+				duration = -1
+			}
+		}
+	}
+}
+
+country_event = { #Hostile Home
+	id = flavor_unguldavor.13
+	title = flavor_unguldavor.13.t
+	desc = flavor_unguldavor.13.d
+	picture = DARK_EXPEDITION_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Dwarven Vassal
+		name = flavor_unguldavor.13.a
+
+		inner_castanor_region = {
+			remove_core = Z36
+		}
+		south_castanor_region = {
+			remove_core = Z36
+		}
+		west_castanor_region = {
+			remove_core = Z36
+		}
+
+		chainlink_mines_area = {
+			add_core = Z36
+			change_culture = stone_dwarf
+			if = {
+				limit = { 
+					is_religion_enabled = corinite
+				}
+				change_religion = corinite #They are dwarves left behind by Hammerhome
+			}
+			else = {
+				change_religion = regent_court
+			}
+			
+		}
+		fallen_asra_area = {
+			add_core = Z36
+			change_culture = stone_dwarf
+			if = {
+				limit = { 
+					is_religion_enabled = corinite
+				}
+				change_religion = corinite #They are dwarves left behind by Hammerhome
+			}
+			else = {
+				change_religion = regent_court
+			}
+		}
+		west_dwarovar_region = {
+			limit = {
+				is_core = ROOT
+			}
+			add_core = Z36
+		}
+
+		create_vassal = Z36
+
+		Z36 = {
+			change_country_color = {
+				country = ROOT
+			}
+			change_government_to_republic = yes
+			override_country_name = "Ungulan Mining Company"
+			add_country_modifier = {
+				name = ung_into_the_depths
+				duration = -1
+			}
+			add_country_modifier = {
+				name = ung_hunt_for_riches
+				duration = -1
+			}
+			if = {
+				limit = { 
+					is_religion_enabled = corinite
+				}
+				change_religion = corinite
+			}
+			remove_country_modifier = dont_colonize_but_migrate
+		}
+		west_dwarovar_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			cede_province = Z36
+		}
+		west_dwarovar_region = {
+			add_permanent_claim = Z36
+		}
+		remove_country_modifier = ung_into_the_depths
+	}
+
+	option = { #Goblin Vassal
+		name = flavor_unguldavor.13.b
+
+		inner_castanor_region = {
+			remove_core = Z36
+		}
+		south_castanor_region = {
+			remove_core = Z36
+		}
+		west_castanor_region = {
+			remove_core = Z36
+		}
+
+		chainlink_mines_area = {
+			add_core = Z36
+			change_culture = cave_goblin
+			if = {
+				limit = { 
+					ROOT = {
+						religion = corinite
+					}
+				}
+				change_religion = corinite
+			}
+			else = {
+				change_religion = goblinic_shamanism
+			}
+		
+		}
+		fallen_asra_area = {
+			add_core = Z36
+			change_culture = cave_goblin
+			if = {
+				limit = { 
+					ROOT = {
+						religion = corinite
+					}
+				}
+				change_religion = corinite
+			}
+			else = {
+				change_religion = goblinic_shamanism
+			}
+		}
+
+		create_vassal = Z36
+
+		Z36 = {
+			change_primary_culture = cave_goblin
+			change_government_to_republic = yes
+			change_country_color = {
+				country = ROOT
+			}
+			override_country_name = "Ungulan Mining Company"
+			add_country_modifier = {
+				name = ung_into_the_depths
+				duration = -1
+			}
+			add_country_modifier = {
+				name = ung_hunt_for_riches
+				duration = -1
+			}
+			if = {
+				limit = { ROOT = { religion = corinite } }
+				change_religion = corinite
+			}
+			else = {
+				change_religion = goblinic_shamanism
+			}
+			remove_country_modifier = dont_colonize_but_migrate
+		}
+		west_dwarovar_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			cede_province = Z36
+		}
+		west_dwarovar_region = {
+			add_permanent_claim = Z36
+		}
+		remove_country_modifier = ung_into_the_depths
+	}
+}
+
+country_event = { #Chained Khozrugan
+	id = flavor_unguldavor.14
+	title = flavor_unguldavor.14.t
+	desc = flavor_unguldavor.14.d
+	picture = CONQUEST_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.14.a
+
+		if = {
+			limit = {
+				any_subject_country = {
+					any_owned_province = {
+						OR = {
+							region = west_castanor_region
+							area = cursewood_area
+							area = whistlevale_area
+						}
+					}
+				}
+			}
+			every_subject_country = {
+				limit = {
+					any_owned_province = {
+						OR = {
+							region = west_castanor_region
+							area = cursewood_area
+							area = whistlevale_area
+						}
+					}
+				}
+				every_owned_province = {
+					limit = {
+						OR = {
+							region = west_castanor_region
+							area = cursewood_area
+							area = whistlevale_area
+						}
+					}
+					add_core = ROOT
+					cede_province = ROOT
+				}
+			}
+		}
+
+		every_owned_province = {
+			limit = {
+				OR = {
+					region = west_castanor_region
+					area = cursewood_area
+					area = whistlevale_area
+				}
+				NOT = {
+					province_id = 756
+				}
+			}
+			add_core = Z51
+		}
+
+		if = {
+			limit = {
+				any_ally = {
+					primary_culture = green_orc
+					capital_scope = {
+						OR = {
+							region = west_castanor_region
+							area = cursewood_area
+							area = whistlevale_area
+						}
+					}
+				}
+			}
+			random_ally = {
+				limit = {
+					primary_culture = green_orc
+					capital_scope = {
+						OR = {
+							region = west_castanor_region
+							area = cursewood_area
+							area = whistlevale_area
+						}
+					}
+				}
+				change_tag = Z51
+			}
+		}
+		else = {
+			release = Z51
+		}
+		
+		create_subject = {
+			who = Z51
+			subject_type = march
+		}
+		add_historical_friend = Z51
+		Z51 = {
+			change_government_to_monarchy = yes
+			add_government_reform = orcish_kingdom_reform
+			add_historical_friend = ROOT
+			add_country_modifier = {
+				name = ung_chained_beast
+				duration = -1
+			}
+			if = {
+				limit = { ROOT = { religion = corinite } }
+				change_religion = corinite
+			}
+			else_if = {
+				limit = { ROOT = { has_country_modifier = seed_of_corinism } }
+				add_country_modifier = {
+					name = seed_of_corinism
+					duration = -1
+				}
+				change_religion = regent_court
+			}
+			else_if = {
+				limit = {ROOT = { religion = bulgu_orazan } }
+				change_religion = bulgu_orazan
+			}
+			swap_non_generic_missions = yes
+		}
+	}
+}
+
+country_event = { #Their Otabar
+	id = flavor_unguldavor.15
+	title = flavor_unguldavor.15.t
+	desc = flavor_unguldavor.15.d
+	picture = SCOTTISH_MERCENARIES_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.15.a
+
+		add_dip_power = -200
+		add_country_modifier = {
+			name = ung_half_orc_accept
+			duration = -1
+		}
+		add_accepted_culture = ungulan_half_orc
+
+		every_owned_province = {
+			limit = { culture = half_orc }
+			change_culture = ungulan_half_orc
+		}
+	}
+}
+
+country_event = { #[GetRulerTitle]'s Folly
+	id = flavor_unguldavor.16
+	title = flavor_unguldavor.16.t
+	desc = flavor_unguldavor.16.d
+	picture = NOBLE_ESTATE_DEMANDS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.16.a
+
+		add_country_modifier = {
+			name = ung_enraged_clans
+			duration = -1
+		}
+
+		hidden_effect = { #Prepare for Pain
+			country_event = {
+				id = flavor_unguldavor.17
+				days = 60
+			}
+			westgate_area = {
+				add_core = B26
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			northyl_area = {
+				add_core = B26
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			trialmount_area = {
+				add_core = B26
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			lower_nath_area = {
+				add_core = B30
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			nortmere_area = {
+				add_core = B30
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			steelhyl_area = {
+				add_core = B25
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			coalwoud_area = {
+				add_core = B25
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			serpentsmarck_area = {
+				add_core = B25
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			sarwood_area = {
+				add_core = B28
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			clouded_wood_area = {
+				add_core = B28
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			nortessord_area = {
+				add_core = B24
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+			esshyl_area = {
+				add_core = B24
+				add_province_modifier = {
+					name = ung_rebellious_clan
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Clans Revolt
+	id = flavor_unguldavor.17
+	title = flavor_unguldavor.17.t
+	desc = flavor_unguldavor.17.d
+	picture = REVOLT_HUNGARIAN_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #GG Get Rekt Scrub
+		name = flavor_unguldavor.17.a
+		
+		custom_tooltip = flavor_unguldavor.17.tt
+
+		add_country_modifier = {
+			name = ung_great_submission
+			duration = -1
+		}
+
+		hidden_effect = {
+			release = B26
+			release = B24
+			release = B25
+			release = B28
+			release = B30
+
+			B26 = {
+				override_country_name = "Halhuraken Khogond"
+				change_country_color = {
+					color = {159 0 0}
+				}
+			}
+			
+			B26 = {
+				define_ruler = {
+					name = "Borgu"
+					dynasty = "Severed Ear"
+					adm = 2
+					dip = 6
+					mil = 6
+					age = 40
+					male = yes
+				}
+				add_ruler_personality = cruel_personality
+				add_ruler_personality = conqueror_personality
+				add_ruler_personality = intricate_web_weaver_personality
+				define_ruler_to_general = {
+					fire = 3
+					shock = 4
+					manuever = 3
+					siege = 3
+				}
+				declare_war_with_cb = {
+					casus_belli = cb_vassalize_mission
+					who = ROOT
+				}
+				change_religion = great_dookan
+				add_country_modifier = {
+					name = ung_gsconvert
+					duration = -1
+				}
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 1.2
+						cavalry = 0.4
+						artillery = 0.5
+					}
+				}
+				every_war_enemy_country = {
+					limit = { NOT = { tag = ROOT } }
+					white_peace = B26
+				}
+			}
+
+			B24 = {
+				define_ruler = {
+					name = "Khagor"
+					dynasty = "Clouded Eye"
+					adm = 5
+					dip = 3
+					mil = 3
+					age = 60
+					male = yes
+					religion = corinite
+				}
+				add_ruler_personality = scholar_personality
+				define_ruler_to_general = {
+					fire = 5
+					shock = 2
+					manuever = 3
+					siege = 2
+				}
+				declare_war_with_cb = {
+					casus_belli = cb_independence_war
+					who = ROOT
+				}
+				change_religion = corinite
+				add_country_modifier = {
+					name = ung_gsconvert
+					duration = -1
+				}
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 1
+						cavalry = 0.2
+						artillery = 0.5
+					}
+				}
+				every_war_enemy_country = {
+					limit = { NOT = { tag = ROOT } }
+					white_peace = B24
+				}
+			}
+			B25 = {
+				define_ruler = {
+					name = "Atu"
+					dynasty = "Bladebreaker"
+					adm = 4
+					dip = 1
+					mil = 6
+					age = 45
+					female = yes
+				}
+				add_ruler_personality = industrious_personality
+				declare_war_with_cb = {
+					casus_belli = cb_independence_war
+					who = ROOT
+				}
+				define_ruler_to_general = {
+					fire = 4
+					shock = 3
+					manuever = 2
+					siege = 4
+				}
+				change_religion = corinite
+				add_country_modifier = {
+					name = ung_gsconvert
+					duration = -1
+				}
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 1.5
+						artillery = 0.3
+					}
+				}
+				every_war_enemy_country = {
+					limit = { NOT = { tag = ROOT } }
+					white_peace = B25
+				}
+			}
+			B28 = {
+				define_ruler = {
+					name = "Zugor"
+					dynasty = "Dogeater"
+					adm = 0
+					dip = 0
+					mil = 6
+					age = 33
+					male = yes
+				}
+				add_ruler_personality = bold_fighter_personality
+				add_ruler_personality = loose_lips_personality
+				define_ruler_to_general = {
+					fire = 0
+					shock = 7
+					manuever = 4
+					siege = 0
+				}
+				declare_war_with_cb = {
+					casus_belli = cb_independence_war
+					who = ROOT
+				}
+				change_religion = great_dookan
+				add_country_modifier = {
+					name = ung_gsconvert
+					duration = -1
+				}
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 1
+						cavalry = 0.8
+					}
+				}
+				every_war_enemy_country = {
+					limit = { NOT = { tag = ROOT } }
+					white_peace = B28
+				}
+			}
+			B30 = {
+				define_ruler = {
+					name = "Ghorza"
+					dynasty = "Korgusblood"
+					adm = 2
+					dip = 4
+					mil = 6
+					age = 23
+					female = yes
+					religion = great_dookan
+				}
+				add_ruler_personality = zealot_personality
+				add_ruler_personality = bold_fighter_personality
+				add_ruler_personality = malevolent_personality
+				define_ruler_to_general = {
+					fire = 3
+					shock = 5
+					manuever = 4
+					siege = 1
+				}
+				declare_war_with_cb = {
+					casus_belli = cb_independence_war
+					who = ROOT
+				}
+				change_religion = great_dookan
+				add_country_modifier = {
+					name = ung_gsconvert
+					duration = -1
+				}
+				capital_scope = {
+					build_to_forcelimit = {
+						infantry = 1.2
+						cavalry = 0.5
+						artillery = 0.2
+					}
+				}
+				every_war_enemy_country = {
+					limit = { NOT = { tag = ROOT } }
+					white_peace = B30
+				}
+			}
+
+			set_country_flag = ung_great_submission_start #Having 100% Warscore against a revolt annexes it.
+			
+			country_event = {
+				id = flavor_unguldavor.18
+				days = 30
+			}
+			clr_country_flag = unguldavor_unruly_clans
+		}
+	}
+}
+
+country_event = { #Grom's Coup (Bloodless)
+	id = flavor_unguldavor.18
+	title = flavor_unguldavor.18.t
+	desc = flavor_unguldavor.18.d
+	picture = NOBLE_ESTATE_TAKE_OVER_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.18.a
+
+		if = {
+			limit = { was_tag = B24 }
+			define_ruler = {
+				name = "Grom 'the Great'" #Canon character, though in a much different context
+				dynasty = "Oakbreaker"
+				age = 30
+				adm = 5
+				dip = 6
+				mil = 4
+				male = yes
+			}
+			define_heir = {
+				name = "Arosha" #Named after Arosha Oakbreaker
+				dynasty = "Oakbreaker"
+				age = 0
+				adm = 5
+				dip = 3
+				mil = 5
+				female = yes
+			}
+		}
+		else = {
+			define_ruler = {
+				name = "Grom 'the Great'" #Canon character, though in a much different context
+				age = 30
+				adm = 5
+				dip = 6
+				mil = 4
+				male = yes
+			}
+		}
+		
+		add_ruler_personality = lawgiver_personality
+
+		remove_country_modifier = ung_enraged_clans
+
+		set_country_flag = ung_part_two
+		swap_non_generic_missions = yes
+
+		custom_tooltip = flavor_unguldavor.18.tt
+	}
+}
+
+country_event = { #Alchemist Offers Aid
+	id = flavor_unguldavor.19
+	title = flavor_unguldavor.19.t
+	desc = flavor_unguldavor.19.d
+	picture = ADVISOR_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.19.a
+
+		define_advisor = {
+			type = court_mage
+			skill = 3
+			#cost_multiplier = -0.5
+			name = "Samûr Ultanuhankar"
+		}
+		define_general = {
+			fire = 5
+			shock = 3
+			manuever = 3
+			siege = 3
+			name = "Krûk Skullcrusher"
+			trait = ruthless_personality
+		}
+		880 = {
+			add_province_modifier = {
+				name = ung_prepared_grounds
+				duration = -1
+			}
+		}
+		add_country_modifier = {
+			name = ung_samur_gunpowder
+			duration = -1
+		}
+	}
+}
+
+country_event = { #Fall of the Traitor (Severed Ear crushed)
+	id = flavor_unguldavor.20
+	title = flavor_unguldavor.20.t
+	desc = flavor_unguldavor.20.d
+	picture = FIREARMS_INCIDENT_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #This was the main mastermind so he's punished severely
+		name = flavor_unguldavor.20.a
+
+		B26 = {
+			disband_all_units = yes
+		}
+		inherit = B26
+
+		if = {
+			limit = {
+				exists = B24
+			}
+			every_owned_province = {
+				limit = {
+					is_core = B26
+				}
+				add_province_modifier = {
+					name = ung_autonomous_clans2
+					duration = -1
+				}
+				remove_core = B26
+				add_local_autonomy = 50
+			}
+		}
+		else = {
+			every_owned_province = {
+				limit = {
+					is_core = B26
+				}
+				add_province_modifier = {
+					name = ung_semiautonomous_clans
+					duration = -1
+				}
+				remove_core = B26
+				add_local_autonomy = 50
+			}
+		}
+
+		add_country_modifier = {
+			name = ung_loyalty_assured
+			duration = -1
+		}
+	}
+}
+
+country_event = { #Sideline Chiefs (Dogeater Revolt Crushed)
+	id = flavor_unguldavor.21
+	title = flavor_unguldavor.21.t
+	desc = flavor_unguldavor.21.d
+	picture = HORDE_ON_HORSEBACK_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Dogeater prompts government reform
+		name = flavor_unguldavor.21.a
+
+		B28 = {
+			disband_all_units = yes
+		}
+
+		inherit = B28
+
+		if = {
+			limit = {
+				exists = B24
+			}
+			every_owned_province = {
+				limit = {
+					is_core = B28
+				}
+				add_province_modifier = {
+					name = ung_autonomous_clans2
+					duration = -1
+				}
+				remove_core = B28
+				add_local_autonomy = 50
+			}
+		}
+		else = {
+			every_owned_province = {
+				limit = {
+					is_core = B28
+				}
+				add_province_modifier = {
+					name = ung_semiautonomous_clans
+					duration = -1
+				}
+				remove_core = B28
+				add_local_autonomy = 50
+			}
+		}
+
+		country_event = {
+			id = flavor_unguldavor.202
+			days = 3650
+		}
+	}
+}
+
+country_event = { #End Clan Armies (Bladebreaker Destroyed)
+	id = flavor_unguldavor.22
+	title = flavor_unguldavor.22.t
+	desc = flavor_unguldavor.22.d
+	picture = LAND_MILITARY_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.22.a
+
+		B25 = {
+			disband_all_units = yes
+		}
+
+		inherit = B25
+
+		if = {
+			limit = {
+				exists = B24
+			}
+			every_owned_province = {
+				limit = {
+					is_core = B25
+				}
+				add_province_modifier = {
+					name = ung_autonomous_clans2
+					duration = -1
+				}
+				remove_core = B25
+				add_local_autonomy = 50
+			}
+		}
+		else = {
+			every_owned_province = {
+				limit = {
+					is_core = B25
+				}
+				add_province_modifier = {
+					name = ung_semiautonomous_clans
+					duration = -1
+				}
+				remove_core = B25
+				add_local_autonomy = 50
+			}
+		}
+	}
+}
+
+country_event = { #Census Reform (Clouded Eye destroyed)
+	id = flavor_unguldavor.23
+	title = flavor_unguldavor.23.t
+	desc = flavor_unguldavor.23.d
+	picture = CONQUEST_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Clouded Eye helps centralize the realm.
+		name = flavor_unguldavor.23.a
+
+		B24 = {
+			disband_all_units = yes
+		}
+
+		inherit = B24
+
+		every_owned_province = {
+			limit = {
+				OR = {
+					has_province_modifier = ung_autonomous_clans2
+					is_core = B24
+				}
+			}
+			add_province_modifier = {
+				name = ung_semiautonomous_clans
+				duration = -1
+			}
+			remove_province_modifier = ung_autonomous_clans2
+			remove_core = B24
+			add_local_autonomy = 50
+		}
+
+		880 = {
+			add_province_modifier = {
+				name = ung_prepared_grounds
+				duration = -1
+			}
+		}
+	}
+}
+
+country_event = { #Repair the System (Bloodgorger Defeated)
+	id = flavor_unguldavor.24
+	title = flavor_unguldavor.24.t
+	desc = flavor_unguldavor.24.d
+	picture = BATTLE_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Ending bad traditions
+		name = flavor_unguldavor.24.a
+
+		B30 = {
+			disband_all_units = yes
+		}
+
+		inherit = B30
+
+		if = {
+			limit = {
+				exists = B24
+			}
+			every_owned_province = {
+				limit = {
+					is_core = B30
+				}
+				add_province_modifier = {
+					name = ung_autonomous_clans2
+					duration = -1
+				}
+				remove_core = B30
+				add_local_autonomy = 50
+			}
+		}
+		else = {
+			every_owned_province = {
+				limit = {
+					is_core = B30
+				}
+				add_province_modifier = {
+					name = ung_semiautonomous_clans
+					duration = -1
+				}
+				remove_core = B30
+				add_local_autonomy = 50
+			}
+		}
+
+		add_country_modifier = {
+			name = ung_end_archaic_traditions
+			duration = 3650
+		}
+		country_event = {
+			id = flavor_unguldavor.203
+			days = 3650
+		}
+	}
+}
+
+country_event = { #King Grom the Great
+	id = flavor_unguldavor.25
+	title = flavor_unguldavor.25.t
+	desc = flavor_unguldavor.25.d
+	picture = MILITARISTICALLY_TALENTED_RULER_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.25.a
+
+		clr_country_flag = ung_great_submission_start
+		remove_country_modifier = ung_samur_gunpowder
+
+		add_ruler_modifier = {
+			name = ung_unguldavor_bashar
+		}
+		increase_ruler_adm_effect = yes
+	}
+}
+
+country_event = { #Grand Opening (Samur's Lab is complete)
+	id = flavor_unguldavor.26
+	title = flavor_unguldavor.26.t
+	desc = flavor_unguldavor.26.d
+	picture = SCIENTISTS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.26.a
+
+		880 = {
+			remove_province_modifier = ung_prepared_grounds
+			add_building = university
+			add_province_modifier = {
+				name = ung_samur_lab
+				duration = -1
+			}
+		}
+	}
+}
+
+country_event = { #New Capital
+	id = flavor_unguldavor.27
+	title = flavor_unguldavor.27.t
+	desc = flavor_unguldavor.27.d
+	picture = CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #North Citadel
+		name = flavor_unguldavor.27.a
+
+		set_capital = 840
+		add_country_modifier = {
+			name = ung_inheritors
+			duration = -1
+		}
+	}
+
+	option = { #North Castonath
+		name = flavor_unguldavor.27.b
+
+		set_capital = 833
+		add_country_modifier = {
+			name = ung_footsteps
+			duration = -1
+		}
+	}
+
+	option = { #Ardent Keep
+		name = flavor_unguldavor.27.c
+
+		set_capital = 865
+		add_country_modifier = {
+			name = ung_defender_orc
+			duration = -1
+		}
+	}
+
+	option = { #Silvervord
+		name = flavor_unguldavor.27.e
+
+		trigger = {
+			owns = 756
+			756 = {
+				development = 20
+				has_building = courthouse
+				has_manufactory_trigger = yes
+			}
+		}
+
+		set_capital = 756
+		add_country_modifier = {
+			name = ung_merchants
+			duration = -1
+		}
+	}
+
+	option = { #Ionntras
+		name = flavor_unguldavor.27.f
+
+		trigger = {
+			owns = 827
+			827 = {
+				development = 20
+				has_building = courthouse
+				has_manufactory_trigger = yes
+			}
+		}
+
+		set_capital = 827
+		add_country_modifier = {
+			name = ung_bastion
+			duration = -1
+		}
+	}
+}
+
+country_event = { #Melted Cannons
+	id = flavor_unguldavor.28
+	title = flavor_unguldavor.28.t
+	desc = flavor_unguldavor.28.d
+	picture = ARTILLERY_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.28.a
+
+		remove_country_modifier = ung_experimental_cannonballs
+		add_country_modifier = {
+			name = ung_cannonmelter
+			duration = -1
+		}
+	}
+}
+
+country_event = { #Shadow Vassal
+	id = flavor_unguldavor.29
+	title = flavor_unguldavor.29.t
+	desc = flavor_unguldavor.29.d
+	picture = SPY_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.29.a
+
+		if = {
+			limit = {
+				Z53 = {
+					ai = yes
+					NOT = { is_subject_of = ROOT }
+				}
+			}
+			vassalize = Z53
+		}
+
+		hornwood_area = {
+			add_permanent_claim = Z53
+		}
+		dryadsdale_area = {
+			add_permanent_claim = Z53
+		}
+		marrhold_area = {
+			add_permanent_claim = Z53
+		}
+		doewood_area = {
+			add_permanent_claim = Z53
+		}
+	}
+}
+
+country_event = { #Ungulan Alchemy
+	id = flavor_unguldavor.30
+	title = flavor_unguldavor.30.t
+	desc = flavor_unguldavor.30.d
+	picture = SCIENTISTS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		trigger = {
+			NOT = { has_country_flag = artificery_unlocked }
+		}
+		name = flavor_unguldavor.30.a
+
+		set_country_flag = unlock_mixed_mode
+
+		country_event = {
+			id = magic_artificery_setup.1
+		}
+	}
+
+	option = {
+		trigger = {
+			has_country_flag = artificery_unlocked
+		}
+		name = flavor_unguldavor.30.b
+
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+	}
+}
+
+country_event = { #Stronger Than Steel
+	id = flavor_unguldavor.31
+	title = flavor_unguldavor.31.t
+	desc = flavor_unguldavor.31.d
+	picture = TRADE_GOODS_METALS_AND_MINING_EQUIPENT_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.31.a
+
+		every_owned_province = {
+			limit = {
+				has_building = mage_tower
+				NOT = { province_id = 860 }
+			}
+			add_province_modifier = {
+				name = ung_drained
+				duration = 5475
+			}
+		}
+
+		860 = {
+			remove_province_modifier = ung_outclassed
+			add_permanent_province_modifier = {
+				name = ung_alchemical_iron
+			}
+		}
+
+		remove_country_modifier = ung_cannonmelter
+		add_country_modifier = {
+			name = ung_samur_cannons
+			duration = -1
+		}
+	}
+}
+
+country_event = { #Fulfilling Grom's Legacy
+	id = flavor_unguldavor.32
+	title = flavor_unguldavor.32.t
+	desc = flavor_unguldavor.32.d
+	picture = GENERALS_DISCUSSING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.32.a
+
+		add_country_modifier = {
+			name = ung_grom_legacy
+			duration = -1
+		}
+	}
+}
+
+country_event = { #Arosha's Dream
+	id = flavor_unguldavor.33
+	title = flavor_unguldavor.33.t
+	desc = flavor_unguldavor.33.d
+	picture = wihgfx_FEMALE_RULER_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.33.a
+
+		if = {
+			limit = {
+				Z51 = {
+					exists = yes
+					is_subject_of = ROOT
+				}
+			}
+			inherit = Z51
+		}
+
+		if = {
+			limit = {
+				Z53 = {
+					exists = yes
+					is_subject_of = ROOT
+				}
+			}
+			inherit = Z53
+		}
+
+		every_owned_province = {
+			add_nationalism = -10
+		}
+	}
+}
+
+country_event = { #Pulse Event Handler
+	id = flavor_unguldavor.100
+	title = flavor_unguldavor.100.t
+	picture = ORC_WITH_AXE_eventPicture
+	hidden = yes
+
+	is_triggered_only = yes
+
+	trigger = {
+		tag = Z52
+		has_country_flag = unguldavor_unruly_clans
+	}
+
+	option = {
+		name = flavor_unguldavor.100.a
+
+		random_list = {
+			50 = {
+
+			}
+			10 = {
+				country_event = {
+					id = flavor_unguldavor.101
+				}
+			}
+			10 = {
+				trigger = {
+					any_owned_province = {
+						any_neighbor_province = {
+    						province_id = 872
+						}
+						has_fort_building_trigger = no
+					}
+				}
+				country_event = {
+					id = flavor_unguldavor.102
+				}
+			}
+			10 = {
+				country_event = {
+					id = flavor_unguldavor.103
+				}
+			}
+			10 = {
+				trigger = {
+					NOT = {
+						has_country_modifier = ung_junk_weapons
+					}
+				}
+				country_event = {
+					id = flavor_unguldavor.104
+				}
+			}
+			10 = {
+				trigger = {
+					NOT = {
+						has_country_modifier = ung_invalid_census
+					}
+				}
+				country_event = {
+					id = flavor_unguldavor.105
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Bloodgorger Raids Neighbors
+	id = flavor_unguldavor.101
+	title = flavor_unguldavor.101.t
+	desc = flavor_unguldavor.101.d
+	picture = COSSACK_ESTATE_RAIDERS_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_neighbor_country = {
+				save_event_target_as = ung_bloodgorger_raid
+			}
+		}
+	}
+
+	option = {
+		name = flavor_unguldavor.101.a
+
+		custom_tooltip = flavor_unguldavor.101.tt
+
+		event_target:ung_bloodgorger_raid = {
+			random_owned_province = {
+				add_devastation = 25
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = unguldavor_sub_raid
+			}
+		}
+	}
+}
+
+country_event = { #Dogeater Internal Raid
+	id = flavor_unguldavor.102
+	title = flavor_unguldavor.102.t
+	desc = flavor_unguldavor.102.d
+	picture = COSSACK_ESTATE_RAIDERS_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					any_neighbor_province = {
+   						province_id = 872
+					}
+					has_fort_building_trigger = no
+				}
+				save_event_target_as = ung_dogwood_raid
+			}
+		}
+	}
+
+	option = {
+		name = flavor_unguldavor.102.a
+		
+		event_target:ung_dogwood_raid = {
+			add_devastation = 25
+		}
+	}
+}
+
+country_event = { #Clouded Eye Humiliation
+	id = flavor_unguldavor.103
+	title = flavor_unguldavor.103.t
+	desc = flavor_unguldavor.103.d
+	picture = muslimgfx_ACCUSATION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.103.a
+
+		add_prestige = -10
+		change_innovativeness = -2
+	}
+}
+
+country_event = { #Bladebreaker Trash Shipment
+	id = flavor_unguldavor.104
+	title = flavor_unguldavor.104.t
+	desc = flavor_unguldavor.104.d
+	picture = MILITARY_CAMP_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.104.a
+
+		add_country_modifier = {
+			name = ung_junk_weapons
+			duration = 3650
+		}
+	}
+}
+
+country_event = { #Severed Ear Hiding Taxes
+	id = flavor_unguldavor.105
+	title = flavor_unguldavor.105.t
+	desc = flavor_unguldavor.105.d
+	picture = BANKRUPTCY_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.105.a
+
+		add_country_modifier = {
+			name = ung_invalid_census
+			duration = 3650
+		}
+	}
+}
+
+country_event = { #Hidden new modifier
+	id = flavor_unguldavor.200
+	title = flavor_unguldavor.200.t
+	picture = ORC_WITH_AXE_eventPicture
+	hidden = yes
+
+	is_triggered_only = yes
+
+	option = {
+		castonath_area = {
+			add_province_modifier = {
+				name = ung_new_patricians
+				duration = -1
+			}
+		}
+	}
+}
+
+province_event = { #Culture convert to half-orc since Paradox is dumb and doesn't allow culture construction to non-primary culture
+	id = flavor_unguldavor.201
+	title = flavor_unguldavor.201.t
+	picture = ORC_WITH_AXE_eventPicture
+	hidden = yes
+
+	is_triggered_only = yes
+
+	option = {
+		if = {
+			limit = {  owner = { accepted_culture = ungulan_half_orc } }
+			change_culture = ungulan_half_orc
+		}
+		else = {
+			change_culture = half_orc
+		}
+		owner = {
+			change_innovativeness = 1
+		}
+	}
+}
+
+country_event = { #Parliament set up
+	id = flavor_unguldavor.202
+	title = flavor_unguldavor.202.t
+	desc = flavor_unguldavor.202.d
+	picture = PARLIAMENT_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.202.a
+
+		add_government_reform = unguldavor_council_of_clans_reform
+	}
+}
+
+country_event = { #New Traditions
+	id = flavor_unguldavor.203
+	title = flavor_unguldavor.203.t
+	desc = flavor_unguldavor.203.d
+	picture = SCIENTISTS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_unguldavor.203.a
+
+		add_country_modifier = {
+			name = ung_new_traditions
+			duration = -1
+		}
+	}
+}
