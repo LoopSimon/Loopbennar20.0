@@ -179,10 +179,10 @@ estate_nobles_land_rights = {
 			# NOT = { adm_tech = 17 }
 		# }
 		#Has already a similar privilege active
-		modifier = {
-			factor = 0.75
-			has_estate_privilege = estate_brahmins_land_rights
-		}
+		# modifier = {
+		# 	factor = 0.75
+		# 	has_estate_privilege = estate_brahmins_land_rights
+		# }
 		modifier = {
 			factor = 0.75
 			has_estate_privilege = estate_church_land_rights
@@ -384,14 +384,12 @@ estate_nobles_levies = {
 		NOT = { has_estate_privilege = estate_nobles_orldhum_platinum_control } #Anbennar
 		NOT = { tag = I08 } #Anbennar
 		NOT = { has_estate_privilege = estate_nobles_themarenn_sailors } #Anbennar
-		NOT = { has_estate_privilege = estate_nobles_levies_olavlund } #Olavlund
 	}
 	can_select = {
 		NOT = { has_estate_privilege = estate_nobles_golden_liberty }
 		NOT = { has_estate_privilege = estate_nobles_orldhum_platinum_liberty } #Anbennar
 		NOT = { has_estate_privilege = estate_nobles_orldhum_platinum_control } #Anbennar
 		NOT = { has_estate_privilege = estate_nobles_themarenn_sailors } #Anbennar
-		NOT = { has_estate_privilege = estate_nobles_levies_olavlund } #Olavlund
 		if = {
 			limit = {
 				has_estate = estate_maratha
@@ -1262,6 +1260,12 @@ estate_nobles_strong_duchies = {
 			max_absolutism = 10
 			diplomatic_upkeep = 1
 			diplomatic_reputation = 1
+		}
+	}
+	conditional_modifier = {
+		trigger = { has_country_flag = U10_upgraded_strong_duchies }
+		modifier = {
+			diplomatic_upkeep = 1
 		}
 	}
 	ai_will_do = {
@@ -3799,125 +3803,81 @@ estate_nobles_themarenn_sailors = { #Anbennar, for A95 missions
 	}
 }
 
-#Olavlund
-estate_nobles_levies_olavlund = {
-	icon = privilege_demand_more_troops
+#Brrtekuh
+estate_nobles_U10_keepers_of_lifes_retreats = {
+	icon = privilege_fort
 	max_absolutism = -5
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes NOT = { has_government_attribute = free_noble_levies } } modifier = { max_absolutism = 1 } }
-	influence = 0.1
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	loyalty = 0.1
 	is_valid = {
-		has_country_flag = olavlund_increased_levies_sailor
+		has_country_flag = U10_military_path_2
 	}
 	can_select = {
-		has_country_flag = olavlund_increased_levies_sailor
+		always = yes
 	}
-	can_revoke = { #Anbennar
-	}
-	modifier_by_land_ownership = {
-		global_tax_modifier = -0.10
-		global_manpower_modifier = 0.2
-		global_sailors_modifier = 0.2
-	}
-	penalties = {
-	}
-	mechanics = {
-		exempt_from_seize_land
+	on_granted = {
+		custom_tooltip = estate_nobles_U10_keepers_of_lifes_retreats_tt
+		tooltip = {
+			add_province_modifier = {
+				name = U10_toxazg_akaz
+				duration = -1
+			}
+		}
 	}
 	ai_will_do = {
-		factor = 5
-		modifier = {
-			factor = 1.5
-			any_rival_country = {
-				army_strength = {
-					who = root
-					value = 1.5
-				}
-			}
-		}
-		modifier = {
-			factor = 1.5
-			has_idea_group = quantity_ideas
-		}
-		modifier = {
-			factor = 0.5
-			max_manpower = 200
-		}
-		modifier = {
-			factor = 0.75
-			NOT = {
-				estate_territory = {
-					estate = estate_nobles
-					territory = 15
-				}
-			}
-		}
-		modifier = {
-			factor = 0.75
-			NOT = {
-				estate_territory = {
-					estate = estate_nobles
-					territory = 10
-				}
-			}
-		}
-		modifier = {
-			factor = 0.75
-			NOT = {
-				estate_territory = {
-					estate = estate_nobles
-					territory = 5
-				}
-			}
-		}
-		modifier = {
-			factor = 0.5
-			NOT = { current_income_balance = 5 }
-		}
-		modifier = {
-			factor = 0.5
-			NOT = { current_income_balance = 0 }
-		}
-		modifier = {
-			factor = 0.5
-			is_absolutism_active = yes
-		}
+		factor = 100
 	}
 }
-
-#Olavlund
-estate_nobles_ebonsteel_cannons = {
-	icon = privilege_limited_war_support
-	
+estate_nobles_U10_torment_of_hellfire = {
+	icon = privilege_morale_damage
+	max_absolutism = -5
 	loyalty = 0.1
-    influence = 0.1
-    max_absolutism = -5
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
-
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	is_valid = {
-		OR = {
-			tag = Z16
-			was_tag = Z16
-		}
-		has_country_flag = olavlund_ebonsteel_cannons_unlocked
+		has_country_flag = U10_military_path_1
 	}
-	
-	can_revoke = { always = yes }
-	
-	benefits = {
-		artillery_cost = 0.10
+	can_select = {
+		always = yes
 	}
-
 	on_granted = {
-		custom_tooltip = estate_nobles_ebonsteel_cannons_granted
-		recalculate_olavlund_ebonsteel_modifier = yes
+		custom_tooltip = estate_nobles_U10_torment_of_hellfire_tt
+		tooltip = {
+			add_province_modifier = {
+				name = U10_hellfire_factory
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					base_production = 10
+					has_building = tradecompany
+					trade_goods = slaves
+				}
+				add_province_modifier = {
+					name = U10_hellfire_factory
+					duration = -1
+				}
+			}
+		}
 	}
-
+	on_invalid = {
+		every_owned_province = {
+			limit = {
+				has_province_modifier = U10_hellfire_factory
+			}
+			remove_province_modifier = U10_hellfire_factory
+		}
+	}
 	on_revoked = {
-		remove_olavlund_ebonsteel_modifier = yes
+		every_owned_province = {
+			limit = {
+				has_province_modifier = U10_hellfire_factory
+			}
+			remove_province_modifier = U10_hellfire_factory
+		}
 	}
-
 	ai_will_do = {
-		factor = 10
+		factor = 100
 	}
 }

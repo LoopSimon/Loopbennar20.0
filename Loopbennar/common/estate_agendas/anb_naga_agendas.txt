@@ -6,23 +6,242 @@ estate_church_naga_build_fort1 = {
         has_anzalkatsa_naga = yes
         has_country_flag = naga_difficulty_2
         any_owned_province = {
-            is_state_core = ROOT
-            province_has_current_tech_fort_trigger = no
-            NOT = { any_neighbor_province = { has_influencing_fort = yes } }
-        }
+			OR = {
+				AND = {
+                    OR = {
+                        NOT = { has_building = fort_15th }
+                        NOT = { has_building = fort_16th }
+                        NOT = { has_building = fort_17th }
+                        NOT = { has_building = fort_18th }
+                    }
+					num_free_building_slots = 1
+					any_neighbor_province = {
+						owner = {
+							OR = {
+								is_rival = root
+								root = { is_rival = prev }
+								AND = {
+									is_subject_other_than_tributary_trigger = yes
+									overlord = {
+										OR = {
+											is_rival = root
+											root = { is_rival = prev }
+										}
+									}
+								}
+							}
+						}
+					}
+					NOT = {
+						any_neighbor_province = {
+							owned_by = root
+							OR = {
+								has_building = fort_15th
+								has_building = fort_16th
+								has_building = fort_17th
+								has_building = fort_18th
+							}
+						}
+					}
+				}
+				AND = {
+					NOT = { has_building = fort_15th }
+					NOT = { has_building = fort_16th }
+					NOT = { has_building = fort_17th }
+					NOT = { has_building = fort_18th }
+					num_free_building_slots = 1
+					any_neighbor_province = {
+						owned_by = root
+						any_neighbor_province = {
+							owner = {
+								OR = {
+									is_rival = root
+									root = { is_rival = prev }
+									AND = {
+										is_subject_other_than_tributary_trigger = yes
+										overlord = {
+											OR = {
+												is_rival = root
+												root = { is_rival = prev }
+											}
+										}
+									}
+								}
+							}
+							NOT = {
+								any_neighbor_province = {
+									owned_by = root
+									OR = {
+										has_building = fort_15th
+										has_building = fort_16th
+										has_building = fort_17th
+										has_building = fort_18th
+									}
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					has_building = fort_15th
+					ROOT = { mil_tech = 14 }
+				}
+				AND = {
+					has_building = fort_16th
+					ROOT = { mil_tech = 19 }
+				}
+				AND = {
+					has_building = fort_17th
+					ROOT = { mil_tech = 24 }
+				}
+			}
+			NOT = { has_building = fort_18th }
+		}
     }
     selection_weight = {
-        factor = 1
+        factor = 100
     }
     pre_effect = {
+        set_variable = {
+			which = estate_church_naga_build_fort1_var
+			value = 0
+		}
         random_owned_province = {
-            limit = {
-                is_state_core = ROOT  # The province must be a core of the country
-                province_has_current_tech_fort_trigger = no
-                NOT = { any_neighbor_province = { has_influencing_fort = yes } }
-            }
-            save_event_target_as = agenda_province   # Save the selected province as an event target
-        }
+			limit = {
+				OR = {
+					AND = {
+						NOT = { has_building = fort_15th }
+						NOT = { has_building = fort_16th }
+						NOT = { has_building = fort_17th }
+						NOT = { has_building = fort_18th }
+						num_free_building_slots = 1
+						any_neighbor_province = {
+							owner = {
+								OR = {
+									is_rival = root
+									root = { is_rival = prev }
+									AND = {
+										is_subject_other_than_tributary_trigger = yes
+										overlord = {
+											OR = {
+												is_rival = root
+												root = { is_rival = prev }
+											}
+										}
+									}
+								}
+							}
+						}
+						NOT = {
+							any_neighbor_province = {
+								owned_by = root
+								OR = {
+									has_building = fort_15th
+									has_building = fort_16th
+									has_building = fort_17th
+									has_building = fort_18th
+								}
+							}
+						}
+					}
+					AND = {
+						NOT = { has_building = fort_15th }
+						NOT = { has_building = fort_16th }
+						NOT = { has_building = fort_17th }
+						NOT = { has_building = fort_18th }
+						num_free_building_slots = 1
+						any_neighbor_province = {
+							owned_by = root
+							any_neighbor_province = {
+								owner = {
+									OR = {
+										is_rival = root
+										root = { is_rival = prev }
+										AND = {
+											is_subject_other_than_tributary_trigger = yes
+											overlord = {
+												OR = {
+													is_rival = root
+													root = { is_rival = prev }
+												}
+											}
+										}
+									}
+								}
+								NOT = {
+									any_neighbor_province = {
+										owned_by = root
+										OR = {
+											has_building = fort_15th
+											has_building = fort_16th
+											has_building = fort_17th
+											has_building = fort_18th
+										}
+									}
+								}
+							}
+						}
+					}
+					AND = {
+						has_building = fort_15th
+						ROOT = { mil_tech = 14 }
+					}
+					AND = {
+						has_building = fort_16th
+						ROOT = { mil_tech = 19 }
+					}
+					AND = {
+						has_building = fort_17th
+						ROOT = { mil_tech = 24 }
+					}
+				}
+				NOT = { has_building = fort_18th }
+			}
+			save_event_target_as = agenda_province
+		}
+        event_target:agenda_province = {
+			if = {
+				limit = {
+					ROOT = { mil_tech = 24 }
+				}
+				ROOT = {
+					set_variable = {
+						which = estate_church_naga_build_fort1_var
+						value = 4
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					ROOT = { mil_tech = 19 }
+				}
+				ROOT = {
+					set_variable = {
+						which = estate_church_naga_build_fort1_var
+						value = 3
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					ROOT = { mil_tech = 14 }
+				}
+				ROOT = {
+					set_variable = {
+						which = estate_church_naga_build_fort1_var
+						value = 2
+					}
+				}
+			}
+			else = {
+				ROOT = {
+					set_variable = {
+						which = estate_church_naga_build_fort1_var
+						value = 1
+					}
+				}
+			}
+		}
     }
     provinces_to_highlight = {
         province_id = event_target:agenda_province
@@ -40,9 +259,56 @@ estate_church_naga_build_fort1 = {
 			}
 		}
         else = {
-            event_target:agenda_province = {
-                province_has_current_tech_fort_trigger = yes
-            } 
+            if = {
+			limit = {
+				check_variable = {
+					which = estate_church_naga_build_fort1_var
+					value = 4
+				}
+			}
+			event_target:agenda_province = {
+				has_building = fort_18th
+			}
+		}
+            else_if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_fort1_var
+                        value = 3
+                    }
+                }
+                event_target:agenda_province = {
+                    OR = {
+                        has_building = fort_17th
+                        has_building = fort_18th
+                    }
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {
+                        which = estate_church_naga_build_fort1_var
+                        value = 2
+                    }
+                }
+                event_target:agenda_province = {
+                    OR = {
+                        has_building = fort_16th
+                        has_building = fort_17th
+                        has_building = fort_18th
+                    }
+                }
+            }
+            else = {
+                event_target:agenda_province = {
+                    OR = {
+                        has_building = fort_15th
+                        has_building = fort_16th
+                        has_building = fort_17th
+                        has_building = fort_18th
+                    }
+                }
+            }
         }
 
     }
@@ -2895,7 +3161,7 @@ estate_church_naga_save_brethren3 = {
         else = {  
             event_target:agenda_province = {
                 custom_trigger_tooltip = {
-                    tooltip = owned_by_country_of_ROOT_religion
+                    tooltip = owned_by_country_of_root_religion
                     owner = {
                         religion = ROOT
                     }

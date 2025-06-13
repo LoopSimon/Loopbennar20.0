@@ -166,10 +166,10 @@ estate_burghers_land_rights = {
 			# NOT = { adm_tech = 17 }
 		# }
 		#Has already a similar privilege active
-		modifier = {
-			factor = 0.75
-			has_estate_privilege = estate_brahmins_land_rights
-		}
+		# modifier = {
+		# 	factor = 0.75
+		# 	has_estate_privilege = estate_brahmins_land_rights
+		# }
 		modifier = {
 			factor = 0.75
 			has_estate_privilege = estate_nobles_land_rights
@@ -463,6 +463,7 @@ estate_burghers_new_world_charter = {
 		OR = {
 			num_of_colonists = 1
 			num_of_colonies = 1
+			has_country_flag = Z88_new_world_but_old
 		}
 	}
 	penalties = {
@@ -2842,110 +2843,62 @@ estate_burghers_promote_burgher_bookkeeping = {
 	}
 }
 
-estate_looptaurs = {
-	icon = privilege_grant_new_world_charter
-	land_share = 5
+#Brrtekuh
+estate_burghers_U10_construction_rights = {
+	icon = privilege_ducats
+	loyalty = 0.0
+	influence = 0.1
 	max_absolutism = -5
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
-	loyalty = 0.05
-	influence = 0.05
 	is_valid = {
-		has_unlocked_estate_privilege = { estate_privilege = estate_looptaurs }
+		has_country_flag = U10_burgher_priv
 	}
 	can_select = {
-		any_owned_province = { has_terrain = steppe }
+		has_country_flag = U10_burgher_priv
 	}
+	benefits = {
+		build_cost = -0.1
+	}
+	
 	on_granted = {
-		custom_tooltip = estate_cossacks_exploration_expedition_effect_tooltip
-	}
-	on_granted_province = {
-		if = {
-			limit = { has_terrain = steppe }
+		custom_tooltip = estate_burghers_U10_construction_rights_tt1
+		tooltip = {
 			add_province_modifier = {
-				name = estate_cossacks_exploration_expedition_mod
+				name = U10_affluent_reclaimation
 				duration = -1
 			}
 		}
-		else_if = {
-			limit = {
-				has_province_modifier = estate_cossacks_exploration_expedition_mod
+		hidden_effect = {
+			every_owned_province = {
+				limit = { has_trade_building_trigger = yes }
+				area = {
+					limit = { owned_by = ROOT }
+					add_province_modifier = {
+						name = U10_affluent_reclaimation
+						duration = -1
+					}
+				}
 			}
-			remove_province_modifier = estate_cossacks_exploration_expedition_mod
+		}
+	}
+	
+	on_invalid = {
+		every_owned_province = {
+			limit = {
+				has_province_modifier = U10_affluent_reclaimation
+			}
+			remove_province_modifier = U10_affluent_reclaimation
 		}
 	}
 	on_revoked = {
-		custom_tooltip = estate_cossacks_exploration_expedition_mod_revoke_tooltip
-		if = {
-			limit = { has_dlc = "Domination" }
-			disable_estate_action = {
-				estate_action = COSSACK_CONQUISTADOR_COSSACKS
-			}
-		}
-		else = {
-			hidden_effect = {
-				disable_estate_action = {
-					estate_action = COSSACK_CONQUISTADOR_COSSACKS
-				}
-			}
-		}
-	}
-	on_revoked_province = {
-		if = {
+		every_owned_province = {
 			limit = {
-				has_province_modifier = estate_cossacks_exploration_expedition_mod
+				has_province_modifier = U10_affluent_reclaimation
 			}
-			remove_province_modifier = estate_cossacks_exploration_expedition_mod
+			remove_province_modifier = U10_affluent_reclaimation
 		}
-	}
-	on_invalid = {
-		custom_tooltip = estate_cossacks_exploration_expedition_mod_revoke_tooltip
-		if = {
-			limit = { has_dlc = "Domination" }
-			disable_estate_action = {
-				estate_action = COSSACK_CONQUISTADOR_COSSACKS
-			}
-		}
-		else = {
-			hidden_effect = {
-				disable_estate_action = {
-					estate_action = COSSACK_CONQUISTADOR_COSSACKS
-				}
-			}
-		}
-	}
-	on_invalid_province = {
-		if = {
-			limit = {
-				has_province_modifier = estate_cossacks_exploration_expedition_mod
-			}
-			remove_province_modifier = estate_cossacks_exploration_expedition_mod
-		}
-	}
-	penalties = {
 	}
 	ai_will_do = {
-		factor = 1
-		#modifier = {
-		#	factor = 10
-		#	OR = {
-		#		tag = MOS
-		#		tag = RUS
-		#	}
-		#}
-		modifier = {
-			factor = 0
-			OR = {
-				NOT = { crown_land_share = 25 }
-				estate_influence = {
-					estate = estate_cossacks
-					influence = 75
-				}
-			}
-			NOT = { has_estate_privilege = estate_cossacks_exploration_expedition }
-		}
-		modifier = {
-			factor = 0
-			is_absolutism_active = yes
-		}
+		factor = 100
 	}
 }

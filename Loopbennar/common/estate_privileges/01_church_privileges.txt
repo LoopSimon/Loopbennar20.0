@@ -176,10 +176,10 @@ estate_church_land_rights = {
 		#	NOT = { adm_tech = 17 }
 		#}
 		#Has already a similar privilege active
-		modifier = {
-			factor = 0.75
-			has_estate_privilege = estate_brahmins_land_rights
-		}
+		# modifier = {
+		# 	factor = 0.75
+		# 	has_estate_privilege = estate_brahmins_land_rights
+		# }
 		modifier = {
 			factor = 0.75
 			has_estate_privilege = estate_nobles_land_rights
@@ -613,6 +613,10 @@ estate_church_clerical_ministers = {
 			yearly_patriarch_authority = 0.005
 		}
 	}
+	conditional_modifier = {
+		trigger = { has_country_flag = U10_buff_clerical_ministers }
+		modifier = { tolerance_own = 1 }
+	}
 	# conditional_modifier = {
 	# 	trigger = {
 	# 		religion = orthodox
@@ -634,6 +638,7 @@ estate_church_clerical_ministers = {
 	conditional_modifier = {
 		trigger = {
 			has_dlc = "Rule Britannia"
+			NOT = { mission_completed = S57_friends_in_holy_places } #shelokmengi S57 MT
 			OR = {
 				#Anbennar
 				religion = great_dookan
@@ -654,6 +659,16 @@ estate_church_clerical_ministers = {
 			church_power_modifier = 0.1
 		}
 	}
+	#shelokmengi S57 MT reward
+	conditional_modifier = {
+		trigger = {
+			has_dlc = "Rule Britannia"
+			mission_completed = S57_friends_in_holy_places
+		}
+    	modifier = {
+        	church_power_modifier = 0.2
+    	}
+}
 	conditional_modifier = {
 		trigger = {
 			has_dlc = "Origins"
@@ -818,6 +833,7 @@ estate_church_inwards_perfection = {
 		}
 	}
 	modifier_by_land_ownership = {
+		development_cost = -0.33
 		global_tax_modifier = 0.33
 		production_efficiency = 0.33
 		manpower_in_true_faith_provinces = 0.33
@@ -1319,11 +1335,12 @@ estate_church_monopoly_of_slaves = {
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
 	loyalty = 0.05
 	is_valid = {
+		# Enabled for Brrtekuh
+		has_country_flag = U10_slavery_monopoly
 		OR = {
 			has_dlc = "Emperor"
 			has_country_flag = buffed_monopolies
 		}
-		always = no
 		#religion = nahuatl
 		any_owned_province = {
 			trade_goods = slaves
@@ -1915,6 +1932,16 @@ estate_church_religious_diplomats = {
 			yearly_harmony = 0.25
 		}
 	}
+	conditional_modifier = { #Helmod
+		trigger = {
+			has_country_flag = Z88_religious_diplomats_upgrade
+		}
+		modifier = {
+			church_loyalty_modifier = 0.05
+			relation_with_same_religion = 20
+			reverse_relation_with_same_religion = 20
+		}
+	}
 	#conditional_modifier = {
 	#	trigger = { has_government_mechanic = ottoman_decadence_mechanic }
 	#	modifier = { monthly_ottoman_decadence = 0.02 }
@@ -1935,7 +1962,15 @@ estate_church_one_faith_one_culture = {
 	icon = privilege_one_faith_one_culture
 	max_absolutism = -5
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
-	conditional_modifier = { trigger = { mission_completed = L03_isagumze_a_god_for_an_empire } modifier = { max_absolutism = 5 } }
+	conditional_modifier = { 
+		trigger = { 
+			OR = {
+				mission_completed = L03_isagumze_a_god_for_an_empire
+				has_country_flag = Z88_religious_culture_upgrade
+			}
+		} 
+		modifier = { max_absolutism = 5 } 
+	}
 	influence = 0.1
 	loyalty = 0.05
 	land_share = 5
@@ -2023,7 +2058,12 @@ estate_church_one_faith_one_culture = {
 		}
 		if = {
 			limit = {
-				NOT = { culture_group = ROOT }
+				NOT = { 
+					culture_group = ROOT
+					ROOT = {
+						has_country_flag = Z88_religious_culture_upgrade
+					}
+				}
 				has_owner_accepted_culture = no
 			}
 			add_province_modifier = {
@@ -2100,7 +2140,12 @@ estate_church_one_faith_one_culture = {
 		}
 	}
 	conditional_modifier = {
-		trigger = { has_country_flag = J33_kukatodic_conversion }
+		trigger = {
+			OR = {
+				has_country_flag = Z88_religious_culture_upgrade
+				has_country_flag = J33_kukatodic_conversion
+			}
+		}
 		modifier = {
 			global_missionary_strength = 0.02
 		}
@@ -2953,10 +2998,11 @@ estate_church_expand_the_theology = {
 		has_dlc = "Domination"
 	}
 	can_select = {
-		if = {
-			limit = { has_estate = estate_brahmins }
-			NOT = { has_estate_privilege = estate_brahmins_expand_the_theology }
-		}
+		always = yes
+		#if = {
+		#	limit = { has_estate = estate_brahmins }
+		#	NOT = { has_estate_privilege = estate_brahmins_expand_the_theology }
+		#}
 	}
 	on_granted = {
 		enable_estate_action = {
@@ -3006,10 +3052,10 @@ estate_church_clerical_education = {
 		has_dlc = "Domination"
 	}
 	can_select = {
-		if = {
-			limit = { has_estate = estate_brahmins }
-			NOT = { has_estate_privilege = estate_brahmins_clerical_education }
-		}
+		# if = {
+		# 	limit = { has_estate = estate_brahmins }
+		# 	NOT = { has_estate_privilege = estate_brahmins_clerical_education }
+		# }
 		if = {
 			limit = { has_estate = estate_dhimmi }
 			NOT = { has_estate_privilege = estate_dhimmi_dhimmi_education }
@@ -3501,4 +3547,264 @@ estate_church_uelos_cult_guaranteed_autonomy = {
 		factor = 1000
 	}
 
+}
+#Brrtekuh
+estate_church_U10_purification_posts_along_the_sorrow = {
+	icon = privilege_build_jain_temple
+	land_share = 10
+	max_absolutism = -10
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	is_valid = {
+		has_country_flag = U10_purification_privileges_enabled
+	}
+	can_select = {
+		crown_land_share = 40
+		calc_true_if = {
+			desc = estate_church_U10_purification_posts_trigger_tt
+			all_states = {
+				any_province_in_state = {
+					province_group = mothers_sorrow_group
+					has_building = mage_tower
+				}
+			}
+			amount = 5
+		}
+		OR = {
+			estate_influence = {
+				estate = estate_mages
+				influence = 50
+			}
+			is_evocation_3 = yes
+			is_abjuration_3 = yes
+			is_divination_3 = yes
+		}
+	}
+	on_granted = {
+		khetarchs_curse_decrease_effect = yes
+		hidden_effect = {
+			check_clergy_on_the_move = yes
+		}
+		every_owned_province = {
+			limit = { has_province_modifier = U10_mothers_ichor }
+			remove_province_modifier = U10_mothers_ichor
+		}
+		custom_tooltip = estate_church_U10_purification_posts_along_the_sorrow_tt
+		tooltip = {
+			add_province_modifier = {
+				name = U10_containment_array
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					has_fort_building_trigger = yes
+					has_building = mage_tower
+				}
+				add_province_modifier = {
+					name = U10_containment_array
+					duration = -1
+				}
+			}
+		}
+	}
+	penalties = {
+	}
+	benefits = {
+		church_privilege_slots = 1
+	}
+	on_invalid = {
+		khetarchs_curse_increase_effect = yes
+		every_owned_province = {
+			limit = {
+				has_province_modifier = U10_containment_array
+			}
+			remove_province_modifier = U10_containment_array
+		}
+	}
+	on_revoked = {
+		every_owned_province = {
+			limit = {
+				has_province_modifier = U10_containment_array
+			}
+			remove_province_modifier = U10_containment_array
+		}
+		khetarchs_curse_increase_effect = yes
+	}
+	ai_will_do = {
+		factor = 100
+	}
+	mechanics = {
+		exempt_from_seize_land
+	}
+}
+estate_church_U10_potent_exorcists = {
+	icon = privilege_cast_spell
+	land_share = 0
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	influence = 0.1
+	is_valid = {
+		has_country_flag = U10_purification_privileges_enabled
+	}
+	can_select = {
+		calc_true_if = {
+			trading_bonus = {
+				trade_goods = damestear
+				value = yes
+			}
+			trading_bonus = {
+				trade_goods = ivory
+				value = yes
+			}
+			trading_bonus = {
+				trade_goods = incense
+				value = yes
+			}
+			trading_bonus = {
+				trade_goods = coffee
+				value = yes
+			}
+			amount = 2
+		}
+	}
+	on_granted = {
+		hidden_effect = {
+			check_clergy_on_the_move = yes
+		}
+		khetarchs_curse_decrease_effect = yes
+	}
+	penalties = {
+	}
+	benefits = {
+		church_privilege_slots = 1
+		leader_land_shock = 1
+		mages_loyalty_modifier = 0.1
+		mages_influence_modifier = 0.1
+	}
+	on_invalid = {
+		khetarchs_curse_increase_effect = yes
+	}
+	on_revoked = {
+		khetarchs_curse_increase_effect = yes
+	}
+	ai_will_do = {
+		factor = 100
+	}
+}
+estate_church_U10_ignorance_campaigns = {
+	icon = privilege_tolerance_own
+	land_share = 0
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	influence = 0.1
+	is_valid = {
+		has_country_flag = U10_purification_privileges_enabled
+	}
+	can_select = {
+		has_institution = printing_press
+		trading_bonus = {
+			trade_goods = paper
+			value = yes
+		}
+		NOT = {
+			any_province = {
+				continent = africa
+				OR = {
+					religion = nirakhetist
+					religion = elikhetist
+				}
+			}
+		}
+	}
+	on_granted = {
+		khetarchs_curse_decrease_effect = yes
+		hidden_effect = {
+			check_clergy_on_the_move = yes
+		}
+	}
+	penalties = {
+	}
+	benefits = {
+		church_power_modifier = 0.2
+		church_privilege_slots = 1
+		tolerance_own = 2
+	}
+	on_invalid = {
+		khetarchs_curse_increase_effect = yes
+	}
+	on_revoked = {
+		khetarchs_curse_increase_effect = yes
+	}
+	ai_will_do = {
+		factor = 100
+	}
+}
+
+estate_church_U10_charms_of_protection = {
+	icon = privilege_tolerance_own
+	land_share = 0
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	influence = 0.1
+	is_valid = {
+		has_country_flag = U10_purification_privileges_enabled
+	}
+	can_select = {
+		is_abjuration_2 = yes
+		calc_true_if = {
+			trading_bonus = {
+				trade_goods = spices
+				value = yes
+			}
+			trading_bonus = {
+				trade_goods = salt
+				value = yes
+			}
+			## exclude_from_progress makes the triggers within return 0 to the calc_true_if.
+			## Without it, 2 gold producing provinces would satisfy the calc_true_if, since
+			## many triggers return their values to the parent calc_true_if.
+			## Nesting the trigger within an OR = { } ensures only a value of 1 is returned,
+			## thus satisfying the intent of putting a trigger here, however it makes the
+			## tooltip difficult to interpret, so it is hidden.
+			## Combining these two functions keeps the tooltip readable and functional
+			exclude_from_progress = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 7
+					trade_goods = gold
+				}
+			}
+			hidden_trigger = {
+				OR = {
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						value = 7
+						trade_goods = gold
+					}
+				}
+			}
+			amount = 2
+		}
+	}
+	on_granted = {
+		khetarchs_curse_decrease_effect = yes
+		hidden_effect = {
+			check_clergy_on_the_move = yes
+		}
+	}
+	penalties = {
+	}
+	benefits = {
+		church_privilege_slots = 1
+		morale_damage_received = -0.1
+		fire_damage_received = -0.1
+	}
+	on_invalid = {
+		khetarchs_curse_increase_effect = yes
+	}
+	on_revoked = {
+		khetarchs_curse_increase_effect = yes
+	}
+	ai_will_do = {
+		factor = 100
+	}
 }

@@ -690,6 +690,26 @@ estate_mages_organization_proffesional_mihipha = {
 		factor = 1
 	}
 }
+estate_mages_organization_aviaries = {	#chaqway
+	icon = privilege_promote_maratha_nobility
+	loyalty = 0.1
+	influence = 0.2
+	is_valid = {
+		has_estate_privilege = estate_mages_organization_aviaries
+	}
+	can_revoke = {
+		always = no
+	}
+	on_granted = {
+		clear_mages_organization_effect = yes
+	}
+	benefits = {
+		state_maintenance_modifier = -0.25
+	}
+	ai_will_do = {
+		factor = 1
+	}
+}
 estate_mages_battlemage_academies = {
 	icon = privilege_demand_more_troops
 	max_absolutism = -5
@@ -879,7 +899,6 @@ estate_mages_free_alchemists = {
 		factor = 0
 	}
 }
-
 
 estate_mages_patronage_of_the_magical_arts = {	#magical patronage
 	icon = privilege_give_money
@@ -1560,7 +1579,7 @@ estate_adventurers_organization_land_of_adventure = {
 }
 
 estate_adventurers_organization_stone_army = {
-	icon = privilege_promote_maratha_nobility
+	icon = estate_nobles_ITA_military_governors
 	max_absolutism = -20
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 4 } }
 	loyalty = 0.15
@@ -2033,6 +2052,7 @@ estate_adventurers_heroes_in_the_army = {
 				has_government_attribute = is_heroic_realm
 				mission_completed = legacy_of_the_wvyern
 				has_country_flag = S53_husbands_in_the_army_flag
+				has_country_flag = Z88_heros_upgrade_1_mod
 			}
 		}
 		modifier = {
@@ -2066,11 +2086,29 @@ estate_adventurers_heroes_in_the_army = {
 		}
 	}
 	conditional_modifier = {
+		trigger = {
+			has_country_flag = Z88_heros_upgrade_2_mod
+		}
+		modifier = {
+			adventurers_loyalty_modifier = 0.1
+			general_cost = -0.25
+		}
+	}
+	conditional_modifier = {
 		trigger = { mission_completed = R11_heroes_army }
 		modifier = {
 			adventurers_loyalty_modifier = 0.1
 			global_manpower_modifier = 0.1
 			mercenary_manpower = 0.1
+		}
+	}
+	conditional_modifier = { #vaengheim
+		trigger = {
+			has_country_flag = Z88_heros_upgrade_3_mod
+		}
+		modifier = {
+			max_absolutism = 10
+			adventurers_loyalty_modifier = 0.1
 		}
 	}
 	ai_will_do = {
@@ -3375,7 +3413,64 @@ estate_monstrous_tribes_promise_new_lands = {
 		}
 	}
 }
-
+#Brrtekuh
+estate_monstrous_tribes_U10_proving_trials = {
+	icon = privilege_demand_more_troops
+	max_absolutism = -10
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	loyalty = 0
+	influence = 0.1
+	is_valid = {
+		mission_completed = U10_the_loyal_pack
+		has_ruler_flag = THE_brrtekuh
+	}
+	can_select = { }
+	on_granted = { custom_tooltip = U10_proving_trials_tt }
+	ai_will_do = {
+		factor = 100
+	}
+}
+estate_monstrous_tribes_U10_followers_of_the_windstorm = {
+	icon = privilege_royal_rule
+	loyalty = 0.2
+	is_valid = {
+		mission_completed = U10_return_of_the_queen
+		has_ruler_flag = THE_brrtekuh
+	}
+	on_granted = {
+		custom_tooltip = serving_the_strongest_tt
+		tooltip = {
+			add_province_modifier = {
+				name = U10_serving_the_strongest
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			every_owned_province = {
+				limit = { religion = kvangahga }
+				add_province_modifier = {
+					name = U10_serving_the_strongest
+					duration = -1
+				}
+			}
+		}
+	}
+	on_invalid_province = {
+		if = {
+			limit = { has_province_modifier = U10_serving_the_strongest }
+			remove_province_modifier = U10_serving_the_strongest
+		}
+	}
+	on_revoked_province = {
+		if = {
+			limit = { has_province_modifier = U10_serving_the_strongest }
+			remove_province_modifier = U10_serving_the_strongest
+		}
+	}
+	ai_will_do = {
+		factor = 100
+	}
+}
 #Centaurs
 estate_monstrous_tribes_free_clans = {
 	icon = privilege_grant_autonomy
@@ -3607,6 +3702,104 @@ estate_nobles_castanor_upgraded_strong_duchies = {
 		modifier = { #will lose it via invalid sooner or later
 			factor = 10
 			has_estate_privilege = estate_nobles_castanor_upgraded_strong_duchies
+		}
+	}
+}
+
+estate_nobles_tribes_tame_the_frontier_privilege = {
+	icon = privilege_grant_new_world_charter
+	influence = 0.05
+	loyalty = 0.05
+	max_absolutism = 0
+	is_valid = {
+		capital_scope = { superregion = gerudia_superregion }
+		culture_native_to_gerudia_superregion = yes
+	}
+	can_select = {
+		adm_tech = 5
+	}
+	can_revoke = {
+		always = yes
+	}
+	on_granted = {
+		custom_tooltip = estate_nobles_tribes_tame_the_frontier_dt
+		custom_tooltip = estate_nobles_tribes_tame_the_frontier_nt
+		tooltip = {
+			add_province_modifier = {
+				name = estate_tame_the_frontier_new_colony_mod
+				duration = 18250 #50 years
+			}
+		}
+		if = {
+			limit = { NOT = { num_of_colonists = 1 } }
+			add_temporary_colonist = { duration = -1 }
+		}
+	}
+	on_granted_province = {
+		if = {
+			limit = {
+				is_colony = yes
+				OR = {
+					region = yyl_moista_region
+					region = northern_pass_region
+					superregion = gerudia_superregion
+				}
+			}
+			add_province_modifier = {
+				name = estate_tame_the_frontier_discount_mod
+				duration = -1
+			}
+		}
+		else = {
+			remove_province_modifier = estate_tame_the_frontier_discount_mod
+		}
+	}
+	on_revoked_province = {
+		remove_province_modifier = estate_tame_the_frontier_discount_mod
+	}
+	on_revoked = {
+		remove_temporary_colonist = yes
+	}
+	penalties = {
+		range = -0.25
+	}
+	ai_will_do = {
+		factor = 5 #>10 take, <5 revoke
+		modifier = {
+			factor = 2
+			capital_scope = { superregion = gerudia_superregion }
+			culture_native_to_gerudia_superregion = yes
+			adm_tech = 5
+		}
+		modifier = {
+			factor = 2
+			capital_scope = { superregion = gerudia_superregion }
+			culture_native_to_gerudia_superregion = yes
+			has_estate_privilege = estate_nobles_tribes_tame_the_frontier_privilege
+		}
+		modifier = {
+			factor = 0.2
+			has_idea_group = exploration_ideas
+		}
+		modifier = {
+			factor = 0.5
+			has_idea_group = expansion_ideas
+		}
+		modifier = {
+			factor = 0.5
+			NOT = { 
+				any_owned_province = { 
+					OR = {
+						superregion = gerudia_superregion
+						region = yyl_moista_region
+						region = northern_pass_region
+					}
+					OR = {
+						has_empty_adjacent_province = yes 
+						is_colony = yes
+					}
+				} 
+			}
 		}
 	}
 }
@@ -4385,181 +4578,6 @@ estate_daulophs_grand_mercenary_feast = {
 	}
 }
 
-# estate_church_independent_clergy = {
-# 	icon = privilege_build_jain_temple
-# 	max_absolutism = -10
-# 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
-# 	is_valid = {
-# 		OR = {
-# 			religion = bulwari_sun_cult
-# 			has_country_flag = updating_isolationism_window
-# 		}
-# 		is_chosen_country = no
-# 	}
-# 	can_select = { }
-
-# 	can_revoke = {
-# 		custom_trigger_tooltip = {
-# 			tooltip = nsc_isolationism_level_is_not_2_tt
-# 			NOT = { isolationism = 2 }
-# 		}
-# 		NOT = { estate_influence = { estate = estate_church influence = 40 } }
-# 		estate_loyalty = { estate = estate_church loyalty = 50 }
-# 		stability = 2
-# 		if = { limit = { isolationism = 1 }
-# 			adm_power = 150
-# 		}
-# 		else_if = { limit = { isolationism = 0 }
-# 			adm_power = 50
-# 		}
-# 	}
-# 	on_revoked = {
-# 		if = { limit = { isolationism = 1 }
-# 			add_stability = -1
-# 			add_adm_power = -150
-# 			custom_tooltip = sun_elf_loyalists_spawn_big_tt
-# 			hidden_effect = {
-# 				random_owned_province = {
-# 					spawn_rebels = {
-# 						type = sun_elf_loyalists_rebels
-# 						size = 2
-# 					}
-# 				}
-# 				random_owned_province = {
-# 					spawn_rebels = {
-# 						type = sun_elf_loyalists_rebels
-# 						size = 2
-# 					}
-# 				}
-# 				random_owned_province = {
-# 					spawn_rebels = {
-# 						type = sun_elf_loyalists_rebels
-# 						size = 2
-# 					}
-# 				}
-# 			}
-# 			custom_tooltip = lesser_effect_with_lower_isolationism_tt
-# 		}
-# 		else_if = { limit = { isolationism = 0 }
-# 			add_stability = -1
-# 			add_adm_power = -50
-# 			custom_tooltip = sun_elf_loyalists_spawn_small_tt
-# 			hidden_effect = {
-# 				random_owned_province = {
-# 					spawn_rebels = {
-# 						type = sun_elf_loyalists_rebels
-# 						size = 2
-# 					}
-# 				}
-# 				random_owned_province = {
-# 					spawn_rebels = {
-# 						type = sun_elf_loyalists_rebels
-# 						size = 1
-# 					}
-# 				}
-# 				random_owned_province = {
-# 					spawn_rebels = {
-# 						type = sun_elf_loyalists_rebels
-# 						size = 1
-# 					}
-# 				}
-# 			}
-# 		}
-# 	}
-
-# 	on_granted = { }
-
-# 	penalties = { }
-
-# 	benefits = { }
-
-# 	conditional_modifier = {
-#  		trigger = {
-# 			NOT = { tag = F31 }
-# 			isolationism = 1
-# 			NOT = { isolationism = 2 }
-# 			OR = {
-# 				is_subject = no
-# 				overlord = { is_chosen_country = no }
-# 			}
-# 		}
-#  		modifier = {
-# 			church_influence_modifier = 0.05
-# 		}
-# 		is_bad = yes
-#  	}
-# 	conditional_modifier = {
-#  		trigger = {
-# 			NOT = { tag = F31 }
-# 			isolationism = 2
-# 			NOT = { isolationism = 3 }
-# 			OR = {
-# 				is_subject = no
-# 				overlord = { is_chosen_country = no }
-# 			}
-# 		}
-#  		modifier = {
-# 			church_loyalty_modifier = -0.05
-# 			church_influence_modifier = 0.10
-# 			global_tax_modifier = -0.05
-# 		}
-# 		is_bad = yes
-#  	}
-# 	conditional_modifier = {
-#  		trigger = {
-# 			NOT = { tag = F31 }
-# 			isolationism = 3
-# 			NOT = { isolationism = 4 }
-# 			OR = {
-# 				is_subject = no
-# 				overlord = { is_chosen_country = yes }
-# 			}
-# 		}
-#  		modifier = {
-# 			church_loyalty_modifier = -0.10
-# 			church_influence_modifier = 0.15
-# 			global_tax_modifier = -0.10
-# 		}
-# 		is_bad = yes
-#  	}
-# 	conditional_modifier = {
-#  		trigger = {
-# 			NOT = { tag = F31 }
-# 			isolationism = 4
-# 			OR = {
-# 				is_subject = no
-# 				overlord = { is_chosen_country = no }
-# 			}
-# 		}
-#  		modifier = {
-# 			church_loyalty_modifier = -0.15
-# 			church_influence_modifier = 0.20
-# 			global_tax_modifier = -0.15
-# 		}
-# 		is_bad = yes
-#  	}
-
-# 	ai_will_do = {
-# 		factor = 11
-# 		modifier = {
-# 			factor = 0.5
-# 			stability = 2
-# 		}
-# 		modifier = {
-# 			factor = 0.5
-# 			stability = 3
-# 		}
-# 		modifier = {
-# 			factor = 0.5
-# 			NOT = { isolationism = 1 }
-# 		}
-# 		modifier = {
-# 			factor = 10
-# 			is_at_war = yes
-# 		}
-# 	}
-# }
-
 estate_church_sponsored_festivals = {
 	icon = privilege_nsc_sponsored_festivals
 	loyalty = 0.10
@@ -4967,20 +4985,400 @@ estate_mages_ice_sculptures = {
 }
 
 #xhazobkult
+gnoll_the_weak_serve_the_strong = {
+	icon = privilege_monopoly_of_goods_slaves
+	influence = 0.05
+	loyalty = 0.1
+	is_valid = {
+		culture_group = gnollish
+		OR = {
+			religion = xhazobkult
+			NOT = { ai = yes }
+		}
+	}
+	can_select = {
+		NOT = { has_estate_privilege = gnoll_the_weak_serve_the_strong_burghers }
+	}
+	penalties = { }
+	benefits = { }
+	on_granted = {
+		hidden_effect = {
+			set_variable = { gnoll_tributary_bonus_count = 0 }
+			every_subject_country = {
+				limit = {
+					is_right_subject_type_xhazobkult = yes
+					is_right_development_xhazobkult = yes 
+					NOT = { has_country_flag = already_giving_tributary_bonus }
+				}
+				set_country_flag = already_giving_tributary_bonus
+				overlord = { change_variable = { gnoll_tributary_bonus_count = 1 } }
+			}
+		}
+		custom_tooltip = gnoll_the_weak_serve_the_strong_economy_tooltip
+		custom_tooltip = " "
+		custom_tooltip = gnoll_the_weak_serve_the_strong_diplomacy_tooltip_1
+		custom_tooltip = " "
+		if = {
+			limit = { religion = xhazobkult }
+			complex_dynamic_effect = {
+				first_custom_tooltip = gnoll_the_weak_serve_the_strong_complex_tooltip_1
+				first_limit = " NOT = { patriarch_authority = 0.5 } "
+				first_effect = " custom_tooltip = gnoll_the_weak_serve_the_strong_complex_tooltip_2 "
+				second_custom_tooltip = gnoll_the_weak_serve_the_strong_complex_tooltip_3
+				second_limit = " patriarch_authority = 0.5 "
+				second_effect = " custom_tooltip = gnoll_the_weak_serve_the_strong_complex_tooltip_4 "
+			}
+		}
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { global_tax_modifier = 0.05 production_efficiency = 0.05 land_forcelimit_modifier = 0.05 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { global_tax_modifier = 0.10 production_efficiency = 0.10 land_forcelimit_modifier = 0.10 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { global_tax_modifier = 0.15 production_efficiency = 0.15 land_forcelimit_modifier = 0.15 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { global_tax_modifier = 0.20 production_efficiency = 0.20 land_forcelimit_modifier = 0.20 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			check_variable = { gnoll_tributary_bonus_count = 5 }
+		}
+		modifier = { global_tax_modifier = 0.25 production_efficiency = 0.25 land_forcelimit_modifier = 0.25 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { global_tax_modifier = 0.025 production_efficiency = 0.025 land_forcelimit_modifier = 0.025 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { global_tax_modifier = 0.05 production_efficiency = 0.05 land_forcelimit_modifier = 0.05 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { global_tax_modifier = 0.075 production_efficiency = 0.075 land_forcelimit_modifier = 0.075 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { global_tax_modifier = 0.10 production_efficiency = 0.10 land_forcelimit_modifier = 0.10 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 5 } 
+		}
+		modifier = { global_tax_modifier = 0.125 production_efficiency = 0.125 land_forcelimit_modifier = 0.125 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 6 } 
+		}
+		modifier = { global_tax_modifier = 0.15 production_efficiency = 0.15 land_forcelimit_modifier = 0.15 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 7 } 
+		}
+		modifier = { global_tax_modifier = 0.175 production_efficiency = 0.175 land_forcelimit_modifier = 0.175 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 8 } 
+		}
+		modifier = { global_tax_modifier = 0.20 production_efficiency = 0.20 land_forcelimit_modifier = 0.20 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 9 } 
+		}
+		modifier = { global_tax_modifier = 0.225 production_efficiency = 0.225 land_forcelimit_modifier = 0.225 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			check_variable = { gnoll_tributary_bonus_count = 10 }
+		}
+		modifier = { global_tax_modifier = 0.25 production_efficiency = 0.25 land_forcelimit_modifier = 0.25 }
+	}
+	conditional_modifier = {
+		trigger = { religion = xhazobkult NOT = { patriarch_authority = 0.5 } }
+		modifier = { monarch_power_tribute = 1 }
+	}
+	conditional_modifier = {
+		trigger = { religion = xhazobkult patriarch_authority = 0.5 }
+		modifier = { reduced_liberty_desire = 20 }
+	}
+	on_revoked = {
+		hidden_effect = {
+			set_variable = { gnoll_tributary_bonus_count = 0 }
+			every_subject_country = { clr_country_flag = already_giving_tributary_bonus }		
+		}
+	}
+	on_invalid = {
+		hidden_effect = {
+			set_variable = { gnoll_tributary_bonus_count = 0 }
+			every_subject_country = { clr_country_flag = already_giving_tributary_bonus }		
+		}
+	}
+	ai_will_do = {
+		factor = 100
+	}
+}
+
+gnoll_the_weak_serve_the_strong_burghers = {
+	icon = privilege_monopoly_of_goods_slaves
+	influence = 0.05
+	loyalty = 0.1
+	is_valid = {
+		culture_group = gnollish
+		OR = {
+			religion = xhazobkult
+			NOT = { ai = yes }
+		}
+	}
+	can_select = {
+		NOT = { has_estate_privilege = gnoll_the_weak_serve_the_strong_burghers }
+	}
+	penalties = { }
+	benefits = { }
+	on_granted = {
+		hidden_effect = {
+			set_variable = { gnoll_tributary_bonus_count = 0 }
+			every_subject_country = {
+				limit = {
+					is_right_subject_type_xhazobkult = yes
+					is_right_development_xhazobkult = yes 
+					NOT = { has_country_flag = already_giving_tributary_bonus }
+				}
+				set_country_flag = already_giving_tributary_bonus
+				overlord = { change_variable = { gnoll_tributary_bonus_count = 1 } }
+			}
+		}
+		custom_tooltip = gnoll_the_weak_serve_the_strong_economy_tooltip
+		custom_tooltip = " "
+		custom_tooltip = gnoll_the_weak_serve_the_strong_diplomacy_tooltip_1
+		custom_tooltip = " "
+		if = {
+			limit = { religion = xhazobkult }
+			complex_dynamic_effect = {
+				first_custom_tooltip = gnoll_the_weak_serve_the_strong_complex_tooltip_1
+				first_limit = " NOT = { patriarch_authority = 0.5 } "
+				first_effect = " custom_tooltip = gnoll_the_weak_serve_the_strong_complex_tooltip_2 "
+				second_custom_tooltip = gnoll_the_weak_serve_the_strong_complex_tooltip_3
+				second_limit = " patriarch_authority = 0.5 "
+				second_effect = " custom_tooltip = gnoll_the_weak_serve_the_strong_complex_tooltip_4 "
+			}
+		}
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { global_tax_modifier = 0.05 production_efficiency = 0.05 land_forcelimit_modifier = 0.05 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { global_tax_modifier = 0.10 production_efficiency = 0.10 land_forcelimit_modifier = 0.10 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { global_tax_modifier = 0.15 production_efficiency = 0.15 land_forcelimit_modifier = 0.15 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { global_tax_modifier = 0.20 production_efficiency = 0.20 land_forcelimit_modifier = 0.20 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			check_variable = { gnoll_tributary_bonus_count = 5 }
+		}
+		modifier = { global_tax_modifier = 0.25 production_efficiency = 0.25 land_forcelimit_modifier = 0.25 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { global_tax_modifier = 0.025 production_efficiency = 0.025 land_forcelimit_modifier = 0.025 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { global_tax_modifier = 0.05 production_efficiency = 0.05 land_forcelimit_modifier = 0.05 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { global_tax_modifier = 0.075 production_efficiency = 0.075 land_forcelimit_modifier = 0.075 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { global_tax_modifier = 0.10 production_efficiency = 0.10 land_forcelimit_modifier = 0.10 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 5 } 
+		}
+		modifier = { global_tax_modifier = 0.125 production_efficiency = 0.125 land_forcelimit_modifier = 0.125 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 6 } 
+		}
+		modifier = { global_tax_modifier = 0.15 production_efficiency = 0.15 land_forcelimit_modifier = 0.15 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 7 } 
+		}
+		modifier = { global_tax_modifier = 0.175 production_efficiency = 0.175 land_forcelimit_modifier = 0.175 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 8 } 
+		}
+		modifier = { global_tax_modifier = 0.20 production_efficiency = 0.20 land_forcelimit_modifier = 0.20 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 9 } 
+		}
+		modifier = { global_tax_modifier = 0.225 production_efficiency = 0.225 land_forcelimit_modifier = 0.225 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			check_variable = { gnoll_tributary_bonus_count = 10 }
+		}
+		modifier = { global_tax_modifier = 0.25 production_efficiency = 0.25 land_forcelimit_modifier = 0.25 }
+	}
+	conditional_modifier = {
+		trigger = { religion = xhazobkult NOT = { patriarch_authority = 0.5 } }
+		modifier = { monarch_power_tribute = 1 }
+	}
+	conditional_modifier = {
+		trigger = { religion = xhazobkult patriarch_authority = 0.5 }
+		modifier = { reduced_liberty_desire = 20 }
+	}
+	on_revoked = {
+		hidden_effect = {
+			set_variable = { gnoll_tributary_bonus_count = 0 }
+			every_subject_country = { clr_country_flag = already_giving_tributary_bonus }		
+		}
+	}
+	on_invalid = {
+		hidden_effect = {
+			set_variable = { gnoll_tributary_bonus_count = 0 }
+			every_subject_country = { clr_country_flag = already_giving_tributary_bonus }		
+		}
+	}
+	ai_will_do = {
+		factor = 100
+	}
+}
+
 xhazobkult_organized_sacrifices = {
 	icon = privilege_seek_support_of_clergy
-	max_absolutism = -5
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	influence = 0.05
 	loyalty = 0.05
 	is_valid = {
 		religion = xhazobkult
+		culture_group = gnollish
+		has_country_modifier = monstrous_nation
+		NOT = { 
+			has_estate_privilege = xhazobkult_ritualized_cleansing 
+			has_estate_privilege = xhazobkult_ritualized_cleansing_clergy
+			has_estate_privilege = xhazobkult_organized_sacrifices_clergy
+			has_country_flag = removing_monstrous
+		}
+		if = {
+			limit = { ai = yes }
+			is_demonic_school = yes
+		}
 	}
-	penalties = {
-		development_cost = 0.1
+	can_select = {
+		religion = xhazobkult
+		culture_group = gnollish
+		has_country_modifier = monstrous_nation
+		NOT = { 
+			has_estate_privilege = xhazobkult_ritualized_cleansing 
+			has_estate_privilege = xhazobkult_ritualized_cleansing_clergy
+			has_estate_privilege = xhazobkult_organized_sacrifices_clergy
+			has_country_flag = removing_monstrous
+		}
+		if = {
+			limit = { ai = yes }
+			is_demonic_school = yes
+		}
 	}
-	benefits = {
-		yearly_patriarch_authority = 0.005
+	penalties = { }
+	benefits = { 
+		same_religion_advisor_cost = -0.1
+	}
+	on_granted = {
+		custom_tooltip = exclusive_organized_sacrifices_tooltip
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_organized_sacrifices_tribute_tooltip
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_organized_sacrifices_missionary_tooltip
 	}
 	conditional_modifier = {
 		trigger = { mission_completed = F71_a_silent_strike }
@@ -4989,8 +5387,589 @@ xhazobkult_organized_sacrifices = {
 			global_unrest = 1
 		}
 	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { global_missionary_strength = 0.006 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { global_missionary_strength = 0.012 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { global_missionary_strength = 0.018 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { global_missionary_strength = 0.024 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			check_variable = { gnoll_tributary_bonus_count = 5 }
+		}
+		modifier = { global_missionary_strength = 0.03 missionaries = 1 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { global_missionary_strength = 0.003 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { global_missionary_strength = 0.006 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { global_missionary_strength = 0.009 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { global_missionary_strength = 0.012 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 5 } 
+		}
+		modifier = { global_missionary_strength = 0.015 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 6 } 
+		}
+		modifier = { global_missionary_strength = 0.018 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 7 } 
+		}
+		modifier = { global_missionary_strength = 0.021 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 8 } 
+		}
+		modifier = { global_missionary_strength = 0.024 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 9 } 
+		}
+		modifier = { global_missionary_strength = 0.027 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			check_variable = { gnoll_tributary_bonus_count = 10 }
+		}
+		modifier = { global_missionary_strength = 0.03 missionaries = 1 }
+	}
 	ai_will_do = {
-		factor = 5
+		factor = 100
+	}
+}
+
+xhazobkult_organized_sacrifices_clergy = {
+	icon = privilege_seek_support_of_clergy
+	influence = 0.05
+	loyalty = 0.05
+	is_valid = {
+		religion = xhazobkult
+		culture_group = gnollish
+		has_country_modifier = monstrous_nation
+		NOT = { 
+			has_estate_privilege = xhazobkult_ritualized_cleansing 
+			has_estate_privilege = xhazobkult_ritualized_cleansing_clergy
+			has_estate_privilege = xhazobkult_organized_sacrifices
+			has_country_flag = removing_monstrous
+		}
+		if = {
+			limit = { ai = yes }
+			is_demonic_school = yes
+		}
+	}
+	can_select = {
+		religion = xhazobkult
+		culture_group = gnollish
+		has_country_modifier = monstrous_nation
+		NOT = { 
+			has_estate_privilege = xhazobkult_ritualized_cleansing 
+			has_estate_privilege = xhazobkult_ritualized_cleansing_clergy
+			has_estate_privilege = xhazobkult_organized_sacrifices
+			has_country_flag = removing_monstrous
+		}
+		if = {
+			limit = { ai = yes }
+			is_demonic_school = yes
+		}
+	}
+	penalties = { }
+	benefits = { 
+		same_religion_advisor_cost = -0.1
+	}
+	on_granted = {
+		custom_tooltip = exclusive_organized_sacrifices_tooltip
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_organized_sacrifices_tribute_tooltip
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_organized_sacrifices_missionary_tooltip
+	}
+	conditional_modifier = {
+		trigger = { mission_completed = F71_a_silent_strike }
+		modifier = { 
+			development_cost = -0.1
+			global_unrest = 1
+		}
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { global_missionary_strength = 0.006 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { global_missionary_strength = 0.012 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { global_missionary_strength = 0.018 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { global_missionary_strength = 0.024 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			check_variable = { gnoll_tributary_bonus_count = 5 }
+		}
+		modifier = { global_missionary_strength = 0.03 missionaries = 1 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { global_missionary_strength = 0.003 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { global_missionary_strength = 0.006 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { global_missionary_strength = 0.009 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { global_missionary_strength = 0.012 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 5 } 
+		}
+		modifier = { global_missionary_strength = 0.015 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 6 } 
+		}
+		modifier = { global_missionary_strength = 0.018 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 7 } 
+		}
+		modifier = { global_missionary_strength = 0.021 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 8 } 
+		}
+		modifier = { global_missionary_strength = 0.024 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 9 } 
+		}
+		modifier = { global_missionary_strength = 0.027 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			check_variable = { gnoll_tributary_bonus_count = 10 }
+		}
+		modifier = { global_missionary_strength = 0.03 missionaries = 1 }
+	}
+	ai_will_do = {
+		factor = 100
+	}
+}
+
+xhazobkult_ritualized_cleansing = {
+	icon = privilege_seek_support_of_clergy
+	influence = 0.05
+	loyalty = 0.05
+	is_valid = {
+		religion = xhazobkult
+		culture_group = gnollish
+		NOT = { 
+			has_estate_privilege = xhazobkult_organized_sacrifices 
+			has_estate_privilege = xhazobkult_organized_sacrifices_clergy
+			has_estate_privilege = xhazobkult_ritualized_cleansing_clergy
+			ruler_has_personality = xhazobs_chosen_personality
+			has_ruler_flag = undergoing_xhazob_ritual
+		}
+		if = {
+			limit = { ai = yes }
+			is_non_demonic_school = yes
+		}
+	}
+	can_select = {
+		religion = xhazobkult
+		culture_group = gnollish
+		NOT = { 
+			has_estate_privilege = xhazobkult_organized_sacrifices 
+			has_estate_privilege = xhazobkult_organized_sacrifices_clergy
+			has_estate_privilege = xhazobkult_ritualized_cleansing_clergy
+			ruler_has_personality = xhazobs_chosen_personality
+			has_ruler_flag = undergoing_xhazob_ritual
+		}
+		if = {
+			limit = { ai = yes }
+			is_non_demonic_school = yes
+		}
+	}
+	penalties = { }
+	benefits = { }
+	on_granted = {
+		custom_tooltip = exclusive_ritualized_cleansing_tooltip
+		custom_tooltip = " "
+		add_patriarch_authority = -0.2
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_ritualized_cleansing_no_more_dp_tooltip
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_ritualized_cleansing_no_more_xhazob_tooltip
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_ritualized_cleansing_tech_tooltip
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { technology_cost = -0.02 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { technology_cost = -0.04 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { technology_cost = -0.06 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { technology_cost = -0.08 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			check_variable = { gnoll_tributary_bonus_count = 5 }
+		}
+		modifier = { technology_cost = -0.1 development_cost = -0.05 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { technology_cost = -0.01 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { technology_cost = -0.02 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { technology_cost = -0.03 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { technology_cost = -0.04 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 5 } 
+		}
+		modifier = { technology_cost = -0.05 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 6 } 
+		}
+		modifier = { technology_cost = -0.06 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 7 } 
+		}
+		modifier = { technology_cost = -0.07 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 8 } 
+		}
+		modifier = { technology_cost = -0.08 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 9 } 
+		}
+		modifier = { technology_cost = -0.09 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			check_variable = { gnoll_tributary_bonus_count = 10 }
+		}
+		modifier = { technology_cost = -0.1 development_cost = -0.05 }
+	}
+	ai_will_do = {
+		factor = 100
+	}
+}
+
+xhazobkult_ritualized_cleansing_clergy = {
+	icon = privilege_seek_support_of_clergy
+	influence = 0.05
+	loyalty = 0.05
+	is_valid = {
+		religion = xhazobkult
+		culture_group = gnollish
+		NOT = { 
+			has_estate_privilege = xhazobkult_organized_sacrifices 
+			has_estate_privilege = xhazobkult_organized_sacrifices_clergy
+			has_estate_privilege = xhazobkult_ritualized_cleansing
+			ruler_has_personality = xhazobs_chosen_personality
+			has_ruler_flag = undergoing_xhazob_ritual
+		}
+		if = {
+			limit = { ai = yes }
+			is_non_demonic_school = yes
+		}
+	}
+	can_select = {
+		religion = xhazobkult
+		culture_group = gnollish
+		NOT = { 
+			has_estate_privilege = xhazobkult_organized_sacrifices 
+			has_estate_privilege = xhazobkult_organized_sacrifices_clergy
+			has_estate_privilege = xhazobkult_ritualized_cleansing
+			ruler_has_personality = xhazobs_chosen_personality
+			has_ruler_flag = undergoing_xhazob_ritual
+		}
+		if = {
+			limit = { ai = yes }
+			is_non_demonic_school = yes
+		}
+	}
+	penalties = { }
+	benefits = { }
+	on_granted = {
+		custom_tooltip = exclusive_ritualized_cleansing_tooltip
+		custom_tooltip = " "
+		add_patriarch_authority = -0.2
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_ritualized_cleansing_no_more_dp_tooltip
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_ritualized_cleansing_no_more_xhazob_tooltip
+		custom_tooltip = " "
+		custom_tooltip = xhazobkult_ritualized_cleansing_tech_tooltip
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { technology_cost = -0.02 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { technology_cost = -0.04 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { technology_cost = -0.06 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { technology_cost = -0.08 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			ai = yes
+			check_variable = { gnoll_tributary_bonus_count = 5 }
+		}
+		modifier = { technology_cost = -0.1 development_cost = -0.05 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 1 } 
+		}
+		modifier = { technology_cost = -0.01 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 2 } 
+		}
+		modifier = { technology_cost = -0.02 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 3 } 
+		}
+		modifier = { technology_cost = -0.03 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 4 } 
+		}
+		modifier = { technology_cost = -0.04 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 5 } 
+		}
+		modifier = { technology_cost = -0.05 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 6 } 
+		}
+		modifier = { technology_cost = -0.06 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 7 } 
+		}
+		modifier = { technology_cost = -0.07 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 8 } 
+		}
+		modifier = { technology_cost = -0.08 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			is_variable_equal = { which = gnoll_tributary_bonus_count value = 9 } 
+		}
+		modifier = { technology_cost = -0.09 }
+	}
+	conditional_modifier = {
+		trigger = { 
+			NOT = { ai = yes }
+			check_variable = { gnoll_tributary_bonus_count = 10 }
+		}
+		modifier = { technology_cost = -0.1 development_cost = -0.05 }
+	}
+	ai_will_do = {
+		factor = 100
 	}
 }
 
@@ -5003,6 +5982,7 @@ xhazobkult_flesh_of_flesh = {
 	is_valid = {
 		religion = xhazobkult
 		has_ruler_flag = undergoing_xhazob_ritual
+		NOT = { has_country_flag = zokka_zokka_heir_of_zokka_flag }
 	}
 	can_select = {
 		custom_trigger_tooltip = {
@@ -5051,6 +6031,7 @@ xhazobkult_incinerate_weak = {
 			tooltip = xhazobkult_attempting_xhaz
 			has_ruler_flag = undergoing_xhazob_ritual
 		}
+		NOT = { has_estate_privilege = xhazobkult_incinerate_weak_clergy }
 	}
 	penalties = {
 		global_monthly_devastation = 0.25
@@ -5064,7 +6045,34 @@ xhazobkult_incinerate_weak = {
 	}
 }
 
-
+xhazobkult_incinerate_weak_clergy = {
+	icon = privilege_seek_support_of_clergy
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	influence = 0.05
+	loyalty = 0.05
+	is_valid = {
+		religion = xhazobkult
+		has_ruler_flag = undergoing_xhazob_ritual
+	}
+	can_select = {
+		custom_trigger_tooltip = {
+			tooltip = xhazobkult_attempting_xhaz
+			has_ruler_flag = undergoing_xhazob_ritual
+		}
+		NOT = { has_estate_privilege = xhazobkult_incinerate_weak }
+	}
+	penalties = {
+		global_monthly_devastation = 0.25
+		global_unrest = 4
+	}
+	benefits = {
+		yearly_patriarch_authority = 0.01
+	}
+	ai_will_do = {
+		factor = 5
+	}
+}
 
 estate_mages_sun_elf_evocation = {
 	icon = privilege_seek_support_of_clergy
@@ -5630,68 +6638,6 @@ estate_mages_flamekeepers = {
 	ai_will_do = { factor = 20 }
 }
 
-estate_nobility_yangban = {
-	icon = privilege_recruit_minister
-	max_absolutism = -5
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
-	loyalty = 0.1
-	influence = 0.1
-	land_share = 10
-	is_valid = {
-		culture_group = odheongun
-	}
-	can_select = {
-		culture_group = odheongun
-		NOT = { has_estate_privilege = estate_burghers_yangban }
-	}
-	penalties = {
-		governing_capacity_modifier = -0.05
-		burghers_loyalty_modifier = -0.1
-	}
-	benefits = {
-		monthly_reform_progress_modifier = 0.05
-		diplomatic_reputation = 1
-	}
-	# on_granted = {
-	# }
-	# on_revoked = {
-	# }
-	ai_will_do = {
-		factor = 0
-	}
-}
-
-estate_burghers_yangban = {
-	icon = privilege_recruit_minister
-	max_absolutism = -5
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
-	loyalty = 0.1
-	influence = 0.1
-	land_share = 10
-	is_valid = {
-		culture_group = odheongun
-	}
-	can_select = {
-		culture_group = odheongun
-		NOT = { has_estate_privilege = estate_nobility_yangban }
-	}
-	penalties = {
-		trade_efficiency = -0.05
-		nobles_loyalty_modifier = -0.1
-	}
-	benefits = {
-		global_institution_spread = 0.1
-		state_governing_cost = -0.1
-	}
-	# on_granted = {
-	# }
-	# on_revoked = {
-	# }
-	ai_will_do = {
-		factor = 0
-	}
-}
-
 #Spirits and Temples
 estate_adventurers_temple_quest_licenses = {
 	icon = privilege_temple_complex
@@ -5830,7 +6776,7 @@ estate_mages_spirit_speakers = {
 		modifier = {
 			factor = 3
 			OR = {
-				religion = bangujonsi
+				religion = neokttareum
 				religion = saanorgegh
 				religion = mystic_accord
 			}
@@ -6417,7 +7363,7 @@ estate_clergy_osc_centralization_nominated_kasra = {
         }
         modifier = {
             land_morale = 0.05
-			yearly_absolutism = 0.05
+			yearly_absolutism = 0.5
 			church_influence_modifier = -0.1
         }
     }
@@ -8541,6 +9487,7 @@ estate_nobles_orldhum_platinum_control = {
 	}
 	benefits = {
 		land_morale = 0.1
+		land_forcelimit_modifier = 0.1
 		global_autonomy = -0.05
 	}
 	modifier_by_land_ownership = {
@@ -8553,7 +9500,7 @@ estate_nobles_orldhum_platinum_control = {
 
 #Lake Federation
 estate_mages_organization_onyxguard = {
-	icon = privilege_promote_maratha_nobility
+	icon = privilege_onyxguard
 	max_absolutism = -5
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	loyalty = 0.1
@@ -11547,7 +12494,7 @@ estate_burghers_war_of_colours_treacherous_gold = {
 	}
 	penalties = {
 		global_trade_power = -0.2
-		ship_trade_power_modifier = -0.2
+		global_ship_trade_power = -0.2
 	}
 	ai_will_do = {
 		factor = -300
@@ -12084,8 +13031,7 @@ estate_nobility_trazoskala_mutation = {
 
 estate_church_khateshala_mutation = {
 	icon = privilege_lizardfolk_mutation
-	max_absolutism = -10
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	max_absolutism = 0
 	loyalty = 0.05
 	influence = 0.1
 	is_valid = { 
@@ -12455,7 +13401,7 @@ estate_burghers_thanats_mutation = {
 		NOT = { has_estate_privilege = estate_burghers_thanats_upgraded_mutation }
 		6062 = {
 			if = {
-				limit = { ROOT = { tag = L95 } } #Rayaz
+				limit = { ROOT = { OR = { tag = L95 was_tag = L95 } } } #Rayaz
 				OR = {
 					culture = arraskay_lizardfolk
 					culture = ichiadza_lizardfolk
@@ -12508,7 +13454,7 @@ estate_burghers_thanats_upgraded_mutation = { #Rayaz MT
 		NOT = { has_estate_privilege = estate_burghers_thanats_mutation }
 		6062 = {
 			if = {
-				limit = { ROOT = { tag = L95 } } #Rayaz
+				limit = { ROOT = { OR = { tag = L95 was_tag = L95 } } } #Rayaz
 				OR = {
 					culture = arraskay_lizardfolk
 					culture = ichiadza_lizardfolk
@@ -12624,7 +13570,7 @@ estate_burghers_gasabi_mutation = {
 estate_church_akhaxpa_mutation = {
 	icon = privilege_lizardfolk_mutation
 	land_share = 0
-	max_absolutism = -10
+	max_absolutism = 0
 	loyalty = -0.05
 	influence = 0.1
 	is_valid = {
@@ -12816,6 +13762,60 @@ estate_nobles_vb_independent = {
 		factor = 100
 	}
 }
+
+estate_nobles_oberons_watchful_eye = {
+	icon = privilege_puppet_ruler
+	loyalty = 0.10
+	influence = 0.10
+	max_absolutism = -30
+
+	is_valid = {
+		tag = I30
+
+		NOT = {
+			has_estate_privilege = estate_nobles_oberons_iron_rule
+			has_country_flag = oberon_fate
+		}
+	}
+
+	can_revoke = {
+		always = no
+	}
+
+	benefits = {
+		core_creation = -0.10
+	}
+}
+
+estate_nobles_oberons_iron_rule = {
+	icon = privilege_nobility
+	loyalty = 0.10
+	influence = 0.10
+	max_absolutism = -30
+
+	is_valid = {
+		tag = I30
+
+		NOT = {
+			has_estate_privilege = estate_nobles_oberons_watchful_eye 
+			has_country_flag = oberon_fate
+		}
+	}
+
+	can_revoke = {
+		always = no
+	}
+
+	benefits = {
+		years_of_nationalism = -5
+	}
+
+	penalties = {
+		reform_progress_growth = -0.33
+		legitimacy = -3
+	}
+}
+
 
 estate_nobles_factionalist_commanders = {
 	icon = privilege_limited_war_support
@@ -13050,7 +14050,7 @@ estate_nobles_zamukaras_harpy_support = {
 		OR = {
 			AND = {
 				any_owned_province = {
-					has_province_modifier = harpy_roost
+					harpy_roost_st_has_non_fledgling_roost = yes
 				}
 				has_harpy_accepted_culture = yes
 			}
@@ -13597,10 +14597,10 @@ estate_nobility_covenblad_black_tree = {
 			# NOT = { adm_tech = 17 }
 		# }
 		#Has already a similar privilege active
-		modifier = {
-			factor = 0.75
-			has_estate_privilege = estate_brahmins_land_rights
-		}
+		#modifier = {
+		#	factor = 0.75
+		#	has_estate_privilege = estate_brahmins_land_rights
+		#}
 		modifier = {
 			factor = 0.75
 			has_estate_privilege = estate_church_land_rights
@@ -14367,7 +15367,7 @@ estate_mages_delta_orbs = {
 			high_tolerance_gnomish_race_trigger = yes
 		}
 		modifier = {
-			backrow_artillery_damage = 0.1
+			backrow_artillery_damage = 0.2
 		}
 	}
 	conditional_modifier = {
@@ -16157,7 +17157,7 @@ estate_nobility_humiliated_nobles = {
 
 #hisost Yamok
 estate_burghers_gnollish_crafters = {
-	icon = privilege_monopoly
+	icon = privilege_artificers_development_tools
 	loyalty = 0.10
 	influence = 0.10
 	
@@ -16241,7 +17241,7 @@ estate_burghers_gnollish_crafters = {
 }
 
 estate_burghers_gnollish_crafters_bad = {
-	icon = privilege_monopoly
+	icon = privilege_artificers_development_tools
 	loyalty = 0
 	influence = 0.10
 	
@@ -16332,7 +17332,7 @@ estate_burghers_gnollish_crafters_bad = {
 }
 
 estate_nobility_gnollish_awirenya_bad = {
-	icon = privilege_monopoly
+	icon = privilege_hyena
 	loyalty = -0.1
 	influence = 0.1
 	
@@ -16378,7 +17378,7 @@ estate_nobility_gnollish_awirenya_bad = {
 }
 
 estate_nobility_gnollish_awirenya = {
-	icon = privilege_monopoly
+	icon = privilege_hyena
 	loyalty = -0.05
 	influence = -0.05
 	
@@ -16420,9 +17420,18 @@ estate_church_kvan_sync = {
 	loyalty = 0.1
 	influence = 0.1
 	
-	is_valid = { 
-		has_country_flag = s23_kvan_sync 
-		NOT = { has_estate_privilege = estate_church_anti_kvan_sync }
+	is_valid = {
+		OR = {
+			AND = {
+				has_country_flag = s23_kvan_sync 
+				NOT = { has_estate_privilege = estate_church_anti_kvan_sync }
+			}
+			AND = {
+				is_or_was_tag = { tag = S23 }
+				ai = yes
+			}
+		} 
+		
 	}
 	can_select = { has_country_flag = s23_kvan_sync }
 	can_revoke = { always = no }
@@ -16484,7 +17493,7 @@ estate_church_anti_kvan_sync = {
 	influence = 0
 	
 	is_valid = { has_country_flag = s23_disaster }
-	can_select = { has_country_flag = s23_disaster }
+	can_select = { always = no }
 	can_revoke = {  }
 
 	on_granted = {
@@ -16704,7 +17713,7 @@ estate_church_lrm_bellacaire_the_pink_stripe = {
 	penalties = { }
 	benefits = {
 		diplomatic_reputation = 2
-		relation_with_same_religion = 10
+		reverse_relation_with_same_religion = 10
 	}
 	can_revoke = { }
 	ai_will_do = {
@@ -16809,7 +17818,7 @@ estate_burghers_supremacy_of_napesfleet = {
 	penalties = { }
 	benefits = {
 		light_ship_cost = -0.20
-		ship_trade_power_modifier = 0.2
+		global_ship_trade_power = 0.2
 	}
 	can_revoke = { }
 	ai_will_do = {
@@ -16838,7 +17847,6 @@ estate_church_insincere_conversion = {
 	}
 	ai_will_do = { factor = 1 }
 }
-
 
 #Rayaz MT non-mutation privileges
 
@@ -16871,7 +17879,7 @@ estate_church_delegates_of_the_prophecy = {
 			}
 		}
 		modifier = {
-			reduced_liberty_desire = -40
+			reduced_liberty_desire = -30
 		}
 	}
 	influence_scaled_conditional_modifier = {	#Modifier that are applied if the specified conditions are true. At 100% Influence you gain 100% of the modifier. SCALES BEYOND 100% INFLUENCE
@@ -16888,7 +17896,7 @@ estate_church_delegates_of_the_prophecy = {
 			}
 		}
 		modifier = {
-			reduced_liberty_desire = 20
+			reduced_liberty_desire = 15
 		}
 	}
 	influence_scaled_conditional_modifier = {	#Modifier that are applied if the specified conditions are true. At 100% Influence you gain 100% of the modifier. SCALES BEYOND 100% INFLUENCE
@@ -16899,7 +17907,7 @@ estate_church_delegates_of_the_prophecy = {
 			}
 		}
 		modifier = {
-			reduced_liberty_desire = 40
+			reduced_liberty_desire = 30
 		}
 	}
 	penalties = {
@@ -16921,7 +17929,7 @@ estate_church_imperial_court = {
 	icon = privilege_recruit_minister
 	max_absolutism = -10
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
-	influence = 0.01
+	influence = 0.1
 	loyalty = 0.05
 	is_valid = { 
 		has_dlc = "Domination" #Technically redundant
@@ -17006,4 +18014,1013 @@ estate_mages_fifth_family = {
     }
     benefits = {
     }
+}
+
+#Frozenmaw tolerance privilege
+estate_monstrous_tribes_other_believers = {
+	icon = privilege_recruit_minister
+	loyalty = 0.00
+	influence = 0.05
+	max_absolutism = -5
+	is_valid = {
+		is_or_was_tag = {
+			tag = Z18 
+		}
+		mission_completed = z18_fridas_preaching
+		NOT = { mission_completed = z18_embrace_new_gods }
+	}
+	on_granted = {
+	}
+	on_revoked = {
+	}
+	can_revoke = {		
+	}
+	penalties = {
+		global_heathen_missionary_strength = -0.1
+	}
+	benefits = {
+		tolerance_heathen = 3
+	}
+	ai_will_do = {
+		factor = 10
+	}
+}
+estate_mages_chaqway_flamingo = {
+	icon = privilege_grant_autonomy
+	max_absolutism = 0
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
+	loyalty = -0.05
+	influence = 0.1
+	is_valid = { 
+		has_unlocked_estate_privilege = { estate_privilege = estate_mages_chaqway_flamingo }
+	}
+	on_granted = {
+		custom_tooltip = chaqway_flamingo_tt
+	}
+	penalties = {
+	}
+	benefits = {
+	}
+	ai_will_do = {
+		factor = 1
+	}
+}
+
+# Zokka
+estate_mages_kelmaxherho_favours = {
+	icon = privilege_wolf
+	
+	is_valid = { has_estate_privilege = estate_mages_kelmaxherho_favours }
+	can_select = { has_estate_privilege = estate_mages_kelmaxherho_favours }
+	can_revoke = { always = no }
+	benefits = {
+		mages_privilege_slots = 1
+	}
+
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 1 } }
+		modifier = { num_accepted_cultures = 1 mages_loyalty_modifier = 0.025 mages_influence_modifier = 0.025 church_loyalty_modifier = -0.025 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 2 } }
+		modifier = { num_accepted_cultures = 2 mages_loyalty_modifier = 0.05 mages_influence_modifier = 0.05 church_loyalty_modifier = -0.05 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 3 } }
+		modifier = { num_accepted_cultures = 3 mages_loyalty_modifier = 0.075 mages_influence_modifier = 0.075 church_loyalty_modifier = -0.075 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 4 } }
+		modifier = { num_accepted_cultures = 4 mages_loyalty_modifier = 0.1 mages_influence_modifier = 0.1 church_loyalty_modifier = -0.1 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 5 } }
+		modifier = { num_accepted_cultures = 5 mages_loyalty_modifier = 0.125 mages_influence_modifier = 0.125 church_loyalty_modifier = -0.125 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 6 } }
+		modifier = { num_accepted_cultures = 6 mages_loyalty_modifier = 0.15 mages_influence_modifier = 0.15 church_loyalty_modifier = -0.15 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 7 } }
+		modifier = { num_accepted_cultures = 7 mages_loyalty_modifier = 0.175 mages_influence_modifier = 0.175 church_loyalty_modifier = -0.175 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 8 } }
+		modifier = { num_accepted_cultures = 8 mages_loyalty_modifier = 0.2 mages_influence_modifier = 0.2 church_loyalty_modifier = -0.2 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 9 } }
+		modifier = { num_accepted_cultures = 9 mages_loyalty_modifier = 0.225 mages_influence_modifier = 0.225 church_loyalty_modifier = -0.225 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 10 } }
+		modifier = { num_accepted_cultures = 10 mages_loyalty_modifier = 0.25 mages_influence_modifier = 0.25 church_loyalty_modifier = -0.25 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 11 } }
+		modifier = { num_accepted_cultures = 11 mages_loyalty_modifier = 0.275 mages_influence_modifier = 0.275 church_loyalty_modifier = -0.275 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kelmaxherho_favours_count value = 12 } }
+		modifier = { num_accepted_cultures = 12 mages_loyalty_modifier = 0.3 mages_influence_modifier = 0.3 church_loyalty_modifier = -0.3 }
+	}
+	conditional_modifier = {
+		trigger = { check_variable = { which = kelmaxherho_favours_count value = 13 } }
+		modifier = { num_accepted_cultures = 13 mages_loyalty_modifier = 0.325 mages_influence_modifier = 0.325 church_loyalty_modifier = -0.325 }
+	}
+
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_church_kaxhkeddax_favours = {
+	icon = privilege_hyena
+	
+	is_valid = { has_estate_privilege = estate_church_kaxhkeddax_favours }
+	can_select = { has_estate_privilege = estate_church_kaxhkeddax_favours }
+	can_revoke = { always = no }
+
+	benefits = {
+		church_privilege_slots = 1
+	}
+
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 1 } }
+		modifier = { missionaries = 1 church_loyalty_modifier = 0.025 church_influence_modifier = 0.025 mages_loyalty_modifier = -0.025 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 2 } }
+		modifier = { missionaries = 2 church_loyalty_modifier = 0.05 church_influence_modifier = 0.05 mages_loyalty_modifier = -0.05 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 3 } }
+		modifier = { missionaries = 3 church_loyalty_modifier = 0.075 church_influence_modifier = 0.075 mages_loyalty_modifier = -0.075 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 4 } }
+		modifier = { missionaries = 4 church_loyalty_modifier = 0.1 church_influence_modifier = 0.1 mages_loyalty_modifier = -0.1 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 5 } }
+		modifier = { missionaries = 5 church_loyalty_modifier = 0.125 church_influence_modifier = 0.125 mages_loyalty_modifier = -0.125 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 6 } }
+		modifier = { missionaries = 6 church_loyalty_modifier = 0.15 church_influence_modifier = 0.15 mages_loyalty_modifier = -0.15 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 7 } }
+		modifier = { missionaries = 7 church_loyalty_modifier = 0.175 church_influence_modifier = 0.175 mages_loyalty_modifier = -0.175 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 8 } }
+		modifier = { missionaries = 8 church_loyalty_modifier = 0.2 church_influence_modifier = 0.2 mages_loyalty_modifier = -0.2 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 9 } }
+		modifier = { missionaries = 9 church_loyalty_modifier = 0.225 church_influence_modifier = 0.225 mages_loyalty_modifier = -0.225 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 10 } }
+		modifier = { missionaries = 10 church_loyalty_modifier = 0.25 church_influence_modifier = 0.25 mages_loyalty_modifier = -0.25 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 11 } }
+		modifier = { missionaries = 11 church_loyalty_modifier = 0.275 church_influence_modifier = 0.275 mages_loyalty_modifier = -0.275 }
+	}
+	conditional_modifier = {
+		trigger = { is_variable_equal = { which = kaxhkeddax_favours_count value = 12 } }
+		modifier = { missionaries = 12 church_loyalty_modifier = 0.3 church_influence_modifier = 0.3 mages_loyalty_modifier = -0.3 }
+	}
+	conditional_modifier = {
+		trigger = { check_variable = { which = kaxhkeddax_favours_count value = 13 } }
+		modifier = { missionaries = 13 church_loyalty_modifier = 0.325 church_influence_modifier = 0.325 mages_loyalty_modifier = -0.325 }
+	}
+
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_mages_organization_favoured_slaves = {
+	icon = privilege_promote_maratha_nobility
+	loyalty = 0.15
+	influence = 0.15
+	is_valid = {
+		has_estate_privilege = estate_mages_organization_favoured_slaves
+	}
+	can_select = {
+		has_estate_privilege = estate_mages_organization_favoured_slaves
+	}
+	can_revoke = {
+		always = no
+	}
+	on_granted = {
+		custom_tooltip = mages_benefits_tt
+		clear_mages_organization_effect = yes
+	}
+	ai_will_do = {
+		factor = 1
+	}
+}
+
+estate_church_kaxhkeddax_fundamentalism = {
+	icon = privilege_unifying
+	is_valid = {
+		has_government_attribute = enables_corrivalry
+		NOT = { has_country_flag = kaxhkeddax_dead }
+	}
+	can_select = {
+		has_government_attribute = enables_corrivalry
+	}
+	on_granted = {
+		scaling_with_influence_privilege_tooltip = {
+			estate_privilege = estate_church_kaxhkeddax_fundamentalism
+		}
+	}
+	on_revoked = {
+		scaling_with_influence_privilege_tooltip = {
+			estate_privilege = estate_church_kaxhkeddax_fundamentalism
+		}
+	}
+	influence_scaled_conditional_modifier = {	#Modifier that are applied if the specified conditions are true. At 100% Influence you gain 100% of the modifier.
+		trigger = {
+			NOT = {
+				estate_loyalty = {
+					estate = estate_church
+					loyalty = 30
+				}
+			}
+		}
+		modifier = {
+			raze_power_gain = -0.25
+			global_autonomy = 0.01
+			mages_loyalty_modifier = -0.1
+		}
+	}
+	influence_scaled_conditional_modifier = {	#Modifier that are applied if the specified conditions are true. At 100% Influence you gain 100% of the modifier.
+		trigger = {
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 30
+			}
+			NOT = {
+				estate_loyalty = {
+					estate = estate_church
+					loyalty = 60
+				}
+			}
+		}
+		modifier = {
+			raze_power_gain = 0.1
+			global_autonomy = -0.01
+			mages_loyalty_modifier = -0.15
+		}
+	}
+	influence_scaled_conditional_modifier = {	#Modifier that are applied if the specified conditions are true. At 100% Influence you gain 100% of the modifier.
+		trigger = {
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 60
+			}
+		}
+		modifier = {
+			raze_power_gain = 0.25
+			global_autonomy = -0.02
+			mages_loyalty_modifier = -0.2
+		}
+	}
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_mages_kelmaxherho_pragmatism = {
+	icon = privilege_autonomy
+	is_valid = {
+		has_government_attribute = enables_corrivalry
+		NOT = { has_country_flag = kelmaxherho_dead }
+	}
+	can_select = {
+		has_government_attribute = enables_corrivalry
+	}
+	on_granted = {
+		scaling_with_influence_privilege_tooltip = {
+			estate_privilege = estate_mages_kelmaxherho_pragmatism
+		}
+	}
+	on_revoked = {
+		scaling_with_influence_privilege_tooltip = {
+			estate_privilege = estate_mages_kelmaxherho_pragmatism
+		}
+	}
+	influence_scaled_conditional_modifier = {	#Modifier that are applied if the specified conditions are true. At 100% Influence you gain 100% of the modifier.
+		trigger = {
+			NOT = {
+				estate_loyalty = {
+					estate = estate_mages
+					loyalty = 30
+				}
+			}
+		}
+		modifier = {
+			technology_cost = 0.1
+			church_loyalty_modifier = -0.1
+		}
+	}
+	influence_scaled_conditional_modifier = {	#Modifier that are applied if the specified conditions are true. At 100% Influence you gain 100% of the modifier.
+		trigger = {
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 30
+			}
+			NOT = {
+				estate_loyalty = {
+					estate = estate_mages
+					loyalty = 60
+				}
+			}
+		}
+		modifier = {
+			technology_cost = -0.05
+			church_loyalty_modifier = -0.15
+		}
+	}
+	influence_scaled_conditional_modifier = {	#Modifier that are applied if the specified conditions are true. At 100% Influence you gain 100% of the modifier.
+		trigger = {
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 60
+			}
+		}
+		modifier = {
+			technology_cost = -0.1
+			church_loyalty_modifier = -0.2
+		}
+	}
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_monstrous_tribes_open_pyres = {
+	icon = privilege_xhazobkult_candles
+	influence = 0.1
+	land_share = 5
+	max_absolutism = -10
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	
+	is_valid = { has_country_flag = zokka_open_pyres_flag }
+
+	can_select = { 
+		religion = xhazobkult
+	}
+
+	on_granted = {
+		custom_tooltip = zokka_open_pyres_tt
+	}
+
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_mages_moment_of_felflame = {
+	icon = privilege_cast_spell
+	
+	is_valid = { has_country_flag = zokka_words_flag }
+	can_select = { NOT = { has_estate_privilege = estate_church_eternal_felflame } }
+	can_revoke = { always = no }
+
+	benefits = {
+		mages_privilege_slots = 1
+	}
+
+	on_granted = {
+		custom_tooltip = zokka_moment_felflame_tt
+		if = {
+			limit = { OR = { has_estate_privilege = estate_mages_moment_of_congruence has_estate_privilege = estate_mages_moment_of_edification } NOT = { has_country_flag = zokka_priv_favour_granted_flag } }
+			set_country_flag = zokka_priv_favour_granted_flag
+			add_kelmaxherho_favour = yes
+		}
+	}
+	
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_mages_moment_of_congruence = {
+	icon = privilege_xhazobkult_candles
+	
+	is_valid = { has_country_flag = zokka_words_flag }
+	can_select = { NOT = { has_estate_privilege = estate_church_eternal_congruence } }
+	can_revoke = { always = no }
+
+	benefits = {
+		mages_privilege_slots = 1
+	}
+	
+	on_granted = {
+		custom_tooltip = zokka_moment_congruence_tt
+		if = {
+			limit = { OR = { has_estate_privilege = estate_mages_moment_of_felflame has_estate_privilege = estate_mages_moment_of_edification } NOT = { has_country_flag = zokka_priv_favour_granted_flag } }
+			set_country_flag = zokka_priv_favour_granted_flag
+			add_kelmaxherho_favour = yes
+		}
+		hidden_effect = {
+			every_owned_province = {
+				limit = { has_state_patriach = yes }
+				add_base_tax = 1
+				add_province_modifier = {
+					name = zokka_congruence_moment
+					duration = -1
+				}
+				set_province_flag = zokka_congruence_flag
+			}
+		}
+	}
+	
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_mages_moment_of_edification = {
+	icon = privilege_wolf
+	
+	is_valid = { has_country_flag = zokka_words_flag }
+	can_select = { NOT = { has_estate_privilege = estate_church_eternal_edification } }
+	can_revoke = { always = no }
+
+	benefits = {
+		mages_privilege_slots = 1
+	}
+
+	on_granted = {
+		custom_tooltip = zokka_moment_edification_tt
+		if = {
+			limit = { OR = { has_estate_privilege = estate_mages_moment_of_congruence has_estate_privilege = estate_mages_moment_of_felflame } NOT = { has_country_flag = zokka_priv_favour_granted_flag } }
+			set_country_flag = zokka_priv_favour_granted_flag
+			add_kelmaxherho_favour = yes
+		}
+	}
+	
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_church_eternal_felflame = {
+	icon = privilege_cast_spell
+	
+	is_valid = { has_country_flag = zokka_words_flag }
+	can_select = { NOT = { has_estate_privilege = estate_mages_moment_of_felflame } }
+	can_revoke = { always = no }
+
+	benefits = {
+		church_privilege_slots = 1
+	}
+
+	on_granted = {
+		custom_tooltip = zokka_eternal_felflame_tt
+		if = {
+			limit = { OR = { has_estate_privilege = estate_church_eternal_congruence has_estate_privilege = estate_church_eternal_edification } NOT = { has_country_flag = zokka_priv_favour_granted_flag } }
+			set_country_flag = zokka_priv_favour_granted_flag
+			add_kaxhkeddax_favour = yes
+		}
+	}
+	
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_church_eternal_congruence = {
+	icon = privilege_xhazobkult_candles
+	
+	is_valid = { has_country_flag = zokka_words_flag }
+	can_select = { NOT = { has_estate_privilege = estate_mages_moment_of_congruence } }
+	can_revoke = { always = no }
+
+	benefits = {
+		church_privilege_slots = 1
+	}
+
+	on_granted = {
+		if = {
+			limit = { mission_completed = F29_zokka_maelstrom }
+			custom_tooltip = zokka_eternal_congruence2_tt
+		}
+		else = { custom_tooltip = zokka_eternal_congruence_tt }
+		if = {
+			limit = { OR = { has_estate_privilege = estate_church_eternal_felflame has_estate_privilege = estate_church_eternal_edification } NOT = { has_country_flag = zokka_priv_favour_granted_flag } }
+			set_country_flag = zokka_priv_favour_granted_flag
+			add_kaxhkeddax_favour = yes
+		}
+	}
+	
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_church_eternal_edification = {
+	icon = privilege_hyena
+	
+	is_valid = { has_country_flag = zokka_words_flag }
+	can_select = { NOT = { has_estate_privilege = estate_mages_moment_of_edification } }
+	can_revoke = { always = no }
+
+	benefits = {
+		church_privilege_slots = 1
+	}
+
+	penalties = {
+		yearly_patriarch_authority = -0.01
+		devotion = -1
+	}
+
+	on_granted = {
+		custom_tooltip = zokka_eternal_edification_tt
+		if = {
+			limit = { OR = { has_estate_privilege = estate_church_eternal_congruence has_estate_privilege = estate_church_eternal_felflame } NOT = { has_country_flag = zokka_priv_favour_granted_flag } }
+			set_country_flag = zokka_priv_favour_granted_flag
+			add_kaxhkeddax_favour = yes
+		}
+	}
+	
+	ai_will_do = {
+		factor = 1000
+	}
+}
+
+estate_monstrous_tribes_tyrants_blessing = {
+	icon = privilege_loan_interaction
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	loyalty = 0.05
+	influence = 0.05
+
+	is_valid = { OR = { has_reform = zokka_immoveable_kult has_reform = zokka_unstoppable_kult has_reform = zokka_immoveable_kult2 has_reform = zokka_unstoppable_kult2 } }
+	can_select = {
+		patriarch_authority = 0.3
+		if = {
+			limit = {
+				has_estate_privilege = estate_monstrous_tribes_tyrants_blessing
+			}
+			has_estate_loan = yes
+		}
+	}
+	can_revoke = {
+		has_estate_loan = no
+	}
+	on_granted = {
+		add_patriarch_authority = -0.3
+		custom_tooltip = estate_burghers_indebted_to_burghers_effect_tooltip
+		tooltip = {
+			add_inflation = 0.5
+		}
+		hidden_effect = {
+			add_loan = {
+				fixed_interest = 1
+				duration = 60
+				estate_loan = yes
+			}
+			add_loan = {
+				fixed_interest = 1
+				duration = 60
+				estate_loan = yes
+			}
+			add_loan = {
+				fixed_interest = 1
+				duration = 60
+				estate_loan = yes
+			}
+			add_loan = {
+				fixed_interest = 1
+				duration = 60
+				estate_loan = yes
+			}
+			add_loan = {
+				fixed_interest = 1
+				duration = 60
+				estate_loan = yes
+			}
+		}
+	}
+	penalties = {
+		yearly_patriarch_authority = -0.03
+		trade_efficiency = -0.05
+	}
+	benefits = {
+		global_tax_modifier = 0.25
+	}
+	ai_will_do = {
+		factor = 0
+	}
+}
+
+oasis_of_water_dreams_privilege = {
+	icon = privilege_grant_autonomy
+	loyalty = 0
+	influence = 0
+	can_select = {
+		OR = {
+			religion = fangaulan_pantheon
+			religion = mother_akasik
+			religion = kvangahga
+		}
+		6098 = {
+			has_great_project = {
+				type = water_dreams_oasis
+				tier = 1
+			}
+		}
+	}
+	is_valid = {
+		owns = 6098
+	}
+	on_granted = {
+		custom_tooltip = oasis_of_water_dreams_privilege_tt
+		tooltip = {
+			if = {
+				limit = {
+					6098 = {
+						has_great_project = {
+							type = water_dreams_oasis
+							tier = 3
+						}
+					}
+				}
+				add_province_modifier = {
+					name = oasis_of_water_dreams_fmk_mod3
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					6098 = {
+						has_great_project = {
+							type = water_dreams_oasis
+							tier = 2
+						}
+					}
+				}
+				add_province_modifier = {
+					name = oasis_of_water_dreams_fmk_mod2
+					duration = -1
+				}
+			}
+			else = {
+				add_province_modifier = {
+					name = oasis_of_water_dreams_fmk_mod1
+					duration = -1
+				}
+			}
+		}
+	}
+	on_revoked = {
+
+	}
+	can_revoke = {
+		always = yes
+	}
+	penalties = {
+	}
+	benefits = {
+	}
+	on_granted_province = {
+		if = {
+			limit = {
+				OR = {
+					religion = fangaulan_pantheon
+					religion = mother_akasik
+					religion = kvangahga
+				}
+			}
+			oasis_dream_add_religion_modifier = yes
+		}
+		else = {
+			oasis_dream_remove_religion_modifier = yes
+		}
+	}
+	on_revoked_province = {
+		oasis_dream_remove_religion_modifier = yes
+	}
+	on_invalid_province = {
+		oasis_dream_remove_religion_modifier = yes
+	}
+	on_invalid = {
+	}
+	ai_will_do = {
+		factor = 10
+	}
+}
+
+#Rise of Adeen incident
+estate_mages_adeeni_magi = {
+	icon = privilege_rahen_castes
+	loyalty = 0.05
+	influence = 0.05
+
+	is_valid = {
+		has_country_flag = rinta_seeker_mages_control_adeen
+	}
+	can_revoke = {
+		
+	}
+	penalties = {
+		allowed_marine_fraction = -0.05
+	}
+
+	ai_will_do = {
+		factor = 1
+	}
+}
+
+#Ranger Privileges
+estate_adventurers_rangers_use_ranger_pathfinders = {
+	icon = privilege_conquistador
+	loyalty = 0.05
+	influence = 0.1
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	is_valid = { }
+	can_select = { }
+	can_revoke = { }
+	on_granted = { }
+	benefits = {
+		movement_speed = 0.15
+		free_land_leader_pool = 1
+		leader_land_manuever = 1
+	}
+	penalties = {
+		amount_of_cawa = -0.25
+	}
+	ai_will_do = {
+		factor = 1
+	}
+	on_cooldown_expires = { }
+}
+
+estate_adventurers_rangers_ranger_primacy = {
+	icon = privilege_recruit_from_marathi
+	loyalty = 0.1
+	influence = 0.3
+	land_share = 5
+	max_absolutism = 5
+	is_valid = {
+		primary_culture = wood_elf
+	}
+	on_granted = {
+		add_country_modifier = {
+			name = deepwoods_rangers_ranger_primacy
+			duration = -1
+		}
+	}
+	on_revoked = {
+		remove_country_modifier = deepwoods_rangers_ranger_primacy
+	}
+	on_invalid = {
+		remove_country_modifier = deepwoods_rangers_ranger_primacy
+	}
+	penalties = {
+		infantry_power = -0.1
+		cavalry_power = -0.1
+		nobles_influence_modifier = -0.1
+        nobles_loyalty_modifier = -0.1
+	}
+	mechanics = {
+	 	exempt_from_seize_land
+	}
+	ai_will_do = {
+		factor = 1
+	}
+}
+
+estate_adventurers_rangers_call_the_hunt = {
+	icon = privilege_morale_damage
+	loyalty = 0
+	influence = 0.1
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	is_valid = {
+		primary_culture = wood_elf
+	}
+	can_select = { }
+	can_revoke = { }
+	on_granted = { }
+	benefits = { }
+	penalties = { }
+	on_granted = {
+		enable_estate_action = {
+			estate_action = CALL_THE_HUNT_ACTION
+		}
+	}
+	on_revoked = {
+		disable_estate_action = {
+			estate_action = CALL_THE_HUNT_ACTION
+		}
+	}
+	on_invalid = {
+		disable_estate_action = {
+			estate_action = CALL_THE_HUNT_ACTION
+		}
+	}
+	ai_will_do = {
+		factor = 0
+	}
+}
+
+estate_adventurers_rangers_ayeth_strategy = {
+	icon = privilege_land_rights
+	loyalty = 0.05
+	influence = 0.1
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	is_valid = { 
+		primary_culture = wood_elf
+	}
+	can_select = {
+		any_owned_province = {
+			has_province_modifier = deepwoods_rangers_camp
+		}
+		custom_trigger_tooltip = {
+			tooltip = deepwoods_ranger_strategy_cooldown
+			OR = {
+				NOT = { has_country_flag = picked_ranger_strategy_privilege }
+				had_country_flag = {
+					flag = picked_ranger_strategy_privilege
+					days = 3650
+				}
+			}
+		}
+	}
+	on_granted = {
+		if = {
+			limit = { has_estate_privilege = estate_adventurers_rangers_scotha_strategy }
+			remove_estate_privilege = estate_adventurers_rangers_scotha_strategy
+		}
+		if = {
+			limit = { has_estate_privilege = estate_mages_rangers_drennen_strategy }
+			remove_estate_privilege = estate_mages_rangers_drennen_strategy
+		}
+		custom_tooltip = deepwoods_rangers_ayeth_strategy_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { has_province_modifier = deepwoods_rangers_camp }
+				add_province_modifier = {
+					name = deepwoods_rangers_ayeth_strategy_mod
+					duration = -1
+				}
+				every_neighbor_province = {
+					limit = { owned_by = ROOT }
+					add_province_modifier = {
+						name = deepwoods_rangers_ayeth_strategy_mod
+						duration = -1
+					}
+				}
+			}
+			clr_country_flag = picked_ranger_strategy_privilege
+			set_country_flag = picked_ranger_strategy_privilege
+		}
+	}
+	on_revoked = {
+		every_owned_province = {
+			remove_province_modifier = deepwoods_rangers_ayeth_strategy_mod
+		}
+	}
+	cooldown_years = 10
+	ai_will_do = {
+		factor = 1
+	}
+}
+
+estate_adventurers_rangers_scotha_strategy = {
+	icon = privilege_land_rights
+	loyalty = 0.05
+	influence = 0.1
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	is_valid = { 
+		primary_culture = wood_elf
+	}
+	can_select = {
+		any_owned_province = {
+			has_province_modifier = deepwoods_rangers_camp
+		}
+		custom_trigger_tooltip = {
+			tooltip = deepwoods_ranger_strategy_cooldown
+			OR = {
+				NOT = { has_country_flag = picked_ranger_strategy_privilege }
+				had_country_flag = {
+					flag = picked_ranger_strategy_privilege
+					days = 3650
+				}
+			}
+		}
+	}
+	on_granted = {
+		if = {
+			limit = { has_estate_privilege = estate_adventurers_rangers_ayeth_strategy }
+			remove_estate_privilege = estate_adventurers_rangers_ayeth_strategy
+		}
+		if = {
+			limit = { has_estate_privilege = estate_mages_rangers_drennen_strategy }
+			remove_estate_privilege = estate_mages_rangers_drennen_strategy
+		}
+		custom_tooltip = deepwoods_rangers_scotha_strategy_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					has_province_modifier = deepwoods_rangers_camp
+					OR = {
+						trade_goods = dyes
+						trade_goods = ivory
+						trade_goods = cloth
+						trade_goods = spices
+						trade_goods = silk
+						trade_goods = sugar
+					}
+				}
+				add_province_modifier = {
+					name = deepwoods_rangers_scotha_strategy_mod
+					duration = -1
+				}
+			}
+			clr_country_flag = picked_ranger_strategy_privilege
+			set_country_flag = picked_ranger_strategy_privilege
+		}
+	}
+	on_revoked = {
+		every_owned_province = {
+			limit = { has_province_modifier = deepwoods_rangers_camp }
+			remove_province_modifier = deepwoods_rangers_scotha_strategy_mod
+		}
+	}
+	cooldown_years = 10
+	ai_will_do = {
+		factor = 1
+	}
+}
+
+estate_mages_rangers_drennen_strategy = {
+	icon = privilege_land_rights
+	loyalty = 0.05
+	influence = 0.1
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	is_valid = { 
+		primary_culture = wood_elf
+	}
+	can_select = {
+		any_owned_province = {
+			has_province_modifier = deepwoods_rangers_camp
+		}
+		custom_trigger_tooltip = {
+			tooltip = deepwoods_ranger_strategy_cooldown
+			OR = {
+				NOT = { has_country_flag = picked_ranger_strategy_privilege }
+				had_country_flag = {
+					flag = picked_ranger_strategy_privilege
+					days = 3650
+				}
+			}
+		}
+	}
+	on_granted = {
+		if = {
+			limit = { has_estate_privilege = estate_adventurers_rangers_ayeth_strategy }
+			remove_estate_privilege = estate_adventurers_rangers_ayeth_strategy
+		}
+		if = {
+			limit = { has_estate_privilege = estate_adventurers_rangers_scotha_strategy }
+			remove_estate_privilege = estate_adventurers_rangers_scotha_strategy
+		}
+		custom_tooltip = deepwoods_rangers_drennen_strategy_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { has_province_modifier = deepwoods_rangers_camp }
+				add_province_modifier = {
+					name = deepwoods_rangers_drennen_strategy_mod
+					duration = -1
+				}
+			}
+			clr_country_flag = picked_ranger_strategy_privilege
+			set_country_flag = picked_ranger_strategy_privilege
+		}
+	}
+	on_revoked = {
+		every_owned_province = {
+			limit = { has_province_modifier = deepwoods_rangers_camp }
+			remove_province_modifier = deepwoods_rangers_drennen_strategy_mod
+		}
+	}
+	cooldown_years = 10
+	ai_will_do = {
+		factor = 1
+	}
 }
