@@ -41,11 +41,9 @@ po_anb_tributary = {
 		OR = {
 			AND = {
 				culture_group = gnollish
-				NOT = {
-					AND = {
-						ai = yes
-						religion = kvangahga
-					}
+				OR = {
+					ai = no
+					religion = xhazobkult
 				}
 			}
 			culture_group = ogre
@@ -115,7 +113,31 @@ po_anb_tributary = {
 			ai_value = 2000
 		}
 		limit = { # if limit evaluates false, ai_weight will evaluate to 0 regardless
-			always = yes
+			OR = {
+				NOT = { culture_group = gnollish } #only applies for gnolls
+				AND = {
+					any_neighbor_country = { #not your only neighbor, not counting subjects
+						NOT = { tag = FROM } 
+						NOT = { is_subject_of = ROOT }
+					}
+                    NOT = {
+                        AND = {
+                            check_variable = { gnoll_tributary_bonus_count = 5 } #already has enough to get the full bonus
+                            is_emperor_of_china = no #the steward needs to make more tributaries than 5
+                        }
+                        #is not xhazobine or undergoing the ritual
+                        ruler_has_personality = xhazobs_chosen_personality
+                        has_ruler_flag = undergoing_xhazob_ritual
+                    } 
+					FROM = { 
+						#num_of_cities = 7 #large enough that it doesn't drop below total dev req if you take land 
+						#total_development = 50 #don't use it on weak guys
+						NOT = { historical_rival_with = ROOT } #kill your rivals
+						#NOT = { any_ally = { any_neighbor_country = { tag = ROOT } } } #not allied to your other neighbors
+						NOT = { any_owned_province = { is_permanent_claim = ROOT } } #you don't have perma claims on them
+					}
+				}
+			}
 		}
 	}
 }
