@@ -1,13 +1,12 @@
 
 namespace = flavor_beepeck
 
-country_event = {
+country_event = { #Petition start
 	id = flavor_beepeck.1
 	title = flavor_beepeck.1.t
 	desc = flavor_beepeck.1.d
 	picture = GOOD_WITH_MONARCH_eventPicture
 	
-	fire_only_once = yes
 	is_triggered_only = yes
 	
 	trigger = {
@@ -16,24 +15,50 @@ country_event = {
 	
 	option = {
 		name = flavor_beepeck.1.a
-		set_imperial_incident = incident_halfling_elector
+		ai_chance = {
+			factor = 4
+		}
+		emperor = {
+			country_event = {
+				id = flavor_beepeck.2
+				days = 730
+			}
+		}
+		A40 = {
+			country_event = {
+				id = flavor_beepeck.6
+				days = 730
+			}
+		}
+	}
+	option = {
+		name = flavor_beepeck.1.b
+		ai_chance = {
+			factor = 1
+		}
+		157 = {
+			add_permanent_claim = ROOT
+		}
+		add_stability = -1
 	}
 }
 
-# Mock imperial incident
-country_event = {
+country_event = { #Petition to emperor
 	id = flavor_beepeck.2
 	title = flavor_beepeck.2.t
 	desc = flavor_beepeck.2.d
 	picture = GOOD_WITH_MONARCH_eventPicture
 	
 	is_triggered_only = yes
-	major = yes
 	
 	option = { # reject their claims
 		name = flavor_beepeck.2.a
 		ai_chance = {
-			factor = 0
+			factor = 2
+			modifier = {
+				factor = 4
+				alliance_with = A40
+			}
 		}
 		reverse_add_opinion = {
 			who = A12
@@ -42,18 +67,18 @@ country_event = {
 		reverse_add_opinion = {
 			who = A40
 			modifier = forced_other_to_give_up_claim_on_us
+			multiplier = 2
 		}
 		hidden_effect = {
 			A12 = {
-				set_country_flag = claims_rejected
-				country_event = { id = flavor_beepeck.3 days = 3 }
+				country_event = { id = flavor_beepeck.7 }
 			}
 		}
 	}
 	option = { # acknowledge their claims
 		name = flavor_beepeck.2.b
 		ai_chance = {
-			factor = 10
+			factor = 5
 		}
 		157 = {
 			add_core = A12
@@ -65,15 +90,17 @@ country_event = {
 		
 		hidden_effect = {
 			A12 = {
-				set_country_flag = claims_acknowledged
-				country_event = { id = flavor_beepeck.3 days = 3 }
+				country_event = { id = flavor_beepeck.3 }
+			}
+			A40 = {
+				country_event = { id = flavor_beepeck.8 }
 			}
 		}
 	}
 	option = { # enforce their claims
 		name = flavor_beepeck.2.c
 		ai_chance = {
-			factor = 1
+			factor = 3
 			modifier = {
 				factor = 1.2
 				has_opinion = {
@@ -114,6 +141,9 @@ country_event = {
 				alliance_with = A12
 			}
 		}
+		trigger = { #to avoid a player getting orston'd, ever
+			A40 = { ai = yes }
+		}
 		157 = {
 			add_core = A12
 			cede_province = A12
@@ -126,36 +156,32 @@ country_event = {
 			who = A40
 			modifier = opinion_took_province
 		}
+		custom_tooltip = beepeck_incident_warning_tt
 		hidden_effect = {
 			A12 = {
-				set_country_flag = claims_enforced
-				country_event = { id = flavor_beepeck.3 days = 3 }
+				country_event = { id = flavor_beepeck.3 }
+			}
+			A40 = {
+				country_event = { id = flavor_beepeck.9 }
 			}
 		}
 	}
 }
 
-# Follow-up for Beepeck
-country_event = {
+country_event = { #Success of the petition
 	id = flavor_beepeck.3
 	title = flavor_beepeck.3.t
 	desc = {
 		trigger = {
-			has_country_flag = claims_rejected
+			owns = 157
 		}
-		desc = flavor_beepeck.3.d
+		desc = flavor_beepeck.3.d.a
 	}
 	desc = {
 		trigger = {
-			has_country_flag = claims_acknowledged
+			NOT = { owns = 157 }
 		}
-		desc = flavor_beepeck.3.d2
-	}
-	desc = {
-		trigger = {
-			has_country_flag = claims_enforced
-		}
-		desc = flavor_beepeck.3.d3
+		desc = flavor_beepeck.3.d.b
 	}
 	picture = GOOD_WITH_MONARCH_eventPicture
 	
@@ -164,21 +190,20 @@ country_event = {
 	
 	option = {
 		trigger = {
-			has_country_flag = claims_rejected
+			owns = 157
 		}
 		name = flavor_beepeck.3.a
+		add_prestige = 15
+		157 = {
+			add_local_autonomy = 25
+		}
 	}
 	option = {
 		trigger = {
-			has_country_flag = claims_acknowledged
+			NOT = { owns = 157 }
 		}
 		name = flavor_beepeck.3.b
-	}
-	option = {
-		trigger = {
-			has_country_flag = claims_enforced
-		}
-		name = flavor_beepeck.3.c
+		add_prestige = 5
 	}
 }
 
@@ -219,6 +244,80 @@ country_event = {
 			manuever = 6
 			siege = 3
 			trait = extortioner_personality
+		}
+	}
+}
+
+country_event = { #angry exwes
+	id = flavor_beepeck.6
+	title = flavor_beepeck.6.t
+	desc = flavor_beepeck.6.d
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_beepeck.6.a
+		add_opinion = {
+			who = A12
+			modifier = creating_claim
+			multiplier = 7
+		}
+	}
+}
+country_event = { #petition denied
+	id = flavor_beepeck.7
+	title = flavor_beepeck.7.t
+	desc = flavor_beepeck.7.d
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_beepeck.7.a
+		add_prestige = -15
+	}
+}
+country_event = { #Orston claimed by beepeck
+	id = flavor_beepeck.8
+	title = flavor_beepeck.8.t
+	desc = flavor_beepeck.8.d
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_beepeck.8.a
+		add_prestige = -15
+	}
+}
+country_event = { #Orston stolen by beepeck
+	id = flavor_beepeck.9
+	title = flavor_beepeck.9.t
+	desc = flavor_beepeck.9.d
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_beepeck.9.a
+		ai_chance = {
+			factor = 9
+		}
+		add_prestige = -25
+	}
+	option = {
+		name = flavor_beepeck.9.b
+		ai_chance = {
+			factor = 1
+		}
+		declare_war_with_cb = {
+			casus_belli = cb_core
+			who = A12
+			war_goal_province = 157
+		}
+		emperor = {
+			join_all_defensive_wars_of = A12
 		}
 	}
 }

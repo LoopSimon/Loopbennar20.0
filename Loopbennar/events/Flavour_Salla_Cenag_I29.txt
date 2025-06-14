@@ -18,6 +18,13 @@ country_event = {
 
 	option = {
 		name = salla_cenag.1.a
+		custom_tooltip = salla_cenag.1.a.tt
+		add_ruler_modifier = { name = salla_cenag_heartsmitten }
+		set_ruler_flag = salla_cenag_ruled_by_alara
+		hidden_effect = { 
+			add_ruler_modifier = { name = exceptional_willpower_150 } 
+			country_event = { id = salla_cenag.2 } 
+		}
 	}
 }
 
@@ -31,9 +38,15 @@ country_event = {
 
 	option = {
 		name = salla_cenag.2.a
+		custom_tooltip = salla_cenag.2.a.tt
+		hidden_effect = { define_ruler_to_general  = { fire = 2	shock = 4	manuever = 4	siege = 1 trait = frontline_holder_personality } }
 	}
 	option = {
 		name = salla_cenag.2.b
+		custom_tooltip = salla_cenag.2.b.tt
+		hidden_effect = { 
+			add_ruler_modifier = { name = may_not_make_ruler_general }
+		}
 	}
 }
 
@@ -47,6 +60,16 @@ country_event = {
 
 	option = {
 		name = salla_cenag.3.a
+		I28 = {
+			add_favors = {
+				who = PREV
+				amount = 10
+			}
+			add_trust = {
+				who = PREV
+				value = 10
+			}
+		}
 	}
 }
 
@@ -60,6 +83,27 @@ country_event = {
 
 	option = {
 		name = salla_cenag.4.a
+		custom_tooltip = salla_cenag.4.a.tt
+		I29 = { 
+			define_general  = { 
+				name = "Elaria Ayeth" 
+				fire = 0	
+				shock = 4	
+				manuever = 4	
+				siege = 0 
+				trait = cruel_tactician_personality 
+			} 
+		}
+		if = {
+			limit = { I33 = { ai = yes } }
+			hidden_effect = { I33 = { kill_heir = { allow_new_heir = no } } }
+		}
+		I33 = {
+			capital_scope = {
+				cawa_infantry = I29
+				cawa_infantry = I29
+			}
+		}
 	}
 }
 
@@ -73,6 +117,7 @@ country_event = {
 
 	option = {
 		name = salla_cenag.5.a
+		custom_tooltip = salla_cenag.5.a.tt
 	}
 }
 country_event = {
@@ -91,13 +136,32 @@ country_event = {
 country_event = {
 	id = salla_cenag.7
 	title = salla_cenag.7.t
-	desc = salla_cenag.7ruler.d
+	desc = {
+		trigger = { is_monarch_leader = no }
+		desc = salla_cenag.7ruler.d
+	}
+	desc = {
+		trigger = { is_monarch_leader = yes }
+		desc = salla_cenag.7general.d
+	}
 	picture = WOOD_ELVEN_THRONE_ROOM_eventPicture
 
 	is_triggered_only = yes
 
 	option = {
+		trigger = { is_monarch_leader = no }
 		name = salla_cenag.7ruler.a
+		I41 = { add_manpower = -2 }
+	}
+	option = {
+		trigger = { is_monarch_leader = yes }
+		name = salla_cenag.7general.a
+		custom_tooltip = salla_cenag.7general.a.tt
+		I41 = { add_manpower = -4 }
+	}
+
+	after = {
+		I41 = { country_event = { id = salla_cenag.8 } }
 	}
 }
 country_event = {
@@ -110,6 +174,7 @@ country_event = {
 
 	option = {
 		name = salla_cenag.8.a
+		custom_tooltip = salla_cenag.8.a.tt
 	}
 }
 
@@ -123,9 +188,47 @@ country_event = {
 
 	option = {
 		name = salla_cenag.9.a
+		large_decrease_of_orcish_tolerance_effect = yes
+		custom_tooltip = salla_cenag.9.a.tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { culture = green_orc }
+				change_religion = fey_court
+				change_culture = wood_elf
+				add_devastation = 10
+			}
+			I28 = {
+				every_owned_province = {
+					limit = { culture = green_orc }
+					change_religion = fey_court
+					change_culture = wood_elf
+					add_devastation = 10
+				}
+			}	
+		}
 	}
 	option = {
 		name = salla_cenag.9.b
+		small_increase_of_orcish_tolerance_effect = yes
+		custom_tooltip = salla_cenag.9.b.tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { culture = green_orc }
+				add_province_modifier = {
+					name = salla_cenag_pacified_orcs
+					duration = 7300
+				}	
+			}
+			I28 = {
+				every_owned_province = {
+				limit = { culture = green_orc }
+					add_province_modifier = {
+						name = salla_cenag_pacified_orcs
+						duration = 7300
+					}	
+				}
+			}
+		}
 	}
 }
 country_event = {
@@ -138,19 +241,53 @@ country_event = {
 
 	option = {
 		name = salla_cenag.10.a
+		every_owned_province = {
+			limit = {
+				owned_by = ROOT
+				region = daravans_folly_region
+			}
+			spawn_rebels = {
+				type = infestation_gnoll_rebels
+				size = 1
+			}
+		}
 	}
 }
 
 country_event = {
 	id = salla_cenag.11
 	title = salla_cenag.11.t
-	desc = salla_cenag.11.d
+	desc = {
+		trigger = { NOT = { has_ruler_flag = salla_cenag_ruled_by_alara } }
+		desc = salla_cenag.11alara.d
+	}
+	desc = {
+		trigger = { has_ruler_flag = salla_cenag_ruled_by_alara }
+		desc = salla_cenag.11alara.d
+	}
 	picture = SEJM_eventPicture
 
 	is_triggered_only = yes
 
 	option = {
 		name = salla_cenag.11.a
+		ourdia_region = { discover_country = ROOT }
+		if = {
+			limit = {
+				has_spy_network_in = {
+					who = U16
+					value = 25
+				}
+			}
+			change_government_reform_progress = 100
+		}
+		
+		if = {
+			limit = {
+				U16 = { has_50_opinion_improved_relation = { target = ROOT }  } 
+			}
+			capital_scope = { add_next_institution_embracement = 25 }
+		}
 	}
 }
 country_event = {
@@ -163,21 +300,57 @@ country_event = {
 
 	option = {
 		name = salla_cenag.12.a
+		add_country_modifier = {
+			name = salla_cenag_family_in_arms
+			duration = 7200
+		}
 	}
 }
 country_event = {
 	id = salla_cenag.13
 	title = salla_cenag.13.t
-	desc = salla_cenag.13.d
+	desc = {
+		trigger = { has_ruler_flag = salla_cenag_ruled_by_alara }
+		desc = salla_cenag.13alara.d
+	}
+	desc = {
+		trigger = { NOT = { has_ruler_flag = salla_cenag_ruled_by_alara } }
+		desc = salla_cenag.13alara.d
+	}
 	picture = DHOW_AT_SEA_eventPicture
 
 	is_triggered_only = yes
 
 	option = {
-		name = salla_cenag.13.a
+		trigger = { has_ruler_flag = salla_cenag_ruled_by_alara }
+		name = salla_cenag.13alara.a
+		set_country_flag = I29_ourdia_liberate_branch
+		custom_tooltip = salla_cenag.13.a.tt
 	}
 	option = {
+		trigger = { has_ruler_flag = salla_cenag_ruled_by_alara }
+		name = salla_cenag.13alara.b
+		set_country_flag = I29_ourdia_conquer_branch
+		custom_tooltip = salla_cenag.13.b.tt
+	}
+
+	option = {
+		trigger = { NOT = { has_ruler_flag = salla_cenag_ruled_by_alara } }
+		name = salla_cenag.13.a
+		set_country_flag = I29_ourdia_liberate_branch
+		custom_tooltip = salla_cenag.13.a.tt
+	}
+	option = {
+		trigger = { NOT = { has_ruler_flag = salla_cenag_ruled_by_alara } }
 		name = salla_cenag.13.b
+		set_country_flag = I29_ourdia_conquer_branch
+		custom_tooltip = salla_cenag.13.b.tt
+	}
+
+	after = {
+		hidden_effect = {
+			swap_non_generic_missions = yes
+		}
 	}
 }
 country_event = {
@@ -190,6 +363,47 @@ country_event = {
 
 	option = {
 		name = salla_cenag.14.a
+
+		define_advisor = {
+			type = theologian
+			skill = 1
+			discount = yes
+			culture = sun_elf
+			religion = bulwari_sun_cult
+			name = "Kelmonias"
+		}
+
+		define_advisor = {
+			type = philosopher
+			skill = 1
+			discount = yes
+			culture = sun_elf
+			religion = bulwari_sun_cult
+			female = yes
+			name = "Amarien"
+		}
+
+		hidden_effect = {
+			bahar_region = { discover_country = ROOT }
+			gulf_of_glass_area = { discover_country = ROOT }
+			imuluses_area = { discover_country = ROOT }
+			kuz_mountains_area = { discover_country = ROOT }
+			eduz_vacyn_area = { discover_country = ROOT }
+			anzabad_area = { discover_country = ROOT }
+
+			every_country = {
+				limit = {
+					capital_scope = {
+						OR = {
+							region = bahar_region
+							region = bulwar_proper_region
+						}
+					}
+				}
+				deepwoods_bone_grove = { discover_country = PREV }
+			}	
+		}
+		custom_tooltip = salla_cenag.14.a.tt
 	}
 }
 country_event = {
@@ -202,6 +416,21 @@ country_event = {
 
 	option = {
 		name = salla_cenag.15.a
+		add_splendor = 50
+		capital_scope = {
+			add_institution_embracement = {
+				which = renaissance
+				value = 25
+			}
+		}
+		I28 = {
+			capital_scope = {
+				add_institution_embracement = {
+					which = renaissance
+					value = 25
+				}
+			}
+		}
 	}
 }
 
@@ -215,6 +444,23 @@ country_event = {
 
 	option = {
 		name = salla_cenag.16.a
+		add_prestige = 50
+		add_splendor = 100
+
+		every_known_country = {
+			limit = { 
+				has_country_modifier = deepwoods_verdant_pact 
+				NOT = { tag = I29 }
+			}
+			capital_scope = {
+				add_next_institution_embracement = 100
+			}
+		}
+
+		if = {
+			limit = { has_ruler_flag = salla_cenag_ruled_by_alara }
+			country_event = { id = salla_cenag.17 days = 3 }
+		}
 	}
 }
 
@@ -228,6 +474,9 @@ country_event = {
 
 	option = {
 		name = salla_cenag.17.a
+		add_ruler_modifier = {
+			name = salla_cenag_just_me
+		}
 	}
 }
 
@@ -241,18 +490,118 @@ country_event = {
 
 	option = {
 		name = salla_cenag.18.a
+		add_stability = 1
+		country_event = {
+			id = salla_cenag.19
+			days = 7
+		}
 	}
 }
 
 country_event = {
 	id = salla_cenag.19
 	title = salla_cenag.19.t
-	desc = salla_cenag.19.d
+	desc = {
+		trigger = { has_ruler_flag = salla_cenag_ruled_by_alara }
+		desc = salla_cenag.19alara.d
+	}
+	desc = {
+		trigger = { NOT = { has_ruler_flag = salla_cenag_ruled_by_alara } }
+		desc = salla_cenag.19.d
+	}
 	picture = THE_HEROINE_eventPicture
 
 	is_triggered_only = yes
 
 	option = {
 		name = salla_cenag.19.a
+			form_cyranvar = yes
+			every_ally = {
+				limit = {
+					primary_culture = wood_elf
+					capital_scope = { superregion = deepwoods_superregion }
+				}
+				ROOT = { vassalize = PREV }
+			}
+			hidden_effect = {
+				add_country_modifier = {
+					name = salla_cenag_yfel_cenag
+					duration = -1
+				}	
+			}
+			custom_tooltip = salla_cenag.19.a.tt
+			add_country_modifier = {
+				name = salla_cenag_embrace_change
+				duration = 1825
+			}
+	}
+}
+
+country_event = {
+	id = salla_cenag.20
+	title = salla_cenag.20.t
+	is_triggered_only = yes
+	desc = {
+		trigger = { has_ruler_flag = salla_cenag_ruled_by_alara }
+		desc = salla_cenag.20alara.d
+	}
+	desc = {
+		trigger = { NOT = { has_ruler_flag = salla_cenag_ruled_by_alara } }
+		desc = salla_cenag.20.d
+	}
+	picture = BORDER_TENSION_eventPicture
+
+	fire_only_once = yes
+
+	trigger = {
+		tag = I29
+		deepwoods_bone_grove = {
+			type = all
+			owned_by = ROOT
+		}
+	}
+
+	option = {
+		trigger = { has_ruler_flag = salla_cenag_ruled_by_alara }
+		name = salla_cenag.20alara.a
+		set_country_flag = I29_goblin_tolerance_branch
+		custom_tooltip = salla_cenag.20.a.tt
+
+		hidden_effect = {
+			swap_non_generic_missions = yes
+		}
+	}
+
+	option = {
+		trigger = { has_ruler_flag = salla_cenag_ruled_by_alara }
+		name = salla_cenag.20alara.b
+		set_country_flag = I29_goblin_intolerance_branch
+		custom_tooltip = salla_cenag.20.b.tt
+
+		hidden_effect = {
+			swap_non_generic_missions = yes
+		}
+	}
+
+	option = {
+		trigger = { NOT = { has_ruler_flag = salla_cenag_ruled_by_alara } }
+		name = salla_cenag.20.a
+		set_country_flag = I29_goblin_tolerance_branch
+		custom_tooltip = salla_cenag.20.a.tt
+
+		hidden_effect = {
+			swap_non_generic_missions = yes
+		}
+	}
+
+	option = {
+		trigger = { NOT = { has_ruler_flag = salla_cenag_ruled_by_alara } }
+		name = salla_cenag.20.b
+		set_country_flag = I29_goblin_intolerance_branch
+		custom_tooltip = salla_cenag.20.b.tt
+
+		hidden_effect = {
+			swap_non_generic_missions = yes
+		}
 	}
 }

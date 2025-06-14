@@ -5,6 +5,8 @@ namespace = xhazobkult_events
 ###########################
 #1-99
 #Xhazobkult tributary demonic power
+
+# Repurposed for the new tributary bonuses. Old effects are commented out in case they have to be revived.
 country_event = {
 	id = xhazobkult_events.1
 	title = xhazobkult_events.1.t
@@ -15,201 +17,119 @@ country_event = {
 	hidden = yes
 	
 	trigger = {
-		religion = xhazobkult
+		overlord = { OR = { has_estate_privilege = gnoll_the_weak_serve_the_strong has_estate_privilege = gnoll_the_weak_serve_the_strong_burghers } }
+		is_right_subject_type_xhazobkult = yes
+		OR = {
+			AND = {
+				has_country_flag = already_giving_tributary_bonus
+				NOT = { is_right_development_xhazobkult = yes }
+			}
+			AND = {
+				NOT = { has_country_flag = already_giving_tributary_bonus }
+				is_right_development_xhazobkult = yes
+			}
+		}
 	}
 	
 	immediate = {
-		remove_country_modifier = xhazobkult_tributaries_1
-		remove_country_modifier = xhazobkult_tributaries_2
-		remove_country_modifier = xhazobkult_tributaries_3
-		remove_country_modifier = xhazobkult_tributaries_4
-		remove_country_modifier = xhazobkult_tributaries_5
-		remove_country_modifier = xhazobkult_tributaries_6
-		remove_country_modifier = xhazobkult_tributaries_7
-		remove_country_modifier = xhazobkult_tributaries_8
-		remove_country_modifier = xhazobkult_tributaries_9
-		remove_country_modifier = xhazobkult_tributaries_10
+		#remove_country_modifier = xhazobkult_tributaries_1
+		#remove_country_modifier = xhazobkult_tributaries_2
+		#remove_country_modifier = xhazobkult_tributaries_3
+		#remove_country_modifier = xhazobkult_tributaries_4
+		#remove_country_modifier = xhazobkult_tributaries_5
+		#remove_country_modifier = xhazobkult_tributaries_6
+		#remove_country_modifier = xhazobkult_tributaries_7
+		#remove_country_modifier = xhazobkult_tributaries_8
+		#remove_country_modifier = xhazobkult_tributaries_9
+		#remove_country_modifier = xhazobkult_tributaries_10
 		
-		calc_tributary_dev_proportion = yes
+		#calc_tributary_dev_proportion = yes
 	}
 	
 	option = {
 		name = xhazobkult_events.1.a
 		ai_chance = { factor = 1 }
-		xhazobkult_calc_tributary_proportion = yes
+		#xhazobkult_calc_tributary_proportion = yes
+		if = {
+			limit = {
+				NOT = { has_country_flag = already_giving_tributary_bonus }
+				is_right_development_xhazobkult = yes
+			}
+			set_country_flag = already_giving_tributary_bonus
+			overlord = { change_variable = { gnoll_tributary_bonus_count = 1 } }
+		}
+		if = {
+			limit = {
+				has_country_flag = already_giving_tributary_bonus
+				NOT = { is_right_development_xhazobkult = yes }
+			}
+			clr_country_flag = already_giving_tributary_bonus
+			overlord = { subtract_variable = { gnoll_tributary_bonus_count = 1 } }
+		}
 	}
 }
 
-
-#Demonsterization event for changing religion based on your school
 country_event = {
 	id = xhazobkult_events.2
 	title = xhazobkult_events.2.t
 	desc = xhazobkult_events.2.d
-	picture = THE_COVENANT_eventPicture
+	picture = MILITARY_CAMP_eventPicture
 	
 	is_triggered_only = yes
-
-	#Nirakhetist
-	option = {
-		name = xhazobkult_events.2.b
-		trigger = {
-			OR = {
-				religious_school = {
-					group = gnollish
-					school = demons_of_the_sorrow_tradition
-				}
-				has_country_modifier = demons_of_the_sorrow_tradition_modifier
-			}	
+	hidden = yes
+	
+	trigger = {
+		culture_group = gnollish
+		OR = { 
+			has_estate_privilege = gnoll_the_weak_serve_the_strong 
+			has_estate_privilege = gnoll_the_weak_serve_the_strong_burghers 
+			has_estate_privilege = xhazobkult_organized_sacrifices 
+			has_estate_privilege = xhazobkult_organized_sacrifices_clergy
 		}
-		add_stability = -2
-		change_religion = nirakhetist
-		decrease_monstrous_10 = yes
-		add_country_modifier = {
-			name = orc_conversion_zeal
-			duration = 3650
+		any_subject_country = {
+			is_right_subject_type_xhazobkult = yes
+			NOT = { liberty_desire = 50 }
 		}
-		hidden_effect = { set_country_flag = monstrous_converted_religion }
 	}
-	#OSC
-	option = {
-		name = xhazobkult_events.2.c
-		trigger = {
-			OR = {
-				AND = {
-					religious_school = {
-						group = gnollish
-						school = monstrous_pedigrees_tradition
-					}
-					NOT = { tag = A49 }
-				}
-				has_country_modifier = monstrous_pedigrees_tradition_modifier
-			}			
-		}
-		add_stability = -2
-		change_religion = old_bulwari_sun_cult
-		decrease_monstrous_10 = yes
-		add_country_modifier = {
-			name = orc_conversion_zeal
-			duration = 3650
-		}
-		hidden_effect = { set_country_flag = monstrous_converted_religion }
+	
+	immediate = {
 	}
-	#Regent Court
+	
 	option = {
-		name = xhazobkult_events.2.j
-		trigger = {
-			tag = A49
-		}
-		add_stability = -2
-		change_religion = regent_court
-		decrease_monstrous_10 = yes
-		add_country_modifier = {
-			name = orc_conversion_zeal
-			duration = 3650
-		}
-		hidden_effect = { set_country_flag = monstrous_converted_religion }
-	}
-	#Fangaulan Pantheon
-	option = {
-		name = xhazobkult_events.2.e
-		trigger = {
-			OR = {
-				religious_school = {
-					group = gnollish
-					school = children_of_goxma_tradition
-				}
-				has_country_modifier = children_of_goxma_tradition_modifier
-			}	
-		}
-		add_stability = -2
-		change_religion = fangaulan_pantheon
-		decrease_monstrous_10 = yes
-		add_country_modifier = {
-			name = orc_conversion_zeal
-			duration = 3650
-		}
-		hidden_effect = { set_country_flag = monstrous_converted_religion }
-	}
-	#Kvangahga
-	option = {
-		name = xhazobkult_events.2.f
-		trigger = {
-			OR = {
-				religious_school = {
-					group = gnollish
-					school = kult_of_the_packmother_tradition
-				}
-				has_country_modifier = kult_of_the_packmother_tradition_modifier
-			}	
-		}
-		add_stability = -2
-		change_religion = kvangahga
-		decrease_monstrous_10 = yes
-		add_country_modifier = {
-			name = orc_conversion_zeal
-			duration = 3650
-		}
-		hidden_effect = { set_country_flag = monstrous_converted_religion }
-	}
-	#Shadowpact
-	option = {
-		name = xhazobkult_events.2.g
-		trigger = {
-			OR = {
-				religious_school = {
-					group = gnollish
-					school = umbral_bargains_tradition
-				}
-				has_country_modifier = umbral_bargains_tradition_modifier
-			}	
-		}
-		add_stability = -2
-		change_religion = shadow_pact
-		decrease_monstrous_10 = yes
-		add_country_modifier = {
-			name = orc_conversion_zeal
-			duration = 3650
-		}
+		name = xhazobkult_events.2.a
+		ai_chance = { factor = 1 }
+		#Break alliances and guarantees when your tribs become loyal
 		if = {
-			limit = {
-				OR ={
-					tag = F71
-					was_tag = F71
+			limit = { OR = { has_estate_privilege = gnoll_the_weak_serve_the_strong has_estate_privilege = gnoll_the_weak_serve_the_strong_burghers } }
+			every_subject_country = {
+				limit = {
+					ai = yes
+					is_right_subject_type_xhazobkult = yes
+					NOT = { liberty_desire = 50 }
+				}
+				every_ally = { 
+					limit = {  NOT = { is_right_subject_type_xhazobkult = yes } }
+					break_alliance = PREV 
+				}
+				every_known_country = {
+					limit = { guaranteed_by = PREV }
+					remove_guarantee = PREV
 				}
 			}
-			custom_tooltip = " "
-			custom_tooltip = rakkaz_change_religion_alert
 		}
-		hidden_effect = { set_country_flag = monstrous_converted_religion }
-	}
-	#Demonic Shamans Refuse
-	option = {
-		name = xhazobkult_events.2.h
-		trigger = {
-			OR = {
-				religious_school = {
-					group = gnollish
-					school = demonic_shamans_tradition
+		#Handle the "Tributaries now give DP as tribute" effect
+		if = {
+			limit = { OR = { has_estate_privilege = xhazobkult_organized_sacrifices has_estate_privilege = xhazobkult_organized_sacrifices_clergy } }
+			every_subject_country = {
+				limit = { 
+					is_right_subject_type_xhazobkult = yes
+					is_right_development_xhazobkult = yes
+					NOT = { liberty_desire = 50 }
 				}
-				has_country_modifier = demonic_shamans_tradition_modifier
-			}	
+				overlord = { add_patriarch_authority = 0.001 }
+			}
 		}
-		add_stability = 1
-		add_patriarch_authority = 0.1
-		add_mil_power = 100
-		increase_monstrous_5 = yes
-		set_country_flag = xhazobkult_rejected_conversion
 	}
-	#Refuse
-	option = {
-		name = xhazobkult_events.2.i
-		add_stability = 1
-		increase_monstrous_2 = yes
-		set_country_flag = xhazobkult_rejected_conversion
-	}
-
-	after = { remove_country_modifier = conversion_zeal }
 }
 
 
@@ -264,6 +184,177 @@ country_event = { #Local gnolls do their own ritual
 		else = { add_prestige = -20 }
 		event_target:event_province = { add_unrest = 5 }
 	}
+}
+
+#Demonsterization event for changing religion based on your school
+country_event = {
+	id = xhazobkult_events.101
+	title = xhazobkult_events.101.t
+	desc = xhazobkult_events.101.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+
+	#Nirakhetist
+	option = {
+		name = xhazobkult_events.101.b
+		trigger = {
+			OR = {
+				religious_school = {
+					group = gnollish
+					school = demons_of_the_sorrow_tradition
+				}
+				has_country_modifier = demons_of_the_sorrow_tradition_modifier
+			}	
+		}
+		add_stability = -2
+		change_religion = nirakhetist
+		decrease_monstrous_10 = yes
+		add_country_modifier = {
+			name = orc_conversion_zeal
+			duration = 3650
+		}
+		hidden_effect = { set_country_flag = monstrous_converted_religion }
+	}
+	#OSC
+	option = {
+		name = xhazobkult_events.101.c
+		trigger = {
+			OR = {
+				AND = {
+					religious_school = {
+						group = gnollish
+						school = monstrous_pedigrees_tradition
+					}
+					NOT = { tag = A49 }
+				}
+				has_country_modifier = monstrous_pedigrees_tradition_modifier
+			}			
+		}
+		add_stability = -2
+		change_religion = old_bulwari_sun_cult
+		decrease_monstrous_10 = yes
+		add_country_modifier = {
+			name = orc_conversion_zeal
+			duration = 3650
+		}
+		hidden_effect = { set_country_flag = monstrous_converted_religion }
+	}
+	#Regent Court
+	option = {
+		name = xhazobkult_events.101.j
+		trigger = {
+			tag = A49
+		}
+		add_stability = -2
+		change_religion = regent_court
+		decrease_monstrous_10 = yes
+		add_country_modifier = {
+			name = orc_conversion_zeal
+			duration = 3650
+		}
+		hidden_effect = { set_country_flag = monstrous_converted_religion }
+	}
+	#Fangaulan Pantheon
+	option = {
+		name = xhazobkult_events.101.e
+		trigger = {
+			OR = {
+				religious_school = {
+					group = gnollish
+					school = children_of_goxma_tradition
+				}
+				has_country_modifier = children_of_goxma_tradition_modifier
+			}	
+		}
+		add_stability = -2
+		change_religion = fangaulan_pantheon
+		decrease_monstrous_10 = yes
+		add_country_modifier = {
+			name = orc_conversion_zeal
+			duration = 3650
+		}
+		hidden_effect = { set_country_flag = monstrous_converted_religion }
+	}
+	#Kvangahga
+	option = {
+		name = xhazobkult_events.101.f
+		trigger = {
+			OR = {
+				religious_school = {
+					group = gnollish
+					school = kult_of_the_packmother_tradition
+				}
+				has_country_modifier = kult_of_the_packmother_tradition_modifier
+			}	
+		}
+		add_stability = -2
+		change_religion = kvangahga
+		decrease_monstrous_10 = yes
+		add_country_modifier = {
+			name = orc_conversion_zeal
+			duration = 3650
+		}
+		hidden_effect = { set_country_flag = monstrous_converted_religion }
+	}
+	#Shadowpact
+	option = {
+		name = xhazobkult_events.101.g
+		trigger = {
+			OR = {
+				religious_school = {
+					group = gnollish
+					school = umbral_bargains_tradition
+				}
+				has_country_modifier = umbral_bargains_tradition_modifier
+			}	
+		}
+		add_stability = -2
+		change_religion = shadow_pact
+		decrease_monstrous_10 = yes
+		add_country_modifier = {
+			name = orc_conversion_zeal
+			duration = 3650
+		}
+		if = {
+			limit = {
+				OR ={
+					tag = F71
+					was_tag = F71
+				}
+			}
+			custom_tooltip = " "
+			custom_tooltip = rakkaz_change_religion_alert
+		}
+		hidden_effect = { set_country_flag = monstrous_converted_religion }
+	}
+	#Demonic Shamans Refuse
+	option = {
+		name = xhazobkult_events.101.h
+		trigger = {
+			OR = {
+				religious_school = {
+					group = gnollish
+					school = demonic_shamans_tradition
+				}
+				has_country_modifier = demonic_shamans_tradition_modifier
+			}	
+		}
+		add_stability = 1
+		add_patriarch_authority = 0.1
+		add_mil_power = 100
+		increase_monstrous_5 = yes
+		set_country_flag = xhazobkult_rejected_conversion
+	}
+	#Refuse
+	option = {
+		name = xhazobkult_events.101.i
+		add_stability = 1
+		increase_monstrous_2 = yes
+		set_country_flag = xhazobkult_rejected_conversion
+	}
+
+	after = { remove_country_modifier = conversion_zeal }
 }
 
 ###########################
@@ -554,11 +645,6 @@ country_event = {
 		else = { hidden_effect = { country_event = { id = xhazobkult_events.3001 days = 3650 } } } #10 year timer
 	}
 }
-
-
-
-
-
 
 #xhaz success
 country_event = {
@@ -915,10 +1001,6 @@ country_event = {
 	}
 }
 
-
-
-
-
 #xhaz too late
 country_event = {
 	id = xhazobkult_events.3003
@@ -942,7 +1024,6 @@ country_event = {
 		custom_tooltip = xhazobkult_too_late_tt
 	}
 }
-
 
 #xhaz dies
 country_event = {
@@ -983,8 +1064,6 @@ country_event = {
 		custom_tooltip = xhazobkult_xhazobine_dies_tt
 	}
 }
-
-
 
 #xhaz demonic power checker. maybe turn into PTM later, would be very annoying to maintain though.
 country_event = {
