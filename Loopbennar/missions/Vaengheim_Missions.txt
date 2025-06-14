@@ -72,19 +72,21 @@ column1 = {
 				}
 			}
 			else = {
-				Z11 = {
-					OR = {
-						overlord = {
-							has_spy_network_from = {
-								who = ROOT
-								value = 25
-							}
-						}
+				OR = {
+					Z08 = {
 						has_spy_network_from = {
 							who = ROOT
-							value = 25
+							value = 20
 						}
 					}
+					Z11 = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 20
+						}
+					}
+				}
+				Z11 = {
 					is_at_war = yes
 				}
 				NOT = {
@@ -146,7 +148,7 @@ column1 = {
 		required_missions = { Z88_ending_the_strife } 
 		provinces_to_highlight = {  
 			is_capital_of = Z17
-		} 
+		}
 
 		trigger = {  
 			NOT = { has_country_modifier = racial_pop_troll_purge }
@@ -161,7 +163,6 @@ column1 = {
 
 		effect = {  
 			set_country_flag = Z88_tolerance_focus_booster
-			custom_tooltip = z88_troll_troubles_ttt
 			custom_tooltip = Z88_tolerance_focus_booster_tt
 			if = {
 				limit = {
@@ -176,6 +177,7 @@ column1 = {
 				Z17 = {
 					change_religion = skaldhyrric_faith
 				}
+				custom_tooltip = z88_troll_troubles_ttt
 			} 
 		} 
 	}
@@ -187,6 +189,7 @@ column1 = {
 		provinces_to_highlight = {  
 			superregion = gerudia_superregion
 			culture = fjord_troll
+			NOT = { province_id = 2426 }
 			NOT = {
 				AND = {
 					owned_by = ROOT
@@ -205,6 +208,7 @@ column1 = {
 			gerudia_superregion = {
 				type = all
 				OR = {
+					province_id = 2426
 					NOT = {
 						culture = fjord_troll
 					}
@@ -264,8 +268,41 @@ column1 = {
 		} 
 
 		effect = {  
-			country_event = {
-				id = vaengheim.2
+			custom_tooltip = Z88_hunt_spawn
+			if = {
+				limit = {
+					any_owned_province = {
+						OR = {
+							culture = blue_reachman
+							culture = white_reachman
+						}
+						vaengheim_has_hunts = no
+					}
+				}
+				random_owned_province = {
+					limit = {
+						OR = {
+							culture = blue_reachman
+							culture = white_reachman
+						}
+						vaengheim_has_hunts = no
+					}
+					add_province_modifier = {
+						name = Z88_entering_equilibrium
+						duration = -1
+					}
+				}
+			}
+			else = {
+				random_owned_province = {
+					add_province_modifier = {
+						name = Z88_entering_equilibrium
+						duration = -1
+					}
+				}
+			}
+			alenic_frontier_region = {
+				add_permanent_claim = ROOT
 			}
 		} 
 	}
@@ -542,6 +579,13 @@ column2 = {
 		effect = { 
 			custom_tooltip = Z88_taric_shift_tt 
 			set_country_flag = Z88_tarik_in_parliament_f
+			hidden_effect = {
+				add_country_modifier = {
+					name = Z88_tarik_in_parliament
+					duration = -1
+				}
+				add_accepted_culture = taric_gerudian
+			}
 			Z88_max_seat_increase = yes
 			every_owned_province = {
 				limit = {
@@ -678,22 +722,10 @@ column2 = {
 		} 
 
 		effect = {  
+			custom_tooltip = Z88_tale_of_krja_unlock_tt
+			set_country_flag = Z88_tale_of_krja_unlock
 			custom_tooltip = Z88_unlock_buffer_zone_tt
 			set_country_flag = Z88_unlock_buffer_zone
-			custom_tooltip = Z88_new_hunt_tt
-			random_owned_province = {
-				limit = {
-					region = alenic_reach_region
-					vaengheim_has_hunts = no
-				}
-				add_province_modifier = {
-					name = Z88_roc_hunt
-					duration = -1
-				}
-			}
-			dragon_coast_region = {
-				add_permanent_claim = ROOT
-			}
 		} 
 	}
 
@@ -730,8 +762,20 @@ column2 = {
 		} 
 
 		effect = {
-			custom_tooltip = Z88_tale_of_krja_unlock_tt
-			set_country_flag = Z88_tale_of_krja_unlock
+			custom_tooltip = Z88_new_hunt_tt
+			random_owned_province = {
+				limit = {
+					region = alenic_reach_region
+					vaengheim_has_hunts = no
+				}
+				add_province_modifier = {
+					name = Z88_roc_hunt
+					duration = -1
+				}
+			}
+			dragon_coast_region = {
+				add_permanent_claim = ROOT
+			}
 		} 
 	}
 
@@ -922,7 +966,7 @@ column3p1 = {
 
 		effect = {  
 			set_country_flag = Z88_hunts_active
-			custom_tooltip = Z88_new_hunt_tt
+			custom_tooltip = Z88_hunts_active_tt
 			random_owned_province = {
 				limit = {
 					vaengheim_has_hunts = no
@@ -1030,6 +1074,9 @@ column3p1 = {
 					NOT = {
 						owned_by = Z91
 					}
+					NOT = {
+						province_id = 990
+					}
 				}
 				AND = {
 					is_year = 1494
@@ -1043,39 +1090,67 @@ column3p1 = {
 		} 
 
 		trigger = {
-			OR = {
-				AND = {
-					Z91 = {
-						is_subject_of = ROOT
-					}
-					northern_giants_tears_area = {
-						type = all
-						owned_by = Z91
-					}
-					southern_giants_tears_area = {
-						type = all
-						owned_by = Z91
-					}
-					has_country_modifier = racial_focus_orcish
+			if = {
+				limit = {
 					NOT = {
-						has_country_modifier = racial_pop_orcish_purge
+						is_year = 1494
 					}
 				}
-				AND = {
-					is_year = 1494
-					Z91 = {
-						all_core_province = {
-							owned_by = ROOT
-						}
-					}
+				Z91 = {
+					is_subject_of = ROOT
+				}
+				northern_giants_tears_area = {
+					type = all
+					owned_by = Z91
+				}
+				southern_giants_tears_area = {
+					type = all
+					province_id = 990
+					owned_by = Z91
+				}
+				has_country_modifier = racial_focus_orcish
+				NOT = {
+					has_country_modifier = racial_pop_orcish_purge
+				}
+			}
+			else = {
+				northern_giants_tears_area = {
+					type = all
+					owned_by = ROOT
+				}
+				southern_giants_tears_area = {
+					type = all
+					province_id = 990
+					owned_by = ROOT
+				}
+				has_country_modifier = racial_focus_orcish
+				NOT = {
+					has_country_modifier = racial_pop_orcish_purge
 				}
 			}
 		}
 
-		effect = {  
+		effect = {
+			if = {
+				limit = {
+					Z50 = {
+						exists = yes
+					}
+				}
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = Z50
+					months = -1
+				}
+			}
 			add_casus_belli = {
 				type = cb_vassalize_mission
 				target = Z18
+				months = -1
+			}
+			add_casus_belli = {
+				type = cb_vassalize_mission
+				target = Z45
 				months = -1
 			}
 			if = {
@@ -1159,14 +1234,75 @@ column3p1 = {
 					value = 10
 				}
 			}
-			OR = {
-				Z18 = {
-					is_subject_of = ROOT
+			if = {
+				limit = {
+					Z18 = {
+						exists = no
+					}
+					Z50 = {
+						exists = yes
+					}
 				}
-				Z18 = {
-					all_core_province = {
-						owned_by = ROOT
-						is_core = ROOT
+				OR = {
+					AND = {
+						Z50 = {
+							is_subject_of = ROOT
+						}
+						Z45 = {
+							is_subject_of = ROOT
+						}
+					}
+					AND = {
+						Z50 = {
+							is_subject_of = ROOT
+						}
+						Z45 = {
+							all_core_province = {
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+						}
+					}
+					AND = {
+						Z45 = {
+							is_subject_of = ROOT
+						}
+						Z50 = {
+							all_core_province = {
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+						}
+					}
+				}
+			}
+			else = {
+				OR = {
+					AND = {
+						Z18 = {
+							is_subject_of = ROOT
+						}
+						Z45 = {
+							is_subject_of = ROOT
+						}
+					}
+					AND = {
+						Z18 = {
+							is_subject_of = ROOT
+						}
+						Z45 = {
+							all_core_province = {
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+						}
+					}
+					AND = {
+						Z45 = {
+							is_subject_of = ROOT
+						}
+						Z18 = {
+							all_core_province = {
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+						}
 					}
 				}
 			}
@@ -1180,10 +1316,50 @@ column3p1 = {
 				name = Z88_orcs_in_parliament
 				duration = -1
 			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						OR = {
+							culture = grombar_half_orc
+							culture = grombar_orc
+						}
+					}
+					change_culture = gray_orc
+				}
+				every_subject_country = {
+					every_owned_province = {
+						limit = {
+							OR = {
+								culture = grombar_half_orc
+								culture = grombar_orc
+							}
+						}
+						change_culture = gray_orc
+					}
+				}
+			}
 			add_accepted_culture = gray_orc
-			alenic_reach_region = {
-				add_permanent_claim = Z18
-				add_permanent_claim = ROOT
+			if = {
+				limit = {
+					Z18 = {
+						exists = no
+					}
+					Z50 = {
+						exists = yes
+					}
+				}
+				alenic_reach_region = {
+					add_permanent_claim = Z50
+					add_permanent_claim = Z45
+					add_permanent_claim = ROOT
+				}
+			}
+			else = {
+				alenic_reach_region = {
+					add_permanent_claim = Z18
+					add_permanent_claim = Z45
+					add_permanent_claim = ROOT
+				}
 			}
 			custom_tooltip = Z88_new_hunt_tt
 			random_owned_province = {
@@ -1414,7 +1590,7 @@ column3p1 = {
 				}
 			}
 			num_of_battles = {
-				amount = 100
+				amount = 300
 			}
 			OR = {
 				army_tradition = 75
@@ -1597,7 +1773,7 @@ column4 = {
 				}
 			}
 			num_of_owned_provinces_with = {
-				value = 6
+				value = 5
 				fast_has_pop_of_race = { race = human }
 				has_building = temple
 				num_of_times_improved_by_owner = 1
@@ -1605,11 +1781,11 @@ column4 = {
 		} 
 
 		effect = {
-			custom_tooltip = Z88_manpower_recovery_from_battles_tt
 			add_country_modifier = {
 				name = Z88_wings_of_healing
 				duration = -1
 			}
+			custom_tooltip = Z88_manpower_recovery_from_battles_tt
 			set_country_flag = Z88_manpower_recovery_from_battles
 		} 
 	}
@@ -1618,7 +1794,8 @@ column4 = {
 		icon = mission_magnificent_castle
 		position = 5
 		required_missions = { Z88_on_wings_of_healing } 
-		provinces_to_highlight = {  
+		provinces_to_highlight = {
+			owned_by = ROOT
 			harpy_roost_st_has_any_roost = yes
 			NOT = {
 				has_manpower_building_trigger = yes
@@ -1636,7 +1813,7 @@ column4 = {
 			}
 			check_variable = {
 				which = vaengheim_land_units_recovered_total
-				value = 10000
+				value = 5000
 			}
 		} 
 
@@ -1982,6 +2159,9 @@ column5 = {
 					name = Z88_settling_frontier_subject
 					duration = 14600
 				}
+				hidden_effect = {
+					add_government_reform = settled_horde
+				}
 			}
 		} 
 	}
@@ -2003,16 +2183,24 @@ column5 = {
 		effect = {
 			custom_tooltip = Z88_oils_and_fat_tt
 			hidden_effect = {
-				every_owned_province = {
-					limit = {
-						has_production_building_trigger = yes
-						base_production = 6
-					}
-					change_trade_goods = incense
-					add_permanent_province_modifier = {
-						name = Z88_oil_industry
-						duration = -1
-					}
+				for = {
+					amount = 6
+					effect = "
+						random_owned_province = {
+							limit = {
+								has_production_building_trigger = yes
+								base_production = 6
+								NOT = {
+									has_province_modifier = Z88_oil_industry
+								}
+							}
+							change_trade_goods = incense
+							add_permanent_province_modifier = {
+								name = Z88_oil_industry
+								duration = -1
+							}
+						}
+					"
 				}
 			}
 		}

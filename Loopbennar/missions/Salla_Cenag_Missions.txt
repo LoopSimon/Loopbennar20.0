@@ -1,43 +1,285 @@
-salla_cenag_col_1 = {
+salla_cenag_col_1_goblin_fate_unknown = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = I29
+		NOT = { has_country_flag = I29_goblin_tolerance_branch } 
+		NOT = { has_country_flag = I29_goblin_intolerance_branch } 
+	}
+
+	salla_cenag_branching_1_2 = {
+		icon = mission_unknown_mission
+		position = 2
+		required_missions = { salla_cenag_warlocks_wars } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = salla_cenag_goblin_path_tt
+				always = no
+			}
+		}
+
+		effect = { custom_tooltip = salla_cenag_goblin_path_tt } 
+	}
+
+	salla_cenag_branching_1_3 = {
+		icon = mission_unknown_mission
+		position = 3
+		required_missions = { salla_cenag_branching_1_2 } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = salla_cenag_goblin_path_tt
+				always = no
+			}
+		}
+
+		effect = { custom_tooltip = salla_cenag_goblin_path_tt } 
+	}
+}
+salla_cenag_col_1_goblin_fate_tolerance = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = I29
+		has_country_flag = I29_goblin_tolerance_branch
+	}
+
+	salla_cenag_uneasy_peace_tolerance = {
+		icon = mission_destroyed_city
+		position = 2
+		required_missions = { salla_cenag_warlocks_wars } 
+		provinces_to_highlight = {
+			province_group = deepwoods_bone_grove
+			NOT = {
+				AND = {
+					is_state_core = ROOT
+					NOT = { unrest = 2 }
+				}
+			} 
+		}
+
+		trigger = {
+			deepwoods_bone_grove = {
+				type = all
+				is_state_core = ROOT
+				NOT = { unrest = 2 }
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = "salla_cenag_goblin_tolerance_reward"
+				duration = 7300
+			}
+			deepwoods_bone_grove = {
+				add_province_modifier = {
+					name = "salla_cenag_uneasy_peace_reward"
+					duration = 7300
+				}
+			}
+			define_advisor = {
+				type = trader
+				skill = 2
+				cost_multiplier = 0.5
+				culture = forest_goblin
+				religion = fey_court
+			}
+		}
+	}
+
+	salla_cenag_our_home_tolerance = {
+		icon = mission_early_game_buildings
+		position = 3
+		required_missions = { salla_cenag_uneasy_peace_tolerance } 
+		provinces_to_highlight = {
+			province_group = deepwoods_bone_grove
+			NOT = {
+					has_trade_building_trigger = yes
+					has_tax_building_trigger = yes
+			}
+		} 
+
+		trigger = {
+			development_in_provinces = {
+				province_group = deepwoods_bone_grove
+				value = 60
+			}
+			OR = {
+				medium_tolerance_goblin_race_trigger = yes
+				high_tolerance_goblin_race_trigger = yes
+			}
+			num_of_owned_provinces_with = {
+				province_group = deepwoods_bone_grove
+				OR = {
+						has_trade_building_trigger = yes
+						has_tax_building_trigger = yes
+				}
+				value = 3
+			}
+		}
+
+		effect = {
+			deepwoods_bone_grove = {
+				add_province_modifier = {
+					name = "salla_cenag_struggling_together"
+					duration = 7300
+				}
+				hidden_effect = {
+					if = {
+						limit = { culture = forest_goblin } 
+						add_elven_minority_size_effect = yes
+					}
+					if = {
+						limit = { culture = wood_elf } 
+						add_goblin_minority_size_effect = yes
+					}
+				}
+				custom_tooltip = salla_cenag_our_home_tolerance_settling_reward_tt
+			}
+		}
+	}
+}
+salla_cenag_col_1_goblin_fate_intolerance = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = I29
+		has_country_flag = I29_goblin_intolerance_branch
+	}
+
+	salla_cenag_uneasy_peace_intolerance = {
+		icon = mission_destroyed_city
+		position = 2
+		required_missions = { salla_cenag_warlocks_wars } 
+		provinces_to_highlight = {
+			province_group = deepwoods_bone_grove
+			OR = {
+					NOT = { is_state_core = ROOT }
+					AND = {
+							culture = forest_goblin
+							NOT = {
+									has_province_modifier = autonomy_decreased
+									NOT = { local_autonomy = 25 } 
+							}
+					}
+			}
+		} 
+
+		trigger = {
+			deepwoods_bone_grove = {
+				type = all
+				is_state_core = ROOT
+			}
+			custom_trigger_tooltip = {
+				tooltip = salla_cenag_uneasy_peace_intolerance_autonomy_tt
+				NOT = {
+					deepwoods_bone_grove = {
+						culture = forest_goblin
+						NOT = {
+							has_province_modifier = autonomy_decreased
+							NOT = { local_autonomy = 25 } 
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			deepwoods_bone_grove = {
+				limit = { culture = forest_goblin } 
+				add_nationalism = -20
+				add_province_modifier = {
+					name = "salla_cenag_uneasy_peace_intolerance_reward"
+					duration = 7300
+				}
+			}
+			hidden_effect = { deepwoods_bone_grove = { remove_province_modifier = conversion_zeal }  } 
+		}
+	}
+
+	salla_cenag_our_home_intolerance = {
+		icon = mission_early_game_buildings
+		position = 3
+		required_missions = { salla_cenag_uneasy_peace_intolerance } 
+		provinces_to_highlight = {
+			province_group = deepwoods_bone_grove
+			OR = {
+					NOT = { culture = wood_elf }
+					NOT = { religion = fey_court }
+			}
+		} 
+
+		trigger = {
+			deepwoods_bone_grove = {
+				type = all
+				culture = wood_elf
+				religion = fey_court
+			}
+		}
+
+		effect = {
+			every_owned_province = {
+				limit = { province_group = deepwoods_bone_grove } 
+				add_random_development = 1
+			}
+			add_stability_or_adm_power = yes
+			add_prestige = 25
+		}
+	}
+}
+salla_cenag_col_1_base = {
 	slot = 1
 	generic = no
 	ai = yes
 	has_country_shield = yes
 	potential = { tag = I29 } 
 
-	salla_cenag_uneasy_peace = {
-		icon = mission_destroyed_city
-		position = 2
-		required_missions = { salla_cenag_warlocks_wars } 
-		provinces_to_highlight = {  } 
-
-		trigger = {  } 
-
-		effect = {  } 
-	}
-
-	salla_cenag_our_home = {
-		icon = mission_early_game_buildings
-		position = 3
-		required_missions = { salla_cenag_uneasy_peace } 
-		provinces_to_highlight = {  } 
-
-		trigger = {  } 
-
-		effect = {  } 
-	}
-
 	salla_cenag_curiosity = {
 		icon = mission_hanged_tree
 		position = 4
 		required_missions = { salla_cenag_into_the_unknown } 
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = {
+    	region = daravans_folly_region
+    	is_empty = yes
+		} 
 
-		trigger = {  } 
+		trigger = {
+			num_of_owned_provinces_with = {
+				region = daravans_folly_region
+					OR = {
+						is_colony = yes
+						is_city = yes
+					}
+				value = 2
+			}
+			calc_true_if = {
+				daravans_folly_region = {
+					type = all
+					has_discovered = ROOT
+				} 
+				amount = 3
+			}
+		}
 
 		effect = {
-			country_event = { id = salla_cenag.10 }
-		} 
+			add_dip_power = 25
+			add_adm_power = 25
+			add_mil_power = 25
+			country_event = {
+				id = salla_cenag.10
+				days = 30
+			}
+			custom_tooltip = salla_cenag.10.insight
+		}
 	}
 
 	salla_cenag_where_the_land_ends = {
@@ -46,22 +288,165 @@ salla_cenag_col_1 = {
 		required_missions = { salla_cenag_salla_arka } 
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {
+			num_of_ports = 1
+		}
 
 		effect = {
-			country_event = { id = salla_cenag.13 }
-		} 
+			add_splendor = 25
+			hidden_effect = {
+				crathanor_area = { discover_country = ROOT } 
+				reuyel_area = { discover_country = ROOT }
+				tungr_mountains_area = { discover_country = ROOT }
+				every_country = {
+					limit = {
+						capital_scope = {
+							OR = {
+								region = ourdia_region
+								region = bahar_region
+							}
+						}
+					}
+					deepwoods_bone_grove = {
+						discover_country = PREV
+					}
+				}
+			}
+			country_event = { id = salla_cenag.13 } 
+			if = {
+				limit = { has_ruler_flag = salla_cenag_ruled_by_alara } 
+				custom_tooltip = salla_cenag.13alara.insight
+			}
+			else = {
+				custom_tooltip = salla_cenag.13.insight
+			}
+		}
+	}
+}
+salla_cenag_col_1_ourdia_unknown = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = I29
+		NOT = { has_country_flag = I29_ourdia_conquer_branch } 
+		NOT = { has_country_flag = I29_ourdia_liberate_branch } 
+	}
+
+	salla_cenag_branching_1_6 = {
+		icon = mission_unknown_mission
+		position = 6
+		required_missions = { salla_cenag_where_the_land_ends } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = salla_cenag_ourdia_path_tt
+				always = no
+			}
+		}
+
+		effect = { custom_tooltip = salla_cenag_ourdia_path_tt } 
+	}
+}
+salla_cenag_col_1_ourdia_conquer = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = I29
+		has_country_flag = I29_ourdia_conquer_branch
 	}
 
 	salla_cenag_far_lands = {
 		icon = mission_naval_dominance
 		position = 6
 		required_missions = { salla_cenag_where_the_land_ends } 
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = lencmarck_area 
+					NOT = { is_core = ROOT }
+				}
+				AND = {
+					province_id = 507
+					has_dock_building_trigger = no 
+				}
+			}
+		}
 
-		trigger = {  } 
+		trigger = {
+			lencmarck_area = { 
+				type = all
+				is_core = ROOT 
+			}
+			507 = { has_dock_building_trigger = yes } 
+			navy_size_percentage = 0.5
+			num_of_light_ship = 3
+		}
 
-		effect = {  } 
+		effect = {
+			define_explorer = {
+				shock = 1
+				fire = 1
+				manuever = 4
+			}
+			lencmarck_area = { add_elven_minority_size_effect = yes } 
+			tencmarck_area = { add_elven_minority_size_effect = yes } 
+			add_country_modifier = {
+				name = "salla_cenag_far_lands_reward"
+				duration = 3650
+			}
+		}
+	}
+}
+salla_cenag_col_1_ourdia_liberate = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = I29
+		has_country_flag = I29_ourdia_liberate_branch
+	}
+
+	salla_cenag_unlikely_friends = {
+		icon = mission_naval_dominance
+		position = 6
+		required_missions = { salla_cenag_where_the_land_ends } 
+		provinces_to_highlight = {
+			owned_by = U16
+		} 
+
+		trigger = {
+			U16 = { has_75_opinion_improved_relation = { target = ROOT }  } 
+			OR = {
+				diplomatic_reputation = 3
+				has_global_modifier_value = {
+					which = improve_relation_modifier
+					value = 0.3
+				}
+			}
+		}
+
+		effect = {
+			hidden_effect = {
+				force_remove_rival = U16
+				U16 = { force_remove_rival = ROOT }
+			}
+			add_historical_friend_mutual = { tag = U16 } 
+			every_owned_province = {
+				limit = { is_core = U16 } 
+				cede_province = U16
+				ROOT = {
+					add_adm_power = 25
+					add_dip_power = 25
+					add_mil_power = 25
+				}
+			}
+		}
 	}
 }
 salla_cenag_col_2 = {
@@ -74,38 +459,90 @@ salla_cenag_col_2 = {
 	salla_cenag_warlocks_wars = {
 		icon = mission_secret_of_the_veil
 		position = 1
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { owned_by = U12 } 
 
-		trigger = {  } 
+		trigger = { is_in_war = { defenders = U12 }  } 
 
-		effect = {  } 
+		effect = {
+			add_country_modifier = {
+				name = "salla_cenag_for_the_lost"
+				duration = 3650
+			}
+			custom_tooltip = salla_cenag_warlocks_wars_insult_reward_tooltip
+			if = {
+				limit = {
+					U12 = {
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = scornfully_insulted
+						}
+					}
+				}
+				add_manpower = 2
+			}
+		}
 	}
 
 	salla_cenag_into_the_unknown = {
 		icon = mission_alone_in_the_wood
 		position = 3
-		required_missions = {
-			salla_cenag_warlocks_wars
-			salla_cenag_uneasy_peace
+		required_missions = { salla_cenag_warlocks_wars } 
+		provinces_to_highlight = {
+			area = tencmarck_area
+			owned_by = I29
 		}
-		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {
+			tencmarck_area = {
+				type = any
+				owned_by = ROOT
+			}
+			is_at_war = no
+		}
 
-		effect = {  } 
+		effect = {
+			#disable explore folly option for deepwoods expedition
+			set_country_flag = explored_folly
+			define_conquistador = {
+				shock = 1
+				fire = 1
+				manuever = 3
+				siege = 0
+			}
+			add_country_modifier = {
+				name = salla_cenag_into_the_unknown_reward
+				duration = 3650
+			}
+		}
 	}
 
 	salla_cenag_salla_arka = {
 		icon = mission_conquer_50_development
 		position = 4
 		required_missions = { salla_cenag_into_the_unknown } 
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { owned_by = U16 } 
 
-		trigger = {  } 
+		trigger = {
+			OR = {
+				has_spy_network_in = {
+					who = U16
+					value = 25
+				}
+				U16 = { has_50_opinion_improved_relation = { target = ROOT }  } 
+			}
+		}
 
 		effect = {
-			country_event = { id = salla_cenag.11 }
-		} 
+			custom_tooltip = salla_cenag_salla_arka_reward_tooltip
+			country_event = { id = salla_cenag.11 } 
+			if = {
+				limit = { has_ruler_flag = salla_cenag_ruled_by_alara } 
+				custom_tooltip = salla_cenag.11alara.insight
+			}
+			else = {
+				custom_tooltip = salla_cenag.11.insight
+			}
+		}
 	}
 
 	salla_cenag_wide_eyes = {
@@ -114,22 +551,75 @@ salla_cenag_col_2 = {
 		required_missions = { salla_cenag_salla_arka } 
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {
+			OR = {
+				any_ally = {
+					capital_scope = {
+						OR = {
+							region = ourdia_region
+							region = bahar_region
+						}
+					}
+				}
+				calc_true_if = {
+					all_known_country = {
+						capital_scope = {
+							OR = {
+								region = ourdia_region
+								region = bahar_region
+							}
+						}
+						has_opinion = {
+							who = ROOT
+							value = 50
+						}
+					}
+					amount = 2
+				}
+			}
+			
+		}
 
 		effect = {
-			country_event = { id = salla_cenag.14 }
-		} 
+			change_government_reform_progress = 100
+			add_country_modifier = {
+				name = salla_cenag_wide_eyes_reward
+				duration = 3650
+			}
+			if = {
+				limit = { has_ruler_flag = salla_cenag_ruled_by_alara } 
+				country_event = { id = salla_cenag.14 } 
+				custom_tooltip = salla_cenag.14.insight
+			}
+		}
 	}
 
-	salla_cenag_lead_the_way = {
+	salla_cenag_across_haless = {
 		icon = mission_cossack_cavalry
-		position = 7
-		required_missions = { salla_cenag_second_conclave } 
+		position = 6
+		required_missions = { salla_cenag_wide_eyes } 
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {
+			custom_trigger_tooltip = {
+				AND = {
+					has_country_flag = explored_s_castanor
+					has_country_flag = explored_harpy_hills
+				}
+				tooltip = salla_cenag_across_haless_expedition_tt
+			}
+		}
 
-		effect = {  } 
+		effect = {
+			add_country_modifier = {
+				name = salla_cenag_across_haless_castanor_reward
+				duration = 3650
+			}
+			add_country_modifier = {
+				name = salla_cenag_across_haless_harpies_reward
+				duration = 3650
+			}
+		}
 	}
 }
 salla_cenag_col_3 = {
@@ -142,22 +632,77 @@ salla_cenag_col_3 = {
 	salla_cenag_blood_is_thicker = {
 		icon = mission_three_elve
 		position = 1
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { owned_by = I28 } 
 
-		trigger = {  } 
+		trigger = {
+			OR = {
+				I28 = { capital_scope = { has_ruler_leader_from = I29 }  } 
+				I28 = {
+					has_opinion = {
+						who = I29
+						value = 150
+					}
+				}
+			}
+		}
 
-		effect = { country_event = { id = salla_cenag.3 }  } 
+		effect = {
+			add_church_power = 50
+			if = {
+				limit = { has_ruler_flag = salla_cenag_ruled_by_alara } 
+				country_event = { id = salla_cenag.3 } 
+				custom_tooltip = salla_cenag.3.insight
+			}
+		}
 	}
 
 	salla_cenag_two_steps_ahead = {
 		icon = mission_forest_pilgrim
 		position = 2
 		required_missions = { salla_cenag_blood_is_thicker } 
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = {
+			owned_by = I41
+		} 
 
-		trigger = {  } 
+		trigger = {
+			if = {
+				limit = { I41 = { exists = yes } }
+				has_spy_network_in = {
+					who = I41
+					value = 20
+				}
+				OR = {
+					is_rival = I41
+					has_eclipsed = I41
+				}
+			} else = {
+    		NOT = { exists = I41 }
+			}
+		}
 
-		effect = { country_event = { id = salla_cenag.12 } }
+		effect = {
+			if = {
+				limit = { exists = I41 }
+				I41 = {
+					add_country_modifier = {
+						name = "salla_cenag_bodies_and_bones"
+						duration = 3650
+					}
+				}
+				add_spy_network_in = {
+					who = I41
+					value = -20
+				}
+				if = {
+					limit = { has_ruler_flag = salla_cenag_ruled_by_alara } 
+					country_event = { id = salla_cenag.7 } 
+					custom_tooltip = salla_cenag.7.insight
+				}
+			} 
+			else = { 
+				add_mil_power = 100 #congrats you killed the bastard before you were supposed to. 
+			}
+		}
 	}
 
 	salla_cenag_getting_the_chop = {
@@ -166,56 +711,121 @@ salla_cenag_col_3 = {
 		required_missions = { salla_cenag_two_steps_ahead } 
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {
+			I41 = { exists = no } 
+			I28 = { num_of_cities = 3 } 
+		}
 
-		effect = { 
-			country_event = { id = salla_cenag.9 }
-		} 
+		effect = {
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 25
+			}
+			country_event = { id = salla_cenag.9 } 
+			custom_tooltip = salla_cenag.9.insight
+		}
 	}
 
 	salla_cenag_stubborn_thorns = {
 		icon = mission_artificier_experience
 		position = 5
 		required_missions = { salla_cenag_kinship } 
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = {
+    	province_group = deepwoods_thorn_grove
+    	NOT = { owned_by = I28 }
+		}
 
-		trigger = {  } 
+		trigger = {
+			deepwoods_thorn_grove = {
+				type = all
+				owned_by = I28 #Salla Drennen 
+			}
+			I28 = { capital_scope = { feudalism = 100 } }
+		}
 
 		effect = {
-			country_event = { id = salla_cenag.15 }
-		} 
+			change_innovativeness = 5
+			add_country_modifier = {
+				name = salla_cenag_stubborn_thorns_reward
+				duration = 3650
+			}
+			I28 = {
+				add_country_modifier = {
+					name = salla_cenag_stubborn_thorns_reward
+					duration = 3650
+				}
+			}
+			if = {
+				limit = { has_ruler_flag = salla_cenag_ruled_by_alara } 
+				country_event = { id = salla_cenag.15 } 
+				custom_tooltip = salla_cenag.15.insight
+			}
+		}
 	}
 
 	salla_cenag_second_conclave = {
 		icon = mission_big_house
 		position = 6
 		required_missions = {
+			salla_cenag_wide_eyes
 			salla_cenag_stubborn_thorns
-			salla_cenag_swift_arrow
+			salla_cenag_shoulder_lean_on
 		}
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {
+			capital_scope = { development = 20 } 
+			has_institution = renaissance
+			OR = {
+				adm_tech = 4
+				mil_tech = 4
+				dip_tech = 4
+			}
+		}
 
 		effect = {
-			country_event = { id = salla_cenag.16 }
-		} 
+			country_event = { id = salla_cenag.16 } 
+			custom_tooltip = salla_cenag.16.insight
+		}
 	}
 
 	salla_cenag_ceannasai = {
 		icon = mission_a_crown
-		position = 8
+		position = 7
 		required_missions = {
-			salla_cenag_lead_the_way
+			salla_cenag_second_conclave
+			salla_cenag_across_haless
 			salla_cenag_on_all_fronts
 		}
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = {
+			owner = {
+        is_subject_of = ROOT
+        culture = wood_elf
+        liberty_desire = 50
+    	}
+		} 
 
-		trigger = {  } 
+		trigger = {
+			is_at_war = no
+			exists = I31
+			exists = I32
+			exists = I34
+			all_subject_country = {
+				OR = {
+					NOT = { culture = wood_elf }
+					NOT = { liberty_desire = 50 } 
+				}
+			}
+		}
 
 		effect = {
-			country_event = { id = salla_cenag.19 }
-		} 
+			if = {
+				limit = { has_ruler_flag = salla_cenag_ruled_by_alara } 
+				country_event = { id = salla_cenag.18 } 
+				custom_tooltip = salla_cenag.18.insight
+			}
+			else = { country_event = { id = salla_cenag.19 }  } 
+		}
 	}
 }
 salla_cenag_col_4 = {
@@ -231,9 +841,34 @@ salla_cenag_col_4 = {
 		required_missions = { salla_cenag_blood_is_thicker } 
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {
+			OR = {
+				fey_court_unseelie_court_pleased_trigger = yes
+				fey_court_unseelie_court_delighted_trigger = yes
+				church_power = 75
+			}
+		}
 
-		effect = {  } 
+		effect = {
+			custom_tooltip = salla_cenag_the_bone_struggle_tooltip
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = {
+							fey_court_unseelie_court_pleased_trigger = yes
+							fey_court_unseelie_court_delighted_trigger = yes
+						}
+					}
+					add_church_power = -75
+				}
+			}
+			random_owned_province = { unseelie_challengers = 1 } 
+			fey_court_moderately_improve_unseelie_court_relations = yes
+			add_country_modifier = {
+				name = "salla_cenag_passed_unseelie_challenge"
+				duration = 3650
+			}
+		}
 	}
 
 	salla_cenag_kinship = {
@@ -242,35 +877,108 @@ salla_cenag_col_4 = {
 		required_missions = {
 			salla_cenag_getting_the_chop
 			salla_cenag_the_bone_struggle
-			salla_cenag_shoulder_lean_on
+			salla_cenag_swift_arrow
 		}
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = {
+			OR = {
+					owned_by = I28
+					owned_by = I33
+			}
+		}
 
-		trigger = {  } 
+		trigger = {
+			OR = {
+				I28 = {
+					trust = {
+						who = ROOT
+						value = 60
+					}
+				}
+				I28 = { vassal_of = ROOT } 
+			}
+			OR = {
+				I33 = {
+					trust = {
+						who = ROOT
+						value = 60
+					}
+				}
+				I33 = { vassal_of = ROOT } 
+			}
+		}
 
-		effect = {  } 
+		effect = {
+			country_event = { id = salla_cenag.12 } 
+			custom_tooltip = salla_cenag.12.insight
+			vassalize = I28
+			vassalize = I33
+		}
 	}
 
-	salla_cenag_swift_arrow = {
-		icon = mission_placeholder
+	salla_cenag_shoulder_lean_on = {
+		icon = mission_ahmadabad_paper
 		position = 5
 		required_missions = { salla_cenag_kinship } 
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = {
+			province_group = deepwoods_arrow_grove
+			NOT = { owned_by = I33 }
+		} 
 
-		trigger = {  } 
+		trigger = {
+			deepwoods_arrow_grove = {
+				type = all
+				owned_by = I33
+			}
+			OR = {
+				I33 = {
+					development_in_provinces = {
+						province_group = deepwoods_arrow_grove
+						value = 65
+					}
+					num_of_owned_provinces_with = {
+						province_group = deepwoods_arrow_grove
+						OR = {
+							has_influencing_fort = yes
+							any_neighbor_province = { has_influencing_fort = yes }
+						}
+						value = 4
+					}
+				}
+			}
+		}
 
-		effect = {  } 
+		effect = {
+			# TODO elaria fluff
+			add_country_modifier = {
+				name = "salla_cenag_a_shoulder_to_lean_on_reward"
+				duration = 3650
+			}
+		}
 	}
 
 	salla_cenag_on_all_fronts = {
 		icon = mission_mounted_battle
-		position = 7
-		required_missions = { salla_cenag_second_conclave } 
-		provinces_to_highlight = {  } 
+		position = 6
+		required_missions = { salla_cenag_bonecoated_infiltrators } 
+		provinces_to_highlight = {
+			province_group = deepwoods_feytouched_gladeways 
+			NOT = { owner = { culture = wood_elf } }
+		} 
 
-		trigger = {  } 
+		trigger = {
+			deepwoods_feytouched_gladeways = {
+				type = all
+				owner = { culture = wood_elf } 
+			}
+		}
 
-		effect = {  } 
+		effect = {
+			change_mil = 1
+			add_country_modifier = {
+				name = salla_cenag_on_all_fronts_reward
+				duration = 3650
+			}
+		}
 	}
 }
 salla_cenag_col_5 = {
@@ -283,22 +991,73 @@ salla_cenag_col_5 = {
 	salla_cenag_shadow_of_grief = {
 		icon = mission_thinking_king
 		position = 1
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = { owned_by = I33 } 
 
-		trigger = {  } 
+		trigger = {
+			OR = {
+				I33 = { capital_scope = { has_ruler_leader_from = I29 }  } 
+				I33 = {
+					has_opinion = {
+						who = I29
+						value = 170
+					}
+				}
+			}
+		}
 
-		effect = { country_event = { id = salla_cenag.4 }  } 
+		effect = {
+			if = {
+				limit = { has_ruler_flag = salla_cenag_ruled_by_alara } 
+				country_event = { id = salla_cenag.4 } 
+				custom_tooltip = salla_cenag.4.insight
+			}
+			else = {
+				I33 = {
+					capital_scope = {
+						cawa_infantry = I29
+						cawa_infantry = I29
+					}
+				}
+			}
+		}
 	}
 
-	salla_cenag_shoulder_lean_on = {
-		icon = mission_dual_diplomacy
+	salla_cenag_swift_arrow = {
+		icon = mission_control_the_ganges_delta
 		position = 3
 		required_missions = { salla_cenag_shadow_of_grief } 
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {
+			I33 = { num_of_cities = 3 }
+			OR = {
+				NOT = { exists = I36 }
+				NOT = { exists = I42 }
+			}
+		}
 
-		effect = {  } 
+		effect = {
+			add_country_modifier = {
+				name = "salla_cenag_swift_as_an_arrow_reward"
+				duration = 3650
+			}
+			I33 = {
+				add_country_modifier = {
+					name = "salla_cenag_swift_as_an_arrow_reward"
+					duration = 3650
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = { province_group = deepwoods_arrow_grove } 
+					cede_province = I33
+					ROOT = {
+						capital_scope = { cawa_infantry = I29 }
+					}
+				}
+			}
+			custom_tooltip = salla_cenag_swift_arrow_bonus_reward_tt
+		}
 	}
 
 	salla_cenag_bonecoated_infiltrators = {
@@ -307,8 +1066,37 @@ salla_cenag_col_5 = {
 		required_missions = { salla_cenag_kinship } 
 		provinces_to_highlight = {  } 
 
-		trigger = {  } 
+		trigger = {
+			OR = {
+				fey_court_unseelie_court_delighted_trigger = yes
+				has_reform = favor_the_unseelie
+				church_power = 50
+			}
+			OR = {
+				army_professionalism = 0.15
+				has_global_modifier_value = {
+					which = discipline
+					value = 0.2
+				}
+			}
+			deepwoods_bone_grove = { has_province_modifier = deepwoods_rangers_camp }
+			num_of_cawa = 6
+		}
 
-		effect = {  } 
+		effect = {
+			add_country_modifier = {
+				name = "salla_cenag_bonecoated_infiltrators_rangers_reward"
+				duration = -1
+			}
+			if = {
+				limit = { 
+					NOT = {
+						fey_court_unseelie_court_delighted_trigger = yes
+						has_reform = favor_the_unseelie		
+					}
+				}
+				add_church_power = -50
+			}
+		}
 	}
 }
