@@ -656,7 +656,12 @@ estate_church_root_out_heresy = {
 			}
 			OR = {
 				is_part_of_hre = no
-				NOT = { hre_reform_passed = landfriede }
+				NOT = { 
+					OR = {
+						hre_reform_passed = anbennar_mages_peace
+						hre_reform_passed = anbennar_empower_imperial_diet
+					}
+				}
 				ROOT = { is_part_of_hre = no }
 			}
 		}
@@ -707,7 +712,12 @@ estate_church_root_out_heresy = {
 				}
 				OR = {
 					is_part_of_hre = no
-					NOT = { hre_reform_passed = landfriede }
+					NOT = { 
+						OR = {
+							hre_reform_passed = anbennar_mages_peace
+							hre_reform_passed = anbennar_empower_imperial_diet
+						}
+					}
 					ROOT = { is_part_of_hre = no }
 				}
 			}
@@ -1095,7 +1105,12 @@ estate_church_protect_brethren = {
 					NOT = { ROOT = { truce_with = prev } }
 					OR = {
 						is_part_of_hre = no
-						NOT = { hre_reform_passed = landfriede }
+						NOT = { 
+							OR = {
+								hre_reform_passed = anbennar_mages_peace
+								hre_reform_passed = anbennar_empower_imperial_diet
+							}
+						}
 						ROOT = { is_part_of_hre = no }
 					}
 				}
@@ -1134,7 +1149,12 @@ estate_church_protect_brethren = {
 						NOT = { ROOT = { truce_with = prev } }
 						OR = {
 							is_part_of_hre = no
-							NOT = { hre_reform_passed = landfriede }
+							NOT = { 
+								OR = {
+									hre_reform_passed = anbennar_mages_peace
+									hre_reform_passed = anbennar_empower_imperial_diet
+								}
+							}
 							ROOT = { is_part_of_hre = no }
 						}
 					}
@@ -1157,7 +1177,12 @@ estate_church_protect_brethren = {
 						NOT = { ROOT = { truce_with = prev } }
 						OR = {
 							is_part_of_hre = no
-							NOT = { hre_reform_passed = landfriede }
+							NOT = { 
+								OR = {
+									hre_reform_passed = anbennar_mages_peace
+									hre_reform_passed = anbennar_empower_imperial_diet
+								}
+							}
 							ROOT = { is_part_of_hre = no }
 						}
 					}
@@ -1732,5 +1757,153 @@ estate_church_luna_fight_heresy = {
 
 	invalid_trigger = {
 		NOT = { hre_size = 1 }
+	}
+}
+
+estate_church_enforce_eoa_religion = {
+	can_select = {
+		hre_religion_locked = yes
+		is_emperor = yes
+		any_known_country = {
+			is_part_of_hre = yes
+			NOT = { religion = emperor }
+		}
+		NOT = { has_anzalkatsa_naga = yes }
+	}
+	provinces_to_highlight = {
+	   	is_capital = yes
+		owner = { tag = event_target:agenda_country }
+	}
+	selection_weight = {
+		factor = 5
+	}
+	pre_effect = {
+		random_known_country = {
+			limit = {
+				is_part_of_hre = yes
+				NOT = { religion = emperor }
+			}
+			save_event_target_as = agenda_country
+		}
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+		else = {
+			event_target:agenda_country = { religion = emperor }
+		}
+		
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_church
+		}
+		add_imperial_influence = 3
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		clr_auto_complete_flag = yes
+        add_estate_loyalty_modifier = {
+            estate = estate_church
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+	}
+	fail_if = {
+		is_emperor = no
+	}
+}
+
+estate_church_improve_with_temple = {
+	can_select = {
+		hre_religion_locked = yes
+		is_emperor = yes
+		any_known_country = {
+			is_part_of_hre = yes
+			OR = {
+				has_reform = leading_clergy_reform
+				owns = 52
+				owns = 266
+				owns = 97
+			}
+		}
+		NOT = { has_anzalkatsa_naga = yes }
+	}
+	provinces_to_highlight = {
+	   	is_capital = yes
+        owner = { tag = event_target:agenda_country }
+	}
+	selection_weight = {
+		factor = 5
+	}
+	pre_effect = {
+		random_known_country = {
+			limit = {
+				is_part_of_hre = yes
+				OR = {
+					has_reform = leading_clergy_reform
+					owns = 52
+					owns = 266
+					owns = 97
+				}
+			}
+			save_event_target_as = agenda_country
+		}
+	}
+	task_requirements = {
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_church
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_church
+			}
+		}
+		else = {
+			event_target:agenda_country = {
+				has_opinion = {
+					who = ROOT
+					value = 100
+				}
+			}
+		}
+	}
+	task_completed_effect = {
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		on_completed_agenda_effect = {
+			estate = estate_church
+		}
+		add_imperial_influence = 3
+	}
+	failing_effect = {
+		on_failed_agenda_effect = yes
+		clr_auto_complete_flag = yes
+        add_estate_loyalty_modifier = {
+            estate = estate_church
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+	}
+	fail_if = {
+		is_emperor = no
 	}
 }

@@ -1,18 +1,77 @@
 edict_feudal_de_jure_law = {
 	potential = {
-		current_age = age_of_discovery
-	}
-	
-	allow = {
-		custom_trigger_tooltip = {
-			tooltip = edict_feudal_de_jure_law_tooltip
-			has_country_flag = feudal_de_jure_law
+		OR = {
+			current_age = age_of_discovery
+			AND = {
+				OR = {
+					tag = Z01
+					is_subject_of = Z01
+					is_part_of_hre = yes
+				}
+				has_global_flag = eoa_established_embassies
+			}
 		}
-		current_age = age_of_discovery
+	}
+	allow = {
+		OR = {
+			AND = {
+				custom_trigger_tooltip = {
+					tooltip = edict_feudal_de_jure_law_tooltip
+					has_country_flag = feudal_de_jure_law
+				}
+				current_age = age_of_discovery
+			}
+			AND = {
+				OR = {
+					tag = Z01
+					is_subject_of = Z01
+					is_part_of_hre = yes
+				}
+				has_global_flag = eoa_established_embassies
+			}
+		}
 	}
 	
 	modifier = { # OBS: Modify AI accordingly if this is changed
 		local_unrest = -5
+	}
+
+	on_state_edict_enacted = {
+		if = {
+			limit = {
+				has_global_flag = eoa_established_embassies
+				owner = {
+					OR = {
+						tag = Z01
+						is_subject_of = Z01
+						is_part_of_hre = yes
+					}
+				}
+			}
+			ROOT = {
+				add_province_modifier = {
+					name = eoa_extra_prosperity
+					duration = -1
+				}
+			}
+		}
+	}
+	on_state_edict_revoked = {
+		if = {
+			limit = {
+				has_global_flag = eoa_established_embassies
+				owner = {
+					OR = {
+						tag = Z01
+						is_subject_of = Z01
+						is_part_of_hre = yes
+					}
+				}
+			}
+			ROOT = {
+				remove_province_modifier = eoa_extra_prosperity
+			}
+		}
 	}
 	
 	color = {  116 198 240  }

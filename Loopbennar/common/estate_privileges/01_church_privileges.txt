@@ -254,6 +254,10 @@ estate_church_religious_state = {
 		trigger = { has_country_flag = religious_state_no_loyalty_penalty }
 		modifier = { church_loyalty_modifier = 0.05 }
 	}
+	conditional_modifier = {
+		trigger = { has_country_flag = farranean_mana_privileges }
+		modifier = { church_loyalty_modifier = 0.1 }
+	}
 	#conditional_modifier = {
 	#	trigger = { has_government_mechanic = ottoman_decadence_mechanic }
 	#	modifier = { monthly_ottoman_decadence = 0.02 }
@@ -1975,6 +1979,7 @@ estate_church_one_faith_one_culture = {
 	loyalty = 0.05
 	land_share = 5
 	is_valid = {
+		NOT = { has_country_flag = farranean_shades_of_tolerant_leaves }
 		NOT = { has_estate_privilege = estate_wyvernheart_culture_of_the_heart }
 		hidden_trigger = { NOT = { has_estate_privilege = estate_church_corinsfield_society } }	
 		NOT = { AND = { tag = Z99 was_tag = B39 } }
@@ -3806,5 +3811,100 @@ estate_church_U10_charms_of_protection = {
 	}
 	ai_will_do = {
 		factor = 100
+	}
+}
+estate_church_farranean_shades_of_many_leaves = {
+	icon = privilege_one_faith_one_culture
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	influence = 0.1
+	loyalty = 0.05
+	is_valid = {
+		has_country_flag = farranean_shades_of_tolerant_leaves
+	}
+	can_select = {
+	}
+	on_granted = {
+		custom_tooltip = farranean_leaves_shaded_tt
+		tooltip = {
+			add_province_modifier = {
+				name = estate_church_united_faith_and_culture
+				duration = -1
+			}
+		}
+	}
+	on_granted_province = {
+		if = {
+			limit = {
+				OR = {
+					has_owner_accepted_culture = yes
+					culture_group = ROOT
+				}
+			}
+			add_province_modifier = {
+				name = estate_church_united_faith_and_culture
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				has_province_modifier = estate_church_united_faith_and_culture
+			}
+			remove_province_modifier = estate_church_united_faith_and_culture
+		}
+	}
+	on_revoked = {
+		custom_tooltip = farranean_leaves_shaded_revoked_invalid_tt
+	}
+	on_revoked_province = {
+		if = {
+			limit = {
+				has_province_modifier = estate_church_united_faith_and_culture
+			}
+			remove_province_modifier = estate_church_united_faith_and_culture
+		}
+	}
+	on_invalid = {
+		custom_tooltip = farranean_leaves_shaded_revoked_invalid_tt
+	}
+	on_invalid_province = {
+		if = {
+			limit = {
+				has_province_modifier = estate_church_united_faith_and_culture
+			}
+			remove_province_modifier = estate_church_united_faith_and_culture
+		}
+	}
+	penalties = {
+	}
+	benefits = {
+	}
+	conditional_modifier = {
+		trigger = { has_government_attribute = free_religious_culture }
+		modifier = {
+			church_influence_modifier = -0.2
+		}
+	}
+	cooldown_years = 15
+	ai_will_do = {
+		factor = 10
+		modifier = {
+			factor = 0
+			NOT = { dominant_religion = ROOT }
+		}
+		modifier = {
+			factor = 0
+			NOT = { dominant_culture = ROOT }
+		}
+		modifier = {
+			factor = 0
+			NOT = { religion = the_thought }
+		}
+		modifier = {
+			factor = 100
+			NOT = { average_autonomy = 15 }
+			dominant_religion = ROOT
+			dominant_culture = ROOT
+		}
 	}
 }

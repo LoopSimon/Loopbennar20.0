@@ -23,7 +23,12 @@ estate_adventurers_war_monstrous = {
 			}
 			OR = {
 				is_part_of_hre = no
-				NOT = { hre_reform_passed = landfriede }
+				NOT = { 
+					OR = {
+						hre_reform_passed = anbennar_mages_peace
+						hre_reform_passed = anbennar_empower_imperial_diet
+					}
+				}
 				ROOT = { is_part_of_hre = no }
 			}
 		}
@@ -81,7 +86,12 @@ estate_adventurers_war_monstrous = {
 				}
 				OR = {
 					is_part_of_hre = no
-					NOT = { hre_reform_passed = landfriede }
+					NOT = { 
+						OR = {
+							hre_reform_passed = anbennar_mages_peace
+							hre_reform_passed = anbennar_empower_imperial_diet
+						}
+					}
 					ROOT = { is_part_of_hre = no }
 				}
 			}
@@ -167,7 +177,12 @@ estate_adventurers_conquer_monstrous_province_x = {
 			}
 			OR = {
 				is_part_of_hre = no
-				NOT = { hre_reform_passed = landfriede }
+				NOT = { 
+					OR = {
+						hre_reform_passed = anbennar_mages_peace
+						hre_reform_passed = anbennar_empower_imperial_diet
+					}
+				}
 				ROOT = { is_part_of_hre = no }
 			}
 		}
@@ -239,7 +254,12 @@ estate_adventurers_conquer_monstrous_province_x = {
 				}
 				OR = {
 					is_part_of_hre = no
-					NOT = { hre_reform_passed = landfriede }
+					NOT = { 
+						OR = {
+							hre_reform_passed = anbennar_mages_peace
+							hre_reform_passed = anbennar_empower_imperial_diet
+						}
+					}
 					ROOT = { is_part_of_hre = no }
 				}
 			}
@@ -1095,7 +1115,12 @@ estate_adventurers_join_coalition = {
 			}
 			OR = {
 				is_part_of_hre = no
-				NOT = { hre_reform_passed = landfriede }
+				NOT = { 
+					OR = {
+						hre_reform_passed = anbennar_mages_peace
+						hre_reform_passed = anbennar_empower_imperial_diet
+					}
+				}
 				ROOT = { is_part_of_hre = no }
 			}
 		}
@@ -1162,7 +1187,12 @@ estate_adventurers_join_coalition = {
 				}
 				OR = {
 					is_part_of_hre = no
-					NOT = { hre_reform_passed = landfriede }
+					NOT = { 
+						OR = {
+							hre_reform_passed = anbennar_mages_peace
+							hre_reform_passed = anbennar_empower_imperial_diet
+						}
+					}
 					ROOT = { is_part_of_hre = no }
 				}
 			}
@@ -1196,7 +1226,12 @@ estate_adventurers_join_coalition = {
 				}
 				OR = {
 					is_part_of_hre = no
-					NOT = { hre_reform_passed = landfriede }
+					NOT = { 
+						OR = {
+							hre_reform_passed = anbennar_mages_peace
+							hre_reform_passed = anbennar_empower_imperial_diet
+						}
+					}
 					ROOT = { is_part_of_hre = no }
 				}
 				has_country_modifier = monstrous_nation
@@ -1231,7 +1266,12 @@ estate_adventurers_join_coalition = {
 				}
 				OR = {
 					is_part_of_hre = no
-					NOT = { hre_reform_passed = landfriede }
+					NOT = { 
+						OR = {
+							hre_reform_passed = anbennar_mages_peace
+							hre_reform_passed = anbennar_empower_imperial_diet
+						}
+					}
 					ROOT = { is_part_of_hre = no }
 				}
 				has_ruler_modifier = witch_king_modifier
@@ -2648,5 +2688,95 @@ estate_adventurers_luna_sponsor_foreign_adventurers = {
 
 	invalid_trigger = {
 		NOT = { hre_size = 1 }
+	}
+}
+
+estate_adventurers_emperor_help_colony = {
+	can_select = {
+		is_emperor = yes
+		OR = {
+			north_america = {
+				is_colony = yes
+				owner = { is_part_of_hre = yes }
+			}
+			south_america = {
+				is_colony = yes
+				owner = { is_part_of_hre = yes }
+			}
+		}
+	}
+	selection_weight = {
+		factor = 5
+	}
+	pre_effect = {
+		random_province = {
+			limit = {
+				is_colony = yes
+				OR = {
+					continent = south_america
+					continent = north_america
+				}
+				owner = { is_part_of_hre = yes }
+			}
+			save_event_target_as = agenda_province
+			owner = { save_event_target_as = agenda_country }
+		}
+	}
+    provinces_to_highlight = {
+        province_id = event_target:agenda_province
+    }
+	task_requirements = {
+		if = {
+			limit = {
+				emperor = {
+					ai = yes
+				}
+			}
+			event_target:agenda_country = {
+				has_opinion = {
+					who = emperor
+					value = 100
+				}
+			}
+		}
+		else = {
+			event_target:agenda_country = {
+				has_20_opinion_sent_gift = { target = ROOT }
+			}
+		}
+		emperor = {
+			manpower = 5
+		}
+	}
+    task_completed_effect = {
+		on_completed_agenda_effect = {
+			estate = estate_adventurers
+		}
+		add_estate_loyalty = {
+			estate = estate_adventurers
+			loyalty = 10
+		}
+		add_imperial_influence = 5
+		emperor = {
+			add_manpower = -5
+		}
+		event_target:agenda_province = {
+			add_colonysize = 500
+		}
+		#is somewhat likely to accept revoke/unify cause you helped them
+		event_target:agenda_country = { country_event = { id = flavour_eoa_reforms.24 } }
+    }
+    failing_effect = {
+		on_failed_agenda_effect = yes
+		clr_auto_complete_flag = yes
+        add_estate_loyalty_modifier = {
+            estate = estate_adventurers
+			desc = EST_VAL_AGENDA_DENIED
+			loyalty = -5
+			duration = 7300
+        }
+    }
+	fail_if = {
+		is_emperor = no
 	}
 }
