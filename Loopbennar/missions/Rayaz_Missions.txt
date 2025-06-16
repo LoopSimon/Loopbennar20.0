@@ -29,7 +29,6 @@ rayaz_1 = {
 					is_at_war = no
 				}
 			}
-			
 		} 
 
 		effect = {  
@@ -127,7 +126,6 @@ rayaz_1 = {
 				define_advisor = { 
 					skill = 2 
 					type = theologian 
-					location = 5912 
 					culture = arraskay_lizardfolk 
 					religion = anzalkatsa 
 					cost_multiplier = 0.25 
@@ -303,7 +301,7 @@ rayaz_2 = {
 			5898 = { add_base_tax = -4 add_base_production = -4 add_base_manpower = -4 } #Karrask
 			5914 = { #Khugra
 				add_base_tax = 3 add_base_production = 3 add_base_manpower = 3 
-				add_province_modifier = {
+				add_permanent_province_modifier = {
 					name = rayaz_adzalas_river_trade
 					duration = -1
 				}
@@ -414,7 +412,7 @@ rayaz_3 = {
 				   }
 					NOT = { 
 						AND = {
-							country_or_non_sovereign_subject_holds = ROOT #Rayaz
+							owned_by = ROOT #Rayaz
 							NOT = { unrest = 0 }
 						}
 					} 
@@ -425,43 +423,45 @@ rayaz_3 = {
 		trigger = {  
 			NOT = { exists = L69 } #Zerat, country
 			OR = {
-				AND = {
-					L90 = { #Ashkha
-						vassal_of = ROOT #Rayaz
-						NOT = { liberty_desire = 50 }
-						has_embargo_rivals = yes
-						has_scutage = yes
-					}
-					L99 = { #Katsanada
-						vassal_of = ROOT #Rayaz
-						NOT = { liberty_desire = 50 }
-						has_embargo_rivals = yes
-						has_scutage = yes
-					}
+				L99 = { #Katsanada
+					vassal_of = ROOT #Rayaz
+					NOT = { liberty_desire = 50 }
+					has_embargo_rivals = yes
+					has_scutage = yes
 				}
 				AND = {
-					rakshas_area = {
-						type = all
-						NOT = { unrest = 0 }
-						country_or_non_sovereign_subject_holds = ROOT #Rayaz
-					}
 					rakirap_srap_area = {
 						type = all
 						NOT = { unrest = 0 }
-						country_or_non_sovereign_subject_holds = ROOT #Rayaz
-					}
-					pshorkitsa_area = {
-						type = all
-						NOT = { unrest = 0 }
-						country_or_non_sovereign_subject_holds = ROOT #Rayaz
+						owned_by = ROOT #Rayaz
 					}
 					6024 = { #Asparimu
 						NOT = { unrest = 0 }
-						country_or_non_sovereign_subject_holds = ROOT #This one specifically is technically redundant since you own it from the start
+						owned_by = ROOT #This one specifically is technically redundant since you own it from the start
 					}
-					NOT = { num_of_rebel_armies = 1 }
 				}
 			}
+			OR = {
+				L90 = { #Ashkha
+					vassal_of = ROOT #Rayaz
+					NOT = { liberty_desire = 50 }
+					has_embargo_rivals = yes
+					has_scutage = yes
+				}
+				AND = {
+					pshorkitsa_area = {
+						type = all
+						NOT = { unrest = 0 }
+						owned_by = ROOT #Rayaz
+					}
+					rakshas_area = {
+						type = all
+						NOT = { unrest = 0 }
+						owned_by = ROOT #Rayaz
+					}
+				}
+			}
+			NOT = { num_of_rebel_armies = 1 }
 			5921 = { NOT = { devastation = 0.01 } } #Zerat, province
 		} 
 
@@ -557,7 +557,7 @@ rayaz_3 = {
 				 
 			} 
 			5932 = { #Lasadzanazh
-				add_province_modifier = {
+				add_permanent_province_modifier = {
 					name = rayaz_riverclaw_patronage
 					duration = -1
 				}	
@@ -567,7 +567,7 @@ rayaz_3 = {
 				} 
 			}
 			5965 = { #Khogadash
-				add_province_modifier = {
+				add_permanent_province_modifier = {
 					name = rayaz_riverclaw_patronage
 					duration = -1
 				}
@@ -897,6 +897,9 @@ rayaz_4 = {
 					value = 10
 				}
 			}
+			all_subject_country = {
+				NOT = { liberty_desire = 30 }
+			}
 		} 
 
 		effect = {  
@@ -997,7 +1000,32 @@ rayaz_5 = {
 			rayaz_4_2
 			rayaz_5_1
 		}
-		provinces_to_highlight = {  } 
+		provinces_to_highlight = {  
+			OR = {
+				AND = {
+					culture = ashhana_lizardfolk
+					owned_by = ROOT
+					NOT = { has_state_edict = edict_religious_unity }
+				}
+				AND = {
+					owner = {
+						OR = {
+							alliance_with = ROOT #Rayaz
+							guaranteed_by = ROOT #Rayaz
+						}
+						NOT = {
+							AND = {
+								has_spy_network_from = {
+									who = ROOT #Rayaz
+									value = 40
+								}
+								has_15_opinion_getting_subsidies = { target = ROOT } #Rayaz
+							}
+						}
+					}
+				}
+			}
+		} 
 
 		trigger = {  
 			OR = {
@@ -1049,6 +1077,21 @@ rayaz_5 = {
 		} 
 
 		effect = {  
+			add_casus_belli = {
+				target = L80 #Zulbur
+				type = cb_humiliate
+				months = 300
+			}
+			add_casus_belli = {
+				target = L84 #Shalazar
+				type = cb_humiliate
+				months = 300
+			}
+			add_casus_belli = {
+				target = S70 #Yezel Mora
+				type = cb_humiliate
+				months = 300
+			}
 			custom_tooltip = rayaz_ashhana_vassal_tt
 			tooltip = {
 				add_country_modifier = {
@@ -1056,6 +1099,7 @@ rayaz_5 = {
 					duration = 9125
 				}
 			}
+			custom_tooltip = rayaz_conversion_tt
 			custom_tooltip = mission_alternatively_tt
 			tooltip = {
 				add_country_modifier = {
@@ -1063,7 +1107,6 @@ rayaz_5 = {
 					duration = 9125
 				}
 			}
-			custom_tooltip = rayaz_conversion_tt
 			hidden_effect = {
 				every_known_country = {
 					limit = {
@@ -1100,32 +1143,6 @@ rayaz_5 = {
 						change_religion = anzalkatsa
 					}
 				}
-				if = {
-					limit = {
-						any_known_country = {
-							culture = ashhana_lizardfolk
-							has_spy_network_from = {
-								who = ROOT #Rayaz
-								value = 40
-							}
-							has_15_opinion_getting_subsidies = { target = ROOT } #Rayaz
-							OR = {
-								alliance_with = ROOT #Rayaz
-								guaranteed_by = ROOT #Rayaz
-							}
-						}
-					}
-					add_country_modifier = {
-						name = rayaz_custodian_of_the_bloodcursed
-						duration = 9125
-					}
-				}
-				else = {
-					add_country_modifier = {
-						name = rayaz_reclaimer_of_the_bloodcursed
-						duration = 9125
-					}
-				}
 			}
 		} 
 	}
@@ -1140,51 +1157,57 @@ rayaz_5 = {
 		provinces_to_highlight = {  } 
 
 		trigger = {  
-			estate_loyalty = {
-				estate = estate_nobles
-				loyalty = 60
-			}
-			estate_loyalty = {
-				estate = estate_burghers
-				loyalty = 60
-			}
-			NOT = {
-				estate_influence = {
-					estate = estate_nobles
-					influence = 40
+			OR = {
+				AND = {
+					estate_loyalty = {
+						estate = estate_nobles
+						loyalty = 60
+					}
+					estate_loyalty = {
+						estate = estate_burghers
+						loyalty = 60
+					}
 				}
-			}
-			NOT = {
-				estate_influence = {
-					estate = estate_burghers
-					influence = 40
+				AND = {
+					NOT = {
+						estate_influence = {
+							estate = estate_nobles
+							influence = 40
+						}
+					}
+					NOT = {
+						estate_influence = {
+							estate = estate_burghers
+							influence = 40
+						}
+					}
 				}
 			}
 			L80 = { #Zulbur
 				OR = {
 					NOT = { 
-						num_of_cities = 5
+						num_of_cities = 5 
 						num_of_subjects = 1
 					}
-					is_subject_of = ROOT
-					humiliated_by = ROOT
+					is_subject_of = ROOT #Rayaz
+					humiliated_by = ROOT #Rayaz
 					AND = {
 						exists = no
-						S70 = { humiliated_by = ROOT }
+						S70 = { humiliated_by = ROOT } #Yezel Mora #Rayaz
 					}
 				}
 			}
 			L84 = { #Shalazar
 				OR = {
 					NOT = { 
-						num_of_cities = 5
+						num_of_cities = 5 
 						num_of_subjects = 1
 					}
-					is_subject_of = ROOT
-					humiliated_by = ROOT
+					is_subject_of = ROOT #Rayaz
+					humiliated_by = ROOT #Rayaz
 					AND = {
 						exists = no
-						S70 = { humiliated_by = ROOT }
+						S70 = { humiliated_by = ROOT } #Yezel Mora #Rayaz
 					}
 				}
 			}

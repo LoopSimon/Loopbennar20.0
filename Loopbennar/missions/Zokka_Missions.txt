@@ -720,16 +720,19 @@ zokka_missions_2 = {
 		}
 
 		trigger = {
-			all_owned_province = {
-				OR = {
-					AND = {
-						culture = surani
-						NOT = { local_autonomy = 50 }
+			custom_trigger_tooltip = {
+				tooltip = zokka_scorched_gardens_tt
+				all_owned_province = {
+					OR = {
+						AND = {
+							culture = surani
+							NOT = { local_autonomy = 50 }
+						}
+						NOT = { culture = surani }
 					}
-					NOT = { culture = surani }
 				}
 			}
-			F31 = { is_subject_of_type_with_overlord = { who = ROOT type = tributary_state_anb } }
+			F31 = { is_subject_of_type_with_overlord = { who = F29 type = tributary_state_anb } }
 			if = {
 				limit = { ai = no }
 				631 = {
@@ -753,6 +756,10 @@ zokka_missions_2 = {
 				add_province_modifier = {
 					name = zokka_where_light_first_wept
 					duration = -1
+				}
+				if = {
+					limit = { has_province_modifier = religious_zeal_at_conv }
+					remove_province_modifier = religious_zeal_at_conv
 				}
 			}
 		}
@@ -958,7 +965,8 @@ zokka_missions_2 = {
 				}
 			}
 			OR = {
-				AND = {
+				custom_trigger_tooltip = {
+					tooltip = zokka_pyres_mages_tt
 					estate_loyalty = {
 						estate = estate_mages
 						loyalty = 60
@@ -970,7 +978,8 @@ zokka_missions_2 = {
 						has_any_ongoing_construction = no
 					}
 				}
-				AND = {
+				custom_trigger_tooltip = {
+					tooltip = zokka_pyres_church_tt
 					estate_loyalty = {
 						estate = estate_church
 						loyalty = 60
@@ -1225,7 +1234,7 @@ zokka_missions_3 = {
                 AND = {
                     area = garpix_zokka_area
                     OR = {
-                        NOT = { development = 8 }
+                        NOT = { development = 9 }
                         has_state_patriach = no
                     }
                 }
@@ -1240,7 +1249,7 @@ zokka_missions_3 = {
 		trigger = {
 			garpix_zokka_area = {
 				type = all
-				development = 8
+				development = 9
 				has_state_patriach = yes
 			}
 			OR = {
@@ -1276,12 +1285,10 @@ zokka_missions_3 = {
 					country_event = { id = flavour_zokka.73 } #zokka
 				}
 			}
-			571 = {
-				if = {
-					limit = { has_tax_building_trigger = no }
-					add_treasury = -100
-					add_building = temple
-				}
+			if = {
+				limit = { 571 = { has_tax_building_trigger = no } }
+				add_treasury = -100
+				571 = { add_or_upgrade_tax_building = yes }
 			}
 			583 = {
 				remove_human_minority_size_effect = yes
@@ -1351,6 +1358,15 @@ zokka_missions_3 = {
 				OR = {
 					has_country_flag = is_great_xhaz
 					has_ruler_flag = undergoing_xhazob_ritual
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = xhazob_no_immortal_tt
+				NOT = {
+					has_ruler_flag = magic_project_lichdom_started
+					has_country_flag = lich_ruler
+					has_country_flag = vampire_ruler
+					is_long_lived_ruler = yes
 				}
 			}
 		}
@@ -1789,6 +1805,15 @@ zokka_missions_4 = {
 				AND = {
 					has_any_xhazobkult_invocation = yes
 					patriarch_authority = 0.1
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = xhazob_no_immortal_tt
+				NOT = {
+					has_ruler_flag = magic_project_lichdom_started
+					has_country_flag = lich_ruler
+					has_country_flag = vampire_ruler
+					is_long_lived_ruler = yes
 				}
 			}
 		}
@@ -2593,28 +2618,28 @@ zokka_missions_1b = {
 		effect = {
 			if = {
 				limit = { 3206 = { is_empty = yes } }
-				add_siberian_construction = 400
+				3206 = { add_siberian_construction = 400 }
 			}
 			if = {
 				limit = { 6734 = { is_empty = yes } }
-				add_siberian_construction = 400
+				6734 = { add_siberian_construction = 400 }
 			}
 			shadow_swamp_region = { limit = { NOT = { owned_by = ROOT } } zokka_add_claims = yes }
 			if = {
 				limit = { 5474 = { has_fort_building_trigger = yes } }
-				upgrade_fort_building = yes
+				5474 = { upgrade_fort_building = yes }
 			}
 			if = {
 				limit = { 5665 = { has_fort_building_trigger = yes } }
-				upgrade_fort_building = yes
+				5665 = { upgrade_fort_building = yes }
 			}
 			if = {
 				limit = { 3206 = { has_fort_building_trigger = yes } }
-				upgrade_fort_building = yes
+				3206 = { upgrade_fort_building = yes }
 			}
 			if = {
 				limit = { 6734 = { has_fort_building_trigger = yes } }
-				upgrade_fort_building = yes
+				6734 = { upgrade_fort_building = yes }
 			}
 			custom_tooltip = zokka_unlock_empowered_invocation_tt
 			hidden_effect = {
@@ -2965,40 +2990,22 @@ zokka_missions_2b = {
 
 		provinces_to_highlight = {
 			OR = {
-				AND = {
-					owned_by = ROOT
-					religion = xhazobkult
-					has_tax_building_trigger = no
-					owner = {
-						NOT = {
-							num_of_owned_provinces_with = {
-								value = 1407
-								religion = xhazobkult
-								has_tax_building_trigger = yes
-							}
-						}
-					}
-				}
-				AND = {
-					OR = {
-						religion_group = bulwari
-						religion_group = khetist
-						religion_group = triunic_lake
-						religion = the_hunt
-						religion = mother_akasik
-						religion = irdaeos_worship
-						religion = feast_of_the_gods
-						religion = night_coven
-					}
-					OR = {
-						continent = europe
-						continent = serpentspine
-						continent = africa
-						continent = asia
-					}
-					is_empty = no
-				}
+				religion_group = bulwari
+				religion_group = khetist
+				religion_group = triunic_lake
+				religion = the_hunt
+				religion = mother_akasik
+				religion = irdaeos_worship
+				religion = feast_of_the_gods
+				religion = night_coven
 			}
+			OR = {
+				continent = europe
+				continent = serpentspine
+				continent = africa
+				continent = asia
+			}
+			is_empty = no
 		}
 
 		trigger = {
@@ -3419,11 +3426,11 @@ zokka_missions_3b = {
 				}
 				estate_loyalty = {
 					estate = estate_church
-					loyalty = 80
+					loyalty = 75
 				}
 				estate_influence = {
 					estate = estate_church
-					influence = 80
+					influence = 75
 				}
 			}
 			else_if = {
@@ -3437,29 +3444,29 @@ zokka_missions_3b = {
 				}
 				estate_loyalty = {
 					estate = estate_mages
-					loyalty = 80
+					loyalty = 75
 				}
 				estate_influence = {
 					estate = estate_mages
-					influence = 80
+					influence = 75
 				}
 			}
 			else = {
 				estate_loyalty = {
 					estate = estate_church
-					loyalty = 80
+					loyalty = 75
 				}
 				estate_influence = {
 					estate = estate_church
-					influence = 80
+					influence = 75
 				}
 				estate_loyalty = {
 					estate = estate_mages
-					loyalty = 80
+					loyalty = 75
 				}
 				estate_influence = {
 					estate = estate_mages
-					influence = 80
+					influence = 75
 				}
 			}
 		}

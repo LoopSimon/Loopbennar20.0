@@ -1,0 +1,2236 @@
+farranean_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = B60 } 
+
+	farranean_the_valefort_remnant = {
+		icon = mission_greentide
+		position = 1
+		provinces_to_highlight = { 
+			area = valefort_area
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+				unrest = 2
+				AND = {
+					local_autonomy = 25
+					NOT = { has_province_modifier = autonomy_decreased }
+				}
+			}
+		} 
+
+		trigger = { 
+			valefort_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+				NOT = { unrest = 2 }
+				OR = {
+					NOT = { local_autonomy = 25 }
+					has_province_modifier = autonomy_decreased
+				}
+			}
+		 } 
+
+		effect = { 
+			add_adm_power = 25
+			add_dip_power = 25
+			add_mil_power = 25
+			define_advisor = {
+				type = court_mage
+				skill = 1
+				discount = yes
+				culture = farrani_half_elf
+			}
+			define_advisor = {
+				type = diplomat
+				skill = 1
+				discount = yes
+				culture = farrani_half_elf
+			}
+			define_advisor = {
+				type = army_reformer
+				skill = 1
+				discount = yes
+				culture = farrani_half_elf
+			}
+		 } 
+	}
+
+	farranean_securing_our_status = {
+		icon = mission_diplomacy_missive
+		position = 3
+		required_missions = { farranean_the_scogtrin } 
+		provinces_to_highlight = { 
+			OR = {
+				area = valefort_area
+				area = cursewood_area
+				area = whistlevale_area
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+				NOT = { base_manpower = 6 }
+				has_fort_building_trigger = no
+			}
+		} 
+
+		trigger = { 
+			OR = {
+				army_size = 20
+				army_size_percentage = 0.8
+			}
+			valefort_area = {
+				owned_by = ROOT
+				is_core = ROOT
+				has_fort_building_trigger = yes
+				base_manpower = 6
+			}
+			cursewood_area = {
+				owned_by = ROOT
+				is_core = ROOT
+				has_fort_building_trigger = yes
+				base_manpower = 6
+			}
+			whistlevale_area = {
+				owned_by = ROOT
+				is_core = ROOT
+				has_fort_building_trigger = yes
+				base_manpower = 6
+			}
+		 } 
+
+		effect = { 
+			add_country_modifier = {
+				name = farranean_securing_status_country
+				duration = 7300
+			}
+			every_owned_province = {
+				limit = {
+					has_fort_building_trigger = yes
+				}
+				add_province_modifier = {
+					name = farranean_securing_status_fort
+					duration = 18250
+				}
+			}
+		 } 
+	}
+
+	farranean_couples_counselling = {
+		icon = mission_discussion_arch
+		position = 5
+		required_missions = {
+			farranean_securing_our_status
+			farranean_the_old_rival
+		}
+		provinces_to_highlight = { 
+			is_capital_of = A32
+		 } 
+
+		trigger = { 
+			legitimacy = 95
+			prestige = 80
+			A32 = {
+				is_subject_of = ROOT
+				NOT = { liberty_desire = 60 }
+				OR = {
+					has_200_opinion_improved_relation = { target = ROOT }
+					has_opinion = {
+						who = ROOT
+						value = 50
+					}
+				}
+			}
+		 } 
+
+		effect = { 
+			A32 = {
+				change_religion = ROOT
+			}
+			country_event = {
+				id = flavour_farranean.6
+			}
+			custom_tooltip = farranean_elf_minorities_tt
+			set_country_flag = farranean_elven_minority_effect
+		 } 
+	}
+
+	farranean_the_place_of_munas = {
+		icon = mission_moon_moon
+		position = 7
+		required_missions = {
+			farranean_couples_counselling
+			farranean_velvet_glove_lethal_warmth
+		}
+		provinces_to_highlight = { 
+			province_id = 352
+		 } 
+
+		trigger = { 
+			OR = {
+				has_personal_deity = munas_moonsinger
+				any_owned_province = {
+					holy_order = munas_order
+				}
+				352 = {
+					development = 30
+				}
+			}
+			A32 = {
+				all_owned_province = {
+					has_owner_religion = yes
+				}
+				has_matching_religion = ROOT
+			}
+			OR = {
+				navy_size = 1
+				mercantilism = 20
+			}
+		 } 
+
+		effect = { 
+			custom_tooltip = farranean_munas_tt
+			hidden_effect = {
+				set_country_flag = upgraded_munas
+				every_owned_province = {
+					limit = { holy_order = munas_order }
+					add_permanent_province_modifier = {
+						name = corinite_munas_upgraded
+						duration = -1
+					}
+                }
+			}
+			if = {
+				limit = { religion = corinite }
+				clr_country_flag = corinite_dip_order_picked
+				country_event = {
+						id = corinite.301
+						days = 7
+				}
+			}
+			if = {
+				limit = { religion = regent_court }
+				country_event = { id = regent_court.2 }
+			}
+			if = {
+				limit = {
+					NOT = {
+						OR = {
+							religion = regent_court
+							religion = corinite
+						}
+					}
+				}
+				add_country_modifier = {
+					name = farranean_place_of_munas
+					duration = -1
+				}
+			}
+		 } 
+	}
+
+	farranean_inheriting_old_claims = {
+		icon = mission_whisper
+		position = 8
+		required_missions = { farranean_the_place_of_munas } 
+		provinces_to_highlight = { 
+			is_capital = yes
+			OR = {
+				owner = {
+					is_emperor = yes
+					NOT = { tag = ROOT }
+					NOT = { has_been_insulted_by_root = yes }
+				}
+				owner = {
+					tag = A32
+					NOT = {
+						AND = {
+							NOT = { liberty_desire = 50 }
+							mission_completed = A32_the_elven_vale
+						}
+					}
+				}
+			}
+		 } 
+
+		trigger = { 
+			OR = {
+				emperor = {
+					has_been_insulted_by_root = yes
+				}
+				is_emperor = yes
+			}
+			A32 = {
+				NOT = { liberty_desire = 50 }
+				mission_completed = A32_the_elven_vale
+			}
+		 } 
+
+		effect = { 
+			custom_tooltip = farranean_human_minority_sizes_tt
+			hidden_effect = {
+				every_owned_province = {
+					add_human_minority_size_effect = yes
+				}
+				A32 = {
+					every_owned_province = {
+						add_human_minority_size_effect = yes
+					}
+				}
+			}
+			rotwall_area = {
+				change_culture = moon_elf
+				remove_core = A77
+			}
+		 } 
+	}
+
+	farranean_treating_your_elders = {
+		icon = mission_monarch_diplomacy
+		position = 9
+		required_missions = { farranean_inheriting_old_claims } 
+		provinces_to_highlight = { 
+			OR = {
+				area = teagansfield_area
+				area = rotwall_area
+				province_id	= 350
+			}
+			NOT = { owned_by = A32 }
+		 } 
+
+		trigger = { 
+			A32 = {
+				mission_completed = A32_antirionn
+			}
+			350 = {
+				num_of_times_improved = 6
+				has_courthouse_building_trigger = yes
+				owned_by = A32
+			}
+			teagansfield_area = {
+				type = all
+				owned_by = A32
+			}
+			rotwall_area = {
+				type = all
+				owned_by = A32
+			}
+		 } 
+
+		effect = { 
+			350 = {
+				add_building = state_house
+				add_province_modifier = {
+					name = farranean_silent_repose
+					duration = -1
+				}
+			}
+			if = {
+				limit = {
+					adm = 6
+				}
+				add_adm_power = 100
+			}
+			else = {
+				change_adm = 1
+			}
+			if = {
+				limit = {
+					dip = 6
+				}
+				add_dip_power = 100
+			}
+			else = {
+				change_dip = 1
+			}
+			if = {
+				limit = {
+					mil = 6
+				}
+				add_mil_power = 100
+			}
+			else = {
+				change_mil = 1
+			}
+		 } 
+	}
+}
+farranean_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = B60 } 
+
+	farranean_estates_new_and_old = {
+		icon = mission_approach_throne
+		position = 3
+		required_missions = { farranean_the_scogtrin } 
+		provinces_to_highlight = {  } 
+
+		trigger = { 
+			estate_loyalty = {
+    			estate = all
+   				loyalty = 60
+			}
+			OR = {
+				crown_land_share = 30
+				stability = 3
+			}
+			has_estate_privilege = estate_nobles_nobility_primacy
+			has_estate_privilege = estate_church_religious_state
+			has_estate_privilege = estate_burghers_land_of_commerce
+		 } 
+
+		effect = { 
+			custom_tooltip = farranean_mana_privileges_tt
+			set_country_flag = farranean_mana_privileges
+		 } 
+	}
+
+	farranean_the_old_rival = {
+		icon = mission_heated_battle
+		position = 4
+		required_missions = {
+			farranean_estates_new_and_old
+			farranean_the_sil_na_ean
+		}
+		provinces_to_highlight = { 
+			is_capital_of = A32
+		 } 
+
+		trigger = { 
+			OR = {
+				num_of_trusted_allies = 2
+				has_global_modifier_value = {
+					which = discipline
+					value = 0.1
+				}
+			}
+			if = {
+				limit = {
+					exists = A32
+				}
+				A32 = {
+					has_been_insulted_by_root = yes
+				}
+				OR = {
+					has_spy_network_in = {
+						who = A32
+						value = 50
+					}
+					AND  = {
+						has_spy_network_in = {
+							who = A32
+							value = 30
+						}
+						advisor = spymaster
+					}
+					A32 = { is_subject = yes }
+				}
+				army_size = A32
+			}
+			else = {
+				north_ibevar_area = {
+					type = all
+					owned_by = ROOT
+					}
+				south_ibevar_area = {
+					type = all
+					owned_by = ROOT
+				}
+			}
+		 } 
+
+		effect = { 
+			if = {
+				limit = {
+					exists = A32
+				}
+				country_event = {
+					id = flavour_farranean.5
+				}
+			}
+			else = {
+				release_with_religion_and_culture = {
+					tag = A32
+					religion = ROOT
+					culture = moon_elf
+				}
+				create_union = A32
+			}
+		 } 
+	}
+
+	farranean_velvet_glove_lethal_warmth = {
+		icon = mission_female_throne
+		position = 6
+		required_missions = {
+			farranean_couples_counselling
+			farranean_a_saplings_spurt
+		}
+		provinces_to_highlight = { 
+			OR = {
+				area = north_ibevar_area
+				area = south_ibevar_area
+				province_id = 352
+			}
+			NOT = { owned_by = A32 }
+		 } 
+
+		trigger = { 
+			north_ibevar_area = {
+				type = all
+				owned_by = A32
+			}
+			south_ibevar_area = {
+				type = all
+				owned_by = A32
+			}
+			352 = {
+				num_of_times_improved = 6
+				owned_by = A32
+			}
+			OR = {
+				employed_advisor = {
+					culture = moon_elf
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_nobles
+					value = 3
+				}
+			}
+		 } 
+
+		effect = {
+			custom_tooltip = farranean_ibevari_missions_unlocks_tt
+			set_country_flag = farranean_ibevari_missions
+			forlorn_vale_region = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_elven_minority_size_effect = yes
+			}
+		  } 
+	}
+
+	farranean_one_blade_for_all = {
+		icon = mission_silblaidd
+		position = 9
+		required_missions = {
+			farranean_velvet_glove_lethal_warmth
+			farranean_inheriting_old_claims
+		}
+		provinces_to_highlight = { 
+			area = rotwall_area
+			OR = {
+				NOT = { owned_by = A32 }
+				unrest = 1
+				local_autonomy = 50
+				NOT = { has_tax_building_trigger = yes }
+				NOT = { has_production_or_gold_building_trigger = yes }
+				NOT = { has_manpower_building_trigger = yes}
+			}
+		 } 
+
+		trigger = { 
+			rotwall_area = {
+				type = all
+				owned_by = A32
+				NOT = { unrest = 1 }
+				NOT = { local_autonomy = 50 }
+				has_tax_building_trigger = yes
+				has_production_or_gold_building_trigger = yes
+				has_manpower_building_trigger = yes
+			}
+			OR = {
+				NOT = { exists = A77 }
+				A77 = {
+					has_100_opinion_improved_relation = { target = ROOT }
+				}
+			}
+		 } 
+
+		effect = { 
+			rotwall_area = {
+				add_elven_minority_size_effect = yes
+				add_human_minority_size_effect = yes
+				add_half_elven_minority_size_effect = yes
+				add_half_orcish_minority_size_effect = yes
+				add_orcish_minority_size_effect = yes
+				add_goblin_minority_size_effect = yes
+			}
+			define_general = {
+    			shock = 5
+    			fire = 5
+    			manuever = 4
+    			siege = 4
+				female = yes
+				name = "Reanna of Rotwall"
+			}
+		 } 
+	}
+
+	farranean_requiem_for_the_elfrealm = {
+		icon = mission_marriage
+		position = 10
+		required_missions = {
+			farranean_treating_your_elders
+			farranean_one_blade_for_all
+			farranean_the_thrum_renewed
+		}
+		provinces_to_highlight = { 
+			OR = {
+				area = arbaran_area
+				area = golden_plains_area
+				area = cestir_area
+			}
+			NOT = { owned_by = ROOT }
+			NOT = { owned_by = A32 }
+		} 
+
+		trigger = { 
+			A32 = {
+				mission_completed = A32_safe_home
+				total_development = 400
+				NOT = { liberty_desire = 5 }
+				has_opinion = {
+					who = ROOT
+					value = 200
+				}
+			}
+			arbaran_area = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					owned_by = A32
+				}
+			}
+			golden_plains_area = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					owned_by = A32
+				}
+			}
+			cestir_area = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					owned_by = A32
+				}
+			}
+			prestige = 95
+			legitimacy = 100
+		 } 
+
+		effect = { 
+			custom_tooltip = farranean_inherting_ibevar_tt
+			set_country_flag = farranean_end_ibevar
+		 } 
+	}
+
+	farranean_the_future_we_create = {
+		icon = mission_new_dawn
+		position = 12
+		required_missions = { farranean_requiem_for_the_elfrealm } 
+		provinces_to_highlight = { 
+			owned_by = ROOT
+			has_any_oppressed_pop_trigger = yes
+		 } 
+
+		trigger = { 
+			OR = {
+				army_tradition = 80
+				army_professionalism = 0.7
+			}
+			is_at_war = no
+			all_owned_province = {
+				has_any_oppressed_pop_trigger = no
+			}
+			OR = {
+				has_dip_advisor_5 = yes
+				has_mil_advisor_5 = yes
+				has_adm_advisor_5 = yes
+			}
+			has_dip_advisor_4 = yes
+			has_mil_advisor_4 = yes
+			has_adm_advisor_4 = yes
+		 } 
+
+		effect = { 
+			custom_tooltip = farranean_bonus_conditions_tt
+			if = {
+				limit = {
+					has_country_flag = farranean_ibevari_soldier_flag
+				}
+				add_country_modifier = {
+					name = farranean_ibevari_solider
+					duration = -1
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = farranean_ibevar_diplomat_flag
+				}
+				add_country_modifier = {
+					name = farranean_ibevar_diplomat
+					duration = -1
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = farranean_greater_ibevar_flag
+				}
+				swap_free_idea_group = yes
+			}
+		 } 
+	}
+}
+farranean_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = B60 } 
+
+	farranean_escin_reclaimed = {
+		icon = mission_city_prosperity
+		position = 1
+		provinces_to_highlight = { 
+			province_id = 777
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					OR = {
+						development = 20
+						AND = {
+							num_of_buildings_in_province = 2
+							development = 12
+						}
+					}
+				}
+			}
+		 } 
+
+		trigger = { 
+			777 = {
+				owned_by = ROOT
+				OR = {
+					development = 20
+					AND = {
+						num_of_buildings_in_province = 2
+						development = 12
+					}
+				}
+			}
+		 } 
+
+		effect = { 
+			set_capital = 777
+			define_general = {
+				shock = 4
+				fire = 2
+				manuever = 3
+				siege = 4
+				name = "Niam Caderan"
+			}
+			custom_tooltip = farranean_refugee_event_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = {
+							any_owned_province = {
+								province_group = escann_proper
+								has_province_flag = escanni_migration_target
+							}
+						}
+					}
+					random_owned_province = {
+						limit = { province_group = escann_proper }
+						set_province_flag = escanni_migration_target
+					}
+				}
+				country_event = {
+						id = escanni_refugees_settlement.400 #Event manager
+				}
+			}
+		} 
+	}
+
+	farranean_the_scogtrin = {
+		icon = mission_misty_forest
+		position = 2
+		required_missions = {
+			farranean_the_valefort_remnant
+			farranean_escin_reclaimed
+			farranean_the_next_casean
+		}
+		provinces_to_highlight = { 
+			owned_by = ROOT
+			devastation = 5
+		 } 
+
+		trigger = { 
+			is_at_war = no
+			NOT = { average_autonomy = 10 }
+			all_owned_province = {
+				NOT = { devastation = 5 }
+			}
+			777 = {
+				province_has_center_of_trade_of_level = 2
+			}
+		 } 
+
+		effect = { 
+			country_event = {
+				id = flavour_farranean.1
+			}
+			add_legitimacy = 10
+		 } 
+	}
+
+	farranean_the_sil_na_ean = {
+		icon = mission_confrontation
+		position = 3
+		required_missions = { farranean_the_scogtrin } 
+		provinces_to_highlight = {  } 
+
+		trigger = { 
+			legitimacy = 95
+			prestige = 50
+			is_at_war = no
+			if = {
+				limit = {
+					calc_true_if = {
+						all_known_country = {
+							OR = {
+								dynasty = "Siloriel"
+								dynasty = "Silcalas"
+								dynasty = "Silistra"
+								dynasty = "Silebor"
+								dynasty = "Silnara"
+								dynasty = "Silmuna"
+							}
+						}
+						amount = 2
+					}
+				}
+				calc_true_if = {
+					all_known_country = {
+						OR = {
+							dynasty = "Siloriel"
+							dynasty = "Silcalas"
+							dynasty = "Silistra"
+							dynasty = "Silebor"
+							dynasty = "Silnara"
+							dynasty = "Silmuna"
+						}
+						has_opinion = {
+							who = ROOT
+							value = 80
+						}
+					}
+					amount = 2
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						exists = B31
+						exists = B36
+						exists = B58
+						exists = Z45
+						exists = B33
+					}
+				}
+				OR = {
+					B31 = {
+						has_opinion = {
+							who = ROOT
+							value = 80
+						}
+					}
+					B36 = {
+						has_opinion = {
+							who = ROOT
+							value = 80
+						}
+					}
+					B58 = {
+						has_opinion = {
+							who = ROOT
+							value = 80
+						}
+					}
+					Z45 = {
+						has_opinion = {
+							who = ROOT
+							value = 80
+						}
+					}
+					B33 = {
+						has_opinion = {
+							who = ROOT
+							value = 80
+						}
+					}
+				}
+			}
+		 } 
+
+		effect = { 
+			set_country_flag = farranean_government_unlocked
+			add_government_reform = farranean_united_farrani_court
+			if = {
+				limit = {
+					was_tag = B07
+				}
+				country_event = {
+					id = flavour_farranean.4
+				}
+			}
+			else_if = {
+				limit = {
+					was_tag = B19
+				}
+				country_event = {
+					id = flavour_farranean.3
+				}
+			}
+			else = {
+				country_event = {
+					id = flavour_farranean.2
+				}
+			}
+		 } 
+	}
+
+	farranean_a_saplings_spurt = {
+		icon = mission_alone_in_the_wood
+		position = 5
+		required_missions = { farranean_the_old_rival } 
+		provinces_to_highlight = { 
+			province_id = 777
+			OR = {
+				NOT = { development = 30 }
+				NOT = { num_of_buildings_in_province = 4 }
+			}
+		 } 
+
+		trigger = { 
+			777 = {
+				development = 30
+				num_of_buildings_in_province = 4
+			}
+			A32 = {
+				is_subject_of = ROOT
+				has_support_loyalists = yes
+			}
+			OR = {
+				court_mage = 3
+				theologian = 3
+				AND = {
+					has_adm_advisor_2 = yes
+					has_dip_advisor_2 = yes
+					has_mil_advisor_2 = yes
+				}
+			}
+		 } 
+
+		effect = { 
+			country_event = {
+				id = flavour_farranean.7
+			}
+			if = {
+				limit = {
+					dip = 6
+				}
+				add_dip_power = 100
+			}
+			else = {
+				change_dip = 1
+			}
+			if = {
+				limit = {
+					has_heir = yes 
+				}
+				change_heir_adm = 1 
+				change_heir_dip = 1 
+				change_heir_mil = 1 
+			}
+			else = {
+				country_event = { 
+					id = dynastic_events.1
+				}
+			}
+		 } 
+	}
+
+	farranean_as_the_rain_falls = {
+		icon = mission_star_comet
+		position = 7
+		required_missions = {
+			farranean_velvet_glove_lethal_warmth
+			farranean_a_saplings_spurt
+			farranean_order_in_the_plains
+		}
+		provinces_to_highlight = { 
+			owned_by = ROOT
+			devastation = 10
+		 } 
+
+		trigger = { 
+			religious_unity = 0.90
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = crimson_deluge_over_tooltip
+					has_global_flag = crimson_deluge_is_over
+				}
+				custom_trigger_tooltip = {
+					tooltip = crimson_deluge_started_tooltip
+					has_global_flag = crimson_deluge_is_actively_happening
+				}
+			}
+			OR = {
+				all_owned_province = {
+					NOT = { devastation = 10 }
+				}
+				all_states = {
+					any_province_in_state = {
+						has_fort_building_trigger = yes
+					}
+				}
+			}
+		 } 
+
+		effect = { 
+			custom_tooltip = farranean_shade_of_leaves_tt
+			set_country_flag = farranean_shades_of_tolerant_leaves
+		 } 
+	}
+
+	farranean_the_thrum_renewed = {
+		icon = mission_verdant_secret
+		position = 9
+		required_missions = {
+			farranean_as_the_rain_falls
+			farranean_ranging_the_merewood
+			farranean_reuniting_the_traditions
+		}
+		provinces_to_highlight = { 
+			province_id = 777
+			OR = {
+				NOT = { development = 40 }
+				has_manufactory_trigger = no
+				NOT = { num_of_buildings_in_province = 6 }
+			}
+		 } 
+
+		trigger = { 
+			777 = {
+				development = 40
+				has_manufactory_trigger = yes
+				num_of_buildings_in_province = 6
+			}
+			has_adm_advisor_3 = yes
+			has_dip_advisor_3 = yes
+			has_mil_advisor_3 = yes 
+		 } 
+
+		effect = { 
+			country_event = {
+				id = flavour_farranean.8
+			}
+			custom_tooltip = farranean_great_men_events_tt
+			#admin category
+			if = {
+				limit = {
+					philosopher = 3
+				}
+				country_event = {
+					id = 4021
+					days = 1
+				}
+			}
+			if = {
+				limit = {
+					natural_scientist = 3
+				}
+				country_event = {
+					id = 4022
+				}
+			}
+			if = {
+				limit = {
+					artist = 3
+				}
+				country_event = {
+					id = 4025
+				}
+			}
+			if = {
+				limit = {
+					treasurer = 3
+				}
+				country_event = {
+					id = 4026
+				}
+			}
+			if = {
+				limit = {
+					theologian = 3
+				}
+				country_event = {
+					id = 4027
+				}
+			}
+			if = {
+				limit = {
+					master_of_mint = 3
+				}
+				country_event = {
+					id = 4104
+				}
+			}
+			if = {
+				limit = {
+					inquisitor = 3
+				}
+				country_event = {
+					id = 4120
+				}
+			}
+			#diplomatic category
+			if = {
+				limit = {
+					naval_reformer = 3
+				}
+				country_event = {
+					id = 4024
+					days = 30
+				}
+			}
+			if = {
+				limit = {
+					statesman = 3
+				}
+				country_event = {
+					id = 4028
+					days = 30
+				}
+			}
+			if = {
+				limit = {
+					colonial_governor = 3
+				}
+				country_event = {
+					id = 4029
+					days = 30
+				}
+			}
+			if = {
+				limit = {
+					spymaster = 3
+				}
+				country_event = {
+					id = 4030
+					days = 30
+				}
+			}
+			if = {
+				limit = {
+					diplomat = 3
+				}
+				country_event = {
+					id = 4031
+					days = 30
+				}
+			}
+			if = {
+				limit = {
+					trader = 3
+				}
+				country_event = {
+					id = 4032
+					days = 30
+				}
+			}
+			if = {
+				limit = {
+					navigator = 3
+				}
+				country_event = {
+					id = 4110
+					days = 30
+				}
+			}
+			#military category
+			if = {
+				limit = {
+					army_reformer = 3
+				}
+				country_event = {
+					id = 4023
+					days = 60
+				}
+			}
+			if = {
+				limit = {
+					grand_captain = 3
+				}
+				country_event = {
+					id = 4114
+					days = 60
+				}
+			}
+			if = {
+				limit = {
+					army_organiser = 3
+				}
+				country_event = {
+					id = 4115
+					days = 60
+				}
+			}
+			if = {
+				limit = {
+					commandant = 3
+				}
+				country_event = {
+					id = 4116
+					days = 60
+				}
+			}
+			if = {
+				limit = {
+					quartermaster = 3
+				}
+				country_event = {
+					id = 4117
+					days = 60
+				}
+			}
+			if = {
+				limit = {
+					recruitmaster = 3
+				}
+				country_event = {
+					id = 4118
+					days = 60
+				}
+			}
+			if = {
+				limit = {
+					fortification_expert = 3
+				}
+				country_event = {
+					id = 4119
+					days = 60
+				}
+			}
+		 } 
+	}
+
+	farranean_a_night_to_remember = {
+		icon = mission_venus
+		position = 11
+		required_missions = {
+			farranean_requiem_for_the_elfrealm
+			farranean_the_thrum_renewed
+		}
+		provinces_to_highlight = { 
+			OR = {
+				province_id = 777
+				province_id = 352
+				province_id = 257
+				province_id = 349
+			}
+			OR = {
+				NOT = { development = 45 }
+				has_courthouse_building_trigger = no
+				has_manufactory_trigger = no
+			}
+		 } 
+
+		trigger = { 
+			777 = {
+				development = 45
+				has_courthouse_building_trigger = yes
+				has_manufactory_trigger = yes
+			}
+			352 = {
+				development = 30
+				has_courthouse_building_trigger = yes
+				has_manufactory_trigger = yes
+			}
+			257 = {
+				development = 30
+				has_courthouse_building_trigger = yes
+				has_manufactory_trigger = yes
+			}
+			349 = {
+				development = 30
+				has_courthouse_building_trigger = yes
+				has_manufactory_trigger = yes
+			}
+			num_of_issues_passed = {
+				amount = 6
+				alternative_trigger = "stability = 2"
+			}
+			high_tolerance_elven_race_trigger = yes
+			has_country_modifier = racial_focus_elven
+			high_tolerance_human_race_trigger = yes
+		 } 
+
+		effect = { 
+			country_event = {
+				id = flavour_farranean.9
+			}
+		 } 
+	}
+
+	farranean_farranean_means_unity = {
+		icon = mission_tree_fishing
+		position = 13
+		required_missions = {
+			farranean_the_future_we_create
+			farranean_a_night_to_remember
+			farranean_the_past_unmourned
+		}
+		provinces_to_highlight = { 
+			owned_by = ROOT
+			devastation = 5
+		 } 
+
+		trigger = { 
+			is_at_war = no
+			all_owned_province = {
+				NOT = { devastation = 5 }
+			}
+			development_in_provinces = {
+				value = 1000
+				culture = farrani_half_elf
+			}
+			monthly_adm = 11
+			monthly_dip = 11
+			monthly_mil = 11
+			custom_trigger_tooltip = {
+				tooltip = farranean_escanni_wars_tt
+				OR = {
+					has_country_flag = escanni_wars_castanor_option_unlocked
+					has_country_flag = escanni_wars_usurp_emperorship
+					has_country_flag = can_form_bd
+					has_country_modifier = escanni_wars_escanni_imperialism	
+					has_country_modifier = escanni_wars_escanni_peace
+				}
+			}
+		 } 
+
+		effect = { 
+			country_event = {
+				id = flavour_farranean.12
+			}
+		 } 
+	}
+}
+farranean_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = B60 } 
+
+	farranean_returning_refugees = {
+		icon = mission_forest_pilgrim
+		position = 3
+		required_missions = { farranean_the_scogtrin } 
+		provinces_to_highlight = {  } 
+
+		trigger = { 
+			if = {
+				limit = {
+					245 = { #Freecestir, where the counting var is located
+						check_variable = { #This counts the amounts of refugee centers of any size left on the map
+							which = NumberOfRefugeesLeft
+							value = 4
+						}
+					}
+				}
+				calc_true_if = {
+					escanni_refugee_centers = {
+						type = all
+						has_escanni_refugees = yes
+						owner = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+					}
+					amount = 2
+				}
+			}
+			is_at_war = no
+			248 = {
+				owned_by = ROOT
+			}
+		} 
+
+		effect = { 
+			custom_tooltip = farranean_limited_refugee_autonomy_tt
+			set_country_flag = farranean_no_refugee_autonomy
+			set_country_flag = no_autonomy_from_racial_migration_human
+			set_country_flag = no_autonomy_from_racial_migration_half_elven
+			set_country_flag = no_autonomy_from_racial_migration_elven
+			country_event = {
+				id = escanni_refugees_settlement.410 #Manufactoring Knowledge from the West
+			}
+			country_event = {
+				id = escanni_refugees_settlement.410 #Manufactoring Knowledge from the West
+				days =  365
+			}
+		 } 
+	}
+
+	farranean_safeguarding_tomorrow = {
+		icon = mission_pray_light
+		position = 5
+		required_missions = {
+			farranean_the_old_rival
+			farranean_as_i_was_saying
+		}
+		provinces_to_highlight = { 
+			OR = {
+				area = cursewood_area
+				area = whistlevale_area
+				area = valefort_area
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { development = 12 }
+				AND = {
+					local_autonomy = 0.1
+					is_prosperous = no
+				}
+				AND = {
+					fast_has_pop_of_race = { race = orcish }
+					ROOT = { high_tolerance_orcish_race_trigger = no }
+				}
+			}
+		 } 
+
+		trigger = { 
+			cursewood_area = {
+				type = all
+				owned_by = ROOT
+				development = 12
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = is_prosperous_tt
+						is_prosperous = yes
+					}
+					NOT = { local_autonomy = 0.1 }
+				}
+				OR = {
+					NOT = { fast_has_pop_of_race = { race = orcish } }
+					ROOT = {
+						high_tolerance_orcish_race_trigger = yes
+					}
+				}
+			}
+			whistlevale_area = {
+				type = all
+				owned_by = ROOT
+				development = 12
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = is_prosperous_tt
+						is_prosperous = yes
+					}
+					NOT = { local_autonomy = 0.1 }
+				}
+				OR = {
+					NOT = { fast_has_pop_of_race = { race = orcish } }
+					ROOT = {
+						high_tolerance_orcish_race_trigger = yes
+					}
+				}
+			}
+			valefort_area = {
+				type = all
+				owned_by = ROOT
+				development = 12
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = is_prosperous_tt
+						is_prosperous = yes
+					}
+					NOT = { local_autonomy = 0.1 }
+				}
+				OR = {
+					NOT = { fast_has_pop_of_race = { race = orcish } }
+					ROOT = {
+						high_tolerance_orcish_race_trigger = yes
+					}
+				}
+			}
+		 } 
+
+		effect = { 
+			custom_tooltip = farranean_tomorrow_protected_tt
+			if = {
+				limit = {
+					high_tolerance_orcish_race_trigger = yes
+				}
+				valefort_area = {
+					add_half_orcish_minority_size_effect = yes
+					add_orcish_minority_size_effect = yes
+				}
+				cursewood_area = {
+					add_half_orcish_minority_size_effect = yes
+					add_orcish_minority_size_effect = yes
+				}
+				whistlevale_area = {
+					add_half_orcish_minority_size_effect = yes
+					add_orcish_minority_size_effect = yes
+				}
+			}
+			else = {
+				every_owned_province = {
+					limit = {
+						culture = farrani_half_elf
+					}
+					add_elven_minority_size_effect = yes
+					add_human_minority_size_effect = yes
+				}
+			}
+		 } 
+	}
+
+	farranean_ranging_the_merewood = {
+		icon = mission_alone_in_the_forest
+		position = 8
+		required_missions = { farranean_as_the_rain_falls } 
+		provinces_to_highlight = { 
+			OR = {
+				province_id = 794
+				province_id = 788
+				province_id = 785
+			}
+			NOT = {
+				owner = {
+					has_been_insulted_by_root = yes
+					has_spy_network_from = {
+						who = ROOT
+						value = 30
+					}
+				}
+				owned_by = ROOT
+			}
+		 } 
+
+		trigger = { 
+			army_size = 40
+			num_of_artillery = 10
+			794 = {
+				OR = {
+					owner = {
+						has_been_insulted_by_root = yes
+						has_spy_network_from = {
+							who = ROOT
+							value = 30
+						}
+					}
+					owned_by = ROOT
+				}
+			}
+			788 = {
+				OR = {
+					owner = {
+						has_been_insulted_by_root = yes
+						has_spy_network_from = {
+							who = ROOT
+							value = 30
+						}
+					}
+					owned_by = ROOT
+				}
+			}
+			785 = {
+				OR = {
+					owner = {
+						has_been_insulted_by_root = yes
+						has_spy_network_from = {
+							who = ROOT
+							value = 30
+						}
+					}
+					owned_by = ROOT
+				}
+			}
+		 } 
+
+		effect = { 
+			oudmerewood_area = {
+				add_permanent_claim = ROOT
+			}
+			nortmerewood_area = {
+				add_permanent_claim = ROOT
+			}
+			merescker_area = {
+				add_permanent_claim = ROOT
+			}
+			add_country_modifier = {
+				name = farranean_ranging_merewood
+				duration = 7300
+			}
+		 } 
+	}
+
+	farranean_helping_scars_fade = {
+		icon = friends_in_high_places
+		position = 9
+		required_missions = { farranean_ranging_the_merewood } 
+		provinces_to_highlight = { 
+			OR = {
+				area = falsemire_area
+				area = adenica_area
+				area = upcreek_area
+			}
+			OR = {
+				devastation = 2
+				local_autonomy = 2
+				NOT = { num_of_buildings_in_province = 3 }
+			}
+		 } 
+
+		trigger = { 
+			falsemire_area = {
+				type = all
+				owned_by = ROOT
+				num_of_buildings_in_province = 3
+				NOT = { devastation = 2 }
+				NOT = { local_autonomy = 2 }
+			}
+			adenica_area = {
+				type = all
+				owned_by = ROOT
+				num_of_buildings_in_province = 3
+				NOT = { devastation = 2 }
+				NOT = { local_autonomy = 2 }
+			}
+			upcreek_area = {
+				type = all
+				owned_by = ROOT
+				num_of_buildings_in_province = 3
+				NOT = { devastation = 2 }
+				NOT = { local_autonomy = 2 }
+			}
+		 } 
+
+		effect = { 
+			increase_all_existing_tolerances = { size = medium }
+			custom_tooltip = farranean_refugee_autonomy_tt
+			set_country_flag = no_autonomy_from_racial_migration
+			custom_tooltip = farranean_scars_mended_tt
+			hidden_effect = {
+				every_owned_province = {
+					add_local_autonomy = -10
+					remove_province_modifier = autonomy_decreased
+				}
+			}
+		 } 
+	}
+
+	farranean_a_resplendent_destiny = {
+		icon = mission_magic_tower
+		position = 11
+		required_missions = {
+			farranean_helping_scars_fade
+			farranean_balancing_the_scales
+		}
+		provinces_to_highlight = { 
+			owned_by = ROOT
+			is_prosperous = no
+			unrest = 1
+		 } 
+
+		trigger = { 
+			num_of_states = 8
+			all_states = {
+				OR = { 
+					is_prosperous = yes
+					NOT = { unrest = 1 }
+				}
+			}
+			is_lacking_institutions = no
+			calc_true_if = {
+				is_ahead_of_time_in_technology = { tech = adm }
+				is_ahead_of_time_in_technology = { tech = dip }
+				is_ahead_of_time_in_technology = { tech = mil }
+				amount = 2
+			}
+			legitimacy = 80
+			stability = 2
+		 } 
+
+		effect = { 
+			set_country_flag = farranean_advisor_negatives_nullified
+			custom_tooltip = farranean_advisor_negatives_removed_tt
+		 } 
+	}
+}
+farranean_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = B60 } 
+
+	farranean_the_next_casean = {
+		icon = mission_heunthume
+		position = 1
+		provinces_to_highlight = { 
+		 } 
+
+		trigger = { 
+			num_of_owned_provinces_with = {
+				value = 3
+				has_fort_building_trigger = yes
+				has_manpower_building_trigger = yes
+			}
+		 } 
+
+		effect = { 
+			custom_tooltip = farranean_casean_effect_tt
+			for = {
+				amount = 3
+				effect = "
+					random_owned_province = { 
+						limit = {
+							has_production_building_trigger = no
+							has_fort_building_trigger = yes
+							has_manpower_building_trigger = yes 
+						} 
+					add_building = workshop 
+					}
+				"
+			}
+		 } 
+	}
+
+	farranean_squatters_and_upstarts = {
+		icon = mission_ghost_town
+		position = 3
+		required_missions = { farranean_the_scogtrin } 
+		provinces_to_highlight = { 
+			OR = {
+				province_id = 769
+				province_id = 774
+				province_id = 782
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+				owner = {
+					has_been_insulted_by_root = yes
+				}
+			}
+		 } 
+
+		trigger = { 
+			769 = {
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						has_been_insulted_by_root = yes
+					}
+				}
+			}
+			774 = {
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						has_been_insulted_by_root = yes
+					}
+				}
+			}
+			782 = {
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						has_been_insulted_by_root = yes
+					}
+				}
+			}
+			OR = {
+				AND = {
+					has_dip_advisor_2 = yes
+					has_mil_advisor = yes
+				}
+				AND = {
+					has_dip_advisor = yes
+					has_mil_advisor_2 = yes
+				}
+			}
+		 } 
+
+		effect = { 
+			rohibon_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { owned_by = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			taran_plains_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { owned_by = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			verteben_area = {
+				limit = {
+					NOT = { is_core = ROOT }
+					NOT = { owned_by = ROOT }
+				}
+				add_permanent_claim = ROOT
+			}
+			add_country_modifier = {
+				name = farranean_squatters_upstarts
+				duration = 3650
+			}
+		 } 
+	}
+
+	farranean_as_i_was_saying = {
+		icon = mission_writing_book
+		position = 4
+		required_missions = {
+			farranean_returning_refugees
+			farranean_squatters_and_upstarts
+		}
+		provinces_to_highlight = { 
+			OR = {
+				province_id = 245
+				province_id = 229
+			}
+		 } 
+
+		trigger = { 
+			monthly_income = 50
+			OR = {
+				245 = {
+					trade_share = {
+						country = ROOT
+						share = 50
+					}
+				}
+				229 = {
+					trade_share = {
+						country = ROOT
+						share = 50
+					}
+				}
+				AND = {
+					245 = {
+						trade_share = {
+							country = ROOT
+							share = 30
+						}
+					}
+					229 = {
+						trade_share = {
+							country = ROOT
+							share = 30
+						}
+					}
+				}
+			}
+			if = {
+				limit = { 
+					has_estate = estate_church
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_church
+					value = 1
+				}
+			}
+			if = {
+				limit = { 
+					has_estate = estate_mages
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_mages
+					value = 1
+				}
+			}
+			if = {
+				limit = { 
+					has_estate = estate_adventurers
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_adventurers
+					value = 1
+				}
+			}
+			if = {
+				limit = { 
+					has_estate = estate_nobles
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_nobles
+					value = 1
+				}
+			}
+			if = {
+				limit = { 
+					has_estate = estate_castonath_patricians
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_castonath_patricians
+					value = 1
+				}
+			}
+			else = {
+				num_of_estate_agendas_completed = {
+					estate = estate_burghers
+					value = 1
+				}
+			}
+		 } 
+
+		effect = { 
+			add_country_modifier = {
+				name = farranean_as_i_said
+				duration = -1
+			}
+		 } 
+	}
+
+	farranean_order_in_the_plains = {
+		icon = mission_green_village
+		position = 6
+		required_missions = { farranean_safeguarding_tomorrow } 
+		provinces_to_highlight = { 
+			OR = {
+				area = rohibon_area
+				area = taran_plains_area
+				area = verteben_area
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { is_core = ROOT }
+				unrest = 2
+				local_autonomy = 30
+			}
+		} 
+
+		trigger = { 
+			rohibon_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+				NOT = { unrest = 2 }
+				NOT = { local_autonomy = 30 }
+			}
+			taran_plains_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+				NOT = { unrest = 2 }
+				NOT = { local_autonomy = 30 }
+			}
+			verteben_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+				NOT = { unrest = 2 }
+				NOT = { local_autonomy = 30 }
+			}
+			num_of_issues_passed = {
+				amount = 2
+				alternative_trigger = "stability = 2"
+			}
+		 } 
+
+		effect = { 
+			set_country_flag = farranean_human_minority_effect
+			custom_tooltip = farranean_human_minorities_conversion_tt
+			custom_tooltip = farranean_ordered_the_plains_tt
+			hidden_effect = {
+				every_owned_province = {
+					add_human_minority_size_effect = yes
+				}
+			}
+		 } 
+	}
+
+	farranean_reuniting_the_traditions = {
+		icon = mission_princess_writing
+		position = 8
+		required_missions = { farranean_order_in_the_plains } 
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					is_capital = yes
+					owner = {
+						OR = {
+							tag = A31
+							primary_culture = esmari
+						}
+					}
+				}
+				province_id = 266
+			}
+		 } 
+
+		trigger = { 
+			OR = {
+				A31 = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+				any_known_country = {
+					primary_culture = esmari
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+				266 = {
+					owner = {
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 20
+				has_province_modifier = farranean_farrani_vision
+			}
+		 } 
+
+		effect = { 
+			set_country_flag = farranean_calling_all_unlock
+			custom_tooltip = farranean_calling_all_issue_tt
+		 } 
+	}
+
+	farranean_balancing_the_scales = {
+		icon = weimar_classicism
+		position = 10
+		required_missions = {
+			farranean_helping_scars_fade
+			farranean_reuniting_the_traditions
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = { 
+			if = {
+				limit = { 
+					has_estate = estate_church
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_church
+					value = 2
+				}
+				estate_loyalty = {
+					estate = estate_church
+					loyalty = 70
+				}
+				estate_influence = {
+					estate = estate_church
+					influence = 70
+				}
+			}
+			if = {
+				limit = { 
+					has_estate = estate_mages
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_mages
+					value = 2
+				}
+			}
+			if = {
+				limit = { 
+					has_estate = estate_adventurers
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_adventurers
+					value = 2
+				}
+			}
+			if = {
+				limit = { 
+					has_estate = estate_nobles
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_nobles
+					value = 2
+				}
+				estate_loyalty = {
+					estate = estate_nobles
+					loyalty = 70
+				}
+				estate_influence = {
+					estate = estate_nobles
+					influence = 70
+				}
+			}
+			if = {
+				limit = { 
+					has_estate = estate_castonath_patricians
+				}
+				num_of_estate_agendas_completed = {
+					estate = estate_castonath_patricians
+					value = 2
+				}
+				estate_loyalty = {
+					estate = estate_castonath_patricians
+					loyalty = 60
+				}
+				estate_influence = {
+					estate = estate_castonath_patricians
+					influence = 60
+				}
+			}
+			else = {
+				num_of_estate_agendas_completed = {
+					estate = estate_burghers
+					value = 2
+				}
+				estate_loyalty = {
+					estate = estate_burghers
+					loyalty = 70
+				}
+				estate_influence = {
+					estate = estate_burghers
+					influence = 70
+				}
+			}
+		 } 
+
+		effect = { 
+			set_country_flag = farranean_estates_harmony
+			custom_tooltip = farranean_harmonious_estates_tt
+		 } 
+	}
+
+	farranean_hope_in_every_heart = {
+		icon = prosperity_for_all
+		position = 11
+		required_missions = { farranean_balancing_the_scales } 
+		provinces_to_highlight = { 
+			owned_by = ROOT
+			has_owner_culture = no
+			has_owner_accepted_culture = no
+			NOT = { culture_group = escanni }
+		} 
+
+		trigger = { 
+			NOT = { absolutism =  20 }
+			245 = {
+				trade_share = {
+					country = ROOT
+					share = 30
+				}
+			}
+			229 = {
+				trade_share = {
+					country = ROOT
+					share = 30
+				}
+			}
+			808 = {
+				trade_share = {
+					country = ROOT
+					share = 30
+				}
+			}
+			monthly_income = 200
+			all_owned_province = {
+				OR = {
+					has_owner_accepted_culture = yes
+					culture_group = escanni
+					has_owner_culture = yes
+				}
+			}
+		 } 
+
+		effect = { 
+			country_event = {
+				id = flavour_farranean.10
+			}
+		 } 
+	}
+
+	farranean_the_past_unmourned = {
+		icon = mission_white_tower
+		position = 12
+		required_missions = {
+			farranean_a_night_to_remember
+			farranean_a_resplendent_destiny
+			farranean_hope_in_every_heart
+		}
+		provinces_to_highlight = { 
+			region = forlorn_vale_region
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { culture = farrani_half_elf }
+				NOT = { development = 12 }
+				NOT = { num_of_buildings_in_province = 3 }
+				NOT = { has_province_modifier = farranean_farrani_vision }
+			}
+		 } 
+
+		trigger = { 
+			forlorn_vale_region = {
+				type = all
+				owned_by = ROOT
+				culture = farrani_half_elf
+				development = 12
+				num_of_buildings_in_province = 3
+				has_province_modifier = farranean_farrani_vision
+			}
+			total_development = 1200
+			NOT = { great_power_rank = 6 }
+			if = {
+				limit = {
+					religion = regent_court
+				}
+				has_personal_deity = munas_upgraded
+			}
+			else_if = {
+				limit = {
+					religion = corinite
+				}
+				all_owned_province = {
+					OR = {
+						has_corinite_adm_order = yes
+						has_corinite_dip_order = yes
+						has_corinite_mil_order = yes
+					}
+				}
+			}
+			else = {
+				religious_unity = 0.9
+			}
+		 } 
+
+		effect = { 
+			country_event = {
+				id = flavour_farranean.11
+			}
+		 } 
+	}
+}
