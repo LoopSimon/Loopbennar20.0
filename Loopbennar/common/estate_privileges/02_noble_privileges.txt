@@ -30,6 +30,13 @@ estate_nobles_land_rights = {
 			max_absolutism = 5
 		}
 	}
+	conditional_modifier = {
+		trigger = { 222 = { owned_by = ROOT has_great_project = { type = black_iron_mine tier = 3 } } }
+		modifier = {
+			max_absolutism = 5
+			legitimacy = 1
+		}
+	}
 	# conditional_modifier = {
 	# 	trigger = { has_government_attribute = BYZ_buff_dynatoi_land_grants  }
 	# 	modifier = {
@@ -323,6 +330,7 @@ estate_nobles_officer_corp = {
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	influence = 0.05
 	is_valid = {
+		NOT = { has_country_flag = LRM_bluehart_privilege }
 		NOT = { has_country_flag = no_noble_military } # Anbennar
 		NOT = { has_country_flag = active_sword }
 		NOT = {
@@ -1202,10 +1210,8 @@ estate_nobles_strong_duchies = {
 	loyalty = 0.05
 	check_valid_when_tag_switching = no
 	is_valid = {
-		NOT = { has_country_flag = estate_nobles_castanor_upgraded_strong_duchies_unlocked }
 		NOT = { has_estate_privilege = estate_nobles_sunijalla_council_of_lords }
-		NOT = { has_country_flag = L62_mengi_partners }
-		NOT = { has_country_flag = rayaz_strong_duchies_upgraded }
+		NOT = { has_country_flag = disable_nobles_strong_duchies }
 		any_subject_country = {
 			OR = {
 				is_subject_of_type = vassal
@@ -3487,6 +3493,13 @@ estate_nobles_noble_officer_right = {
 	is_valid = {
 		has_dlc = "Domination"
 		NOT = { has_country_flag = no_noble_military }
+		if = {
+			limit = { is_or_was_tag = { tag = A33 } }
+			NOT = {
+				has_estate_privilege = estate_adventurers_ride_of_the_worthy
+				has_estate_privilege = estate_nobles_noble_wyvernriders
+			}
+		}
 	}
 	can_select = {
 		if = {
@@ -3496,6 +3509,13 @@ estate_nobles_noble_officer_right = {
 		if = {
 			limit = { has_estate = estate_maratha }
 			NOT = { has_estate_privilege = estate_maratha_force_conscription }
+		}
+		if = {
+			limit = { is_or_was_tag = { tag = A33 } }
+			NOT = {
+				has_estate_privilege = estate_adventurers_ride_of_the_worthy
+				has_estate_privilege = estate_nobles_noble_wyvernriders
+			}
 		}
 	}
 	on_granted = {
@@ -3533,10 +3553,7 @@ estate_nobles_expedition_rights = {
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	is_valid = {
 		has_dlc = "Domination"
-		OR = {
 		has_any_exploration_idea = yes
-		has_idea = additional_colonists
-		}
 	}
 	loyalty_scaled_conditional_modifier = {
 		trigger = {
@@ -3636,7 +3653,7 @@ estate_nobles_G57_emerald_waters = {
 	}
 	on_granted = {
 		custom_tooltip = estate_nobles_G57_emerald_waters_tt
-			hidden_effect = {
+		hidden_effect = {
 			every_owned_province = {
 				limit = {
 					OR = {
@@ -3886,5 +3903,64 @@ estate_nobles_U10_torment_of_hellfire = {
 	}
 	ai_will_do = {
 		factor = 100
+	}
+}
+
+estate_nobility_lizardfolk_imperial_fisheries = {
+	icon = privilege_grant_autonomy
+	max_absolutism = 0
+	loyalty = 0.05
+	influence = 0.05
+ 	is_valid = { 
+		has_estate_privilege = estate_nobility_lizardfolk_imperial_fisheries
+	}
+	can_revoke = {
+		always = no
+	}
+	on_granted = {
+		custom_tooltip = estate_nobility_lizardfolk_imperial_fisheries_tt
+		add_country_modifier = {
+			name = lizardfolk_sea_beasts_giant_sharks
+			duration = -1
+		}
+	}
+	on_granted_province = {
+		if = {
+			limit = {
+				OR = {
+					province_id = 5896
+					province_id = 5898
+					province_id = 5834
+					province_id = 3259
+					province_id = 3258
+				}
+				has_dock_building_trigger = yes
+			}
+			add_province_modifier = {
+				name = lizardfolk_imperial_fisheries
+				duration = -1
+			}
+		}
+	}
+	on_revoked = {
+		remove_country_modifier = lizardfolk_sea_beasts_giant_sharks
+	}
+	on_revoked_province = {
+		remove_province_modifier = lizardfolk_imperial_fisheries
+	}
+	benefits = {
+		has_galleon = yes
+		allowed_galleon_fraction = 0.025 
+	}
+	conditional_modifier = {
+		trigger = { NOT = { has_country_flag = lizardfolk_imperial_fisheries_buff } }
+		modifier = { amount_of_galleon = 5 } 
+	}
+	conditional_modifier = {
+		trigger = { has_country_flag = lizardfolk_imperial_fisheries_buff }
+		modifier = { amount_of_galleon = 10 } 
+	}
+	ai_will_do = {
+		factor = 10
 	}
 }

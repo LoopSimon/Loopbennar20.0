@@ -454,6 +454,18 @@ custom_icon = {
 	tooltip = diggy_hole_progress_tt
 }
 
+custom_icon = {
+	name = add_parliament_forbidden
+	potential = {
+		owned_by = FROM
+		has_seat_in_parliament = no
+		FROM = { has_country_flag = cant_manually_add_parliament_seats }
+	}
+	tooltip = add_parliament_forbidden_tt
+}
+
+
+
 ##############################################################################################################################################################################
 ### PROVINCE UI GLOBAL
 ##############################################################################################################################################################################
@@ -471,6 +483,10 @@ custom_button = { #Button for the UI when building UI is closed
 			OR = {
 				tag = FROM
 				is_subject_of = FROM
+				AND = {
+					FROM = { is_or_was_tag = { tag = Z22 } }
+					is_giesadh_or_trade_league_member = yes
+				}
 			}
 			FROM = {
 				NOT = { has_country_flag = province_button_UI_opened }
@@ -494,6 +510,10 @@ custom_window = { #Window for the UI when building UI is closed
             OR = {
                 tag = FROM
                 is_subject_of = FROM
+				AND = {
+					FROM = { is_or_was_tag = { tag = Z22 } }
+					is_giesadh_or_trade_league_member = yes
+				}
             }
             FROM = {
                 has_country_flag = province_button_UI_opened
@@ -508,6 +528,10 @@ custom_window = { #Window for the UI when building UI is open and no monument
 			OR = {
 				tag = FROM
 				is_subject_of = FROM
+				AND = {
+					FROM = { is_or_was_tag = { tag = Z22 } }
+					is_giesadh_or_trade_league_member = yes
+				}
 			}
 		}
     }
@@ -523,6 +547,10 @@ custom_window = { #Window for the UI when building UI is open and there is a mon
 			OR = {
 				tag = FROM
 				is_subject_of = FROM
+				AND = {
+					FROM = { is_or_was_tag = { tag = Z22 } }
+					is_giesadh_or_trade_league_member = yes
+				}
 			}
 		}
     }
@@ -960,10 +988,8 @@ custom_button = { #Transmutative Path UI closed
 		hidden_trigger = {
 			owner = {
 				NOT = {
-					OR = {
-						has_country_flag = transmutative_path_infuse_chi_menu_open
-						has_country_flag = transmutative_path_infuse_trade_goods_menu_open
-					}
+					has_country_flag = transmutative_path_infuse_chi_menu_open
+					has_country_flag = transmutative_path_infuse_trade_goods_menu_open
 				}
 			}
 		}
@@ -1045,6 +1071,7 @@ custom_button = {
 		if = { limit = { NOT = { has_province_flag = harpy_roost_present } }
 			harpy_roost_st_terrain_is_valid = yes
 			FROM = { adm_power = 20 }
+			controlled_by = owner
 		}
 		else_if = { limit = { has_province_modifier = harpy_roost_mod_roost_fledgling NOT = { has_province_modifier = harpy_roost_under_construction } } 
 			harpy_roost_st_terrain_is_valid = yes
@@ -1059,9 +1086,11 @@ custom_button = {
 					check_variable = { which = harpy_roost_own_and_subject_development which = harpy_roost_var_next_threshold }
 				}
 			}
+			controlled_by = owner
 		}
 		else = {
 			harpy_roost_st_can_build_tier_3_roost_allow = yes
+			controlled_by = owner
 		}
 	}
 	effect = { 
@@ -1086,6 +1115,8 @@ custom_button = { #Wood Elf Ranger Camps
 			OR = {
 				has_reform = wood_elf_salla
 				has_reform = the_great_salla
+				has_reform = autocracy_reform_sf
+				has_reform = oak_monarchy_reform
 			}
 		}
 		OR = {
@@ -1138,6 +1169,41 @@ custom_button = { #Dummy closed
 	}
 	effect = { }
 	tooltip = unified_province_ui_no_tag_button_tt
+}
+custom_button = { #333 empire planets
+	name = khatalashya_province_button
+	tooltip = khatalashya_province_button_tt
+	potential = {
+		owner = {
+			tag = S81
+		}
+		has_province_flag = khatalashya_ready_to_be_colonized
+	}
+	trigger = {
+		if = {
+			limit = {
+				has_province_flag = khatalashya_colonized_province
+			}
+			custom_trigger_tooltip = {
+				tooltip = khatalashya_we_can_only_wait
+				always = no
+			}
+		}
+		else = {
+			khatalashya_can_colonize_this_planet = yes
+		}
+		NOT = { S81 = { has_country_modifier = khatalashya_colonization_in_progress } }
+		if = {
+			limit = { S81 = { has_country_flag = the_hivemind_can_start } }
+			custom_trigger_tooltip = {
+				tooltip = khatalashya_something_is_stirring
+				always = no
+			}
+		}
+	}
+	effect = {
+		khatalashya_planetary_effects = yes
+	}
 }
 custom_button = { #Xanzerbexis Wyvern Farms
 	name = A49_create_wyvern_farm_button
@@ -1262,6 +1328,63 @@ custom_button = { #Arawkelin Deforestation
 		}
 	}
 }
+custom_button = { #Verne Port of Adventure
+	name = verne_port_of_adventure_button
+	tooltip = verne_port_of_adventure_button_tt
+	potential = {
+		owner = {
+			OR = {
+				has_country_flag = verne_unlock_port_of_adventure_button
+				overlord = { has_country_flag = verne_unlock_port_of_adventure_button }
+			}
+		}
+		country_or_subject_holds = FROM
+		OR = {
+			continent = africa
+			continent = south_america
+			continent = north_america
+			region = ringlet_isles_region
+		}
+		has_port = yes
+	}
+	trigger = {
+		province_has_center_of_trade_of_level = 2
+		num_of_units_in_province = {
+			amount = 5
+			type = infantry
+			who = FROM
+		}
+		NOT = { has_province_modifier = verne_port_of_adventure }
+	}
+	effect = {
+		kill_units = { who = FROM type = infantry amount = 5 }
+		create_port_of_adventure = yes
+		if = {
+			limit = { has_province_flag = merfolk_settlement }
+			merfolk_add_opinion_effect_small = yes
+		}
+		if = {
+			limit = {
+				region_for_scope_province = {
+					is_empty = yes
+					has_port = yes
+				}
+			}
+			custom_tooltip = verne_port_of_adventure_button_effect_tt
+			hidden_effect = {
+				region = {
+					limit = {
+						is_empty = yes
+						has_port = yes
+					}
+					type = random
+					amount = 1
+					add_siberian_construction = 100
+				}
+			}
+		}
+	}
+}
 
 custom_button = { #Chaqway
 	name = chaqway_markets_button
@@ -1295,4 +1418,85 @@ custom_button = { #Chaqway
 		}
 	}
 	tooltip = estabilish_qhatuway
+}
+
+custom_button = {
+	name = S15_aquaculture_button
+	potential = {
+		owner = {
+			tag = S15
+			tag = FROM
+			NOT = { has_country_flag = S15_opened_menu }
+		}
+		has_port = yes
+	}
+	trigger = {
+		owner = {
+			OR = {
+				mission_completed = S15_the_great_pearl_cave
+				mission_completed = S15_rebuild_karassk
+			}
+		}
+		has_port = yes
+		NOT = {
+			province_id = 5834
+			province_id = 5895
+			province_id = 5898
+			province_id = 5914
+			province_id = 5941
+			province_id = 5949
+			province_id = 6060
+		}
+		custom_trigger_tooltip = {
+			tooltip = S15_aquaculture_building_tt
+			NOT = { has_province_flag = S15_aquaculture }
+		}
+	}
+	effect = {
+		owner = {
+			country_event = {
+				id = flavour_karshyr.100
+			}
+		}
+	}
+	tooltip = S15_aquaculture_tt
+}
+
+custom_button = {	#celmaldor trade league investment
+	name = celmaldor_trade_league_investment
+	tooltip = z22_trade_league_investment_tt
+	potential = { 
+		has_global_flag = z22_trade_league_investment
+		FROM = {
+			is_or_was_tag = { tag = Z22 }
+		}
+		owner = {
+			is_giesadh_or_trade_league_member = yes 
+			NOT = {
+				has_global_flag = z22_in_investment_screen
+			}
+		}
+	}
+	trigger = {
+		NOT = {
+			has_any_ongoing_construction = yes
+		}
+		num_free_building_slots = 1
+		FROM = {
+			is_or_was_tag = { tag = Z22 }
+			treasury = 100
+		}
+	}
+	effect = {
+		set_global_flag = z22_in_investment_screen
+		set_province_flag = z22_investment_province_chosen
+		hidden_effect = {
+			save_event_target_as = z22_investment_province_target
+		}
+		FROM = {
+			country_event = {
+				id = flavour_celmaldor.71
+			}
+		}
+	}
 }

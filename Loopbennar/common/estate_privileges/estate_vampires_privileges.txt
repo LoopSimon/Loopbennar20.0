@@ -100,6 +100,12 @@ estate_vampires_law_open_rule = {
 	on_granted = {
 		clear_vampire_law = yes
 		update_vampire_open_rule_opinion = yes
+
+		hidden_effect = {
+			facade_suspicion_increase_10 = yes
+			facade_suspicion_increase_10 = yes
+			country_event = { id = vampire_ruler.0 }
+		}
 	}
 	on_revoked = {
 		remove_vampire_open_rule_opinion = yes
@@ -238,7 +244,11 @@ estate_vampires_organization_the_blood_court = {
 	}
 	on_granted = {
 		clear_vampire_organization = yes
+
+		facade_suspicion_decrease_10 = yes
 	}
+	on_revoked = { facade_suspicion_increase_10 = yes }
+	on_invalid = { facade_suspicion_increase_10 = yes }
 	
 	penalties = {
 		nobles_influence_modifier = -0.1
@@ -327,7 +337,7 @@ estate_vampires_organization_vampires_lord = {
 				has_estate_privilege = estate_vampires_organization_vampires_lord
 				AND = {
 					NOT = { has_estate_privilege = estate_vampires_organization_vampiric_emigres }
-					has_ruler_flag = is_a_vampire
+					ruler_is_vampire = yes
 				}
 			}
 			NOT = { has_estate_privilege = estate_vampires_organization_the_blood_court }
@@ -337,7 +347,7 @@ estate_vampires_organization_vampires_lord = {
 				has_estate_privilege = estate_vampires_organization_vampires_lord
 				AND = {
 					NOT = { has_estate_privilege = estate_vampires_organization_vampiric_emigres }
-					has_ruler_flag = is_a_vampire
+					ruler_is_vampire = yes
 				}
 			}
 		}
@@ -546,7 +556,6 @@ estate_vampires_transfer_land_ownership = {
 		
 		modifier = {
 			factor = 10
-			#want_to_increase_vampire_land = yes
 			estate_loyalty = {
 				estate = estate_vampires
 				loyalty = 50
@@ -732,13 +741,12 @@ estate_vampires_expelling_vampire_landowners = {
 		
 		modifier = {
 			factor = 10
-			#want_to_reduce_vampire_influence = yes
 			estate_influence = {
 				estate = estate_vampires
 				influence = 90
 			}
 			has_estate_privilege = estate_vampires_organization_vampires_lord
-			NOT = { has_ruler_flag = is_a_vampire }
+			ruler_is_not_vampire = yes
 		}
 		
 		modifier = {
@@ -749,7 +757,7 @@ estate_vampires_expelling_vampire_landowners = {
 		modifier = {
 			factor = 0
 			OR = {
-				a_vampire_rules_the_country = yes
+				ruler_is_vampire = yes
 				average_unrest = 2
 			}
 		}
@@ -772,8 +780,9 @@ estate_vampires_cover_vampires_action = {
 	}
 	can_revoke = {
 	}
-	on_granted = {
-	}
+	on_granted = { facade_suspicion_decrease_5 = yes }
+	on_revoked = { facade_suspicion_increase_5 = yes }
+	on_invalid = { facade_suspicion_increase_5 = yes }
 	
 	penalties = {
 		global_tax_modifier = -0.15
@@ -792,36 +801,30 @@ estate_vampires_cover_vampires_action = {
 		modifier = {
 			factor = 2
 			OR = {
-				#want_to_increase_vampire_influence = yes
-				OR = {
-					AND = {
+				AND = {
+					estate_loyalty = {
+						estate = estate_vampires
+						loyalty = 60
+					}
+					ruler_is_vampire = yes
+				}
+				AND = {
+					estate_influence = {
+						estate = estate_vampires
+						influence = 20
+					}
+					has_vampire_masquerade = yes
+				}
+				AND = {
+					NOT = {
 						estate_loyalty = {
 							estate = estate_vampires
-							loyalty = 60
+							loyalty = 30
 						}
-						a_vampire_rules_the_country = yes
 					}
-					AND = {
-						estate_influence = {
-							estate = estate_vampires
-							influence = 20
-						}
-						has_vampire_masquerade = yes
-					}
-				}
-				#want_to_increase_vampire_loyalty = yes
-				OR = {
-					AND = {
-						NOT = {
-							estate_loyalty = {
-								estate = estate_vampires
-								loyalty = 30
-							}
-						}
-						estate_influence = {
-							estate = estate_vampires
-							influence = 60
-						}
+					estate_influence = {
+						estate = estate_vampires
+						influence = 60
 					}
 				}
 			}
@@ -834,7 +837,7 @@ estate_vampires_cover_vampires_action = {
 		
 		modifier = {
 			factor = 3
-			a_vampire_rules_the_country = yes
+			ruler_is_vampire = yes
 		}
 	}
 }
@@ -883,8 +886,9 @@ estate_vampires_vampires_in_the_administration = {
 	}
 	can_revoke = {
 	}
-	on_granted = {
-	}
+	on_granted = { facade_suspicion_decrease_5 = yes }
+	on_revoked = { facade_suspicion_increase_5 = yes }
+	on_invalid = { facade_suspicion_increase_5 = yes }
 	
 	penalties = {
 	}
@@ -917,14 +921,13 @@ estate_vampires_vampires_in_the_administration = {
 		
 		modifier = {
 			factor = 2
-			#want_to_increase_vampire_influence = yes
 			OR = {
 				AND = {
 					estate_loyalty = {
 						estate = estate_vampires
 						loyalty = 60
 					}
-					a_vampire_rules_the_country = yes
+					ruler_is_vampire = yes
 				}
 				AND = {
 					estate_influence = {
@@ -938,7 +941,7 @@ estate_vampires_vampires_in_the_administration = {
 		
 		modifier = {
 			factor = 100
-			a_vampire_rules_the_country = yes
+			ruler_is_vampire = yes
 		}
 	}
 }
@@ -979,18 +982,17 @@ estate_vampires_vampiric_military_command = {
 		
 		modifier = {
 			factor = 0.5
-			#want_to_reduce_vampire_influence = yes
 			estate_influence = {
 				estate = estate_vampires
 				influence = 90
 			}
 			has_estate_privilege = estate_vampires_organization_vampires_lord
-			NOT = { has_ruler_flag = is_a_vampire }
+			ruler_is_not_vampire = yes
 		}
 		
 		modifier = {
 			factor = 10
-			a_vampire_rules_the_country = yes
+			ruler_is_vampire = yes
 		}
 	}
 }
