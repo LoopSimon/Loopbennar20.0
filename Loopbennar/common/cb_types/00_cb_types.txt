@@ -58,9 +58,10 @@ cb_restore_personal_union = {
 			FROM = {
 				OR = {
 					government = monarchy
-					has_reform = ambrosian_republic
+					# has_reform = ambrosian_republic
 					# has_reform = military_dictatorship_reform
-					has_country_flag = neapolitan_republic
+					# has_country_flag = neapolitan_republic
+					has_country_flag = verne_union_target #Verne PU coup's two republics so I need this to keep the CB
 				}
 				is_subject = no
 				NOT = { ruler_can_revive = yes } # Anbennar
@@ -447,6 +448,21 @@ cb_humiliate = {
 	war_goal = humiliate
 }
 
+#Anbennar - Humiliate CB for missions
+cb_humiliate_triggered = {
+	valid_for_subject = no
+
+	is_triggered_only = yes
+	months = 24
+
+	attacker_disabled_po = {
+		po_demand_provinces
+		po_become_vassal
+		po_subjugate_vassal
+	}
+
+	war_goal = humiliate
+}
 
 # Temporary claim CB (mostly used by missions)
 cb_conquest = {
@@ -871,9 +887,13 @@ cb_liberation = {
 				tag = S53
 				has_country_flag = S53_liberation_non_GP_flag
 			}
+			AND = {
+				tag = A45
+				has_country_flag = A45_liberation
+			}
 			has_country_flag = LRM_imperial_liberation_war
 		}
- 	}
+	}
 	prerequisites = {
 		OR = {
 			AND = {
@@ -916,6 +936,13 @@ cb_liberation = {
 					any_owned_province = {
 						province_group = luna_river_cities_provinces
 					}
+				}
+			}
+			AND = {
+				has_country_flag = A45_liberation
+				FROM = {
+					NOT = { is_part_of_hre = yes }
+					any_neighbor_country = { is_part_of_hre = yes}
 				}
 			}
 		}
@@ -1757,12 +1784,12 @@ cb_force_satrapy = {
 
 	prerequisites_self = {
 		has_dlc = "Mandate of Heaven"
+		is_emperor_of_china = yes
 		NOT = { ruler_has_personality = xhazobs_chosen_personality }
 	}
 
 	prerequisites = {
 		FROM = { is_subject = no }
-		is_emperor_of_china = yes
 		OR = {
 			is_neighbor_of = FROM
 			any_subject_country = { is_neighbor_of = FROM } #Anbennar
@@ -1778,32 +1805,39 @@ cb_force_tributary_anb = {
 
 	prerequisites_self = {
 		has_dlc = "Mandate of Heaven"
+		NOT = { is_subject_of_type = tributary_state } #Satrapies can't get tributaries
+		NOT = { tag = L25 } #so AI sakul doesnt block its own expansion
+		OR = {
+			culture_group = ogre # anbennar
+			religion = feast_of_the_gods # anbennar, required for mechanics
+			AND = {
+				culture_group = gnollish
+				OR = {
+					religion = xhazobkult
+					NOT = { ai = yes }
+				}
+			}
+			has_country_flag = can_use_tributary_cb_flag # anbennar
+			has_government_attribute = can_use_tributary_cb
+			is_sri_baginda = yes
+		}
 	}
 
 	prerequisites = {
 
 		FROM = { is_subject = no }
-		NOT = { tag = L25 } #so AI sakul doesnt block its own expansion
 		OR = {
-			culture_group = ogre # anbennar
-			religion = feast_of_the_gods # anbennar, required for mechanics
-			has_country_flag = can_use_tributary_cb_flag # anbennar
-			has_government_attribute = can_use_tributary_cb
-			AND = { #T2 can only use on yanglam, T3 whatever
-				is_sri_baginda = yes
-				OR = {
-					AND = {
-						is_tier_2_baginda = yes
-						FROM = { 
-							OR = {
-								tag = Y69  #Brenulan
-								culture_group = yanglam 
-							}
-						}
+			NOT = { is_sri_baginda = yes }
+			AND = {
+				is_tier_2_baginda = yes
+				FROM = { 
+					OR = {
+						tag = Y69  #Brenulan
+						culture_group = yanglam 
 					}
-					is_tier_3_baginda = yes
 				}
 			}
+			is_tier_3_baginda = yes
 		}
 		OR = {	
 			is_neighbor_of = FROM
@@ -1811,6 +1845,13 @@ cb_force_tributary_anb = {
 				OR = {
 					is_sri_baginda = yes
 					religion = feast_of_the_gods
+					AND = {
+						culture_group = gnollish
+						OR = {
+							religion = xhazobkult
+							NOT = { ai = yes }
+						}
+					}
 				}
 				any_subject_country = { is_neighbor_of = FROM } #Anbennar
 			}
@@ -1866,22 +1907,8 @@ cb_force_join_hre = {
 
 	prerequisites_self = {
 		has_dlc = "Emperor"
-		OR = {
-			AND = {
-				OR = {
-					tag = A77
-					AND = {
-						tag = Z97
-						was_tag = A77
-					}
-				}
-				has_country_flag = aldresia_expand_empire
-			}
-			AND = {
-				is_emperor = yes
-				hre_reform_passed = emperor_reichsstabilitaet
-			}
-		}
+		is_emperor = yes
+		hre_reform_passed = anbennar_reinforce_imperial_frontiers
 	}
 
 	prerequisites = {
@@ -2161,6 +2188,7 @@ cb_push_back_colonizers = {
 		has_dlc = "Conquest of Paradise"
 		is_native_tribe = yes
 		NOT = { has_reform = adventurer_reform has_country_modifier = monstrous_nation } # Anbennar
+		NOT = { has_reform = chendhyan_tribal_federation } # Tribal Chendhyans
 	}
 
 	prerequisites = {

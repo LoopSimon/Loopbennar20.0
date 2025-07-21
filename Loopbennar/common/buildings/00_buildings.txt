@@ -70,11 +70,8 @@ marketplace = {
 			}
 		}
 
-		owner = { accretive_path_jiangszun_chi_stacking_effect = { amount = 20 } }
-		owner = { accretive_path_upper_raheni_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 1 }
-
 		sponsored_adventurers_building_reform_effect = { value = 5 type = trade }
 	}
 	on_destroyed = {
@@ -146,7 +143,6 @@ workshop = {
 		}
 
 		gronstunad_building_authority_effect = { value = 1 }
-
 		sponsored_adventurers_building_reform_effect = { value = 5 type = prod }
 	}
 	on_destroyed = {
@@ -247,11 +243,8 @@ temple = {
 			add_base_tax = 1
 		}
 
-		owner = { accretive_path_harimari_chi_stacking_effect = { amount = 20 } }
-		owner = { accretive_path_goldscale_kobold_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 1 }
-
 		sponsored_adventurers_building_reform_effect = { value = 5 type = tax }
 		
 		if = {
@@ -376,10 +369,17 @@ barracks = {
 			}
 		}
 
-		owner = { accretive_path_jiangyang_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 1 }
-	}
+		
+		if = { #Degakheion
+			limit = { FROM = { has_country_flag = degakheion_manpower_building_buff } }
+			add_province_modifier = {
+				name = G46_barracks_buff
+				duration = -1
+			}
+		}
+	} 
 	on_destroyed = {
 		# if = {
 			# limit = {
@@ -400,9 +400,18 @@ barracks = {
 		update_improved_military_buildings_modifier = {
 			building = barracks #1.35
 		}
+
+		if = { #Degakheion
+			limit = { FROM = { has_country_flag = degakheion_manpower_building_buff } }
+			remove_province_modifier = G46_barracks_buff
+		}
 	}
 	on_obsolete = {
 		gronstunad_building_authority_effect = { value = -1 }
+		if = { #Degakheion
+			limit = { FROM = { has_country_flag = degakheion_manpower_building_buff } }
+			remove_province_modifier = G46_barracks_buff
+		}
 	}
 
 	ai_will_do = {
@@ -575,14 +584,12 @@ fort_15th = {
 			}
 		}
 
-		owner = { accretive_path_xiaken_chi_stacking_effect = { amount = 40 } }
-		owner = { accretive_path_naamjyut_chi_stacking_effect = { amount = 40 } }
 
 		#Anbennar
 		
 		#Anbennar
 		anbennar_building_effect = yes
-
+		owner = { accretive_path_gain_chi = { aspect = serenity_in_rock_and_stone category = mil amount = 20 } }
 		gronstunad_building_authority_effect = { value = 2 }
 
 		
@@ -611,6 +618,16 @@ fort_15th = {
 			}	
 		}
 		spirit_fort_awakening_effect = yes
+		if = { #No double forts for you
+			limit = {
+				OR = {
+					has_building = fort_16th
+					has_building = fort_17th
+					has_building = fort_18th
+				}
+			}
+			remove_building = fort_15th
+		}
 	}
 
 	# THIS = Province, FROM = Destroyer, Will not be called on buildings made obsolete!
@@ -740,7 +757,6 @@ courthouse = {
 			}
 		}
 		
-		owner = { accretive_path_jiangyang_chi_stacking_effect = { amount = 10 } }
 
 		gronstunad_building_authority_effect = { value = 1 }
 	}
@@ -849,6 +865,27 @@ dock = {
 		}
 
 		gronstunad_building_authority_effect = { value = 1 }
+
+		if = {
+			limit = {
+				FROM = {
+					has_estate_privilege = estate_nobility_lizardfolk_imperial_fisheries
+				}
+				OR = {
+					province_id = 5896 
+					province_id = 5898
+					province_id = 5834
+					province_id = 3259
+					province_id = 3258
+				}
+			}
+			add_province_modifier = {
+				name = lizardfolk_imperial_fisheries
+				duration = -1
+			}
+		}
+
+		z22_white_harbour_build_check = yes
 	}
 
 	on_destroyed = {
@@ -856,6 +893,10 @@ dock = {
 			building = dock
 			type = production
 			value = 1
+		}
+		if = {
+			limit = { has_province_modifier = lizardfolk_imperial_fisheries }
+			remove_province_modifier = lizardfolk_imperial_fisheries
 		}
 	}
 	on_obsolete = {
@@ -936,7 +977,6 @@ regimental_camp = {
 
 		gronstunad_building_authority_effect = { value = 2 }
 
-		owner = { accretive_path_jiangyang_chi_stacking_effect = { amount = 20 } }
 	}
 	on_destroyed = {
 		update_improved_military_buildings_modifier = { #1.35
@@ -1059,11 +1099,9 @@ fort_16th = {
 		}
 		#Anbennar
 
-		owner = { accretive_path_xiaken_chi_stacking_effect = { amount = 40 } }
-		owner = { accretive_path_naamjyut_chi_stacking_effect = { amount = 40 } }
 
 		anbennar_building_effect = yes
-
+		owner = { accretive_path_gain_chi = { aspect = serenity_in_rock_and_stone category = mil amount = 20 } }
 		gronstunad_building_authority_effect = { value = 4 }
 		spirit_fort_awakening_effect = yes
 		#Anbennar - Brrtekuh
@@ -1089,6 +1127,16 @@ fort_16th = {
 				limit = { owned_by = FROM }
 				add_devastation = -5
 			}	
+		}
+		if = { #No double forts for you
+			limit = {
+				OR = {
+					has_building = fort_17th
+					has_building = fort_18th
+				}
+			}
+			remove_building = fort_16th
+			remove_building = fort_15th
 		}
 	}
 
@@ -1265,11 +1313,8 @@ cathedral = {
 			add_base_tax = 2
 		}
 		
-		owner = { accretive_path_harimari_chi_stacking_effect = { amount = 20 } }
-		owner = { accretive_path_goldscale_kobold_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 3 }
-
 		sponsored_adventurers_building_reform_effect = { value = 5 type = tax }
 		
 		if = {
@@ -1356,7 +1401,6 @@ university = {
 			FROM = { add_legitimacy = 1 }
 		}
 		
-		owner = { accretive_path_harimari_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 3 }
 		
@@ -1500,11 +1544,8 @@ trade_depot = {
 			FROM = { change_government_reform_progress = 4 }
 		}
 
-		owner = { accretive_path_jiangszun_chi_stacking_effect = { amount = 20 } }
-		owner = { accretive_path_upper_raheni_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 3 }
-
 		sponsored_adventurers_building_reform_effect = { value = 5 type = trade }
 
 		if = {
@@ -1653,7 +1694,6 @@ training_fields = {
 			FROM = { add_legitimacy = 0.5 }
 		}
 
-		owner = { accretive_path_jiangyang_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 3 }
 		
@@ -1661,6 +1701,14 @@ training_fields = {
 			limit = { FROM =  { has_country_flag = J84_training_fields_flag } }
 			add_province_modifier = {
 				name = J84_training_fields_buff
+				duration = -1
+			}
+		}
+
+		if = { #Degakheion
+			limit = { FROM = { has_country_flag = degakheion_manpower_building_buff } }
+			add_province_modifier = {
+				name = G46_training_fields_buff
 				duration = -1
 			}
 		}
@@ -1673,6 +1721,11 @@ training_fields = {
 		if = { #Taychendi Empire
 			limit = { FROM =  { has_country_flag = J84_training_fields_flag } }
 			remove_province_modifier = J84_training_fields_buff
+		}
+
+		if = { #Degakheion
+			limit = { FROM = { has_country_flag = degakheion_manpower_building_buff } }
+			remove_province_modifier = G46_training_fields_buff
 		}
 		# if = {
 			# limit = {
@@ -1793,11 +1846,9 @@ fort_17th = {
 		}
 		#Anbennar
 
-		owner = { accretive_path_xiaken_chi_stacking_effect = { amount = 40 } }
-		owner = { accretive_path_naamjyut_chi_stacking_effect = { amount = 40 } }
 
 		anbennar_building_effect = yes
-
+		owner = { accretive_path_gain_chi = { aspect = serenity_in_rock_and_stone category = mil amount = 20 } }
 		gronstunad_building_authority_effect = { value = 6 }
 		spirit_fort_awakening_effect = yes
 		#Anbennar - Brrtekuh
@@ -1823,6 +1874,14 @@ fort_17th = {
 				limit = { owned_by = FROM }
 				add_devastation = -5
 			}	
+		}
+		if = { #No double forts for you
+			limit = {
+				has_building = fort_18th
+			}
+			remove_building = fort_17th
+			remove_building = fort_16th
+			remove_building = fort_15th
 		}
 	}
 
@@ -1937,11 +1996,8 @@ stock_exchange = {
 			FROM = { change_government_reform_progress = 4 }
 		}
 
-		owner = { accretive_path_jiangszun_chi_stacking_effect = { amount = 20 } }
-		owner = { accretive_path_upper_raheni_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 4 }
-
 		sponsored_adventurers_building_reform_effect = { value = 5 type = trade }
 
 		if = {
@@ -2010,7 +2066,6 @@ counting_house = {
 		}
 
 		gronstunad_building_authority_effect = { value = 4 }
-
 		sponsored_adventurers_building_reform_effect = { value = 5 type = prod }
 	}
 	on_destroyed = {
@@ -2062,7 +2117,6 @@ town_hall = {
 			FROM = { change_government_reform_progress = 4 }
 		}
 		
-		owner = { accretive_path_jiangyang_chi_stacking_effect = { amount = 10 } }
 
 		gronstunad_building_authority_effect = { value = 2 }
 	}
@@ -2168,6 +2222,25 @@ drydock = {
 		anbennar_building_effect = yes
 
 		gronstunad_building_authority_effect = { value = 3 }
+
+		if = {
+			limit = {
+				FROM = {
+					has_estate_privilege = estate_nobility_lizardfolk_imperial_fisheries
+				}
+				OR = {
+					province_id = 5896 
+					province_id = 5898
+					province_id = 5834
+					province_id = 3259
+					province_id = 3258
+				}
+			}
+			add_province_modifier = {
+				name = lizardfolk_imperial_fisheries
+				duration = -1
+			}
+		}
 	}
 
 	on_destroyed = {
@@ -2175,6 +2248,10 @@ drydock = {
 			building = drydock
 			type = production
 			value = 2
+		}
+		if = {
+			limit = { has_province_modifier = lizardfolk_imperial_fisheries }
+			remove_province_modifier = lizardfolk_imperial_fisheries
 		}
 	}
 	on_obsolete = {
@@ -2218,7 +2295,6 @@ conscription_center = {
 			FROM = { add_legitimacy = 0.5 }
 		}
 
-		owner = { accretive_path_jiangyang_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 4 }
 	}
@@ -2345,11 +2421,9 @@ fort_18th = {
 		}
 		#Anbennar
 
-		owner = { accretive_path_xiaken_chi_stacking_effect = { amount = 40 } }
-		owner = { accretive_path_naamjyut_chi_stacking_effect = { amount = 40 } }
 
 		anbennar_building_effect = yes
-
+		owner = { accretive_path_gain_chi = { aspect = serenity_in_rock_and_stone category = mil amount = 20 } }
 		gronstunad_building_authority_effect = { value = 8 }
 		spirit_fort_awakening_effect = yes
 		#Anbennar - Brrtekuh
@@ -2486,11 +2560,12 @@ wharf = {
 		anbennar_building_effect = yes
 
 		gronstunad_building_authority_effect = { value = 5 }
-
+		on_production_manufactory_built_effect = yes
 		on_built_manufactory_effect = yes
 	}
 
 	on_destroyed = {
+		on_production_manufactory_destroyed_effect = yes
 		remove_development_from_building = {
 			building = manufactory
 			type = production
@@ -2595,16 +2670,16 @@ weapons = {
 		}
 		#Anbennar
 
-		owner = { accretive_path_beikling_chi_stacking_effect = { amount = 100 } }
 
 		anbennar_building_effect = yes
 
 		gronstunad_building_authority_effect = { value = 5 }
-
+		on_production_manufactory_built_effect = yes
 		on_built_manufactory_effect = yes
 	}
 
 	on_destroyed = {
+		on_production_manufactory_destroyed_effect = yes
 		remove_development_from_building = {
 			building = manufactory
 			type = production
@@ -2677,11 +2752,12 @@ textile = {
 		anbennar_building_effect = yes
 
 		gronstunad_building_authority_effect = { value = 5 }
-
+		on_production_manufactory_built_effect = yes
 		on_built_manufactory_effect = yes
 	}
 
 	on_destroyed = {
+		on_production_manufactory_destroyed_effect = yes
 		remove_development_from_building = {
 			building = manufactory
 			type = production
@@ -2754,14 +2830,14 @@ plantations = {
 		#Anbennar
 		anbennar_building_effect = yes
 
-		owner = { accretive_path_naamjyut_chi_stacking_effect = { amount = 100 } }
 
 		gronstunad_building_authority_effect = { value = 5 }
-
+		on_production_manufactory_built_effect = yes
 		on_built_manufactory_effect = yes
 	}
 
 	on_destroyed = {
+		on_production_manufactory_destroyed_effect = yes
 		remove_development_from_building = {
 			building = manufactory
 			type = production
@@ -2839,7 +2915,7 @@ tradecompany = {
 		anbennar_building_effect = yes
 
 		gronstunad_building_authority_effect = { value = 5 }
-
+		on_production_manufactory_built_effect = yes
 		on_built_manufactory_effect = yes
 
 		if = {
@@ -2866,6 +2942,7 @@ tradecompany = {
 	}
 
 	on_destroyed = {
+		on_production_manufactory_destroyed_effect = yes
 		remove_development_from_building = {
 			building = manufactory
 			type = production
@@ -2955,10 +3032,9 @@ farm_estate = {
 			FROM = { add_legitimacy = 1 }
 		}
 
-		owner = { accretive_path_jiangyang_chi_stacking_effect = { amount = 20 } }
 
 		gronstunad_building_authority_effect = { value = 5 }
-
+		on_production_manufactory_built_effect = yes
 		on_built_manufactory_effect = yes
 
 		if = {
@@ -3016,6 +3092,7 @@ farm_estate = {
 	}
 
 	on_destroyed = {
+		on_production_manufactory_destroyed_effect = yes
 		remove_development_from_building = {
 			building = manufactory
 			type = production
@@ -3126,10 +3203,11 @@ mills = {
 		anbennar_building_effect = yes
 
 		gronstunad_building_authority_effect = { value = 5 }
-
+		on_production_manufactory_built_effect = yes
 		on_built_manufactory_effect = yes
 	}
 	on_destroyed = {
+		on_production_manufactory_destroyed_effect = yes
 		remove_development_from_building = {
 			building = manufactory
 			type = production
@@ -3785,18 +3863,14 @@ mage_tower = {
 		#Anbennar - Irkorzik
 		if = {
 			limit = { 
-				AND = {
-					owner = { has_estate_privilege = estate_church_sandstorm_summoning }
-					owner = { has_country_flag = irkorzik_sandstorm_summoning_buff }
-				}
+				owner = { has_estate_privilege = estate_church_sandstorm_summoning }
+				owner = { has_country_flag = irkorzik_sandstorm_summoning_buff }
 			}
 			add_province_modifier = { name = irkorzik_sandstorm_summoning_buff duration = -1 }
 		}
 		else_if = {
 			limit = { 
-				AND = {
-					owner = { has_estate_privilege = estate_church_sandstorm_summoning }
-				}
+				owner = { has_estate_privilege = estate_church_sandstorm_summoning }
 			}
 			add_province_modifier = { name = irkorzik_sandstorm_summoning duration = -1 }
 		}
@@ -3822,14 +3896,6 @@ mage_tower = {
 				name = U10_containment_array
 				duration = -1
 			}
-		}
-		if = {
-			limit = { owner = { has_country_modifier = organized_aid } }
-			add_devastation = -5
-			every_neighbor_province = { 
-				limit = { owned_by = FROM }
-				add_devastation = -5
-			}	
 		}
 
 		#Anbennar - Masked Butcher
@@ -3911,20 +3977,16 @@ mage_tower = {
 		#Anbennar - Irkorzik
 		if = {
 			limit = { 
-				AND = {
-					owner = { has_estate_privilege = estate_church_sandstorm_summoning } 
-					owner = { has_country_flag = irkorzik_upgraded_sandstorm_summoning }
-					has_province_modifier = irkorzik_sandstorm_summoning_buff
-				}
+				owner = { has_estate_privilege = estate_church_sandstorm_summoning } 
+				owner = { has_country_flag = irkorzik_upgraded_sandstorm_summoning }
+				has_province_modifier = irkorzik_sandstorm_summoning_buff
 			}
 			remove_province_modifier = irkorzik_sandstorm_summoning_buff
 		}
 		else_if = {
 			limit = { 
-				AND = {
-					owner = { has_estate_privilege = estate_church_sandstorm_summoning } 
-					has_province_modifier = irkorzik_sandstorm_summoning
-				}
+				owner = { has_estate_privilege = estate_church_sandstorm_summoning } 
+				has_province_modifier = irkorzik_sandstorm_summoning
 			}
 			remove_province_modifier = irkorzik_sandstorm_summoning
 		}
