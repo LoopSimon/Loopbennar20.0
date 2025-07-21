@@ -35,46 +35,58 @@ face_stealers_rebels = {
 	
 	# The rebel type with the highest modifier for this province gets picked
 	spawn_chance = {
-		factor = 0
+		factor = 1000
+		modifier = {
+			factor = 0
+			province_has_no_facestealer_trigger = yes
+		}
 	}
  
  	# This is checked for EACH province in the Area of Operations
 	movement_evaluation = {
-		factor = 0
+		factor = 1
+		modifier = {
+			factor = 0.5
+			units_in_province = 1
+		}
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 2
+			OR = {
+				province_has_no_facestealer_trigger = yes
+				has_province_modifier = facestealer_1
+			}
+		}
 	}
  
  	# Province Scope
  	siege_won_trigger = {
-		culture = runsukhi
-		NOT = {
-			is_capital = yes
+		continent = asia
+		OR = {
+			province_has_no_facestealer_trigger = yes
+			has_province_modifier = facestealer_1
 		}
  	}
 	siege_won_effect = {
-		custom_tooltip = religious_rebels_seige_effect_tooltip
-		hidden_effect = {
-			if = {
-				limit = {
-					NOT = { religion = levaajan }
-				}
-				change_religion = levaajan
-				add_province_modifier = {
-					name = "forced_conversion"
-					duration = 730
-				}
-			}
-		}
+		add_facestealer_effect = yes
 	}
 	
 	# Country scope
 	can_negotiate_trigger = {
 #		religion_group = halessi
-		always = no
+		
+		if = { #AI can negotiate
+			limit = { ai = no }
+			always = no
+		}
 	}
 	
 	# Country scope
 	can_enforce_trigger = {
-		always = no
+		always = yes
 	}
 	
 	# Localisation for their demands
@@ -89,13 +101,6 @@ face_stealers_rebels = {
 				hidden = yes
 			}
 		}
-		change_religion = levaajan
-		add_prestige = -50
-		every_owned_province = {
-			limit = {
-				has_rebel_faction = REB
-			}
-			add_local_autonomy = 20
-		}
+		every_owned_province = { limit = { continent = asia } add_facestealer_effect = yes }
 	}
 }

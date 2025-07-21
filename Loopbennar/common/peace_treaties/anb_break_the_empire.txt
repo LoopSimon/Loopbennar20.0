@@ -8,7 +8,7 @@
 # Nor do they support setting provinces (like cede province) or third party countries (like annull treaties) as targets.
 # FROM = The dude that receive it THIS = The dude that launch the shit
 # Example:
-po_chendhya_reclaim_land = {
+po_break_the_empire = {
 	# The following strings need localization: 
 	#		"make_dummy_desc" (uses text processing, supporting bracket notation) ("[FROM.GetName] becomes a [THIS.GetName] Dummy")
 	#		"CB_ALLOWED_make_dummy" (uses plain localization) ("Enforced Dumbness")
@@ -24,45 +24,68 @@ po_chendhya_reclaim_land = {
 	warscore_cost = {
 		# Which of the giver's provinces' war score costs are included and by how much. All entries default to 0. Any combination of entries can be used. Try negative values at your own risk.
 		all_provinces = 0.0 # All the giver's provinces
-		no_provinces = 1000.0 # This is just a constant. Equivalent to a single province with with war score cost 1
+		no_provinces = 50 # This is just a constant. Equivalent to a single province with with war score cost 1
 		owner_keeps = 0.0 # The provinces that are not of any of the types below
-		conquered = 1.0 # Provinces that are selected by a Demand Province treaty
+		conquered = 0.0 # Provinces that are selected by a Demand Province treaty
 		returned_core = 0.0 # Provinces that are selected by a Return Core treaty
 		released_nation = 0.0 # Provinces that will become a part of a selected released-to-be nation
 		cancelled_subject = 0.0 # This one should not be relevant here since Giver can't be a cancelled subject. Including anyway for completeness
 		concede_colonial_region = 0.0 # Ditto
 	}
-	warscore_cap = 70 # Warscore cost will never go above this value. Only enabled if non-negative. This value defaults to -1.
-	requires_demand_independence = no # Whether this can be demanded by the former subject in an independence war without also demanding independence.
+	warscore_cap = 90 # Warscore cost will never go above this value. Only enabled if non-negative. This value defaults to -1.
+	requires_demand_independence = yes # Whether this can be demanded by the former subject in an independence war without also demanding independence.
 	is_make_subject = no # This will make the treaty mutually exclusive with other treaties that makes the giver a subject, or that explicitly frees the giver from their current overlord.
 	requires_is_allowed = yes # If set to "yes", treaty will only be visible when explicitly allowed by casus belli. If not, it will be available but cost diplomatic power.
 	
 	is_visible = { # Defaults to equivalent of "always = yes"
-		is_in_war = { casus_belli = cb_tribal_raiding }
-		FROM = { is_in_war = { casus_belli = cb_tribal_raiding } }
+		tag = B59
+		OR = {
+			is_in_war = {
+				defender_leader = ROOT
+				casus_belli = imperial_chastening
+			}
+			is_in_war = {
+				attacker_leader = ROOT
+				casus_belli = imperial_chastening
+			}
+		}
+		FROM = { 
+			is_in_war = { casus_belli = imperial_chastening }
+			OR = {
+				is_in_war = {
+					defender_leader = THIS
+					casus_belli = imperial_chastening
+				}
+				is_in_war = {
+					attacker_leader = THIS
+					casus_belli = imperial_chastening
+				}
+			} 
+		}
 	}
 	is_allowed = { # Defaults to equivalent of "always = yes"
-		hidden_trigger = { ai = no }
-		has_reform = chendhyan_federation_to_ezhudar
-		custom_trigger_tooltip = {
-			tooltip = owns_chendhyan_tribal_land_tt
-			any_tribal_land = { owned_by = FROM }
+		FROM = {
+			capital_scope = { controlled_by = ROOT }
 		}
 	}
 	effect = { # Defaults to empty effect (which makes error log entry but is safe)
-		FROM = {
-			every_owned_province = {
-				limit = { tribal_land_of = ROOT }
-				decolonize = yes
+		hidden_effect = { #Needed for MT
+			if = {
+				limit = { tag = B59 }
 			}
-			every_neighbor_country = {
-				limit = { NOT = { is_subject_of = ROOT } }
-				reverse_add_casus_belli = {
-					type = cb_tribal_raiding
-					target = ROOT
+			europe = {
+				limit = { 
+					is_part_of_hre = yes 
 				}
+				set_province_flag = was_part_of_hre
 			}
 		}
+		ROOT = { 
+			set_country_flag = broke_the_empire
+			country_event = { id = hre_event.15 }
+		}
+		dismantle_hre = yes
+
 	}
 	ai_weight = { # Defaults to always evaluate to 0
 		export_to_variable = {

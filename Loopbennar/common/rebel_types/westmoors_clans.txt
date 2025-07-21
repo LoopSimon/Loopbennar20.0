@@ -1,0 +1,336 @@
+
+westmoors_clans = {
+
+	color = { 179 51 51 }
+	
+	area = nation
+	government = monarchy
+	defection = none
+	independence = none
+	unit_transfer = yes
+	gfx_type = culture_province	
+	
+	resilient = yes					# Will not disband on defeat.
+	reinforcing = yes				# Will reinforce (double rate in rebel controlled provinces)
+	general = yes					# Does use generals. The 'define_ruler' effect with 'rebel' argument will pick the rebel leader as new King.
+	smart = yes
+	disband_on_leader_death = no	# Pretender rebels live forever!
+	will_relocate = yes				# Units will relocate if they have sieged all provinces nearby and has to move over sea.
+	dynasty = yes	#same dynasty for rebel uprising
+	
+	
+	artillery = 0.1
+	infantry = 0.7
+	cavalry = 0.2
+	
+	morale = 1.25
+	
+	# Possible handle actions
+	handle_action_negotiate = yes
+	handle_action_stability = yes
+	handle_action_build_core = yes
+	handle_action_send_missionary = yes	
+
+	spawn_chance = {
+		factor = 1
+		modifier = {
+			factor = 0
+			owner = {
+				NOT = {
+					has_country_flag = westmoors_pretender_rebels
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			has_rebel_faction = westmoors_clans
+		}
+		modifier = {
+			factor = 5
+			owner = {
+				any_owned_province = {
+					has_rebel_faction = westmoors_clans
+				}
+			}
+		}
+		modifier = {
+			factor = 0
+			owner = {
+				is_colonial_nation = yes
+			}
+		}
+		modifier = {
+			factor = 0
+			owner = {
+				NOT = { num_of_cities = 3 }
+			}
+		}
+		modifier = {
+			factor = 0
+			is_overseas = yes
+		}
+		modifier = {
+			factor = 0.05
+			owner = {
+				OR = {
+					has_country_modifier = lost_mandate_of_heaven
+				}
+			}
+		}
+		modifier = {
+			factor = 2
+			owner = {
+				government = republic
+				aristocracy_ideas = 1
+			}
+		}
+		modifier = {
+			factor = 20
+			owner = {
+				has_disaster = civil_war
+			}
+		}
+		modifier = {
+			factor = 5.0
+			owner = {
+				government = republic
+				NOT = { republican_tradition = 40 }
+			}
+		}	
+		modifier = {
+			factor = 30
+			owner = {
+				government = monarchy
+				has_regency = yes
+				has_heir = no
+			}
+		}
+		modifier = {
+			factor = 5
+			owner = {
+				government = monarchy
+				has_regency = yes
+				has_heir = yes
+				NOT = { heir_claim = 33 }
+			}
+		}
+		modifier = {
+			factor = 5
+			owner = {
+				government = monarchy
+				has_regency = yes
+				has_heir = yes
+				NOT = { heir_claim = 66 }
+			}
+		}
+		modifier = {
+			factor = 2
+			owner = {
+				government = monarchy
+				has_regency = yes
+				has_heir = yes
+				NOT = { heir_claim = 85 }
+			}
+		}
+		modifier = {
+			factor = 4.5
+			owner = {
+				is_lesser_in_union = yes
+			}
+		}
+		modifier = {
+			factor = 3
+			owner = {
+				is_lesser_in_union = yes
+				NOT = { legitimacy = 75 }
+			}
+		}
+		modifier = {
+			factor = 3
+			owner = {
+				is_lesser_in_union = yes
+				NOT = { legitimacy = 50 }
+			}
+		}
+		modifier = {
+			factor = 3
+			owner = {
+				is_lesser_in_union = yes
+				NOT = { legitimacy = 25 }
+			}
+		}
+		modifier = {
+			factor = 0.25
+			owner = {
+				NOT = { primary_culture = ROOT }
+			}
+		}
+		modifier = {
+			factor = 0.1
+			NOT = { is_core = ROOT }
+			any_core_country = {
+				primary_culture = ROOT
+			}
+		}
+		modifier = {
+			factor = 0.75
+			owner = {
+				government = monarchy
+				legitimacy = 66
+			}
+		}
+		modifier = {
+			factor = 0.5
+			owner = {
+				government = monarchy
+				legitimacy = 75
+			}
+		}
+		modifier = {
+			factor = 10
+			owner = { has_country_modifier = "tribal_succession_crisis" }
+		}
+		modifier = {
+			factor = 2.5
+			owner = {
+				government = tribal
+			}
+		}
+	}
+
+	# This is checked for EACH province in the Area of Operations
+	movement_evaluation = {
+		factor = 1
+		modifier = {
+			factor = 0.001
+			controlled_by = REB
+		}
+		modifier = {
+			factor = 4.0
+			is_capital = yes
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 2
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 4
+		}
+		modifier = {
+			factor = 1.5
+			unrest = 6
+		}
+	}
+
+	# Province Scope
+	siege_won_trigger = {
+	}
+	siege_won_effect = {
+	}
+	
+	# Country scope
+	can_negotiate_trigger = {
+		is_at_war = no
+	}
+	
+	# Country scope
+	can_enforce_trigger = {
+		always = yes
+	}
+	
+	# Localisation for their demands
+	demands_description = "pretender_rebels_demand"
+
+	demands_enforced_effect = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = just_lost_to_rebels
+				duration = 10
+				hidden = yes
+			}
+			clr_country_flag = westmoors_pretender_rebels
+		}
+
+		if = {
+			limit = { has_disaster = civil_war }
+			add_prestige = -200
+			add_legitimacy = 25
+		}
+
+		if = {
+			limit = {
+				NOT = {
+					OR = {
+						government = theocracy
+						has_reform = steppe_horde
+						is_emperor_of_china = yes
+						has_reform = colonial_government
+						government = native
+						has_reform = elective_monarchy
+						has_reform = tribal_federation
+						government = tribal
+					}
+				}
+			}
+			change_government = REB
+			#set_legacy_government = despotic_monarchy
+		}
+		if = {
+			limit = { has_heir = yes }
+			kill_heir = { allow_new_heir = no }
+		}
+		if = {
+			limit = { has_consort = yes }
+			kill_consort = yes
+		}
+		set_country_flag = no_new_succession_crisis_if_pretender_rebels #This is used in the event that triggers from the on_action to ensure that you don't get new pretenders if these pretenders are happening because of a succession crisis.
+		define_ruler = {
+			rebel = yes
+			hide_skills = yes
+		}
+		clr_country_flag = no_new_succession_crisis_if_pretender_rebels
+		if = {
+			limit = { has_disaster = civil_war }
+			end_disaster = civil_war
+			clr_country_flag = civilwar_on_capital
+		}
+		if = {
+			limit = { has_disaster = internal_conflicts }
+			country_event = { id = internal_conflicts.8 }
+			end_disaster = internal_conflicts
+		}
+
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			overlord = {
+				create_subject = {
+					subject_type = vassal
+					subject = PREV
+				}
+			}
+			grant_independence = yes
+		}
+
+		if = {
+			limit = {
+				has_country_modifier = z22_westmoor_rebel_consort
+			}
+			define_consort = {
+				adm = 3
+				dip = 5
+				mil = 2
+				culture = moon_elf
+				religion = regent_court
+				dynasty = "Icewind"
+				country_of_origin = Z22
+			}
+			add_opinion = {
+				who = Z22
+				modifier = z22_westmoors_independent
+			}
+		}
+	}
+}

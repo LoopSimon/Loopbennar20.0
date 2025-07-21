@@ -8,7 +8,7 @@
 # Nor do they support setting provinces (like cede province) or third party countries (like annull treaties) as targets.
 # FROM = The dude that receive it THIS = The dude that launch the shit
 # Example:
-po_chendhya_reclaim_land = {
+po_force_revolutionary_ravelian = {
 	# The following strings need localization: 
 	#		"make_dummy_desc" (uses text processing, supporting bracket notation) ("[FROM.GetName] becomes a [THIS.GetName] Dummy")
 	#		"CB_ALLOWED_make_dummy" (uses plain localization) ("Enforced Dumbness")
@@ -24,44 +24,78 @@ po_chendhya_reclaim_land = {
 	warscore_cost = {
 		# Which of the giver's provinces' war score costs are included and by how much. All entries default to 0. Any combination of entries can be used. Try negative values at your own risk.
 		all_provinces = 0.0 # All the giver's provinces
-		no_provinces = 1000.0 # This is just a constant. Equivalent to a single province with with war score cost 1
+		no_provinces = 80 # This is just a constant. Equivalent to a single province with with war score cost 1
 		owner_keeps = 0.0 # The provinces that are not of any of the types below
-		conquered = 1.0 # Provinces that are selected by a Demand Province treaty
+		conquered = 0.0 # Provinces that are selected by a Demand Province treaty
 		returned_core = 0.0 # Provinces that are selected by a Return Core treaty
 		released_nation = 0.0 # Provinces that will become a part of a selected released-to-be nation
 		cancelled_subject = 0.0 # This one should not be relevant here since Giver can't be a cancelled subject. Including anyway for completeness
 		concede_colonial_region = 0.0 # Ditto
 	}
-	warscore_cap = 70 # Warscore cost will never go above this value. Only enabled if non-negative. This value defaults to -1.
-	requires_demand_independence = no # Whether this can be demanded by the former subject in an independence war without also demanding independence.
+	warscore_cap = 90 # Warscore cost will never go above this value. Only enabled if non-negative. This value defaults to -1.
+	requires_demand_independence = yes # Whether this can be demanded by the former subject in an independence war without also demanding independence.
 	is_make_subject = no # This will make the treaty mutually exclusive with other treaties that makes the giver a subject, or that explicitly frees the giver from their current overlord.
 	requires_is_allowed = yes # If set to "yes", treaty will only be visible when explicitly allowed by casus belli. If not, it will be available but cost diplomatic power.
 	
 	is_visible = { # Defaults to equivalent of "always = yes"
-		is_in_war = { casus_belli = cb_tribal_raiding }
-		FROM = { is_in_war = { casus_belli = cb_tribal_raiding } }
+		has_country_flag = pashaine_spread_ravelian_revolution
 	}
 	is_allowed = { # Defaults to equivalent of "always = yes"
-		hidden_trigger = { ai = no }
-		has_reform = chendhyan_federation_to_ezhudar
-		custom_trigger_tooltip = {
-			tooltip = owns_chendhyan_tribal_land_tt
-			any_tribal_land = { owned_by = FROM }
-		}
+		always = yes
 	}
 	effect = { # Defaults to empty effect (which makes error log entry but is safe)
-		FROM = {
-			every_owned_province = {
-				limit = { tribal_land_of = ROOT }
-				decolonize = yes
-			}
-			every_neighbor_country = {
-				limit = { NOT = { is_subject_of = ROOT } }
-				reverse_add_casus_belli = {
-					type = cb_tribal_raiding
-					target = ROOT
+		custom_tooltip = pashaine_force_revolutionary_ravelian_tt
+		hidden_effect = {
+			FROM = {
+				every_owned_province = {
+					set_revolution_in_province = yes
 				}
+				change_religion = ravelian
+				force_ai_convert = yes
 			}
+			export_to_variable = {
+				which = total_development_zeal
+				value = trigger_value:total_development
+				who = FROM
+			}
+			set_variable = {
+				which = total_development_monarch
+				which = total_development_zeal
+			}
+			#0.1 Revolutionary Zeal for every development
+			multiply_variable = {
+				which = total_development_zeal
+				value = 0.1
+			}
+			round_variable = {
+				which = total_development_zeal
+				value = -1
+			}
+			var_effect = { effect = add_revolutionary_zeal var = total_development_zeal sign = + }
+			#0.33 Monarch Power for every development
+			multiply_variable = {
+				which = total_development_monarch
+				value = 0.33
+			}
+			round_variable = {
+				which = total_development_monarch
+				value = -1
+			}
+			set_variable = {
+				which = adm_power
+				which = total_development_monarch
+			}
+			set_variable = {
+				which = mil_power
+				which = total_development_monarch
+			}
+			set_variable = {
+				which = dip_power
+				which = total_development_monarch
+			}
+			var_effect = { effect = add_adm_power var = adm_power sign = + }
+			var_effect = { effect = add_mil_power var = mil_power sign = + }
+			var_effect = { effect = add_dip_power var = dip_power sign = + }
 		}
 	}
 	ai_weight = { # Defaults to always evaluate to 0

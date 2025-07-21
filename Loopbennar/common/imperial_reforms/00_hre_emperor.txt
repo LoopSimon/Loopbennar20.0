@@ -1,13 +1,16 @@
-emperor_reichsreform = {
+anbennar_call_for_reforms = { #call for reforms
 	empire = hre
 	potential = {
 		has_dlc = "Emperor"
 	}
-	province = {
+	province = { #all empire provinces
 		local_build_cost = -0.05
 		local_development_cost = -0.05
 	}
-	on_effect = {
+	emperor = { #for emperor
+		imperial_authority_value = 0.05
+	}
+	on_effect = { #what happens when selected
 		imperial_ban_allowed = yes
 	}
 	off_effect = {
@@ -15,63 +18,68 @@ emperor_reichsreform = {
 	}
 	gui_container = mainline
 }
-
-emperor_reichsregiment = {
-	empire = hre
-	potential = {
-		has_dlc = "Emperor"
-	}
-	province = {
-		local_unrest = -2
-	}
-	emperor = {
-		diplomatic_reputation = 1
-		diplomats = 1
-	}
-	required_reform = emperor_reichsreform
-	gui_container = mainline
-}
-
-emperor_reichsstabilitaet = {
-	empire = hre
-	required_reform = emperor_reichsregiment
-	gui_container = mainline
-
-	potential = {
-		has_dlc = "Emperor"
-	}
-	province = {
-		local_state_maintenance_modifier = -0.25
-	}
-	on_effect = {
-		custom_tooltip = "EXPAND_EMPIRE_CB"
-	}
-}
-
-emperor_gemeinerpfennig = {
+anbennar_imperial_adventurer_companies = { #imperial adventurer companies
 	empire = hre
 	potential = {
 		has_dlc = "Emperor"
 	}
 	all = {
-		diplomatic_reputation = 1
+		imperial_mercenary_cost = -0.15
+		adventurers_loyalty_modifier = 0.05
 	}
-	emperor_per_prince = {
-		global_tax_income = 0.5
-	}
-	required_reform = emperor_reichsstabilitaet
 	gui_container = mainline
+	required_reform = anbennar_call_for_reforms
 }
-
-emperor_perpetual_diet = {
+anbennar_guarantee_temple_rights = { #guarantree temple rights
 	empire = hre
-	required_reform = emperor_gemeinerpfennig
-	gui_container = mainline
-
 	potential = {
 		has_dlc = "Emperor"
 	}
-	
+	emperor_per_prince = {
+		global_tax_income = 0.4
+	}
+	all = {
+		tolerance_own = 1
+		tolerance_heretic = 1
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		### release temples
+		every_country_in_hre = { effect = "country_event = { id = flavour_eoa_reforms.1 }" }
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	gui_container = mainline
+	required_reform = anbennar_imperial_adventurer_companies
+}
+anbennar_reinforce_imperial_frontiers = { #reinforce imperial frontiers
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	all = {
+		defensiveness = 0.1
+		reinforce_cost_modifier = -0.1
+	}
+	emperor = {
+		diplomatic_reputation = 1
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		custom_tooltip = "EXPAND_EMPIRE_CB"
+		custom_tooltip = authority_on_enforce
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	gui_container = mainline
+	required_reform = anbennar_guarantee_temple_rights
+}
+anbennar_permanent_parliament = { #permanent parliament
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	all = {
+		stability_cost_modifier = -0.1
+	}
 	emperor = {
 		free_city_imperial_authority = 0.5
 	}
@@ -102,7 +110,7 @@ emperor_perpetual_diet = {
 								owner = { has_reform = free_city }
 							}
 							AND = {
-								owner = { is_elector = yes }
+								has_terrain = city_terrain
 								development = 20
 							}
 							development = 30
@@ -124,166 +132,161 @@ emperor_perpetual_diet = {
 			remove_province_triggered_modifier = perpetual_diet
 		}
 	}
-}
-
-emperor_landsknechtswesen = {
-	empire = hre
-	required_reform = emperor_perpetual_diet
 	gui_container = mainline
-
-	potential = {
-		has_dlc = "Emperor"
-	}
-	all = {
-		imperial_mercenary_cost = -0.25
-	}
+	required_reform = anbennar_reinforce_imperial_frontiers
 }
 
-emperor_landfriede = {
+anbennar_nobles_of_the_wand = {
 	empire = hre
 	potential = {
 		has_dlc = "Emperor"
-	}
-	all = {
-		technology_cost = -0.05
 	}
 	emperor = {
-		prestige = 0.5
+		max_absolutism = 10
+		imperial_authority = 0.1
 	}
-	province = {
-		local_institution_spread = 0.1
-	}
+	#add minstrerallis promotion
 	on_effect = {
-		internal_hre_cb = no
+		custom_tooltip = anbennar_empire_colourstop_tt
+		custom_tooltip = anbennar_mage_more_likely.tt
+		every_country_in_hre = { effect = "country_event = { id = flavour_eoa_reforms.2 }" }
+		### established nobles of the wand flavour
+		custom_tooltip = anbennar_empire_colourstart_tt
 	}
-	off_effect = {
-		internal_hre_cb = yes
-	}
-	required_reform = emperor_landsknechtswesen
-	gui_container = mainline
-}
-
-emperor_reichstag_collegia = {
-	empire = hre
-	required_reform = emperor_perpetual_diet
-	disabled_by = emperor_hofgericht
 	gui_container = left_branch
-	ai_acceptance_decentralize = yes
-
+	required_reform = anbennar_permanent_parliament
+	disabled_by = anbennar_expand_marquis_rank
+}
+anbennar_enable_magisterium_governance = {
+	empire = hre
 	potential = {
 		has_dlc = "Emperor"
 	}
 	emperor = {
 		max_free_cities = 3
 	}
-}
-
-emperor_expand_gemeiner_pfennig = {
-	empire = hre
-	required_reform = emperor_reichstag_collegia
-	gui_container = left_branch
-	ai_acceptance_decentralize = yes
-
-	potential = {
-		has_dlc = "Emperor"
-	}
-	emperor_per_prince = {
-		global_manpower = 0.1
-	}
-	elector_per_prince = {
-		global_manpower = 0.2
-	}
-	province = {
-		local_friendly_movement_speed = 0.1
-	}
-}
-
-emperor_rechenschaft = {
-	empire = hre
-	required_reform = emperor_expand_gemeiner_pfennig
-	gui_container = left_branch
-	ai_acceptance_decentralize = yes
-
-	potential = {
-		has_dlc = "Emperor"
-	}
-	emperor_per_prince = {
-		imperial_authority = 0.01
-	}
-	emperor = {
-		max_electors = 1
-	}
-}
-
-emperor_geteilte_macht = {
-	empire = hre
-	required_reform = emperor_rechenschaft
-	gui_container = left_branch
-	ai_acceptance_decentralize = yes
-	disables_hre_badboy_points = yes
-
-	potential = {
-		has_dlc = "Emperor"
-	}
 	on_effect = {
-		custom_tooltip = GETEILTE_MACHT_EFFECT
+		custom_tooltip = anbennar_empire_colourstop_tt
+		custom_tooltip = enable_big_magetower
+		hidden_effect = {
+			every_free_city = {
+				effect = "
+					capital_scope = {
+						add_province_modifier = { name = eoa_magisterium_gov duration = -1 }
+						add_building = mage_tower
+						hidden_effect = { if = { limit = { has_construction = mage_tower } cancel_construction = yes } }
+					}
+				"
+			}
+		}
+		custom_tooltip = anbennar_empire_colourstart_tt
 	}
-	elector_per_prince = {
-		global_tax_income = 0.5
-	}
-	province = {
-		local_development_cost = -0.05
-	}
-}
-
-emperor_reichskrieg = {
-	empire = hre
-	required_reform = emperor_geteilte_macht
+	off_effect = { every_province = { remove_province_modifier = eoa_magisterium_gov } }
 	gui_container = left_branch
-	ai_acceptance_decentralize = yes
-
-	potential = {
-		has_dlc = "Emperor"
-	}
-	on_effect = {
-		enable_imperial_realm_war = yes
-		custom_tooltip = REICHSKRIEG_DEFENSE_OF_REALM_MODIFIER
-	}
-
-	off_effect = {
-		enable_imperial_realm_war = no
-	}
+	required_reform = anbennar_nobles_of_the_wand
 }
-
-emperor_hofgericht = { 
+anbennar_erelas_doctrine = {
 	empire = hre
 	potential = {
 		has_dlc = "Emperor"
 	}
 	emperor = {
+		imperial_authority_value = 0.1
 		core_creation = -0.10
+		can_claim_states = yes
 	}
-	required_reform = emperor_perpetual_diet
-	disabled_by = emperor_reichstag_collegia
-	gui_container = right_branch
-	ai_acceptance_centralize = yes
+	member = {
+		years_of_nationalism = -5
+		core_decay_on_your_own = -0.15
+		harsh_treatment_cost = -0.2
+	}
+	gui_container = left_branch
+	required_reform = anbennar_enable_magisterium_governance
 }
-
-emperor_imperial_estates = {
+anbennar_regulate_artificery = {
 	empire = hre
-	required_reform = emperor_hofgericht
-	gui_container = right_branch
-	ai_acceptance_centralize = yes
-	
+	potential = {
+		has_dlc = "Emperor"
+	}
+	emperor_per_prince = {
+		imperial_authority = 0.005
+	}
+	all = {
+		loyalty_change_on_revoked = 0.05
+		stability_cost_modifier = -0.15
+		artificers_research_time = 0.20
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		custom_tooltip = anbennar_reduce_artificer.tt
+		every_country_in_hre = {
+			effect = "
+				country_event = { id = flavour_eoa_reforms.3 } #edict regulating artificery
+				custom_tooltip = add_magic_study_modifier_25_tt
+				update_magic_study_experience_modifier = { value = 25 } #placeholder til magic rework
+			"
+		}
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	off_effect = {
+		every_country_in_hre = { effect = "update_magic_study_experience_modifier = { value = -25 }" }
+	}
+	gui_container = left_branch
+	required_reform = anbennar_erelas_doctrine
+}
+anbennar_imperial_wizards = {
+	empire = hre
 	potential = {
 		has_dlc = "Emperor"
 	}
 	emperor = {
-		imperial_authority = 0.25
+		spy_action_cost_modifier = -0.2
 	}
+	elector_per_prince = {
+		global_spy_defence = 0.005
+		spy_offence = 0.01
+	}
+	all = {
+		mages_influence_modifier = 0.10
+		global_rebel_suppression_efficiency = 0.5
+		siege_ability = 0.10
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		custom_tooltip = imperial_wizards_estate_effect.tt
+		every_country_in_hre = { effect = "country_event = { id = flavour_eoa_reforms.4 }" }
+		#imperial war wizards event
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	gui_container = left_branch
+	required_reform = anbennar_regulate_artificery
+}
+anbennar_mages_peace = {
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	emperor = {
+		max_absolutism_effect = 0.15
+	}
+	member = {
+		state_maintenance_modifier = -0.25
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		internal_hre_cb = no
+		every_country_in_hre = { effect = "country_event = { id = flavour_eoa_reforms.5 }" }
+		#mages peace event
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	off_effect = {
+		internal_hre_cb = yes
+	}
+	gui_container = left_branch
+	required_reform = anbennar_imperial_wizards
 }
 
-emperor_erbkaisertum = {
+anbennar_imperial_dynasty = { #establish an imperial dynasty
 	empire = hre
 	potential = {
 		has_dlc = "Emperor"
@@ -292,6 +295,7 @@ emperor_erbkaisertum = {
 		imperial_authority = 0.25
 	}
 	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
 		if = {
 			limit = {
 				hre_religion_locked = no
@@ -300,17 +304,224 @@ emperor_erbkaisertum = {
 			set_hre_religion_treaty = yes
 		}
 		hre_inheritable = yes
+		emperor = { #revoke privilegia de non appelando
+			country_event = { id = 9073 tooltip = vassalize_empire2 }
+		}
+		hidden_effect = {
+			every_country = {
+				limit = {
+					is_part_of_hre = yes
+					is_emperor = no
+					num_of_cities = 1
+					NOT = { vassal_of = ROOT }
+				}
+				country_event = { id = 9074 }
+			}
+		}
+		custom_tooltip = anbennar_empire_colourstart_tt
 	}
 	off_effect = {
 		hre_inheritable = no
 		clr_country_flag = usurp_emperorship_hereditary_flag	#Anbennar - long lived emperor stuffs
 	}
-	required_reform = emperor_imperial_estates
-	gui_container = right_branch
 	ai_acceptance_centralize = yes
+	gui_container = left_branch
+	required_reform = anbennar_mages_peace
+}
+anbennar_form_anbennar = {
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	on_effect = {
+		hidden_effect = {
+			emperor = {
+				if = {
+					limit = {
+						ai = yes
+					}
+					add_treasury = 15000 #so AI doesn't shit itself and immediately bankrupt
+				}
+				hidden_effect = { remove_country_modifier = escanni_wars_escanni_emperor }	#Anbennar
+				country_event = { id = 9075 tooltip = renovatio_effect }
+			}			
+		}
+	}
+	gui_container = left_branch
+	ai_acceptance_centralize = yes
+	required_reform = anbennar_imperial_dynasty
 }
 
-emperor_privilegia_de_non_appelando = {
+anbennar_expand_marquis_rank = {
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	elector_per_prince = {
+		global_manpower = 0.2
+	}
+	province = {
+		local_friendly_movement_speed = 0.1
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		emperor = {
+			country_event = { id = flavour_eoa_reforms.6 } #choosing an imperial marshall
+		}
+		#if = { limit = { A32 = { AND = { exists = yes is_subject = no is_part_of_hre = no} #activate invitation of ibevar incident } } }
+		every_country = {
+            limit = {
+                is_part_of_hre = yes
+                is_subject = no
+                OR = {
+                    tag = A22
+                    tag = A48
+                    AND = {
+						NOT = {  tag = emperor }
+						government = monarchy
+                        total_development = 80
+                        land_forcelimit = 12
+                        OR = {
+                            any_subject_country = {
+                                any_neighbor_province = {
+                                    is_part_of_hre = no
+                                }
+                            }
+                            any_neighbor_province = {
+                                is_part_of_hre = no
+                            }
+                        }
+                    }
+                }
+            }
+            country_event = {
+                id = flavour_eoa_reforms.7
+            }
+        }
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	gui_container = right_branch
+	required_reform = anbennar_permanent_parliament
+	disabled_by = anbennar_nobles_of_the_wand
+}
+anbennar_internal_divisions = {
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	emperor = {
+		governing_capacity_modifier = 0.10
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		custom_tooltip = unlocks_consolidate_courts
+		custom_tooltip = eoa_add_anbenncost_ptm
+		hidden_effect = { 8 = { add_province_triggered_modifier = imperial_parliament_empowered } }
+		if = {
+			limit = { hre_reform_passed = anbennar_expand_marquis_rank }
+			emperor = { custom_tooltip = eoa_court_moment }
+		}
+		every_country_in_hre = { effect = "country_event = { id = flavour_eoa_reforms.8 }" } #formalize internal divisions
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	off_effect = {
+		8 = { remove_province_triggered_modifier = imperial_parliament_empowered }
+	}
+	gui_container = right_branch
+	required_reform = anbennar_expand_marquis_rank
+}
+anbennar_electoral_council = {
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	emperor = {
+		max_electors = 1
+		imperial_authority = 0.35
+	}
+	member = {
+		reform_progress_growth = 0.1
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		custom_tooltip = unlocks_abolish_borders
+		every_country_in_hre = { effect = "country_event = { id = flavour_eoa_reforms.9 }" }
+		#equalised electoral council
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	gui_container = right_branch
+	required_reform = anbennar_internal_divisions
+}
+anbennar_imperial_embassies = {
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	emperor = {
+		nobles_loyalty_modifier = 0.10
+		improve_relation_modifier = 0.15
+	}
+	member = {
+		diplomats = 1
+		trade_efficiency = 0.1
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		custom_tooltip = unlocks_de_jure_law
+		every_country_in_hre = { effect = "country_event = { id = flavour_eoa_reforms.10 }" }
+		#anbennarian de jure law
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	gui_container = right_branch
+	required_reform = anbennar_electoral_council
+}
+anbennar_empower_imperial_diet = {
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	all = {
+		global_prosperity_growth = 0.5
+		global_institution_spread = 0.25
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		#custom_tooltip = unlocks_unification_edict
+		if = {
+			limit = { hre_religion_locked = no }
+			custom_tooltip = unlocks_peace_edict
+		}
+		internal_hre_cb = no
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	off_effect = {
+		internal_hre_cb = yes
+	}
+	gui_container = right_branch
+	required_reform = anbennar_imperial_embassies
+}
+anbennar_imperial_war = {
+	empire = hre
+	potential = {
+		has_dlc = "Emperor"
+	}
+	on_effect = {
+		custom_tooltip = anbennar_empire_colourstop_tt
+		#custom_tooltip = unlocks_unite_empire
+		enable_imperial_realm_war = yes
+		custom_tooltip = REICHSKRIEG_DEFENSE_OF_REALM_MODIFIER
+		every_country_in_hre = { effect = "country_event = { id = flavour_eoa_reforms.11 }" }
+		#REICHSKREIG + IMPERIAL PEACE BABY WHAT COULD GO WRONG!! FOR THE GLORY OF THE EMPIRE!!
+		custom_tooltip = anbennar_empire_colourstart_tt
+	}
+	off_effect = {
+		enable_imperial_realm_war = no
+	}
+	gui_container = right_branch
+	required_reform = anbennar_empower_imperial_diet
+}
+
+anbennar_aristo_revoke = {
 	empire = hre
 	war = yes			#this may cause a war, so special AI check needed, to not lose many.
 	discounted_from_foreign_overlord_check = yes
@@ -325,39 +536,56 @@ emperor_privilegia_de_non_appelando = {
 		imperial_authority = 0.25
 	}
 	on_effect = {
-	
+		custom_tooltip = anbennar_empire_colourstop_tt
 		emperor = {
-			country_event = { id = 9073 tooltip = vassalize_empire2 }
-		}
-		hidden_effect = {
-			every_country = {
-				limit = {
-					is_part_of_hre = yes
-					is_emperor = no
-					num_of_cities = 1
-					NOT = { vassal_of = ROOT }
-				}
-				country_event = { id = 9074 }
+			country_event = {
+				id = flavour_eoa_reforms.25
 			}
 		}
+		if = {
+			limit = {
+				hre_religion_locked = no
+				hre_religion_treaty = no
+			}
+			set_hre_religion_treaty = yes
+		}
+		custom_tooltip = anbennar_empire_colourstart_tt
 	}
-	required_reform = emperor_erbkaisertum
+	off_effect = {
+		clr_country_flag = usurp_emperorship_hereditary_flag	#Anbennar - long lived emperor stuffs
+	}
+	required_reform = anbennar_imperial_war
 	gui_container = right_branch
 	ai_acceptance_centralize = yes
 }
 
-emperor_renovatio = {
+anbennar_aristo_unite = {
 	empire = hre
 	potential = {
 		has_dlc = "Emperor"
 	}
 	on_effect = {
-		emperor = {
-			hidden_effect = { remove_country_modifier = escanni_wars_escanni_emperor }	#Anbennar
-			country_event = { id = 9075 tooltip = renovatio_effect }
+		if = {
+			limit = {
+				NOT = {
+					has_global_flag = eoa_wont_unite
+				}
+			}
+			emperor = {
+				country_event = { id = 9075 tooltip = renovatio_effect }
+			}
+		}
+		else = {
+			every_country = {
+				limit = { is_part_of_hre = yes }
+				add_stability_or_adm_power = yes
+				add_dip_power = 100
+				add_adm_power = 100
+				add_mil_power = 100
+			}
 		}
 	}
-	required_reform = emperor_privilegia_de_non_appelando
+	required_reform = anbennar_aristo_revoke
 	gui_container = right_branch
 	ai_acceptance_centralize = yes
 }

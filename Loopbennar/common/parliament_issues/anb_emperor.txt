@@ -1,0 +1,382 @@
+consolidate_courts = {
+	category = 3
+	allow = {
+		is_emperor = yes
+		NOT = { 
+			has_global_flag = eoa_consolidated_courts
+			tag = Z01
+		}
+		hre_reform_passed = anbennar_internal_divisions 
+        if = {
+            limit = {
+                ai = no
+            }
+            imperial_influence = 10
+        }
+	}
+	effect = {
+			if = {
+				limit = { ai = no }
+				add_imperial_influence = -10
+			}
+			custom_tooltip = eoa_princely_support
+		hidden_effect = { #decided to not make this a scripted effect since each time these need to have a different effect
+			random_list = {
+				1 = {
+					modifier = {
+						factor = 9
+						check_variable = {
+							which = eoa_prince_support
+							value = 9
+						}
+					}
+					set_global_flag = eoa_consolidated_courts
+					every_country = {
+						limit = { is_part_of_hre = yes }
+						country_event = { id = flavour_eoa_reforms.16 }
+					}
+					eoa_prince_support_bonus = yes
+				}
+				9 = {
+					trigger = {
+						NOT = {
+							check_variable = {
+								which = eoa_prince_support
+								value = 20
+							}
+						}
+					}
+					country_event = { id = flavour_eoa_reforms.30 }
+				}
+			}
+		}
+	}
+	chance = { factor = 1000 } #should always appear if trigger met
+	ai_will_do = { factor = 1000 } #should be AI top prio
+}
+
+abolish_imperial_borders = {
+	category = 3
+	allow = {
+		is_emperor = yes
+		NOT = { 
+			has_global_flag = eoa_abolished_borders
+			tag = Z01
+		}
+		hre_reform_passed = anbennar_electoral_council
+        has_global_flag = eoa_consolidated_courts
+        if = {
+            limit = {
+                ai = no
+            }
+            imperial_influence = 10
+        }
+	}
+	effect = {
+		if = {
+			limit = { ai = no }
+			add_imperial_influence = -10
+		}
+		custom_tooltip = eoa_princely_support
+		hidden_effect = {
+			random_list = {
+				1 = {
+					modifier = {
+						factor = 9
+						check_variable = { which = eoa_prince_support value = 9 }
+					}
+					set_global_flag = eoa_abolished_borders
+					every_country = {
+						limit = { is_part_of_hre = yes }
+						country_event = { id = flavour_eoa_reforms.17 }
+						add_country_modifier = { name = eoa_borders duration = 3650 }
+					}
+					eoa_prince_support_bonus = yes
+				}
+				9 = {
+					trigger = {
+						NOT = { check_variable = { which = eoa_prince_support value = 20 } }
+					}
+					country_event = { id = flavour_eoa_reforms.30 }
+				}
+			}
+		}
+	}
+	chance = { factor = 1000 } #should always appear if trigger met
+	ai_will_do = { factor = 1000 } #should be AI top prio
+}
+
+anbennar_de_jure_law = {
+	category = 3
+	allow = {
+		is_emperor = yes
+		NOT = { 
+			has_global_flag = eoa_established_embassies
+			tag = Z01
+		}
+		hre_reform_passed = anbennar_imperial_embassies
+		has_global_flag = eoa_abolished_borders		
+		if = {
+			limit = {
+				emperor = { ai = no }
+			}
+			imperial_influence = 10
+		}
+	}
+	effect = {
+		if = {
+			limit = { ai = no }
+			add_imperial_influence = -10
+		}
+		custom_tooltip = eoa_princely_support
+		hidden_effect = {
+			random_list = {
+				1 = {
+					modifier = {
+						factor = 9
+						check_variable = { which = eoa_prince_support value = 9 }
+					}
+					set_global_flag = eoa_established_embassies
+					every_country = {
+						limit = { is_part_of_hre = yes }
+						country_event = { id = flavour_eoa_reforms.18 }
+					}
+					eoa_prince_support_bonus = yes
+				}
+				9 = {
+					trigger = {
+						NOT = { check_variable = { which = eoa_prince_support value = 20 } }
+					}
+					country_event = { id = flavour_eoa_reforms.30 }
+				}
+			}
+		}
+	}
+	chance = { factor = 1000 } #should always appear if trigger met
+	ai_will_do = { factor = 1000 } #should be AI top prio
+}
+
+edict_of_peace = { #Cuius regio, eius religio
+	category = 3
+	allow = {
+		is_emperor = yes
+		NOT = { #probably redundant here since if HRE has a religion this won't trigger anyway, but i include it for consistency
+			has_global_flag = eoa_religion_established
+			tag = Z01
+		}
+		hre_reform_passed = anbennar_empower_imperial_diet
+		has_global_flag = eoa_established_embassies
+		hre_religion_locked = no
+		hre_religion_treaty = no
+		if = {
+			limit = {
+				emperor = { ai = no }
+			}
+			imperial_influence = 10
+		}
+	}
+	effect = {
+		if = {
+			limit = { ai = no }
+			add_imperial_influence = -10
+		}
+		custom_tooltip = eoa_princely_support
+		hidden_effect = {
+			random_list = {
+				1 = {
+					modifier = {
+						factor = 9
+						check_variable = { which = eoa_prince_support value = 9 }
+					}
+					set_global_flag = eoa_religion_established
+					every_country = {
+						limit = { is_part_of_hre = yes }
+						country_event = { id = flavour_eoa_reforms.19 }
+					}
+					set_hre_religion_treaty = yes
+					eoa_prince_support_bonus = yes
+				}
+				9 = {
+					trigger = {
+						NOT = { check_variable = { which = eoa_prince_support value = 20 } }
+					}
+					country_event = { id = flavour_eoa_reforms.30 }
+				}
+			}
+		}
+	}
+	chance = { factor = 1000 } #should always appear if trigger met
+	ai_will_do = { factor = 1000 } #AI should want religious peace
+}
+
+edict_enforcing_religion = { #recognize adean/corin/cube as head of the court
+	category = 3
+	allow = {
+		is_emperor = yes
+		NOT = { #probably redundant here since if HRE has a religion this won't trigger anyway, but i include it for consistency
+			has_global_flag = eoa_religion_established
+			tag = Z01
+		}
+		hre_reform_passed = anbennar_empower_imperial_diet
+		has_global_flag = eoa_established_embassies
+		hre_religion_locked = yes
+		hre_religion_treaty = no
+		OR = {
+			religion = regent_court
+			religion = corinite
+			religion = ravelian
+		}
+		if = {
+			limit = {
+				emperor = { ai = no }
+			}
+			imperial_influence = 10
+		}
+	}
+	effect = {
+		if = {
+			limit = { ai = no }
+			add_imperial_influence = -10
+		}
+		custom_tooltip = eoa_princely_support
+		hidden_effect = {
+			random_list = {
+				1 = {
+					modifier = {
+						factor = 9
+						check_variable = { which = eoa_prince_support value = 9 }
+					}
+					set_global_flag = eoa_religion_established
+					every_country = {
+						limit = {
+							is_part_of_hre = yes
+						}
+						country_event = { id = flavour_eoa_reforms.20 }
+					}
+					eoa_prince_support_bonus = yes
+				}
+				9 = {
+					trigger = {
+						NOT = { check_variable = { which = eoa_prince_support value = 20 } }
+					}
+					country_event = { id = flavour_eoa_reforms.30 }
+				}
+			}
+		}
+	}
+	chance = { factor = 1000 } #should always appear if trigger met
+	ai_will_do = { factor = 0 } #AI doesn't wanna bother players
+}
+anbennar_unification_sentiment = {
+	category = 3
+	allow = {
+		is_emperor = yes
+		NOT = {
+			has_global_flag = eoa_unification_sentiment
+			tag = Z01
+		}
+		hre_reform_passed = anbennar_aristo_revoke
+		has_global_flag = eoa_established_embassies
+		OR = {
+			hre_religion_locked = yes
+			hre_religion_treaty = yes
+		}
+		if = {
+			limit = {
+				emperor = { ai = no }
+			}
+			imperial_influence = 10
+		}
+	}
+	effect = {
+		if = {
+			limit = { ai = no }
+			add_imperial_influence = -10
+		}
+		custom_tooltip = eoa_princely_support
+		hidden_effect = {
+			random_list = {
+				1 = {
+					modifier = {
+						factor = 9
+						check_variable = { which = eoa_prince_support value = 9 }
+					}
+					set_global_flag = eoa_unification_sentiment
+					every_country = {
+						limit = { 
+							is_part_of_hre = yes 
+							OR = {
+								overlord = { is_part_of_hre = yes }
+								OR = {
+									culture = wexonard
+									culture = roilsardi
+									culture_group = anbennarian
+								}
+							}
+						}
+						country_event = { id = flavour_eoa_reforms.23 }
+						hidden_effect = {
+							add_country_modifier = {
+								name = eoa_unification_fever
+								duration = -1
+							}
+						}
+					}
+					eoa_prince_support_bonus = yes
+				}
+				9 = {
+					trigger = {
+						NOT = { check_variable = { which = eoa_prince_support value = 20 } }
+					}
+					country_event = { id = flavour_eoa_reforms.30 }
+				}
+			}
+		}
+	}
+	chance = { factor = 1000 } #should always appear if trigger met
+	ai_will_do = { factor = 1000 } #should be AI top prio
+}
+
+#anbennar_unite_the_empire = { #Unite The Empire - moved to reforms
+#	category = 3
+#	allow = {
+#		is_emperor = yes
+#		if = {
+#			limit = {
+#				emperor = { ai = yes }
+#			}
+#			imperial_influence = 35
+#			hre_reform_passed = anbennar_imperial_war
+#			has_global_flag = eoa_unification_sentiment
+#		}
+#		else = { 
+#			imperial_influence = 60
+#			hre_reform_passed = anbennar_imperial_war
+#			has_global_flag = eoa_unification_sentiment
+#		}
+#	}
+#	effect = {
+#		custom_tooltip = eoa_anbennar_unified
+#		emperor = {
+#			every_province = {
+#				limit = {
+#					is_part_of_hre = yes
+#				}
+#				add_permanent_province_modifier = {
+#					name = dwindling_prince_autonomy
+#					duration = 3650
+#				}
+#			}
+#			if = {
+#				limit = {
+#					ai = yes
+#				}
+#				add_treasury = 5000 #so AI doesn't shit itself and immediately bankrupt
+#			}
+#			hidden_effect = { remove_country_modifier = escanni_wars_escanni_emperor }	#Anbennar
+#			country_event = { id = 9075 tooltip = renovatio_effect }
+#		}
+#	}
+#	chance = { factor = 1000 } #should always appear if trigger met
+#	ai_will_do = { factor = 1000 } #should be AI top prio
+#} (...i wasn't)
