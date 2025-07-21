@@ -1,0 +1,1208 @@
+I33_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = I33 } 
+
+	I33_in_his_name = {
+		icon = mission_cope_with_refugees
+		position = 3
+		required_missions = { I33_finishing_what_he_has_started } 
+		provinces_to_highlight = {
+			province_id = 3033 #Ayethstir
+			NOT = { development = 15 }
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = I33_in_his_name_ctt
+				has_country_flag = I33_irvah_has_died
+			}
+			3033 = { development = 15 }
+		} 
+
+		effect = {
+			if = {
+				limit = { NOT = { has_country_flag = I33_irvah_has_died } }
+				custom_tooltip = I33_in_his_name_fake_effect_tt
+			}
+			3033 = {
+				add_province_modifier = {
+					name = I33_families_returning
+					duration = 3650
+				}
+				hidden_effect = {
+					set_variable = {
+						which = ayethFamiliesReturning
+						value = 15
+					}
+				}
+			}
+			custom_tooltip = I33_in_his_name_tt
+		} 
+	}
+
+	I33_for_the_family = {
+		icon = mission_jungle
+		position = 4
+		required_missions = { I33_in_his_name } 
+		provinces_to_highlight = {
+			is_capital_of = I29
+		} 
+
+		trigger = {
+			I29 = {
+				has_opinion = { who = ROOT value = 190 }
+				if = {
+					limit = { NOT = { has_dlc = "Leviathan" } }
+					trust = { who = ROOT value = 60 }
+				}
+				else = {
+					trust = { who = ROOT value = 70 }
+				}
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = I33_for_the_family_ctt
+						has_consort_flag = is_lanhara_ayeth
+					}
+					marriage_with = ROOT
+				}
+			}
+		}
+
+		effect = {
+			simple_dynamic_effect = {
+				first_custom_tooltip = I33_for_the_family_sde_tt
+				first_limit = "I29 = { NOT = { total_development = 100 } }"
+				first_effect = "country_event = { id = flavour_ayeth.25 } custom_tooltip = I33_for_the_family_tt"
+				second_limit = "I29 = { total_development = 100 }"
+				second_effect = "add_casus_belli = { type = cb_vassalize_mission target = I29 months = 300 }"
+			}
+			hidden_effect = {
+				every_known_country = {
+					limit = {
+						NOT = { culture = wood_elf }
+						any_owned_province = {
+							is_core = I29
+						}
+					}
+					set_country_flag = I33_salla_cenag_enemies
+				}
+			}
+		} 
+	}
+
+	I33_bonewalking = {
+		icon = mission_skull
+		position = 5
+		required_missions = { I33_for_the_family } 
+		provinces_to_highlight = {
+			owner = {
+				has_country_flag = I33_salla_cenag_enemies
+			}
+		} 
+
+		trigger = { 
+			I29 = { 
+				is_subject_of = ROOT
+				num_of_cities = 6
+			}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = I33_bonewalking_ctt
+					any_known_country = {
+						has_country_flag = I33_salla_cenag_enemies
+						ROOT = {
+							has_won_war_against = {
+								who = PREV
+								max_years_since = 5
+							}
+						}
+					}
+				}
+				deepwoods_bone_grove = {
+					type = all
+					owner = { culture_is_elven = yes }
+				}
+			}
+		}
+
+		effect = { 
+			increase_ruler_dip_effect = yes
+			custom_tooltip = I33_bonewalking_tt
+			hidden_effect = {
+				I29 = {
+					trigger_switch = {
+						on_trigger = num_of_cities
+						9 = { add_liberty_desire = -25 }
+						8 = { add_liberty_desire = -20 }
+						7 = { add_liberty_desire = -15 }
+						6 = { add_liberty_desire = -10 }
+						5 = { add_liberty_desire = -5 }
+					}
+				}
+			}
+		}
+	}
+
+	I33_clan_of_archers = {
+		icon = mission_che_the_council_house
+		position = 7
+		required_missions = {
+			I33_bonewalking
+			I33_the_next_draw
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			num_of_wars = { amount = 8 }
+			custom_trigger_tooltip = {
+				tooltip = I33_clan_of_archers_ctt
+				check_variable = {
+					which = ayethKillCount
+					value = 5
+				}
+			}
+			OR = {
+				is_ahead_of_time_in_technology = { tech = mil }
+				custom_trigger_tooltip = {
+					tooltip = I33_higher_mil_tech_tt
+					all_known_country = {
+						OR = {
+							NOT = { capital_scope = { superregion = deepwoods_superregion } }
+							NOT = { mil_tech = ROOT }
+						}
+					}
+				}
+				#higher mil tech
+			}
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = I33_led_by_elaria_example
+				duration = -1
+			}
+			custom_tooltip = I33_clan_of_archers_tt
+			hidden_effect = { set_country_flag = I33_clan_of_archers_reward }
+		} 
+	}
+}
+I33_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = I33 } 
+
+	I33_my_only_allies = {
+		icon = mission_diplomatic_relation
+		position = 1
+		provinces_to_highlight = {
+			owner = {
+				tag = I29
+				NOT = { has_opinion = { who = ROOT value = 150 } }
+			}
+		} 
+
+		trigger = {
+			has_estate_privilege = estate_church_religious_diplomats
+			I29 = {
+				has_opinion = { who = ROOT value = 150 }
+			}
+		} 
+
+		effect = {
+			custom_tooltip = I33_my_only_allies_tt
+			hidden_effect = {
+				add_trust = {
+					who = I29
+					value = 10
+					mutual = yes
+				}
+				add_favors = {
+					who = I29
+					amount = 10
+				}
+			}
+			define_advisor = {
+				type = natural_scientist
+				skill = 1
+				cost_multiplier = 0.5
+			}
+		} 
+	}
+
+	I33_finishing_what_he_has_started = {
+		icon = mission_fire_of_london
+		position = 2
+		required_missions = { I33_my_only_allies } 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 7015
+				province_id = 3035
+			}
+			NOT = {
+				controlled_by = ROOT
+				owned_by = ROOT
+				controlled_by = I29
+			}
+		} 
+
+		trigger = {
+			7015 = { 
+				OR = {
+					owned_by = ROOT
+					controlled_by = ROOT
+					controlled_by = I29
+				} 
+			}
+			3035 = { 
+				OR = {
+					owned_by = ROOT
+					controlled_by = ROOT
+					controlled_by = I29
+				} 
+			}
+		}
+
+		effect = {
+			3032 = { add_permanent_claim = ROOT }
+			7014 = { add_permanent_claim = ROOT }
+			custom_tooltip = I33_finishing_what_he_has_started_tt
+			hidden_effect = {
+				gozyest_area = {
+					limit = { controlled_by = I29 }
+					change_controller = ROOT
+				}
+				gozyest_area = {
+					limit = { is_looted = yes }
+					ROOT = { add_prestige = 10 }
+				}
+				gozyest_area = {
+					limit = { is_looted = no }
+					remove_loot = {
+						who = ROOT
+						amount = 10
+					}
+				}
+			}
+		} 
+	}
+
+	I33_so_it_never_happens_again = {
+		icon = mission_ne_palisades
+		position = 4
+		required_missions = {
+			I33_in_his_name
+			I33_cut_them_down
+		}
+		provinces_to_highlight = {
+			province_id = 3033
+			OR = {
+				has_fort_building_trigger = no
+				NOT = { feudalism = 100 }
+			}
+		} 
+
+		trigger = {
+			army_size = 12
+			3033 = {
+				has_fort_building_trigger = yes
+				feudalism = 100
+			}
+		} 
+
+		effect = {
+			3033 = { center_of_trade = 1 }
+			custom_tooltip = I33_so_it_never_happens_again_tt	
+			hidden_effect = {
+				I29 = {
+					capital_scope = {
+						add_institution_embracement = {
+							which = feudalism
+							value = 100
+						}
+					}
+				}
+				deepwoods_arrow_grove = {
+					add_institution_embracement = {
+						which = feudalism
+						value = 50
+					}
+				}
+			}
+		} 
+	}
+
+	I33_the_next_draw = {
+		icon = mission_mesoamerican_soldiers_training
+		position = 6
+		required_missions = { I33_new_bows } 
+		provinces_to_highlight = {
+			province_id = 3033
+			NOT = { development = 25 }
+		} 
+
+		trigger = {
+			3033 = { development = 25 }
+			num_of_owned_provinces_with = {
+				value = 5
+				has_province_modifier = deepwoods_rangers_camp
+			}
+			treasury = 200
+			OR = {
+				army_professionalism = 0.15
+				army_tradition = 40
+			}
+		} 
+
+		effect = {
+			add_treasury = -200
+			3033 = {
+				add_province_modifier = {
+					name = I33_range_of_ayethstir
+					duration = -1
+				}
+			}
+		} 
+	}
+
+	I33_culling_of_deepwoods = {
+		icon = mission_impaled_soldies
+		position = 7
+		required_missions = {
+			I33_the_next_draw
+			I33_another_conclave
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					has_terrain = fey_gladeway
+					NOT = { owned_by = ROOT }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 3
+								has_terrain = fey_gladeway
+							}
+						}
+					}
+				}
+				owner = {
+					any_owned_province = {
+						superregion = deepwoods_superregion
+					}
+					OR = {
+						culture_is_goblin = yes
+						culture_is_orcish = yes
+					}
+					NOT = {
+						ROOT = {
+							has_won_war_against = {
+								who = PREV
+								max_years_since = 25
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			mil_power = 100
+			num_of_owned_provinces_with = {
+				value = 3
+				has_terrain = fey_gladeway
+			}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = I33_culling_of_deepwoods_1_ctt
+					NOT = {
+						deepwoods_superregion = {
+							owner = {
+								OR = {
+									culture_is_orcish = yes
+									culture_is_goblin = yes
+								}
+							}
+						}
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = I33_culling_of_deepwoods_2_ctt
+					all_known_country = {	
+						OR = {
+							NOT = { any_owned_province = { superregion = deepwoods_superregion } }
+							AND	 = {
+								NOT = { culture_group = orcish }
+								NOT = { culture_group = goblin }
+							}
+							ROOT = {
+								has_won_war_against = {
+									who = PREV
+									max_years_since = 25
+								}
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			add_mil_power = -100
+			country_event = {
+				id = flavour_ayeth.11
+			}
+			custom_tooltip = I33_culling_of_deepwoods_ei_tt
+		} 
+	}
+}
+I33_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = I33 } 
+
+	I33_kill_him = {
+		icon = mission_heated_battle
+		position = 2
+		required_missions = { I33_grieving_period_is_over } 
+		provinces_to_highlight = {
+			owner = {
+				tag = I42
+				NOT = { war_with = ROOT }
+			}
+		} 
+
+		trigger = {
+			is_monarch_leader = yes
+			war_with = I42
+		} 
+
+		effect = {
+			complex_dynamic_effect = {
+				first_custom_tooltip = I33_kill_him_cde_tt
+				first_limit = "I42 = { has_been_insulted_by_root = yes }"
+				first_effect = "custom_tooltip = I33_kill_him_tt hidden_effect = { if = { limit = { I42 = { has_opinion_modifier = { who = ROOT modifier = scornfully_insulted } } } add_manpower = 3 } else = { add_manpower = 2 } }"
+			}
+			country_event = {
+				id = flavour_ayeth.5
+			}
+			custom_tooltip = I33_kill_him_ei_tt
+		} 
+	}
+
+	I33_cut_them_down = {
+		icon = mission_burning_castle
+		position = 3
+		required_missions = {
+			I33_finishing_what_he_has_started
+			I33_kill_him
+		}
+		provinces_to_highlight = {
+			province_group = deepwoods_arrow_grove
+			OR = {
+				NOT = {
+					num_of_units_in_province = {
+						who = ROOT
+						type = infantry
+						amount = 1
+					}
+				}
+				NOT = { owned_by = ROOT }
+			}
+		} 
+
+		trigger = {
+			deepwoods_arrow_grove = {
+				type = all
+				owned_by = ROOT
+				num_of_units_in_province = {
+					who = ROOT
+					type = infantry
+					amount = 1
+				}
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_ayeth.9
+			}
+			custom_tooltip = I33_cut_them_down_ei_tt
+		} 
+	}
+
+	I33_new_bows = {
+		icon = mission_colonial
+		position = 5
+		required_missions = {
+			I33_so_it_never_happens_again
+			I33_entering_the_gloom
+		}
+		provinces_to_highlight = {
+			has_province_flag = I33_forest_to_be_cut
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = I33_new_bows_ctt
+				deepwoods_arrow_grove = {
+					type = all
+					NOT = { has_province_flag = I33_forest_to_be_cut }
+				}
+			}
+		} 
+
+		effect = {
+			3035 = {
+				change_trade_goods = tropical_wood
+				add_permanent_province_modifier = {
+					name = fey_abundant_goods_improved
+					duration = -1
+				}
+			}
+			custom_tooltip = I33_new_bows_tt
+			hidden_effect = {
+				trigger_switch = {
+					on_trigger = num_of_cawa
+					5 = { add_mil_power = 100 add_army_tradition = 10 }
+					4 = { add_mil_power = 80 add_army_tradition = 8 }
+					3 = { add_mil_power = 60 add_army_tradition = 6 }
+					2 = { add_mil_power = 40 add_army_tradition = 4 }
+					1 = { add_mil_power = 20 add_army_tradition = 2 }
+				}
+			}
+			hidden_effect = { set_country_flag = I33_heir_to_ahain }
+			deepwoods_river_grove = {
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+
+	I33_another_conclave = {
+		icon = mission_monarch_diplomacy
+		position = 6
+		required_missions = { I33_new_bows } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					ROOT = { has_country_flag = I33_high_grief_of_elaria }
+					owner = { 
+						primary_culture = wood_elf
+						has_been_insulted_by_root = no
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+				AND = {
+					ROOT = { NOT = { has_country_flag = I33_high_grief_of_elaria } }
+					owner = {
+						primary_culture = wood_elf
+						NOT = { has_opinion = { who = ROOT value = 175 } }
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+			}
+			superregion = deepwoods_superregion
+		} 
+
+		trigger = {
+			OR = {
+				adm_tech = 4
+				dip_tech = 4
+				mil_tech = 4
+			}
+			if = {
+				limit = { has_country_flag = I33_high_grief_of_elaria }
+				all_known_country = {
+                    OR = {
+                        NOT = { primary_culture = wood_elf }
+                        NOT = { capital_scope = { superregion = deepwoods_superregion } }
+                        is_subject_of = ROOT
+                        has_been_insulted_by_root = yes
+                    }
+                }
+			}
+			else = {
+				any_subject_country = {
+					primary_culture = wood_elf
+					has_opinion = { who = ROOT value = 175 }
+				}
+				calc_true_if = {
+					amount = 2
+					all_known_country = {
+						primary_culture = wood_elf
+						capital_scope = { superregion = deepwoods_superregion }
+						has_opinion = { who = ROOT value = 175 }
+						is_subject = no
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = I33_another_conclave_cb_tt
+			hidden_effect = {
+				every_known_country = {
+					limit = { 
+						OR = {
+							culture_group = orcish 
+							culture_group = goblin
+						}
+						capital_scope = {
+							superregion = deepwoods_superregion
+						}
+					}
+					reverse_add_casus_belli = {
+						type = cb_insult
+						target = ROOT
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = I33_high_grief_of_elaria }
+				custom_tooltip = I33_another_conclave_high_grief_tt
+				hidden_effect = {
+					every_known_country = {
+						limit = { primary_culture = wood_elf }
+						reverse_add_casus_belli = {
+							type = cb_insult
+							target = ROOT
+						}
+					}
+				}
+			}
+			else = {
+				add_stability_or_adm_power = yes
+				custom_tooltip = I33_another_conclave_low_grief_tt
+				hidden_effect = {
+					every_subject_country = {
+						limit = { primary_culture = wood_elf }
+						add_liberty_desire = -25
+						add_stability_or_adm_power = yes
+						every_owned_province = {
+							add_institution_embracement = {
+								which = feudalism
+								value = 100
+							}
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	I33_to_my_mother_vehari = {
+		icon = mission_writing_book
+		position = 8
+		required_missions = {
+			I33_culling_of_deepwoods
+			I33_shape_the_spine
+			I33_favouring_none
+		}
+		provinces_to_highlight = {
+			superregion = deepwoods_superregion
+			owner = {
+				OR = {
+					culture_group = orcish
+					culture_group = goblin
+				}
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = I33_culling_of_deepwoods_1_ctt
+				NOT = {
+					deepwoods_superregion = {
+						owner = {
+							OR = {
+								culture_is_orcish = yes
+								culture_is_goblin = yes
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = I33_high_grief_of_elaria }
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = I33_to_my_mother_vehari_ctt
+						check_variable = {
+							which = ayethKillCount
+							value = 10
+						}
+					}
+					deepwoods_superregion = {
+						type = all
+						owned_by = ROOT
+					}
+				}
+				num_of_owned_provinces_with = {
+					value = 45
+					superregion = deepwoods_superregion
+				}
+			}
+			else = {
+				stability = 2
+				NOT = { war_exhaustion = 0.1 }
+				num_of_provinces_owned_or_owned_by_subjects_with = {
+					value = 45
+					superregion = deepwoods_superregion
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = I33_to_my_mother_vehari_tt
+			hidden_effect = {
+				if = {
+					limit = { has_country_flag = I33_high_grief_of_elaria }
+					country_event = { id = flavour_ayeth.13 }
+				}
+				else = {
+					country_event = { id = flavour_ayeth.12 }
+				}
+			}
+		} 
+	}
+}
+I33_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = I33 } 
+
+	I33_grieving_period_is_over = {
+		icon = mission_confrontation
+		position = 1
+		provinces_to_highlight = {
+			owner = {
+				OR = {
+					tag = I36
+					tag = I42
+				}
+				NOT = { is_enemy = ROOT }
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = I33_grieving_period_is_over_tt
+				has_country_flag = I33_elaria_returned
+			}
+			national_focus = MIL
+			OR = {
+				is_rival = I36
+				has_eclipsed = I36
+			}
+			OR = {
+				is_rival = I42
+				has_eclipsed = I42
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_ayeth.2
+			}
+			custom_tooltip = I33_grieving_period_is_over_ei_tt
+		} 
+	}
+
+	I33_obligations_i_have = {
+		icon = mission_alone_in_the_forest
+		position = 2
+		required_missions = { I33_grieving_period_is_over }
+		provinces_to_highlight = {
+			owner = {
+				tag = I43
+				NOT = {
+					has_spy_network_from = {
+						who = ROOT
+						value = 25
+					}
+				}
+			}
+		}
+
+		trigger = {
+			has_spy_network_in = {
+				who = I43
+				value = 25
+			}
+			OR = {
+				fey_court_unseelie_court_pleased_or_higher_trigger = yes
+				fey_court_seelie_court_pleased_or_higher_trigger = yes
+			}
+		} 
+
+		effect = {
+			complex_dynamic_effect = {
+				first_custom_tooltip = I33_obligations_i_have_cde1_tt
+				first_limit = "fey_court_unseelie_court_pleased_or_higher_trigger = yes fey_court_seelie_court_pleased_or_higher_trigger = yes"
+				first_effect = "add_country_modifier = { name = I33_against_invaders duration = 5475 }"
+				second_custom_tooltip = I33_obligations_i_have_cde2_tt
+				second_limit = "fey_court_unseelie_court_pleased_or_higher_trigger = yes"
+				second_effect = "add_country_modifier = { name = I33_against_invaders duration = 3650 } increase_grief_of_elaria = yes"
+				third_custom_tooltip = I33_obligations_i_have_cde3_tt
+				third_limit = "fey_court_seelie_court_pleased_or_higher_trigger = yes"
+				third_effect = "add_country_modifier = { name = I33_against_invaders duration = 3650 }"
+			}
+		} 
+	}
+
+	I33_entering_the_gloom = {
+		icon = mission_misty_forest
+		position = 4
+		required_missions = {
+			I33_cut_them_down
+			I33_ashentree_whispers
+		}
+		provinces_to_highlight = {
+			province_group = deepwoods_shadow_grove
+			NOT = { controlled_by = ROOT }
+			NOT = { owned_by = ROOT }
+		} 
+
+		trigger = {
+			OR = {
+				AND = {
+					war_score_against = {
+						who = I43
+						value = 25
+					}
+					calc_true_if = {
+						deepwoods_shadow_grove = {
+							type = all
+							controlled_by = ROOT
+						}
+						amount = 4
+					}
+				}
+				num_of_provinces_owned_or_owned_by_subjects_with = {
+					value = 4
+					province_group = deepwoods_shadow_grove
+				}
+			}
+		} 
+
+		effect = {
+			hidden_effect = {
+				deepwoods_shadow_grove = {
+					limit = {
+						OR = {
+							controlled_by = ROOT
+							country_or_subject_holds = ROOT
+						}
+					}
+					type = random
+					spawn_rebels = {
+						size = 1
+						type = ashentree_pact_rebels
+					}
+					amount = 1
+				}
+				fey_court_moderately_improve_seelie_court_relations = yes
+				fey_court_moderately_improve_unseelie_court_relations = yes
+				fey_court_moderately_improve_unaligned_fey_relations = yes
+			}
+			custom_tooltip = I33_entering_the_gloom_tt
+			add_country_modifier = {
+				name = I33_hunters_of_ashentree
+				duration = 9125
+			}
+		} 
+	}
+
+	I33_her_grove = {
+		icon = mission_alone_in_the_wood
+		position = 6
+		required_missions = {
+			I33_new_bows
+			I33_monsters_among_us
+		} 
+
+		trigger = {
+			at_war_with_religious_enemy = yes
+			custom_trigger_tooltip = {
+				tooltip = I33_her_grove_ctt
+				deepwoods_superregion = {
+					has_province_modifier = scorched_earth
+					OR = {
+						owned_by = ROOT
+						controlled_by = ROOT
+					}
+				}
+			}
+			manpower = 8
+		} 
+
+		effect = {
+			custom_tooltip = I33_her_grove_tt
+			hidden_effect = {
+				trigger_switch = {
+					on_trigger = num_of_cawa
+					16 = { add_manpower = -0.0 }
+					15 = { add_manpower = -0.5 }
+					14 = { add_manpower = -1.0 }
+					13 = { add_manpower = -1.5 }
+					12 = { add_manpower = -2.0 }
+					11 = { add_manpower = -2.5 }
+					10 = { add_manpower = -3.0 }
+					9 = { add_manpower = -3.5 }
+					8 = { add_manpower = -4.0 }
+					7 = { add_manpower = -4.5 }
+					6 = { add_manpower = -5.0 }
+					5 = { add_manpower = -5.5 }
+					4 = { add_manpower = -6.0 }
+					3 = { add_manpower = -6.5 }
+					2 = { add_manpower = -7.0 }
+					1 = { add_manpower = -7.5 }
+					0 = { add_manpower = -8.0 }
+				}
+				east_deepwoods_region = {
+					limit = {
+						owner = {
+							OR = {
+								culture_group = orcish
+								culture_group = goblin
+							}
+						}
+					}
+					add_permanent_province_modifier = {
+						name = I33_constant_harassment
+						duration = 10950
+					}
+				}
+			}
+		}
+	}
+
+	I33_shape_the_spine = {
+		icon = mission_ne_longhouses
+		position = 7
+		required_missions = {
+			I33_another_conclave
+			I33_her_grove
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 3033
+					NOT = {
+						AND = {
+							renaissance = 100
+							has_trade_building_trigger = yes
+						}
+					}
+				}
+				AND = {
+					province_group = deepwoods_arrow_grove
+					trade_goods = tropical_wood
+					NOT = {
+						num_of_times_improved_by_owner = 1
+						has_production_building_trigger = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			treasury = 50
+			3033 = {
+				renaissance = 100
+				has_trade_building_trigger = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = I33_shape_the_spine_ctt
+				deepwoods_arrow_grove = {
+					type = all
+					OR = {
+						NOT = { trade_goods = tropical_wood }
+						OR = {
+							num_of_times_improved_by_owner = 1
+							has_production_building_trigger = yes
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			add_treasury = -50
+			custom_tooltip = I33_shape_the_spine_tt
+			hidden_effect = {
+				pick_best_province = {
+					scope = deepwoods_arrow_grove
+					scale = higher_development_than
+					global_trigger = "trade_goods = tropical_wood"
+					event_target_name = "I33_highest_dev_tropical_wood_target"
+					number = 1
+				}
+				if = {
+					limit = {
+						has_saved_event_target = I33_highest_dev_tropical_wood_target_1
+					}
+					event_target:I33_highest_dev_tropical_wood_target_1 = {
+						add_or_upgrade_production_building = yes
+					}
+				}
+				every_owned_province = {
+					limit = {
+						trade_goods = tropical_wood
+					}
+					add_province_modifier = {
+						name = I33_bowyer_privileges
+						duration = 9125
+					}
+				}
+			}
+		} 
+	}
+}
+I33_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = I33 } 
+
+	I33_ashentree_whispers = {
+		icon = mission_forest_shrine
+		position = 3
+		required_missions = { I33_obligations_i_have } 
+		provinces_to_highlight = {
+			province_id = 3063
+			NOT = { has_ruler_leader_from = ROOT }
+		} 
+
+		trigger = {
+			church_power = 75
+			3063 = { has_ruler_leader_from = ROOT }
+			custom_trigger_tooltip = {
+				tooltip = I33_ashentree_whispers_ctt
+				fey_court_seelie_court_ambivalent_or_higher_trigger = yes
+				fey_court_unseelie_court_ambivalent_or_higher_trigger = yes
+				fey_court_unaligned_fey_ambivalent_or_higher_trigger = yes
+			}
+		} 
+
+		effect = {
+			add_church_power = -75
+			add_country_modifier = {
+				name = I33_braving_the_shadows
+				duration = 3650
+			}
+			deepwoods_shadow_grove = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	I33_monsters_among_us = {
+		icon = mission_burning_witch
+		position = 5
+		required_missions = {
+			I33_ashentree_whispers
+			I33_entering_the_gloom
+		}
+		provinces_to_highlight = {
+			province_group = deepwoods_shadow_grove
+			OR = {
+				owner = {
+					OR = {
+						culture_group = orcish
+						culture_group = goblin
+					}
+				}
+				owner = {
+					tag = I34
+					is_subject_of = ROOT
+					liberty_desire = 50
+				}
+				AND = {
+					local_autonomy = 35
+					NOT = { has_province_modifier = autonomy_decreased }
+				}
+			}
+		} 
+
+		trigger = {
+			stability = 1
+			deepwoods_shadow_grove = {
+				type = all
+				owner = {
+					NOT = { culture_group = orcish }
+					NOT = { culture_group = goblin }
+				}
+			}
+			OR = {
+				AND = {
+					I34 = { is_subject_of = ROOT }
+					I34 = { NOT = { liberty_desire = 50 } }
+				}
+				deepwoods_shadow_grove = {
+					type = all
+					OR = { 
+						NOT = { local_autonomy = 35 }
+						has_province_modifier = autonomy_decreased
+					}
+				}
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_ayeth.10
+			}
+			custom_tooltip = I33_monsters_among_us_ei_tt
+		} 
+	}
+
+	I33_favouring_none = {
+		icon = balance_the_estates
+		position = 7
+		required_missions = {
+			I33_monsters_among_us
+			I33_her_grove
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = I33_favouring_none_1_ctt
+				fey_court_seelie_court_pleased_or_higher_trigger = yes
+				fey_court_unseelie_court_pleased_or_higher_trigger = yes
+				fey_court_unaligned_fey_pleased_or_higher_trigger = yes
+			}
+			calc_true_if = {
+				amount = 3
+				has_country_modifier = fey_court_seelie_modifier_1
+				has_country_modifier = fey_court_seelie_modifier_2
+				has_country_modifier = fey_court_seelie_modifier_3
+				has_country_modifier = fey_court_unseelie_modifier_1_late_game
+				has_country_modifier = fey_court_unseelie_modifier_2
+				has_country_modifier = fey_court_unseelie_modifier_3
+				has_country_modifier = fey_court_unaligned_modifier_1
+				has_country_modifier = fey_court_unaligned_modifier_2
+				has_country_modifier = fey_court_unaligned_modifier_3
+			}
+			religious_unity = 0.9
+
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = I33_courting_all_courts
+				duration = -1
+			}
+		} 
+	}
+}

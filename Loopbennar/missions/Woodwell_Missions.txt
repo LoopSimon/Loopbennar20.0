@@ -1,0 +1,717 @@
+##Branch
+woodwell1 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = A88
+	}
+	has_country_shield = yes
+	
+
+	A88_druids = {
+		icon = mission_alone_in_the_forest_2
+		required_missions = {
+			
+		}
+		position = 1
+		trigger = {
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 60
+			}
+			estate_influence = {
+				estate = estate_church
+				influence = 50
+			}
+			has_estate_privilege = estate_church_one_faith_one_culture
+		}
+		effect = {
+			set_country_flag = a88_druid_rename
+			custom_tooltip = a88_estate_rename
+			country_event = {
+				id = flavour_woodwell.1
+			}
+		}
+	}
+	
+	A88_more_work = {
+		icon = mission_alone_in_the_wood
+		required_missions = {
+			A88_druids
+		}
+		position = 3
+		provinces_to_highlight = {
+			area = woodwell_area
+			NOT = { base_production = 5 }
+		}
+		trigger = {
+			woodwell_area = {
+				type = all
+				base_production = 5
+			}
+			has_adm_advisor = yes
+			is_in_deficit = no
+		}
+		effect = {
+			woodwell_area = {
+				add_province_modifier = {
+					name = A88_woodworkwell
+					duration = -1
+				}
+				change_trade_goods = tropical_wood
+			}
+		}
+	}
+	
+}
+##Branch
+woodwell2 = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = A88
+	}
+	has_country_shield = yes
+	
+	A88_warcry = {
+		icon = the_italian_league
+		required_missions = {
+			
+		}
+		position = 1
+		provinces_to_highlight = {
+			OR = {
+				is_capital_of = A01
+				is_capital_of = A11
+				is_capital_of = A15
+			}
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = woodwell_mission_a3
+				OR = {
+					AND = {
+						OR = {
+							has_spy_network_in = {
+								who = A01
+								value = 25
+							}
+							has_spy_network_in = {
+								who = A11
+								value = 25
+							}
+						}
+						19 = {
+							owner = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 25
+								}
+							}
+						}
+						31 = {
+							owner = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 25
+								}
+							}
+						}
+						OR = {
+							A01 = {
+								has_opinion_modifier = {
+									who = ROOT
+									modifier = scornfully_insulted
+								}
+							}
+							A11 = {
+								has_opinion_modifier = {
+									who = ROOT
+									modifier = scornfully_insulted
+								}
+							}
+							A15 = {
+								has_opinion_modifier = {
+									who = ROOT
+									modifier = scornfully_insulted
+								}
+							}
+						}
+					}
+					AND = {
+						carneteria_area = {
+							type = all
+							owned_by = ROOT
+							is_core = ROOT
+						}
+						pearlywine_area = {
+							type = all
+							owned_by = ROOT
+							is_core = ROOT
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			carneteria_area = {
+				add_permanent_claim = ROOT
+			}
+			pearlywine_area = {
+				add_permanent_claim = ROOT
+			}
+			custom_tooltip = a88_lorent_scorned
+			if = {
+				limit = {
+					A01 = {
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = scornfully_insulted
+						}
+					}
+				}
+				add_power_projection = {
+					type = mission_rewards_power_projection
+					amount = 20
+				}
+				add_country_modifier = {
+					name = A88_cutting_down
+					duration = 3650
+				}
+			}
+		}
+	}
+	A88_reclaim = {
+		icon = claim_the_borderlands
+		required_missions = {
+			A88_druids A88_warcry
+		}
+		position = 2
+		provinces_to_highlight = {
+			 OR = {
+                AND = {
+                    region = west_dameshead_region
+                    owned_by = ROOT
+                    unrest = 1
+                }
+                AND = {
+                    OR = {
+                        province_id = 19
+                        province_id = 31
+                    }
+                    NOT = { 
+                        AND = {
+                            owned_by = ROOT 
+                            is_core = ROOT
+                        }
+                    }
+                }
+            }
+		}
+		trigger = {
+			owns_core_province = 19
+			owns_core_province = 31
+			all_owned_province = {
+                OR = {
+                    NOT = { region = west_dameshead_region }
+                    NOT = { unrest = 1 }
+                }
+            }
+		}
+		
+		effect = {
+			custom_tooltip = a88_autonomy
+			add_estate_nobles_loyalty_effect = yes
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						region = west_dameshead_region
+					}
+					add_local_autonomy = -30
+				}
+			}
+		}
+	}
+	##Mission End
+	##Mission Start
+	A88_woodwork = {
+		icon = assert_our_sovereignty
+		required_missions = {
+			A88_more_work A88_cultivation A88_reclaim
+		}
+		position = 4
+		provinces_to_highlight = {
+			region = west_dameshead_region
+			owned_by = ROOT
+			local_autonomy = 10
+			NOT = {
+				has_province_modifier = autonomy_decreased
+			}
+		}
+		trigger = {
+			estate_loyalty = {
+				estate = all
+				loyalty = 60
+			}
+			stability = 1
+			 all_owned_province = {
+                OR = {
+                    NOT = { region = west_dameshead_region }
+                    NOT = { local_autonomy = 10 }
+                    has_province_modifier = autonomy_decreased
+                }
+            }
+		}
+		effect = {
+			country_event = {
+				id = flavour_woodwell.8
+			}
+			add_splendor = 200
+			west_dameshead_region = { add_permanent_claim = ROOT }
+			remove_country_modifier = A88_contesting_claims
+			custom_tooltip = a88_can_carneter
+			custom_tooltip = a88_glory_tt
+			if = {
+                limit = {
+                    west_dameshead_region = {
+                        type = all
+                        OR = {
+                            NOT = { has_terrain = woods }
+                            owned_by = ROOT
+                        }
+                    }
+                }
+                add_country_modifier = {
+                    name = A88_glory
+                    duration = -1
+                }
+            }
+		}
+	}
+	
+}
+##Branch
+woodwell3 = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = A88
+	}
+	has_country_shield = yes
+	
+	##Mission Start
+	A88_support = {
+		icon = adjust_the_general_means
+		required_missions = {
+			A88_diplomacy A88_warcry
+		}
+		position = 2
+		
+		provinces_to_highlight = {
+            OR = {
+                AND = {
+                    OR = {
+                        province_id = 20
+                        province_id = 57
+                    }
+                    NOT = {
+                        AND = {
+                            owned_by = ROOT
+                            development = 14
+                            base_production = 7
+                        }
+                    }
+                }
+                AND = {
+                    OR = {
+                        province_id = 1270
+                        province_id = 1292
+                    }
+                    NOT = {
+                        trade_share = {
+                            country = ROOT
+                            share = 10
+                        }
+                    }
+                }
+            }
+        }
+		
+		trigger = {
+			OR = {
+				20 = {
+					owned_by = ROOT
+					development = 14
+					base_production = 7
+				}
+				57 = {
+					owned_by = ROOT
+					development = 14
+					base_production = 7
+				}
+			}
+			OR = {
+				1270 = {
+					trade_share = {
+						country = ROOT
+						share = 10
+					}
+				}
+				1292 = {
+					trade_share = {
+						country = ROOT
+						share = 10
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = a88_paper
+			if = {
+				limit = {
+					20 = {
+						owned_by = ROOT
+						base_production = 7
+						development = 14
+					}
+				}
+				20 = {
+					change_trade_goods = paper
+				}
+				add_estate_burghers_loyalty_effect = yes
+			}
+			if = {
+				limit = {
+					57 = {
+						owned_by = ROOT
+						base_production = 7
+						development = 14
+					}
+				}
+				57 = {
+					change_trade_goods = paper
+				}
+				add_estate_burghers_loyalty_effect = yes
+			}
+		}
+	}
+
+	A88_cultivation = {
+		icon = mission_transmutation
+		required_missions = {
+			A88_support
+		}
+		position = 3
+		provinces_to_highlight = {
+			province_id = 275 
+            NOT = {
+                owner = {
+                    has_75_opinion_improved_relation = {
+                        target = ROOT
+                    }
+                }
+            }
+
+		}
+		trigger = {
+			275 = {
+				OR = {
+					owner = {
+						has_75_opinion_improved_relation = {
+							target = ROOT
+						}
+					}
+					owned_by = ROOT
+				}
+			}
+			treasury = 200
+			has_estate_privilege = estate_burghers_patronage_of_the_arts
+		}
+		effect = {
+			add_country_modifier = {
+				name = A88_stories
+				duration = -1
+			}
+			add_treasury = -200
+		}
+	}
+
+	
+}
+##Branch
+woodwell4 = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = A88
+	}
+	has_country_shield = yes
+	
+
+	A88_diplomacy = {
+		icon = reform_bergordnung
+		required_missions = {
+			
+		}
+		position = 1
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						is_capital_of = Z05
+						is_capital_of = A87
+						is_capital_of = Z68
+						is_capital_of = A04
+					}
+					OR = {
+						owner = { NOT = { has_30_opinion_improved_relation = { target = ROOT } } }
+						AND = {
+							owner = { NOT = { is_enemy = ROOT } }
+							ROOT = {
+								NOT = {
+									calc_true_if = {
+										amount = 2
+										is_rival = A04
+										is_rival = Z05
+										is_rival = A87
+										is_rival = Z68
+									}
+								}
+							}
+						}
+					}
+
+				}
+				AND = {
+					is_capital_of = A04
+					ROOT = {
+						NOT = {
+							AND = {
+								alliance_with = A04
+								A04 = {
+									owes_favors = {
+										who = ROOT
+										value = 5
+									}
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital_of = Z05
+					ROOT = {
+						NOT = {
+							AND = {
+								alliance_with = Z05
+								Z05 = {
+									owes_favors = {
+										who = ROOT
+										value = 5
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = woodwell_mission_a5
+				OR = {
+					AND = {
+						Z05 = {
+							has_30_opinion_improved_relation = { target = ROOT }
+						}
+						A87 = {
+							has_30_opinion_improved_relation = { target = ROOT }
+						}
+						Z68 = {
+							has_30_opinion_improved_relation = { target = ROOT }
+						}
+						A04 = {
+							has_30_opinion_improved_relation = { target = ROOT }
+						}
+					}
+					AND = {
+						alliance_with = A04
+						A04 = {
+							owes_favors = {
+								who = ROOT
+								value = 5
+							}
+						}
+					}
+					AND = {
+						alliance_with = Z05
+						Z05 = {
+							owes_favors = {
+								who = ROOT
+								value = 5
+							}
+						}
+					}
+					calc_true_if = {
+						amount = 2
+						is_rival = A04 
+						is_rival = Z05 
+						is_rival = A87 
+						is_rival = Z68 
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = a88_friends_with_others
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							Z05 = {
+								has_30_opinion_improved_relation = { target = ROOT }
+							}
+							A87 = {
+								has_30_opinion_improved_relation = { target = ROOT }
+							}
+							Z68 = {
+								has_30_opinion_improved_relation = { target = ROOT }
+							}
+							A04 = {
+								has_30_opinion_improved_relation = { target = ROOT }
+							}
+						}
+						AND = {
+							alliance_with = A04
+							A04 = {
+								owes_favors = {
+									who = ROOT
+									value = 5
+								}
+							}
+						}
+						AND = {
+							alliance_with = Z05
+							Z05 = {
+								owes_favors = {
+									who = ROOT
+									value = 5
+								}
+							}
+						}
+					}
+				}
+				custom_tooltip = BONUS_REWARD_YES
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			tooltip = {
+				add_dip_power = 25
+				add_adm_power = 25
+				every_known_country = {
+					limit = {
+						NOT = {
+							is_rival = ROOT
+						}
+						OR = {
+							tag = A04
+							tag = A87
+							tag = Z68
+							tag = Z05
+						}
+					}
+					add_trust = {
+						who = ROOT
+						value = 10
+					}
+				}
+				}
+				custom_tooltip = mission_alternatively_tt
+				custom_tooltip = a88_rivals_with_others
+				if = {
+					limit = {
+                        calc_true_if = {
+							amount = 2
+							is_rival = A04 
+							is_rival = Z05 
+							is_rival = A87 
+							is_rival = Z68 
+						}
+					}
+					custom_tooltip = BONUS_REWARD_YES
+				}
+				else = { custom_tooltip = BONUS_REWARD_NO }
+				tooltip = {
+					add_mil_power = 100
+				}
+				hidden_effect = {
+					if = {
+                        limit = { 
+							OR = {
+								AND = {
+									Z05 = {
+										has_30_opinion_improved_relation = { target = ROOT }
+									}
+									A87 = {
+										has_30_opinion_improved_relation = { target = ROOT }
+									}
+									Z68 = {
+										has_30_opinion_improved_relation = { target = ROOT }
+									}
+									A04 = {
+										has_30_opinion_improved_relation = { target = ROOT }
+									}
+								}
+								AND = {
+									alliance_with = A04
+									A04 = {
+										owes_favors = {
+											who = ROOT
+											value = 5
+										}
+									}
+								}
+								AND = {
+									alliance_with = Z05
+									Z05 = {
+										owes_favors = {
+											who = ROOT
+											value = 5
+										}
+									}
+								}
+							}
+						}
+                        add_dip_power = 25
+						add_adm_power = 25
+						every_known_country = {
+							limit = {
+								NOT = {
+									is_rival = ROOT
+								}
+								OR = {
+									tag = A04
+									tag = A87
+									tag = Z68
+									tag = Z05
+								}
+							}
+							add_trust = {
+								who = ROOT
+								value = 10
+							}
+						}
+					}
+					else = {
+                        add_mil_power = 100
+					}
+				}
+
+		}
+	}
+	
+}

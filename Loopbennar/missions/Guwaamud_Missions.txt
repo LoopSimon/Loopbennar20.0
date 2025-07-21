@@ -1,0 +1,244 @@
+
+guwaamud_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = { tag = Y96 }
+
+	has_country_shield = yes
+	Y96_finish_mainland_conquest = {
+		icon = mission_chinese_general_riding
+		position = 1
+		
+		provinces_to_highlight = {
+			region = gowon_region
+			NOT = {
+				OR = {
+					AND = {
+						owned_by = ROOT
+						is_core = ROOT
+					}
+					area = nakseseom_area
+				}
+			}
+		}
+		
+		trigger = {
+			if = {
+				limit = { primary_culture = guwaadun }
+				5348 = { culture = guwaadun }
+			}
+			gowon_region = {
+				type = all
+				OR = {
+					AND = {
+						owned_by = ROOT
+						is_core = ROOT
+					}
+					area = nakseseom_area
+				}
+			}
+		}
+
+		effect = {
+			add_legitimacy = 10
+			add_prestige = 10
+			every_owned_province = {
+				limit = {
+					any_neighbor_province = {
+						owned_by = ROOT
+						culture = guwaadun
+						NOT = { has_province_flag = Y96_guwaadunification }
+					}
+					culture_group = gowon
+					NOT = { culture = guwaadun }
+				}
+				change_culture = guwaadun
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+				set_province_flag = Y96_guwaadunification
+			}
+			every_owned_province = {
+				clr_province_flag = Y96_guwaadunification
+			}
+		}
+	}
+	
+	Y96_develop_economy = {
+		icon = mission_potosi_silver
+		position = 2
+		required_missions = { Y96_finish_mainland_conquest }
+		
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 5358
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+							base_production = 10
+						}
+					}
+				}
+				AND = {
+					province_id = 5356
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+							base_production = 10
+							has_trade_building_trigger = yes
+							province_has_center_of_trade_of_level  = 2
+						}
+					}
+				}
+				AND = {
+					province_id = 5348
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+							development = 30
+							has_tax_building_trigger = yes
+						}
+					}
+				}
+			}
+		}
+		
+		trigger = {
+			5358 = {
+				owned_by = ROOT
+				is_core = ROOT
+				base_production = 10
+			}
+			5356 = {
+				owned_by = ROOT
+				is_core = ROOT
+				base_production = 10
+				has_trade_building_trigger = yes
+				province_has_center_of_trade_of_level  = 2
+			}
+			5348 = {
+				owned_by = ROOT
+				is_core = ROOT
+				development = 30
+				has_tax_building_trigger = yes
+			}
+		}
+
+		effect = {
+			every_owned_province = {
+				limit = {
+					any_neighbor_province = {
+						owned_by = ROOT
+						culture = guwaadun
+						NOT = { has_province_flag = Y96_guwaadunification }
+					}
+					culture_group = gowon
+					NOT = { culture = guwaadun }
+				}
+				change_culture = guwaadun
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+				set_province_flag = Y96_guwaadunification
+			}
+			every_owned_province = {
+				clr_province_flag = Y96_guwaadunification
+			}
+		}
+	}
+	
+	Y96_build_bhengudak_temple = {
+		icon = mission_develop_cordoba
+		position = 3
+		required_missions = { Y96_develop_economy }
+		
+		provinces_to_highlight = {
+			province_id = 5348
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					is_core = ROOT
+					development = 40
+					has_tax_building_trigger = yes
+				}
+			}
+		}
+		
+		trigger = {
+			has_personal_deity = bhengudak
+			treasury = 200
+			5348 = {
+				owned_by = ROOT
+				is_core = ROOT
+				development = 40
+				has_tax_building_trigger = yes
+			}
+		}
+
+		effect = {
+			add_treasury = -200
+			country_event = { id = guwaamud.2 days = 730 }
+			5348 = { change_religion = saanorgegh }
+			5350 = { change_religion = saanorgegh }
+			5345 = { change_religion = saanorgegh }
+			5346 = { change_religion = saanorgegh }
+			5347 = { change_religion = saanorgegh }
+			5355 = { change_religion = saanorgegh }
+			every_owned_province = {
+				limit = {
+					any_neighbor_province = {
+						owned_by = ROOT
+						culture = guwaadun
+						NOT = { has_province_flag = Y96_guwaadunification }
+					}
+					culture_group = gowon
+					NOT = { culture = guwaadun }
+				}
+				change_culture = guwaadun
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+				set_province_flag = Y96_guwaadunification
+			}
+			every_owned_province = {
+				clr_province_flag = Y96_guwaadunification
+			}
+		}
+	}
+	
+	Y96_nakseseom_cult = {
+		icon = mission_look_west
+		position = 4
+		required_missions = { Y96_build_bhengudak_temple }
+		
+		provinces_to_highlight = {
+			province_id = 5419
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					is_core = ROOT
+					has_tax_building_trigger = yes
+				}
+			}
+		}
+		
+		trigger = {
+			treasury = 50
+			5419 = {
+				owned_by = ROOT
+				is_core = ROOT
+				has_tax_building_trigger = yes
+			}
+		}
+		
+		effect = {
+			add_treasury = -50
+			country_event = { id = guwaamud.3 days = 730 }
+		}
+	}
+}

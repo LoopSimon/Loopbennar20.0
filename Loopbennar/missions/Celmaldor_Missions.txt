@@ -1,0 +1,5835 @@
+Z22_branch_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		OR = {
+			tag = Z22
+			AND = {
+				tag = B98
+				was_tag = Z22
+			}
+		}
+	} 
+
+	z22_defend_inlet = {
+		icon = mission_invade_island
+		position = 1
+		provinces_to_highlight = {
+			area = coddorran_heights_area
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		} 
+
+		trigger = {  
+			num_of_light_ship = 10
+			OR = {
+				num_of_heavy_ship = 5
+				num_of_galley = 6
+			}
+
+			coddorran_heights_area = {
+				type = all 
+				owned_by = ROOT
+			}
+		} 
+
+		effect = {
+			storm_isles_area = {
+				add_permanent_claim = ROOT
+			}
+			frostbridges_area = {
+				add_permanent_claim = ROOT 
+			}
+			696 = {
+				add_province_modifier = {
+					name = z22_white_harbour_gates
+					duration = -1
+				}
+			}
+			695 = {
+				add_province_modifier = {
+					name = z22_white_harbour_gates
+					duration = -1
+				}
+			}
+			697 = {
+				add_province_modifier = {
+					name = z22_white_harbour_gates
+					duration = -1
+				}
+			}
+			694 = {
+				add_province_modifier = {
+					name = z22_white_harbour_gates
+					duration = -1
+				}
+			}
+			696 = {
+				add_trade_modifier = {
+					who = ROOT
+					duration = 7300
+					power = 30
+					key = z22_inlet_defended
+				}
+			}
+		} 
+	}
+
+	z22_gnomers_storm = {
+		icon = mission_gnome_tinkering
+		position = 2
+		required_missions = {
+			z22_defend_inlet
+			z22_control_tolls
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = storm_isles_area
+					OR = {
+						NOT = { owned_by = ROOT }
+						unrest = 1
+						AND = { 
+							local_autonomy = 30.01
+							NOT = { local_autonomy = 90 }
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 190 #Storm Isles
+						province_id = 188 #Lilcodd
+					}
+					has_trade_building_trigger = no
+					NOT = {
+						190 = { has_trade_building_trigger = yes } #Storm Isles
+						188 = { has_trade_building_trigger = yes } #Lilcodd
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			storm_isles_area = {
+				owned_by = ROOT
+				NOT = {
+					unrest = 1
+				}
+				OR = {
+					local_autonomy = 90
+					NOT = {
+						local_autonomy = 30
+					}
+				}
+			}
+			OR = {
+				190 = {
+					has_trade_building_trigger = yes
+				}
+				188 = {
+					has_trade_building_trigger = yes
+				}
+			}
+		} 
+
+		effect = {
+			storm_isles_area = {
+				add_nationalism = -5
+			}
+			if = {
+				limit = {
+					190 = {
+						has_trade_building_trigger = yes
+					}
+				}
+				190 = {
+					add_base_production = 2
+					add_elven_minority_size_effect = yes 
+					add_province_modifier = {
+						name = z22_storm_isles_trade
+						duration = -1
+					}
+				}
+			}
+			else = {
+				188 = {
+					add_base_production = 2
+					add_elven_minority_size_effect = yes
+					add_province_modifier = {
+						name = z22_storm_isles_trade
+						duration = -1
+					}
+				}
+			}
+			696 = {
+				add_gnomish_minority_size_effect = yes 
+			}
+		} 
+	}
+
+	z22_lonely_voyages = {
+		icon = mission_arabian_sea_trade
+		position = 4
+		required_missions = { z22_gnomers_storm } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						region = dalaire_region
+						region = bloodgroves_region
+						region = north_ruined_isles_region
+					}
+					has_port = yes
+					NOT = { has_discovered = ROOT }
+				}
+				AND = {
+					province_id = 1001
+					NOT = {
+						AND = {
+							base_production = 6
+							has_trade_building_trigger = yes
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			dalaire_region = {
+				type = all
+				OR = {
+					NOT = {
+						has_port = yes
+					}
+					has_discovered = Z22
+				}
+			}
+			bloodgroves_region = {
+				type = all
+				OR = {
+					NOT = {
+						has_port = yes
+					}
+					has_discovered = Z22
+				}
+			}
+			north_ruined_isles_region = {
+				type = all
+				OR = {
+					NOT = {
+						has_port = yes
+					}
+					has_discovered = Z22
+				}
+			}
+			1001 = {
+				has_trade_building_trigger = yes
+				base_production = 6
+			}
+		} 
+
+		effect = {
+			1001 = {
+				add_permanent_province_modifier = {
+					name = z22_last_homely_harbour
+					desc = until_end_of_age_of_discovery_desc
+					duration = -1
+				}
+			}
+		} 
+	}
+
+	z22_old_world_anchor = {
+		icon = mission_rb_conquer_the_isles
+		position = 6
+		required_missions = {
+			z22_lonely_voyages
+			z22_reinvigorate_harbour
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = dalaire_region
+					NOT = {
+						AND = {
+							owned_by_subject_of = ROOT
+							is_core = owner
+							owner = {
+								is_colonial_nation = yes
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 1202
+					NOT = {
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT
+							development = 15
+							has_dock_building_trigger = yes 
+							has_trade_building_trigger = yes
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 10
+				region = dalaire_region
+				is_city = yes
+			}
+			1202 = {
+				development = 15
+				has_dock_building_trigger = yes
+				has_trade_building_trigger = yes
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+		} 
+
+		effect = {
+			1202 = {
+				if = {
+					limit = {
+						NOT = {
+							province_has_center_of_trade_of_level = 3
+						}
+					}
+					add_center_of_trade_level = 1 
+				}
+			}
+			random_subject_country = {
+				limit = {
+					capital_scope = {
+						region = dalaire_region
+					}
+					is_colonial_nation = yes
+				}
+				1202 = {
+					cede_province = PREV
+				}
+				set_capital = 1202
+				add_country_modifier = {
+					name = z22_growing_colony
+					duration = -1
+				}
+				set_country_flag = does_not_convert_colonies_culture_or_religion_flag
+			}
+			dalaire_region = {
+				limit = {
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+			broken_isles_region = {
+				limit = {
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+			hidden_effect = {
+				country_event = {
+					id = flavour_celmaldor.21
+					days = 1825
+					random = 3650
+				}
+			}
+		} 
+	}
+
+	z22_multicultural_colonies = {
+		icon = mission_dominate_home_trade_node
+		position = 7
+		required_missions = { z22_old_world_anchor } 
+		provinces_to_highlight = { 
+			colonial_region = colonial_dalaire
+			NOT = {
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					development = 10
+					has_courthouse_building_trigger = yes
+					is_city = yes
+				}
+			}
+		} 
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 30
+				colonial_region = colonial_dalaire
+				is_city = yes
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 8
+				region = dalaire_region
+				development = 10
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 10
+				region = dalaire_region
+				has_courthouse_building_trigger = yes
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_acts_of_deland_for_colonies_tt
+
+			every_subject_country = {
+				limit = {
+					is_colonial_nation = yes
+				}
+				add_government_reform = z22_acts_of_deland
+				if = {
+					limit = {
+						NOT = {
+							has_country_modifier = z22_growing_colony
+						}
+					}
+					add_country_modifier = {
+						name = z22_growing_colony
+						duration = -1
+					}
+				}
+				set_country_flag = does_not_convert_colonies_culture_or_religion_flag
+				set_country_flag = z22_colony_culture_religion_change_chance
+			}
+			set_country_flag = z22_colony_culture_religion_change_chance
+
+
+		} 
+	}
+
+	z22_frozen_passage = {
+		icon = mission_protect_white_sea_trade
+		position = 9
+		required_missions = {
+			z22_multicultural_colonies
+			z22_new_directions
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					colonial_region = colonial_broken_sea
+					OR = {
+						owner = {
+							NOT = {
+								is_giesadh_or_trade_league_member = yes
+								is_subject_of = ROOT
+							}
+						}
+						AND = {
+							province_has_center_of_trade_of_level = 1
+							NOT = {
+								AND = { 
+									development = 10
+									has_trade_building_trigger = yes
+								} 
+							}
+						}
+					}
+				}
+				AND = {
+					OR = {
+						has_province_modifier = eigras_gate_toll
+						has_province_modifier = icebreaker_toll
+					}
+					NOT = {
+						galleys_in_province = 4
+					}
+				}
+				AND = {
+					OR = {
+						region = sarmadfar_region
+						region = randrunnse_region
+						region = glorelthir_region
+					}
+					is_capital = yes
+					NOT = {
+						owner = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			colonial_broken_sea = {
+				type = all
+				owner = {
+					is_giesadh_or_trade_league_member = yes 
+					is_subject_of = ROOT
+				}
+				OR = {
+					AND = {
+						province_has_center_of_trade_of_level = 1
+						development = 10
+					}
+					NOT = {
+						province_has_center_of_trade_of_level = 1
+					}
+				}
+				OR = {
+					NOT = {
+						has_province_modifier = eigras_gate_toll
+						has_province_modifier = icebreaker_toll
+					}
+					AND = {
+						OR = {
+							has_province_modifier = eigras_gate_toll
+							has_province_modifier = icebreaker_toll
+						}
+						galleys_in_province = 4
+					}
+				}
+			}
+			2037 = {
+				custom_trigger_tooltip = {
+					tooltip = z22_node_owns_province_or_nation_with_100_opinion_tt
+					OR = {
+						any_trade_node_member_country = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+						any_trade_node_member_province = {
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+					}
+				}
+			}
+			1965 = {
+				custom_trigger_tooltip = {
+					tooltip = z22_node_owns_province_or_nation_with_100_opinion_tt
+					OR = {
+						any_trade_node_member_country = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+						any_trade_node_member_province = {
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+					}
+				}
+			}
+			1990 = {
+				custom_trigger_tooltip = {
+					tooltip = z22_node_owns_province_or_nation_with_100_opinion_tt
+					OR = {
+						any_trade_node_member_country = {
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+						any_trade_node_member_province = {
+							country_or_non_sovereign_subject_holds = ROOT
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			colonial_broken_sea = {
+				limit = {
+					OR = {
+						province_has_center_of_trade_of_level = 1
+						has_province_modifier = eigras_gate_toll
+						has_province_modifier = icebreaker_toll
+					}
+				}
+				add_province_modifier = {
+					name = z22_frozen_infrastructure
+					duration = -1
+				}
+				if = {
+					limit = {
+						OR = {
+							has_province_modifier = eigras_gate_toll
+							has_province_modifier = icebreaker_toll
+						}
+					}
+					kill_units = {
+						who = ROOT
+						type = galley
+						amount = 4
+					}
+				}
+			}
+			1990 = {
+				add_trade_modifier = {
+					who = ROOT
+					duration = -1
+					power = 50
+					key = z22_northern_seas_trade
+				}
+			}
+			1965 = {
+				add_trade_modifier = {
+					who = ROOT
+					duration = -1
+					power = 50
+					key = z22_northern_seas_trade
+				}
+			}
+			2037 = {
+				add_trade_modifier = {
+					who = ROOT
+					duration = -1
+					power = 50
+					key = z22_northern_seas_trade
+				}
+			}
+			1746 = {
+				add_trade_modifier = {
+					who = ROOT
+					duration = -1
+					power = 50
+					key = z22_northern_seas_trade
+				}
+			}
+		} 
+	}
+
+	z22_emancipate_aelantir = {
+		icon = mission_aelantir
+		position = 11
+		required_missions = { z22_frozen_passage } 
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				is_colonial_nation = yes
+				overlord = {
+					tag = ROOT
+				}
+				NOT = {
+					AND = {
+						has_opinion = {
+							who = ROOT
+							value = 200
+						}
+						trust = {
+							who = ROOT
+							value = 70
+						}
+					}
+				}
+			}
+			NOT = {
+				AND = {
+					development = 30
+					OR = {
+						has_building = university
+						has_courthouse_building_trigger = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			all_subject_country = {
+				OR = {
+					is_colonial_nation = no
+					AND = {
+						has_opinion = {
+							who = ROOT
+							value = 200
+						}
+						trust = {
+							who = ROOT
+							value = 70
+						}
+						capital_scope = {
+							development = 30
+							OR = {
+								has_building = university
+								has_courthouse_building_trigger = yes
+							}
+						}
+					}
+				}
+			}
+			calc_true_if = {
+				amount = 5
+				north_america = {
+					type = all
+					OR = {
+						province_id = 1202
+						province_id = 1746
+						province_id = 1965
+						province_id = 1990
+						province_id = 2037
+						province_id = 2088
+						province_id = 1948
+						province_id = 1028
+						province_id = 1016
+						province_id = 2153
+					}
+					trade_share = {
+						country = ROOT
+						share = 65
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_giesadh_restriction_NA_1_tt
+
+			set_global_flag = z22_giesadh_restriction_NA_1
+			clr_global_flag = z22_giesadh_restriction_gerudia
+
+			set_country_flag = z22_colonies_to_free_nations
+
+			custom_tooltip = z22_free_your_colonies_tt
+
+			hidden_effect = {
+				add_country_modifier = {
+					name = z22_transfer_offset	#This offsets the -1000 tags get
+					duration = -1
+					hidden = yes
+				}
+			}
+
+			every_active_trade_node = {
+				limit = {
+					trade_share = {
+						country = ROOT
+						share = 75
+					}
+					any_trade_node_member_province = {
+						continent = north_america
+					}
+				}
+				add_trade_modifier = {
+					who = ROOT
+					duration = -1
+					power = 250
+					key = z22_league_aelantir
+				}
+			}
+
+			hidden_effect = {
+				every_subject_country = {
+					limit = {
+						is_colonial_nation = yes
+					}
+					set_country_flag = z22_former_celmaldor_colonial_tag
+					set_country_flag = z22_is_permanent_giesadh
+					grant_independence = yes
+					create_alliance = ROOT
+					add_opinion = {
+						who = ROOT
+						modifier = historical_friend
+					}
+					reverse_add_opinion = {
+						who = ROOT
+						modifier = historical_friend
+					}
+					add_trust = {
+						who = ROOT
+						value = 25
+					}
+					z22_make_giesadh_effect = yes
+				}
+			}
+
+			hidden_effect = {
+				set_estate_privilege = z22_league_dividends
+			}
+
+			set_global_flag = z22_giseadh_modifiers_tier_2
+		} 
+	}
+
+	z22_elfhome_allies = {
+		icon = mission_alliances
+		position = 12
+		required_missions = {
+			z22_emancipate_aelantir
+			z22_halanns_greatest_port
+		}
+		provinces_to_highlight = {
+			continent = north_america
+			is_capital = yes
+			owner = {
+				NOT = {
+					has_20_opinion_sent_gift = {
+						target = ROOT 
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			calc_true_if = {
+				amount = 5
+				all_known_country = {
+					is_giesadh_or_trade_league_member = yes
+					capital_scope = {
+						continent = north_america
+					}
+					has_opinion = {
+						who = ROOT
+						value = 175
+					}
+				}
+			}
+			if = {
+				limit = {
+					calc_true_if = {
+						amount = 15
+						all_known_country = {
+							capital_scope = {
+								continent = north_america
+							}
+						}
+					}
+				}
+				calc_true_if = {
+					amount = 15
+					all_known_country = {
+						capital_scope = {
+							continent = north_america
+						}
+						has_20_opinion_sent_gift = {
+							target = ROOT 
+						}
+					}
+				}
+			}
+			else = {
+				OR = {
+					NOT = {
+						capital_scope = {
+							continent = north_america
+						}
+						is_rival = ROOT
+					}
+					has_20_opinion_sent_gift = {
+						target = ROOT
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_giesadh_restriction_NA_2_tt
+
+			set_global_flag = z22_giesadh_restriction_NA_2
+			clr_global_flag = z22_giesadh_restriction_NA_1 
+
+			every_country = {
+				limit = {
+					capital_scope = {
+						continent = north_america
+					}
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = z22_grand_northern_league
+				}
+			}
+
+			custom_tooltip = z22_claims_on_NA_tt
+			hidden_effect = {
+				north_america = {
+					limit = {
+						NOT = {
+							owned_by_trade_league_member_or_giesadh = yes
+						}
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+
+		} 
+	}
+
+	z22_northern_liberation = {
+		icon = mission_arverynn_street
+		position = 13
+		required_missions = { z22_elfhome_allies } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital = yes
+					owner = {
+						is_colonial_nation = yes
+					}
+					continent = north_america
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						is_giesadh_or_trade_league_member = yes
+						NOT = {
+							AND = {
+								has_opinion = {
+									who = ROOT
+									value = 200
+								}
+								trust = {
+									who = ROOT
+									value = 90
+								}
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			all_known_country = {
+				OR = {
+					NOT = {
+						capital_scope = {
+							continent = north_america
+						}
+					}
+					AND = {
+						is_colonial_nation = no
+						OR = {
+							is_giesadh_or_trade_league_member = yes
+							overlord = {
+								is_giesadh_or_trade_league_member = yes
+								is_subject_of = ROOT
+							}
+						}
+						has_opinion = {
+							who = ROOT
+							value = 200
+						}
+						trust = {
+							who = ROOT
+							value = 90
+						}
+					}
+				}
+			}
+			1202 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			1746 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			1965 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			1990 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			2037 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			2088 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			1948 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			1028 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			1016 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			2153 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			4663 = {
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_acts_of_deland_for_NA_tt
+			add_country_modifier = {
+				name = z22_north_elfhome_decolonised
+				duration = -1
+			}
+			hidden_effect = {
+				every_known_country = {
+					limit = {
+						capital_scope = {
+							continent = north_america
+						}
+					}
+					add_government_reform = z22_acts_of_deland
+				}
+			}
+			1202 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1746 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1965 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1990 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2037 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2088 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1948 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1028 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1016 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2153 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1864 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1823 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1165 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			1133 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			4663 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+		} 
+	}
+}
+
+Z22_branch_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		OR = {
+			tag = Z22
+			AND = {
+				tag = B98
+				was_tag = Z22
+			}
+		}
+	} 
+
+	z22_control_tolls = {
+		icon = mission_rb_scottish_north_sea_trade
+		position = 1
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = frostbridges_area
+					NOT = {
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT
+							is_core = owner
+						}
+					}
+				}
+				AND = {
+					province_id = 1324
+					OR = {
+						NOT = {
+							1324 = {
+								trade_share = {
+									country = ROOT
+									share = 30
+								}
+							}
+						}
+						1324 = {
+							privateer_power = {
+								share = 2
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			frostbridges_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+				is_core = owner
+			}
+			1324 = {
+				trade_share = {
+					country = ROOT
+					share = 30
+				}
+				NOT = {
+					privateer_power = {
+						share = 2
+					}
+				}
+			}
+		} 
+
+		effect = {
+			every_known_country = {
+				limit = {
+					religion = skaldhyrric_faith
+				}
+				add_country_modifier = {
+					name = z22_pass_watched
+					duration = 18250
+				}
+			}
+			1324 = {
+				add_trade_modifier = {
+					who = ROOT
+					duration = 7300
+					power = 40 #Buffed cuz the trade is ass early game
+					key = Z22_CONTROLLING_TOLLS
+				}
+			}
+		} 
+	}
+
+	z22_curtail_clans = {
+		icon = mission_elf_smiling
+		position = 2
+		required_missions = {
+			z22_control_tolls
+			z22_silver_league
+		}
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			government_reform_progress = 30
+
+			custom_trigger_tooltip = {
+				tooltip = z22_curtail_clans_tt
+				if = {
+					limit = {
+						z22_ruler_is_icewind = yes
+					}
+					faction_influence = {
+						faction = icewind_clan
+						influence = 65
+					}
+				}
+				if = {
+					limit = {
+						z22_ruler_is_whitespear = yes
+					}
+					faction_influence = {
+						faction = whitespear_clan
+						influence = 65
+					}
+				}
+				if = {
+					limit = {
+						z22_ruler_is_frozentide = yes
+					}
+					faction_influence = {
+						faction = frozentide_clan
+						influence = 65
+					}
+				}
+				if = {
+					limit = {
+						z22_ruler_is_non_clan = yes 
+					}
+					NOT = {
+						faction_influence = {
+							faction = frozentide_clan
+							influence = 45
+						}
+						faction_influence = {
+							faction = icewind_clan
+							influence = 45
+						}
+						faction_influence = {
+							faction = whitespear_clan
+							influence = 45
+						}
+					}
+				}
+			}
+
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = z22_no_mercs_hired_tt
+					had_country_flag = {
+						flag = recruited_merc_company
+						days = 3650
+					}
+				}
+				estate_loyalty = {
+					estate = estate_nobles
+					higher_than_influence = yes
+				}
+				NOT = {
+					num_of_mercenaries = 1
+				}
+			}
+		} 
+
+		effect = {
+			change_government_reform_progress = -30
+
+			set_country_flag = z22_influence_from_reelection
+
+			custom_tooltip = z22_influence_from_reelection_tt
+
+			if = {
+				limit = {
+					has_ruler_flag = ruler_is_icewind
+				}
+				add_faction_influence = {
+					faction = icewind_clan
+					influence = -15
+				}
+			}
+			else_if = {
+				limit = {
+					has_ruler_flag = ruler_is_whitespear
+				}
+				add_faction_influence = {
+					faction = whitespear_clan
+					influence = -15
+				}
+			}
+			else_if = {
+				limit = {
+					has_ruler_flag = ruler_is_frozentide
+				}
+				add_faction_influence = {
+					faction = frozentide_clan
+					influence = -15
+				}
+			}
+		} 
+	}
+
+	z22_tides_profit = {
+		icon = mission_african_gold
+		position = 3
+		required_missions = {
+			z22_gnomers_storm
+			z22_curtail_clans
+			z22_invest_allies
+		}
+		provinces_to_highlight = {
+			area = serpentshead_area
+			NOT = {
+				has_trade_building_trigger = yes
+			}
+		} 
+
+		trigger = {
+			serpentshead_area = {
+				type = all
+				has_trade_building_trigger = yes
+			}
+			696 = {
+				trade_share = {
+					country = ROOT
+					share = 50
+				}
+			}
+			723 = {
+				trade_share = {
+					country = ROOT
+					share = 15
+				}
+			}
+			975 = {
+				trade_share = {
+					country = ROOT
+					share = 15
+				}
+			}
+			num_of_light_ship = 20
+		} 
+
+		effect = {
+			add_stability_or_adm_power = yes 
+			696 = {
+				add_trade_node_income = 60
+			}
+			723 = {
+				add_trade_node_income = 60
+			}
+			975 = {
+				add_trade_node_income = 60
+			}
+			custom_tooltip = z22_unlock_military_demonopolisation_tt
+		} 
+	}
+
+	z22_disband_private_armies = {
+		icon = mission_armor_choice
+		position = 4
+		required_missions = { z22_tides_profit } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			NOT = {
+				has_manpower_building_trigger = yes
+			}
+		} 
+
+		trigger = {
+			if = {
+				limit = {
+					has_ruler_flag = ruler_is_frozentide
+				}
+				NOT = {
+					faction_influence = {
+						faction = icewind_clan
+						influence = 20
+					}
+					faction_influence = {
+						faction = whitespear_clan
+						influence = 20
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_ruler_flag = ruler_is_icewind
+				}
+				NOT = {
+					faction_influence = {
+						faction = frozentide_clan
+						influence = 20
+					}
+					faction_influence = {
+						faction = whitespear_clan
+						influence = 20
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_ruler_flag = ruler_is_whitespear
+				}
+				NOT = {
+					faction_influence = {
+						faction = icewind_clan
+						influence = 20
+					}
+					faction_influence = {
+						faction = frozentide_clan
+						influence = 20
+					}
+				}
+			}
+			OR = {
+				army_professionalism = 0.2
+				AND = {
+					army_professionalism = 0.1
+					mil_power = 100
+				}
+			}
+			estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 60
+			}
+			estate_loyalty = {
+				estate = estate_nobles
+				higher_than_influence = yes 
+			}
+			num_of_owned_provinces_with = {
+				value = 5
+				has_manpower_building_trigger = yes 
+			}
+		} 
+
+		effect = {
+			remove_estate_privilege = z22_clan_levies_privilege
+
+			if = {
+				limit = {
+					NOT = {
+						army_professionalism = 0.2
+					}
+				}
+				add_mil_power = -100
+			}
+
+			add_country_modifier = {
+				name = z22_restructuring_army
+				duration = 9125
+			}
+		} 
+	}
+
+	z22_reinvigorate_harbour = {
+		icon = mission_early_game_buildings
+		position = 5
+		required_missions = {
+			z22_lonely_voyages
+			z22_disband_private_armies
+			z22_united_magnates
+		}
+		provinces_to_highlight = {
+			province_id = 696
+			NOT = {
+				AND = {
+					development = 30
+					has_dock_building_trigger = yes
+					has_production_building_trigger = yes
+					has_tax_building_trigger = yes
+				}
+			}
+		} 
+
+		trigger = {
+			696 = {
+				development = 30
+				has_dock_building_trigger = yes
+				has_production_building_trigger = yes
+				has_tax_building_trigger = yes
+				if = {
+					limit = {
+						has_dlc = "Leviathan"
+					}
+					num_of_times_expanded_infrastructure = 2
+				}
+			}
+			OR = {
+				natural_scientist = 2
+				trader = 2
+				navigator = 2
+				naval_reformer = 2
+			}
+		} 
+
+		effect = {
+			set_country_flag = does_not_convert_colonies_culture_or_religion_flag
+
+			696 = {
+				add_permanent_province_modifier = {
+					name = z22_colonial_port
+					duration = -1
+				}
+			}
+
+			custom_tooltip = z22_unlock_harbour_expansion_tt
+		} 
+	}
+
+	z22_loyal_army = {
+		icon = mission_have_two_subjects
+		position = 6
+		required_missions = {
+			z22_reinvigorate_harbour
+			z22_amend_act
+		}
+		provinces_to_highlight = {
+			country_or_non_sovereign_subject_holds = ROOT
+			NOT = {
+				has_manpower_building_trigger = yes
+			}
+		} 
+
+		trigger = {
+			army_professionalism = 0.2
+			army_tradition = 60
+			OR = {
+				AND = {
+					army_professionalism = 0.3
+					NOT = {
+						army_professionalism = 0.4
+					}
+					mil_power = 100
+				}
+				AND = {
+					NOT = {
+						army_professionalism = 0.3
+					}
+					mil_power = 200
+				}
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 15
+				has_manpower_building_trigger = yes
+			}
+			army_size = 50
+			NOT = {
+				mercenary_fraction = 0.1
+			}
+		} 
+
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						army_professionalism = 0.4
+					}
+					army_professionalism = 0.3
+				}
+				add_mil_power = -100
+			}
+			else_if = {
+				limit = {
+					NOT = {
+						army_professionalism = 0.3
+					}
+				}
+				add_mil_power = -200	
+			}
+			country_event = {
+				id = flavour_celmaldor.4
+			}
+		} 
+	}
+
+	z22_proof_concept = {
+		icon = mission_hanseatic_city
+		position = 7
+		required_missions = { z22_loyal_army } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 696
+					NOT = {
+						has_province_modifier = z22_white_harbour_1
+						has_province_modifier = z22_white_harbour_2
+						has_province_modifier = z22_white_harbour_3
+						has_province_modifier = z22_white_harbour_4
+						has_province_modifier = z22_white_harbour_5
+					}
+				}
+				AND = {
+					area = serpentshead_area
+					NOT = {
+						has_shipyard_building_trigger = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			696 = {
+				custom_trigger_tooltip = {
+					tooltip = z22_white_harbour_level_1_tt
+					OR = {
+						has_province_modifier = z22_white_harbour_1
+						has_province_modifier = z22_white_harbour_2
+						has_province_modifier = z22_white_harbour_3
+						has_province_modifier = z22_white_harbour_4
+						has_province_modifier = z22_white_harbour_5
+					}
+				}
+				province_trade_power = 75
+				province_has_center_of_trade_of_level = 2
+			}
+			serpentshead_area = {
+				type = all
+				has_shipyard_building_trigger = yes
+			}
+			trade_goods_produced_amount = {
+				trade_goods = naval_supplies
+				amount = 10
+			}
+		} 
+
+		effect = {
+			696 = {
+				if = {
+					limit = {
+						province_has_center_of_trade_of_level = 3
+					}
+					owner = {
+						add_adm_power = 50
+						add_dip_power = 50
+						add_mil_power = 50
+					}
+				}
+				else = {
+					add_center_of_trade_level = 1
+				}
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 2
+			}
+			country_event = {
+				id = flavour_celmaldor.6
+			}
+		} 
+	}
+
+	z22_new_directions = {
+		icon = mission_princess_writing
+		position = 8
+		required_missions = {
+			z22_proof_concept
+			z22_multicultural_colonies
+			z22_greater_reach
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					superregion = gerudia_superregion
+					country_or_non_sovereign_subject_holds = ROOT
+					NOT = {
+						AND = {
+							has_production_building_trigger = yes
+							has_courthouse_building_trigger = yes
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						is_colonial_nation = yes
+						overlord = {
+							tag = ROOT
+						}
+					}
+					NOT = {
+						AND = {
+							development = 20
+							has_courthouse_building_trigger = yes 
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			calc_true_if = {
+				amount = 5
+				all_active_trade_node = {
+					trade_share = {
+						country = ROOT
+						share = 80
+					}
+				}
+			}
+			calc_true_if = {
+				amount = 30
+				gerudia_superregion = {
+					type = all
+					has_production_building_trigger = yes
+					has_courthouse_building_trigger = yes
+				}
+			}
+			all_subject_country = {
+				OR = {
+					NOT = {
+						is_colonial_nation = yes
+					}
+					capital_scope = {
+						development = 20
+						has_courthouse_building_trigger = yes
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavour_celmaldor.7
+			}
+		}
+	}
+
+	z22_burgeoning_harbour = {
+		icon = mission_heart_of_the_hansa
+		position = 9
+		required_missions = {
+			z22_new_directions
+			z22_toward_unification
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 696
+					NOT = {
+						AND = {
+							development = 50
+							has_manufactory_trigger = yes
+						}
+					}
+				}
+				AND = {
+					province_id = 697
+					NOT = {
+						has_manufactory_trigger = yes
+					}
+				}
+				AND = {
+					province_id = 695
+					NOT = {
+						has_manufactory_trigger = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			696 = {
+				development = 50
+				has_manufactory_trigger = yes
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = z22_white_harbour_level_3_tt
+						OR = {
+							has_province_modifier = z22_white_harbour_3
+							has_province_modifier = z22_white_harbour_4
+							has_province_modifier = z22_white_harbour_5
+						}
+					}
+					AND = {
+						custom_trigger_tooltip = {
+							tooltip = z22_white_harbour_level_2_tt
+							has_province_modifier = z22_white_harbour_2
+						}
+						ROOT = {
+							treasury = 1000
+						}
+					}
+				}
+			}
+			697 = {
+				has_manufactory_trigger = yes
+			}
+			695= {
+				has_manufactory_trigger = yes
+			}
+		} 
+
+		effect = {
+			serpentshead_area = {
+				add_province_modifier = {
+					name = z22_centre_reach
+					duration = -1
+				}
+			}
+			695 = {
+				change_trade_goods = naval_supplies
+				add_building_construction = {
+					building = wharf
+					cost = 0
+					speed = 0.25
+				}
+			}
+		} 
+	}
+
+	z22_commercialised_magic = {
+		icon = mission_tech_stuff
+		position = 10
+		required_missions = {
+			z22_frozen_passage
+			z22_burgeoning_harbour
+			z22_prosperitys_champion
+		}
+		provinces_to_highlight = {
+			OR = {
+				trade_goods = precursor_relics
+				trade_goods = damestear
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+				owner = {
+					is_giesadh_or_trade_league_member = yes
+				}
+			}
+		} 
+
+		trigger = {
+			OR = {
+				has_estate = estate_artificers
+				AND = {
+					OR = {
+						has_country_flag = magic_artificery_mage_only
+						has_country_flag = magic_artificery_artificery_only
+					}
+					adm_power = 100
+				}
+				custom_trigger_tooltip = {
+					tooltip = z22_innovativeness_per_decade_tt
+					if = {
+						limit = {
+							is_year = 1645
+						}
+						innovativeness = 10
+					}
+					else_if = {
+						limit = {
+							is_year = 1640
+						}
+						innovativeness = 20
+					}
+					else_if = {
+						limit = {
+							is_year = 1635
+						}
+						innovativeness = 30
+					}
+					else_if = {
+						limit = {
+							is_year = 1630
+						}
+						innovativeness = 40
+					}
+					else_if = {
+						limit = {
+							is_year = 1625
+						}
+						innovativeness = 50
+					}
+					else_if = {
+						limit = {
+							is_year = 1620
+						}
+						innovativeness = 60
+					}
+					else_if = {
+						limit = {
+							is_year = 1615
+						}
+						innovativeness = 70
+					}
+					else_if = {
+						limit = {
+							is_year = 1610
+						}
+						innovativeness = 80
+					}
+					else_if = {
+						limit = {
+							is_year = 1605
+						}
+						innovativeness = 90
+					}
+					else_if = {
+						limit = {
+							is_year = 1600
+						}
+						innovativeness = 100
+					}
+				}
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 5
+				OR = {
+					trade_goods = precursor_relics
+					trade_goods = damestear
+				}
+			}
+		} 
+
+		effect = {
+			if = {
+				limit = {
+					has_country_flag = magic_artificery_mage_only
+				}
+				artifice_magic_switch_to_mixed_mode = yes
+				add_adm_power = -100
+			}
+			if = {
+				limit = {
+					has_country_flag = magic_artificery_artificery_only
+				}
+				artifice_magic_switch_to_mixed_mode = yes
+				add_adm_power = -100
+			}
+			set_country_flag = unlock_mixed_mode
+			unlock_artificery = yes
+			tooltip = {
+				set_estate_privilege = z22_steady_iteration_privilege
+			}
+			hidden_effect = {
+				country_event = {
+					id = flavour_celmaldor.997
+					days = 20 #get your artificer estate before setting the privilege
+				}
+			}
+			custom_tooltip = z22_unlock_unique_inventions_tt
+		} 
+	}
+
+	z22_halanns_greatest_port = {
+		icon = mission_develop_nevas_port
+		position = 11
+		required_missions = { z22_commercialised_magic } 
+		provinces_to_highlight = {
+			province_id = 696
+			NOT = {
+				AND = {
+					has_province_modifier = z22_white_harbour_5
+					has_building = mage_tower
+					transports_in_province = 30
+				}
+			}
+		} 
+
+		trigger = {
+			696 = {
+				custom_trigger_tooltip = {
+					tooltip = z22_white_harbour_level_5_tt
+					has_province_modifier = z22_white_harbour_5
+				}
+				transports_in_province = 30 
+				has_building = mage_tower
+			}
+			treasury = 5000
+			num_economic_artifice_inventions_active = {
+				VAL = 3
+			}
+		} 
+
+		effect = {
+			add_treasury = -5000
+			696 = {
+				kill_units = {
+					who = ROOT
+					type = transport
+					amount = 30 
+				}
+				add_province_modifier = {
+					name = z22_white_harbour_couriers
+					duration = -1
+				}
+				add_base_tax = 3
+				add_base_production = 3
+				add_base_manpower = 3
+				if = {
+					limit = {
+						NOT = {
+							has_building = grand_shipyard
+						}
+					}
+					remove_building = shipyard
+					add_building = grand_shipyard
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_building = stock_exchange
+						}
+					}
+					remove_building = marketplace
+					remove_building = trade_depot
+					add_building = stock_exchange
+				}
+			}
+			add_splendor = 800
+		} 
+	}
+
+	z22_galsheah_dream = {
+		icon = mission_look_west
+		position = 12
+		required_missions = { z22_halanns_greatest_port } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					superregion = gerudia_superregion
+					has_port = yes
+					NOT = {
+						has_shipyard_building_trigger = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			gerudia_superregion = {
+				type = all
+				OR = {
+					NOT = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = z22_has_unlocked_inventions_tt
+				has_country_flag = unlocked_artifice_invention_military_sky_galleons
+				has_country_flag = unlocked_artifice_invention_naval_mageshields
+				has_country_flag = unlocked_artifice_invention_pathway_transmutation 
+				has_country_flag = unlocked_artifice_invention_innate_windshaping
+				has_country_flag = unlocked_artifice_invention_icestorm_cannons
+				has_country_flag = unlocked_artifice_invention_sustaining_arks
+			}
+			OR = {
+				trading_bonus = {
+					trade_goods = precursor_relics
+					value = yes
+				}
+				trading_bonus = {
+					trade_goods = damestear
+					value = yes
+				}
+				AND = {
+					num_of_provinces_owned_or_owned_by_subjects_with = {
+						value = 10
+						OR = {
+							trade_goods = precursor_relics
+							trade_goods = damestear
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = z22_money_for_inno_tt
+				if = {
+					limit = {
+						innovativeness = 100
+					}
+					treasury = 5000
+				}
+				else_if = {
+					limit = {
+						innovativeness = 90
+					}
+					treasury = 10000
+				}
+				else_if = {
+					limit = {
+						innovativeness = 80
+					}
+					treasury = 20000
+				}
+				else_if = {
+					limit = {
+						innovativeness = 70
+					}
+					treasury = 30000
+				}
+				else_if = {
+					limit = {
+						innovativeness = 60
+					}
+					treasury = 40000
+				}
+				else_if = {
+					limit = {
+						innovativeness = 50
+					}
+					treasury = 50000
+				}
+				else_if = {
+					limit = {
+						innovativeness = 40
+					}
+					treasury = 60000
+				}
+				else_if = {
+					limit = {
+						innovativeness = 30
+					}
+					treasury = 70000
+				}
+				else_if = {
+					limit = {
+						innovativeness = 20
+					}
+					treasury = 80000
+				}
+				else_if = {
+					limit = {
+						innovativeness = 10
+					}
+					treasury = 90000
+				}
+				else = {
+					treasury = 100000
+				}
+			}
+		} 
+
+		effect = {
+			if = {
+				limit = {
+					innovativeness = 100
+				}
+				add_treasury = -5000
+			}
+			else_if = {
+				limit = {
+					innovativeness = 90
+				}
+				add_treasury = -10000
+			}
+			else_if = {
+				limit = {
+					innovativeness = 80
+				}
+				add_treasury = -20000
+			}
+			else_if = {
+				limit = {
+					innovativeness = 70
+				}
+				add_treasury = -30000
+			}
+			else_if = {
+				limit = {
+					innovativeness = 60
+				}
+				add_treasury = -40000
+			}
+			else_if = {
+				limit = {
+					innovativeness = 50
+				}
+				add_treasury = -50000
+			}
+			else_if = {
+				limit = {
+					innovativeness = 40
+				}
+				add_treasury = -60000
+			}
+			else_if = {
+				limit = {
+					innovativeness = 30
+				}
+				add_treasury = -70000
+			}
+			else_if = {
+				limit = {
+					innovativeness = 20
+				}
+				add_treasury = -80000
+			}
+			else_if = {
+				limit = {
+					innovativeness = 10
+				}
+				add_treasury = -90000
+			}
+			else = {
+				add_treasury = -100000
+			}
+
+			custom_tooltip = z22_galsheah_construction_begin_tt
+		} 
+	}
+
+	z22_it_sails = {
+		icon = crusader_fleet
+		position = 14
+		required_missions = { z22_galsheah_dream } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = z22_galsheah_finished_check_tt
+				check_variable = {
+					which = CelmaldorShipProgress
+					value = 16
+				}
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_celmaldor.13
+			}
+		} 
+	}
+}
+
+Z22_branch_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		OR = {
+			tag = Z22
+			AND = {
+				tag = B98
+				was_tag = Z22
+			}
+		}
+	} 
+
+	z22_silver_league = {
+		icon = mission_establish_mint_towns
+		position = 1
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				primary_culture = blue_reachman
+				is_giesadh_or_trade_league_member = yes
+				NOT = {
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = z22_trade_league_member_opinion_tt
+				all_known_country = {
+					OR = {
+						NOT = {
+							primary_culture = blue_reachman
+						}
+						NOT = {
+							is_in_trade_league_with = ROOT
+						}
+						has_opinion = {
+							who = ROOT
+							value = 125
+						}
+					}
+				}
+			}
+			prestige = 30
+			has_dip_advisor = yes
+			NOT = {
+				advisor = spymaster
+			}
+		} 
+
+		effect = {
+			set_global_flag = z22_trade_league_investment
+
+			custom_tooltip = z22_make_trade_league_investments_tt
+
+			every_known_country = {
+				limit = {
+					primary_culture = blue_reachman
+					is_in_trade_league_with = ROOT
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = z22_silver_league_leader
+				}
+				add_trust = {
+					who = ROOT
+					value = 10
+				}
+			}
+
+			hidden_effect = {
+				set_variable = {
+					which = GiesadhNum
+					value = 0
+				}
+			}
+
+		} 
+	}
+
+	z22_invest_allies = {
+		icon = mission_bankers_of_cambay
+		position = 2
+		required_missions = { z22_silver_league } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					NOT = {
+						AND = {
+							has_trade_building_trigger = yes
+							has_coast_defense_building_trigger = yes
+							has_production_building_trigger = yes
+						}
+					}
+					owner = {
+						is_giesadh_or_trade_league_member = yes
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						tag = Z28
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			calc_true_if = {
+				amount = 5
+				gerudia_superregion = {
+					type = all 
+					AND = {
+						OR = {
+							has_trade_building_trigger = yes
+							has_coast_defense_building_trigger = yes
+							has_production_building_trigger = yes
+						}
+						owner = {
+							OR = {
+								is_subject_of = ROOT
+								is_giesadh_or_trade_league_member = yes
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					exists = Z28
+				}
+				army_size = Z28
+				prestige = Z28
+			}
+		} 
+
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						exists = Z28
+					}
+				}
+				coast_of_vics_area = {
+					limit = {
+						NOT = {
+							owner = {
+								OR = {
+									is_subject_of = ROOT
+									is_giesadh_or_trade_league_member = yes
+								}
+							}
+						}
+					}
+					add_permanent_claim = ROOT
+				}
+				707 = {
+					if = {
+						limit = {
+							NOT = {
+								owner = {
+									OR = {
+										is_subject_of = ROOT
+										is_giesadh_or_trade_league_member = yes
+									}
+								}
+							}
+						}
+						add_permanent_claim = ROOT
+					}
+				}
+				add_country_modifier = {
+					name = z22_against_bayvic
+					duration = 7300
+				}
+				every_known_country = {
+					limit = {
+						OR = {
+							is_subject_of = ROOT
+							is_giesadh_or_trade_league_member = yes
+						}
+					}
+					add_country_modifier = {
+						name = z22_against_bayvic
+						duration = 7300
+					}
+				}
+				Z33 = {
+					add_opinion = {
+						who = ROOT
+						modifier = z22_the_better_leader
+					}
+					add_opinion = {
+						who = Z28
+						modifier = z22_worse_leader
+					}
+				}
+				Z30 = {
+					add_opinion = {
+						who = ROOT
+						modifier = z22_the_better_leader
+					}
+					add_opinion = {
+						who = Z28
+						modifier = z22_worse_leader
+					}
+				}
+				Z32 = {
+					add_opinion = {
+						who = ROOT
+						modifier = z22_the_better_leader
+					}
+					add_opinion = {
+						who = Z28
+						modifier = z22_worse_leader
+					}
+				}
+			}
+			else = {
+				Z28 = {
+					add_prestige = -20
+					every_known_country = {
+						limit = {
+							is_subject_of = ROOT
+							is_giesadh_or_trade_league_member = yes
+							any_owned_province = {
+								OR = {
+									has_trade_building_trigger = yes
+									has_coast_defense_building_trigger = yes
+								}
+							}
+						}
+						Z28 = {
+							add_prestige = -10
+						}
+					}
+					every_known_country = {
+						limit = {
+							is_in_trade_league_with = PREV
+						}
+						add_opinion = {
+							who = ROOT
+							modifier = z22_the_better_leader
+						}
+						add_opinion = {
+							who = Z28
+							modifier = z22_worse_leader
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	z22_revive_storvik = {
+		icon = mission_galleys_in_port
+		position = 3
+		required_missions = { z22_invest_allies } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital = yes
+					owner = {
+						is_in_trade_league_with = Z28
+					}
+				}
+				AND = {
+					owned_by = Z28
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						primary_culture = blue_reachman
+						NOT = {
+							tag = Z28
+							is_in_trade_league_with = Z28
+						}
+						NOT = {
+							is_in_trade_league_with = ROOT
+							alliance_with = ROOT
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			Z28 = {
+				OR = {
+					NOT = {
+						calc_true_if = {
+							amount = 2
+							all_known_country = {
+								is_in_trade_league_with = PREV
+							}
+						}
+					}
+					AND = {
+						exists = no
+						all_core_province = {
+							OR = {
+								country_or_non_sovereign_subject_holds = ROOT
+								owned_by_trade_league_member_or_giesadh = yes
+							}
+						}
+					}
+				}
+			}
+			all_known_country = {
+				OR = {
+					NOT = {
+						primary_culture = blue_reachman
+					}
+					is_in_trade_league_with = Z28
+					tag = Z28
+					alliance_with = ROOT
+					is_in_trade_league_with = ROOT
+					is_subject_of = ROOT
+				}
+			}
+			723 = {
+				is_strongest_trade_power = ROOT
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_unlock_giesadh_allies_tt
+
+			set_global_flag = z22_can_have_giesadh
+			set_global_flag = z22_giesadh_restriction_bayvic
+
+			hidden_effect = {
+				set_estate_privilege = z22_giesadh_alliances
+			}
+
+			if = {
+				limit = {
+					NOT = {
+						exists = Z28
+					}
+				}
+				add_prestige = 25
+				custom_tooltip = z22_storvik_opinions_tt
+				hidden_effect = {
+					every_known_country = {
+						limit = {
+							OR = {
+								primary_culture = blue_reachman
+								tag = Z33
+							}
+						}
+						add_opinion = {
+							who = ROOT
+							modifier = z22_new_storvic
+						}
+						reverse_add_opinion = {
+							who = ROOT
+							modifier = z22_new_storvic
+						}
+						add_opinion = {
+							who = A13
+							modifier = z22_we_hate_gawed
+						}
+					}
+				}
+			}
+			else = {
+				custom_tooltip = z22_giesadh_restriction_bayvic_tt
+				Z28 = {
+					country_event = {
+						id = flavour_celmaldor.14
+						days = 5
+					}
+				}
+				every_known_country = {
+					limit = {
+						OR = {
+							primary_culture = blue_reachman
+							tag = Z33
+						}
+					}
+					add_opinion = {
+						who = ROOT
+						modifier = z22_new_storvic
+					}
+					reverse_add_opinion = {
+						who = ROOT
+						modifier = z22_new_storvic
+					}
+					add_opinion = {
+						who = A13
+						modifier = z22_we_hate_gawed
+					}
+					add_trust = {
+						who = A13
+						value = -20 
+						mutual = yes
+					}
+					if = {
+						limit = {
+							alliance_with = A13
+						}
+						break_alliance = A13
+					}
+				}
+			}
+		} 
+	}
+
+	z22_united_magnates = {
+		icon = mission_the_finns
+		position = 4
+		required_missions = {
+			z22_tides_profit
+			z22_revive_storvik
+			z22_clans_moors
+		}
+		provinces_to_highlight = {
+			superregion = gerudia_superregion
+			OR = {
+				country_or_non_sovereign_subject_holds = ROOT
+				owned_by_trade_league_member_or_giesadh = yes
+			}
+			OR = {
+				has_terrain = forest
+				has_terrain = woods
+			}
+			num_free_building_slots = 1
+			NOT = {
+				has_production_building_trigger = yes
+			}
+		} 
+
+		trigger = {
+			calc_true_if = {
+				amount = 8
+				gerudia_superregion = {
+					type = all
+					OR = {
+						country_or_non_sovereign_subject_holds = ROOT
+						owned_by_trade_league_member_or_giesadh = yes
+					}
+					OR = {
+						has_terrain = forest
+						has_terrain = woods
+					}
+					OR = {
+						has_production_building_trigger = yes
+						NOT = {
+							num_free_building_slots = 1
+						}
+					}
+				}
+			}
+			estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 60
+			}
+			estate_influence = {
+				estate = estate_burghers
+				influence = 60
+			}
+		} 
+
+		effect = {
+			unlock_estate_privilege = {
+				estate_privilege = estate_burghers_forest_expansion
+			}
+			gerudia_superregion = {
+				type = random
+				amount = 5
+				limit = {
+					OR = {
+						country_or_non_sovereign_subject_holds = ROOT
+						owned_by_trade_league_member_or_giesadh = yes
+					}
+					OR = {
+						has_terrain = forest
+						has_terrain = woods
+					}
+					has_production_building_trigger = yes
+					NOT = {
+						province_id = 696
+					}
+				}
+				if = {
+					limit = {
+						NOT = {
+							trade_goods = naval_supplies
+						}
+					}
+					change_trade_goods = naval_supplies
+				}
+				add_permanent_province_modifier = {
+					name = z22_magnate_lumber
+					duration = -1
+				}
+			}
+		} 
+	}
+
+	z22_amend_act = {
+		icon = mission_spread_the_reformation
+		position = 5
+		required_missions = {
+			z22_united_magnates
+			z22_blue_league
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					NOT = {
+						has_courthouse_building_trigger = yes
+					}
+				}
+				AND = {
+					is_capital = yes 
+					OR = {
+						region = dalr_region
+						region = olavlund_region
+					}
+					NOT = {
+						ROOT = {
+							calc_true_if = {
+								amount = 4
+								all_known_country = {
+									capital_scope = {
+										OR = {
+											region = dalr_region
+											region = olavlund_region
+										}
+									}
+									has_opinion = {
+										who = ROOT
+										value = 100
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 8
+				has_courthouse_building_trigger = yes
+			}
+			has_reform = z22_silver_diet
+			OR = {
+				calc_true_if = {
+					amount = 4
+					all_known_country = {
+						capital_scope = {
+							OR = {
+								region = dalr_region
+								region = olavlund_region
+							}
+						}
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+				all_known_country = {
+					OR = {
+						capital_scope = {
+							NOT = {
+								region = dalr_region
+								region = olavlund_region
+							}
+						}
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+						is_rival = ROOT
+					}
+				}
+			}
+		} 
+
+		effect = {
+			set_global_flag = z22_enabled_acts_of_deland
+			add_government_reform = z22_acts_of_deland
+
+			every_known_country = {
+				limit = {
+					culture_group = gerudian
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = z22_gerudian_rights
+				}
+			}
+
+			varheim_area = {
+				add_permanent_claim = ROOT
+			}
+			revrland_area = {
+				add_permanent_claim = ROOT
+			}
+			bjarnland_area = {
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+
+	z22_third_act = {
+		icon = mission_writing_book
+		position = 6
+		required_missions = {
+			z22_reinvigorate_harbour
+			z22_amend_act
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				culture_group = gnomish
+				has_any_gnomish_pop_trigger = yes
+			}
+			NOT = {
+				has_courthouse_building_trigger = yes
+			}
+		} 
+
+		trigger = {
+			all_owned_province = {
+				OR = {
+					NOT = {
+						culture_group = gnomish
+						has_any_gnomish_pop_trigger = yes
+					}
+					has_courthouse_building_trigger = yes
+				}
+			}
+			OR = {
+				high_tolerance_gnomish_race_trigger = yes
+				AND = {
+					medium_tolerance_gnomish_race_trigger = yes
+					adm_power = 200
+				}
+			}
+			government_reform_progress = 50
+		} 
+
+		effect = {
+			change_government_reform_progress = -50
+			if = {
+				limit = {
+					NOT = {
+						high_tolerance_gnomish_race_trigger = yes
+					}
+				}
+				add_adm_power = -200
+			}
+			z22_add_race_to_deland_acts_effect = {
+				race = gnomish
+			}
+			add_country_modifier = {
+				name = z22_gnomish_acceptance
+				duration = 7300
+			}
+			largest_increase_of_gnomish_tolerance_effect = yes 
+		} 
+	}
+
+	z22_greater_reach = {
+		icon = mission_russian_navy
+		position = 7
+		required_missions = {
+			z22_loyal_army
+			z22_third_act
+			z22_cousins_song_snow
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					superregion = gerudia_superregion
+					is_city = yes
+					NOT = {
+						owned_by_trade_league_member_or_giesadh = yes
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						OR = {
+							is_giesadh_or_trade_league_member = yes
+							is_subject_of = ROOT
+						}
+						NOT = {
+							AND = {
+								has_opinion = {
+									who = ROOT
+									value = 200
+								}
+								trust = {
+									who = ROOT
+									value = 60
+								}
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			gerudia_superregion = {
+				type = all
+				OR = {
+					is_city = no
+					country_or_non_sovereign_subject_holds = ROOT
+					owned_by_trade_league_member_or_giesadh = yes
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = z22_five_races_in_acts_tt
+				z22_num_of_races_in_acts = {
+					VAL = 5
+				}
+			}
+			all_known_country = {
+				OR = {
+					NOT = {
+						is_subject_of = ROOT
+						is_giesadh_or_trade_league_member = yes
+					}
+					AND = {
+						has_opinion = {
+							who = ROOT
+							value = 200
+						}
+						trust = {
+							who = ROOT
+							value = 60
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_unlock_unification_debate_tt
+
+			hidden_effect = {
+				every_known_country = {
+					limit = {
+						capital_scope = {
+							superregion = gerudia_superregion
+						}
+					}
+					add_trust = {
+						who = ROOT
+						value = 15
+						mutual = yes
+					}
+				}
+			}
+		} 
+	}
+
+	z22_toward_unification = {
+		icon = mission_swear_fealty_knight
+		position = 8
+		required_missions = {
+			z22_greater_reach
+			z22_skaldol_treaty
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					culture = blue_reachman
+					OR = {
+						unrest = 1
+						local_autonomy = 25
+						NOT = {
+							owned_by = ROOT
+						}
+					}
+				}
+				AND = {
+					province_group = blue_reachman_cities
+					NOT = {
+						AND = {
+							development = 20
+							has_courthouse_building_trigger = yes
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			gerudia_superregion = {
+				type = all
+				OR = {
+					NOT = {
+						culture = blue_reachman
+					}
+					AND = {
+						owned_by = ROOT
+						NOT = {
+							unrest = 1
+							local_autonomy = 25
+						}
+					}
+				}
+			}
+			blue_reachman_cities = {
+				type = all
+				development = 20
+				has_courthouse_building_trigger = yes
+			}
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = z22_toward_unification
+				duration = 18250
+			}
+			custom_tooltip = z22_may_annex_in_all_gerudia_tt
+		} 
+	}
+
+	z22_prosperitys_champion = {
+		icon = mission_rb_scottish_the_darien_scheme
+		position = 9
+		required_missions = {
+			z22_new_directions
+			z22_toward_unification
+		}
+		provinces_to_highlight = {
+			superregion = gerudia_superregion
+			NOT = {
+				is_prosperous = yes
+				num_of_buildings_in_province = 5
+			}
+		} 
+
+		trigger = {
+			696 = {
+				trade_share = {
+					country = ROOT
+					share = 80
+				}
+			}
+			723 = {
+				trade_share = {
+					country = ROOT
+					share = 80
+				}
+			}
+			OR = {
+				696 = {
+					trade_node_value = 100
+				}
+				723 = {
+					trade_node_value = 100
+				}
+			}
+			calc_true_if = {
+				amount = 30
+				gerudia_superregion = {
+					type = all
+					OR = {
+						is_prosperous = yes
+						num_of_buildings_in_province = 5
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_splendor_for_prosperity_tt
+			hidden_effect = {
+				gerudia_superregion = {
+					if = {
+						limit = {
+							is_prosperous = yes
+						}
+						ROOT = {
+							add_splendor = 10
+						}
+					}
+				}
+			}
+			custom_tooltip = z22_increased_mana_from_institution_embrace_tt
+			add_country_modifier = {
+				name = z22_bright_futures
+				duration = 7300
+			}
+		} 
+	}
+
+	z22_rights_of_man = {
+		icon = mission_noble_council
+		position = 10
+		required_missions = {
+			z22_prosperitys_champion
+			z22_black_reach
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					superregion = gerudia_superregion
+					NOT = {
+						owned_by = ROOT
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					NOT = {
+						has_courthouse_building_trigger = yes
+					}
+				}
+			}
+		} 
+
+		trigger = { 
+			gerudia_superregion = {
+				type = all
+				owned_by = ROOT
+			}
+			government_reform_progress = 150
+			num_of_owned_provinces_with = {
+				value = 50
+				has_courthouse_building_trigger = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = z22_number_of_races_in_acts_8_tt
+				z22_num_of_races_in_acts = {
+					VAL = 8
+				}
+			}
+		} 
+
+		effect = {
+			change_government_reform_progress = -150
+			
+			if = {
+				limit = {
+					tag = B98 
+				}
+				override_country_name = NA_INEILCYRR
+			}
+
+			custom_tooltip = z22_unlock_clan_contributions_tt
+			custom_tooltip = z22_upgrade_commercial_tongue_tt
+
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						development = 10
+					}
+					if = {
+						limit = {
+							culture = blue_reachman
+						}
+						remove_province_modifier = z22_commercial_language_blue_1
+						add_province_modifier = {
+							name = z22_commercial_language_blue_2
+							duration = -1
+						}
+					}
+					else = {
+						remove_province_modifier = z22_commercial_language_notblue_1
+						add_province_modifier = {
+							name = z22_commercial_language_notblue_2
+							duration = -1 
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	z22_council_trade = {
+		icon = mission_monarch_diplomacy
+		position = 12
+		required_missions = {
+			z22_halanns_greatest_port
+			z22_rights_of_man
+			z22_skalds_artificers
+		}
+		provinces_to_highlight = {
+			owned_by_trade_league_member_or_giesadh = yes
+			is_capital = yes
+			NOT = {
+				owner = {
+					has_opinion = {
+						who = ROOT
+						value = 200
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			OR = {
+				696 = {
+					trade_node_value = 300
+					highest_value_trade_node = yes
+				}
+				723 = {
+					trade_node_value = 300
+					highest_value_trade_node = yes
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = z22_opinion_with_nations_in_continents_tt
+				if = {
+					limit = {
+						africa = {
+							is_capital = yes
+							owner = {
+								any_owned_province = {
+									has_port = yes
+								}
+							}
+						}
+					}
+					any_known_country = {
+						capital_scope = {
+							continent = africa
+						}
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+				if = {
+					limit = {
+						europe = {
+							is_capital = yes
+							owner = {
+								any_owned_province = {
+									has_port = yes
+								}
+							}
+						}
+					}
+					any_known_country = {
+						capital_scope = {
+							continent = europe
+						}
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+				if = {
+					limit = {
+						asia = {
+							is_capital = yes
+							owner = {
+								any_owned_province = {
+									has_port = yes
+								}
+							}
+						}
+					}
+					any_known_country = {
+						capital_scope = {
+							continent = asia
+						}
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+				if = {
+					limit = {
+						south_america = {
+							is_capital = yes
+							owner = {
+								any_owned_province = {
+									has_port = yes
+								}
+							}
+						}
+					}
+					any_known_country = {
+						capital_scope = {
+							continent = south_america
+						}
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+				any_known_country = {
+					capital_scope = {
+						continent = north_america
+					}
+					any_owned_province = {
+						has_port = yes 
+					}
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+			all_known_country = {
+				OR = {
+					NOT = {
+						is_giesadh_or_trade_league_member = yes
+					}
+					has_opinion = {
+						who = ROOT
+						value = 200
+					}
+				}
+			}
+			treasury = 10000
+			dip_power = 300
+		} 
+
+		effect = {
+			add_treasury = -10000
+			add_dip_power = -300
+
+			every_known_country = {
+				limit = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+				add_country_modifier = {
+					name = z22_trade_council
+					duration = -1
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = z22_council_of_trade
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = z22_council_of_trade
+				}
+			}
+			add_country_modifier = {
+				name = z22_trade_council
+				duration = -1
+			}
+			add_country_modifier = {
+				name = z22_trade_leader
+				duration = -1
+			}
+		} 
+	}
+
+	z22_uniting_continents = {
+		icon = mission_haless_map
+		position = 14
+		required_missions = {
+			z22_northern_liberation
+			z22_council_trade
+			z22_leagues_army
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					has_port = yes
+					is_capital = yes
+					NOT = {
+						owned_by = ROOT
+					}
+					owner = {
+						NOT = {
+							AND = {
+								has_opinion = {
+									who = ROOT 
+									value = 150
+								}
+								trust = {
+									who = ROOT
+									value = 75
+								}
+								alliance_with = ROOT
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					NOT = {
+						owned_by_trade_league_member_or_giesadh = yes
+						country_or_non_sovereign_subject_holds = ROOT
+						owner = {
+							alliance_with = ROOT
+						}
+					}
+					owner = {
+						NOT = {
+							AND = {
+								has_20_opinion_sent_gift = { target = ROOT }
+								has_opinion = {
+									who = ROOT
+									value = 100
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						is_rival = ROOT
+						NOT = {
+							trade_embargo_by = ROOT
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = z22_alliance_with_nations_in_continents_tt
+				if = {
+					limit = {
+						africa = {
+							is_capital = yes
+							owner = {
+								any_owned_province = {
+									has_port = yes
+									has_discovered = ROOT
+								}
+							}
+						}
+					}
+					any_known_country = {
+						capital_scope = {
+							continent = africa
+						}
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+						trust = {
+							who = ROOT
+							value = 75
+						}
+						alliance_with = ROOT
+					}
+				}
+				if = {
+					limit = {
+						europe = {
+							is_capital = yes
+							owner = {
+								any_owned_province = {
+									has_port = yes
+									has_discovered = ROOT
+								}
+							}
+						}
+					}
+					any_known_country = {
+						capital_scope = {
+							continent = europe
+						}
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+						trust = {
+							who = ROOT
+							value = 75
+						}
+						alliance_with = ROOT
+					}
+				}
+				if = {
+					limit = {
+						asia = {
+							is_capital = yes
+							owner = {
+								any_owned_province = {
+									has_port = yes
+									has_discovered = ROOT
+								}
+							}
+						}
+					}
+					any_known_country = {
+						capital_scope = {
+							continent = asia
+						}
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+						trust = {
+							who = ROOT
+							value = 75
+						}
+						alliance_with = ROOT
+					}
+				}
+				if = {
+					limit = {
+						south_america = {
+							is_capital = yes
+							owner = {
+								any_owned_province = {
+									has_port = yes
+									has_discovered = ROOT
+								}
+							}
+						}
+					}
+					any_known_country = {
+						capital_scope = {
+							continent = south_america
+						}
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+						trust = {
+							who = ROOT
+							value = 75
+						}
+						alliance_with = ROOT
+					}
+				}
+				any_known_country = {
+					capital_scope = {
+						continent = north_america
+					}
+					has_opinion = {
+						who = ROOT
+						value = 150
+					}
+					trust = {
+						who = ROOT
+						value = 75
+					}
+					alliance_with = ROOT
+				}
+			}
+			calc_true_if = {
+				amount = 5
+				all_known_country = {
+					NOT = {
+						alliance_with = ROOT
+						is_subject_of = ROOT
+						is_NOT_giesadh_or_trade_league_member = yes
+					}
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+					has_20_opinion_sent_gift = { target = ROOT }
+				}
+			}
+			diplomatic_reputation = 8
+			all_rival_country = {
+				trade_embargo_by = ROOT
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_giesadh_restriction_unlimited_tt
+
+			set_global_flag = z22_giesadh_restriction_unlimited
+			clr_global_flag = z22_giesadh_restriction_NA_2
+
+			custom_tooltip = z22_add_every_race_to_celmaldor_tt
+			hidden_effect = {
+				696 = {
+					add_human_minority_size_effect = yes
+					add_elven_minority_size_effect = yes
+					add_half_elven_minority_size_effect = yes
+					add_gnomish_minority_size_effect = yes
+					add_gnollish_minority_size_effect = yes
+					add_kobold_minority_size_effect = yes
+					add_harpy_minority_size_effect = yes
+					add_orcish_minority_size_effect = yes
+					add_half_orcish_minority_size_effect = yes
+					add_troll_minority_size_effect = yes
+					add_goblin_minority_size_effect = yes
+					add_halfling_minority_size_effect = yes
+					add_harimari_minority_size_effect = yes
+					add_lizardfolk_minority_size_effect = yes
+					add_hobgoblin_minority_size_effect = yes
+					add_centaur_minority_size_effect = yes
+					add_dwarven_minority_size_effect = yes
+					add_ogre_minority_size_effect = yes
+				}
+			}
+		} 
+	}
+
+	z22_world_anchor = {
+		icon = fortify_malta
+		position = 15
+		required_missions = {
+			z22_it_sails
+			z22_uniting_continents
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					superregion = gerudia_superregion
+					NOT = {
+						development = 30
+					}
+				}
+				AND = {
+					province_id = 696
+					NOT = {
+						AND = {
+							development = 75
+							NOT = {
+								num_free_building_slots = 1
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			OR = {
+				696 = {
+					trade_node_value = 1000
+				}
+				723 = {
+					trade_node_value = 1000
+				}
+			}
+			num_of_allies = 25
+			num_of_owned_provinces_with = {
+				value = 30
+				superregion = gerudia_superregion
+				development = 30
+			}
+			696 = {
+				development = 75
+				NOT = {
+					num_free_building_slots = 1
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = z22_number_of_races_in_acts_14_tt
+				z22_num_of_races_in_acts = {
+					VAL = 14
+				}
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_celmaldor.15
+			}
+		} 
+	}
+}
+
+Z22_branch_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		OR = {
+			tag = Z22
+			AND = {
+				tag = B98
+				was_tag = Z22
+			}
+		}
+	} 
+
+	z22_greatwoods_timber = {
+		icon = mission_verdant_secret
+		position = 2
+		required_missions = { z22_silver_league } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital = yes
+					owner = {
+						tag = A13
+						NOT = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 35
+							}
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+					}
+				}
+				AND = {
+					province_group = western_alenic_reach
+					owner = {
+						dynasty = "Adshaw"
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			A13 = {
+				OR = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+					has_spy_network_from = {
+						who = ROOT
+						value = 35
+					}
+				}
+			}
+			western_alenic_reach = {
+				type = all
+				NOT = {
+					owner = {
+						dynasty = "Adshaw"
+					}
+				}
+			}
+			treasury = 100
+			dip_power = 50
+		} 
+
+		effect = {
+			add_treasury = -100
+			add_dip_power = -50
+
+			A13 = {
+				if = {
+					limit = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 1
+						}
+					}
+					add_spy_network_from = {
+						who = ROOT
+						value = -35
+					}
+				}
+			}
+
+			coddorran_heights_area = {
+				add_province_modifier = {
+					name = z22_new_timber
+					duration = 5475
+				}
+			}
+			serpentshead_area = {
+				add_province_modifier = {
+					name = z22_new_timber
+					duration = 5475
+				}
+			}
+
+			westmoor_proper_area = {
+				add_permanent_claim = ROOT
+			}
+			beronmoor_area = {
+				add_permanent_claim = ROOT
+			}
+			moorhills_area = {
+				add_permanent_claim = ROOT
+			}
+
+			custom_tooltip = z22_investment_becomes_cheaper_tt
+		} 
+	}
+
+	z22_clans_moors = {
+		icon = mission_rb_conquer_the_highlands
+		position = 3
+		required_missions = { z22_greatwoods_timber } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = coddorran_heights_area
+					owned_by = ROOT
+					NOT = {
+						AND = {
+							has_fort_building_trigger = yes
+							development = 10
+						}
+					}
+				}
+				AND = {
+					OR = {
+						area = beronmoor_area
+						area = westmoor_proper_area
+						area = moorhills_area
+					}
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			coddorran_heights_area = {
+				has_fort_building_trigger = yes
+				development = 10
+			}
+
+			OR = {
+				AND = {
+					beronmoor_area = {
+						type = all
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					westmoor_proper_area = {
+						type = all
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					moorhills_area = {
+						type = all
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				AND = {
+					A24 = {
+						is_subject_of = A13
+						has_opinion = {
+							who = ROOT
+							value = 125
+						}
+					}
+					treasury = 400
+					mil_power = 50
+					OR = {
+						dip_power = 100
+						z22_ruler_is_icewind = yes 
+					}
+				}
+			}
+
+		} 
+
+		effect = {
+			coddorran_heights_area = {
+				type = random
+				amount = 1
+				limit = {
+					has_manpower_building_trigger = yes
+					has_fort_building_trigger = yes
+					development = 10
+				}
+				add_elven_minority_size_effect = yes
+				add_human_minority_size_effect = yes
+				add_half_elven_minority_size_effect = yes
+			}
+			191 = {
+				add_elven_minority_size_effect = yes
+			}
+
+			if = {
+				limit = {
+					NOT = {
+						AND = {
+							beronmoor_area = {
+								type = all
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+							westmoor_proper_area = {
+								type = all
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+							moorhills_area = {
+								type = all
+								country_or_non_sovereign_subject_holds = ROOT
+							}
+						}
+					}
+				}
+				A24 = {
+					country_event = {
+						id = flavour_celmaldor.16
+						days = 10
+					}
+				}
+			}
+			else = {
+				beronmoor_area = {
+					add_local_autonomy = -25
+					add_nationalism = -5
+				}
+				westmoor_proper_area = {
+					add_local_autonomy = -25
+					add_nationalism = -5
+				}
+				moorhills_area = {
+					add_local_autonomy = -25
+					add_nationalism = -5
+				}
+			}
+		} 
+	}
+
+	z22_blue_league = {
+		icon = mission_rb_control_the_hansa
+		position = 4
+		required_missions = {
+			z22_revive_storvik
+			z22_white_reach_relations
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_group = blue_reachman_cities
+					num_free_building_slots = 1
+					NOT = {
+						has_trade_building_trigger = yes
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						OR = {
+							primary_culture = blue_reachman
+							tag = Z33
+						}
+						NOT = {
+							has_opinion = {
+								who = ROOT
+								value = 200
+							}
+						}
+					}
+				}
+				AND = {
+					province_group = western_alenic_reach
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+						owned_by_trade_league_member_or_giesadh = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			blue_reachman_cities = {
+				type = all
+				OR = {
+					has_trade_building_trigger = yes
+					NOT = {
+						num_free_building_slots = 1
+					}
+				}
+			}
+			all_known_country = {
+				OR = {
+					NOT = {
+						primary_culture = blue_reachman
+						tag = Z33
+					}
+					has_opinion = {
+						who = ROOT
+						value = 200
+					}
+				}
+			}
+			western_alenic_reach = {
+				type = all
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owned_by_trade_league_member_or_giesadh = yes
+				}
+			}
+		} 
+
+		effect = {
+			change_government_reform_progress = 100
+
+			custom_tooltip = z22_unlock_silver_diet_tt
+
+			custom_tooltip = z22_giesadh_restriction_alenic_reach_tt
+
+			set_global_flag = z22_giesadh_restriction_alenic_reach
+			clr_global_flag = z22_giesadh_restriction_bayvic
+
+			if = {
+				limit = {
+					reform_level = 6
+				}
+				add_government_reform = z22_silver_diet
+			}
+
+			if = {
+				limit = {
+					exists = Z50
+				}
+				if = {
+					limit = {
+						Z50 = {
+							alliance_with = ROOT
+						}
+					}
+					Z50 = {
+						set_country_flag = z22_is_permanent_giesadh
+						z22_make_giesadh_effect = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					Z18 = {
+						alliance_with = ROOT
+					}
+				}
+				Z18 = {
+					set_country_flag = z22_is_permanent_giesadh
+					z22_make_giesadh_effect = yes
+				}
+			}
+		} 
+	}
+
+	z22_skaldol_treaty = {
+		icon = mission_protestant_heddal_church
+		position = 7
+		required_missions = {
+			z22_third_act
+			z22_cousins_song_snow
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					superregion = gerudia_superregion
+					OR = {
+						owned_by_trade_league_member_or_giesadh = yes
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					OR = {
+						NOT = {
+							religion = ROOT
+						}
+						has_province_modifier = religious_zeal_at_conv
+					}
+					NOT = {
+						has_tax_building_trigger = yes
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 190
+						province_id = 197
+						province_id = 995
+					}
+					NOT = {
+						AND = {
+							has_courthouse_building_trigger = yes
+							has_tax_building_trigger = yes
+							development = 15
+						}
+					}
+				}
+				AND = {
+					province_id = 976
+					NOT = {
+						AND = {
+							has_courthouse_building_trigger = yes
+							has_tax_building_trigger = yes
+							has_building = mage_tower
+							development = 15
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 20
+				OR = {
+					NOT = {
+						religion = ROOT
+					}
+					has_province_modifier = religious_zeal_at_conv
+				}
+				has_tax_building_trigger = yes
+			}
+			190 = {
+				has_courthouse_building_trigger = yes
+				has_tax_building_trigger = yes
+				development = 15
+			}
+			197 = {
+				has_courthouse_building_trigger = yes
+				has_tax_building_trigger = yes
+				development = 15
+			}
+			995 = {
+				has_courthouse_building_trigger = yes
+				has_tax_building_trigger = yes
+				development = 15
+			}
+			976 = {
+				has_courthouse_building_trigger = yes
+				has_tax_building_trigger = yes
+				has_building = mage_tower
+				development = 15
+			}
+			estate_loyalty = {
+				estate = estate_church
+				higher_than_influence = yes
+			}
+			has_estate_privilege = estate_burghers_enforced_interfaith_dialogue
+		} 
+
+		effect = {
+
+			add_stability_or_adm_power = yes
+
+			custom_tooltip = z22_skaldol_reduce_nationalism_tt
+			custom_tooltip = z22_skaldol_convert_back_tt
+			custom_tooltip = z22_skaldol_opinion_tt
+
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						NOT = {
+							religion = ROOT
+						}
+					}
+					add_nationalism = -5
+				}
+				every_owned_province = {
+					limit = {
+						has_province_modifier = religious_zeal_at_conv
+					}
+					if = {
+						limit = {
+							OR = {
+								region = dalr_region
+								region = olavlund_region
+								region = gerudian_frontier_region
+							}
+						}
+						change_religion = skaldhyrric_faith
+					}
+				}
+				every_subject_country = {
+					every_owned_province = {
+						limit = {
+							NOT = {
+								religion = PREV
+							}
+						}
+						add_nationalism = -5
+					}
+					every_owned_province = {
+						limit = {
+							has_province_modifier = religious_zeal_at_conv
+						}
+						if = {
+							limit = {
+								OR = {
+									region = dalr_region
+									region = olavlund_region
+									region = gerudian_frontier_region
+								}
+							}
+							change_religion = skaldhyrric_faith
+						}
+					}
+					if = {
+						limit = {
+							NOT = {
+								religion = ROOT
+							}
+						}
+						add_opinion = {
+							who = ROOT
+							modifier = z22_religious_guarantees
+						}
+						add_trust = {
+							who = ROOT
+							value = 10
+						}
+					}
+				}
+				every_known_country = {
+					limit = {
+						is_giesadh_or_trade_league_member = yes
+						NOT = {
+							religion = ROOT
+						}
+					}
+					add_opinion = {
+						who = ROOT
+						modifier = z22_religious_guarantees
+					}
+					add_trust = {
+						who = ROOT
+						value = 10
+					}
+				}
+			}
+			add_government_reform = z22_skaldol_treaty_of_faiths
+		} 
+	}
+
+	z22_black_reach = {
+		icon = mission_the_caucasus_rus
+		position = 9
+		required_missions = {
+			z22_toward_unification
+			z22_gerudian_frontier
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 965
+				province_id = 959
+				province_id = 995
+				province_id = 975
+				province_id = 978
+				province_id = 982
+				province_id = 6271
+				province_id = 984
+				province_id = 966
+			}
+			NOT = {
+				AND = {
+					development = 15
+					has_trade_building_trigger = yes
+					has_production_building_trigger = yes
+					has_manufactory_trigger = yes
+					if = {
+						limit = {
+							has_port = yes
+						}
+						has_shipyard_building_trigger = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			965 = {
+				development = 15
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				if = {
+					limit = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+			959 = {
+				development = 15
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				if = {
+					limit = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+			995 = {
+				development = 15
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				if = {
+					limit = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+			975 = {
+				development = 15
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				if = {
+					limit = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+			978 = {
+				development = 15
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				if = {
+					limit = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+			982 = {
+				development = 15
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				if = {
+					limit = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+			6271 = {
+				development = 15
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				if = {
+					limit = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+			984 = {
+				development = 15
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				if = {
+					limit = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+			966 = {
+				development = 15
+				has_trade_building_trigger = yes
+				has_production_building_trigger = yes
+				has_manufactory_trigger = yes
+				if = {
+					limit = {
+						has_port = yes
+					}
+					has_shipyard_building_trigger = yes
+				}
+			}
+		} 
+
+		effect = {
+			965 = {
+				add_province_modifier = {
+					name = z22_northern_trade_cities
+					duration = -1
+				}
+			}
+			959 = {
+				add_province_modifier = {
+					name = z22_northern_trade_cities
+					duration = -1
+				}
+			}
+			995 = {
+				add_province_modifier = {
+					name = z22_northern_trade_cities
+					duration = -1
+				}
+			}
+			975 = {
+				add_province_modifier = {
+					name = z22_northern_trade_cities
+					duration = -1
+				}
+			}
+			978 = {
+				add_province_modifier = {
+					name = z22_northern_trade_cities
+					duration = -1
+				}
+			}
+			982 = {
+				add_province_modifier = {
+					name = z22_northern_trade_cities
+					duration = -1
+				}
+			}
+			6271 = {
+				add_province_modifier = {
+					name = z22_northern_trade_cities
+					duration = -1
+				}
+			}
+			984 = {
+				add_province_modifier = {
+					name = z22_northern_trade_cities
+					duration = -1
+				}
+			}
+			966 = {
+				add_province_modifier = {
+					name = z22_northern_trade_cities
+					duration = -1
+				}
+			}
+		} 
+	}
+
+	z22_skalds_artificers = {
+		icon = mission_runeforged_cannons
+		position = 11
+		required_missions = {
+			z22_rights_of_man
+			z22_black_reach
+			z22_out_of_reach
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						region = dalr_region
+						region = olavlund_region
+					}
+					NOT = {
+						has_building = mage_tower
+					}
+				}
+				AND = {
+					province_group = western_alenic_reach
+					NOT = {
+						AND = {
+							development = 40
+							has_multiple_manufactory_trigger = {
+								VAL = 2
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 723
+					NOT = {
+						AND = {
+							development = 40
+							has_multiple_manufactory_trigger = {
+								VAL = 2
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					NOT = {
+						has_building = university
+						AND = {
+							has_manufactory_trigger = yes 
+							development = 20
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 20
+				has_building = mage_tower
+				OR = {
+					region = dalr_region
+					region = olavlund_region
+				}
+			}
+			723 = {
+				development = 40
+				has_multiple_manufactory_trigger = {
+					VAL = 2
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				province_group = western_alenic_reach
+				NOT = {
+					province_id = 723
+				}
+				development = 40
+				has_multiple_manufactory_trigger = {
+					VAL = 2
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 30
+				OR = {
+					has_building = university
+					AND = {
+						development = 20
+						has_manufactory_trigger = yes
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_steady_iteration_upgrade_tt
+
+			custom_tooltip = z22_access_to_gerudian_inventions_tt
+
+			set_country_flag = can_use_lullaby_cannon #Any other Gerudian or skaldhyrric inventions should be added
+			set_country_flag = unlocked_artifice_invention_lullaby_cannon
+
+			country_event = {
+				id = flavour_celmaldor.18
+				days = 10
+			}
+		} 
+	}
+
+	z22_leagues_army = {
+		icon = mission_aelnar_corps
+		position = 13
+		required_missions = {
+			z22_council_trade
+			z22_snow_legions
+		}
+		provinces_to_highlight = {
+			is_capital = yes
+			owned_by_trade_league_member_or_giesadh = yes
+			NOT = {
+				owner = {
+					subsidised_percent_amount = {
+						value = 0.1
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			army_size = 150
+			num_of_regiments_at_full_drill = 100
+
+			num_of_heavy_ship = 100
+			num_of_transport = 100
+			navy_size = 1000
+
+			NOT = {
+				any_known_country = {
+					tech_difference = 1
+				}
+			}
+			all_known_country = {
+				OR = {
+					subsidised_percent_amount = {
+						value = 0.1
+					}
+					NOT = {
+						is_giesadh_or_trade_league_member = yes
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_linked_military_tt
+			hidden_effect = {
+				every_known_country = {
+					limit = {
+						OR = {
+							is_subject_of = ROOT
+							is_giesadh_or_trade_league_member = yes
+						}
+					}
+					add_country_modifier = {
+						name = z22_linked_military
+						duration = -1
+					}
+				}
+			}
+			add_country_modifier = {
+				name = z22_anchoring_might
+				duration = -1
+			}
+		} 
+	}
+}
+
+Z22_branch_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { 
+		OR = {
+			tag = Z22
+			AND = {
+				tag = B98
+				was_tag = Z22
+			}
+		}
+	} 
+
+	z22_white_reach_relations = {
+		icon = mission_vrorenmarch_kingdom
+		position = 3
+		required_missions = { z22_invest_allies } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_group = eastern_alenic_reach
+					NOT = {
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT 
+							owned_by_trade_league_member_or_giesadh = yes
+							owner = {
+								alliance_with = ROOT
+							}
+							OR = {
+								culture = blue_reachman
+								culture = white_reachman
+								culture = gray_orc
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					province_group = eastern_alenic_reach
+					owner = {
+						OR = {
+							is_giesadh_or_trade_league_member = yes
+							is_subject_of = ROOT
+							alliance_with = ROOT
+						}
+					}
+					NOT = {
+						owner = {
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			if = {
+				limit = {
+					alliance_with = Z18
+				}
+				calc_true_if = {
+					amount = 12
+					eastern_alenic_reach = {
+						type = all
+						OR = {
+							country_or_non_sovereign_subject_holds = ROOT
+							owned_by_trade_league_member_or_giesadh = yes
+							owner = {
+								alliance_with = ROOT
+							}
+						}
+						owner = {
+							OR = {
+								primary_culture = white_reachman
+								primary_culture = gray_orc
+							}
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+						}
+					}
+				}
+			}
+			else = {
+				calc_true_if = {
+					amount = 8
+					eastern_alenic_reach = {
+						type = all
+						OR = {
+							country_or_non_sovereign_subject_holds = ROOT
+							owned_by_trade_league_member_or_giesadh = yes
+							owner = {
+								alliance_with = ROOT
+							}
+						}
+						OR = {
+							owner = {
+								OR = {
+									primary_culture = white_reachman
+									primary_culture = gray_orc
+								}
+								has_opinion = {
+									who = ROOT
+									value = 150
+								}
+							}
+							is_core = ROOT
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			if = {
+				limit = {
+					alliance_with = Z18
+				}
+				Z18 = {
+					add_historical_friend = ROOT
+					add_trust = {
+						who = ROOT
+						value = 10
+						mutual = yes 
+					}
+					set_country_flag = z22_cedevik_deal
+					define_consort = {
+						country_of_origin = ROOT
+						religion = ROOT
+						culture = ROOT
+						female = yes
+						dynasty = "Icewind"
+					}
+				}
+				add_historical_friend = Z18
+			}
+			else = {
+				every_known_country = {
+					limit = {
+						OR = {
+							primary_culture = white_reachman
+							primary_culture = gray_orc
+						}
+						any_owned_province = {
+							province_group = eastern_alenic_reach
+						}
+						OR = {
+							is_subject_of = ROOT
+							is_giesadh_or_trade_league_member = yes
+						}
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+					}
+					add_historical_friend = ROOT
+					add_trust = {
+						who = ROOT
+						value = 10
+						mutual = yes 
+					}
+					if = {
+						limit = {
+							primary_culture = gray_orc
+						}
+						set_country_flag = z22_cedevik_deal
+					}
+					ROOT = {
+						add_historical_friend = PREV
+					}
+				}
+			}
+			eastern_alenic_reach = {
+				limit = {
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+						owned_by_trade_league_member_or_giesadh = yes
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+
+	z22_white_league = {
+		icon = mission_conquer_lithuania
+		position = 5
+		required_missions = {
+			z22_blue_league
+			z22_white_reach_relations
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_group = eastern_alenic_reach
+					owned_by = ROOT
+					OR = {
+						unrest = 1
+						devastation = 1
+					}
+				}
+				AND = {
+					province_group = eastern_alenic_reach
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+						owned_by_trade_league_member_or_giesadh = yes
+					}
+				}
+				AND = {
+					is_capital = yes
+					province_group = eastern_alenic_reach
+					owner = {
+						OR = {
+							is_subject_of = ROOT
+							is_giesadh_or_trade_league_member = yes
+						}
+						NOT = {
+							has_opinion = {
+								who = ROOT
+								value = 200
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			eastern_alenic_reach = {
+				type = all
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owned_by_trade_league_member_or_giesadh = yes
+				}
+				OR = {
+					AND = {
+						owned_by = ROOT
+						NOT = {
+							unrest = 1
+							devastation = 1
+						}
+					}
+					owner = {
+						has_opinion = {
+							who = ROOT
+							value = 200
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = z22_white_reach_stabilised
+				duration = 18250
+			}
+			eastern_alenic_reach = {
+				add_nationalism = -10
+				owner = {
+					if = {
+						limit = {
+							NOT = {
+								has_country_modifier = z22_white_reach_stabilised
+							}
+						}
+						add_country_modifier = {
+							name = z22_white_reach_stabilised
+							duration = 18250
+						}
+					}
+				}
+			}
+			northern_giants_tears_area = {
+				add_permanent_claim = ROOT
+			}
+			southern_giants_tears_area = {
+				add_permanent_claim = ROOT
+			}
+			esfjall_area = {
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+
+	z22_cousins_song_snow = {
+		icon = mission_the_varangians
+		position = 6
+		required_missions = {
+			z22_white_league
+			z22_amend_act
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = dalr_region
+				region = olavlund_region
+				region = gerudian_frontier_region
+			}
+			NOT = {
+				country_or_non_sovereign_subject_holds = ROOT
+				owned_by_trade_league_member_or_giesadh = yes
+			}
+		} 
+
+		trigger = {
+			calc_true_if = {
+				amount = 20
+				gerudia_superregion = {
+					type = all
+					OR = {
+						owned_by_trade_league_member_or_giesadh = yes
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+					OR = {
+						region = dalr_region
+						region = olavlund_region
+						region = gerudian_frontier_region
+					}
+				}
+			}
+			696 = {
+				trade_share = {
+					country = ROOT
+					share = 75
+				}
+			}
+			975 = {
+				trade_share = {
+					country = ROOT
+					share = 75
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_giesadh_restriction_gerudia_tt 
+
+			set_global_flag = z22_giesadh_restriction_gerudia
+			clr_global_flag = z22_giesadh_restriction_alenic_reach
+
+			add_country_modifier = {
+				name = z22_gerudian_settlers
+				duration = 18250
+			}
+
+			gerudia_superregion = {
+				limit = {
+					is_city = yes 
+					NOT = {
+						owned_by_trade_league_member_or_giesadh = yes
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+
+	z22_gerudian_frontier = {
+		icon = mission_rb_colonise_canada
+		position = 8
+		required_missions = {
+			z22_skaldol_treaty
+			z22_cousins_song_snow
+		}
+		provinces_to_highlight = {
+			superregion = gerudia_superregion
+			is_capital = yes 
+			NOT = {
+				owner = {
+					any_owned_province = {
+						any_neighbor_province = {
+							is_city = no
+							superregion = gerudia_superregion
+						}
+					}
+					OR = {
+						is_subject_of = ROOT
+						trust = {
+							who = ROOT
+							value = 70
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = z22_money_manpower_for_gerudian_colonising_tt
+				if = {
+					limit = {
+						calc_true_if = {
+							amount = 10
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 2000
+					manpower = 10
+				}
+				else_if = {
+					limit = {
+						calc_true_if = {
+							amount = 9
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 1800
+					manpower = 9
+				}
+				else_if = {
+					limit = {
+						calc_true_if = {
+							amount = 8
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 1600
+					manpower = 8
+				}
+				else_if = {
+					limit = {
+						calc_true_if = {
+							amount = 7
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 1400
+					manpower = 7
+				}
+				else_if = {
+					limit = {
+						calc_true_if = {
+							amount = 6
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 1200
+					manpower = 6
+				}
+				else_if = {
+					limit = {
+						calc_true_if = {
+							amount = 5
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 1000
+					manpower = 5
+				}
+				else_if = {
+					limit = {
+						calc_true_if = {
+							amount = 4
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 800
+					manpower = 4
+				}
+				else_if = {
+					limit = {
+						calc_true_if = {
+							amount = 3
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 600
+					manpower = 3
+				}
+				else_if = {
+					limit = {
+						calc_true_if = {
+							amount = 2
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 400
+					manpower = 2
+				}
+				else_if = {
+					limit = {
+						calc_true_if = {
+							amount = 1
+							all_known_country = {
+								any_owned_province = {
+									any_neighbor_province = {
+										superregion = gerudia_superregion
+										is_city = no
+									}
+								}
+								OR = {
+									is_giesadh_or_trade_league_member = yes
+									is_subject_of = ROOT
+								}
+							}
+						}
+					}
+					treasury = 200
+					manpower = 1
+				}
+			}
+			all_known_country = {
+				OR = {
+					AND = {
+						any_owned_province = {
+							any_neighbor_province = {
+								superregion = gerudia_superregion
+								is_city = no
+							}
+						}
+						OR = {
+							is_subject_of = ROOT
+							is_giesadh_or_trade_league_member = yes
+						}
+					}
+					NOT = {
+						any_owned_province = {
+							any_neighbor_province = {
+								superregion = gerudia_superregion
+								is_city = no
+							}
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = z22_trolls_harpies_in_acts_tt
+				z22_acts_troll = yes
+				z22_acts_harpy = yes
+			}
+		} 
+
+		effect = {
+			custom_tooltip = z22_remove_manpower_crowns_for_colonising
+			hidden_effect = {
+				set_variable = {
+					which = CelmaldorFrontierCountries
+					value = 0
+				}
+				every_known_country = {
+					limit = {
+						any_neighbor_province = {
+							superregion = gerudia_superregion
+							is_city = no
+						}
+					}
+					ROOT = {
+						change_variable = {
+							which = CelmaldorFrontierCountries
+							value = 1
+						}
+					}
+				}
+				while = {
+					limit = {
+						check_variable = {
+							which = CelmaldorFrontierCountries
+							value = 1
+						}
+					}
+					add_treasury = -200
+					add_manpower = -1
+					subtract_variable = {
+						which = CelmaldorFrontierCountries
+						value = 1
+					}
+				}
+			}
+			every_known_country = {
+				limit = {
+					any_owned_province = {
+						any_neighbor_province = {
+							superregion = gerudia_superregion
+							is_city = no
+						}
+					}
+					OR = {
+						is_giesadh_or_trade_league_member = yes
+						is_subject_of = ROOT
+					}
+				}
+				add_treasury = 200
+				add_manpower = 1
+				add_country_modifier = {
+					name = z22_frontier_settlement
+					duration = 18250
+				}
+				set_country_flag = does_not_convert_colonies_culture_or_religion_flag
+				set_country_flag = z22_gerudia_colonising
+			}
+			set_country_flag = z22_gerudia_colonising
+			hidden_effect = {
+				country_event = {
+					id = flavour_celmaldor.17
+					days = 365
+					random = 900
+				}
+			}
+		} 
+	}
+
+	z22_out_of_reach = {
+		icon = mission_rb_grow_the_channel
+		position = 10
+		required_missions = {
+			z22_black_reach
+			z22_gerudian_frontier
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					continent = europe
+					owned_by = ROOT
+					NOT = {
+						has_influencing_fort = yes
+						any_neighbor_province = {
+							has_influencing_fort = yes
+						}
+					}
+				}
+				AND = {
+					any_neighbor_province = {
+						OR = {
+							province_id = 1436
+							province_id = 1324
+							province_id = 1476
+							province_id = 1320
+							province_id = 1321
+							province_id = 1322
+							province_id = 1323
+							province_id = 1477
+							province_id = 1286
+							province_id = 1475
+							province_id = 1289
+							province_id = 1317
+							province_id = 1474
+						}
+					}
+					NOT = {
+						any_neighbor_province = {
+							has_coast_defense_building_trigger = yes
+						}
+						has_coast_defense_building_trigger = yes
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			all_owned_province = {
+				OR = {
+					NOT = {
+						continent = europe
+					}
+					is_island = yes
+					has_influencing_fort = yes
+					any_neighbor_province = {
+						has_influencing_fort = yes
+					}
+				}
+			}
+			gerudia_superregion = {
+				type = all
+				OR = {
+					has_port = no
+					OR = {
+						has_coast_defense_building_trigger = yes
+						any_neighbor_province = {
+							has_coast_defense_building_trigger = yes
+						}
+					}
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				has_building = ramparts
+				has_fort_building_trigger = yes
+			}
+			OR = {
+				num_of_heavy_ship = 60
+				num_of_galley = 120
+			}
+		} 
+
+		effect = {
+			
+			1436 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1324 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1476 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1320 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1321 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1322 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1323 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1477 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1286 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1475 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1289 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1317 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			1474 = {
+				random_neighbor_province = {
+					limit = {
+						owned_by = ROOT
+						has_building = coastal_defence
+					}
+					add_province_modifier = {
+						name = z22_out_of_reach
+						duration = -1
+					}
+				}
+			}
+			add_country_modifier = {
+				name = z22_wood_stone
+				duration = -1
+			}
+		} 
+	}
+
+	z22_snow_legions = {
+		icon = mission_duel_snow
+		position = 12
+		required_missions = {
+			z22_out_of_reach
+			z22_skalds_artificers
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT 
+			NOT = {
+				AND = {
+					base_manpower = 10
+					has_building = training_fields
+				}
+			}
+		} 
+
+		trigger = {
+			OR = {
+				AND = {
+					army_tradition = 60
+					army_professionalism = 0.6
+				}
+				AND = {
+					army_tradition = 50
+					army_professionalism = 0.5
+					mil_power = 100
+				}
+				AND = {
+					army_tradition = 40
+					army_professionalism = 0.4
+					mil_power = 200
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 30
+				has_building = training_fields
+				base_manpower = 10
+			}
+			custom_trigger_tooltip = {
+				tooltip = z22_military_inventions_discovered_tt
+				num_military_artifice_inventions_discovered = {
+					VAL = 3
+				}
+			}
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = z22_snow_legions
+				duration = -1
+			}
+		} 
+	}
+}

@@ -1,0 +1,2748 @@
+#Writing by wdfrodo, .Simetra, Cappadocia, Wilyape, FOOD and Creatively bankrupt, coding by Creatively bankrupt
+
+karshyr_missions_ghost = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = { tag = S15 }
+}
+
+karshyr_missions_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = { tag = S15 }
+	S15_strengthen_the_hydromancer_guild = {
+		icon = mission_empowerment
+		position = 3
+		required_missions = {
+			S15_begin_the_restoration
+		}
+		provinces_to_highlight = {
+			province_id = 5834
+		}
+
+		trigger = {
+			5834 = {
+				has_building = mage_tower
+			}
+			num_of_estate_privileges = {
+				estate = estate_mages
+				value = 3
+			}
+		}
+		
+		effect = {
+			set_estate_privilege = estate_mages_hydromancers_guild
+			add_adm_power = 50
+			add_dip_power = 50
+			add_mil_power = 50
+		}
+	}
+
+	S15_spread_the_farms = {
+		icon = mission_se_along_the_river
+		position = 4
+		required_missions = {
+			S15_strengthen_the_hydromancer_guild
+			S15_adventures_into_aquaculture
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			trade_goods = dyes
+		}
+
+		trigger = {
+			trade_goods_produced_amount = {
+				trade_goods = dyes
+				amount = 5
+			}
+			5834 = { province_has_center_of_trade_of_level = 2 }
+			stability = 2
+		}
+		
+		effect = {
+			5895 = {
+				add_province_modifier = {
+					name = S15_early_aquaculture_seaweed
+					duration = -1
+				}
+				save_trade_goods = yes
+				change_trade_goods = dyes
+			}
+			hidden_effect = {
+				change_variable = {
+					which = aquacultureTotal
+					value = 1
+				}
+				change_variable = {
+					which = aquacultureDyesMax
+					value = 1
+				}
+			}
+		}
+	}
+
+	S15_reclaim_the_lost_islands = {
+		icon = mission_invade_island
+		position = 5
+		required_missions = {
+			S15_spread_the_farms
+		}
+		provinces_to_highlight = {
+			OR = {
+				area = inner_rankaty_islands_area
+				area = outer_rankaty_islands_area
+			}
+			NOT = {
+				is_prosperous = yes
+				NOT = { owned_by = ROOT }
+				development = 10
+			}
+		}
+
+		trigger = {
+			inner_rankaty_islands_area = {
+				type = all
+				OR = {
+					is_prosperous = yes
+					NOT = { owned_by = ROOT }
+					development = 10
+				}
+			}
+			outer_rankaty_islands_area = {
+				type = all
+				OR = {
+					is_prosperous = yes
+					NOT = { owned_by = ROOT }
+					development = 10
+				}
+			}
+			5834 = {
+				owned_by = ROOT
+				num_of_units_in_province = {
+					who = ROOT
+					type = infantry
+					amount = 10
+				}
+			}
+		}
+		
+		effect = {
+			inner_rankaty_islands_area = {
+				add_siberian_construction = 250
+				add_permanent_claim = ROOT
+			}
+			outer_rankaty_islands_area = {
+				add_siberian_construction = 250
+				add_permanent_claim = ROOT
+			}
+			5834 = {
+				kill_units = {
+					who = ROOT
+					type = infantry
+					amount = 10
+				}
+			}
+		}
+	}
+
+	S15_a_natural_ally = {
+		icon = mission_tree_fishing
+		position = 6
+		required_missions = {
+			S15_reclaim_the_lost_islands
+		}
+		provinces_to_highlight = {
+			OR = {
+				area = inner_rankaty_islands_area
+				area = outer_rankaty_islands_area
+			}
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					is_city = yes
+				}
+				
+			}
+		}
+
+		trigger = {
+			inner_rankaty_islands_area = {
+				type = all
+				owned_by = ROOT
+				is_city = yes
+			}
+			outer_rankaty_islands_area = {
+				type = all
+				owned_by = ROOT
+				is_city = yes
+			}
+			3258 = {
+				development = 10
+				has_production_building_trigger = yes
+			}
+		}
+		
+		effect = {
+			3258 = {
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+			}
+			set_country_flag = S15_merfolk_buff
+			custom_tooltip = S15_merfolk_buff_tt
+			tooltip = {
+				add_province_modifier = {
+					name = S15_merfolk_allied
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = { has_province_modifier = offcoast_merfolk_allied }
+					add_province_modifier = {
+						name = S15_merfolk_allied
+						duration = -1
+					}
+				}
+			}
+		}
+	}
+
+	S15_invite_them_to_karshyr = {
+		icon = mission_hanseatic_city
+		position = 7
+		required_missions = {
+			S15_a_natural_ally
+			S15_finalise_the_crater_city
+		}
+		provinces_to_highlight = { }
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = merfolk_neutral_great_tt
+				check_variable = {
+					which = merfolkOpinionVar
+					value = 50
+				}
+			}
+			num_of_galley = 35
+		}
+		
+		effect = {
+			merfolk_add_opinion_effect_largest = yes
+			5834 = { merfolk_spawn_modifier = yes }
+		}
+	}
+
+	S15_the_city_of_nazyhn = {
+		icon = mission_market
+		position = 12
+		required_missions = {
+			S15_control_the_gulf
+		}
+		provinces_to_highlight = {
+			province_id = 5941
+		}
+
+		trigger = {
+			5941 = {
+				num_of_times_expanded_infrastructure = 2
+				development = 30
+			}
+			trade_goods_produced_amount = {
+				trade_goods = spices
+				amount = 15
+			}
+		}
+		
+		effect = {
+			5941 = {
+				add_province_modifier = {
+					name = S15_coastal_city
+					duration = -1
+				}
+				set_seat_in_parliament = yes
+				remove_province_modifier = S15_executed_elites
+			}
+			country_event = {
+				id = flavour_karshyr.6
+			}
+		}
+	}
+}
+
+karshyr_missions_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = { tag = S15 }
+	S15_begin_the_restoration = {
+		icon = mission_magnificent_castle
+		position = 2
+		required_missions = {
+			S15_a_beachhead_secured
+		}
+		provinces_to_highlight = {
+			area = inner_rankaty_islands_area
+		}
+
+		trigger = {
+			treasury = 100
+			inner_rankaty_islands_area = {
+				has_state_edict = edict_encourage_development
+			}
+		}
+		
+		effect = {
+			add_treasury = -100
+			5834 = {
+				add_province_modifier = {
+					name = S15_restoration_of_the_crater_city
+					duration = -1
+				}
+			}
+		}
+	}
+
+	S15_adventures_into_aquaculture = {
+		icon = mission_tree_fishing
+		position = 3
+		required_missions = {
+			S15_begin_the_restoration
+		}
+		provinces_to_highlight = {
+			province_id = 5834
+		}
+
+		trigger = {
+			5834 = {
+				base_production = 8
+			}
+			estate_influence = {
+				estate = estate_burghers
+				influence = 75
+			}
+			if = {
+				limit = { has_dlc = "Domination" }
+				has_estate_privilege = estate_burghers_economical_boost
+			}
+			else = {
+				estate_loyalty = {
+					estate = estate_burghers
+					loyalty = 60
+				}
+			}
+		}
+		
+		effect = {
+			5834 = {
+				add_province_modifier = {
+					name = S15_early_aquaculture_seaweed_karshyr
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				set_variable = {
+					which = aquacultureTotal
+					value = 0
+				}
+				set_variable = {
+					which = aquacultureDyes
+					value = 0
+				}
+				set_variable = {
+					which = aquacultureGems
+					value = 0
+				}
+				set_variable = {
+					which = aquacultureFish
+					value = 0
+				}
+				set_variable = {
+					which = aquacultureSpices
+					value = 0
+				}
+				set_variable = {
+					which = aquacultureSalt
+					value = 0
+				}
+				set_variable = {
+					which = aquacultureDyesMax
+					value = 1
+				}
+				set_variable = {
+					which = aquacultureGemsMax
+					value = 0
+				}
+				set_variable = {
+					which = aquacultureFishMax
+					value = 0
+				}
+				set_variable = {
+					which = aquacultureSpicesMax
+					value = 0
+				}
+				set_variable = {
+					which = aquacultureSaltMax
+					value = 0
+				}
+			}
+		}
+	}
+
+	S15_export_the_khateshala = {
+		icon = mission_magic_tower
+		position = 5
+		required_missions = {
+			S15_spread_the_farms
+			S15_karshyr_prosperous
+		}
+		provinces_to_highlight = {
+			OR = {
+				area = karassk_tara_area
+				province_id = 5898
+			}
+		}
+
+		trigger = {
+			5898 = {
+				development = 20
+				has_building = mage_tower
+			}
+			karassk_tara_area = {
+				OR = {
+					is_prosperous = yes
+					has_production_building_trigger = yes
+				}
+			}
+		}
+		
+		effect = {
+			5898 = {
+				add_province_modifier = {
+					name = S15_enforced_khateshala
+					duration = -1
+				}
+			}
+			add_adm_power = 50
+			add_dip_power = 50
+			add_mil_power = 50
+		}
+	}
+
+	S15_finalise_the_crater_city = {
+		icon = mission_magnificent_castle
+		position = 6
+		required_missions = {
+			S15_reclaim_the_lost_islands
+			S15_export_the_khateshala
+			S15_eclipse_the_sapphire
+		}
+		provinces_to_highlight = {
+			province_id = 5834
+		}
+
+		trigger = {
+			5834 = {
+				development = 35
+				has_production_building_trigger = yes
+				has_manpower_building_trigger = yes
+			}
+			OR = {
+				has_adm_advisor_3 = yes
+				custom_trigger_tooltip = {
+					tooltip = S15_science_or_magic_tt
+					OR = {
+						natural_scientist = 2
+						court_mage = 2
+					}
+				}
+			}
+			treasury = 400
+		}
+		
+		effect = {
+			5834 = {
+				remove_province_modifier = S15_restoration_of_the_crater_city
+				add_province_modifier = {
+					name = S15_resplendent_crater_city
+					duration = -1
+				}
+			}
+			add_treasury = -400
+			country_event = {
+				id = flavour_karshyr.3
+			}
+		}
+	}
+
+	S15_the_great_pearl_cave = {
+		icon = mission_underground_cave
+		position = 8
+		required_missions = {
+			S15_invite_them_to_karshyr
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5914
+				province_id = 3258
+			}
+		}
+
+		trigger = {
+			5914 = {
+				owned_by = ROOT
+				has_production_building_trigger = yes
+				has_dock_building_trigger = yes
+			}
+			3258 = {
+				owned_by = ROOT
+				development = 15
+				has_dock_building_trigger = yes
+				galleys_in_province = 15
+				hidden_trigger = {
+					galleys_in_province = ROOT
+				}
+			}
+		}
+		
+		effect = {
+			3258 = {
+				add_province_modifier = {
+					name = S15_the_great_pearl_cave_cheneshkad
+					duration = -1
+				}
+				set_province_flag = S15_aquaculture
+				set_province_flag = S15_aquaculture_gems_flag
+				save_trade_goods = yes
+				change_trade_goods = gems
+				kill_units = {
+					who = ROOT
+					type = galley
+					amount = 15
+				}
+			}
+			5914 = {
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 1
+				add_province_modifier = {
+					name = S15_the_great_pearl_cave_khugra
+					duration = -1
+				}
+				set_province_flag = S15_aquaculture
+				set_province_flag = S15_aquaculture_gems_flag
+				save_trade_goods = yes
+				change_trade_goods = gems
+			}
+			set_country_flag = S15_gems
+			custom_tooltip = S15_aquaculture_gems_buildable_tt
+			custom_tooltip = S15_gems_tt
+			hidden_effect = {
+				change_variable = {
+					which = aquacultureGems
+					value = 1
+				}
+				change_variable = {
+					which = aquacultureGemsMax
+					value = 3
+				}
+			}
+			if = {
+				limit = { ai = yes }
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						NOT = {
+							province_id = 5834
+							province_id = 5895
+							province_id = 5898
+							province_id = 5914
+							province_id = 5941
+							province_id = 5949
+							province_id = 6060
+							has_province_flag = S15_aquaculture
+						}
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_gems
+						duration = -1
+					}
+					set_province_flag = S15_aquaculture
+					set_province_flag = S15_aquaculture_gems_flag
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						NOT = {
+							province_id = 5834
+							province_id = 5895
+							province_id = 5898
+							province_id = 5914
+							province_id = 5941
+							province_id = 5949
+							province_id = 6060
+							has_province_flag = S15_aquaculture
+						}
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_gems
+						duration = -1
+					}
+					set_province_flag = S15_aquaculture
+					set_province_flag = S15_aquaculture_gems_flag
+				}
+			}
+		}
+	}
+
+	S15_improve_the_project = {
+		icon = mission_se_along_the_river
+		position = 9
+		required_missions = {
+			S15_the_great_pearl_cave
+		}
+		provinces_to_highlight = { }
+
+		trigger = {
+			check_variable = {
+				which = aquacultureTotal
+				value = 2
+			}
+			OR = {
+				innovativeness = 25
+				AND = {
+					innovativeness = 10
+					OR = {
+						has_adm_advisor_3 = yes
+						natural_scientist = 1
+					}
+				}
+			}
+		}
+		
+		effect = {
+			custom_tooltip = S15_aquaculture_improvement_tt
+			tooltip = {
+				add_province_modifier = {
+					name = S15_aquaculture_improvement
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = { has_province_flag = S15_aquaculture }
+					add_province_modifier = {
+						name = S15_aquaculture_improvement
+						duration = -1
+					}
+				}
+			}
+			custom_tooltip = S15_dyes_and_gems_tt
+			hidden_effect = {
+				change_variable = {
+					which = aquacultureDyes
+					value = 1
+				}
+				change_variable = {
+					which = aquacultureDyesMax
+					value = 1
+				}
+				change_variable = {
+					which = aquacultureGems
+					value = 1
+				}
+				change_variable = {
+					which = aquacultureGemsMax
+					value = 1
+				}
+			}
+			set_country_flag = S15_aquaculture_improvement
+			if = {
+				limit = { has_country_flag = S15_fish }
+				custom_tooltip = S15_fish_tt
+				hidden_effect = {
+					change_variable = {
+						which = aquacultureFish
+						value = 1
+					}
+					change_variable = {
+						which = aquacultureFishMax
+						value = 1
+					}
+				}
+				if = {
+					limit = { ai = yes }
+					random_owned_province = {
+						limit = {
+							has_port = yes
+							NOT = {
+								province_id = 5834
+								province_id = 5895
+								province_id = 5898
+								province_id = 5914
+								province_id = 5941
+								province_id = 5949
+								province_id = 6060
+								has_province_flag = S15_aquaculture
+							}
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_fish
+							duration = -1
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_improvement
+							duration = -1
+						}
+						set_province_flag = S15_aquaculture
+						set_province_flag = S15_aquaculture_fish_flag
+					}
+				}
+			}
+			if = {
+				limit = { ai = yes }
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						NOT = {
+							province_id = 5834
+							province_id = 5895
+							province_id = 5898
+							province_id = 5914
+							province_id = 5941
+							province_id = 5949
+							province_id = 6060
+							has_province_flag = S15_aquaculture
+						}
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_diversified
+						duration = -1
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_improvement
+						duration = -1
+					}
+					set_province_flag = S15_aquaculture
+					set_province_flag = S15_aquaculture_dyes_flag
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						NOT = {
+							province_id = 5834
+							province_id = 5895
+							province_id = 5898
+							province_id = 5914
+							province_id = 5941
+							province_id = 5949
+							province_id = 6060
+							has_province_flag = S15_aquaculture
+						}
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_gems
+						duration = -1
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_improvement
+						duration = -1
+					}
+					set_province_flag = S15_aquaculture
+					set_province_flag = S15_aquaculture_gems_flag
+				}
+			}
+		}
+	}
+
+	S15_control_the_gulf = {
+		icon = mission_assemble_an_army
+		position = 11
+		required_missions = {
+			S15_formalise_the_council
+		}
+		provinces_to_highlight = {
+			OR = {
+				superregion = tanib_dajek_superregion
+				superregion = taneyas_superregion
+				superregion = djinnakah_superregion
+				region = dao_nako_region
+			}
+			is_capital = yes
+			owner = { navy_size = ROOT }
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = S15_control_the_gulf_tt
+				NOT = {
+					any_known_country = {
+						navy_size = ROOT
+						capital_scope = {
+							OR = {
+								superregion = tanib_dajek_superregion
+								superregion = taneyas_superregion
+								superregion = djinnakah_superregion
+								region = dao_nako_region
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		effect = {
+			hidden_effect = {
+				1458 = { every_trade_node_member_province = { add_permanent_claim = S15 } }
+				change_variable = {
+					which = aquacultureFish
+					value = 2
+				}
+				change_variable = {
+					which = aquacultureFishMax
+					value = 2
+				}
+			}
+			custom_tooltip = S15_adzalaz_claims_tt
+			custom_tooltip = S15_double_fish_tt
+			qasri_abeesooyinka_area = {
+				add_permanent_claim = ROOT
+			}
+			add_country_modifier = {
+				name = S15_control_the_seas
+				duration = 9125 #25 years
+			}
+			add_country_modifier = {
+				name = S15_control_the_seas_marine_only
+				duration = 9125 #25 years
+			}
+		}
+	}
+
+	S15_ousted_slavers = {
+		icon = mission_fleet
+		position = 12
+		required_missions = {
+			S15_control_the_gulf
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 6009
+				province_id = 6060
+			}
+		}
+
+		trigger = {
+			accepted_culture = dhebiji
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = S15_aquaculture_province_tt
+					6009 = { has_province_flag = S15_aquaculture }
+				}
+				6009 = {
+					development = 30
+					has_manufactory_trigger = yes
+				}
+			}
+			owns = 6060
+			high_tolerance_human_race_trigger = yes
+		}
+		
+		effect = {
+			6060 = {
+				add_province_modifier = {
+					name = S15_coastal_city
+					duration = -1
+				}
+				set_seat_in_parliament = yes
+				add_province_modifier = {
+					name = S15_production_based_salts
+					duration = -1
+				}
+				set_province_flag = S15_aquaculture
+				set_province_flag = S15_aquaculture_salt_flag
+				save_trade_goods = yes
+				change_trade_goods = salt
+			}
+			6009 = {
+				add_province_modifier = {
+					name = S15_early_karshyrian_development
+					duration = -1
+				}
+			}
+			set_country_flag = S15_salt
+			custom_tooltip = S15_aquaculture_salt_buildable_tt
+			custom_tooltip = S15_salt_tt
+			hidden_effect = {
+				change_variable = {
+					which = aquacultureSalt
+					value = 2
+				}
+				change_variable = {
+					which = aquacultureSaltMax
+					value = 3
+				}
+			}
+			if = {
+				limit = { ai = yes }
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						NOT = {
+							province_id = 5834
+							province_id = 5895
+							province_id = 5898
+							province_id = 5914
+							province_id = 5941
+							province_id = 5949
+							province_id = 6060
+							has_province_flag = S15_aquaculture
+						}
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_salt
+						duration = -1
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_improvement
+						duration = -1
+					}
+					set_province_flag = S15_aquaculture
+					set_province_flag = S15_aquaculture_salt_flag
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						NOT = {
+							province_id = 5834
+							province_id = 5895
+							province_id = 5898
+							province_id = 5914
+							province_id = 5941
+							province_id = 5949
+							province_id = 6060
+							has_province_flag = S15_aquaculture
+						}
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_salt
+						duration = -1
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_improvement
+						duration = -1
+					}
+					set_province_flag = S15_aquaculture
+					set_province_flag = S15_aquaculture_salt_flag
+				}
+			}
+		}
+	}
+}
+
+karshyr_missions_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = { tag = S15 }
+	S15_a_beachhead_secured = {
+		icon = mission_unite_home_region
+		position = 1
+		required_missions = {  }
+		provinces_to_highlight = {
+			OR = {
+				owned_by = L68
+				area = ninu_ra_kyik_area
+			}
+		}
+
+		trigger = {
+			ninu_ra_kyik_area = {
+				controlled_by = ROOT
+			}
+			NOT = { exists = L68 }
+		}
+		
+		effect = {
+			karassk_tara_area = {
+				add_permanent_claim = ROOT
+			}
+			narasad_area = {
+				add_permanent_claim = ROOT
+			}
+			custom_tooltip = S15_revenge_by_our_own_hands_tt
+			hidden_effect = {
+				if = {
+					limit = { 5898 = { owned_by = S15 } }
+					add_country_modifier = {
+						name = S15_revenge_by_our_own_hands
+						duration = 9125 #25 years
+					}
+				}
+				else = {
+					add_adm_power = 50
+					add_dip_power = 50
+					add_mil_power = 50
+				}
+			}
+		}
+	}
+
+	S15_avenge_the_millenia = {
+		icon = mission_burning_castle
+		position = 2
+		required_missions = {
+			S15_a_beachhead_secured
+		}
+		provinces_to_highlight = {
+			province_id = 5898
+		}
+
+		trigger = {
+			5898 = {
+				owned_by = ROOT
+				num_of_units_in_province = {
+					who = ROOT
+					type = infantry
+					amount = 5
+				}
+			}
+			has_mil_advisor_2 = yes
+		}
+		
+		effect = {
+			5898 = {
+				add_devastation = 50
+				add_base_tax = -2
+				add_base_production = -2
+				add_base_manpower = -2
+				change_trade_goods = fish
+			}
+			5834 = {
+				add_base_tax = 2
+				add_base_production = 2
+				add_base_manpower = 2
+			}
+			add_prestige = 25
+			remove_estate_privilege = estate_church_naga_mutation
+			set_country_flag = nagas_forbidden
+			add_stability = 3
+			add_country_modifier = {
+				name = S15_aimless
+				duration = -1
+			}
+			every_known_country = {
+				limit = {
+					religion = anzalkatsa
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = S15_burned_down_karassk
+				}
+			}
+			set_country_flag = S15_naga_dead
+		}
+	}
+
+	S15_karshyr_prosperous = {
+		icon = mission_approach_throne
+		position = 4
+		required_missions = {
+			S15_avenge_the_millenia
+		}
+		provinces_to_highlight = {
+			OR = {
+				area = karassk_tara_area
+				area = narasad_area
+			}
+			NOT = { owned_by = ROOT }
+		}
+
+		trigger = {
+			karassk_tara_area = {
+				type = all
+				owned_by = ROOT
+			}
+			narasad_area = {
+				type = all
+				owned_by = ROOT
+			}
+			NOT = { has_estate_privilege = estate_nobility_forgotten_city }
+		}
+		
+		effect = {
+			inner_rankaty_islands_area = {
+				add_prosperity = 50
+			}
+			outer_rankaty_islands_area = {
+				add_prosperity = 50
+			}
+			add_country_modifier = {
+				name = S15_the_rising_islands
+				duration = 18250 #50 years
+			}
+			khugra_tara_area = {
+				add_permanent_claim = ROOT
+			}
+			nepa_tressik_area = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	S15_eclipse_the_sapphire = {
+		icon = mission_frozen_star
+		position = 5
+		required_missions = {
+			S15_karshyr_prosperous
+		}
+		provinces_to_highlight = {
+			OR = {
+				area = khugra_tara_area
+				area = nepa_tressik_area
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				local_autonomy = 25
+			}
+		}
+
+		trigger = {
+			khugra_tara_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { local_autonomy = 25 }
+			}
+			nepa_tressik_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { local_autonomy = 25 }
+			}
+		}
+		
+		effect = {
+			if = {
+				limit = {
+					5914 = {
+						province_has_center_of_trade_of_level = 2
+					}
+				}
+				add_treasury = 200
+			}
+			else = {
+				5914 = {
+					add_center_of_trade_level = 1
+				}
+			}
+			5914 = {
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+			}
+			5898 = {
+				add_province_modifier = {
+					name = S15_coastal_city
+					duration = -1
+				}
+			}
+			5914 = {
+				add_province_modifier = {
+					name = S15_coastal_city
+					duration = -1
+				}
+			}
+			nazhni_tara_area = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	S15_the_city_of_shadows = {
+		icon = mission_shady_encounter
+		position = 9
+		required_missions = {
+			S15_the_great_pearl_cave
+			S15_rebuild_karassk
+		}
+		provinces_to_highlight = {
+			province_id = 5941
+			province_has_current_tech_fort_trigger = no
+		}
+
+		trigger = {
+			5941 = {
+				owned_by = ROOT
+				province_has_current_tech_fort_trigger = yes
+			}
+			OR = {
+				has_adm_advisor_3 = yes
+				theologian = 1
+			}
+		}
+		
+		effect = {
+			5941 = {
+				add_nationalism = -10
+				add_province_modifier = {
+					name = S15_executed_elites
+					duration = -1
+				}
+			}
+			add_treasury = 500
+		}
+	}
+
+	S15_formalise_the_council = {
+		icon = mission_noble_council
+		position = 10
+		required_missions = {
+			S15_improve_the_project
+			S15_the_city_of_shadows
+			S15_before_cannor_arrives
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5834
+				province_id = 5898
+				province_id = 5914
+			}
+			has_courthouse_building_trigger = no
+		}
+
+		trigger = {
+			government_reform_progress = 100
+			5834 = { has_courthouse_building_trigger = yes }
+			5898 = { has_courthouse_building_trigger = yes }
+			5914 = { has_courthouse_building_trigger = yes }
+		}
+		
+		effect = {
+			add_government_reform = council_of_the_coast
+			set_country_flag = cant_manually_add_parliament_seats
+			capital_scope = {
+				if = {
+					limit = { NOT = { province_id = 5834 }  }
+					set_seat_in_parliament = no
+				}
+			}
+			5834 = { set_seat_in_parliament = yes } #Should be redundant, because capital, but I don't trust it - CB.
+			5898 = { set_seat_in_parliament = yes }
+			5914 = { set_seat_in_parliament = yes }
+			add_country_modifier = {
+				name = S15_the_fleet_of_the_gulf
+				duration = -1
+			}
+			custom_tooltip = S15_aquaculture_dyes_buildable_tt
+			set_country_flag = S15_dyes
+		}
+	}
+
+	S15_conquer_the_isle = {
+		icon = mission_invade_island
+		position = 11
+		required_missions = {
+			S15_formalise_the_council
+		}
+		provinces_to_highlight = {
+			is_capital_of = S77
+		}
+
+		trigger = {
+			adm_power = 100
+			S77 = {
+				OR = {
+					total_development = 100
+					army_size = 15
+				}
+			}
+		}
+		
+		effect = {
+			fahvanosy_region = {
+				add_permanent_claim = S77
+			}
+			S77 = {
+				add_country_modifier = {
+					name = S15_unite_the_isle
+					duration = 9125 #25 years
+				}
+			}
+			add_adm_power = -100
+		}
+	}
+
+	S15_the_merfolk_city = {
+		icon = mission_se_along_the_river
+		position = 12
+		required_missions = {
+			S15_control_the_gulf
+		}
+		provinces_to_highlight = {
+			province_id = 5949
+		}
+
+		trigger = {
+			5949 = {
+				galleys_in_province = 50
+				galleys_in_province = ROOT
+				has_dock_building_trigger = yes
+				has_shipyard_building_trigger = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = merfolk_allied_great_tt
+				check_variable = {
+					which = merfolkOpinionVar
+					value = 80
+				}
+			}
+		}
+		
+		effect = {
+			5949 = {
+				add_province_modifier = {
+					name = S15_coastal_city
+					duration = -1
+				}
+				center_of_trade = 2
+				set_seat_in_parliament = yes
+				merfolk_spawn_modifier = yes
+			}
+			5898 = {
+				remove_province_modifier = S15_the_fisheries_karassk
+				add_province_modifier = {
+					name = S15_enhanced_grand_fish_farm
+					duration = -1
+				}
+				set_province_flag = S15_aquaculture
+				set_province_flag = S15_aquaculture_fish_flag
+			}
+			5949 = {
+				add_province_modifier = {
+					name = S15_aquaculture_fish
+					duration = -1
+				}
+				add_province_modifier = {
+					name = S15_fish_farm_merfolk_expertise
+					duration = -1
+				}
+				set_province_flag = S15_aquaculture
+				set_province_flag = S15_aquaculture_fish_flag
+				save_trade_goods = yes
+				change_trade_goods = fish
+			}
+			custom_tooltip = S15_aquaculture_fish_merfolk_tt
+			tooltip = {
+				add_province_modifier = {
+					name = S15_fish_farm_merfolk_expertise
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = { has_province_modifier = S15_aquaculture_fish }
+					add_province_modifier = {
+						name = S15_fish_farm_merfolk_expertise
+						duration = -1
+					}
+				}
+			}
+			custom_tooltip = estate_nobility_lizardfolk_imperial_fisheries_buff_tt
+			set_country_flag = S15_enhanced_fish
+			set_country_flag = lizardfolk_imperial_fisheries_buff
+		}
+	}
+
+	S15_the_gulf_united = {
+		icon = mission_empire
+		position = 13
+		required_missions = {
+			S15_the_city_of_nazyhn
+			S15_ousted_slavers
+			S15_the_merfolk_city
+			S15_the_isle_united
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						region = throden_gokad_region
+						area = teranak_area
+						area = yassa_tara_area
+						area = ssippansek_area
+					}
+					NOT = {
+						owned_by = ROOT
+						area = zesipas_tara_area
+					}
+				}
+				AND = {
+					is_capital = yes
+					continent = africa
+					owner = {
+						navy_size = ROOT
+						NOT = { tag = ROOT }
+						NOT = { is_subject_of = ROOT }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			throden_gokad_region = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					area = zesipas_tara_area
+				}
+			}
+			teranak_area = {
+				type = all
+				owned_by = ROOT
+			}
+			yassa_tara_area = {
+				type = all
+				owned_by = ROOT
+			}
+			ssippansek_area = {
+				type = all
+				owned_by = ROOT
+			}
+			NOT = {
+				any_known_country = {
+					capital_scope = { continent = africa }
+					NOT = { is_subject_of = ROOT }
+					navy_size = ROOT
+				}
+			}
+			government_rank = 3
+		}
+		
+		effect = {
+			remove_country_modifier = S15_the_fleet_of_the_gulf
+			add_country_modifier = {
+				name = S15_the_fleet_of_the_lizardfolk
+				duration = -1
+			}
+			add_country_modifier = {
+				name = S15_disciplined_marines
+				duration = -1
+			}
+		}
+	}
+
+	S15_the_future_of_karshyr = {
+		icon = mission_pray_light
+		position = 14
+		required_missions = {
+			S15_the_gulf_united
+		}
+		provinces_to_highlight = { }
+
+		trigger = {
+			OR = {
+				3082 = { highest_value_trade_node = yes }
+				home_trade_node = { highest_value_trade_node = yes }
+			}
+			army_size = 100
+			navy_size = 100
+			is_religion_enabled = ravelian
+		}
+		
+		effect = {
+			country_event = {
+				id = flavour_karshyr.7
+			}
+		}
+	}
+}
+
+karshyr_missions_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = { tag = S15 }
+	S15_introduce_ourselves = {
+		icon = mission_rb_grow_the_channel
+		position = 6
+		required_missions = {
+			S15_eclipse_the_sapphire
+			S15_the_southern_island_united
+		}
+		provinces_to_highlight = { }
+
+		trigger = {
+			OR = {
+				prestige = 75
+				government_rank = 2
+			}
+			OR = {
+				diplomat = 1
+				statesman = 1
+				dip_power = 100
+			}
+		}
+		
+		effect = {
+			western_cannor_superregion = {
+				discover_country = ROOT
+			}
+			divenhal_sea_region = {
+				discover_country = ROOT
+			}
+			westcoast_region = {
+				discover_country = ROOT
+			}
+			west_salahad_coast_region = {
+				discover_country = ROOT
+			}
+			hidden_effect = {
+				every_known_country = {
+					limit = {
+						capital_scope = {
+							superregion = western_cannor_superregion
+						}
+					}
+					S15 = {
+						capital_scope = {
+							discover_country = PREV
+						}
+					}
+				}
+				set_country_flag = S15_cannor_events_T1
+			}
+			if = {
+				limit = {
+					NOT = {
+						diplomat = 1
+						statesman = 1
+					}
+				}
+				add_dip_power = -100
+			}
+			custom_tooltip = S15_cannorian_events_tt
+		}
+	}
+
+	S15_rebuild_karassk = {
+		icon = mission_diplomacy_missive
+		position = 8
+		required_missions = {
+			S15_introduce_ourselves
+		}
+		provinces_to_highlight = {
+			province_id = 5898
+		}
+
+		trigger = {
+			5898 = {
+				development = 30
+				num_of_times_expanded_infrastructure = 2
+			}
+			custom_trigger_tooltip = {
+				tooltip = S15_improve_opinion_tt
+				calc_true_if = {
+					all_known_country = {
+						capital_scope = { continent = europe }
+						OR = {
+							has_country_modifier = human_administration
+							has_country_modifier = half_elven_administration
+							has_country_modifier = elven_administration
+							has_country_modifier = dwarven_administration
+							has_country_modifier = gnomish_administration
+							has_country_modifier = halfling_administration
+						}
+						has_90_opinion_improved_relation = { target = ROOT }
+					}
+					amount = 2
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = S15_monstrosity_tt
+				OR = {
+					has_country_flag = removing_monstrous
+					NOT = { has_country_modifier = monstrous_nation }
+				}
+			}
+		}
+		
+		effect = {
+			random_known_country = {
+				limit = {
+					capital_scope = { continent = europe }
+					OR = {
+						has_country_modifier = human_administration
+						has_country_modifier = elven_administration
+						has_country_modifier = dwarven_administration
+						has_country_modifier = gnomish_administration
+						has_country_modifier = halfling_administration
+					}
+					has_90_opinion_improved_relation = { target = ROOT }
+				}
+				if = {
+					limit = { has_country_modifier = human_administration }
+					5898 = { add_human_minority_size_effect = yes }
+					ROOT = { medium_increase_of_human_tolerance_effect = yes }
+				}
+				if = {
+					limit = { has_country_modifier = elven_administration }
+					5898 = { add_elven_minority_size_effect = yes }
+					ROOT = { medium_increase_of_elven_tolerance_effect = yes }
+				}
+				if = {
+					limit = { has_country_modifier = dwarven_administration }
+					5898 = { add_dwarven_minority_size_effect = yes }
+					ROOT = { medium_increase_of_dwarven_tolerance_effect = yes }
+				}
+				if = {
+					limit = { has_country_modifier = gnomish_administration }
+					5898 = { add_gnomish_minority_size_effect = yes }
+					ROOT = { medium_increase_of_gnomish_tolerance_effect = yes }
+				}
+				if = {
+					limit = { has_country_modifier = halfling_administration }
+					5898 = { add_halfling_minority_size_effect = yes }
+					ROOT = { medium_increase_of_halfling_tolerance_effect = yes }
+				}
+			}
+			decrease_monstrous_5 = yes
+			country_event = {
+				id = flavour_karshyr.4
+			}
+		}
+	}
+
+	S15_before_cannor_arrives = {
+		icon = mission_shady_encounter
+		position = 9
+		required_missions = {
+			S15_rebuild_karassk
+		}
+		provinces_to_highlight = { }
+
+		trigger = {
+			has_dip_advisor_3 = yes
+			dip_power = 200
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = S15_outside_the_gulf
+				duration = 9125 #25 years
+			}
+			S77 = {
+				add_country_modifier = {
+					name = S15_outside_the_isle
+					duration = 9125 #25 years
+				}
+			}
+			add_dip_power = -200
+		}
+	}
+
+	S15_discuss_the_spire = {
+		icon = mission_diplomacy_missive
+		position = 11
+		required_missions = {
+			S15_formalise_the_council
+		}
+		provinces_to_highlight = {
+			area = dogo_babolo_area
+		}
+
+		trigger = {
+			OR = {
+				any_neighbor_country = { capital_scope = { continent = europe } }
+				any_ally = {
+					capital_scope = { continent = europe }
+				}
+			}
+			NOT = { has_country_modifier = monstrous_nation }
+			manpower = 25
+			treasury = 1000
+		}
+		
+		effect = {
+			country_event = {
+				id = flavour_karshyr.5
+			}
+			add_manpower = -25
+			add_treasury = -1000
+			5894 = { add_siberian_construction = 100 }
+			5894 = {
+				add_province_modifier = {
+					name = S15_early_karshyrian_development
+					duration = -1
+				}
+			}
+		}
+	}
+
+	S15_the_isle_united = {
+		icon = mission_invade_island
+		position = 12
+		required_missions = {
+			S15_conquer_the_isle
+			S15_discuss_the_spire
+		}
+		provinces_to_highlight = {
+			region = fahvanosy_region
+			NOT = {
+				owned_by = ROOT
+				owned_by = S77
+				area = mapotibokbo_area
+				area = oronsafa_area
+				area = havoamihipha_area
+				area = ibidelibe_area
+				area = nafalofimapo_area
+				area = tanfandoro_area
+				area = bavabetsaro_area
+			}
+		}
+
+		trigger = {
+			fahvanosy_region = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					owned_by = S77
+					area = sil_berkhens_land_area
+					area = far_uelos_isles_area
+					area = sombimofo_area
+					area = pikakely_area
+					area = havafonosy_area
+					area = bavabetsaro_area
+					province_id = 5823
+					province_id = 5818
+				}
+			}
+			6632 = {
+				development = 25
+				has_great_project = {
+					type = lizardfolk_port
+					tier = 3
+				}
+			}
+		}
+		
+		effect = {
+			S77 = {
+				add_country_modifier = {
+					name = S15_the_prosperous_isle
+					duration = -1
+				}
+			}
+			add_country_modifier = {
+				name = S15_gratitude_of_the_fahvanosy
+				duration = -1
+			}
+			6632 = {
+				add_province_modifier = {
+					name = S15_seabound_centre
+					duration = -1
+				}
+			}
+			6624 = {
+				add_province_modifier = {
+					name = S15_seabound_cloves
+					duration = -1
+				}
+			}
+			6626 = {
+				add_province_modifier = {
+					name = S15_seabound_cloves
+					duration = -1
+				}
+			}
+			6634 = {
+				add_province_modifier = {
+					name = S15_seabound_cloves
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+karshyr_missions_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = { tag = S15 }
+	S15_our_friends_in_fahvanosy = {
+		icon = mission_alliances
+		position = 1
+		required_missions = {  }
+		provinces_to_highlight = {
+			culture = mazava
+		}
+		
+		trigger = {
+			OR = {
+				alliance_with = L50
+				any_ally = { culture = mazava }
+			}
+			has_country_modifier = racial_focus_halfling
+		}
+		
+		effect = {
+			if = {
+				limit = {
+					alliance_with = L50
+				}
+				hire_advisor = {
+					type = natural_scientist
+					cost_multiplier = 0.5
+					skill = 2
+					culture = mazava
+				}
+				L50 = {
+					hire_advisor = {
+						type = trader
+						cost_multiplier = 0.5
+						skill = 2
+						culture = karshyray_lizardfolk
+					}
+					set_country_flag = S15_halfling_ally_mazava
+				}
+			}
+			else = {
+				random_ally = {
+					limit = { culture = mazava }
+					add_historical_friend_mutual = { tag = S15 }
+					set_country_flag = S15_halfling_ally_mazava
+				}
+			}
+			fahvanosy_region = {
+				limit = { culture = mazava }
+				add_permanent_claim = ROOT
+			}
+			add_permanent_claim = 6632
+		}
+	}
+
+	S15_push_for_amiratsamo = {
+		icon = mission_invade_island
+		position = 4
+		required_missions = {
+			S15_our_friends_in_fahvanosy
+		}
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = { has_country_flag = S15_halfling_ally_mazava }
+		}
+		
+		trigger = {
+			OR = {
+				statesman = 1
+				diplomat = 1
+			}
+			custom_trigger_tooltip = {
+				tooltip = S15_halfling_ally_tt
+				any_ally = {
+					has_country_flag = S15_halfling_ally_mazava
+					culture = mazava
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = sent_gift
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = S15_push_for_amiratsamo_tt
+				NOT = {
+					fahvanosy_region = {
+						OR = {
+							culture = mazava
+							province_id = 6632
+						}
+						owner = {
+							NOT = {
+								tag = ROOT
+								has_country_flag = S15_halfling_ally_mazava
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		effect = {
+			custom_tooltip = S15_amiratsamo_tt
+			hidden_effect = {
+				random_ally = {
+					limit = {
+						culture = mazava
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = sent_gift
+						}
+						has_country_flag = S15_halfling_ally_mazava
+					}
+					fahvanosy_region = {
+						limit = {
+							OR = {
+								culture = mazava
+								province_id = 6632
+							}
+						}
+						cede_province = PREV
+					}
+				}
+			}
+		}
+	}
+
+	S15_the_southern_island_united = {
+		icon = mission_have_two_subjects
+		position = 5
+		required_missions = {
+			S15_push_for_amiratsamo
+		}
+		provinces_to_highlight = { }
+		
+		trigger = {
+			S77 = {
+				trust = {
+					who = ROOT
+					value = 100
+				}
+				has_opinion = {
+					who = ROOT
+					value = 100
+				}
+			}
+		}
+		
+		effect = {
+			country_event = {
+				id = flavour_karshyr.1
+			}
+			custom_tooltip = halfling_vassalization_tt
+			S77 = {
+				add_country_modifier = {
+					name = S15_lizardfold_aid
+					duration = 9125 #25 years
+				}
+			}
+			add_country_modifier = {
+				name = S15_halfling_legitimisation
+				duration = -1
+			}
+		}
+	}
+}
+
+karshyr_missions_6 = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = S15
+		has_country_flag = S15_missions_unlocked
+	}
+	S15_friends_in_sarhal = {
+		icon = mission_diplomacy_missive
+		position = 16
+		required_missions = {
+			S15_exporting_ravelianism
+		}
+		provinces_to_highlight = {
+			OR = {
+				superregion = taneyas_superregion
+				region = fahvanosy_region
+			}
+			owner = {
+				NOT = {
+					tag = S77
+					religion = ravelian
+					religion = shadow_pact
+					religion = xhazobkult
+				}
+			}
+			is_city = yes
+		}
+		
+		trigger = {
+			taneyas_superregion = {
+				type = all
+				OR = {
+					owner = {
+						OR = {
+							tag = S77
+							religion = ravelian
+							religion = shadow_pact
+							religion = xhazobkult
+						}
+					}
+					is_city = no
+				}
+			}
+			fahvanosy_region = {
+				type = all
+				OR = {
+					owner = {
+						OR = {
+							tag = S77
+							religion = ravelian
+							religion = shadow_pact
+							religion = xhazobkult
+						}
+					}
+					is_city = no
+				}
+			}
+			calc_true_if = {
+				katala_raz_region = {
+					type = all
+					owner = {
+						religion = ravelian
+					}
+				}
+				amount = 25
+			}
+			has_estate_privilege = estate_church_religious_diplomats
+		}
+		
+		effect = {
+			every_known_country = {
+				limit = {
+					capital_scope = {
+						OR = {
+							superregion = taneyas_superregion
+							region = fahvanosy_region
+						}
+					}
+					religion = ravelian
+				}
+				Z97 = {
+					add_opinion = {
+						who = ROOT
+						modifier = S15_converted_the_unfaithful
+					}
+				}
+			}
+			custom_tooltip = S15_spires_buyable_tt
+			add_permanent_claim = 5921
+			add_permanent_claim = 5763
+			add_permanent_claim = 5863
+			add_permanent_claim = 5585
+			add_permanent_claim = 5894
+			add_permanent_claim = 5971
+			add_permanent_claim = 5650
+			add_permanent_claim = 6032
+		}
+	}
+}
+
+karshyr_missions_7 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = S15
+		has_country_flag = S15_missions_unlocked
+	}
+	S15_exporting_ravelianism = {
+		icon = mission_diplomacy_missive
+		position = 15
+		required_missions = {
+			S15_the_future_of_karshyr
+		}
+		provinces_to_highlight = {
+			is_capital = yes
+			continent = africa
+			owner = { tech_difference = 1 }
+		}
+		
+		trigger = {
+			monthly_income = 200
+			NOT = {
+				any_known_country = {
+					capital_scope = { continent = africa }
+					tech_difference = 1
+				}
+			}
+		}
+		
+		effect = {
+			custom_tooltip = S15_ravelian_tt
+			custom_tooltip = S15_ravelian_subject_tt
+			tooltip = {
+				add_country_modifier = {
+					name = S15_ravelian_liberty_desire
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				every_subject_country = {
+					limit = {
+						religion = ravelian
+					}
+					add_country_modifier = {
+						name = S15_ravelian_liberty_desire
+						duration = -1
+					}
+				}
+			}
+		}
+	}
+
+	S15_a_lizard_rectorate = {
+		icon = mission_priest_church
+		position = 16
+		required_missions = {
+			S15_exporting_ravelianism
+		}
+		provinces_to_highlight = { }
+		
+		trigger = {
+			papal_influence = 200
+			religious_unity = 0.9
+		}
+		
+		effect = {
+			if = {
+				limit = { papal_controller = { ai = yes NOT = { tag = S15 } } }
+				set_papal_controller = ROOT
+			}
+			else = {
+				add_adm_power = 200
+				add_dip_power = 200
+				add_mil_power = 200
+			}
+			hidden_effect = {
+				S70 = {
+					every_owned_province = {
+						add_permanent_claim = ROOT
+					}
+				}
+			}
+			custom_tooltip = S15_yezel_mora_claims_tt
+		}
+	}
+
+	S15_contain_the_shadow = {
+		icon = mission_frost_troll
+		position = 17
+		required_missions = {
+			S15_friends_in_sarhal
+			S15_a_lizard_rectorate
+		}
+		provinces_to_highlight = {
+			superregion = taneyas_superregion
+			owner = { NOT = { religion = ravelian } }
+		}
+		
+		trigger = {
+			taneyas_superregion = { type = all owner = { religion = ravelian } }
+			NOT = { exists = S70 }
+		}
+		
+		effect = {
+			add_country_modifier = {
+				name = S15_contained_the_shadow
+				duration = -1
+			}
+			taneyas_superregion = {
+				remove_core = S70
+				remove_claim = S70
+			}
+		}
+	}
+}
+
+karshyr_missions_8 = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = S15
+		has_country_flag = S15_missions_unlocked
+	}
+	S15_investigate_the_spires = {
+		icon = mission_artificier_experience
+		position = 15
+		required_missions = {
+			S15_the_future_of_karshyr
+		}
+		provinces_to_highlight = {
+			province_group = spire_provinces
+		}
+		
+		trigger = {
+			5763 = {
+				has_great_project = {
+					type = kazakesh
+					tier = 2
+				}
+			}
+			development_in_provinces = {
+				value = 60
+				province_group = spire_provinces
+				owned_by = ROOT
+			}
+		}
+		
+		effect = {
+			every_owned_province = {
+				limit = { province_group = spire_provinces }
+				add_province_modifier = {
+					name = S15_karshyrian_investment
+					duration = -1
+				}
+			}
+			set_country_flag = S15_spire_investment
+			custom_tooltip = S15_spires_tt
+		}
+	}
+
+	S15_relics_from_near_and_far = {
+		icon = mission_precursor_relics
+		position = 16
+		required_missions = {
+			S15_exporting_ravelianism
+			S15_investigate_the_spires
+			S15_ravelian_recognition
+		}
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				trade_goods_produced_amount = {
+					trade_goods = precursor_relics
+					amount = 5
+				}
+				NOT = {
+					tag = ROOT
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+		}
+		
+		trigger = {
+			trade_goods_produced_amount = {
+				trade_goods = precursor_relics
+				amount = 3
+			}
+			OR = {
+				is_papal_controller = yes
+				AND = {
+					treasury = 3000
+					adm_power = 100
+					dip_power = 100
+					mil_power = 100
+					any_known_country = {
+						trade_goods_produced_amount = {
+							trade_goods = precursor_relics
+							amount = 5
+						}
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+			}
+		}
+		
+		effect = {
+			if = {
+				limit = { NOT = { is_papal_controller = yes } }
+				add_treasury = -3000
+				add_adm_power = -100
+				add_dip_power = -100
+				add_mil_power = -100
+			}
+			add_country_modifier = {
+				name = S15_study_of_relics
+				duration = -1
+			}
+		}
+	}
+
+	S15_the_prototype_project = {
+		icon = mission_crowning
+		position = 17
+		required_missions = {
+			S15_relics_from_near_and_far
+			S15_artifice_and_aquaculture
+		}
+		provinces_to_highlight = {
+			province_group = spire_provinces
+		}
+		
+		trigger = {
+			development_in_provinces = {
+				value = 120
+				province_group = spire_provinces
+				owned_by = ROOT
+			}
+			num_of_owned_provinces_with = {
+				province_group = spire_provinces
+				has_great_project = {
+					type = any
+					tier = 3
+				}
+				value = 3
+			}
+		}
+		
+		effect = {
+			country_event = {
+				id = flavour_karshyr.10
+				days = 365 #1 year
+			}
+		}
+	}
+
+	S15_the_khateshala_project = {
+		icon = mission_empowerment
+		position = 18
+		required_missions = {
+			S15_contain_the_shadow
+			S15_the_prototype_project
+		}
+		provinces_to_highlight = {
+			province_group = spire_provinces
+		}
+		
+		trigger = {
+			spire_provinces = {
+				type = all
+				owned_by = ROOT
+				OR = {
+					province_id = 5921
+					province_id = 5585
+					NOT = { has_great_project = { type = any } }
+					has_great_project = {
+						type = any
+						tier = 3
+					}
+				}
+			}
+			development_in_provinces = {
+				value = 250
+				province_group = spire_provinces
+			}
+		}
+		
+		effect = {
+			#remove_estate_privilege = estate_artificers_karshyr
+			#set_estate_privilege = estate_artificers_karshyr_improved #MAGIC REWORK - do not disable inventions. Sets the balance between mages and artificers to 100% Mage/50% Artificer
+			remove_country_modifier = S15_no_artifice
+		}
+	}
+}
+
+karshyr_missions_9 = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = S15
+		has_country_flag = S15_missions_unlocked
+	}
+	S15_ravelian_recognition = {
+		icon = mission_hands_praying
+		position = 15
+		required_missions = {
+			S15_the_future_of_karshyr
+		}
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				religion = ravelian
+				NOT = { has_90_opinion_improved_relation = { target = ROOT } }
+			}
+		}
+		
+		trigger = {
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = S15_silver_tongued_tt
+					OR = {
+						statesman = 5
+						diplomat = 5
+					}
+				}
+				diplomatic_reputation = 5
+			}
+			custom_trigger_tooltip = {
+				tooltip = S15_has_improved_90_ravelian_tt
+				any_known_country = {
+					religion = ravelian
+					has_90_opinion_improved_relation = { target = ROOT }
+				}
+			}
+		}
+		
+		effect = {
+			set_country_flag = S15_cannor_events_T3
+			country_event = {
+				id = flavour_karshyr.9
+			}
+		}
+	}
+
+	S15_artifice_and_aquaculture = {
+		icon = mission_artificier_experience
+		position = 16
+		required_missions = {
+			S15_ravelian_recognition
+			S15_the_ravelian_coast
+		}
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				has_estate = estate_artificers
+				NOT = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+		}
+		
+		trigger = {
+			check_variable = {
+				which = aquacultureTotal
+				value = 10
+			}
+			OR = {
+				is_papal_controller = yes
+				any_known_country = {
+					has_estate = estate_artificers
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+			}
+		}
+		
+		effect = {
+			#set_estate_privilege = estate_artificers_karshyr #MAGIC REWORK - Disables inventions and offsets all mana disadvantages from being in mixed in regards to magic
+			unlock_artificery = yes
+			if = {
+				limit = { has_country_flag = S15_spices }
+				custom_tooltip = S15_dyes_and_spices_tt
+				hidden_effect = {
+					change_variable = {
+						which = aquacultureDyes
+						value = 1
+					}
+					change_variable = {
+						which = aquacultureSpices
+						value = 1
+					}
+					change_variable = {
+						which = aquacultureDyesMax
+						value = 1
+					}
+					change_variable = {
+						which = aquacultureSpicesMax
+						value = 1
+					}
+				}
+				if = {
+					limit = { ai = yes }
+					random_owned_province = {
+						limit = {
+							has_port = yes
+							NOT = {
+								province_id = 5834
+								province_id = 5895
+								province_id = 5898
+								province_id = 5914
+								province_id = 5941
+								province_id = 5949
+								province_id = 6060
+								has_province_flag = S15_aquaculture
+							}
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_diversified
+							duration = -1
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_improvement
+							duration = -1
+						}
+						set_province_flag = S15_aquaculture
+						set_province_flag = S15_aquaculture_dyes_flag
+					}
+					random_owned_province = {
+						limit = {
+							has_port = yes
+							NOT = {
+								province_id = 5834
+								province_id = 5895
+								province_id = 5898
+								province_id = 5914
+								province_id = 5941
+								province_id = 5949
+								province_id = 6060
+								has_province_flag = S15_aquaculture
+							}
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_spices
+							duration = -1
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_improvement
+							duration = -1
+						}
+						set_province_flag = S15_aquaculture
+						set_province_flag = S15_aquaculture_spices_flag
+					}
+				}
+			}
+			else = {
+				custom_tooltip = S15_double_dyes_tt
+				hidden_effect = {
+					change_variable = {
+						which = aquacultureDyes
+						value = 2
+					}
+					change_variable = {
+						which = aquacultureDyesMax
+						value = 2
+					}
+				}
+				if = {
+					limit = { ai = yes }
+					random_owned_province = {
+						limit = {
+							has_port = yes
+							NOT = {
+								province_id = 5834
+								province_id = 5895
+								province_id = 5898
+								province_id = 5914
+								province_id = 5941
+								province_id = 5949
+								province_id = 6060
+								has_province_flag = S15_aquaculture
+							}
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_diversified
+							duration = -1
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_improvement
+							duration = -1
+						}
+						set_province_flag = S15_aquaculture
+						set_province_flag = S15_aquaculture_dyes_flag
+					}
+					random_owned_province = {
+						limit = {
+							has_port = yes
+							NOT = {
+								province_id = 5834
+								province_id = 5895
+								province_id = 5898
+								province_id = 5914
+								province_id = 5941
+								province_id = 5949
+								province_id = 6060
+								has_province_flag = S15_aquaculture
+							}
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_specialised
+							duration = -1
+						}
+						add_province_modifier = {
+							name = S15_aquaculture_improvement
+							duration = -1
+						}
+						set_province_flag = S15_aquaculture
+						set_province_flag = S15_aquaculture_dyes_flag
+					}
+				}
+			}
+			custom_tooltip = S15_gems_fish_and_salt_tt
+			hidden_effect = {
+				change_variable = {
+					which = aquacultureGems
+					value = 1
+				}
+				change_variable = {
+					which = aquacultureFish
+					value = 2
+				}
+				change_variable = {
+					which = aquacultureSalt
+					value = 1
+				}
+				change_variable = {
+					which = aquacultureGemsMax
+					value = 1
+				}
+				change_variable = {
+					which = aquacultureFishMax
+					value = 2
+				}
+				change_variable = {
+					which = aquacultureSaltMax
+					value = 1
+				}
+			}
+			if = {
+				limit = { ai = yes }
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						NOT = {
+							province_id = 5834
+							province_id = 5895
+							province_id = 5898
+							province_id = 5914
+							province_id = 5941
+							province_id = 5949
+							province_id = 6060
+							has_province_flag = S15_aquaculture
+						}
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_gems
+						duration = -1
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_improvement
+						duration = -1
+					}
+					set_province_flag = S15_aquaculture
+					set_province_flag = S15_aquaculture_gems_flag
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						NOT = {
+							province_id = 5834
+							province_id = 5895
+							province_id = 5898
+							province_id = 5914
+							province_id = 5941
+							province_id = 5949
+							province_id = 6060
+							has_province_flag = S15_aquaculture
+						}
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_fish
+						duration = -1
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_improvement
+						duration = -1
+					}
+					set_province_flag = S15_aquaculture
+					set_province_flag = S15_aquaculture_fish_flag
+				}
+				random_owned_province = {
+					limit = {
+						has_port = yes
+						NOT = {
+							province_id = 5834
+							province_id = 5895
+							province_id = 5898
+							province_id = 5914
+							province_id = 5941
+							province_id = 5949
+							province_id = 6060
+							has_province_flag = S15_aquaculture
+						}
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_salt
+						duration = -1
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_improvement
+						duration = -1
+					}
+					set_province_flag = S15_aquaculture
+					set_province_flag = S15_aquaculture_salt_flag
+				}
+			}
+			change_innovativeness = 5
+			disable_all_artifice_inventions = yes
+			add_country_modifier = {
+				name = S15_no_artifice
+				duration = -1
+			}
+		}
+	}
+}
+
+karshyr_missions_10 = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = S15
+		has_country_flag = S15_missions_unlocked
+	}
+	S15_the_ravelian_coast = {
+		icon = mission_invade_island
+		position = 15
+		required_missions = {
+			S15_the_future_of_karshyr
+		}
+		provinces_to_highlight = { }
+		
+		trigger = {
+			check_variable = {
+				which = aquacultureTotal
+				value = 5
+			}
+			OR = {
+				theologian = 1
+				has_adm_advisor_5 = yes
+			}
+		}
+		
+		effect = {
+			5834 = { change_religion = ravelian }
+			5898 = { change_religion = ravelian }
+			5914 = { change_religion = ravelian }
+			5941 = { change_religion = ravelian }
+			5949 = { change_religion = ravelian }
+			6060 = { change_religion = ravelian }
+			5834 = {
+				add_cardinal = yes
+			}
+			custom_tooltip = S15_aquaculture_ravelian_tt
+			tooltip = {
+				add_province_modifier = {
+					name = S15_aquaculture_ravelian
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = { has_province_flag = S15_aquaculture }
+					random = {
+						chance = 50
+						change_religion = ravelian
+					}
+					add_province_modifier = {
+						name = S15_aquaculture_ravelian
+						duration = -1
+					}
+				}
+				set_country_flag = S15_aquaculture_ravelian_flag
+			}
+		}
+	}
+}

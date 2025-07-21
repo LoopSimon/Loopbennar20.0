@@ -11,12 +11,15 @@ arawkelin_1 = {
 		provinces_to_highlight = {  } 
 
 		trigger = {
-			adm_power = 100
-			dip_power = 100
-			mil_power = 100
+			adm_power = 50
+			dip_power = 50
+			mil_power = 50
 		}
 
 		effect = {
+			add_adm_power = -50
+			add_dip_power = -50
+			add_mil_power = -50
 			pingurnsai_area = {
 				add_province_modifier = {
 					name = "arawkelin_countryside_conversion"
@@ -956,7 +959,10 @@ arawkelin_3 = {
 		provinces_to_highlight = {
 			OR = {
 				AND = {
-					Y20 = { exists = yes }
+					Y20 = { 
+						exists = yes 
+						NOT = { is_subject_of = ROOT }
+					}
 					is_capital_of = Y20
 					NOT = {
 						owner = {
@@ -968,7 +974,12 @@ arawkelin_3 = {
 					}
 				}
 				AND = {
-					Y20 = { exists = no }
+					Y20 = { 
+						OR = { 
+							exists = no 
+							is_subject_of = ROOT
+						}
+					}
 					area = iongsim_area
 					NOT = { country_or_non_sovereign_subject_holds = ROOT }
 				}
@@ -977,7 +988,12 @@ arawkelin_3 = {
 
 		trigger = {
 			if = {
-				limit = { Y20 = { exists = yes } }
+				limit = { 
+					Y20 = { 
+						exists = yes 
+						NOT = { is_subject_of = ROOT }
+					} 
+				}
 				alliance_with = Y20
 				reverse_has_opinion = {
 					who = Y20
@@ -994,16 +1010,26 @@ arawkelin_3 = {
 
 		effect = {
 			if = {
-				limit = { Y20 = { NOT = { exists = yes } } }
+				limit = { 
+					Y20 = { 
+						OR = {
+							NOT = { exists = yes } 
+							is_subject_of = ROOT
+						}
+					} 
+				}
 				every_owned_province = {
 					limit = { is_core = Y20 }
 					remove_core = ROOT
 				}
-				release_with_religion_and_culture = {
-					tag = Y20
-					religion = ROOT
-					culture = gangim
-				} 
+				if = {
+					limit = { Y20 = { NOT = { exists = yes } } }
+					release_with_religion_and_culture = {
+						tag = Y20
+						religion = ROOT
+						culture = gangim
+					} 
+				}
 				create_subject = {
 					subject_type = commercial_enterprise
 					subject = Y20

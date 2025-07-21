@@ -317,23 +317,42 @@ uesrennu_2 = {
 		} 
 
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = uesrennu_ON_war_not_on_tt
-				has_country_flag = rat_kings_alive
-			}
-			2520 = {
-				owned_by = ROOT
-				has_building = mage_tower
-				all_neighbor_province = {
-					has_tax_building_trigger = yes
-					country_or_subject_holds = ROOT
+			if = {
+				limit = {
+					NOT = { has_country_flag = rat_kings_alive }
+				}
+				custom_trigger_tooltip = {
+					tooltip = dead_aryakompu_tt
+					always = yes
 				}
 			}
-
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = uesrennu_ON_war_not_on_tt
+					has_country_flag = rat_kings_alive
+				}
+				2520 = {
+					owned_by = ROOT
+					has_building = mage_tower
+					all_neighbor_province = {
+						has_tax_building_trigger = yes
+						country_or_subject_holds = ROOT
+					}
+				}
+			}
 		} 
 
 		effect = {
-			country_event = { id = uesrennu.11 }
+			if = {
+				limit = {
+					NOT = { has_country_flag = rat_kings_alive }
+				}
+				custom_tooltip = uesrennu_dead_rat_tt
+				add_prestige = -5
+			}
+			else = {
+				country_event = { id = uesrennu.11 }
+			}
 		} 
 	}
 }
@@ -497,30 +516,50 @@ uesrennu_3 = {
 		provinces_to_highlight = {  } 
 
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = uesrennu_ON_war_not_on_tt
-				has_country_flag = rat_kings_alive
-			}
-			NOT = {	num_of_rebel_armies = 1	}
-			2502 = { has_province_modifier = uesrennu_mine_5 }
-			custom_trigger_tooltip = {
-				tooltip = has_narrow_ward_spell_active_tt
-				any_owned_province = {
-					OR = {
-						has_province_modifier = magic_estate_ward_1
-						has_province_modifier = magic_estate_ward_2
-						has_province_modifier = magic_estate_ward_3
-					}
+			if = {
+				limit = {
+					NOT = { has_country_flag = rat_kings_alive }
+				}
+				custom_trigger_tooltip = {
+					tooltip = dead_aryakompu_tt
+					always = yes
 				}
 			}
-			custom_trigger_tooltip = {
-				tooltip = rat_heir_tt
-				has_heir_flag = rat_heir
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = uesrennu_ON_war_not_on_tt
+					has_country_flag = rat_kings_alive
+				}
+				NOT = {	num_of_rebel_armies = 1	}
+				2502 = { has_province_modifier = uesrennu_mine_5 }
+				custom_trigger_tooltip = {
+					tooltip = has_narrow_ward_spell_active_tt
+					any_owned_province = {
+						OR = {
+							has_province_modifier = magic_estate_ward_1
+							has_province_modifier = magic_estate_ward_2
+							has_province_modifier = magic_estate_ward_3
+						}
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = rat_heir_tt
+					has_heir_flag = rat_heir
+				}
 			}
 		} 
 
 		effect = {
-			country_event = { id = uesrennu.12 }
+			if = {
+				limit = {
+					NOT = { has_country_flag = rat_kings_alive }
+				}
+				custom_tooltip = uesrennu_dead_rat_tt
+				add_prestige = -5
+			}
+			else = {
+				country_event = { id = uesrennu.12 }
+			}
 		} 
 	}
 }
@@ -617,7 +656,21 @@ uesrennu_4 = {
 		provinces_to_highlight = {  } 
 
 		trigger = {
-			
+			calc_true_if = {
+				amount = 2
+				all_subject_country = {
+					NOT = {
+						tag = G67
+						tag = G71
+					}
+					capital_scope = {
+						num_of_units_in_province = {
+							amount = 5
+							who = ROOT
+						}
+					}
+				}
+			}
 		} 
 
 		effect = {
@@ -728,92 +781,112 @@ uesrennu_4 = {
 		provinces_to_highlight = {  } 
 
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = uesrennu_ON_war_not_on_tt
-				has_country_flag = rat_kings_alive
-			}
-			OR = {
-				has_personal_deity = taychend_glory_5
-				AND = {
-					legitimacy = 100
-					mil_power = 200
+			if = {
+				limit = {
+					NOT = { has_country_flag = rat_kings_alive }
 				}
-			}
-			all_known_country = {
-				OR = {
-					NOT = {
-						capital_scope = { superregion = taychend_superregion }
-					}
-					has_been_eclipsed_by = ROOT
-				}
-			}
-			stability = 2
-			2502 = {
 				custom_trigger_tooltip = {
-					tooltip = uesrennu_send_rats_here
-					ROOT = {		#throws a ton of errors if done the normal way
-						any_hired_mercenary_company = {
-							template = merc_uesrennu_armoured_kotakompus
-							location = { province_id = 2502 }
+					tooltip = dead_aryakompu_tt
+					always = yes
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = uesrennu_ON_war_not_on_tt
+					has_country_flag = rat_kings_alive
+				}
+				OR = {
+					has_personal_deity = taychend_glory_5
+					AND = {
+						legitimacy = 100
+						mil_power = 200
+					}
+				}
+				all_known_country = {
+					OR = {
+						NOT = {
+							capital_scope = { superregion = taychend_superregion }
+						}
+						has_been_eclipsed_by = ROOT
+					}
+				}
+				stability = 2
+				2502 = {
+					custom_trigger_tooltip = {
+						tooltip = uesrennu_send_rats_here
+						ROOT = {		#throws a ton of errors if done the normal way
+							any_hired_mercenary_company = {
+								template = merc_uesrennu_armoured_kotakompus
+								location = { province_id = 2502 }
+							}
 						}
 					}
 				}
-			}			
+			}
 		} 
 
 		effect = {
-			hidden_effect = {
-				if = {
-					limit = { has_heir = yes }
-					capital_scope = {
-						spawn_rebels = {
-							size = 3
-							type = pretender_rebels
-							use_heir_as_leader = yes
-						}
-					}
-				}
-				else = {
-					capital_scope = {
-						spawn_rebels = {
-							size = 3
-							type = pretender_rebels
-						}
-					}
-				}
-				random_owned_province = {
-					spawn_rebels = {
-						size = 2
-						type = pretender_rebels
-					}
-				}
-				random_owned_province = {
-					spawn_rebels = {
-						size = 2
-						type = pretender_rebels
-					}
-				}
-				define_heir = {
-						dynasty = "of Mlerek"
-						name = "The Flesh-Gnasher"
-						age = 5
-						adm = 0
-						dip = 0
-						mil = 0
-						claim = 10
-						no_consort_with_heir = yes
-						block_disinherit = yes
-					}
-				anb_block_heir_death = { ruler = yes duration = -1 }
-				set_heir_flag = rat_heir
-				add_stability = -2
-			}
-			custom_tooltip = uesrennu_new_heir_tt
 			if = {
 				limit = {
-					NOT = { has_personal_deity = taychend_glory_5 }
+					NOT = { has_country_flag = rat_kings_alive }
 				}
-				add_mil_power = -200
+				custom_tooltip = uesrennu_dead_rat_tt
+				add_prestige = -5
+			}
+			else = {
+				hidden_effect = {
+					if = {
+						limit = { has_heir = yes }
+						capital_scope = {
+							spawn_rebels = {
+								size = 3
+								type = pretender_rebels
+								use_heir_as_leader = yes
+							}
+						}
+					}
+					else = {
+						capital_scope = {
+							spawn_rebels = {
+								size = 3
+								type = pretender_rebels
+							}
+						}
+					}
+					random_owned_province = {
+						spawn_rebels = {
+							size = 2
+							type = pretender_rebels
+						}
+					}
+					random_owned_province = {
+						spawn_rebels = {
+							size = 2
+							type = pretender_rebels
+						}
+					}
+					define_heir = {
+							dynasty = "of Mlerek"
+							name = "The Flesh-Gnasher"
+							age = 5
+							adm = 0
+							dip = 0
+							mil = 0
+							claim = 10
+							no_consort_with_heir = yes
+							block_disinherit = yes
+						}
+					anb_block_heir_death = { ruler = yes duration = -1 }
+					set_heir_flag = rat_heir
+					add_stability = -2
+				}
+				custom_tooltip = uesrennu_new_heir_tt
+				if = {
+					limit = {
+						NOT = { has_personal_deity = taychend_glory_5 }
+					}
+					add_mil_power = -200
+				}
 			}
 		} 
 	}

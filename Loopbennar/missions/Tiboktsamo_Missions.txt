@@ -1,0 +1,1319 @@
+# Region review by Liv and Chunguito
+# Content review by LVTHeir
+# Balance by Oxtroo
+# Writing review by Enkelados and Jeck
+# LOC and Code by Archsteel
+# Coding help by Liv
+# Coding by Jothell:
+#	'any reader should know he basically did all the heavy lifting for coding. I cannot thank him enough'
+# Coding review by Blaziy and okman
+# Thank you so much to everyone who helped me with this ~ Arch
+
+Tiboktsamo_Missions_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = L53
+			was_tag = L53 #Remove when Vyoronsi MT is finished.
+		}
+	}
+
+	L53_sunken_citadel = {
+		icon = mission_west_african_ports
+		position = 3
+		required_missions = { L53_our_claim_vindicated }
+		provinces_to_highlight = {
+			province_id = 5763 #New Hookfield/Torapinoma
+			NOT = {
+				AND = {
+					OR = {
+						AND = {
+							is_empty = yes
+							NOT = { native_size = 1 }
+						}
+						AND = {
+							is_empty = no
+							owned_by = ROOT
+						}
+					}
+					num_of_units_in_province = {
+						amount = 10
+						type = infantry
+						who = ROOT
+					}
+				}
+			}
+		}
+
+		trigger = {
+			treasury = 100
+			5763 = {
+				OR = {
+					AND = {
+						is_empty = yes
+						NOT = { native_size = 1 }
+					}
+					AND = {
+						is_empty = no
+						owned_by = ROOT
+					}
+				}
+				num_of_units_in_province = {
+					amount = 10
+					type = infantry
+					who = ROOT
+				}
+			}
+		}
+
+		effect = {
+			add_treasury = -100
+			5763 = {
+				kill_units = {
+					who = ROOT
+					type = infantry
+					amount = 5
+				}
+			}
+			add_or_extend_country_modifier = {
+				name = L53_mainland_colonist
+				duration = 9125
+			}
+			dogo_babolo_area = {
+				add_permanent_claim = ROOT
+				hidden_effect = {
+					add_permanent_province_modifier = {
+						name = L53_mainland_reclamation_permanent
+						duration = 9125
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							is_empty = yes
+							owned_by = ROOT
+						}
+					}
+					add_province_modifier = {
+						name = L53_mainland_reclamation
+						duration = 9125
+					}
+				}
+			}
+			5763 = {
+				if = { #Uncolonised, so colonise it
+					limit = { is_empty = yes }
+					create_colony = 1000
+					change_trade_goods = iron
+					change_culture = ROOT
+					change_religion = ROOT
+				}
+				else_if = { #Owned by us
+					limit = { owned_by = ROOT }
+					if = { #Colony isn't finished, finish it
+						limit = { is_city = no }
+						add_colonysize = 1000
+					}
+					add_core = ROOT
+					change_culture = ROOT
+					change_religion = ROOT
+					change_trade_goods = iron
+				}
+			}
+
+			custom_tooltip = L53_sunken_citadel_tooltip
+
+			hidden_effect = {
+				if = {
+					limit = {
+						mission_completed = L53_a_brothers_betrayal
+					}
+					country_event = {
+						id = flavour_tiboktsamo.10
+						days = 1825
+					}
+				}
+			}
+		}
+	}
+
+	L53_the_place_of_lizards = {
+		icon = mission_greenscales
+		position = 6
+		required_missions = { L53_sunken_citadel }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 5763 #New Hookfield/Torapinoma
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+							has_production_building_trigger = yes
+						}
+					}
+				}
+				AND = {
+                    province_id = 5845 #Chibuswa/Vadronoma
+                    ROOT = { NOT = { has_country_flag = two_tails_completed } }
+                }
+			}
+		}
+
+		trigger = {
+			5763 = {
+				owned_by = ROOT
+				is_core = ROOT
+				has_production_building_trigger = yes
+			}
+			treasury = 250
+			custom_trigger_tooltip = {
+				tooltip = L53_two_tails_of_the_tailed_completed_tooltip
+				has_country_flag = two_tails_completed
+			}
+		}
+
+		effect = {
+			add_treasury = -250
+			increase_ruler_adm_effect = yes
+			5763 = {
+				build_production_manufactory = {
+					COST = 0
+					SPEED = 0.5
+				}
+				nakavy_avo_add_shrine_province_effect = { deity = drongray }
+			}
+			custom_tooltip = L53_discount_ananoma_torapinoma
+			hidden_effect = { set_country_flag = ananoma_repair_discount_torapinoma }
+		}
+	}
+}
+Tiboktsamo_Missions_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = L53
+			was_tag = L53 #Remove when Vyoronsi MT is finished.
+		}
+	}
+
+	L53_knowing_better = {
+		icon = mission_court_education
+		position = 3
+		required_missions = { L53_our_claim_vindicated }
+		provinces_to_highlight = {
+			is_capital = yes
+			OR = {
+				AND = {
+					owned_by = ROOT
+					NOT = {
+						provincial_institution_progress = {
+							which = renaissance
+							value = 50
+						}
+					}
+				}
+				AND = {
+					has_discovered = ROOT
+					NOT = { owned_by = ROOT }
+					owner = {
+						NOT = {
+							NOT = { tech_difference = 1 }
+							NOT = { religion = fangaulan_pantheon }
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			capital_scope = {
+				provincial_institution_progress = {
+					which = renaissance
+					value = 50
+				}
+			}
+			all_known_country = {
+				OR = {
+					NOT = { tech_difference = 1 }
+					NOT = { religion = fangaulan_pantheon }
+				}
+			}
+		}
+
+		effect = {
+			narawan_jigin_area = {
+				add_permanent_claim = ROOT
+			}
+			negetu_area = {
+				add_permanent_claim = ROOT
+			}
+
+			custom_tooltip = L53_innovativeness_tooltip
+			hidden_effect = {
+				for = {
+					amount = 5
+					effect = "
+						if = {
+							limit = {
+								capital_scope = {
+									NOT = {
+										provincial_institution_progress = {
+											which = renaissance
+											value = 100
+										}
+									}
+								}
+							}
+							capital_scope = {
+								add_institution_embracement = {
+									which = renaissance
+									value = 10
+								}
+							}
+						}
+						else = {
+							change_innovativeness = 1
+						}
+					"
+				}
+			}
+		}
+	}
+
+	L53_the_fangaulan_archives = {
+		icon = mission_dark_book
+		position = 4
+		required_missions = { L53_knowing_better }
+		provinces_to_highlight = {
+			OR = {
+				area = negetu_area
+				area = narawan_jigin_area
+			}
+			NOT = { owned_by = ROOT }
+		}
+
+		trigger = {
+			negetu_area = {
+				type = all
+				owned_by = ROOT
+			}
+			narawan_jigin_area = {
+				type = all
+				owned_by = ROOT
+			}
+			OR = {
+				has_adm_advisor_2 = yes
+				natural_scientist = 1
+			}
+			is_in_deficit = no
+		}
+
+		effect = {
+			custom_tooltip = L53_fangaulan_archives_tooltip
+			hidden_effect = {
+				set_country_flag = L53_eloko_is_pranking
+				for = {
+					amount = 6
+					effect = "
+					random_province = {
+						limit = {
+							region = dao_nako_region
+							NOT = { has_province_modifier = L53_eloko_sighting }
+							NOT = { province_group = halfling_ruins }
+							is_empty = no
+						}
+						add_permanent_province_modifier = {
+							name = L53_eloko_sighting
+							duration = -1
+						}
+						add_permanent_claim = ROOT
+					}
+					"
+				}
+			}
+		}
+	}
+
+	L53_ghosts_busted = {
+		icon = mission_alone_in_the_wood
+		position = 6
+		required_missions = { L53_the_fangaulan_archives }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = dao_nako_region
+					has_province_modifier = L53_eloko_sighting
+				}
+				AND = {
+					province_id = 5758
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							has_fort_building_trigger = yes
+							has_tax_building_trigger = yes
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			development_in_provinces = {
+				region = dao_nako_region
+				value = 100
+			}
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 40
+			}
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 50
+			}
+			treasury = 250
+			NOT = { has_country_modifier = L53_elokos_prank }
+			NOT = { dao_nako_region = { has_province_modifier = L53_eloko_sighting } }
+			5758 = {
+				owned_by = ROOT
+				has_fort_building_trigger = yes
+				has_tax_building_trigger = yes
+			}
+		}
+
+		effect = {
+			hidden_effect = { clr_country_flag = L53_eloko_is_pranking }
+			add_treasury = -250
+			country_event = {
+				id = flavour_tiboktsamo.7
+			}
+			5758 = {
+				add_building_construction = {
+					building = mage_tower
+					cost = 0
+					speed = 0.5
+				}
+				nakavy_avo_add_shrine_province_effect = { deity = jyva }
+			}
+			custom_tooltip = L53_discount_ananoma_latranoma
+			hidden_effect = { set_country_flag = ananoma_repair_discount_latranoma }
+			increase_ruler_dip_effect = yes
+		}
+	}
+}
+
+Tiboktsamo_Missions_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = L53
+			was_tag = L53 #Remove when Vyoronsi MT is finished.
+		}
+	}
+
+	L53_declaring_a_kolovadoy = {
+		icon = mission_elephant_war
+		position = 1
+		provinces_to_highlight = {
+			owner = {
+				OR = {
+					tag = L10 #Kunolo
+					tag = S98 #Bibyobi
+					tag = L38 #Rayafo
+				}
+				NOT = { has_been_insulted_by_root = yes }
+			}
+		}
+
+		trigger = {
+			L10 = {
+				OR = {
+					has_been_insulted_by_root = yes
+					exists = no
+				}
+			}
+			S98 = {
+				OR = {
+					has_been_insulted_by_root = yes
+					exists = no
+				}
+			}
+			L38 = {
+				OR = {
+					has_been_insulted_by_root = yes
+					exists = no
+				}
+			}
+			army_size_percentage = 1
+		}
+
+		effect = {
+			country_event = {
+				id = flavour_tiboktsamo.1
+			}
+		}
+	}
+
+	L53_our_claim_vindicated = {
+		icon = mission_crusade_for_varna
+		position = 2
+		required_missions = { L53_declaring_a_kolovadoy }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = kunolo_area
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					owner = {
+						OR = {
+							tag = L10 #Kunolo
+							tag = S98 #Bibyobi
+						}
+					}
+				}
+				AND = {
+					province_id = 6626 #Angoitra
+					NOT = {
+						owner = {
+							OR = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 20
+								}
+								has_opinion = {
+									who = ROOT
+									value = 80
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			kunolo_area = {
+				type = all
+				owned_by = ROOT
+			}
+			NOT = { exists = L10 }
+			NOT = { exists = S98 }
+			6626 = {
+				owner = {
+					OR = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 20
+						}
+						has_opinion = {
+							who = ROOT
+							value = 80
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			halfling_ruins = {
+				add_permanent_claim = ROOT
+			}
+			custom_tooltip = L53_our_claim_vindicated_tooltip
+			hidden_effect = {
+				L53_rank_up_kolovadoy = yes
+			}
+			simple_dynamic_effect = {
+				first_custom_tooltip = L53_inquisitor_tooltip
+				first_limit = "
+					6626 = {
+							owner = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 20
+								}
+								has_opinion = {
+									who = ROOT
+									value = 80
+								}
+							}
+						}
+				"
+				first_effect = "
+					define_advisor = {
+						type = inquisitor
+						skill = 2
+						cost_multiplier = 0.25
+					}
+				"
+				second_limit = "
+					NOT = {
+						6626 = {
+							owner = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 20
+								}
+								has_opinion = {
+									who = ROOT
+									value = 80
+								}
+							}
+						}
+					}
+				"
+				second_effect = "
+					define_advisor = {
+						type = inquisitor
+						skill = 1
+						cost_multiplier = 0.5
+					}
+				"
+			}
+		}
+	}
+
+	L53_trials_for_traitors = {
+		icon = mission_beheading
+		position = 3
+		required_missions = { L53_our_claim_vindicated }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = kunolo_area
+					NOT = {
+						NOT = { local_autonomy = 20 }
+						has_province_modifier = autonomy_decreased
+					}
+				}
+				AND = {
+					province_id = 5710
+					NOT = {
+						num_of_units_in_province = {
+							amount = 5
+							type = infantry
+							who = ROOT
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			kunolo_area = {
+				type = all
+				OR = {
+					NOT = { local_autonomy = 20 }
+					has_province_modifier = autonomy_decreased
+				}
+			}
+			5710 = {
+				num_of_units_in_province = {
+					amount = 5
+					type = infantry
+					who = ROOT
+				}
+			}
+			treasury = 50
+		}
+
+		effect = {
+			add_treasury = -50
+			5710 = {
+				add_or_upgrade_courthouse_building = yes
+			}
+			country_event = {
+				id = flavour_tiboktsamo.2
+			}
+		}
+	}
+
+	L53_eternal_vigil = {
+		icon = mission_magisterium_fold_four
+		position = 4
+		required_missions = { L53_trials_for_traitors }
+		provinces_to_highlight = {
+			area = kunolo_area
+			OR = {
+				NOT = {
+					AND = {
+						religion = nakavy_avo
+						NOT = { unrest = 0 }
+					}
+				}
+				AND = {
+					province_id = 5714
+					NOT = {
+						AND = {
+							has_fort_building_trigger = yes
+							has_building = mage_tower
+						}
+					}
+				}
+				AND = {
+					province_id = 5710
+					NOT = { has_fort_building_trigger = yes }
+				}
+			}
+		}
+
+		trigger = {
+			kunolo_area = {
+				type = all
+				religion = nakavy_avo
+				NOT = { unrest = 0 }
+			}
+			5714 = { #Tiboktsamo
+				has_fort_building_trigger = yes
+				has_building = mage_tower
+			}
+			5710 = { #Kunolo/Kolonama
+				has_fort_building_trigger = yes
+			}
+		}
+
+		effect = {
+			kunolo_area = {
+				remove_province_modifier = L53_unpopular_executions
+				add_province_modifier = {
+					name = L53_eternal_vigil_mod
+					duration = -1
+				}
+			}
+		}
+	}
+
+	L53_glorious_return = {
+		icon = mission_crowning
+		position = 6
+		required_missions = { L53_eternal_vigil }
+		provinces_to_highlight = {
+			area = kunolo_area
+			OR = {
+				NOT = {
+					is_prosperous = yes
+					development = 15
+					AND = {
+						development = 10
+						has_terrain = jungle
+					}
+				}
+				AND = {
+					province_id = 5710
+					NOT = {
+						AND = {
+							development = 25
+							province_has_center_of_trade_of_level = 2
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			kunolo_area = {
+				type = all
+				OR = {
+					is_prosperous = yes
+					development = 15
+					AND = {
+						development = 10
+						has_terrain = jungle
+					}
+				}
+			}
+			5710 = { #Kunolo
+				development = 25
+				province_has_center_of_trade_of_level = 2
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					5710 = { is_capital_of = ROOT }
+				}
+				add_adm_power = 100
+			}
+			else = {
+				set_capital = 5710
+			}
+			if = {
+				limit = {
+					5710 = {
+						province_has_center_of_trade_of_level = 3
+					}
+				}
+				add_treasury = 500
+			}
+			else = {
+				5710 = {
+					add_center_of_trade_level = 1
+				}
+			}
+			5710 = {
+				add_province_modifier = {
+					name = L53_city_of_kolo
+					duration = -1
+				}
+			}
+			custom_tooltip = L53_discount_ananoma_kolonoma
+			hidden_effect = { set_country_flag = ananoma_repair_discount_kolonoma }
+			increase_ruler_adm_effect = yes
+			country_event = {
+				id = flavour_tiboktsamo.12
+			}
+		}
+	}
+
+	L53_a_prophecy_fulfilled = {
+		icon = mission_elephant_king
+		position = 7
+		required_missions = {
+			L53_glorious_return
+			L53_the_place_of_lizards
+			L53_ghosts_busted
+			L53_the_human_kolovadoy
+			L53_impenetrable_shell
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_group = halfling_ruins
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					OR = {
+						region = horashesh_region
+						region = khetapera_region
+						superregion = fangaula_superregion
+					}
+					NOT = { owned_by = ROOT }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 25
+								OR = {
+									region = horashesh_region
+									region = khetapera_region
+									superregion = fangaula_superregion
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				legitimacy = 90
+				republican_tradition = 90
+			}
+			halfling_ruins = {
+				owned_by = ROOT
+				type = all
+			}
+			num_of_owned_provinces_with = {
+				value = 25
+				OR = {
+					region = horashesh_region
+					region = khetapera_region
+					superregion = fangaula_superregion
+				}
+			}
+		}
+
+		effect = {
+			country_event = { #Switch country to Vyoronsi in event
+				id = flavour_tiboktsamo.13
+			}
+		}
+	}
+}
+Tiboktsamo_Missions_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = L53
+			was_tag = L53 #Remove when Vyoronsi MT is finished.
+		}
+	}
+
+	L53_divided_they_fall = {
+		icon = mission_whisper
+		position = 3
+		required_missions = { L53_our_claim_vindicated }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital = yes
+					owner = {
+						OR = {
+							tag = L09
+							tag = L37
+						}
+						NOT = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 25
+							}
+							exists = no
+							AND = {
+								tag = L09
+								NOT = { alliance_with = L37 }
+							}
+							AND = {
+								tag = L37
+								NOT = { alliance_with = L09 }
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 3084
+					NOT = {
+						privateer_power = {
+							share = 10
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			L09 = {
+				OR = {
+					has_spy_network_from = {
+						who = ROOT
+						value = 25
+					}
+					exists = no
+					NOT = { alliance_with = L37 }
+				}
+			}
+			L37 = {
+				OR = {
+					has_spy_network_from = {
+						who = ROOT
+						value = 25
+					}
+					exists = no
+					NOT = { alliance_with = L09 }
+				}
+			}
+			3084 = { # Sea of Lel
+				privateer_power = { share = 10 }
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					L37 = {
+						was_player = no
+						alliance_with = L09
+					}
+					L09 = {
+						was_player = no
+						alliance_with = L37
+					}
+				}
+				custom_tooltip = L53_divided_they_fall_tt
+				hidden_effect = {
+					L37 = { break_alliance = L09 }
+				}
+			}
+			else = {
+				L37 = { remove_fow = 240 }
+				L09 = { remove_fow = 240 }
+			}
+			zuvavim_area = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	L53_pardons_for_the_worthy = {
+		icon = mission_big_house
+		position = 4
+		required_missions = { L53_divided_they_fall }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital_of = L38
+					ROOT = {
+						NOT = {
+							is_rival = L38
+							has_eclipsed = L38
+							NOT = { exists = L38 }
+						}
+					}
+				}
+				AND = {
+					province_id = 5821
+					NOT = {
+						owner = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 30
+							}
+						}
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+						}
+					}
+				}
+				AND = {
+					province_id = 5840
+					NOT = { ROOT = { owns_core_province = 5840 } }
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				is_rival = L38
+				has_eclipsed = L38
+				NOT = { exists = L38 }
+			}
+			5821 = {
+				OR = {
+					owner = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 30
+						}
+					}
+					AND = {
+						owned_by = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+			trading_policy_in_node = {
+				node = 3084 #Sea of Lel
+				policy = hostile_trading
+			}
+			owns_core_province = 5840 #Saikinoma
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { owns = 5821 } }
+				5821 = {
+					owner = {
+						reverse_add_casus_belli = {
+							type = cb_insult
+							target = ROOT
+							months = 240
+						}
+					}
+				}
+			}
+			define_advisor = {
+				type = natural_scientist
+				skill = 2
+				cost_multiplier = 0.5
+			}
+			
+			custom_tooltip = L53_brain_drain_tooltip
+			hidden_effect = {
+				L38 = {
+					every_owned_province = {
+						add_devastation = 20
+					}
+				}
+				random_province = {
+					limit = {
+						OR = {
+							area = zuvavim_area
+							area = zugvuma_area
+						}
+						NOT = { culture = ROOT }
+					}
+					change_culture = ROOT
+				}
+				random_province = {
+					limit = {
+						OR = {
+							area = zuvavim_area
+							area = zugvuma_area
+						}
+						NOT = { culture = ROOT }
+					}
+					change_culture = ROOT
+				}
+			}
+		}
+	}
+
+	L53_punishment_for_the_rest = {
+		icon = mission_burning_castle
+		position = 5
+		required_missions = {
+			L53_pardons_for_the_worthy
+			L53_the_fangaulan_archives
+		}
+		provinces_to_highlight = {
+			province_id = 5821 #Mapiltra
+			NOT = {
+				owned_by = ROOT
+				owner = {
+					ROOT = {
+						war_score_against = {
+							who = PREV
+							value = 80
+						}
+					}
+					capital_scope = {
+						controlled_by = ROOT
+					}
+				}
+			}
+		}
+
+		trigger = {
+			5821 = {
+				OR = {
+					owned_by = ROOT
+					owner = {
+						ROOT = {
+							war_score_against = {
+								who = PREV
+								value = 80
+							}
+						}
+						capital_scope = {
+							controlled_by = ROOT
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = L53_punishment_for_the_rest_tt
+			country_event = { id = flavour_tiboktsamo.11 }
+			increase_ruler_adm_effect = yes
+		}
+	}
+
+	L53_the_human_kolovadoy = {
+		icon = mission_fire_judgement
+		position = 6
+		required_missions = { L53_punishment_for_the_rest }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = chibuswa_area
+						area = zuvavim_area
+						area = zugvuma_area
+					}
+					NOT = {
+						AND = {
+							religion = nakavy_avo
+							owned_by = ROOT
+						}
+					}
+				}
+				owned_by = L09 #Zuvavim
+			}
+		}
+
+		trigger = {
+			chibuswa_area = {
+				type = all
+				religion = nakavy_avo
+				owned_by = ROOT
+			}
+			zuvavim_area = {
+				type = all
+				religion = nakavy_avo
+				owned_by = ROOT
+			}
+			zugvuma_area = {
+				type = all
+				religion = nakavy_avo
+				owned_by = ROOT
+			}
+			L09 = {
+				exists = no
+			}
+			num_of_owned_provinces_with = {
+				value = 4
+				OR = {
+					area = chibuswa_area
+					area = zuvavim_area
+					area = zugvuma_area
+				}
+				has_owner_culture = yes
+			}
+		}
+		
+		effect = {
+			large_decrease_of_human_tolerance_effect = yes
+			custom_tooltip = L53_chastise_the_zuvavim_tooltip
+			tooltip = { #This is here to show a nice tooltip
+				add_province_modifier = {
+					name = L53_punitive_measures
+					duration = 9125
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						OR = {
+							area = zuvavim_area
+							area = zugvuma_area
+							area = chibuswa_area
+						}
+						has_human_majority_trigger = yes
+					}
+					add_base_manpower = -1
+					add_base_production = -1
+					add_base_tax = -1
+					add_province_modifier = {
+						name = L53_punitive_measures
+						duration = 9125
+					}
+				}
+			}
+			5840 = {
+				add_base_manpower = 1
+				add_base_production = 1
+				add_base_tax = 1
+			}
+			5845 = {
+				add_base_manpower = 1
+				add_base_production = 1
+				add_base_tax = 1
+			}
+			increase_ruler_adm_effect = yes
+		}
+	}
+}
+Tiboktsamo_Missions_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = L53
+			was_tag = L53 #Remove when Vyoronsi MT is finished.
+		}
+	}
+
+	L53_a_brothers_betrayal = {
+		icon = mission_conquer_the_doab
+		position = 3
+		required_missions = { L53_our_claim_vindicated }
+		provinces_to_highlight = { }
+
+		trigger = {
+			if = {
+				limit = { has_dlc = "Cradle of Civilization" }
+				OR = {
+					army_professionalism = 0.2
+					army_tradition = 50
+				}
+			}
+			else = {
+				army_tradition = 60
+			}
+			army_size = 20
+			land_forcelimit = 20
+			NOT = { num_of_mercenaries = 1 }
+			is_in_deficit = no
+		}
+
+		effect = {
+			country_event = {
+				id = flavour_tiboktsamo.8
+			}
+
+			hidden_effect = {
+				if = {
+					limit = {
+						mission_completed = L53_sunken_citadel
+					}
+					country_event = {
+						id = flavour_tiboktsamo.10
+						days = 1825
+					}
+				}
+			}
+		}
+	}
+
+	L53_impenetrable_shell = {
+		icon = mission_fortifying_the_plain
+		position = 6
+		required_missions = { L53_a_brothers_betrayal }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = chibuswa_area
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 5845
+					NOT = {
+						AND = {
+							has_manpower_building_trigger = yes
+							has_fort_building_trigger = yes
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			chibuswa_area = {
+				type = all
+				owned_by = ROOT
+			}
+			5845 = {
+				has_manpower_building_trigger = yes
+				has_fort_building_trigger = yes
+			}
+			treasury = 250
+			num_of_battles = { amount = 10 }
+			num_of_wars = { amount = 5 }
+			custom_trigger_tooltip = {
+				tooltip = L53_tougher_than_the_toughest_completed_tooltip
+				has_country_flag = tougher_than_the_toughest_completed
+			}
+		}
+
+		effect = {
+			add_treasury = -250
+			5845 = {
+				add_building_construction = {
+					building = ramparts
+					cost = 0
+					speed = 0.5
+				}
+				nakavy_avo_add_shrine_province_effect = { deity = turozi }
+			}
+			custom_tooltip = L53_discount_ananoma_vadronoma
+			hidden_effect = { set_country_flag = ananoma_repair_discount_vadronoma }
+			increase_ruler_adm_effect = yes
+		}
+	}
+}

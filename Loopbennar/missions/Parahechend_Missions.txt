@@ -1,0 +1,1435 @@
+################################################
+##           Creator: Takasaki        		  ##
+##			   Coder: Blaziy				  ##
+################################################
+
+J81_1_missions = { 
+	slot = 1
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = J81
+			AND = {
+				tag = J84 #Taychendi Empire
+				was_tag = J81
+			}
+			AND = {
+				tag = U39 #Orenvalyam
+				was_tag = J81
+			}
+		}
+	} 
+
+	J81_1_1_leverage_the_scavvers = {
+		icon = mission_asian_trader
+		position = 1
+		required_missions = {
+		}
+
+		provinces_to_highlight = { 
+			OR = {
+				is_capital_of = G70 #Nakar Kriadvai
+				province_id = 2495 #Nakar Kriadvai
+			}
+			ROOT = {
+				NOT = {
+					has_spy_network_in = {
+						who = G70 #Nakar Kriadvai
+						value = 25
+					}
+					owns = 2495 #Nakar Kriadvai
+					J82 = { owns = 2495 } #Varamraya, Nakar Kriadvai
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				has_spy_network_in = {
+					who = G70 #Nakar Kriadvai
+					value = 25
+				}
+				owns = 2495 #Nakar Kriadvai
+				J82 = { owns = 2495 } #Varamraya, Nakar Kriadvai
+			}
+			has_estate_privilege = estate_burghers_indebted_to_burghers
+			has_estate_privilege = estate_burghers_land_trade_rights
+		}
+
+		effect = {
+			2550 = { #Parahechend
+				add_province_modifier = {
+					name = J81_outsider_guids_ascendent
+					duration = -1
+				}
+			}
+			add_corruption = 5
+			custom_tooltip = J81_loans_tt
+			hidden_effect = {
+				for = {
+					amount = 10
+					effect = "add_loan = { duration = 60 fixed_interest = 0.5 estate_loan = yes }"
+				}
+			}
+		}
+	}
+
+	J81_1_2_an_offer_irrefusable = {
+		icon = mission_dual_diplomacy
+		position = 2
+		required_missions = { 
+			J81_1_1_leverage_the_scavvers
+			J81_3_1_cunning_trick_crushing_maul
+		}
+
+		provinces_to_highlight = { 
+			OR = {
+				province_id = 2495 #Nakar Kriadvai
+				province_id = 2500 #Royakottar
+			}
+			NOT = {
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					province_has_center_of_trade_of_level = 2
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				2500 = { #Royakottar
+					country_or_non_sovereign_subject_holds = ROOT
+					province_has_center_of_trade_of_level = 2
+				}
+				2495 = { #Nakar Kriadvai
+					country_or_non_sovereign_subject_holds = ROOT
+					province_has_center_of_trade_of_level = 2
+				}
+			}
+			estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 60
+			}
+			estate_influence = {
+				estate = estate_burghers
+				influence = 50
+			}
+			has_estate_loan = no
+		}
+
+		effect = {
+			set_country_flag = J81_enable_outsider_guilds_flag
+			set_estate_privilege = estate_church_J81_outsider_guilds
+			2550 = { #Parahechend
+				change_trade_goods = precursor_relics
+			}
+			2500 = { #Royakottar
+				add_permanent_province_modifier = {
+					name = J81_outsider_guids_ascendent
+					duration = -1
+				}
+			}
+			2495 = { #Nakar Kriadvai
+				add_permanent_province_modifier = {
+					name = J81_outsider_guids_ascendent
+					duration = -1
+				}
+			}
+			if = {
+				limit = {
+					2500 = { #Royakottar
+						country_or_non_sovereign_subject_holds = ROOT
+						province_has_center_of_trade_of_level = 2
+					}
+				}
+				custom_tooltip = J81_royakottar_cot_yes_tt
+				hidden_effect = {
+					2500 = { #Royakottar
+						if = {
+							limit = { 
+								provincial_institution_progress = {
+									which = feudalism
+									value = 100
+								} 
+							}
+							add_institution_embracement = {
+								which = renaissance
+								value = 50
+							}
+						}
+						else = {
+							add_institution_embracement = {
+								which = feudalism
+								value = 100
+							}
+						}
+					}
+				}
+			}
+			else = { custom_tooltip = J81_royakottar_cot_no_tt }
+
+			if = {
+				limit = {
+					2495 = { #Nakar Kriadvai
+						country_or_non_sovereign_subject_holds = ROOT
+						province_has_center_of_trade_of_level = 2
+					}
+				}
+				custom_tooltip = J81_kriadvai_cot_yes_tt
+				hidden_effect = {
+					2495 = { #Nakar Kriadvai
+						if = {
+							limit = { 
+								provincial_institution_progress = {
+									which = feudalism
+									value = 100
+								} 
+							}
+							add_institution_embracement = {
+								which = renaissance
+								value = 50
+							}
+						}
+						else = {
+							add_institution_embracement = {
+								which = feudalism
+								value = 100
+							}
+						}
+					}
+				}
+			}
+			else = { custom_tooltip = J81_kriadvai_cot_no_tt }
+		}
+	}
+
+	J81_1_4_a_lesson_in_economics = {
+		icon = mission_mal_riches_of_trade
+		position = 4
+		required_missions = {
+			J81_2_3_the_hammer_of_anathazhilan
+		}
+
+		provinces_to_highlight = {
+			province_id = 2520 #Nagar Vyechei
+			NOT = {
+				owner = {
+					is_subject_of = ROOT
+					dynasty = "Rakulacan"
+				}
+				AND = {
+					owned_by = ROOT
+					is_core = ROOT
+					has_trade_building_trigger = yes
+					has_tax_building_trigger = yes
+				}
+			}
+		}
+
+		trigger = {
+			2520 = { #Nagar Vyechei
+				OR = {
+					owner = {
+						is_subject_of = ROOT
+						dynasty = "Rakulacan"
+					}
+					AND = {
+						owned_by = ROOT
+						is_core = ROOT
+						has_trade_building_trigger = yes
+						has_tax_building_trigger = yes
+					}
+				}
+			}
+			has_estate_privilege = estate_burghers_control_over_monetary_policy
+		}
+
+		effect = {
+			country_event = { #Con and Art
+				id = parahechend_events.8
+			}
+		}
+	}
+	
+	J81_1_5_avarice_immortal = {
+		icon = mission_south_indian_trade
+		position = 5
+		required_missions = {
+			J81_1_4_a_lesson_in_economics
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 1545 #Vyech Node
+				province_id = 1544 #Kalavend Node
+			}
+			NOT = {
+				trade_share = { 
+					country = ROOT 
+					share = 50
+				}
+			}
+		}
+
+		trigger = {
+			any_known_country = {
+				capital_scope = {
+					continent = europe
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = J81_vyech_trade_tt
+				1545 = { #Vyech Node
+					trade_share = { 
+						country = ROOT 
+						share = 50
+					} 
+				} 
+			}
+			custom_trigger_tooltip = {
+				tooltip = J81_kalavend_trade_tt
+				1544 = { #Kalavend Node
+					trade_share = {
+						country = ROOT 
+						share = 50
+					} 
+				}
+			}
+		}
+
+		effect = {
+			A11 = { #Pearlsedge
+				capital_scope = {
+					discover_country = ROOT
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = J81_selling_to_cannorians
+				}
+			}
+			A29 = { #Busilar
+				capital_scope = {
+					discover_country = ROOT
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = J81_selling_to_cannorians
+				}
+			}
+			A47 = { #Eborthil
+				capital_scope = {
+					discover_country = ROOT
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = J81_selling_to_cannorians
+				}
+			}
+			A33 = { #Verne
+				capital_scope = {
+					discover_country = ROOT
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = J81_selling_to_cannorians
+				}
+			}
+			add_country_modifier = {
+				name = J81_selling_relics_to_cannorians
+				duration = 18250 #50 years
+			}
+			country_event = { #An Offer from the Past
+				id = parahechend_events.30
+			}
+		}
+	}
+}
+
+J81_2_missions = { 
+	slot = 2
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = J81
+			AND = {
+				tag = J84 #Taychendi Empire
+				was_tag = J81
+			}
+			AND = {
+				tag = U39 #Orenvalyam
+				was_tag = J81
+			}
+		}
+	} 
+	
+	J81_2_2_keeping_it_in_the_family = {
+		icon = friends_in_high_places
+		position = 2
+		required_missions = { 
+			J81_3_1_cunning_trick_crushing_maul
+		}
+		
+
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				is_subject_of = ROOT
+				NOT = { dynasty = "Rakulacan" }
+			}
+			ROOT = {
+				NOT = {
+					AND = {
+						calc_true_if = {
+							amount = 2
+							all_subject_country = {
+								dynasty = "Rakulacan"
+							}
+						}
+						num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+							value = 10
+							owner = {
+								is_subject_of = ROOT
+								dynasty = "Rakulacan"
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			calc_true_if = {
+				amount = 2
+				all_subject_country = {
+					dynasty = "Rakulacan"
+				}
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 10
+				owner = {
+					is_subject_of = ROOT
+					dynasty = "Rakulacan"
+				}
+			}
+			has_estate_privilege = estate_nobles_strong_duchies
+		}
+
+		effect = {
+			custom_tooltip = J81_random_adm_advisor_tt
+			custom_tooltip = J81_random_dip_advisor_tt
+			custom_tooltip = J81_random_mil_advisor_tt
+			hidden_effect = {
+				define_random_adm_advisor_effect = {
+					# name = "Tailazhil Rakulacan"
+					skill = 1
+					culture = kalavendhi
+					religion = gods_of_the_taychend
+					cost_multiplier = 0.75
+				}
+				define_random_dip_advisor_effect = {
+					# name = "Uratand Rakulacan"
+					skill = 1
+					culture = kalavendhi
+					religion = gods_of_the_taychend
+					cost_multiplier = 0.75
+				}
+				define_random_mil_advisor_effect = {
+					# name = "Vindar Rakulacan"
+					skill = 1
+					culture = kalavendhi
+					religion = gods_of_the_taychend
+					cost_multiplier = 0.75
+				}
+			}
+			custom_tooltip = J81_rakulacan_rule_tt
+			tooltip = {
+				add_country_modifier = {
+					name = J81_rakulacan_rule
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				every_subject_country = {
+					limit = { dynasty = "Rakulacan" }
+					add_ruler_modifier = {
+						name = J81_rakulacan_rule
+						duration = -1
+					}
+				}
+			}
+		}
+	}
+	
+	J81_2_3_the_hammer_of_anathazhilan = {
+		icon = mission_obsidian_blades
+		position = 3
+		required_missions = { 
+			J81_1_2_an_offer_irrefusable
+			J81_2_2_keeping_it_in_the_family
+			J81_3_2_revenge_of_the_rakulacan
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = banderuttai_area
+						area = kattisangamar_area
+					}
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+				AND = {
+					OR = {
+						province_id = 2530 #Gophira
+						province_id = 2542 #Uddachend
+					}
+					NOT = {
+						country_or_non_sovereign_subject_holds = ROOT
+						country_or_non_sovereign_subject_holds = G52 #Ameion
+					}
+				}
+			}
+		}
+
+		trigger = {
+			banderuttai_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			kattisangamar_area = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			2530 = { #Gophira
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					country_or_non_sovereign_subject_holds = G52 #Ameion
+				}
+			}
+			2542 = { #Uddachend
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT
+					country_or_non_sovereign_subject_holds = G52 #Ameion
+				}
+			}
+			2550 = { #Parahechend
+				has_ruler_leader_from = ROOT
+				OR = {
+					has_heir_leader_from = ROOT
+					custom_trigger_tooltip = {
+						tooltip = heir_isnt_evindash_tt
+						ROOT = { NOT = { has_heir_flag = heir_is_evindash_flag } }
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = { #Into Anathazhilan
+				id = parahechend_events.20
+			}
+		}
+	}
+	
+	J81_2_4_for_old_times_sake = {
+		icon = mission_battle_of_varna
+		position = 4
+		required_missions = { 
+			J81_2_3_the_hammer_of_anathazhilan
+		}
+
+		provinces_to_highlight = {
+			region = yodhanchend_region
+			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		trigger = {
+			yodhanchend_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			taychend_hero_cult_has_passed_reform = { reform = 3 }
+		}
+
+		effect = {
+			country_event = { #Hammer and Repeat
+				id = parahechend_events.7
+			}
+			custom_tooltip = J81_round_2_insight_tt
+		}
+	}
+}
+
+
+J81_3_missions = { 
+	slot = 3
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = J81
+			AND = {
+				tag = J84 #Taychendi Empire
+				was_tag = J81
+			}
+			AND = {
+				tag = U39 #Orenvalyam
+				was_tag = J81
+			}
+		}
+	} 
+
+	J81_3_1_cunning_trick_crushing_maul = {
+		icon = mission_diplomacy_missive
+		position = 1
+		required_missions = { 
+		}
+
+		provinces_to_highlight = {
+			is_capital_of = J82 #Varamraya
+			OR = {
+				AND = {
+					ROOT = { has_country_flag = J81_varamraya_accept_flag }
+					J82 = { #Varamraya
+						NOT = {
+							has_50_opinion_improved_relation = { target = ROOT }
+							has_opinion = {
+								who = ROOT
+								value = 80
+							}
+						}
+					}
+				}
+				AND = {
+					NOT = { ROOT = { has_country_flag = J81_varamraya_accept_flag } }
+					J82 = { #Varamraya
+						NOT = { has_been_insulted_by_root = yes }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			army_size_percentage = 1.2
+			if = {
+				limit = { has_country_flag = J81_varamraya_accept_flag }
+				custom_trigger_tooltip = {
+					tooltip = J81_varamraya_accepted_tt
+					always = yes
+				}
+				J82 = { #Varamraya
+					OR = {
+						has_50_opinion_improved_relation = { target = ROOT }
+						has_opinion = {
+							who = ROOT
+							value = 80
+						}
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = J81_varamraya_denied_tt
+					always = yes
+				}
+				J82 = { #Varamraya
+					has_been_insulted_by_root = yes
+				}
+			}
+		}
+
+		effect = {
+			nanru_nakar_area = { add_permanent_claim = ROOT }
+			custom_tooltip = J81_royal_marriage_subject_tt
+			country_event = { #Betrayal of the Rakulacan
+				id = parahechend_events.3
+			}
+			custom_tooltip = J81_scheme_event_insight_tt
+		}
+	}
+
+	J81_3_2_revenge_of_the_rakulacan = {
+		icon = mission_burning_castle
+		position = 2
+		required_missions = {
+			J81_3_1_cunning_trick_crushing_maul
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 2493 #Pirsitel
+						area = nanru_nakar_area
+					}
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+						}
+					}
+				}
+				AND = {
+					OR = {
+						area = parahechend_area
+						area = vettakaramai_area
+						area = varamraya_area
+					}
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			is_subject = no
+			owns_core_province = 2493 #Pirsitel
+			nanru_nakar_area = {
+				type = all 
+				owned_by = ROOT
+				is_core = ROOT
+			}
+			parahechend_area = { type = all country_or_non_sovereign_subject_holds = ROOT }
+			vettakaramai_area = { type = all country_or_non_sovereign_subject_holds = ROOT }
+			varamraya_area = { type = all country_or_non_sovereign_subject_holds = ROOT }
+		}
+
+		effect = {
+			country_event = { #Recompense and Retribution
+				id = parahechend_events.5
+			}
+		}
+	}
+
+	J81_3_4_enough_to_go_around = {
+		icon = mission_subjugate_the_merchants
+		position = 4
+		required_missions = {
+			J81_2_3_the_hammer_of_anathazhilan
+			J81_4_3_rakulacimai_reborn
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital = yes
+					owner = {
+						is_subject_of = ROOT
+						NOT = {
+							AND = {
+								dynasty = "Rakulacan"
+								NOT = { liberty_desire = 50 }
+							}
+						}
+					}
+				}
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					owner = {
+						is_subject_of = ROOT
+						NOT = { dynasty = "Rakulacan" }
+					}
+					ROOT = {
+						NOT = {
+							num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+								value = 40
+								owner = {
+									is_subject_of = ROOT
+									dynasty = "Rakulacan"
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					local_autonomy = 20
+					ROOT = {
+						NOT = {
+							num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+								value = 75
+								NOT = { local_autonomy = 20 }
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			calc_true_if = {
+				amount = 4
+				all_subject_country = {
+					dynasty = "Rakulacan"
+					NOT = { liberty_desire = 50 }
+				}
+			}
+			OR = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 40
+					owner = {
+						is_subject_of = ROOT
+						dynasty = "Rakulacan"
+					}
+				}
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 75
+					NOT = { local_autonomy = 20 }
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = J81_enough_to_go_around
+				duration = -1
+			}
+			if = {
+				limit = {
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						value = 40
+						owner = {
+							is_subject_of = ROOT
+							dynasty = "Rakulacan"
+						}
+					}
+				}
+				custom_tooltip = J81_option_1_yes_tt
+				set_country_flag = lower_taychend_dev_by_200_flag
+			}
+			else = { custom_tooltip = J81_option_1_no_tt }
+
+			if = {
+				limit = {
+					mission_completed = J84_3_1_a_warlord_empire
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						value = 75
+						NOT = { local_autonomy = 20 }
+					}
+				}
+				custom_tooltip = J81_option_2_te_yes_tt
+				hidden_effect = {
+					add_government_power = {
+						mechanic_type = taychend_vainglory_mechanic
+						power_type = taychend_vainglory_power
+						value = 50
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+						value = 75
+						NOT = { local_autonomy = 20 }
+					}
+				}
+				custom_tooltip = J81_option_2_yes_tt
+				set_country_flag = J81_more_vainglory_flag
+			}
+			else_if = { 
+				limit = { mission_completed = J84_3_1_a_warlord_empire }
+				custom_tooltip = J81_option_2_te_no_tt
+			}
+			else = { custom_tooltip = J81_option_2_no_tt }
+		}
+	}
+
+	J81_3_5_the_empire_of_blood = {
+		icon = mission_mnd_maj_end_disaster #mission_arabian_thalassocracy
+		position = 5
+		required_missions = {
+			J81_1_4_a_lesson_in_economics
+			J81_2_4_for_old_times_sake
+			J81_3_4_enough_to_go_around
+			J81_4_4_return_to_the_steppe
+			J81_5_4_the_rattalai_race
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 2493 #Pirsitel
+					NOT = {
+						AND = {
+							development = 35
+							has_manpower_building_trigger = yes
+							has_production_building_trigger = yes
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						is_subject_of = ROOT
+						liberty_desire = 50
+					}
+				}
+			}
+		}
+
+		trigger = {
+			taychend_hero_cult_has_passed_reform = { reform = 5 }
+			2493 = { #Pirsitel
+				development = 35
+				has_manpower_building_trigger = yes
+				has_production_building_trigger = yes
+			}
+			all_subject_country = {
+				NOT = { liberty_desire = 50 }
+			}
+		}
+
+		effect = {
+			country_event = { #Tyranny and Taychend
+				id = parahechend_events.9
+			}
+		}
+	}
+}
+
+
+J81_4_missions = { 
+	slot = 4
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = J81
+			AND = {
+				tag = J84 #Taychendi Empire
+				was_tag = J81
+			}
+			AND = {
+				tag = U39 #Orenvalyam
+				was_tag = J81
+			}
+		}
+	} 
+
+	J81_4_3_rakulacimai_reborn = {
+		icon = mission_plc_golden_liberty
+		position = 3
+		required_missions = {
+			J81_3_2_revenge_of_the_rakulacan
+			J81_5_2_dismember_the_upstart
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 2493 #Pirsitel
+					NOT = {
+						AND = {
+							has_tax_building_trigger = yes
+							has_fort_building_trigger = yes
+							num_of_times_expanded_infrastructure = 1
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 2487 #Urvand
+						region = kalavend_region
+					}
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			2493 = { #Pirsitel
+				has_tax_building_trigger = yes
+				has_fort_building_trigger = yes
+				num_of_times_expanded_infrastructure = 1
+			}
+			kalavend_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			2487 = { #Urvand
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			has_institution = feudalism
+		}
+
+		effect = {
+			override_country_name = RAKULACIMAI
+			set_country_flag = J81_changed_name_to_rakulacimai_flag
+			2493 = { #Pirsitel
+				change_province_name = "Nanru Pirsitel"
+				add_province_modifier = {
+					name = J81_heart_of_the_rakulacan
+					duration = -1
+				}
+				change_trade_goods = silk
+				add_institution_embracement = {
+					which = renaissance
+					value = 75
+				}
+			}
+		}
+	}
+
+	J81_4_4_return_to_the_steppe = {
+		icon = mission_non-western_cavalry_raid
+		position = 4
+		required_missions = {
+			J81_4_3_rakulacimai_reborn
+			J81_5_3_reinventing_the_wheel
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = gauraddhi_region
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+				AND = {
+					province_id = 2565 #Haenbuddar
+					NOT = {
+						AND = {
+							owned_by = J75 #Rakkabuttai
+							has_fort_building_trigger = yes
+							has_trade_building_trigger = yes
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			gauraddhi_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			J75 = { #Rakkabuttai
+				num_of_owned_provinces_with = {
+					value = 10
+					region = gauraddhi_region
+				}
+				owns = 2565 #Haenbuddar
+			}
+			2565 = { #Haenbuddar
+				has_fort_building_trigger = yes
+				has_trade_building_trigger = yes
+			}
+		}
+
+		effect = {
+			J75 = { #Rakkabuttai
+				set_capital = 2565 #Haenbuddar
+				override_country_name = AVUCAMVAIDA
+				define_ruler = { dynasty = "Rakulacan" }
+			}
+			2565 = { #Haenbuddar
+				change_culture = kalavendhi
+				add_province_modifier = {
+					name = J81_the_armoured_gate_of_taychend
+					duration = -1
+				}
+				change_trade_goods = slaves
+				change_province_name = "Avucamvaida"
+			}
+		}
+	}
+}
+
+J81_5_missions = { 
+	slot = 5
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = J81
+			AND = {
+				tag = J84 #Taychendi Empire
+				was_tag = J81
+			}
+			AND = {
+				tag = U39 #Orenvalyam
+				was_tag = J81
+			}
+		}
+	} 
+
+	J81_5_1_the_scythe_that_rattles = {
+		icon = mission_cossack_cavalry
+		position = 1
+		required_missions = { 
+		}
+
+		provinces_to_highlight = {
+			province_id = 2550 #Parahechend
+			NOT = {
+				num_of_units_in_province = {
+					amount = 3
+					type = cavalry
+					who = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			2550 = { #Parahechend
+				num_of_units_in_province = {
+					amount = 3
+					type = cavalry
+					who = ROOT
+				}
+			}
+		}
+
+		effect = {
+			2550 = { #Parahechend
+				kill_units = {
+					amount = 3
+					type = cavalry
+					who = ROOT
+				}
+			}
+			add_manpower = 3
+			add_treasury = 35
+			unlock_merc_company = {
+				merc_company = merc_parahechendi_scythed_chariots
+			}
+		}
+	}
+
+	J81_5_2_dismember_the_upstart = {
+		icon = gory_to_the_black_army
+		position = 2
+		required_missions = {
+			J81_3_1_cunning_trick_crushing_maul
+			J81_5_1_the_scythe_that_rattles
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital_of = G64 #Larankar
+					owner = { NOT = { has_been_insulted_by_root = yes } }
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						is_subject_of = G64 #Larankar
+						NOT = {
+							AND = {
+								has_50_opinion_improved_relation = { target = ROOT }
+								OR = {
+									liberty_desire = 40
+									ROOT = {
+										has_spy_network_in = {
+											who = G64 #Larankar
+											value = 40
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			is_subject = no
+			if = {
+				limit = { exists = G64 } #Larankar
+				G64 = { has_been_insulted_by_root = yes } #Larankar
+				OR = {
+					alliance_with = G77 #Marhed Rayodana
+					army_size = 25
+					calc_true_if = {
+						amount = 2
+						all_known_country = {
+							is_subject_of = G64 #Larankar
+							has_50_opinion_improved_relation = { target = ROOT }
+							OR = {
+								liberty_desire = 40
+								ROOT = {
+									has_spy_network_in = {
+										who = G64 #Larankar
+										value = 40
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { exists = G64 } #Larankar
+				country_event = { #Discord, Distraction, Dismemberment
+					id = parahechend_events.4
+				}
+				custom_tooltip = J81_larankar_event_insight_tt
+				if = {
+					limit = { alliance_with = G77 } #Marhed Rayodana
+					custom_tooltip = J81_larankar_event_insight_req_1_yes_tt
+				}
+				else = { custom_tooltip = J81_larankar_event_insight_req_1_no_tt }
+				if = {
+					limit = { army_size = 25 }
+					custom_tooltip = J81_larankar_event_insight_req_2_yes_tt
+				}
+				else = { custom_tooltip = J81_larankar_event_insight_req_2_no_tt }
+				if = {
+					limit = {
+						calc_true_if = {
+							amount = 2
+							all_known_country = {
+								is_subject_of = G64 #Larankar
+								has_50_opinion_improved_relation = { target = ROOT }
+								OR = {
+									liberty_desire = 40
+									ROOT = {
+										has_spy_network_in = {
+											who = G64 #Larankar
+											value = 40
+										}
+									}
+								}
+							}
+						}
+					}
+					custom_tooltip = J81_larankar_event_insight_req_3_yes_tt
+				}
+				else = { custom_tooltip = J81_larankar_event_insight_req_3_no_tt }
+			}
+		}
+	}
+
+	J81_5_3_reinventing_the_wheel = {
+		icon = mission_protect_albania
+		position = 3
+		required_missions = {
+			J81_5_2_dismember_the_upstart
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 2479 #Yaranya
+					NOT = {
+						AND = {
+							owned_by = ROOT
+							has_production_building_trigger = yes
+							base_production = 6
+						}
+					}
+				}
+				AND = {
+					province_id = 2485 #Tirsi Ebenesh
+					NOT = {
+						AND = {
+							num_of_units_in_province = {
+								amount = 4
+								type = cavalry
+								who = ROOT
+							}
+							base_manpower = 5
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			2485 = { #Tirsi Ebenesh
+				num_of_units_in_province = {
+					amount = 4
+					type = cavalry
+					who = ROOT
+				}
+				base_manpower = 5
+			}
+			2479 = { #Yaranya
+				owned_by = ROOT
+				has_production_building_trigger = yes
+				base_production = 6
+			}
+		}
+
+		effect = {
+			2485 = { #Tirsi Ebenesh
+				kill_units = {
+					amount = 4
+					type = cavalry
+					who = ROOT
+				}
+			}
+			unlock_merc_company = {
+				merc_company = merc_ebeneshi_scythed_chariots
+			}
+			2479 = { #Yaranya
+				add_permanent_province_modifier = {
+					name = J81_rattalai_workshops
+					duration = -1
+				}
+			}
+			gauraddhi_region = {
+				add_permanent_claim = ROOT
+			}
+			custom_tooltip = J81_scythed_terror_enabled_tt
+			set_country_flag = enabled_scythed_terror_event_flag
+		}
+	}
+
+	J81_5_4_the_rattalai_race = {
+		icon = mission_industrial_forging
+		position = 4
+		required_missions = {
+			J81_5_3_reinventing_the_wheel
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				area = sibisimra_area
+				area = kattisangamar_area
+				area = parahechend_area
+			}
+			NOT = {
+				AND = {
+					has_trade_building_trigger = yes
+					OR = {
+						has_production_building_trigger = yes
+						base_production = 7
+					}
+				}
+			}
+		}
+
+		trigger = {
+			cavalry_fraction = 0.25
+			any_hired_mercenary_company = {
+				template = merc_parahechendi_scythed_chariots
+			}
+			any_hired_mercenary_company = {
+				template = merc_ebeneshi_scythed_chariots
+			}
+			sibisimra_area = {
+				type = all
+				has_trade_building_trigger = yes
+				OR = {
+					has_production_building_trigger = yes
+					base_production = 7
+				}
+			}
+			kattisangamar_area = {
+				type = all
+				has_trade_building_trigger = yes
+				OR = {
+					has_production_building_trigger = yes
+					base_production = 7
+				}
+			}
+			parahechend_area = {
+				type = all
+				has_trade_building_trigger = yes
+				OR = {
+					has_production_building_trigger = yes
+					base_production = 7
+				}
+			}
+		}
+
+		effect = {
+			random_hired_mercenary_company = {
+				limit = { template = merc_parahechendi_scythed_chariots }
+				disband_mercenary_company = THIS
+			}
+			clr_country_flag = unlocked_merc_parahechendi_scythed_chariots
+			random_hired_mercenary_company = {
+				limit = { template = merc_ebeneshi_scythed_chariots }
+				disband_mercenary_company = THIS
+			}
+			clr_country_flag = unlocked_merc_ebeneshi_scythed_chariots
+			unlock_merc_company = {
+				merc_company = merc_kalavendi_scythed_chariots
+			}
+			unlock_merc_company = {
+				merc_company = merc_larankarha_scythed_chariots
+			}
+			sibisimra_area = {
+				add_permanent_province_modifier = {
+					name = J81_rattalai_workshops
+					duration = -1
+				}
+			}
+			kattisangamar_area = {
+				add_permanent_province_modifier = {
+					name = J81_rattalai_workshops
+					duration = -1
+				}
+			}
+			parahechend_area = {
+				add_permanent_province_modifier = {
+					name = J81_rattalai_workshops
+					duration = -1
+				}
+			}
+		}
+	}
+
+	J81_5_5_glory_rigging = {
+		icon = mission_asian_cannon
+		position = 5
+		required_missions = {
+			J81_5_4_the_rattalai_race
+		}
+
+		provinces_to_highlight = {
+			has_province_modifier = J81_rattalai_workshops
+			NOT = {
+				AND = {
+					has_forcelimit_building_trigger = yes
+					has_production_building_trigger = yes
+					num_of_units_in_province = {
+						amount = 4
+						type = cavalry
+						who = ROOT
+					}
+				}
+			}
+		}
+
+		trigger = {
+			taychend_superregion = {
+				type = all
+				OR = {
+					NOT = { has_province_modifier = J81_rattalai_workshops }
+					AND = {
+						has_forcelimit_building_trigger = yes
+						has_production_building_trigger = yes
+						num_of_units_in_province = {
+							amount = 4
+							type = cavalry
+							who = ROOT
+						}
+					}
+				}
+			}
+			OR = {
+				has_idea = J81_the_war_rigs
+				innovativeness = 15
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = J81_the_first_war_rigs
+				duration = -1
+			}
+		}
+	}
+}

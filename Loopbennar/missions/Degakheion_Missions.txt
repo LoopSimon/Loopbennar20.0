@@ -1,751 +1,1156 @@
 
-G46_north = {
+G46_slot_one = {
 	slot = 1
 	generic = no
 	ai = yes
 	potential = {
-		tag = G46
+		OR = {
+			tag = G46
+			AND = {
+				was_tag = G46
+				tag = H22 #Kheios
+			}
+		}
 	}
 	has_country_shield = yes
 	
-	G46_the_uneasy_truce = {
-		icon = mission_diplomacy_missive
+	G46_care_for_our_youngest = {
+		icon = establish_oktoberfest
 		required_missions = { }
-		position = 2
+		position = 1
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital_of = G55 #Eneion
+					ROOT = {
+						NOT = {
+							has_opinion = {
+								who = G55 #Eneion
+								value = 100
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = { 
+						is_subject_of = ROOT
+						liberty_desire = 50
+					}
+				}
+			}
+		}
 		
 		trigger = {
-			NOT = {
-				truce_with = G47
-			}	
+			has_opinion = {
+				who = G55 #Eneion
+				value = 100
+			}
+			dip_power = 50
+			NOT = { any_subject_country = { liberty_desire = 50 }  }
 		}
 
 		effect = {
-			kimanis_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { owned_by = ROOT }
-				}
-				add_permanent_claim = ROOT
+			add_dip_power = -50
+			add_country_modifier = {
+				name = G46_childs_care
+				duration = 5475 #15 years
 			}
-			oktikheion_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { owned_by = ROOT }
+			add_casus_belli = {
+				type = cb_vassalize_mission
+				target = G62 #Amgremos
+				months = 120
+			}
+			G55 = { #Eneion
+				add_country_modifier = {
+					name = G46_fatherly_support
+					duration = -1
 				}
-				add_permanent_claim = ROOT
 			}
 		}
 	}
 
-	G46_defeat_oktikheion = {
-		icon = mission_face_off
-		required_missions = { G46_the_uneasy_truce }
+	G46_end_the_experiment = {
+		icon = mission_hanged_tree
+		required_missions = { G46_care_for_our_youngest }
 		position = 3
-		
+
 		provinces_to_highlight = {
 			OR = {
-				area = kimanis_area
-				area = oktikheion_area
-			}
-			NOT = {
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		
-		trigger = {
-			kimanis_area = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-			oktikheion_area = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-
-		effect = { 
-			arpedifer_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { owned_by = ROOT }
-					NOT = { owned_by = G60 }
+				AND = {
+					is_capital_of = G62 #Amgremos
+					owner = { NOT = { liberty_desire = 50 } }
 				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	G46_seize_the_northern_coast = {
-		icon = mission_destroyed_city
-		required_missions = { G46_defeat_oktikheion }
-		position = 4
-		
-		provinces_to_highlight = {
-			area = arpedifer_area
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
-		}
-
-		trigger = {
-			arpedifer_area = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-
-		effect = { 
-			add_mil_power = 100
-			add_prestige = 25
-		}
-	}
-	
-	G46_proclaim_alecandi_supremacy = {
-		icon = mission_empire
-		required_missions = {
-			G46_seize_the_northern_coast
-			G46_south_coast_domination
-		}
-		position = 4
-		
-		trigger = {
-			prestige = 50
-		}
-
-		effect = { 
-			alecand_region = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { is_permanent_claim = ROOT }
+				AND = {
+					NOT = { exists = G62 } #Amgremos
+					province_id = 2684 #Amgremos
+					NOT = {
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT
+							num_of_units_in_province = {
+								who = ROOT
+								type = infantry
+								amount = 5
+							}
+						}
+					}
 				}
-				add_permanent_claim = ROOT
 			}
-			add_country_modifier = {
-				name = degakheion_alecandi_supremacy
-				duration = -1
+		}
+		
+		trigger = {
+			OR = {
+				G62 = { #Amgremos
+					is_subject_of = ROOT
+					NOT = { liberty_desire = 50 }
+				}
+				AND = {
+					NOT = { exists = G62 } #Amgremos
+					2684 = { #Amgremos
+						country_or_non_sovereign_subject_holds = ROOT
+						num_of_units_in_province = {
+							who = ROOT
+							type = infantry
+							amount = 5
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = { 
+				id = flavour_degakheion.2 #Pirates Captured
 			}
 		}
 	}
 }
 
-G46_south = {
+G46_slot_two = {
 	slot = 2
 	generic = no
 	ai = yes
 	potential = {
-		tag = G46
+		OR = {
+			tag = G46
+			AND = {
+				was_tag = G46
+				tag = H22 #Kheios
+			}
+		}
 	}
 	has_country_shield = yes
-	
-	G46_prepare_for_next_conquests = {
-		icon = mission_assemble_an_army
-		required_missions = { }
-		#position = 1
-		
-		trigger = {
-			manpower_percentage = 0.75
+
+	G46_teachings_of_a_child = {
+		icon = mission_establish_the_prikazy
+		required_missions = { 
+			G46_care_for_our_youngest
+			G46_betrayal_on_ever_front
 		}
-		
-		effect = {
-			ormam_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { owned_by = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	G46_invade_the_bay = {
-		icon = mission_fleet_arrival
-		required_missions = { G46_prepare_for_next_conquests }
 		position = 2
-		
+
 		provinces_to_highlight = {
-			area = ormam_area
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			is_capital_of = G55 #Eneion
+			NOT = {
+				AND = {
+					G55 = { #Eneion
+						liberty_desire = 25
+						has_150_opinion_improved_relation = { target = ROOT } 
+					} 
+				}
+			}
 		}
 		
 		trigger = {
-			ormam_area = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
+			G55 = { #Eneion
+				has_150_opinion_improved_relation = { target = ROOT }
+				NOT = { liberty_desire = 25 }
 			}
+			diplomatic_reputation = 3
 		}
-		
+
 		effect = {
-			kherka_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { owned_by = ROOT }
-				}
-				add_permanent_claim = ROOT
+
+			remove_country_modifier = G46_childs_care
+			add_country_modifier = {
+				name = G46_master_of_nekheis
+				duration = 18250 #50 years
+			}
+			define_advisor = {
+				type = diplomat
+				skill = 2
+				cost_multiplier = 0.5
 			}
 		}
 	}
-	
-	G46_break_the_fortress = {
-		icon = mission_horse_siege
-		required_missions = { G46_invade_the_bay }
-		position = 3
-		
-		provinces_to_highlight = {
-			area = kherka_area
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+
+	G46_keeping_a_child_in_line = {
+		icon = mission_confrontation
+		required_missions = { 
+			G46_teachings_of_a_child
+			G46_end_the_experiment
+			G46_secure_the_interiour
 		}
-		
-		trigger = {
-			kherka_area = {
-				type = all
-				country_or_non_sovereign_subject_holds = ROOT
-			}
-		}
-		
-		effect = {
-			lokemeion_area = {
-				limit = {
-					NOT = { is_core = ROOT }
-					NOT = { owned_by = ROOT }
-				}
-				add_permanent_claim = ROOT
-			}
-		}
-	}
-	
-	G46_south_coast_domination = {
-		icon = mission_heated_battle
-		required_missions = { G46_break_the_fortress }
 		position = 4
-		
+
 		provinces_to_highlight = {
-			area = lokemeion_area
+			province_group = nekhei_capital_provinces
 			NOT = { country_or_non_sovereign_subject_holds = ROOT }
 		}
 		
 		trigger = {
-			lokemeion_area = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = G46_karkares_upheaval_karkares_path
+						has_country_flag = G46_karkares_upheaval_phylaxana_path
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = G46_karkares_upheavel_over
+					has_country_flag = G46_karkares_upheaval_is_over
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = G46_significant_event_tt
+					has_country_flag = G46_karkares_upheaval_is_over
+				}
+			}
+			nekhei_capital_provinces = {
 				type = all
 				country_or_non_sovereign_subject_holds = ROOT
 			}
 		}
 
-		effect = { 
-			add_mil_power = 100
-			add_prestige = 25
+		effect = {
+			G55 = { #Eneion
+				add_liberty_desire = -50
+				if = {
+					limit = {
+						G53 = { is_subject_of = ROOT }
+					}
+					inherit = G53 #Empkeios
+				}
+				if = {
+					limit = {
+						G58 = { is_subject_of = ROOT }
+					}
+					inherit = G58 #Keyolion
+				}
+				if = {
+					limit = {
+						G54 = { is_subject_of = ROOT }
+					}
+					inherit = G54 #Besolaki
+				}
+				if = {
+					limit = {
+						G57 = { is_subject_of = ROOT }
+					}
+					inherit = G57 #Apikhoxi
+				}
+				if = {
+					limit = {
+						G59 = { is_subject_of = ROOT }
+					}
+					inherit = G59 #Anisikheion
+				}
+			}
+			G56 = { #Deyeion
+				if = {
+					limit = {
+						G62 = { is_subject_of = ROOT }
+					}
+					inherit = G62 #Amgremos
+				}
+			}
 		}
 	}
 }
 
-G46_army = {
+G46_slot_three = {
 	slot = 3
 	generic = no
 	ai = yes
 	potential = {
-		tag = G46
+		OR = {
+			tag = G46
+			AND = {
+				was_tag = G46
+				tag = H22 #Kheios
+			}
+		}
 	}
 	has_country_shield = yes
-	
-	G46_expand_conscription = {
-		icon = mission_swear_fealty_knight
+
+	G46_betrayal_on_ever_front = {
+		icon = protect_against_austria
 		required_missions = { }
 		position = 1
-		
-		trigger = {
-			barracks = 5
-		}
-		
-		effect = {
-			add_country_modifier = {
-				name = degakheion_expanded_conscription
-				duration = 7300 #20 years
-			}
-			every_owned_province = {
-				limit = {
-					area = degakheion_area
-				}
-				add_base_manpower = 2
-			}
-		}
-	}
-	
-	G46_mobile_infantry = {
-		icon = mission_warrior_gold
-		required_missions = { G46_expand_conscription }
-		position = 2
-		
-		trigger = {
-			mil_tech = 8
-			mil_power = 50
-		}
-		
-		effect = {
-			add_mil_power = -50
-			add_country_modifier = {
-				name = degakheion_mobile_infantry
-				duration = 7300 #20 years
-			}
-		}
-	}
-	
-	G46_the_warrior_kylakas = {
-		icon = mission_viking
-		required_missions = { G46_mobile_infantry }
-		position = 3
-		
-		trigger = {
-			mil = 5
-			temple = 10
-			treasury = 200
-		}
-		
-		effect = {
-			add_treasury = -200
-			add_country_modifier = {
-				name = degakheion_warrior_kylakas
-				duration = -1
-			}
-		}
-	}
-	
-	G46_kherkan_blacksmiths = {
-		icon = mission_smith
-		required_missions = {
-			G46_break_the_fortress
-			G46_the_warrior_kylakas
-		}
-		position = 4
-		
+
 		provinces_to_highlight = {
-			province_id = 2773
+			is_capital_of = G47 #Oktikheion
+			ROOT = { truce_with = G47 }  #Oktikheion
+		}
+		
+		trigger = {
+			NOT = { truce_with = G47 } #Oktikheion
+			army_size_percentage = 0.9
+		}
+
+		effect = {
+			if = {
+				limit = {
+					employed_advisor = {
+						category = mil
+						skill = 2
+					}
+				}
+				custom_tooltip = G46_mil_advisor_yes_tt
+				hidden_effect = {
+					add_country_modifier = {
+						name = G46_phylaxana_ready_for_war
+						duration = 9125 #25 years
+					}
+				}
+			}
+			else = { custom_tooltip = G46_mil_advisor_no_tt }
+			country_event = { id = flavour_degakheion.1 }
+		}
+	}
+
+	G46_rock_and_a_hard_place = {
+		icon = mission_heated_battle
+		required_missions = { G46_betrayal_on_ever_front }
+		position = 2
+
+		provinces_to_highlight = {
 			OR = {
-				NOT = { owned_by = ROOT }
-				NOT = { base_production = 10 }
-				NOT = { has_courthouse_building_trigger = yes }
-				NOT = {
-					OR = {
-						has_building = weapons
-						trade_goods = damestear
+				area = kimanis_area
+				area = oktikheion_area
+				area = ormam_area
+			}
+			NOT = {
+				AND = {
+					is_state_core = ROOT
+					has_state_edict = edict_centralization_effort
+				}
+			}
+		}
+		
+		trigger = {
+			kimanis_area = { 
+				type = all
+				is_state_core = ROOT
+				has_state_edict = edict_centralization_effort
+			}
+			oktikheion_area = { 
+				type = all
+				is_state_core = ROOT 
+				has_state_edict = edict_centralization_effort
+			}
+			ormam_area = { 
+				type = all
+				is_state_core = ROOT 
+				has_state_edict = edict_centralization_effort
+			}
+		}
+
+		effect = {
+			lokemeion_area = { add_permanent_claim = ROOT }
+			kherka_area = { add_permanent_claim = ROOT }
+			arpedifer_area = { add_permanent_claim = ROOT }
+			country_event = { 
+				id = flavour_degakheion.3 #An Eye For An Eye
+			}
+		}
+	}
+
+	G46_secure_the_interiour = {
+		icon = mission_horse_siege
+		required_missions = { G46_rock_and_a_hard_place }
+		position = 3
+
+		provinces_to_highlight = {
+			OR = {
+				area = kherka_area
+				area = arpedifer_area
+				area = lokemeion_area
+			}
+			NOT = {
+				AND = {
+					is_state_core = ROOT
+					has_state_edict = edict_centralization_effort
+				}
+			}
+		}
+		
+		trigger = {
+			kherka_area = { 
+				type = all
+				is_state_core = ROOT
+				has_state_edict = edict_centralization_effort
+			}
+			arpedifer_area = { 
+				type = all
+				is_state_core = ROOT 
+				has_state_edict = edict_centralization_effort
+			}
+			lokemeion_area = { 
+				type = all
+				is_state_core = ROOT 
+				has_state_edict = edict_centralization_effort
+			}
+		}
+
+		effect = {
+			country_event = { 
+				id = flavour_degakheion.4 #Returned Guardianship
+			}
+			west_alecand = { add_permanent_claim = ROOT }
+			# hidden_effect = {
+				country_event = { 
+					id = flavour_degakheion.9 #Karkares Upheaval!
+					days = 90 #3 months
+				}
+			# }
+		}
+	}
+
+	G46_construct_the_goliath = {
+		icon = mission_conquer_alexandria
+		required_missions = { G46_secure_the_interiour }
+		position = 4
+
+		provinces_to_highlight = {
+			province_id = 2736 #Degakheion
+			NOT = {
+				AND = {
+					development = 35
+					has_no_ongoing_construction = yes
+				}
+			}
+		}
+		
+		trigger = {	
+			2736 = { #Degakheion
+				development = 35
+				has_no_ongoing_construction = yes
+			}
+			OR = {
+				employed_advisor = {
+					type = artist
+				}
+				has_adm_advisor_3 = yes
+			}
+		}
+
+		effect = {
+			2736 = { #Degakheion
+				add_province_modifier = { 
+					name = G46_goliath_construction 
+					duration = 1825 #5 years
+				}
+			}
+			hidden_effect = {
+				country_event = { #Goliath Constructed
+					id = flavour_degakheion.5
+					days = 1825 #5 years
+				}
+			}
+		}
+	}
+
+	G46_guardian_of_the_kheions = {
+		icon = protect_against_the_turks
+		required_missions = {
+			G46_keeping_a_child_in_line
+			G46_construct_the_goliath
+		}
+		position = 5
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = alecand_region
+					NOT = { is_core = ROOT }
+				}
+				AND = {
+					province_group = alecandi_capital_provinces
+					NOT = { has_manpower_building_trigger = yes }
+				}
+				AND = {
+					superregion = kheionai_superregion
+					NOT = {
+						country_or_non_sovereign_subject_holds = G52 #Ameion
+						has_port = no
+						area = gaenbyst_area
+						country_or_non_sovereign_subject_holds = ROOT
 					}
 				}
 			}
 		}
 		
 		trigger = {
-			2773 = {
-				owned_by = ROOT
-				base_production = 10
-				has_courthouse_building_trigger = yes
-				OR = {
-					has_building = weapons
-					trade_goods = damestear
+			alecand_region = {
+				type = all
+				is_core = ROOT
+			}
+			alecandi_capital_provinces = {
+                type = all
+                has_manpower_building_trigger = yes
+            }
+			custom_trigger_tooltip = {
+				tooltip = G46_kheionai_coast_owned_tt
+				kheionai_superregion = {
+					type = all
+					OR = {
+						country_or_non_sovereign_subject_holds = G52 #Ameion
+						has_port = no
+						area = gaenbyst_area
+						country_or_non_sovereign_subject_holds = ROOT
+					}
 				}
 			}
-		}	
-		
-		effect = {
-			add_country_modifier = {
-				name = degakheion_expert_blacksmiths
-				duration = 18250 #50 years
-			}
 		}
-	}
-	
-	G46_a_professional_army = {
-		icon = establish_the_musketeers
-		required_missions = { G46_kherkan_blacksmiths }
-		position = 5
-		
-		
-		trigger = {	
-	   		army_size = 50
-			army_professionalism = 0.40
-			regimental_camp = 10
-			has_global_modifier_value = {
-				which = discipline
-				value = 0.15
-			}
-		}	
 		
 		effect = {
-			add_country_modifier = {
-				name = degakheion_professional_army
-				duration = -1
+			add_prestige = 25
+			alecandi_capital_provinces = {
+				add_province_modifier = {
+					name = G46_guardians_of_the_kheions
+					duration = -1
+				}
+			}
+			if = {
+				limit = { 
+					nekhei_capital_provinces = {
+						type = all
+						has_manpower_building_trigger = yes 
+					}
+				}
+				custom_tooltip = G46_nekhei_capitals_yes_tt
+				hidden_effect = {
+					nekhei_capital_provinces = {
+						add_province_modifier = {
+							name = G46_guardians_of_the_kheions
+							duration = -1
+						}
+					}
+				}
+			}
+			else = { custom_tooltip = G46_nekhei_capitals_no_tt }
+			tooltip = {
+				add_province_modifier = {
+					name = G46_guardians_of_the_kheions
+					duration = -1
+				}
 			}
 		}
 	}
 }
 
-G46_internal = {
+G46_slot_four = {
 	slot = 4
 	generic = no
 	ai = yes
 	potential = {
-		tag = G46
+		OR = {
+			tag = G46
+			AND = {
+				was_tag = G46
+				tag = H22 #Kheios
+			}
+		}
 	}
 	has_country_shield = yes
-	
-	G46_the_sheperds_of_degakheion = {
-		icon = mission_rb_conquer_wales
-		required_missions = { }
-		position = 1
-		
-		provinces_to_highlight = {
-			owned_by = ROOT
-			trade_goods = wool
-			NOT = { base_production = 3 }
-		}
-		
-		trigger = {
-			num_of_owned_provinces_with = {
-				value = 5
-				trade_goods = wool
-				base_production = 3			
-			}
-		}
-		
-		effect = {
-			add_country_modifier = {
-				name = degakheion_wool_trade
-				duration = 7300 #20 years
-			}
-			2736 = {
-				add_base_tax = 3
-			}
-		}
-	}
 
-	G46_the_great_city = {
-		icon = despot_stefans_legacy
-		required_missions = { G46_the_sheperds_of_degakheion }
+	G46_the_strateodegis_academy = {
+		icon = patronize_the_scuole_grandi
+		required_missions = {
+			G46_betrayal_on_ever_front
+			G46_secure_the_state
+		}
 		position = 2
-		
+
 		provinces_to_highlight = {
-			province_id = 2736
-			OR = {
-				NOT = { owned_by = ROOT }
-				NOT = { development = 30 }
-			}
-		}
-		
-		trigger = {
-			2736 = {
-				owned_by = ROOT
-				development = 30
-			}
-		}
- 		
-		effect = {
-			add_stability_or_adm_power = yes
-			2736 = {
-				add_province_modifier = {
-					name = "degakheion_investing_in_capital"
-					duration = 7300 #20 years
+			is_capital_of = ROOT
+			NOT = {
+				AND = {
+					has_tax_building_trigger = yes
+					has_ruler_leader_from = ROOT
+					possible_buildings = 1
 				}
 			}
 		}
-	}
-
-	G46_devandi_clothing = {
-		icon = mission_expand_textile_industry
-		required_missions = { G46_the_great_city }
-		position = 3
-		
-		provinces_to_highlight = {
-			OR = {
-				province_id = 2674
-				province_id = 2625
-			}
-			OR = {
-				NOT = { base_production = 6 }
-				NOT = { has_production_building_trigger = yes }
-			}
-		}
 		
 		trigger = {
-			2674 = {
-				base_production = 6
-				has_production_building_trigger = yes
-			}
-			2625 = {
-				base_production = 6
-				has_production_building_trigger = yes
-			}
-		}
- 		
-		effect = {
-			add_country_modifier = {
-				name = "degakheion_invested_in_subjects"
-				duration = 7300 #20 years
-			}
-		}
-	}
-	
-	G46_the_greatest_culture = {
-		icon = imperial_ascendancy
-		required_missions = { G46_devandi_clothing }
-		position = 4
-		
-		provinces_to_highlight = {
-			province_id = 2736
-			OR = {
-				NOT = { development = 35 }
-				NOT = { has_tax_building_trigger = yes }
-				NOT = { has_production_building_trigger = yes }
-				NOT = { has_trade_building_trigger = yes }
-				NOT = { owned_by = ROOT }
-			}
-		}
-		
-		trigger = {
-			2736 = {
-				development = 35
+			capital_scope = {
 				has_tax_building_trigger = yes
-				has_production_building_trigger = yes
-				has_trade_building_trigger = yes
-				owned_by = ROOT
+				has_ruler_leader_from = ROOT
+				possible_buildings = 1
 			}
-			development_in_provinces = {
-				value = 200
-				culture = degabhen
-			}	
+			army_tradition = 35
+			treasury = 200
 		}
-		
+
 		effect = {
-			2736 = {
-				center_of_trade = 1
-			}	
+			add_treasury = -200
+			capital_scope = {
+				add_or_upgrade_tax_building = yes
+				add_building = regimental_camp
+			}
 			add_country_modifier = {
-				name = "degakheion_the_greatest_culture"
+				name = G46_strateodegis_academy
 				duration = -1
 			}
 		}
 	}
-	
-	G46_search_deeper = {
-		icon = mission_treasure_room
-		required_missions = { G46_the_greatest_culture }
-		position = 5
-	
-		provinces_to_highlight = {
-			province_id = 2736
-			OR = {
-				NOT = { development = 40 }
-				NOT = { has_courthouse_building_trigger = yes }
-				NOT = { owned_by = ROOT }
-			}
-		}
-		
-		trigger = {
-			treasury = 1000
-			2736 = {
-				development = 40
-				has_courthouse_building_trigger = yes
-				owned_by = ROOT
-			}
-		}
-		
-		effect = {
-			add_treasury = -1000
-			country_event = {
-				id = flavor_degakheion.1
-				days = 365
-			}
-		}
-	}	
 }
 
-G46_subjects = {
+G46_slot_five = {
 	slot = 5
 	generic = no
 	ai = yes
 	potential = {
-		tag = G46
+		OR = {
+			tag = G46
+			AND = {
+				was_tag = G46
+				tag = H22 #Kheios
+			}
+		}
 	}
 	has_country_shield = yes
-	
-	G46_reassert_control = {
-		icon = mission_approach_throne
+
+	G46_secure_the_state = {
+		icon = jap_encourage_fudasashi
 		required_missions = { }
 		position = 1
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = kheinos_area
+					NOT = {
+						AND = {
+							is_core = ROOT
+							NOT = { devastation = 1 }
+							num_of_units_in_province = { 
+								who = ROOT
+								type = infantry
+								amount = 2
+							}
+						}
+					}
+				}
+				AND = { 
+					province_id = 2736 #Degakheion
+					NOT = { base_manpower = 11 }
+				}
+			}
+		}
 		
 		trigger = {
-			NOT = {
-				G55 = { liberty_desire = 50 }
-				G56 = { liberty_desire = 50 }
+			kheinos_area = {
+				type = all
+				is_core = ROOT
+				NOT = { devastation = 1 }
+				num_of_units_in_province = { 
+					who = ROOT
+					type = infantry
+					amount = 2
+				}
+			}
+			2736 = { #Degakheion
+				base_manpower = 11
 			}
 		}
 
 		effect = {
-			add_country_modifier = {
-				name = "degakheion_loyal_subjects"
-				duration = 7300 #20 years
+			kheinos_area = {
+				kill_units = {
+					who = ROOT
+					type = infantry
+					amount = 2
+				}
+				add_base_manpower = 2
+				add_building = barracks
 			}
-		}	
+			2736 = { add_base_manpower = -2 } #Degakheion
+		}
 	}
-	
-	G46_finish_the_job = {
-		icon = mission_conquer_romania
-		required_missions = { G46_reassert_control }
+
+	G46_thirst_for_iron = {
+		icon = mission_smith
+		required_missions = { G46_secure_the_state }
 		position = 2
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2770 #Promethe
+				province_id = 2768 #Diveryam
+			}
+			NOT = {
+				AND = {
+					is_state_core = ROOT
+					base_production = 4
+					NOT = { devastation = 1 }
+				}
+			}
+		}
 		
 		trigger = {
+			2770 = { #Promethe
+				is_state_core = ROOT
+				base_production = 4
+				NOT = { devastation = 1 }
+			}
+			2768 = { #Diveryam
+				is_state_core = ROOT
+				base_production = 4
+				NOT = { devastation = 1 }
+			}
+		}
+
+		effect = {
+			2770 = { #Promethe
+				change_trade_goods = iron
+				add_province_modifier = {
+					name = G46_large_iron_mines
+					duration = -1
+				}
+			}
+			2768 = { #Diveryam
+				change_trade_goods = iron
+				add_province_modifier = {
+					name = G46_large_iron_mines
+					duration = -1
+				}
+			}
+		}
+	}
+
+	G46_philosophical_strengthening = {
+		icon = mission_address_the_ethnic_situation
+		required_missions = { 
+			G46_the_strateodegis_academy
+			G46_thirst_for_iron
+		}
+		position = 3
+
+		provinces_to_highlight = {
 			OR = {
-				is_neighbor_of = G62 #Amgremos
-				any_subject_country = {
-					is_neighbor_of = G62 #Amgremos
+				AND = {
+					is_capital_of = ROOT
+					NOT = { has_national_kheionist_holy_order = yes }
 				}
 				AND = {
-					NOT = { exists = G62 } #Amgremos
-					amgremos_area = {
+					owned_by = ROOT
+					is_state_core = ROOT
+					area_for_scope_province = {
 						type = all
-						country_or_subject_holds = ROOT
+						owned_by = ROOT
+					}
+					NOT = { has_kheionist_holy_order = yes }
+					ROOT = {
+						NOT = {
+							calc_true_if = {
+								amount = 3
+								all_states = { has_national_kheionist_holy_order = yes }
+							}
+						}
 					}
 				}
+			}
+		}
+		
+		trigger = {
+			has_kheionist_deity = { deity = mil }
+			capital_scope = { has_national_kheionist_holy_order = yes }
+			calc_true_if = {
+				amount = 3
+				all_states = { has_national_kheionist_holy_order = yes }
 			}
 		}
 
 		effect = {
 			if = {
-				limit = { NOT = { exists = G62 } } #Amgremos
-				amgremos_area = { cede_province = G62 } #Amgremos
-				vassalize = G62 #Amgremos
-			}
-			else = {
-				add_casus_belli = {
-					target = G62
-					type = cb_vassalize_mission
-				}
-			}
-		}
-	}
-
-	G46_encourage_degabhen_culture = {
-		icon = imperial_capitals
-		required_missions = { G46_finish_the_job }
-		position = 3
-		
-		trigger = {
-			dip_power = 100
-			G62 = {
-				is_subject_of = ROOT
-				NOT = { liberty_desire = 50 }
-				has_opinion = {
-					who = ROOT
-					value = 200
-				}	
-			}
-		}
-	   
-		effect = {
-			add_dip_power = -100
-			set_country_flag = G46_amgremos_nekhei
-			create_subject = {
-				subject_type = nekhei
-				subject = G62 #Amgremos
-			}
-			G62 = {
-				override_country_name = TRIEION
-				change_primary_culture = degabhen
-			}
-			2684 = {
-				change_province_name = "Trieion"
-			}	
-			hidden_effect = {
-				every_subject_country = {
-					limit = {
-						is_subject_of_type = nekhei
-						NOT = { tag = G62 } #Amgremos
-					}
-					every_owned_province = {
-						limit = {
-							OR = {
-								#Devand
-								area = apikhoxi_area
-								area = msaghyan_area
-								area = denabatha_area
-								#Andic Reach
-								area = amgremos_area
-								area = bzor_al_swrul_area
-								area = eiongremos_area
-								area = idziydir_area
-								#Mteibas Valley
-								area = zhazn_al_dalk_area
-							}
-						}
-						cede_province = G62 #Amgremos
-						add_core = G62 #Amgremos
+				limit = { has_kheionist_deity = { deity = axierophonic_mandate } }
+				custom_tooltip = G46_axierophonic_mandate_yes_tt
+				hidden_effect = {
+					add_country_modifier = {
+						name = G46_state_monopoly_violence
+						duration = -1
 					}
 				}
 			}
-		}	
-	}
-
-	G46_colonial_ventures = {
-		icon = mission_brazilian_bandeirantes
-		required_missions = { G46_encourage_degabhen_culture }
-		position = 4
-		
-		trigger = {
-			treasury = 500
-			dip_power = 50
-			NOT = {
-				G55 = { liberty_desire = 50 }
-				G56 = { liberty_desire = 50 }
-				G62 = { liberty_desire = 50 }
-			}
-		}
-
-		effect = {
-			add_treasury = -500
-			add_dip_power = -50
-			add_country_modifier = {
-				name = "degakheion_colonial_drive"
-				duration = 18250 #50 years
-			}
-			G55 = {
+			else = { custom_tooltip = G46_axierophonic_mandate_no_tt }
+			tooltip = {
 				add_country_modifier = {
-				name = "degakheion_colonial_drive"
-				duration = 18250 #50 years
-				}
-			}	
-			G56 = {
-				add_country_modifier = {
-				name = "degakheion_colonial_drive"
-				duration = 18250 #50 years
-				}
-			}	
-			G62 = {
-				add_country_modifier = {
-				name = "degakheion_colonial_drive"
-				duration = 18250 #50 years
-				}
-			}
-		}
-	}
-	
-	G46_the_goliath = {
-		icon = mission_conquer_alexandria
-		required_missions = { G46_the_greatest_culture }
-		position = 5
-		
-		provinces_to_highlight = {
-			province_id = 2736
-			NOT = { owned_by = ROOT }
-		}
-		
-		trigger = {
-			treasury = 500
-			2736 = {
-				owned_by = ROOT
-			}	
-		}
-		
-		effect = {
-			add_treasury = -500
-			2736 = {
-				add_permanent_province_modifier = {
-					name = degakheion_the_goliath
+					name = G46_state_monopoly_violence
 					duration = -1
-				}	
+				}
+			}
+
+			if = {
+				limit = { has_kheionist_deity = { deity = drivos_rochos } }
+				custom_tooltip = G46_drivos_rochos_yes_tt
+				hidden_effect = {
+					add_country_modifier = {
+						name = G46_degabhen_wit
+						duration = -1
+					}
+				}
+			}
+			else = { custom_tooltip = G46_drivos_rochos_no_tt }
+			tooltip = {
+				add_country_modifier = {
+					name = G46_degabhen_wit
+					duration = -1
+				}
+			}
+
+			if = {
+				limit = { has_kheionist_deity = { deity = laskaris_creed } }
+				custom_tooltip = G46_laskaris_creed_yes_tt
+				hidden_effect = {
+					add_country_modifier = {
+						name = G46_creed_of_conquest
+						duration = -1
+					}
+				}
+			}
+			else = { custom_tooltip = G46_laskaris_creed_no_tt }
+			tooltip = {
+				add_country_modifier = {
+					name = G46_creed_of_conquest
+					duration = -1
+				}
+			}
+		}
+	}
+
+	G46_institute_the_daografi = {
+		icon = spa_tercios_system
+		required_missions = { G46_philosophical_strengthening }
+		position = 1
+
+		provinces_to_highlight = {
+			province_group = alecandi_capital_provinces
+			NOT = {
+				AND = {
+					is_core = ROOT
+					has_manpower_building_trigger = yes
+					base_manpower = 10
+				}
+			}
+		}
+		
+		trigger = {
+			mil_power = 100
+			alecandi_capital_provinces = {
+				type = all
+				is_core = ROOT
+				has_manpower_building_trigger = yes
+				base_manpower = 10
+			}
+			has_kheionist_deity = { deity = mil }
+		}
+
+		effect = {
+			add_mil_power = -100
+			alecandi_capital_provinces = {
+				add_or_upgrade_manpower_building = yes
+			}
+			custom_tooltip = G46_barracks_buff_tt
+			hidden_effect = {
+				set_country_flag = degakheion_manpower_building_buff
+				every_owned_province = {
+					limit = { has_building = training_fields }
+					add_province_modifier = {
+						name = G46_training_fields_buff
+						duration = -1
+					}
+				}
+				every_owned_province = {
+					limit = { has_building = barracks }
+					add_province_modifier = {
+						name = G46_barracks_buff
+						duration = -1
+					}
+				}
+			}
+		}
+	}
+}
+G46_karkares_path_slot_four = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = G46
+			AND = {
+				was_tag = G46
+				tag = H22 #Kheios
+			}
+		}
+		has_country_flag = G46_karkares_upheaval_is_over
+		has_country_flag = G46_karkares_upheaval_karkares_path
+	}
+
+	G46_the_drivos_kryphane = {
+		icon = mission_parthenon
+		required_missions = { G46_the_strateodegis_academy }
+		position = 4
+
+		provinces_to_highlight = { }
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = G46_karkares_upheavel_over
+				has_country_flag = G46_karkares_upheaval_is_over
+			}
+			OR = {
+				employed_advisor = { type = statesman }
+				AND = {
+					has_dip_advisor_2 = yes
+					adm_power = 50
+				}
+			}
+		}
+
+		effect = {        
+			if = {
+				limit = { NOT  = { employed_advisor = { type = statesman } } }
+				add_adm_power = -50
+			}
+			country_event =  { #The Finishing Touches
+				id = flavour_degakheion.6
+			}
+		}
+	}
+
+	G46_allow_the_flow_of_ideas = {
+		icon = ven_scales_of_power
+		required_missions = { G46_the_drivos_kryphane }
+		position = 5
+
+		provinces_to_highlight = {
+			province_group = alecandi_capital_provinces
+			NOT = { has_state_edict = edict_advancement_effort }
+		}
+		
+		trigger = {
+			stability = 1
+			has_dip_advisor_3 = yes
+			alecandi_capital_provinces = {
+				type = all
+				has_state_edict = edict_advancement_effort
+			}
+		}
+
+		effect = {
+			add_government_reform = degakheion_karkares_council
+		}
+	}
+}
+G46_karkares_path_slot_five = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = G46
+			AND = {
+				was_tag = G46
+				tag = H22 #Kheios
+			}
+		}
+		has_country_flag = G46_karkares_upheaval_is_over
+		has_country_flag = G46_karkares_upheaval_karkares_path
+	}
+
+	G46_reform_the_military = {
+		icon = all_bases_covered
+		required_missions = { G46_the_drivos_kryphane }
+		position = 5
+
+		provinces_to_highlight = {
+			province_group = alecandi_capital_provinces
+			NOT = {
+				AND = {
+					has_forcelimit_building_trigger = yes
+					base_manpower = 10
+					has_kheionist_holy_order = { holy_order = laskaris_creed }
+				}
+			}
+		}
+		
+		trigger = {
+			alecandi_capital_provinces = {
+				type = all
+				has_forcelimit_building_trigger = yes
+				base_manpower = 10
+				has_kheionist_holy_order = { holy_order = laskaris_creed }
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = G46_strateodegis_academy_military_complex
+				duration = -1
+			}
+			remove_country_modifier = G46_strateodegis_academy
+			alecandi_capital_provinces = {
+				add_or_upgrade_forcelimit_building = yes
+			}
+		}
+	}
+}
+
+G46_phylaxana_path_slot_four = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = G46
+			AND = {
+				was_tag = G46
+				tag = H22 #Kheios
+			}
+		}
+		has_country_flag = G46_karkares_upheaval_is_over
+		has_country_flag = G46_karkares_upheaval_phylaxana_path
+	}
+
+	G46_prisoners_once_more = {
+		icon = mission_thirty_years_war
+		required_missions = { G46_the_strateodegis_academy }
+		position = 4
+
+		provinces_to_highlight = {
+			province_group = alecandi_capital_provinces
+			NOT = {
+				num_of_units_in_province = {
+					amount = 5
+					type = infantry
+					who = ROOT
+				}
+			}
+		}
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = G46_karkares_upheavel_over
+				has_country_flag = G46_karkares_upheaval_is_over
+			}
+			alecandi_capital_provinces = {
+				type = all
+				num_of_units_in_province = {
+					amount = 5
+					type = infantry
+					who = ROOT
+				}
+			}
+			have_cast_scry_dissidents = yes #MAGICREWORK
+		}
+
+		effect = {
+			country_event =  { #Days of Torment
+				id = flavour_degakheion.7
+			}
+		}
+	}
+
+	G46_ethonaltian_code = {
+		icon = mission_beheading
+		required_missions = { G46_prisoners_once_more }
+		position = 5
+
+		provinces_to_highlight = {
+			province_group = alecandi_capital_provinces
+			OR = {
+				local_autonomy = 1
+				unrest = 1
+				devastation = 1
+			}
+		}
+		
+		trigger = {
+			stability = 3
+			NOT = { unrest = 0 }
+			government_reform_progress = 50
+			alecandi_capital_provinces = {
+				type = all
+				NOT = { local_autonomy = 1 }
+				NOT = { unrest = 1 }
+				NOT = { devastation = 1 }
+			}
+		}
+
+		effect = {
+			add_government_reform = degakheion_ethonaltian_code
+		}
+	}
+}
+G46_phylaxana_path_slot_five = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		OR = {
+			tag = G46
+			AND = {
+				was_tag = G46
+				tag = H22 #Kheios
+			}
+		}
+		has_country_flag = G46_karkares_upheaval_is_over
+		has_country_flag = G46_karkares_upheaval_phylaxana_path
+	}
+
+	G46_codify_martial_supremacy = {
+		icon = swiss_mercenaries
+		required_missions = { G46_prisoners_once_more }
+		position = 5
+
+		provinces_to_highlight = {
+			province_group = alecandi_capital_provinces
+			NOT = {
+				AND = {
+					has_tax_building_trigger = yes
+					base_tax = 15
+					has_kheionist_holy_order = { holy_order = drivos_rochos }
+				}
+			}
+		}
+		
+		trigger = {
+			alecandi_capital_provinces = {
+				type = all
+				has_tax_building_trigger = yes
+				base_tax = 15
+				has_kheionist_holy_order = { holy_order = drivos_rochos }
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = G46_strateodegis_academy_complex
+				duration = -1
+			}
+			remove_country_modifier = G46_strateodegis_academy
+			alecandi_capital_provinces = {
+				add_or_upgrade_tax_building = yes
 			}
 		}
 	}

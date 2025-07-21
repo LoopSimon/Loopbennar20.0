@@ -421,21 +421,25 @@ R51_missions_2 = {
 		}
 		
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = dhenijanraj_reign_vizier_trigger_tt
-				event_target:raj_vizier_global_target = {
-					has_opinion = {
-						who = ROOT
-						value = 200
+			if = {
+				limit = { has_saved_global_event_target = raj_vizier_global_target }
+				custom_trigger_tooltip = {
+					tooltip = dhenijanraj_reign_vizier_trigger_tt
+					event_target:raj_vizier_global_target = {
+						has_opinion = {
+							who = ROOT
+							value = 200
+						}
+						OR = {
+							adm = 5
+							dip = 5
+							mil = 5
+						}
+						NOT = { liberty_desire = 20 }
 					}
-					OR = {
-						adm = 5
-						dip = 5
-						mil = 5
-					}
-					NOT = { liberty_desire = 20 }
-				}
+				}				
 			}
+			else = { dip_power = 200 }	#should almost never happen, probably could have left empty, but better be safe
 			#4411 = { NOT = { check_variable = { which = vizierSway value = 25 } } }
 		}
 		
@@ -443,6 +447,10 @@ R51_missions_2 = {
 			add_country_modifier = {
 				name = R51_subservient_vizierate #+1 monthly diplo power
 				duration = 3650
+			}
+			if = {
+				limit = { NOT = { has_saved_global_event_target = raj_vizier_global_target } }
+				add_dip_power = -200
 			}
 		}
 	}
