@@ -256,12 +256,20 @@ country_decisions = {
         major = yes
         potential = {
             culture_group = lizardfolk
+			OR = {
+				has_estate_privilege = estate_church_naga_mutation
+				has_estate_privilege = estate_church_naga_upgraded_mutation
+				has_estate_privilege = estate_church_abundance_of_nagas_mutation
+			}
 			NOT = {
 				primary_culture = adzalanas_lizardfolk
 				primary_culture = ashhana_lizardfolk
 				tag = S81
 				tag = L87
 				exists = S81
+			}
+			OR = {
+				NOT = { tag = L70 }
 				mission_completed = L70_khugra_decree_of_unification
 			}
             was_never_end_game_tag_trigger = yes
@@ -275,9 +283,18 @@ country_decisions = {
 					NOT = { owned_by = ROOT }
 					NOT = {
 						ROOT = {
-							num_of_owned_provinces_with = {
-								value = 75
-								superregion = taneyas_superregion
+							OR = {
+								num_of_owned_provinces_with = {
+									value = 75
+									superregion = taneyas_superregion
+								}
+								AND = {
+									tag = L70
+									num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+										value = 75
+										superregion = taneyas_superregion
+									}
+								}
 							}
 						}
 					}
@@ -304,7 +321,6 @@ country_decisions = {
 			hidden_trigger = {
 				culture_group = lizardfolk
 			}
-			religion = anzalkatsa
 			is_at_war = no
 			is_free_or_tributary_trigger = yes                        
             #Required provinces
@@ -323,11 +339,19 @@ country_decisions = {
 					province_id = 5863
                 }
             }
-            
-
-            num_of_owned_provinces_with = {
-                value = 75
-				superregion = taneyas_superregion
+			if = {
+				limit = { tag = L70 } # Khugra
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 75
+					superregion = taneyas_superregion
+				}
+			}
+			else = {
+				religion = anzalkatsa
+				num_of_owned_provinces_with = {
+					value = 75
+					superregion = taneyas_superregion
+				}
             }                        
         }
 
@@ -354,7 +378,20 @@ country_decisions = {
             add_country_modifier = {
                 name = "centralization_modifier"
                 duration = 7300
-            }	
+            }
+			swap_non_generic_missions = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = { has_country_flag = count_church_agendas_current_ruler_flag }
+					}
+					set_country_flag = count_church_agendas_current_ruler_flag
+					set_variable = {
+						which = count_church_agendas_current_ruler
+						value = 0
+					}
+				}
+			}
 			if = {
 				limit = {
 					religion = anzalkatsa
@@ -394,6 +431,45 @@ country_decisions = {
 						remove_province_modifier = lizard_fate_controlled_city 
 						remove_province_modifier = heretic_controlled_city   
 					}
+				}
+			}
+			if = {
+				limit = { is_or_was_tag = { tag = L70 } } # Khugra
+				hidden_effect = {
+					clr_country_flag = araizary_doing_great_journey
+					set_variable = { which = totalVassalDev value = 0 }
+					every_subject_country = {
+						limit = {
+							culture_group = lizardfolk
+							capital_scope = {
+								superregion = taneyas_superregion
+							}
+							NOT = { liberty_desire = 50 }
+							NOT = { is_subject_of_type = tributary_state_anb }
+							NOT = { is_subject_of_type = tributary_state }
+						}
+						ROOT = {
+							export_to_variable = { which = tempVassalDev value = total_development who = PREV }
+							change_variable = { which = totalVassalDev which = tempVassalDev }
+						}
+					}
+					while = { limit = { check_variable = { which = totalVassalDev value = 1 } }
+							  add_dip_power = -2
+							  change_variable = { which = totalVassalDev value = -1 }
+					}
+				}
+				custom_tooltip = integrating_vassals_cost_2_dip_tt
+				every_subject_country = {
+					limit = {
+						culture_group = lizardfolk
+						capital_scope = {
+							superregion = taneyas_superregion
+						}
+						NOT = { liberty_desire = 50 }
+						NOT = { is_subject_of_type = tributary_state_anb }
+						NOT = { is_subject_of_type = tributary_state }
+					}
+					ROOT = { inherit = PREV }
 				}
 			}
         }
@@ -629,7 +705,7 @@ country_decisions = {
 		}
 		
 		provinces_to_highlight = {
-			culture = ashhana_lizardfolk
+			religion = zaradyrra
 			NOT = { owned_by = ROOT }
 		}
 		
@@ -641,7 +717,6 @@ country_decisions = {
 
 			num_of_owned_provinces_with = {
 				value = 20
-				culture = ashhana_lizardfolk
 				religion = zaradyrra
 			}     
 		}

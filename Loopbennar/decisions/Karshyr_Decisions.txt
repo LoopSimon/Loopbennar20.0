@@ -1,0 +1,123 @@
+#Writing by wdfrodo, .Simetra, Cappadocia, Wilyape, FOOD and Creatively bankrupt, coding by Creatively bankrupt
+
+country_decisions = {
+	S15_sell_ravelian = {
+		potential = {
+			tag = S15
+			mission_completed = S15_exporting_ravelianism
+			any_known_country = {
+				NOT = { religion = ravelian }
+				capital_scope = { continent = africa }
+				NOT = { total_development = 1000 }
+				NOT = { tag = S70 }
+				is_emperor_of_china = no
+				is_great_xhaz_trigger = no
+				ai = yes
+			}
+		}
+		allow = {
+			hidden_trigger = {
+				tag = S15
+				mission_completed = S15_exporting_ravelianism
+			}
+			any_known_country = {
+				NOT = { religion = ravelian }
+				capital_scope = { continent = africa }
+				OR = {
+					is_neighbor_of = S15
+					is_subject_of = S15
+				}
+				NOT = { total_development = 1000 }
+				NOT = { tag = S70 }
+				is_emperor_of_china = no
+				is_great_xhaz_trigger = no
+				hidden_trigger = {
+					ai = yes
+				}
+			}
+			treasury = 1000
+		}
+		effect = {
+			random_known_country = {
+				limit = {
+					NOT = { religion = ravelian }
+					capital_scope = { continent = africa }
+					OR = {
+						is_neighbor_of = S15
+						is_subject_of = S15
+					}
+					NOT = { total_development = 1000 }
+					NOT = { tag = S70 }
+					is_emperor_of_china = no
+					is_great_xhaz_trigger = no
+					ai = yes
+				}
+				change_religion = ravelian
+				hidden_effect = {
+					S15 = {
+						export_to_variable = {
+							which = S15_total_dev
+							value = total_development
+							who = PREV
+						}
+						multiply_variable = {
+							which = S15_total_dev
+							value = 20
+						}
+						var_effect = {
+							var = S15_total_dev
+							effect = add_treasury
+							sign = -
+						}
+						if = {
+							limit = { PREV = { NOT = { total_development = 250 } } }
+							vassalize = PREV
+						}
+					}
+				}
+				custom_tooltip = S15_sell_ravelian_tt
+			}
+		}
+	}
+
+	S15_buy_spires = {
+		potential = {
+			tag = S15
+			mission_completed = S15_friends_in_sarhal
+			spire_provinces = { NOT = { owned_by = S15 } }
+		}
+		allow = {
+			hidden_trigger = {
+				tag = S15
+				mission_completed = S15_friends_in_sarhal
+			}
+			spire_provinces = {
+				owner = {
+					religion = ravelian
+					NOT = { tag = S15 }
+					hidden_trigger = {
+						ai = yes
+					}
+				}
+			}
+		}
+		effect = {
+			spire_provinces = {
+				type = random
+				amount = 1
+				limit = {
+					owner = {
+						religion = ravelian
+						NOT = { tag = S15 }
+						ai = yes
+					}
+				}
+				owner = { add_treasury = 2000 }
+				S15 = { add_treasury = -2000 }
+				add_core = S15
+				remove_core = owner
+				cede_province = S15
+			}
+		}
+	}
+}

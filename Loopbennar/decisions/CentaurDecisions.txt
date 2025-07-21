@@ -233,7 +233,143 @@ country_decisions = {
 	#	}
 	#}
 	
-		
+	great_khan_awakening = {
+		major = yes
+		potential = {
+			has_country_modifier = centaur_administration
+			NOT = { has_global_flag = great_khan_formed }
+			was_never_end_game_tag_trigger = yes
+			NOT = {
+				tag = J54
+				tag = J56
+				tag = I89
+				tag = J55
+			}
+		}
+
+		allow = {
+			hidden_trigger = {
+				has_country_modifier = centaur_administration
+			}
+			is_subject = no
+			is_year = 1500
+			mission_completed = CENTAUR_valorous_caehnate
+			OR = {
+				total_development = 300
+				AND = {
+					custom_trigger_tooltip = {
+						tooltip = win_battle_centaur_150_tooltip
+						check_variable = {
+							which = nbCharge
+							value = 150
+						}
+					}
+					total_development = 200
+				}
+				AND = {
+					total_development = 200
+					num_of_wars = { amount = 35 }
+				}
+			}
+			is_at_war = no
+			capital_scope = { superregion = forbidden_lands_superregion }
+			NOT = { is_year = 1600 }
+		}
+		effect = {
+			change_tag = I89
+			custom_tooltip = centaur_unlock_cb_tooltip
+			hidden_effect = { set_country_flag = centaur_special_cb }
+			hidden_effect = { restore_country_name = yes }
+			swap_non_generic_missions = yes
+			remove_non_electors_emperors_from_empire_effect = yes
+			custom_tooltip = great_centaur_horde_tt
+			change_government = tribal
+			hidden_effect = { add_government_reform = great_centaur_horde }
+			grant_unlimited_state_action = { action = genocide }
+			hidden_effect = {
+				forbidden_lands_superregion = {
+					limit = {
+						OR = {
+							region = west_forbidden_plains_region
+							region = east_forbidden_plains_region
+							region = ogre_valley_region
+							region = yyl_moista_region
+							region = serpent_gift_region
+							region = nuzurbokh_region
+						}
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
+				}
+			}
+			if = {
+				limit = {
+					NOT = { government_rank = 3 }
+				}
+				set_government_rank = 3
+			}
+			add_country_modifier = {
+				name = centaur_unification_zeal
+				duration = -1
+				desc = centaur_unification_zeal_tooltip
+			}
+			add_prestige = 25
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			if = {
+				limit = { ai = yes }
+				add_country_modifier = {
+					name = centaur_the_red_storm_ai_luck
+					duration = 36500
+				}
+				if = { #If the Centaurs are struggling, stop spiraling
+					limit = { inflation = 5 }
+					add_inflation = -10
+					add_treasury = 1000
+				}
+			}
+			hidden_effect = {
+				if = { limit = { has_country_modifier = centaur_horde_1 } remove_country_modifier = centaur_horde_1 }
+				else_if = { limit = { has_country_modifier = centaur_horde_2 } remove_country_modifier = centaur_horde_2 }
+				else_if = { limit = { has_country_modifier = centaur_horde_3 } remove_country_modifier = centaur_horde_3 }
+				else_if = { limit = { has_country_modifier = centaur_horde_4 } remove_country_modifier = centaur_horde_4 }
+				else_if = { limit = { has_country_modifier = centaur_horde_5 } remove_country_modifier = centaur_horde_5 }
+				else_if = { limit = { has_country_modifier = centaur_horde_6 } remove_country_modifier = centaur_horde_6 }
+				# trigger_switch = { #Broken in 1.31.5
+					# on_trigger = has_country_modifier
+					
+					# centaur_horde_1 = { remove_country_modifier = centaur_horde_1 }
+					# centaur_horde_2 = { remove_country_modifier = centaur_horde_2 }
+					# centaur_horde_3 = { remove_country_modifier = centaur_horde_3 }
+					# centaur_horde_4 = { remove_country_modifier = centaur_horde_4 }
+					# centaur_horde_5 = { remove_country_modifier = centaur_horde_5 }
+					# centaur_horde_6 = { remove_country_modifier = centaur_horde_6 }
+					
+				# }
+				if = {
+					limit = { has_country_modifier = subjugated_horde }
+					remove_country_modifier = subjugated_horde
+				}
+				if = {
+					limit = { has_country_modifier = settled_horde }
+					remove_country_modifier = settled_horde
+				}
+				add_country_modifier = {
+					name = centaur_zeal_timer
+					duration = 365
+					hidden = yes
+				}
+				set_variable = { centaur_zeal = 10 }
+				set_global_flag = great_khan_formed
+			}
+			country_event = { id = ideagroups.1 } #Swap Ideas
+		}
+		ai_will_do = {
+			factor = 400
+		}
+	}
 	
 	free_our_tribe = {
 		major = yes
@@ -298,11 +434,18 @@ country_decisions = {
 		}
 	}
 	
-form_altorzamh = {
+	form_altorzamh = {
 		major = yes
 		potential = {
 			has_country_modifier = centaur_administration
-			tag = I61
+			was_never_end_game_tag_trigger = yes
+			NOT = { exists = J54 }
+			NOT = {
+				tag = J55
+				tag = J56
+				tag = I89
+				tag = J54
+			}
 		}
 		provinces_to_highlight = {
 			OR = {
@@ -326,16 +469,20 @@ form_altorzamh = {
 				tooltip = altorzamh_irdukhuga_requirement
 					AND = {
 						religion = irdaeos_worship
-						religious_school = {
+						OR = {
+							has_country_modifier = irdukhuga_scholar_modifier
+							religious_school = {
 								group = centaur_religion
 								school = irdukhuga_school
-							}
+							}	
+						}
 					}
 				}
 				religion = the_jadd
 				religion = yudunyovi
 			}
 			is_at_war = no
+			mission_completed = CENTAUR_valorous_caehnate
 			num_of_owned_provinces_with = {
 				value = 3
 				OR = {
@@ -351,8 +498,7 @@ form_altorzamh = {
 		effect = {
 			change_tag = J54
 			hidden_effect = { restore_country_name = yes }
-			country_event = { id = ideagroups.1 } #Swap Ideas
-			swap_non_generic_missions = yes
+			#swap_non_generic_missions = yes
 			remove_non_electors_emperors_from_empire_effect = yes
 			J54 = { decrease_monstrous_10 = yes }
 			bulwar_proper_region = {
@@ -362,15 +508,28 @@ form_altorzamh = {
 				discover_country = ROOT
 			}		
 			hidden_effect = {
-				serpent_gift_region = { add_permanent_claim = ROOT }
-				east_forbidden_plains_region = { add_permanent_claim = ROOT }
+				forbidden_lands_superregion = {
+					limit = {
+						OR = {
+							region = west_forbidden_plains_region
+							region = east_forbidden_plains_region
+							region = ogre_valley_region
+							region = yyl_moista_region
+							region = serpent_gift_region
+							region = nuzurbokh_region
+						}
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
 				}
+			}
 			if = {
 				limit = {
 					NOT = { government_rank = 3 }
 				}
 				set_government_rank = 3
 			}
+			add_prestige = 25
 			add_country_modifier = {
 				name = "centralization_modifier"
 				duration = 7300
@@ -383,18 +542,12 @@ form_altorzamh = {
 				limit = { has_country_modifier = settled_horde }
 				remove_country_modifier = settled_horde
 			}
-		change_government = republic
-		add_republican_tradition = 100
-		add_government_reform = altorzamh_reform
-		capital_scope = {
-				add_institution_embracement = {
-					which = feudalism
-					value = 100
-				}
+			
+			country_event = { id = ideagroups.1 } #idea swap
+			
 			}
-		}
 		ai_will_do = {
-			factor = 400
+		factor = 400
 		}
 	}
 
@@ -429,10 +582,12 @@ form_lejdazamh = {
 								group = centaur_religion
 								school = maslekhuga_school
 							}
+						}
 					}
 				}
 			}
 			is_at_war = no
+			mission_completed = CENTAUR_valorous_caehnate
 			num_of_owned_provinces_with = {
 				value = 3
 				OR = {
@@ -452,15 +607,28 @@ form_lejdazamh = {
 			swap_non_generic_missions = yes
 			remove_non_electors_emperors_from_empire_effect = yes
 			hidden_effect = {
-				ogre_valley_region = { add_permanent_claim = ROOT }
-				west_forbidden_plains_region = { add_permanent_claim = ROOT }
+				forbidden_lands_superregion = {
+					limit = {
+						OR = {
+							region = west_forbidden_plains_region
+							region = east_forbidden_plains_region
+							region = ogre_valley_region
+							region = yyl_moista_region
+							region = serpent_gift_region
+							region = nuzurbokh_region
+						}
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
 				}
+			}
 			if = {
 				limit = {
 					NOT = { government_rank = 3 }
 				}
 				set_government_rank = 3
 			}
+			add_prestige = 25
 			add_country_modifier = {
 				name = "centralization_modifier"
 				duration = 7300
@@ -484,7 +652,7 @@ form_lejdazamh = {
 			}
 		}
 		ai_will_do = {
-			factor = 400
+		factor = 400
 		}
 	}
 
@@ -520,10 +688,12 @@ form_taryeanzamh = {
 								group = centaur_religion
 								school = malukhuga_school
 							}
+						}
 					}
 				}
 			}
 			is_at_war = no
+			mission_completed = CENTAUR_valorous_caehnate
 			num_of_owned_provinces_with = {
 				value = 4
 				OR = {
@@ -550,16 +720,28 @@ form_taryeanzamh = {
 				discover_country = ROOT
 			}
 			hidden_effect = {
-				nuzurbokh_region = { add_permanent_claim = ROOT }
-				east_forbidden_plains_region = { add_permanent_claim = ROOT }
+				forbidden_lands_superregion = {
+					limit = {
+						OR = {
+							region = west_forbidden_plains_region
+							region = east_forbidden_plains_region
+							region = ogre_valley_region
+							region = yyl_moista_region
+							region = serpent_gift_region
+							region = nuzurbokh_region
+						}
+						NOT = { is_core = ROOT }
+					}
+					add_permanent_claim = ROOT
 				}
-			
+			}
 			if = {
 				limit = {
 					NOT = { government_rank = 3 }
 				}
 				set_government_rank = 3
 			}
+			add_prestige = 25
 			add_country_modifier = {
 				name = "centralization_modifier"
 				duration = 7300
@@ -583,7 +765,7 @@ form_taryeanzamh = {
 			}
 		}
 		ai_will_do = {
-			factor = 400
+		factor = 400
 		}
 	}		
 }

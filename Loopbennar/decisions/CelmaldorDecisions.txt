@@ -1,0 +1,819 @@
+
+
+country_decisions = {
+
+	purchase_military_facility_decision = {
+		color = { 195 160 20 }
+
+		potential = {
+			is_or_was_tag = { tag = Z22 }
+			has_estate_privilege = z22_military_demonopolisation
+		}
+
+		allow = {
+			hidden_trigger = {
+				is_or_was_tag = { tag = Z22 }
+			}
+			estate_action_off_cooldown = {
+				estate_action = PURCHASE_MILITARY_FACILITY_ACTION
+				days = 3650
+			}
+			if = {
+				limit = {
+					NOT = {
+						monthly_income = 9
+					}
+				}
+				years_of_income = 3
+			}
+			else = {
+				treasury = 300
+			}
+			capital_scope = {
+				NOT = {
+					has_any_ongoing_construction = yes
+				}
+			}
+		}
+
+		effect = {
+			set_estate_action_cooldown = {
+				estate_action = PURCHASE_MILITARY_FACILITY_ACTION
+			}
+			increase_estate_action_counter = {
+				estate = estate_nobles
+			}
+			estate_action = {
+				estate_action = PURCHASE_MILITARY_FACILITY_ACTION
+			}
+		}
+
+		ai_will_do = {
+			factor = 10
+			modifier = {
+				factor = 10
+				NOT = {
+					manpower_percentage = 0.4
+				}
+			}
+		}
+
+	}
+
+	z22_clan_contributions_decision = {
+
+		potential = {
+			mission_completed = z22_rights_of_man
+			is_or_was_tag = { tag = Z22 }
+			has_faction = whitespear_clan
+			has_faction = icewind_clan
+			has_faction = frozentide_clan
+		}
+
+		allow = {
+			hidden_trigger = {
+				is_or_was_tag = { tag = Z22 }
+			}
+			if = {
+				limit = {
+					faction_in_power = whitespear_clan
+				}
+				faction_influence = {
+					faction = whitespear_clan
+					influence = 70
+				}
+			}
+			else_if = {
+				limit = {
+					faction_in_power = icewind_clan
+				}
+				faction_influence = {
+					faction = icewind_clan
+					influence = 70
+				}
+			}
+			else_if = {
+				limit = {
+					faction_in_power = frozentide_clan
+				}
+				faction_influence = {
+					faction = frozentide_clan
+					influence = 70
+				}
+			}
+			NOT = {
+				has_country_modifier = z22_whitespear_clan_action
+				has_country_modifier = z22_icewind_clan_action
+				has_country_modifier = z22_frozentide_clan_action
+			}
+		}
+
+		effect = {
+			custom_tooltip = z22_clan_contributions_decision_effect_tt
+			if = {
+				limit = {
+					faction_in_power = whitespear_clan
+				}
+				add_faction_influence = {
+					faction = whitespear_clan
+					influence = -50
+				}
+				if = {
+					limit = {
+						army_tradition = 100
+					}
+					create_general = {
+						tradition = 100
+					}
+				}
+				else_if = {
+					limit = {
+						army_tradition = 80
+					}
+					create_general = {
+						tradition = 100 
+					}
+				}
+				else_if = {
+					limit = {
+						army_tradition = 60
+					}
+					create_general = {
+						tradition = 80 
+					}
+				}
+				else_if = {
+					limit = {
+						army_tradition = 40
+					}
+					create_general = {
+						tradition = 60 
+					}
+				}
+				else_if = {
+					limit = {
+						army_tradition = 20
+					}
+					create_general = {
+						tradition = 40 
+					}
+				}
+				else = {
+					create_general = {
+						tradition = 20
+					}
+				}
+
+				if = {
+					limit = {
+						navy_tradition = 100
+					}
+					create_admiral = {
+						tradition = 100
+					}
+				}
+				else_if = {
+					limit = {
+						navy_tradition = 80
+					}
+					create_admiral = {
+						tradition = 100
+					}
+				}
+				else_if = {
+					limit = {
+						navy_tradition = 60
+					}
+					create_admiral = {
+						tradition = 80
+					}
+				}
+				else_if = {
+					limit = {
+						navy_tradition = 40
+					}
+					create_admiral = {
+						tradition = 60
+					}
+				}
+				else_if = {
+					limit = {
+						navy_tradition = 20
+					}
+					create_admiral = {
+						tradition = 40
+					}
+				}
+				else = {
+					create_admiral = {
+						tradition = 20
+					}
+				}
+
+				add_army_tradition = 0.1
+				add_country_modifier = {
+					name = z22_whitespear_clan_action
+					duration = 3650
+				}
+			}
+			else_if = {
+				limit = {
+					faction_in_power = icewind_clan
+				}
+				add_faction_influence = {
+					faction = icewind_clan
+					influence = -50
+				}
+				custom_tooltip = z22_icewind_power_tt
+				hidden_effect = {
+					every_country = {
+						add_aggressive_expansion = {
+							who = ROOT
+							value = -10 
+						}
+					}
+				}
+				add_country_modifier = {
+					name = z22_icewind_clan_action
+					duration = 3650 
+				}
+			}
+			else = {
+				add_faction_influence = {
+					faction = frozentide_clan
+					influence = -50
+				}
+				add_corruption = -2
+				add_country_modifier = {
+					name = z22_frozentide_clan_action
+					duration = 3650
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 10 
+		}
+	}
+
+	z22_harbour_expansion = {
+
+		potential = {
+			owns = 696
+			mission_completed = z22_reinvigorate_harbour
+			696 = {
+				NOT = {
+					has_province_modifier = z22_white_harbour_5
+				}
+			}
+		}
+
+		allow = {
+			hidden_trigger = {
+				is_or_was_tag = { tag = Z22 }
+			}
+			adm_power = 100
+			government_reform_progress = 5
+			treasury = 1000
+			696 = {
+				NOT = {
+					has_any_ongoing_construction = yes
+				}
+				has_dock_building_trigger = yes
+				NOT = {
+					has_province_modifier = z22_harbour_construction_1
+					has_province_modifier = z22_harbour_construction_2
+					has_province_modifier = z22_harbour_construction_3
+					has_province_modifier = z22_harbour_construction_4
+					has_province_modifier = z22_harbour_construction_5
+				}
+			}
+		}
+
+		effect = {
+			add_adm_power = -100
+			change_government_reform_progress = -5
+			add_treasury = -1000
+			696 = {
+				if = {
+					limit = {
+						NOT = {
+							has_province_modifier = z22_white_harbour_1
+							has_province_modifier = z22_white_harbour_2
+							has_province_modifier = z22_white_harbour_3
+							has_province_modifier = z22_white_harbour_4
+							has_province_modifier = z22_white_harbour_5
+						}
+					}
+					if = {
+						limit = {
+							has_dock_building_trigger = yes
+						}
+						remove_building = dock
+						remove_building = drydock
+					}
+					add_building_construction = {
+						building = dock
+						cost = 0.9
+						speed = 2
+					}
+					add_province_modifier = {
+						name = z22_harbour_construction_1
+						duration = -1
+					}
+				}
+				else_if = {
+					limit = {
+						has_province_modifier = z22_white_harbour_1
+					}
+					if = {
+						limit = {
+							has_dock_building_trigger = yes
+						}
+						remove_building = dock
+						remove_building = drydock
+					}
+					add_building_construction = {
+						building = dock
+						cost = 0.8
+						speed = 3.5
+					}
+					add_province_modifier = {
+						name = z22_harbour_construction_2
+						duration = -1
+					}
+				}
+				else_if = {
+					limit = {
+						has_province_modifier = z22_white_harbour_2
+					}
+					if = {
+						limit = {
+							has_dock_building_trigger = yes
+						}
+						remove_building = dock
+						remove_building = drydock
+					}
+					add_building_construction = {
+						building = dock
+						cost = 0.7
+						speed = 5
+					}
+					add_province_modifier = {
+						name = z22_harbour_construction_3
+						duration = -1
+					}
+				}
+				else_if = {
+					limit = {
+						has_province_modifier = z22_white_harbour_3
+					}
+					if = {
+						limit = {
+							has_dock_building_trigger = yes
+						}
+						remove_building = dock
+						remove_building = drydock
+					}
+					add_building_construction = {
+						building = dock
+						cost = 0.6
+						speed = 6.5
+					}
+					add_province_modifier = {
+						name = z22_harbour_construction_4
+						duration = -1
+					}
+				}
+				else_if = {
+					limit = {
+						has_province_modifier = z22_white_harbour_4
+					}
+					if = {
+						limit = {
+							has_dock_building_trigger = yes
+						}
+						remove_building = dock
+						remove_building = drydock
+					}
+					add_building_construction = {
+						building = dock
+						cost = 0.5
+						speed = 8
+					}
+					add_province_modifier = {
+						name = z22_harbour_construction_5
+						duration = -1
+					}
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+
+	z22_liberate_south = {
+
+		potential = {
+			is_or_was_tag = { tag = Z22 }
+			mission_completed = z22_northern_liberation
+			NOT = {
+				has_country_flag = z22_SA_liberated
+			}
+		}
+
+		allow = {
+			is_or_was_tag = { tag = Z22 }
+			mission_completed = z22_northern_liberation
+			all_known_country = {
+				OR = {
+					NOT = {
+						capital_scope = {
+							continent = south_america
+						}
+					}
+					AND = {
+						is_colonial_nation = no
+						OR = {
+							is_giesadh_or_trade_league_member = yes
+							overlord = {
+								is_giesadh_or_trade_league_member = yes
+							}
+						}
+						has_opinion = {
+							who = ROOT
+							value = 200
+						}
+						trust = {
+							who = ROOT
+							value = 90
+						}
+					}
+				}
+			}
+			2175 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2403 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2738 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2673 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2620 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2520 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			6559 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2333 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2246 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2231 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2659 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2530 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2591 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+			2367 = {
+				trade_share = {
+					country = ROOT
+					share = 65
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = z22_acts_of_deland_for_SA_tt
+			hidden_effect = {
+				remove_country_modifier = z22_north_elfhome_decolonised
+				set_country_flag = z22_SA_liberated
+				every_known_country = {
+					limit = {
+						capital_scope = {
+							continent = south_america
+						}
+					}
+					add_government_reform = z22_acts_of_deland
+				}
+			}
+			add_country_modifier = {
+				name = z22_all_elfhome_decolonised
+				duration = -1
+			}
+			2175 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2403 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2738 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2673 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2620 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2520 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			6559 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2333 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2246 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2231 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2659 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2530 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2591 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+			2367 = {
+				if = {
+					limit = {
+						NOT = {
+							has_trade_modifier = {
+								who = ROOT
+								key = z22_league_aelantir
+							}
+						}
+					}
+					add_trade_modifier = {
+						who = ROOT
+						duration = -1
+						power = 250
+						key = z22_league_aelantir
+					}
+				}
+			}
+		}
+
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+
