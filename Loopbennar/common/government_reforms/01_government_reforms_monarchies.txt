@@ -2861,7 +2861,7 @@ revolutionary_empire_reform = {
 	icon = "rioting_burning_2"
 	allow_normal_conversion = no
 	potential = {
-		has_reform = revolutionary_empire_reform
+		is_revolutionary_monarchy_trigger = yes
 	}
 	legacy_equivalent = revolutionary_empire
 	valid_for_new_country = no
@@ -4949,11 +4949,23 @@ oak_monarchy_reform = {
 	nation_designer_trigger = {
 
 	}
+	conditional = {
+		allow = {
+			has_dlc = "Origins"
+		}
+		allow_cawa = yes
+	}
 	modifiers = {
 		diplomatic_reputation = 1
 		yearly_absolutism = 0.5
 		advisor_cost = 0.1
 	}
+	custom_attributes = {
+		locked_government_type = yes
+		heir = no
+		cyranvar_special_election = yes
+	}
+
 	effect = {
 		hidden_effect = {
 			capital_scope = {
@@ -4964,25 +4976,12 @@ oak_monarchy_reform = {
 			}
 		}
 	}
-	conditional = {
-		allow = { 
-
-				has_dlc = "Origins"
-
-		}
-		allow_cawa = yes
-	}
 	removed_effect = {
 		hidden_effect = {
 			capital_scope = {
 				remove_province_modifier = deepwoods_rangers_modifier
 			}
 		}
-	}
-	custom_attributes = {
-		locked_government_type = yes
-		heir = no
-		cyranvar_special_election = yes
 	}
 }
 
@@ -5270,6 +5269,56 @@ ranger_lordship_2 = {
 	}
 }
 
+autocracy_reform_sf = {
+	icon = "crown"
+	allow_normal_conversion = yes
+	legacy_equivalent = despotic_monarchy
+	valid_for_nation_designer = yes
+	nation_designer_cost = 0
+	modifiers = {
+		unjustified_demands = -0.1
+		harsh_treatment_cost = -0.1
+		global_rebel_suppression_efficiency = 0.1
+	}
+	ai = {
+		factor = 0.5 #generic
+	}
+
+	potential = {
+		tag = I30
+		has_reform = autocracy_reform_sf
+	}
+
+	conditional = {
+		allow = {
+			has_dlc = "Origins"
+		}
+		allow_cawa = yes
+	}
+
+	effect = {
+		hidden_effect = {
+			capital_scope = {
+				add_province_modifier = {
+					name = deepwoods_rangers_modifier
+					duration = -1
+				}
+			}
+		}
+	}
+	removed_effect = {
+		hidden_effect = {
+			capital_scope = {
+				remove_province_modifier = deepwoods_rangers_modifier
+			}
+		}
+	}
+
+	custom_attributes = {
+		locked_government_type = yes
+	}
+}
+
 hobgoblin_stratocracy_reform = {
 	icon = "soldiers_5"
 	allow_normal_conversion = yes
@@ -5552,6 +5601,12 @@ damerian_monarchy = {
 					accepted_culture = rogieran
 					accepted_culture = pashainey
 				}
+			}
+		}
+		NOT = {
+			AND = {
+				is_emperor = yes
+				hre_reform_passed = anbennar_internal_divisions
 			}
 		}
 	}
@@ -6589,12 +6644,8 @@ guwaamud_harem_reform = {
 			has_reform = guwaamud_harem_reform
 		}
 	}
-	trigger = {
-		OR = {
-			tag = Y96
-			tag = Y98
-		}
-	}
+	trigger = { tag = Y96 }
+	has_harem = yes
 	modifiers = {
 		nobles_loyalty_modifier = 0.1
 		global_unrest = -1
@@ -6943,8 +6994,109 @@ konolkhatep_gnolls_sorrow_reform = {
 		disabled_purging_human = yes
 	}
 
+	ai = { factor = 100 }
+}
+
+#tier 1
+F66_eternal_empire = {
+	icon = "all_under_tengri_reform"
+	allow_normal_conversion = no
+	potential = {
+		tag = F66
+		OR = {
+			has_reform = F66_eternal_empire
+			have_had_reform = F66_eternal_empire
+		}
+	}
+	trigger = {
+		is_emperor_of_china = yes
+	}
+
+	valid_for_nation_designer = no
+	lock_level_when_selected = yes
+	heir = no
+	queen = no
+	rulers_can_be_generals = no
+	
+	modifiers = {
+		global_prosperity_growth = 0.25
+		culture_conversion_cost = -0.25
+		diplomatic_upkeep = 2
+	}
+
+	government_abilities = {
+		konolkhatep_mechanic
+	}
+	
+	custom_attributes = {
+		disabled_expelling = yes
+		disabled_purging = yes
+		has_meritocracy = yes
+		konolkhatep_slave_raids = yes
+		locked_government_type = yes
+	}
+
+	ai = { factor = 100 }
+}
+
+#tier 4
+F66_words_of_horutep = {
+	icon = "all_under_tengri_reform"
+	allow_normal_conversion = no
+	potential = {
+		OR = {
+			tag = F66
+			is_subject_of_type_with_overlord = {
+				who = F66
+				type = medasi_subject
+			}
+		}
+		F66 = { mission_completed = konolkhatep_seal_pact }
+	}
+	trigger = {
+		OR = {
+			religion = elikhetist
+			religion = nirakhetist
+		}
+	}
+
+	valid_for_nation_designer = no
+	
+	modifiers = {
+		church_influence_modifier = 0.1
+		church_loyalty_modifier = 0.1 
+	}
+	
+	effect = {
+		custom_tooltip = konolkhatep_horutep_khetist_coexistence
+		hidden_effect = {
+			if = {
+				limit = { religion = elikhetist }
+				every_owned_province = {
+					limit = { religion = nirakhetist }
+					add_province_modifier = { name = konolkhatep_voice_horutep_nirakhetist duration = -1 }
+				}
+			}
+			if = {
+				limit = { religion = nirakhetist }
+				every_owned_province = {
+					limit = { religion = elikhetist }
+					add_province_modifier = { name = konolkhatep_voice_horutep_elikhetist duration = -1 }
+				}
+			}
+		}
+	}
+	removed_effect = {
+		hidden_effect = {
+			every_owned_province = {
+				remove_province_modifier = konolkhatep_voice_horutep_nirakhetist
+				remove_province_modifier = konolkhatep_voice_horutep_elikhetist
+			}
+		}
+	}
 	ai = { factor = 1000 }
 }
+
 
 dakinshi_warlord_reform = {
     icon = "shaman"
@@ -7846,25 +7998,29 @@ imperial_nobility_reform = {
 # 	}
 # }
 
-# ministerialis_promotion_reform = {
-# 	icon = "commander_king_reform"
-# 	allow_normal_conversion = yes
-# 	potential = {
-# 		has_dlc = "Domination"
-# 		OR = {
-# 			tag = HLR
-# 			is_part_of_hre = yes
-# 		}
-# 	}
-# 	modifiers = {
-# 		nobles_privilege_slots = 1
-# 		advisor_cost = -0.1
-# 		monthly_favor_modifier = 0.1
-# 	}
-# 	ai = {
-# 		factor = 1
-# 	}
-# }
+ nobles_of_the_wand_reform = {
+ 	icon = "commander_king_reform"
+ 	allow_normal_conversion = yes
+ 	potential = {
+		hre_reform_passed = anbennar_nobles_of_the_wand
+		has_estate = estate_nobles
+ 		OR = {
+ 			tag = Z01
+			is_part_of_hre = yes
+			is_subject_of = Z01
+ 		}
+ 	}
+ 	modifiers = {
+ 		mages_loyalty_modifier = 0.1
+		mages_influence_modifier = 0.1
+		monarch_lifespan = 0.1
+ 		advisor_cost = -0.1
+ 		monthly_favor_modifier = 0.1
+ 	}
+ 	ai = {
+ 		factor = 1
+ 	}
+ }
 
 #Anbennar
 dwarovar_old_clans_reform = {
@@ -9175,6 +9331,7 @@ fanwang_administration = {
 
 	effect = {
 		custom_tooltip = Y98_fanwang_tt
+		hidden_effect = { country_event = { id = daxugo.2 } }
 	}
 }
 
@@ -11153,7 +11310,7 @@ become_rev_republic_reform = {
 	}
 	
 	trigger = {
-		has_reform = revolutionary_empire_reform
+		is_revolutionary_monarchy_trigger = yes
 		if = {
 			limit = {
 				has_dlc = "Rights of Man"
@@ -11930,7 +12087,7 @@ halessi_hegemon_reform = {
 		tag = Y98
 	}
 	trigger = {
-		mission_completed = Y91_outward_gaze
+		mission_completed = Y98_outward_gaze
 	}
 	modifiers = {
 		max_absolutism_effect = 0.1
@@ -12629,7 +12786,6 @@ argordstun_stubborn_reformists = {
 	icon = "nobleman"
 	allow_normal_conversion = no
 	lock_level_when_selected = yes
-	has_parliament = yes
 	potential = {
 		OR = {
 			tag = H76
@@ -12639,6 +12795,9 @@ argordstun_stubborn_reformists = {
 			}
 		}
 		has_reform = argordstun_stubborn_reformists
+	}
+	custom_attributes = {
+		has_parliament = yes	
 	}
 	modifiers = {
 		all_estate_influence_modifier = -0.05
@@ -12655,7 +12814,6 @@ argordstun_gleaming_council = {
 	icon = "nobleman"
 	allow_normal_conversion = no
 	lock_level_when_selected = yes
-	has_parliament = yes
 	potential = {
 		OR = {
 			tag = H76
@@ -12665,6 +12823,9 @@ argordstun_gleaming_council = {
 			}
 		}
 		has_reform = argordstun_gleaming_council
+	}
+	custom_attributes = {
+		has_parliament = yes	
 	}
 	modifiers = {
 		expand_administration_cost = -0.5
@@ -13256,7 +13417,10 @@ honor_the_senators = {
 	icon = "restoration_of_the_senate_reform"
 	allow_normal_conversion = yes
 	potential = {
-		has_reform = damerian_monarchy
+		OR = {
+			has_reform = damerian_monarchy
+			has_reform = damerian_monarchy_aristo_path
+		}
 	}
 	modifiers = {
 		reform_progress_growth = 0.10
@@ -13405,7 +13569,7 @@ empower_magnate_council = {
 		magnate_council_doubled = yes
 		primacy_of_nobility_harsher = yes
 		disable_noble_land_right = yes
-		burghers_land_right_streghtened = yes
+		burghers_land_right_strengthened = yes
 	}
 	ai = { factor = 1 }
 }
@@ -14040,6 +14204,33 @@ gowon_kingdom = {
 	}
 }
 
+gnoll_medasi_reform = {
+	icon = "feudal_theocracy"
+	allow_normal_conversion = no
+	allow_convert = no
+	potential = {
+		has_reform = gnoll_medasi_reform
+		is_subject_of_type_with_overlord = {
+			who = F66
+			type = medasi_subject
+		}
+	}
+	valid_for_nation_designer = no
+	lock_level_when_selected = yes
+	fixed_rank = 2
+	modifiers = {
+		global_autonomy = -0.01
+		caravan_power = 0.25
+	}
+	
+	custom_attributes = {
+		disabled_purging = yes
+		disabled_expelling = yes
+		locked_government_type = yes
+		maintain_dynasty = yes
+		
+	}
+}
 karakhanbar_black_hearth_council_reform_ch = { #Karakhanbar for Cursed Howl, Monarchy Version
 	icon = "legislative_sejm_reform"
 	allow_normal_conversion = no 
@@ -14129,12 +14320,538 @@ Z88_gerudian_council_reform = {
 	valid_for_nation_designer = no
 
 	modifiers = {
-		diplomatic_annexation_cost = -0.2
+		diplomatic_annexation_cost = -0.1
 	}
 
 	custom_attributes = {
 		disabled_purging = yes
 		disabled_expelling = yes
+		locked_government_type = yes
+		has_parliament = yes
+	}
+}
+
+farranean_united_farrani_court = {
+	icon = "british_monarchy"
+	allow_normal_conversion = no
+	potential = {
+		is_or_was_tag = { tag = B60 }
+		has_country_flag = farranean_government_unlocked
+	}
+	valid_for_nation_designer = yes
+	nation_designer_cost = 15
+	nation_designer_trigger = {
+		has_dlc = "Common Sense"
+	}
+	lock_level_when_selected = yes
+	maintain_dynasty = yes
+	modifiers = {
+		no_stability_loss_on_monarch_death = yes
+		yearly_corruption = -0.2
+		parliament_backing_chance = 0.05
+		max_absolutism = -50
+	}
+	custom_attributes = {
+		locked_government_type = yes
+		disabled_purging = yes
+		disabled_expelling = yes
+	}
+	conditional = {
+		allow = {
+			end_game_tags_blocked = yes
+		}	
+		can_change_primary_culture = no
+	}
+	conditional = {
+		allow = {
+			has_dlc = "Common Sense"
+			NOT = { has_dlc = "Domination" }
+		}
+		has_parliament = yes
+	}
+	conditional = {
+		allow = { 
+			has_dlc = "Domination"
+		}
+		has_parliament = yes
+		custom_attributes = {
+			estates_influenced_parliament = yes
+		}
+	}
+}
+
+#EOA (Emperor)
+imperial_parliament_reform = {
+	icon = "imperial_nobility_reform"
+	allow_normal_conversion = no
+	potential = {
+		OR = {
+			has_dlc = "Domination"
+			has_dlc = "Emperor"
+		}
+		is_emperor = yes
+		hre_reform_passed = anbennar_internal_divisions
+	}
+	modifiers = {
+		administrative_efficiency = 0.025
+		num_of_parliament_issues = 5
+		parliament_effect_duration = -5
+		parliament_backing_chance = -1
+	}
+	effect = {
+		custom_tooltip = eoa_imperial_parliament.tt
+	}
+	conditional = {
+		allow = {
+			has_dlc = "Common Sense"
+			NOT = { has_dlc = "Domination" }
+		}
+		has_parliament = yes
+	}
+	conditional = {
+		allow = { 
+			has_dlc = "Domination"
+		}
+		has_parliament = yes
+		custom_attributes = {
+			estates_influenced_parliament = yes
+		}
+	}
+	#government_abilities = {
+		#anb_imperial_parliament
+	#}
+	ai = {
+		factor = 2
+	}
+}
+
+damerian_monarchy_aristo_path = { #this is damerian monarchy with parliament disabled to if they become emperor they would have no issues taking imperial parliament
+	icon = "damerian_monarchy"
+	allow_normal_conversion = no
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		is_emperor = yes
+		OR = {
+			primary_culture = west_damerian
+			primary_culture = east_damerian
+			primary_culture = rogieran
+			primary_culture = pashainey
+			AND = {
+				primary_culture = half_elf
+				OR = {
+					accepted_culture = west_damerian
+					accepted_culture = east_damerian
+					accepted_culture = rogieran
+					accepted_culture = pashainey
+				}
+			}
+		}
+	}
+	valid_for_nation_designer = yes
+	nation_designer_cost = 15
+	nation_designer_trigger = {
+		has_dlc = "Common Sense"
+	}
+	start_territory_to_estates = 0.3
+	modifiers = {
+		diplomatic_reputation = 1
+		global_unrest = -1
+		max_absolutism = -10
+		nobles_influence_modifier = -0.1
+	}
+}
+
+
+### EOA COURTS for princes
+imperial_yellow_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_yellow_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		improve_relation_modifier = 0.1
+		global_prov_trade_power_modifier = 0.1
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus1.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_orange_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_orange_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		diplomatic_reputation = 1
+		diplomatic_annexation_cost = -0.05
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus2.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_sapphire_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_sapphire_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		defensiveness = 0.1
+	}	
+	effect = {
+		custom_tooltip = add_magic_study_modifier_20_tt
+		update_magic_study_experience_modifier = { value = 20 }
+		custom_tooltip = eoa_court_bonus3.tt
+		custom_tooltip = emperor_no_get
+	}
+	removed_effect = {
+		update_magic_study_experience_modifier = { value = -20 }
+	}
+}
+
+imperial_purple_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_purple_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		infantry_cost = -0.1
+		production_efficiency = 0.05
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus4.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_red_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_red_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		leader_land_shock = 1
+		adventurers_loyalty_modifier = 0.1
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus5.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_blue_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_blue_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		leader_cost = -0.1
+		reasons_to_elect = 20
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus6.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_white_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_white_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		naval_forcelimit_modifier = 0.1
+		global_tax_modifier = 0.1
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus7.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_ruby_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_ruby_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		cavalry_cost = -0.1
+		years_to_integrate_personal_union = -10
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus8.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_rainbow_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_rainbow_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		global_regiment_recruit_speed = -0.1
+		build_cost = -0.05
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus9.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_black_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_black_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		global_spy_defence = 0.2
+		global_trade_power = 0.1
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus10.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_silver_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_silver_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		tolerance_own = 2
+		stability_cost_modifier = -0.1
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus11.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_aquamarine_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_aquamarine_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		shock_damage_received = -0.05
+		naval_morale_damage = 0.1
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus12.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+#imperial_obsidian_court = { #for gerudia, RIP }
+
+imperial_pink_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_pink_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		artillery_cost = -0.1
+		tolerance_heathen = 1
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus15.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_copper_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_copper_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		colony_cost_modifier = -0.25
+		navy_tradition = 0.5
+		papal_influence = 1
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus16.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_gray_court = {
+	icon = "map"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_internal_divisions
+		eoa_gray_court = yes
+		OR = {
+			is_part_of_hre = yes
+			tag = Z01
+			is_subject_of = Z01
+		}
+	}
+	modifiers = {
+		reinforce_speed = 0.1
+		land_maintenance_modifier = -0.05
+	}	
+	effect = {
+		custom_tooltip = eoa_court_bonus17.tt
+		custom_tooltip = emperor_no_get
+	}
+}
+
+imperial_marquis_reform = {
+	icon = "soldiers_7"
+	allow_normal_conversion = yes
+	potential = {
+		hre_reform_passed = anbennar_expand_marquis_rank
+		is_part_of_hre = yes
+		OR = {
+			tag = A48
+			tag = A22
+			AND = {
+				total_development = 80
+				land_forcelimit = 12
+				OR = {
+					any_subject_country = {
+						any_neighbor_province = {
+							is_part_of_hre = no
+						}
+					}
+					any_neighbor_province = {
+						is_part_of_hre = no
+					}
+				}
+			}
+		}
+	}
+	modifiers = {
+		fort_maintenance_modifier = -0.2
+		defensiveness = 0.1
+		manpower_in_own_culture_provinces = 0.15
+	}
+}
+
+blackpowder_commonwealth_monarchy = {
+	lock_level_when_selected = yes
+	icon = "rioting_burning_2"
+	allow_normal_conversion = no
+	potential = {
+		has_reform = blackpowder_commonwealth_monarchy
+	}
+	valid_for_new_country = no
+	uses_revolutionary_zeal = yes
+	revolutionary = yes
+	fixed_rank = 3
+	modifiers = {
+		monthly_splendor = 2
+		global_manpower_modifier = 0.25
+		administrative_efficiency = 0.05
+		max_revolutionary_zeal = 50
+		allowed_rev_guard_fraction = 0.25
+	}
+
+	custom_attributes = {
 		locked_government_type = yes
 		has_parliament = yes
 	}

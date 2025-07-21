@@ -89,6 +89,10 @@ parliamentary_reform = {
 		NOT = { has_reform = isagumze_scaled_lords_reform }
 		NOT = { has_reform = kai_republic }
 		NOT = { tag = J33 }
+		NOT = { has_reform = chaqway_qhatuway }
+		NOT = { AND = { tag = S23 NOT = { has_country_flag = s23_disaster_over } } }
+		NOT = { has_reform = the_mazukxiem } #Brrtekuh
+		NOT = { has_reform = council_of_the_coast }
 	}
 	modifiers = {
 		global_unrest = -1
@@ -133,16 +137,6 @@ parliamentary_reform = {
 		if = {
 			limit = { tag = H78 }
 			NOT = { tag = H78 }
-		}
-		if = {
-			limit = { OR = { tag = Y96 tag = Y98 } }
-			custom_trigger_tooltip = {
-				tooltip = Y91_horde_heritage
-				NOT = {
-					has_country_modifier = Y91_horde_heritage_1
-					has_country_modifier = Y91_horde_heritage_2
-				}
-			}
 		}
 	}
 
@@ -1710,6 +1704,7 @@ separate_clergy_from_state_affairs_reform = {
 		NOT = { has_adventurer_reform = yes } # Anbennar
 		NOT = { has_reform = hobgoblin_stratocracy_reform }
 		NOT = { religion = the_thought }
+		NOT = { has_reform = the_mazukxiem } #Brrtekuh
 		OR = {
 			is_revolutionary = no
 			NOT = { has_dlc = "Emperor" }
@@ -1775,6 +1770,7 @@ conserve_the_religion_reform = {
 	potential = {
 		is_revolutionary = yes
 		has_dlc = "Emperor"
+		NOT = { is_or_was_tag = { tag = B59 } } #Pashaine - Too OP for them
 	}
 	modifiers = {
 		rr_royalists_influence = 0.1
@@ -1841,13 +1837,11 @@ shrine_guardians_reform = {
  		hidden_effect = {
  			every_owned_province = {
 				limit = {
-					province_group = shrine_provinces
-					NOT = {
-						AND = {
-							province_id = 6612
-							NOT = { has_global_flag = begga_canonization }
-						}
+					OR = {
+						province_group = shrine_provinces
+						continent = africa
 					}
+					has_any_nakavy_avo_shrine_in_province_trigger = yes
 				}
 				add_province_modifier = { 
 					name = shrine_guard_garisson
@@ -2322,7 +2316,6 @@ anbennar_T5_generic_bottomless_bags = {
 					has_country_modifier = troll_military
 					has_country_modifier = kobold_military
 					has_country_modifier = gnollish_military
-					
 				}
 			}
 		}
@@ -2333,7 +2326,7 @@ anbennar_T5_generic_bottomless_bags = {
 	modifiers = {
 		reinforce_cost_modifier = -0.15
 		reinforce_speed = 0.15
-		supply_limit_modifier = 0.15
+		global_supply_limit_modifier = 0.15
 	}
 	
 	ai = {
@@ -2407,7 +2400,7 @@ anbennar_T5_generic_windshapers = {
 	modifiers = {
 		navy_tradition_decay = -0.01
 		naval_morale = 0.05
-		ship_trade_power_modifier = 0.15
+		global_ship_trade_power = 0.15
 	}
 	
 	ai = {
@@ -5208,6 +5201,14 @@ free_trade_reform = {
 			free_improve_inland_routes = yes
 		}
 	}
+	effect = {
+		if = {
+			limit = {
+				mission_completed = z22_prosperitys_champion
+			}
+			custom_tooltip = z22_increased_mana_from_institution_embrace
+		}
+	}
 	ai = {
 		factor = 1
 	}
@@ -6279,8 +6280,8 @@ the_theory_of_gnomeostasis = {
 		}
 	}
 	modifiers = {
+		core_creation = -0.05
 		tec_technomancy_influence = 0.1
-		ae_impact = -0.1
 		diplomatic_upkeep = 1
 		years_of_nationalism = -5
 	}
@@ -6532,6 +6533,24 @@ khugra_araizary_bond = {
 	}
 	ai = { 
 		factor = 1 
+	}
+}
+
+saqraxat_pyre_promise = {
+	icon = "lake_emissary_liberty"
+
+	potential = {
+		has_country_flag = L04_a_simple_bargain_reform
+	}
+
+	modifiers = {
+		raze_power_gain = -0.75
+		tolerance_own = -2
+	}
+	raze_province = yes
+	custom_attributes = {
+		disabled_purging_gnollish = yes
+		disabled_expelling_gnollish = yes
 	}
 }
 
@@ -6852,5 +6871,161 @@ council_of_fools = {
 		idea_cost = -0.10
 		prestige = 0.5
 		build_time = -0.1
+	}
+}
+
+chaqway_qhatuway = { #Chaqway
+	icon = "government_for_people_reform"
+	allow_normal_conversion = no
+	potential = {
+		has_reform = chaqway_qhatuway
+	}
+	lock_level_when_selected = yes
+	valid_for_new_country = yes
+	custom_attributes = {
+		has_parliament = yes
+		disables_estate_nobles = yes
+	}
+	valid_for_nation_designer = no
+	modifiers = {
+		burghers_loyalty_modifier = 0.1
+		diplomatic_upkeep = 2
+		yearly_corruption = -0.1
+	}
+}
+
+blackpowder_resistance = {
+	icon = "support_state_reform"
+	allow_normal_conversion = no
+	lock_level_when_selected = yes
+	valid_for_new_country = yes
+	potential = {
+		has_country_flag = enabled_blackpowder_resistance
+	}
+	uses_revolutionary_zeal = yes
+	custom_attributes = {
+		has_parliament = yes
+	}
+	valid_for_nation_designer = yes
+	modifiers = {
+		allowed_rev_guard_fraction = 0.25
+		can_recruit_revolutionary_guards = yes
+		max_revolutionary_zeal = 50 
+		may_recruit_female_generals = yes
+	}
+}
+
+puppeting_the_rectorate = {
+	icon = "church_and_state_reform"
+	allow_normal_conversion = no
+	potential = {
+		OR = {
+			has_reform = puppeting_the_rectorate
+			have_had_reform = puppeting_the_rectorate
+		}
+	}
+	modifiers = {
+		global_missionary_strength = 0.02
+		curia_powers_cost = -0.25
+		papal_influence_from_cardinals = 0.25
+	}
+	custom_attributes = {
+		enacting_bull_1_stab_50_adm = yes
+	}
+}
+
+economic_heart_of_cannor = {
+	icon = "merchant_ship"
+	allow_normal_conversion = no
+	potential = {
+		OR = {
+			has_reform = economic_heart_of_cannor
+			have_had_reform = economic_heart_of_cannor
+		}
+	}
+	modifiers = {
+		production_efficiency = 0.15
+		burghers_loyalty_modifier = 0.1
+		burghers_influence_modifier = 0.1
+	}
+	custom_attributes = {
+		expand_infrastructure_goods_rep_zeal = yes
+	}
+}
+
+council_of_the_coast = {
+	icon = "dutch_republic"
+	allow_normal_conversion = no
+	potential = {
+		OR = {
+			has_reform = council_of_the_coast
+			have_had_reform = council_of_the_coast
+		}
+	}
+	custom_attributes = {
+		has_parliament = yes
+		locked_government_type = yes
+	}
+	modifiers = {
+		burghers_loyalty_modifier = 0.1
+		burghers_influence_modifier = 0.1
+		max_possible_parliament_seats = 1
+	}
+}
+
+z22_acts_of_deland = {
+	icon = "paper_with_seal"
+	allow_normal_conversion = no 
+	potential = {
+		has_global_flag = z22_enabled_acts_of_deland
+		OR = {
+			Z22 = {
+				mission_completed = z22_northern_liberation
+			}
+			B98 = {
+				mission_completed = z22_northern_liberation
+			}
+			is_or_was_tag = { tag = Z22 }
+			AND = {
+				is_colonial_nation = yes
+				overlord = {
+					is_or_was_tag = { tag = Z22 }
+				}
+			}
+			has_reform = z22_acts_of_deland
+		}
+	}
+
+	lock_level_when_selected = yes
+
+	trigger = {
+
+	}
+
+	modifiers = {
+		tolerance_heathen = 1
+		tolerance_heretic = 1
+		num_accepted_cultures = 2
+		# female_advisor_chance = 0.25 # getting this as an elf made all your advisors women essentially
+		culture_conversion_cost = 1000
+	}
+
+	custom_attributes = {
+		z22_acts_of_deland_attribute = yes 
+		disabled_expelling = yes
+		disabled_purging = yes	#I think this is better for performance than if I go edit the can_purge trigger
+	}
+
+	effect = {
+		z22_check_deland_act_opinion_modifiers = yes
+		hidden_effect = {
+			set_global_flag = z22_acts_human
+			set_global_flag = z22_acts_half_elf
+			set_global_flag = z22_acts_ruinborn
+		}
+	}
+
+	removed_effect = {
+		z22_check_deland_act_opinion_modifiers = yes
 	}
 }
