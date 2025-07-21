@@ -1778,9 +1778,11 @@ brambleskinner_ourdi_dip_cost = {
 	calc_true_if = {
 		ourdia_region = {
 			type = all
-			OR = {
-				owned_by = ROOT
-				owned_by = U11
+			owner = {
+				OR = {
+					tag = ROOT
+					is_or_was_tag = { tag = U11 }
+				}
 			}
 			NOT = { is_core = ROOT }
 			culture = ourdi
@@ -1822,9 +1824,9 @@ brambleskinner_damage_control_trigger = {
 }
 
 #Stalbor
-has_upgraded_watch_modifer = {
+has_upgraded_watch_modifier = {
 	custom_trigger_tooltip = {
-		tooltip = has_upgraded_watch_modifer_tt
+		tooltip = has_upgraded_watch_modifier_tt
 		OR = {
 			has_province_modifier = arturos_mil_branch
 			has_province_modifier = arturos_adm_branch
@@ -2356,4 +2358,376 @@ yassa_if_merchants = {
             }
         }
     }
+}
+
+#Pashaine
+pashaine_clue_check = {
+	custom_trigger_tooltip = {
+		tooltip = pashaine_has_$amount$_clues
+		check_variable = {
+			which = pashaine_clue
+			value = $amount$
+		}
+	}
+}
+
+pashaine_unity_prov_check = { #Should only highlight a province when you don't own one of the cultures or it doesnt meet the requirements
+	culture = $culture$
+	superregion = western_cannor_superregion
+	OR = {
+		AND = {
+			NOT = { owned_by = ROOT }
+			ROOT = {
+				NOT = {
+					any_owned_province = {
+						culture = $culture$
+					}
+				}
+			}
+		}
+		AND = {
+			owned_by = ROOT
+			OR = {
+				NOT = { num_of_times_improved_by_owner = 5 }
+				NOT = { religion = ravelian }
+				NOT = { has_seat_in_parliament = yes }
+			}
+			ROOT = {
+				NOT = {
+					any_owned_province = {
+						culture = $culture$
+						num_of_times_improved_by_owner = 5
+						religion = ravelian
+						has_seat_in_parliament = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+pashaine_unity_culture_trigger = {
+	if = {
+		limit = {
+			western_cannor_superregion = {
+				culture = $culture$
+			}
+		}
+		any_owned_province = {
+			culture = $culture$
+			num_of_times_improved_by_owner = 5
+			religion = ravelian
+			has_seat_in_parliament = yes
+		}
+	}
+}
+
+#Vaengheim
+vaengheim_has_hunts = {
+	OR = {
+		has_province_modifier = Z88_horrible_hag 
+		has_province_modifier = Z88_woeful_werebear
+		has_province_modifier = Z88_nacker_hunt
+		has_province_modifier = Z88_roc_hunt
+		has_province_modifier = Z88_one_armed_skald
+		has_province_modifier = Z88_white_wolf
+		has_province_modifier = Z88_terrible_troll
+		has_province_modifier = Z88_ficklesome_fey
+		has_province_modifier = Z88_disturbed_balance
+		has_province_modifier = Z88_entering_equilibrium
+		has_province_modifier = Z88_equilibriums_end
+		has_province_modifier = Z88_mountain_depths
+		has_province_modifier = Z88_precursor_ruin
+	}
+}
+#Verne
+verne_can_send_expedition = {
+	custom_trigger_tooltip = {
+		tooltip = verne_send_expe_generic2_tt
+		OR = {
+			AND = {
+				country_or_non_sovereign_subject_holds = ROOT
+				has_manpower_building_trigger = yes
+			}
+			num_of_units_in_province = {
+				amount = 5
+				who = ROOT
+				type = infantry
+			}
+		}
+	}
+}
+khatalashya_traxis_asked_all = {
+	AND = {
+		has_country_flag = 333_thraxis_1_flag
+		has_country_flag = 333_thraxis_2_flag
+		has_country_flag = 333_thraxis_3_flag
+		has_country_flag = 333_thraxis_4_flag
+		has_country_flag = 333_thraxis_5_flag
+		#has_country_flag = 333_thraxis_6_flag
+		has_country_flag = 333_thraxis_7_flag
+		#has_country_flag = 333_thraxis_8_flag
+		has_country_flag = 333_thraxis_9_flag
+		#has_country_flag = 333_thraxis_10_flag
+		has_country_flag = 333_thraxis_11_flag
+		has_country_flag = 333_thraxis_12_flag
+		#has_country_flag = 333_thraxis_13_flag
+	}
+}
+khatalashya_can_colonize_this_planet = {
+	if = {
+		limit = { #Romutha
+			province_id = 5921
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_romutha_2 }
+			S81 = {
+				treasury = 500
+			}
+			has_colonist = yes
+			num_of_units_in_province = {
+				who = ROOT
+				amount = 10
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_romutha_2 } }
+			S81 = {
+				adm_power = 50
+				dip_power = 50
+				mil_power = 50
+				treasury = 250
+			}
+		}
+	}
+	if = {
+		limit = { #Agradent
+			province_id = 5763
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_agradent_2 }
+			S81 = {
+				num_of_owned_provinces_with = {
+					value = 5
+					base_production = 8
+					base_manpower = 8
+					trade_goods = grain
+				}
+			}
+			num_of_units_in_province = {
+				who = ROOT
+				amount = 10
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_agradent_2 } }
+			S81 = {
+				any_owned_province = {
+					base_production = 15
+					trade_goods = precursor_relics
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Zulkanez
+			province_id = 5863
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_zulkanez_2 }
+			S81 = {
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 3
+					OR = {
+						trade_goods = wool
+						trade_goods = fur
+					}
+					base_production = 10
+					has_production_building_trigger = yes
+				}
+			}
+			S81 = {
+				has_estate_privilege = estate_nobility_shanyza_mutation
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_zulkanez_2 } }
+			has_great_project = {
+				type = kuiika_gamyi
+				tier = 3
+			}
+			base_manpower = 20
+		}
+	}
+	if = {
+		limit = { #Shagatan
+			province_id = 5585
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_shagatan_2 }
+			S81 = {
+				num_of_marines = 30
+				num_of_owned_provinces_with = {
+					value = 5
+					has_building = wharf
+				}
+			}
+			5586 = {
+				transports_in_province = 30
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_shagatan_2 } }
+			base_manpower = 12
+			S81 = {
+				OR = {
+					have_cast_aid_construction = yes
+					estate_loyalty = {
+						estate = estate_artificers
+						loyalty = 60
+					}
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Teinglios
+			province_id = 5971
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_teinglios_2 }
+			S81 = {
+				OR = {
+					any_owned_province = {
+						has_building = furnace
+					}
+					treasury = 10000 
+				}
+			}
+			5971 = {
+				has_great_project = {
+					type = khaga_yatsa
+					tier = 3
+				}
+			}
+			S81 = {
+				has_estate_privilege = estate_burghers_gasabi_mutation
+			}
+			has_supply_depot = ROOT
+			num_of_units_in_province = {
+				who = ROOT
+				amount = 10
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_teinglios_2 } }
+			province_has_current_tech_fort_trigger = yes
+			has_manufactory_trigger = yes
+			if = {
+				limit = { has_dlc = Leviathan }
+				num_of_times_expanded_infrastructure = 2
+			}
+			else = {
+				development = 30
+			}
+			S81 = {
+				has_estate_privilege = estate_burghers_gasabi_mutation
+			}
+		}
+	}
+	if = {
+		limit = { #Zangea
+			province_id = 6032
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_zangea_2 }
+			transports_in_province = 100
+			infantry_in_province = 100
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_zangea_2 } }
+			OR = {
+				has_great_project = {
+					type = arskitse
+					tier = 3
+				}
+				AND = {
+					transports_in_province = 50
+					infantry_in_province = 50
+					S81 = {
+						num_of_owned_provinces_with = {
+							value = 5
+							trade_goods = naval_supplies
+							base_production = 8
+						}
+					}
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Atamumba
+			province_id = 6685
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_atamumba_2 }
+			custom_trigger_tooltip = {
+				tooltip = khatalashya_passed_disaster_hive
+				S81 = { NOT = { has_country_flag = the_hivemind_can_start } }
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_atamumba_2 } }
+			OR = {
+				has_building = fort_18th
+				AND = {
+					province_has_current_tech_fort_trigger = yes
+					has_building = ramparts
+				}
+			}
+			S81 = {
+				development_in_provinces = {
+					value = 600
+					region = shadow_swamp_region
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Rakh
+			province_id = 5650
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_rakh_2 }
+			development = 50
+			num_of_units_in_province = {
+				who = ROOT
+				amount = 10
+			}
+			custom_trigger_tooltip = {
+				tooltip = khatalashya_passed_disaster_hive
+				S81 = { NOT = { has_country_flag = the_hivemind_can_start } }
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_rakh_2 } }
+			S81 = {
+				adm_power = 50
+				dip_power = 50
+				mil_power = 50
+				treasury = 1000
+			}
+		}
+	}
+	if = {
+		limit = { #SPACE
+			province_id = 5894
+		}
+		has_building = state_house
+		local_autonomy = 10
+		OR = {
+			has_building = training_fields
+			base_manpower = 15
+		}
+	}
 }

@@ -401,7 +401,7 @@ pasiragha_effect_define_philosopher = {
 	}
 }
 
-#recieves school as input
+#receives school as input
 pasiragha_scholar_system = {
 	if = {
 		limit = {
@@ -561,3 +561,72 @@ pasiragha_add_philosophical_lean = {
 	}
 }
 
+accretive_path_gain_chi = {
+	if = {
+		limit = {
+			religion = accretive_path
+			OR = {
+				has_church_aspect = accretive_path_$aspect$_unimproved
+				has_church_aspect = accretive_path_$aspect$_improved
+			}
+		}
+		add_church_power = $amount$
+		hidden_effect = { change_variable = { accretive_path_$category$_chi = $amount$ } }
+	}
+}### Facestealer System
+add_facestealer_history = {
+	add_permanent_province_modifier = { name = facestealer_$size$ duration = -1 }
+	set_province_flag = province_has_facestealer
+}
+
+add_facestealer_effect = {
+	custom_tooltip = add_facestealer_tt
+	hidden_effect = {
+		if = {
+			limit = { has_province_modifier = facestealer_1 }
+			remove_province_modifier = facestealer_1
+			add_permanent_province_modifier = { name = facestealer_2 duration = -1 }
+		}
+		else_if = {
+			limit = { province_has_no_facestealer_trigger = yes }
+			add_permanent_province_modifier = { name = facestealer_1 duration = -1 }
+			set_province_flag = province_has_facestealer
+		}
+	}
+}
+
+subtract_facestealer_effect = {
+	custom_tooltip = subtract_facestealer_tt
+	hidden_effect = {
+		if = {
+			limit = { has_province_modifier = facestealer_1 }
+			remove_province_modifier = facestealer_1
+			clr_province_flag = province_has_facestealer
+		}
+		else_if = {
+			limit = { has_province_modifier = facestealer_2 }
+			remove_province_modifier = facestealer_2
+			add_permanent_province_modifier = { name = facestealer_1 duration = -1 }
+		}
+	}
+}
+
+shuvuush_break_realms_alias_effect = { #This goes well over the 512 character limit
+	custom_tooltip = shuvuush_break_realms_effect_tt
+	set_country_flag = shuvuush_break_realms_early
+	if = {
+		limit = { owns = 4925 } #Jiantsiang, capital of Jiantsiang
+		set_country_flag = generated_advisor_from_4925
+		generate_very_specific_scaling_advisor_effect = { type = treasurer location = 4925 cost_multiplier = 0.25 culture = serene_harimari religion = high_philosophy }
+	}
+	if = {
+		limit = { owns = 5353 } #Gunseong, capital of Danggun
+		set_country_flag = generated_advisor_from_5353
+		generate_very_specific_scaling_advisor_effect = { type = diplomat location = 5353 cost_multiplier = 0.25 culture = wonju religion = neokttareum }
+	}
+	if = {
+		limit = { owns = 6811 } #Saigahundhalan, capital of Oinukhudi
+		set_country_flag = generated_advisor_from_6811
+		generate_very_specific_scaling_advisor_effect = { type = recruitmaster location = 6811 cost_multiplier = 0.25 culture = oinukhudi religion = un_khudai }
+	}
+}

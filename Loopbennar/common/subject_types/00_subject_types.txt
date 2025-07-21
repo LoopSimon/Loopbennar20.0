@@ -76,6 +76,7 @@ dao = {} #Anbennar
 maghargma_special_subject = {} #Anbennar
 sponsored_adventurer_subject = {} #Anbennar
 vizier_vassal = {}	#Anb
+space_colony = {} #khatalashya
 
 default = {
 	# Graphics:
@@ -106,7 +107,7 @@ default = {
 	can_release_and_play = no							# "Release Colony" in SubjectView
 	uses_tariffs = no
 	dynamically_created_during_history = no				# If the country is automatically created. ( Makes for special checks during history )
-	eats_overlords_colonies = no						# Wheter subject assumes control of overlord's colonies in same colonial region.
+	eats_overlords_colonies = no						# Whether subject assumes control of overlord's colonies in same colonial region.
 	has_colonial_parent = no							# Regulates most rules that should hold only for colonies
 	overlord_can_attack = yes
 	overlord_can_be_subject = no
@@ -974,6 +975,15 @@ personal_union = {
 			}
 		}
 	} 
+	
+	modifier_overlord = {
+		modifier = konolkhatep_free_gnoll_pu
+		trigger = {
+			overlord = {
+				tag = F66
+			}
+		}
+	}
 
 	overlord_opinion_modifier = in_union
 	subject_opinion_modifier = in_union
@@ -1099,6 +1109,12 @@ colony = {
 		modifier = new_world_exploitation_modifier_thought
 		trigger = {
 			overlord = { has_government_attribute = extra_trade_goods_for_colonial_subjects_thought }
+		}
+	}
+	modifier_subject = {
+		modifier = konolkhatep_seneshal_ruined_lands_colony
+		trigger = {
+			overlord = { has_country_flag = horutep_title_flag_seneschal_lands }
 		}
 	}
 	# modifier_subject = {
@@ -1342,6 +1358,27 @@ tributary_state = {
 				overlord = { ai = yes }
 				total_development = 50
 			}
+		}
+	}
+	
+	modifier_overlord = {
+		modifier = konolkhatep_satrapies_slaves_250
+		trigger = {
+			overlord = {
+				tag = F66
+				has_reform = F66_eternal_empire
+			}
+			total_development = 250
+		}
+	}
+	modifier_overlord = {
+		modifier = konolkhatep_satrapies_slaves_500
+		trigger = {
+			overlord = {
+				tag = F66
+				has_reform = F66_eternal_empire
+			}
+			total_development = 500
 		}
 	}
 }
@@ -2989,7 +3026,7 @@ oni_governorship = {
 	can_release_and_play = no							# "Release Colony" in SubjectView
 	uses_tariffs = no
 	dynamically_created_during_history = no				# If the country is automatically created. ( Makes for special checks during history )
-	eats_overlords_colonies = no						# Wheter subject assumes control of overlord's colonies in same colonial region.
+	eats_overlords_colonies = no						# Whether subject assumes control of overlord's colonies in same colonial region.
 	has_colonial_parent = no							# Regulates most rules that should hold only for colonies
 	overlord_can_attack = yes
 	overlord_can_be_subject = no
@@ -4410,6 +4447,7 @@ medasi_subject = {
 		modifier = medasi_subject_modifier
 	}
 	modifier_overlord = {
+		trigger = { NOT = { overlord = { mission_completed = konolkhatep_expand_medasi } } }
 		modifier = medasi_overlord_modifier
 	}
 	# modifier_subject = {
@@ -4431,6 +4469,23 @@ medasi_subject = {
 	modifier_overlord = {
 		trigger = { overlord = { empire_of_china_reform_passed = medasi_trade_reform } }
 		modifier = medasi_trade_reform_overlord_modifier
+	}
+	modifier_overlord = {
+		modifier = konolkhatep_free_gnoll_medasi
+		trigger = {
+			overlord = {
+				tag = F66
+				mission_completed = konolkhatep_expand_medasi
+			}
+		}
+	} 
+	modifier_subject = {
+		trigger = { overlord = { empire_of_china_reform_passed = medasi_disciples_horutep_reform } }
+		modifier = medasi_disciples_horutep_reform_modifier
+	}
+	modifier_subject = {
+		trigger = { overlord = { empire_of_china_reform_passed = medasi_enlightening_halann_reform } }
+		modifier = medasi_enlightening_halann_reform_modifier
 	}
 }
 
@@ -4611,10 +4666,6 @@ nekhei = {
 	support_loyalists = yes
 
 	can_fight = {
-		independent_nations = yes
-		other_overlord = all
-	}
-	can_rival = {
 		independent_nations = yes
 		other_overlord = all
 	}
@@ -5093,4 +5144,92 @@ sponsored_adventurer_subject = {
 	modifier_subject = {
 	  modifier = sponsored_adventurer_pwsc
 	}
+}
+space_colony = {
+	copy_from = default
+
+	# Graphics:
+	sprite = GFX_icon_space_colony
+	diplomacy_overlord_sprite = GFX_diplomacy_lead_space_colony
+	diplomacy_subject_sprite = GFX_diplomacy_weak_space_colony
+
+	# Properties:
+	uses_tariffs = yes
+	overlord_can_attack = no
+	overlord_can_be_subject = yes
+	takes_diplo_slot = no
+	can_release_in_peace = no
+	dynamically_created_during_history = yes
+	can_transfer_in_peace = no
+	press_sailors = yes
+	transfer_trade_power = yes
+	extend_trading_range = yes
+	can_fight_independence_war = no
+	overlord_can_fabricate_for = no
+	can_use_claims = no
+
+	liberty_desire_development_ratio = 0.1
+	opinion_on_subject_integration = 0
+	max_government_rank = 2
+
+	relative_power_class = 0
+	should_quit_wars_on_activation = yes
+
+
+	can_send_missionary_to_subject = yes	
+	count = colony
+
+	forcelimit_to_overlord = 0.3
+	manpower_to_overlord = 0.3
+	naval_forcelimit_to_overlord = 0.01
+	sailors_to_overlord = 0.01
+
+	#Anbennar
+	overlord_protects_external = yes
+	can_fight = {
+	}
+	can_rival = {
+		same_overlord = space_colony
+	}
+	can_ally = {
+		same_overlord = space_colony
+	}
+
+	# Subject Interactions:
+	embargo_rivals = yes
+	replace_governor = yes
+	support_loyalists = yes
+	subsidize_armies = yes
+	send_officers = yes
+	enforce_religion = yes
+	enforce_culture = yes
+	takeondebt = yes
+	increase_tariffs = yes
+	decrease_tariffs = yes
+	grant_province = no
+	grant_core_claim = no
+	block_settlement_growth = no
+	allow_settlement_growth = no
+	bestow_gifts = yes
+	
+	# Modifiers:
+
+	modifier_subject = {
+		modifier = space_colony_subject
+	}
+	modifier_subject = {
+		modifier = 333_space_tchoken
+		trigger = {
+			has_global_flag = space_colony_space_tch
+		}
+	}
+	modifier_subject = {
+		modifier = 333_space_tchoken_v2
+		trigger = {
+			has_global_flag = space_colony_space_tch_2
+		}
+	}
+
+	overlord_opinion_modifier = colonial_relation
+	subject_opinion_modifier = colonial_relation
 }

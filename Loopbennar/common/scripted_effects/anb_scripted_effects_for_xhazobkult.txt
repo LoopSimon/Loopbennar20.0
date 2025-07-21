@@ -151,6 +151,7 @@ become_xhazobine_effects = {
 		country_event = { id = magic_ruler.100 } #make them a mage general
 		change_country_color = { color = { 181 230 29 } }
 		set_global_flag = xhaz_active
+		force_ai_convert = yes #prevent the AI from changing religion while they are the Xhaz
 	}
 	if = {
 		limit = { NOT = { has_country_modifier = zokka_invocation_ultima } }
@@ -558,10 +559,38 @@ light_the_pyres_effect_for_variable = {
 			OR = {
 				NOT = { religion = xhazobkult }
 				ROOT = { has_estate_privilege = estate_mages_moment_of_felflame }
+				ROOT = {
+					owns = 6104
+					culture_group = gnollish
+					religion = xhazobkult
+					6104 = { has_great_project = { type = ger_bexamurr tier = 1 } }
+				}
 			}
-			base_tax = 2
-			base_production = 2
-			base_manpower = 2
+			OR = {
+				ROOT = { has_estate_privilege = estate_mages_moment_of_felflame }
+				NOT = {
+					ROOT = {
+						owns = 6104
+						culture_group = gnollish
+						religion = xhazobkult
+						6104 = { has_great_project = { type = ger_bexamurr tier = 1 } }
+					}
+				}
+				NOT = { culture_group = gnollish }
+			}
+			OR = {
+				AND = {
+					base_tax = 2
+					base_production = 2
+					base_manpower = 2
+				}
+				ROOT = {
+					owns = 6104
+					culture_group = gnollish
+					religion = xhazobkult
+					6104 = { has_great_project = { type = ger_bexamurr tier = 1 } }
+				}
+			}
 		}
 		if = {
 			limit = { ROOT = { has_estate_privilege = estate_mages_moment_of_felflame } }
@@ -580,7 +609,6 @@ light_the_pyres_effect_for_variable = {
 					religion = xhazobkult
 					6104 = { has_great_project = { type = ger_bexamurr tier = 1 } }
 				}
-				NOT = { culture_group = gnollish }
 			}
 			if = {
 				limit = { owner = { has_estate_privilege = estate_mages_moment_of_felflame } }
@@ -589,7 +617,8 @@ light_the_pyres_effect_for_variable = {
 					duration = 1825
 				}
 			}
-			else = {
+			else_if = {
+				limit = { NOT = { religion = xhazobkult } }
 				add_province_modifier = {
 					name = ger_bexamurr_blight_of_talazdvoger
 					duration = 1825
@@ -600,6 +629,7 @@ light_the_pyres_effect_for_variable = {
 					NOT = { has_construction = culture }
 					NOT = { owner = { has_estate_privilege = estate_mages_moment_of_felflame } }
 					has_large_gnollish_minority_trigger = yes
+					NOT = { development = 12 }
 				}
 				add_culture_construction = {
 					speed = 0.66
@@ -609,6 +639,7 @@ light_the_pyres_effect_for_variable = {
 			else = {
 				add_gnollish_minority_size_effect = yes
 			}
+			remove_province_modifier = religious_zeal_at_conv
 		}
 		set_province_flag = xhazobkult_already_lighted_the_pyre
 	}

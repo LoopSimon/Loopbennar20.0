@@ -512,6 +512,23 @@ update_artifice_points = {
 					value = 0.25
 				}
 			}
+
+			#EoA - Regulated Artificery reduces this by 25% for full artifice guys
+			if = {
+				limit = {
+					hre_reform_passed = anbennar_regulate_artificery
+					has_country_flag = magic_artificery_artificery_only
+					OR = {
+						tag = Z01
+						is_subject_of = Z01
+						is_part_of_hre = yes
+					}
+				}
+				subtract_variable = {
+					which = ArtificePointsMultiplier
+					value = 0.25
+				}
+			}
 			
 			# Floor at 0
 			if = {
@@ -641,6 +658,16 @@ update_research_speed = {
 			set_variable = {
 				which = ResearchSpeed
 				value = 10
+			}
+		}
+
+		if = { #increase base research time
+			limit = {
+				has_country_flag = increased_artifice_research_5
+			}
+			change_variable = {
+				which = ResearchSpeed
+				value = 5
 			}
 		}
 
@@ -1885,9 +1912,44 @@ artifice_research_select_innovation_options_effect = {
 						}
 					}
 					primary_culture = pearlsedger
-
 				}
 				set_country_flag = research_artifice_invention_pearl_cultivators
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_superfast_elevators
+							has_country_flag = unlocked_artifice_invention_superfast_elevators
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					culture_group = dwarven
+				}
+				set_country_flag = research_artifice_invention_superfast_elevators
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_sustaining_arks
+							has_country_flag = unlocked_artifice_invention_sustaining_arks
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					mission_completed = z22_commercialised_magic
+				}
+				set_country_flag = research_artifice_invention_sustaining_arks
 				subtract_variable = {
 					which = artificeResearchOptionsTier1
 					value = 1
@@ -2352,6 +2414,7 @@ artifice_research_select_innovation_options_effect = {
 							has_country_flag = unlocked_artifice_invention_prototype_tanks
 							has_country_flag = artifice_researching_economic
 							has_country_flag = artifice_researching_society
+							has_country_flag = blocked_artifice_invention_prototype_tanks
 						}
 					}
 				}
@@ -2554,6 +2617,24 @@ artifice_research_select_innovation_options_effect = {
 					culture_group = harpy
 				}
 				set_country_flag = research_artifice_invention_artificial_egg_surrogates
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_innate_windshaping
+							has_country_flag = unlocked_artifice_invention_innate_windshaping
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					mission_completed = z22_commercialised_magic
+				}
+				set_country_flag = research_artifice_invention_innate_windshaping
 				subtract_variable = {
 					which = artificeResearchOptionsTier2
 					value = 1
@@ -2810,6 +2891,24 @@ artifice_research_select_innovation_options_effect = {
 					has_country_modifier = dwarven_military
 				}
 				set_country_flag = research_artifice_invention_platinum_warsuit
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_icestorm_cannons
+							has_country_flag = unlocked_artifice_invention_icestorm_cannons
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+					mission_completed = z22_commercialised_magic
+				}
+				set_country_flag = research_artifice_invention_icestorm_cannons
 				subtract_variable = {
 					which = artificeResearchOptionsTier2
 					value = 1
@@ -4245,9 +4344,30 @@ artifice_unlock_random_invention_effect = {
 							}
 						}
 						primary_culture = pearlsedger
-	
 					}
 					set_country_flag = unlocked_artifice_invention_pearl_cultivators
+				}
+				1 = {
+					trigger = {
+						NOT = {
+							OR = {
+								has_country_flag = research_artifice_invention_superfast_elevators
+								has_country_flag = unlocked_artifice_invention_superfast_elevators
+							}
+						}
+						culture_group = dwarven
+					}
+					set_country_flag = unlocked_artifice_invention_superfast_elevators
+				}
+				1 = {
+					trigger = {
+						NOT = {
+							has_country_flag = research_artifice_invention_sustaining_arks
+							has_country_flag = unlocked_artifice_invention_sustaining_arks
+						}
+						mission_completed = z22_commercialised_magic
+					}
+					set_country_flag = unlocked_artifice_invention_sustaining_arks
 				}
 				#Military
 				1 = {
@@ -4677,6 +4797,16 @@ artifice_unlock_random_invention_effect = {
 					}
 					set_country_flag = unlocked_artifice_invention_artificial_egg_surrogates
 				}
+				1 = {
+					trigger = {
+						NOT = {
+							has_country_flag = research_artifice_invention_innate_windshaping
+							has_country_flag = unlocked_artifice_invention_innate_windshaping
+						}
+						mission_completed = z22_commercialised_magic
+					}
+					set_country_flag = unlocked_artifice_invention_innate_windshaping
+				}
 				#Military
 				1 = {
 					trigger = {
@@ -4836,6 +4966,28 @@ artifice_unlock_random_invention_effect = {
 						culture_group = ynnic_ruinborn_elf
 					}
 					set_country_flag = unlocked_artifice_invention_veykoda_rune_protections
+				}
+				1 = {
+					trigger = {
+						NOT = {
+							OR = {
+								has_country_flag = research_artifice_invention_platinum_warsuit
+								has_country_flag = unlocked_artifice_invention_platinum_warsuit
+							}
+						}
+						has_country_modifier = dwarven_military
+					}
+					set_country_flag = unlocked_artifice_invention_platinum_warsuit
+				}
+				1 = {
+					trigger = {
+						NOT = {
+							has_country_flag = research_artifice_invention_icestorm_cannons
+							has_country_flag = unlocked_artifice_invention_icestorm_cannons
+						}
+						mission_completed = z22_commercialised_magic
+					}
+					set_country_flag = unlocked_artifice_invention_icestorm_cannons
 				}
 				#Society
 				1 = {
@@ -5217,9 +5369,7 @@ disable_all_artifice_inventions = {
 	custom_tooltip = disable_all_artifice_inventions_tt
 	hidden_effect = {
 		# tier 1 economic
-		remove_estate_privilege = artifice_invention_artificer_exo_arms
 		remove_estate_privilege = artifice_invention_spell_in_a_box
-		remove_estate_privilege = artifice_invention_commercial_sky_galleons
 		remove_estate_privilege = artifice_invention_fine_print_obfuscator
 		remove_estate_privilege = artifice_invention_automated_translator
 		remove_estate_privilege = artifice_invention_wine_ageifier
@@ -5228,6 +5378,7 @@ disable_all_artifice_inventions = {
 		remove_estate_privilege = artifice_invention_market_mender
 		remove_estate_privilege = artifice_invention_plane_of_water_teleporter
 		remove_estate_privilege = artifice_invention_self_cleaning_parchment
+		remove_estate_privilege = artifice_invention_superfast_elevators
 		# tier 1 society
 		remove_estate_privilege = artifice_invention_viewcatcher
 		remove_estate_privilege = artifice_invention_sending_stones
@@ -5254,6 +5405,8 @@ disable_all_artifice_inventions = {
 		remove_estate_privilege = artifice_invention_scrap_mechs
 		remove_estate_privilege = artifice_invention_sunbeam_armaments
 		remove_estate_privilege = artifice_invention_power_fists
+		remove_estate_privilege = artifice_invention_commercial_sky_galleons
+		remove_estate_privilege = artifice_invention_artificer_exo_arms
 		# tier 2 economic
 		remove_estate_privilege = artifice_invention_growth_beans
 		remove_estate_privilege = artifice_invention_vendorless_stall
@@ -5344,5 +5497,21 @@ block_artifice_research = {
 block_artifice_invention = {
 	hidden_effect = { 
 		set_country_flag = block_$invention$
+	}
+}
+
+unlock_artificery = {
+	custom_tooltip = supporting_artificers_tt
+	hidden_effect = {
+		if = {
+            limit = {
+                NOT = { has_country_flag = artificery_unlocked }
+                NOT = { has_country_flag = artificery_choice }
+            }
+            country_event = {
+                id = magic_artificery_setup.1
+            }    
+            set_country_flag = artificery_choice
+        }
 	}
 }

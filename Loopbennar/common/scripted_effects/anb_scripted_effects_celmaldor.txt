@@ -1,0 +1,1415 @@
+
+z22_giesadh_check_effect = {
+	if = {	#check if Giesadh are available
+		limit = {
+			has_global_flag = z22_can_have_giesadh
+		}
+
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						alliance_with = Z22
+						transfers_trade_power_to = Z22
+					}
+					AND = {
+						alliance_with = B98
+						transfers_trade_power_to = B98
+					}
+				}
+				NOT = {
+					has_country_flag = z22_tag_is_giesadh
+					has_country_flag = z22_is_permanent_giesadh
+				}
+				OR = {
+					has_global_flag = z22_giesadh_restriction_unlimited
+					AND = {
+						has_global_flag = z22_giesadh_restriction_NA_2
+						OR = {
+							capital_scope = {
+								OR = {
+									continent = north_america
+									superregion = gerudia_superregion
+								}
+							}
+							tag = A24
+						}
+					}
+					AND = {
+						has_global_flag = z22_giesadh_restriction_NA_1
+						OR = {
+							capital_scope = {
+								superregion = gerudia_superregion
+							}
+							tag = A24 #westmoors
+							has_country_flag = z22_former_celmaldor_colonial_tag
+						}
+					}
+					AND = {
+						has_global_flag = z22_giesadh_restriction_gerudia
+						OR = {
+							capital_scope = {
+								superregion = gerudia_superregion
+							}
+							tag = A24 #westmoors
+						}
+					}
+					AND = {
+						has_global_flag = z22_giesadh_restriction_alenic_reach
+						OR = {
+							capital_scope = {
+								region = alenic_reach_region
+							}
+							tag = A24 #westmoors
+						}
+					}
+					AND = {
+						has_global_flag = z22_giesadh_restriction_bayvic
+						tag = Z28
+					}
+				}
+			}
+			z22_make_giesadh_effect = yes
+		}
+		else_if = {
+			limit = {
+				has_country_flag = z22_tag_is_giesadh
+				NOT = {
+					has_country_flag = z22_is_permanent_giesadh
+					AND = {
+						alliance_with = Z22
+						transfers_trade_power_to = Z22
+					}
+					AND = {
+						alliance_with = B98
+						transfers_trade_power_to = B98
+					}
+				}
+			}
+			z22_remove_giesadh_effect = yes
+		}
+	}
+}
+
+
+z22_giesadh_number_add_effect = {
+	hidden_effect = {
+		change_variable = {
+			which = GiesadhNum
+			value = 1
+		}
+	}
+}
+
+z22_giesadh_number_subtract_effect = {
+	hidden_effect = {
+		subtract_variable = {
+			which = GiesadhNum
+			value = 1
+		}
+	}
+}
+
+z22_make_giesadh_effect = {
+	custom_tooltip = z22_become_giesadh_ally_tt
+
+	if = {
+		limit = {
+			NOT = {
+				has_country_flag = z22_tag_is_giesadh
+			}
+		}
+		set_country_flag = z22_tag_is_giesadh
+	}
+
+	add_country_modifier = {
+		name = z22_is_giesadh
+		duration = -1
+	}
+
+	z22_whaling_guild_check_effect = yes
+
+	if = {
+		limit = {
+			exists = B98
+			B98 = {
+				was_tag = Z22
+			}
+		}
+		B98 = {
+			every_ally = {
+				limit = {
+					is_giesadh_or_trade_league_member = yes
+					NOT = {
+						tag = Z22
+						was_tag = Z22
+					}
+				}
+				add_opinion = {
+					who = PREV
+					modifier = z22_part_of_trade_league
+				}
+				reverse_add_opinion = {
+					who = PREV
+					modifier = z22_part_of_trade_league
+				}
+			}
+			z22_giesadh_number_add_effect = yes
+			add_opinion = {
+				who = PREV
+				modifier = z22_part_of_trade_league
+			}
+			reverse_add_opinion = {
+				who = PREV
+				modifier = z22_part_of_trade_league
+			}
+		}
+	}
+	else = {
+		Z22 = {
+			every_ally = {
+				limit = {
+					is_giesadh_or_trade_league_member = yes
+					NOT = {
+						tag = Z22
+						was_tag = Z22
+					}
+				}
+				add_opinion = {
+					who = PREV
+					modifier = z22_part_of_trade_league
+				}
+				reverse_add_opinion = {
+					who = PREV
+					modifier = z22_part_of_trade_league
+				}
+			}
+			z22_giesadh_number_add_effect = yes
+			add_opinion = {
+				who = PREV
+				modifier = z22_part_of_trade_league
+			}
+			reverse_add_opinion = {
+				who = PREV
+				modifier = z22_part_of_trade_league
+			}
+		}
+	}
+}
+
+z22_remove_giesadh_effect = {
+
+	remove_country_modifier = z22_is_giesadh
+
+	every_country = {
+		limit = {
+			is_giesadh_or_trade_league_member = yes
+			NOT = {
+				tag = Z22
+				was_tag = Z22
+			}
+		}
+		remove_opinion = {
+			who = ROOT
+			modifier = z22_part_of_trade_league
+		}
+		reverse_remove_opinion = {
+			who = ROOT
+			modifier = z22_part_of_trade_league
+		}
+	}
+
+	if = {
+		limit = {
+			exists = B98
+			B98 = {
+				was_tag = Z22
+			}
+		}
+		B98 = {
+			remove_opinion = {
+				who = ROOT
+				modifier = z22_part_of_trade_league
+			}
+			reverse_remove_opinion = {
+				who = ROOT
+				modifier = z22_part_of_trade_league
+			}
+			z22_giesadh_number_subtract_effect = yes
+		}
+	}
+	else = {
+		Z22 = {
+			remove_opinion = {
+				who = ROOT
+				modifier = z22_part_of_trade_league
+			}
+			reverse_remove_opinion = {
+				who = ROOT
+				modifier = z22_part_of_trade_league
+			}
+			z22_giesadh_number_subtract_effect = yes
+		}
+	}
+
+	clr_country_flag = z22_tag_is_giesadh
+
+	z22_whaling_guild_check_effect = yes	#check to see if a tag stops being ur Giesadh
+}
+
+z22_add_race_to_deland_acts_effect = {
+
+	hidden_effect = {
+		set_global_flag = z22_deland_act_$race$
+		z22_increase_num_of_races_in_acts_effect = yes
+	}
+	
+	every_country = {
+		limit = {
+			culture_is_$race$ = yes
+		}
+		add_opinion = {
+			who = ROOT
+			modifier = z22_accepted_in_acts_of_deland
+		}
+	}
+
+	if = {
+		limit = {
+			any_owned_province = {
+				culture_is_$race$ = yes
+			}
+		}
+		random_owned_province = {
+			limit = {
+				culture_is_$race$ = yes
+			}
+			ROOT = {
+				add_accepted_culture = PREV
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			any_subject_country = {
+				any_owned_province = {
+					culture_is_$race$ = yes
+				}
+			}
+		}
+		random_subject_country = {
+			limit = {
+				any_owned_province = {
+					culture_is_$race$ = yes
+				}
+			}
+			random_owned_province = {
+				limit = {
+					culture_is_$race$ = yes
+				}
+				ROOT = {
+					add_accepted_culture = PREV
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			any_ally = {
+				any_owned_province = {
+					culture_is_$race$ = yes
+				}
+			}
+		}
+		random_ally = {
+			limit = {
+				any_owned_province = {
+					culture_is_$race$ = yes
+				}
+			}
+			random_owned_province = {
+				limit = {
+					culture_is_$race$ = yes
+				}
+				ROOT = {
+					add_accepted_culture = PREV
+				}
+			}
+		}
+	}
+	else_if = {
+		limit = {
+			any_known_country = {
+				is_in_trade_league_with = ROOT
+				any_owned_province = {
+					culture_is_$race$ = yes
+				}
+			}
+		}
+		random_known_country = {
+			limit = {
+				is_in_trade_league_with = ROOT
+				any_owned_province = {
+					culture_is_$race$ = yes
+				}
+			}
+			random_owned_province = {
+				limit = {
+					culture_is_$race$ = yes
+				}
+				ROOT = {
+					add_accepted_culture = PREV
+				}
+			}
+		}
+	}
+	else = {
+		random_known_country = {
+			limit = {
+				any_owned_province = {
+					culture_is_$race$ = yes
+				}
+			}
+			random_owned_province = {
+				limit = {
+					culture_is_$race$ = yes
+				}
+				ROOT = {
+					add_accepted_culture = PREV
+				}
+			}
+		}
+	}
+
+}
+
+z22_increase_num_of_races_in_acts_effect = {
+
+	if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_15
+		}
+		add_dip_power = 1
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_14
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_15
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_14
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_13
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_14
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_13
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_12
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_13
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_12
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_11
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_12
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_11
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_10
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_11
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_10
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_9
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_10
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_9
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_8
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_9
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_8
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_7
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_8
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_7
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_6
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_7
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_6
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_5
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_6 
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_5
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_4
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_5
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_4
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_3
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_4
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_3
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_2
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_3
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_2
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = z22_num_of_races_in_acts_1
+		}
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_2
+			duration = -1
+			hidden = yes
+		}
+		remove_country_modifier = z22_num_of_races_in_acts_1
+		change_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+	else = {
+		add_country_modifier = {
+			name = z22_num_of_races_in_acts_1
+			duration = -1
+			hidden = yes
+		}
+		set_variable = {
+			which = z22_acts_of_deland_races_count
+			value = 1
+		}
+	}
+}
+
+z22_check_deland_act_opinion_modifiers_race = {
+
+	if = {
+		limit = {
+			z22_acts_$race$ = yes
+		}
+		every_country = {
+			limit = {
+				NOT = {
+					has_opinion_modifier = {
+						who = ROOT 
+						modifier = z22_accepted_in_acts_of_deland
+					}
+				}
+				culture_is_$race$ = yes
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = z22_accepted_in_acts_of_deland
+			}
+		}
+	}
+	else = {
+		every_country = {
+			limit = {
+				culture_is_$race$ = yes
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = z22_accepted_in_acts_of_deland
+				}
+			}
+			remove_opinion = {
+				who = ROOT
+				modifier = z22_accepted_in_acts_of_deland
+			}
+		}
+	}
+}
+
+z22_check_deland_act_opinion_modifiers = {
+
+	if = {
+		limit = {
+			has_government_attribute = z22_acts_of_deland_attribute
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = human
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = half_elven
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = half_orcish
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = ruinborn
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = kobold
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = gnomish
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = harpy
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = orcish
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = troll
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = goblin
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = gnollish
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = halfling
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = harimari
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = lizardfolk
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = hobgoblin
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = centaur
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = dwarven
+		}
+
+		z22_check_deland_act_opinion_modifiers_race = {
+			race = ogre
+		}
+	}
+	else = {
+		every_country = {
+			limit = {
+				has_opinion_modifier = {
+					who = ROOT
+					modifier = z22_accepted_in_acts_of_deland
+				}
+			}
+			remove_opinion = {
+				who = ROOT
+				modifier = z22_accepted_in_acts_of_deland
+			}
+		}
+	}
+}
+
+#merc levies modifier
+z22_check_merc_modifier = {
+
+	if = {
+		limit = {
+			num_of_mercenaries = 1
+		}
+		if = {
+			limit = {
+				has_ruler_flag = ruler_is_icewind
+			}
+			remove_country_modifier = z22_frozentide_mercs
+			remove_country_modifier = z22_whitespear_mercs
+			add_country_modifier = {
+				name = z22_icewind_mercs
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				has_ruler_flag = ruler_is_whitespear
+			}
+			remove_country_modifier = z22_frozentide_mercs
+			remove_country_modifier = z22_icewind_mercs
+			add_country_modifier = {
+				name = z22_whitespear_mercs
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				has_ruler_flag = ruler_is_frozentide
+			}
+			remove_country_modifier = z22_icewind_mercs
+			remove_country_modifier = z22_whitespear_mercs
+			add_country_modifier = {
+				name = z22_frozentide_mercs
+				duration = -1
+			}
+		}
+		else = {
+			remove_country_modifier = z22_frozentide_mercs
+			remove_country_modifier = z22_icewind_mercs
+			remove_country_modifier = z22_whitespear_mercs
+		}
+	}
+	else = {
+		remove_country_modifier = z22_frozentide_mercs
+		remove_country_modifier = z22_icewind_mercs
+		remove_country_modifier = z22_whitespear_mercs
+	}
+}
+
+estate_action_PURCHASE_MILITARY_FACILITY_ACTION = {
+
+	if = {
+		limit = {
+			monthly_income = 9
+		}
+		add_treasury = -300 
+	}
+	else = {
+		add_years_of_income = -3
+	}
+
+	add_estate_influence_modifier = {
+		estate = estate_nobles
+		desc = EST_VAL_PURCHASE_MILITARY_FACILITY
+		influence = -10
+		duration = 3650
+	}
+
+	if = {
+		limit = {
+			OR = {
+				has_ruler_flag = ruler_is_frozentide
+				has_ruler_flag = ruler_is_icewind
+				has_ruler_flag = ruler_is_whitespear
+			}
+		}
+		if = {
+			limit = {
+				has_ruler_flag = ruler_is_frozentide
+			}
+			add_faction_influence = {
+				faction = frozentide_clan
+				influence = -10
+			}
+		}
+		if = {
+			limit = {
+				has_ruler_flag = ruler_is_icewind
+			}
+			add_faction_influence = {
+				faction = icewind_clan
+				influence = -10
+			}
+		}
+		if = {
+			limit = {
+				has_ruler_flag = ruler_is_whitespear
+			}
+			add_faction_influence = {
+				faction = whitespear_clan
+				influence = -10
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = {
+				faction_in_power = icewind_clan
+			}
+			add_faction_influence = {
+				faction = icewind_clan
+				influence = -10 
+			}
+		}
+		if = {
+			limit = {
+				faction_in_power = whitespear_clan
+			}
+			add_faction_influence = {
+				faction = whitespear_clan
+				influence = -10 
+			}
+		}
+		if = {
+			limit = {
+				faction_in_power = frozentide_clan
+			}
+			add_faction_influence = {
+				faction = frozentide_clan
+				influence = -10 
+			}
+		}
+	}
+
+	capital_scope = {
+		add_unit_construction = {
+			type = infantry
+			amount = 5
+			cost = 0
+			speed = 0.5
+		}
+	}
+
+	add_army_professionalism = 0.02
+
+}
+
+z22_whaling_guild_check_effect = {
+
+	if = {
+		limit = {
+			has_global_flag = z22_whitespear_whaling_activated_flag
+		}
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						has_country_flag = z22_tag_is_giesadh
+						any_ally = {
+							OR = {
+								tag = Z22
+								was_tag = Z22
+							}
+							has_estate_privilege = z22_whitespear_whaling_privilege
+						}
+					}
+					overlord = {
+						OR = {
+							tag = Z22
+							was_tag = Z22
+						}
+						has_estate_privilege = z22_whitespear_whaling_privilege
+					}
+					AND = {
+						any_known_country = {
+							OR = {
+								tag = Z22
+								was_tag = Z22
+							}
+							has_estate_privilege = z22_whitespear_whaling_privilege
+							is_in_trade_league_with = PREV
+						}
+					}
+					AND = {
+						OR = {
+							tag = Z22
+							was_tag = Z22
+						}
+						has_estate_privilege = z22_whitespear_whaling_privilege
+					}
+				}
+			}
+			
+			every_owned_province = {
+				limit = {
+					has_port = yes
+					OR = {
+						trade_goods = fish
+						trade_goods = naval_supplies
+						trade_goods = ivory
+					}
+					any_neighbor_province = {
+						OR = {
+							region = broken_sea_region
+							region = north_aelantir_coast_region
+							region = north_uelos_lament_ocean_region
+							region = northern_thaw_region
+							region = western_broken_sea_region
+						}
+					}
+				}
+				add_permanent_province_modifier = {
+					name = z22_whitespear_whaling_guild
+					duration = -1
+				}
+			}
+		}
+		else = {
+			every_owned_province = {
+				remove_province_modifier = z22_whitespear_whaling_guild
+			}
+		}
+	}
+	else = {
+		every_owned_province = {
+			remove_province_modifier = z22_whitespear_whaling_guild
+		}
+	}
+
+}
+
+
+z22_prince_elect_set_random_character = {
+
+	if = {
+		limit = {
+			has_reform = z22_skaldol_treaty_of_faiths
+		}
+		random_owned_province = {
+			limit = {
+				has_owner_accepted_culture = yes
+			}
+			save_event_target_as = z22_candidate_origin_province
+		}
+	}
+	else = {
+		random_owned_province = {
+			limit = {
+				has_owner_accepted_culture = yes
+				religion = ROOT
+			}
+			save_event_target_as = z22_candidate_origin_province
+		}
+	}
+
+	random_list = {
+		1 = {
+			set_country_flag = z22_mil_candidate
+		}
+		1 = {
+			set_country_flag = z22_dip_candidate
+		}
+		1 = {
+			set_country_flag = z22_adm_candidate
+		}
+	}
+
+}
+
+z22_prince_elect_improved_set_random_character_1 = {
+	random_owned_province = {
+		save_event_target_as = z22_candidate_1_origin
+	}
+}
+
+z22_prince_elect_improved_set_random_character_2 = {
+	random_owned_province = {
+		save_event_target_as = z22_candidate_2_origin
+	}
+}
+
+z22_prince_elect_improved_set_random_character_3 = {
+	random_owned_province = {
+		save_event_target_as = z22_candidate_3_origin
+	}
+}
+
+z22_change_to_random_culture_effect = {
+
+	random = {
+		chance = 33
+		owner = {
+			if = {
+				limit = {
+					is_or_was_tag = { tag = Z22 } 
+				}
+				random_owned_province = {
+					limit = {
+						has_owner_accepted_culture = yes
+					}
+					ROOT = {
+						change_culture = PREV
+						change_religion = PREV
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					is_colonial_nation = yes
+					overlord = {
+						is_or_was_tag = { tag = Z22 }
+					}
+				}
+				overlord = {
+					random_owned_province = {
+						limit = {
+							has_owner_accepted_culture = yes
+						}
+						ROOT = {
+							change_culture = PREV
+							change_religion = PREV
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+z22_gerudian_frontier_change_culture_effect = {
+	random = {
+		chance = 32
+		owner = {
+			random_owned_province = {
+				ROOT = {
+					change_culture = PREV
+					change_religion = PREV
+				}
+			}
+		}
+	}
+}
+
+z22_give_colony_to_local_ally_effect = {
+
+	owner = {
+		if = {
+			limit = {
+				any_known_country = {
+					has_country_flag = z22_former_celmaldor_colonial_tag
+					capital_scope = {
+						region = ROOT
+					}
+				}
+			}
+			random_known_country = {
+				limit = {
+					has_country_flag = z22_former_celmaldor_colonial_tag
+					capital_scope = {
+						region = ROOT
+					}
+				}
+				ROOT = {
+					cede_province = PREV
+				}
+			}
+		}
+	}
+}
+
+z22_free_colony_and_make_giesadh_effect = {
+	overlord = {
+		PREV = {
+			set_country_flag = z22_former_celmaldor_colonial_tag
+			set_country_flag = z22_is_permanent_giesadh
+			grant_independence = yes
+			create_alliance = PREV
+			add_historical_friend_mutual = { tag = PREV }
+			add_trust = {
+				who = PREV
+				value = 25
+			}
+			z22_make_giesadh_effect = yes
+		}
+	}
+}
+
+z22_white_harbour_build_check = {
+
+	if = {
+		limit = {
+			province_id = 696
+			owner = {
+				is_or_was_tag = { tag = Z22 }
+			}
+		}
+
+		if = {
+			limit = {
+				has_province_modifier = z22_harbour_construction_1
+			}
+			add_permanent_province_modifier = {
+				name = z22_white_harbour_1
+				duration = -1
+			}
+			remove_province_modifier = z22_harbour_construction_1
+		}
+		else_if = {
+			limit = {
+				has_province_modifier = z22_harbour_construction_2
+			}
+			remove_province_modifier = z22_white_harbour_1
+			add_permanent_province_modifier = {
+				name = z22_white_harbour_2
+				duration = -1
+			}
+			remove_province_modifier = z22_harbour_construction_2
+		}
+		else_if = {
+			limit = {
+				has_province_modifier = z22_harbour_construction_3
+			}
+			remove_province_modifier = z22_white_harbour_2
+			add_permanent_province_modifier = {
+				name = z22_white_harbour_3
+				duration = -1
+			}
+			remove_province_modifier = z22_harbour_construction_3
+		}
+		else_if = {
+			limit = {
+				has_province_modifier = z22_harbour_construction_4
+			}
+			remove_province_modifier = z22_white_harbour_3
+			add_permanent_province_modifier = {
+				name = z22_white_harbour_4
+				duration = -1
+			}
+			remove_province_modifier = z22_harbour_construction_4
+		}
+		else_if = {
+			limit = {
+				has_province_modifier = z22_harbour_construction_5
+			}
+			remove_province_modifier = z22_white_harbour_4
+			add_permanent_province_modifier = {
+				name = z22_white_harbour_5
+				duration = -1
+			}
+			remove_province_modifier = z22_harbour_construction_5
+		}
+
+	}
+}
+
+z22_niche_mil_effects_check = {
+
+	if = {
+		limit = { has_country_modifier = z22_elves_men }
+		remove_country_modifier = z22_elves_men
+
+		if = {
+			limit = { has_country_modifier = human_military }
+			add_country_modifier = {
+				name = z22_men_elves
+				duration = -1
+			}
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = z22_men_elves }
+		remove_country_modifier = z22_men_elves
+
+		if = {
+			limit = { has_country_modifier = elven_military }
+			add_country_modifier = {
+				name = z22_elves_men
+				duration = -1
+			}
+		}
+	}
+
+}
+
+z22_define_acting_clan = {
+
+	hidden_effect = {
+		random_list = {
+			1 = {
+				set_country_flag = z22_icewind_events
+			}
+			1 = {
+				set_country_flag = z22_whitespear_events
+			}
+			1 = {
+				set_country_flag = z22_frozentide_events
+			}
+		}
+	}
+}
+
+z22_define_second_acting_clan = {
+
+	hidden_effect = {
+		random_list = {
+			1 = {
+				trigger = {
+					NOT = {
+						has_country_flag = z22_icewind_events
+					}
+				}
+				set_country_flag = z22_icewind_events2
+			}
+			1 = {
+				trigger = {
+					NOT = {
+						has_country_flag = z22_whitespear_events
+					}
+				}
+				set_country_flag = z22_whitespear_events2
+			}
+			1 = {
+				trigger = {
+					NOT = {
+						has_country_flag = z22_frozentide_events
+					}
+				}
+				set_country_flag = z22_frozentide_events2
+			}
+		}
+	}
+}
+
+z22_give_clan_influence = {
+	if = {
+		limit = {
+			has_country_flag = z22_icewind_events
+		}
+		add_faction_influence = {
+			faction = icewind_clan
+			influence = 10
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = z22_whitespear_events
+		}
+		add_faction_influence = {
+			faction = whitespear_clan
+			influence = 10
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = z22_frozentide_events
+		}
+		add_faction_influence = {
+			faction = frozentide_clan
+			influence = 10
+		}
+	}
+}
+
+z22_take_clan_influence = {
+	if = {
+		limit = {
+			has_country_flag = z22_icewind_events
+		}
+		add_faction_influence = {
+			faction = icewind_clan
+			influence = -10
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = z22_whitespear_events
+		}
+		add_faction_influence = {
+			faction = whitespear_clan
+			influence = -10
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = z22_frozentide_events
+		}
+		add_faction_influence = {
+			faction = frozentide_clan
+			influence = -10
+		}
+	}
+}
+
+z22_give_clan_influence2 = {
+	if = {
+		limit = {
+			has_country_flag = z22_icewind_events2
+		}
+		add_faction_influence = {
+			faction = icewind_clan
+			influence = 10
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = z22_whitespear_events2
+		}
+		add_faction_influence = {
+			faction = whitespear_clan
+			influence = 10
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = z22_frozentide_events2
+		}
+		add_faction_influence = {
+			faction = frozentide_clan
+			influence = 10
+		}
+	}
+}
+
+z22_take_clan_influence2 = {
+	if = {
+		limit = {
+			has_country_flag = z22_icewind_events2
+		}
+		add_faction_influence = {
+			faction = icewind_clan
+			influence = -10
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = z22_whitespear_events2
+		}
+		add_faction_influence = {
+			faction = whitespear_clan
+			influence = -10
+		}
+	}
+	else_if = {
+		limit = {
+			has_country_flag = z22_frozentide_events2
+		}
+		add_faction_influence = {
+			faction = frozentide_clan
+			influence = -10
+		}
+	}
+}
+
+z22_clr_event_flags = {
+	clr_country_flag = z22_icewind_events
+	clr_country_flag = z22_frozentide_events
+	clr_country_flag = z22_whitespear_events
+	clr_country_flag = z22_icewind_events2
+	clr_country_flag = z22_frozentide_events2
+	clr_country_flag = z22_whitespear_events2
+}

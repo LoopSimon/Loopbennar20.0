@@ -425,40 +425,31 @@ vampire_led_pretender_revolt = {
 	}
 }
 
-#This must be done for all new vampires to ensure their age is tracked correctly
-ruler_become_vampire = {
+ruler_become_vampire = { #this effect turns your current ruler into a vampire
 	hidden_effect = {
 		save_ruler_stats = yes
-		save_ruler_dynasty = yes
 		save_persistent_ruler_personalities = yes
+		save_ruler_dynasty = yes
 		
-		#Reset the timer on how long a vampire has ruled
+		#Setting a country flag that already exists resets how long you've had it for
 		if = {
-			limit = { OR = { has_country_flag = new_vampire NOT = { has_country_flag = vampire_ruler } } }
-			clr_country_flag = new_vampire
-			ruler_new_vampire = yes
+			limit = { NOT = { has_country_flag = ruled_by_vampire } }
+			set_country_flag = ruled_by_vampire #Keeps vampires immortal, defines ruler_is_vampire
 		}
-		set_ruler_flag = is_a_vampire
+		set_ruler_flag = is_a_vampire #Just a convenient flag
+		set_ruler_flag = long_lived_ruler #Vampires are long-lived
+		if = {
+			limit = { NOT = { has_estate_privilege = estate_vampires_law_open_rule } }
+			set_country_flag = hidden_ruler_vampire
+		}
 		if = {
 			limit = { is_female = yes }
-			clr_country_flag = vampire_ruler_male
 			set_country_flag = vampire_ruler_female
-		}
-		else = {
-			clr_country_flag = vampire_ruler_female
-			set_country_flag = vampire_ruler_male
 		}
 		if = {
 			limit = { ruler_has_mage_personality = yes }
 			set_country_flag = mage_vampire
 		}
-		else = {
-			clr_country_flag = mage_vampire
-		}
-	}
-	if = {
-		limit = { has_country_flag = mage_vampire }
-		force_add_ruler_personality = { personality = mage_personality }
 	}
 	tooltip = {
 		kill_ruler = yes
@@ -467,6 +458,7 @@ ruler_become_vampire = {
 		name = vampire_ruler
 		duration = -1
 	}
+
 	remove_country_modifier = ruler_studying_magic 
 	clr_ruler_flag = ruler_studying_abjuration 
 	clr_ruler_flag = ruler_studying_conjuration 
@@ -478,76 +470,33 @@ ruler_become_vampire = {
 	clr_ruler_flag = ruler_studying_transmutation  
 }
 
-#Should be used for resetting the "age" of a vampire (ie how long they have been ruling without aging), so the game does not see successive vampires as a single one and the "real" age of a vampire can be tracked, even if they revive
-ruler_new_vampire = {
-	initialize_vampire = yes
-	reset_vampire_age = yes
+reset_vampire_age = { #When vampires fake their death, or an heir takes over, etc.
 	hidden_effect = {
-		#Don't want to count the Vampire Points from Previous ruler vampires
-		set_variable = {
+		clr_country_flag = ruled_by_vampire
+		set_country_flag = ruled_by_vampire #We use this flag to track age
+
+		set_variable = { #Don't want to count the Vampire Points from previous ruler vampires
 			which = suspicionPoints
 			value = 0
 		}
 	}
 }
 
-initialize_vampire = {
-	# set up flags for the game to treat this ruler as a vampire
-	# but don't reset timers etc
-	set_ruler_flag = is_a_vampire
-	add_ruler_modifier = {
-		name = vampire_ruler
-		duration = -1
-	}
-	set_country_flag = vampire_ruler
-	set_country_flag = vampire_ruler_has_coffin
-	if = {
-		limit = { has_estate_privilege = estate_vampires_law_open_rule }
-		set_country_flag = exposed_vampire_ruler
-	}
-	else = {
-		set_country_flag = hidden_ruler_vampire
-	}
-	if = {
-		limit = { is_female = yes }
-		clr_country_flag = vampire_ruler_male
-		set_country_flag = vampire_ruler_female
-	}
-	else = {
-		clr_country_flag = vampire_ruler_female
-		set_country_flag = vampire_ruler_male
-	}
-	if = {
-		limit = { ruler_has_mage_personality = yes }
-		set_country_flag = mage_vampire
-	}
-	else = {
-		clr_country_flag = mage_vampire
-	}
-}
-
-reset_vampire_age = {
-	hidden_effect = {
-		clr_country_flag = vampire_ruler
-		set_country_flag = vampire_ruler
-		clr_country_flag = vampire_ruler_has_coffin
-		set_country_flag = vampire_ruler_has_coffin
-	}
-}
-
-clear_ruler_vampire_flags = {
-	clr_country_flag = vampire_ruler
-	clr_country_flag = vampire_ruler_has_coffin
+remove_vampire_immortality = { #Also clears other flags, but that's the main use
+	clr_country_flag = ruled_by_vampire
 	clr_country_flag = vampire_ruler_female
-	clr_country_flag = vampire_ruler_male
 	clr_country_flag = hidden_ruler_vampire
-	clr_country_flag = exposed_vampire_ruler
-	clr_country_flag = vampire_heir
+	clr_country_flag = no_vampire_sire
 	clr_country_flag = mage_vampire
 	clr_country_flag = vampire_hunter_1
 	clr_country_flag = vampire_hunter_2
 	clr_country_flag = vampire_hunter_3
 	ruler_clear_saved_spell_schools = yes
+}
+
+clear_vampire_heir = {
+	clr_country_flag = vampire_heir
+	clr_country_flag = has_exiled_vampire_heir
 }
 
 advance_hunter_hunt = {
@@ -580,7 +529,7 @@ end_hunter_hunt = {
 }
 
 kill_vampire_ruler = {
-	clear_ruler_vampire_flags = yes
+	remove_vampire_immortality = yes
 	custom_tooltip = vampire_ruler_die_permanent
 	hidden_effect = { kill_ruler = yes }
 	remove_country_modifier = J84_taychendi_shadow_war

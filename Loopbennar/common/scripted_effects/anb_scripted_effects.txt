@@ -1733,6 +1733,7 @@ clear_artificers_organization_effect = {
 		remove_estate_privilege = estate_artificers_organization_sun_elf
 		remove_estate_privilege = estate_artificers_organization_feiten_shuimu_cadre
 		remove_estate_privilege = estate_artificers_organization_vazhatun_enhanced_astronomy
+		remove_estate_privilege = estate_artificers_organization_strict_state_supervision #Pashaine
 	}
 }
 
@@ -2267,6 +2268,27 @@ destroy_province_permanently = {
 		cede_province = ---
 		add_permanent_province_modifier = { name = cant_colonize duration = -1 }
 		add_colonysize = -1000
+	}
+}
+
+decrease_monstrous_50 = {
+	if = {
+		limit = { has_country_flag = removing_monstrous has_country_modifier = monstrous_nation }
+		custom_tooltip = decrease_monstrous_10_tooltip
+		hidden_effect = { subtract_variable = { monstrousPoints = 50 } }
+		if = {
+			limit = {
+				OR = {
+					has_government_attribute = forced_evolution_reform_effect
+					has_estate_privilege = estate_monstrous_tribes_gozlamoir_system
+				}
+			}
+			hidden_effect = { subtract_variable = { monstrousPoints = 10 } }
+		}
+		hidden_effect = {
+			country_event = { id = monstrous.3 }
+			country_event = { id = monstrous.7 }
+		}
 	}
 }
 
@@ -4194,41 +4216,28 @@ revival_stat_loss = {
 	}
 }
 
-save_ruler_dynasty = {
 	hidden_effect = {
-		if = {
-			limit = { has_heir = yes }
-			exile_heir_as = temp_exile_@ROOT
-			set_country_flag = had_heir_exiled
-		}
-		define_heir = {
+		define_exiled_ruler = {
+			exiled_as = dynastic_interregnum_@ROOT
+			name = "Interregnum"
 			dynasty = ROOT
-			age = 16
-			adm = 6
-			dip = 6
-			mil = 6
-		}
-		exile_ruler_as = { name = temp_exile_ruler_@ROOT }
-		add_stability = 1
-		define_heir = {
-			dynasty = ROOT
-			age = 16
-			adm = 0
-			dip = 0
-			mil = 0
-		}
-		exile_ruler_as = { name = dynastic_heir_@ROOT }
-		add_stability = 1
-		set_ruler = temp_exile_ruler_@ROOT
-		if = {
-			limit = { has_country_flag = had_heir_exiled }
-			set_heir = temp_exile_@ROOT
-			clr_country_flag = had_heir_exiled
-		}
-		else = {
-			remove_heir = {}
+			age = 30
+			max_random_adm = 0
+			max_random_dip = 0
+			max_random_mil = 0
 		}
 	}
+}
+
+restore_saved_dynasty = { #Fire after you performed save_ruler_dynasty at some point in the past
+	hidden_effect = {
+		set_ruler = dynastic_interregnum_@ROOT
+		if = {
+			limit = { NOT = { has_ruler = "Interregnum" } } #In case you tag-swapped
+			define_ruler = { age = 30 name = "Interregnum" dynasty = ROOT max_random_adm  = 0 max_random_dip  = 0 max_random_mil  = 0 hide_skills = yes }
+		}
+	}
+	save_ruler_dynasty = yes #generate another exiled interregnum
 }
 
 add_legitimacy_or_monarch_power = {
@@ -4499,6 +4508,48 @@ add_mercantilism_excess_to_diplo_power_effect = {
 		}
 	}
 }
+
+add_mercantilism_excess_to_50_dip = {
+	tooltip = { add_mercantilism = $VAL$ }
+	custom_tooltip = add_mercantilism_excess_to_diplo_power_effect_tt
+	hidden_effect = {
+		set_variable = {
+			which = left_to_convert
+			value = $VAL$
+		}
+		while = {
+			limit = {
+				check_variable = {
+					which = left_to_convert
+					value = 1
+				}
+			}
+			if = {
+				limit = { mercantilism = 100 }
+				add_dip_power = 50
+			}
+			else = { add_mercantilism = 1 }
+
+			subtract_variable = {
+				which = left_to_convert
+				value = 1
+			}
+		}
+	}
+}
+
+add_mercantilism_excess_to_50_dip_simple = {
+	tooltip = { add_mercantilism = 1 }
+	custom_tooltip = add_mercantilism_excess_to_diplo_power_effect_tt
+	hidden_effect = {
+		if = {
+			limit = { mercantilism = 100 }
+			add_dip_power = 50
+		}
+		else = { add_mercantilism = 1 }
+	}
+}
+
 
 set_vampire_masquerade_opinion = {
 	every_country = {
@@ -5137,6 +5188,7 @@ anb_on_development_effect = {
 			owner = { religion = anzalkatsa }
 			development = 30
 			superregion = taneyas_superregion
+			NOT = { has_global_flag = 333rdformed } 
 			NOT = {
 				province_group = imperial_332_cities
 			}
@@ -5154,6 +5206,30 @@ anb_on_development_effect = {
 		}
 		set_global_flag = firstNonImperialCityMade
 		
+	}
+
+	#Pashaine
+	if = {
+		limit = {
+			owner = {
+				has_country_flag = pashaine_bonus_dev_on_anbennarian
+			}
+			culture_group = anbennarian
+		}
+		random = {
+			chance = 10
+			add_base_$development$ = 1
+		}
+	}
+	if = {
+		limit = {
+			has_province_flag = is_xia_origin
+			owner = { has_church_aspect = accretive_path_temples_for_warriors }
+		}
+		owner = {
+			add_church_power = 10
+			change_variable = { accretive_path_mil_chi = 10 }
+		}
 	}
 }
 
@@ -5174,6 +5250,7 @@ release_with_religion_and_culture = {
 			change_religion = $religion$
 			remove_country_modifier = conversion_zeal
 			change_primary_culture = $culture$
+			remove_country_modifier = restructuring_administration
 		}
 	}
 	release = $tag$
@@ -6624,7 +6701,7 @@ add_random_estate_loyalty = { #Used like add_random_estate_loyalty = { amount = 
 	}
 }
 
-force_ai_convert = { #Stops the ai from converting back immediatly if their RU is too low
+force_ai_convert = { #Stops the ai from converting back immediately if their RU is too low
 	if = {
 		limit = { ai = yes }
 		force_converted = yes
@@ -8075,7 +8152,7 @@ prepare_months_of_trade_income = {
 			which = trade_income_share
 		}
 		multiply_variable = {
-			which = current_treade_income
+			which = current_trade_income
 			value = $months$
 		}
 		round_variable = {
@@ -8339,6 +8416,35 @@ anb_aelantir_cultural_union = { #Might need an update if there's new cultures in
 			anb_add_accepted_culture_or_dip_power = { culture =  ice_sleepers free = yes }
 		}
 	]
+}
+
+anb_imperial_cultural_union = { #Accept all EoA imperial cultures for free without taking a slot
+	custom_tooltip = anb_imperial_cultural_union_tt
+	hidden_effect = {
+		anb_add_accepted_culture_or_dip_power = { culture = anbenncoster free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = half_elf free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = west_damerian free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = east_damerian free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = pearlsedger free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = crownsman free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = vernman free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = exwesser free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = arbarani free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = esmari free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = arannese free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = uelairey free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = aldresian free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = telgeiran free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = pashainey free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = havoric free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = imperial_halfling free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = imperial_gnome free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = dovesworn_gnoll free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = moon_elf free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = silver_dwarf free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = wexonard free = yes }
+		anb_add_accepted_culture_or_dip_power = { culture = vertesker free = yes }
+	}
 }
 
 anb_gain_permanent_claims_on_continent = {
@@ -8643,6 +8749,38 @@ zaradyrra_invite_colors_of_life_effect = {
 	custom_tooltip = zaradyrra_deity_tt
     add_country_modifier = { name = colors_of_life_scholar_modifier duration = 3650 }
 }
+zaradyrra_festivals_of_blood_effect = {
+	if = {
+			limit = {
+				OR = {
+					has_country_flag = ashhana_festivals_of_blood_effect
+					has_country_flag = ashhana_festivals_of_blood_effect_part_2
+				}
+			}
+			add_country_modifier = {
+				name = festivals_of_blood_army_size
+				duration = 3650
+			}
+			capital_scope = {
+				create_units_of_type_in_province = {
+					amount = 5
+					who = ROOT
+					unit_type = infantry
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = ashhana_festivals_of_blood_effect
+				}
+				clr_country_flag = ashhana_festivals_of_blood_effect
+				set_country_flag = ashhana_festivals_of_blood_effect_part_2
+			}
+			else = {
+				clr_country_flag = ashhana_festivals_of_blood_effect_part_2
+			}
+		}
+}
+
 
 give_bladeskeep_monument_worthy_reward = {
     custom_tooltip = bladeskeep_monument_can_use.tt
@@ -9005,7 +9143,7 @@ ascajar_remove_culture_modifier = {
 oasis_dream_add_religion_modifier = {
 	if = {
 		limit = { 
-			365 = {
+			6098 = {
 				has_great_project = {
 					type = water_dreams_oasis
 					tier = 3
@@ -9022,7 +9160,7 @@ oasis_dream_add_religion_modifier = {
 	}
 	else_if = {
 		limit = { 
-			365 = {
+			6098 = {
 				has_great_project = {
 					type = water_dreams_oasis
 					tier = 2
@@ -9038,7 +9176,7 @@ oasis_dream_add_religion_modifier = {
 	}
 	else_if = {
 		limit = {
-			365 = {
+			6098 = {
 				has_great_project = {
 					type = water_dreams_oasis
 					tier = 1
@@ -9060,7 +9198,7 @@ oasis_dream_remove_religion_modifier = {
 dendugma_monastery_ironwood_modifier = {
 	if = {
 		limit = { 
-			365 = {
+			5808 = {
 				has_great_project = {
 					type = dendugma_monastery
 					tier = 3
@@ -9076,7 +9214,7 @@ dendugma_monastery_ironwood_modifier = {
 	}
 	else_if = {
 		limit = { 
-			365 = {
+			5808 = {
 				has_great_project = {
 					type = dendugma_monastery
 					tier = 2
@@ -9141,4 +9279,205 @@ jadd_holy_order_reformed = {
 		}
 		holy_order = militant_jadd_order_upgraded
 	}
+}
+
+every_country_in_hre = {
+	custom_tooltip = every_country_in_hre
+	tooltip = { emperor = { $effect$ } }
+	hidden_effect = {
+		every_country = {
+			limit = { is_part_of_hre = yes }
+			$effect$
+		}
+	}
+}
+
+every_free_city = {
+	custom_tooltip = every_free_city
+	tooltip = { emperor = { $effect$ } }
+	hidden_effect = {
+		every_country = {
+			limit = { has_reform = free_city }
+			$effect$
+		}
+	}
+}
+#Refuge of the glasslords monument
+add_glasslord_network = {
+	if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 10 } }
+		add_province_modifier = {
+			name = glasslord_network_10
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 9 } }
+		add_province_modifier = {
+			name = glasslord_network_9
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 8 } }
+		add_province_modifier = {
+			name = glasslord_network_8
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 7 } }
+		add_province_modifier = {
+			name = glasslord_network_7
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 6 } }
+		add_province_modifier = {
+			name = glasslord_network_6
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 5 } }
+		add_province_modifier = {
+			name = glasslord_network_5
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 4 } }
+		add_province_modifier = {
+			name = glasslord_network_4
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 3 } }
+		add_province_modifier = {
+			name = glasslord_network_3
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 2 } }
+		add_province_modifier = {
+			name = glasslord_network_2
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { check_variable = { which = glasslord_wine_CoTs value = 1 } }
+		add_province_modifier = {
+			name = glasslord_network_1
+			duration = -1
+		}
+	}
+}
+clear_glasslord_network = {
+	remove_province_modifier = glasslord_network_1
+	remove_province_modifier = glasslord_network_2
+	remove_province_modifier = glasslord_network_3
+	remove_province_modifier = glasslord_network_4
+	remove_province_modifier = glasslord_network_5
+	remove_province_modifier = glasslord_network_6
+	remove_province_modifier = glasslord_network_7
+	remove_province_modifier = glasslord_network_8
+	remove_province_modifier = glasslord_network_9
+	remove_province_modifier = glasslord_network_10
+}
+count_church_agendas_current_ruler_effect = {
+	hidden_effect = {
+		if = {
+			limit = {
+				has_country_flag = count_church_agendas_current_ruler_flag
+			}
+			change_variable = {
+				which = count_church_agendas_current_ruler
+				value = 1
+			}
+		}
+	}
+}
+
+
+anb_add_trust_to_every_ally = {
+	custom_tooltip = add_$value$_trust_to_every_ally_tt
+	hidden_effect = {
+		every_ally = {
+			add_trust = {
+				who = $who$
+				value = $value$
+				[[mutual] mutual = $mutual$ ]
+			}
+		}
+	}
+}
+
+anb_make_prosperous = {
+	custom_tooltip = becomes_prosperous_tt
+	hidden_effect = { add_prosperity = 100 }
+}
+
+anb_lose_autonomy_everywhere = { #Supports up to 25, with 5 intervals
+	custom_tooltip = anb_lose_$amount$_autonomy_tt
+	hidden_effect = {
+		every_owned_province = {
+			add_local_autonomy = -$amount$
+		}
+	}
+}
+
+add_yearly_income_capped = {
+	hidden_effect = {
+		export_to_variable = {
+			which = monthly_income
+			value = trigger_value:monthly_income
+		}
+		multiply_variable = { 
+			which = monthly_income
+			value = 12
+		}
+		multiply_variable = { #This is yearly
+			which = monthly_income
+			value = $years$
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = monthly_income
+					value = $cap$
+				}
+			}
+			set_variable = {
+				which = monthly_income
+				value = $cap$
+			}
+		}
+		var_effect = { effect = add_treasury var = monthly_income sign = $sign$ }
+	}
+}
+
+disable_mage_estate = {
+	custom_tooltip = anb_mage_estate_disabled_tt
+	set_country_flag = banned_magic
+}
+
+allow_double_radical_reforms = {
+	custom_tooltip = GER_can_have_radical_reforms_twice
+	if = {
+		limit = {
+			NOT = { has_country_flag = radical_mercantilist_reforms }
+		}
+		set_country_flag = can_have_radical_reforms_twice
+	}
+	else = {
+		clr_country_flag = radical_mercantilist_reforms
+	}
+}
+
+change_propagate_religion_trade_power_to = {
+	custom_tooltip = change_propagate_religion_trade_power_to_$amount$_tt
+	set_country_flag = $amount$_trade_power_for_propogate_religion
 }

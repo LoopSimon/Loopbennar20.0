@@ -12998,6 +12998,7 @@ holi_retirement_flag_clearance = {
 		clr_country_flag = holi_retirement_6
 		clr_country_flag = holi_retirement_7
 		clr_country_flag = Y26_election_loop
+		clr_country_flag = Y26_election_allowed
 	}
 }
 
@@ -13009,6 +13010,7 @@ yinquan_exile_effect = {
 			yinquan_approval_effect = yes
 		}
 		exile_ruler_as = { name = $ruler$_ruler }
+		set_country_flag = Y26_election_allowed #prevents election events firing with flavour_yinquan.40
 	}
 }
 
@@ -13447,6 +13449,60 @@ isobelin_scripted_effect_inscrease_comissioners_plan_variable = {
 		G91 = {
 			country_event = {
 				id = flavor_isobelin.325
+			}
+		}
+	}
+}
+
+isobelin_construct_new_feature = {
+	custom_tooltip = isobelin_$feature$_tt
+	if = {
+		limit = {
+			OR = {
+				controls = $province$
+				AND = {
+					$province$ = {
+						num_of_units_in_province = { who = ROOT amount = 20 }
+						owner = { has_opinion = { value = 150 who = ROOT } }
+					}
+					OR = {
+						treasury = 500
+						$province$ = { owner = { owes_favors = {  who = ROOT value = 30 } } }
+					}				
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					controls = $province$
+					$province$ = { owner = { owes_favors = { who = ROOT value = 30 } } }
+				}
+			}
+			add_treasury = -500
+			$province$ = { owner = { add_treasury = 500 } }	
+		}
+		add_country_modifier = {
+			name = isobelin_modifier_$feature$
+			duration = -1
+		}
+	}
+	else = {
+		custom_tooltip = isobelin_$feature$_req_tt
+		tooltip = {
+			if = {
+				limit = {
+					NOT = {
+						controls = $province$
+						$province$ = { owner = { owes_favors = { who = ROOT value = 30 } } }
+					}
+				}
+				add_treasury = -500
+				$province$ = { owner = { add_treasury = 500 } }	
+			}
+			add_country_modifier = {
+				name = isobelin_modifier_$feature$
+				duration = -1
 			}
 		}
 	}
@@ -18601,6 +18657,16 @@ J52_add_consecrated_industry_modifier = {
 		name = J52_consecrated_industry
 		duration = -1
 	}
+	if = {
+		limit = { sedentarization_province_has_outpost = yes }
+		hidden_effect = {
+			add_province_modifier = {
+				name = sed_min_autonomy_from_ikog_consecration_negation
+				duration = -1
+				hidden = yes
+			}
+		}
+	}
 }
 az_an_extra_mana_ritual_effect = {
 	if = { limit = { mission_completed = az_an_lets_lament }
@@ -18765,21 +18831,23 @@ az_an_vurodrmonir_spell_gravitas = {
 	add_country_modifier = { name = az_an_vurodrmonir_spell_gravitas_modifier duration = 3650 }
 	add_army_professionalism = -0.1
 
-	add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 }
+	custom_tooltip = az_an_vurodrmonir_cooldown_tt
+	hidden_effect = { add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 } }
 	az_an_vurodrmonir_handle_flags_cast = { spell = gravitas }
 }
 az_an_vurodrmonir_spell_curse_of_avarice = {
-	add_years_of_income = -1
+	add_years_of_income = -3
 	country_event = { id = flavor_ovdal_az_an.102 }
 
-	add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 }
+	custom_tooltip = az_an_vurodrmonir_cooldown_tt
+	hidden_effect = { add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 } }
 	az_an_vurodrmonir_handle_flags_cast = { spell = curse_of_avarice }
 }
 az_an_vurodrmonir_spell_halannas_exhale = {
 	country_event = { id = flavor_ovdal_az_an.103 }
 
-	add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 }
-	az_an_vurodrmonir_handle_flags_cast = { spell = halannas_exhale }
+	custom_tooltip = az_an_vurodrmonir_cooldown_tt
+	hidden_effect = { add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 } }
 }
 az_an_vurodrmonir_spell_halannas_exhale_effect = {
 	hidden_effect = { set_variable = { which = az_an_halannas_exhale_charges value = 5 } }
@@ -18865,6 +18933,7 @@ az_an_vurodrmonir_spell_halannas_exhale_effect = {
 		}
 	}
 	custom_tooltip = az_an_vurodrmonir_spell_halannas_exhale_tt
+	az_an_vurodrmonir_handle_flags_cast = { spell = halannas_exhale }
 
 
 	if = { limit = { has_country_flag = az_an_flag_vurodrmonir_halannas_exhale_crownland }
@@ -18915,8 +18984,8 @@ az_an_vurodrmonir_spell_halannas_exhale_apply = {
 		}
 
 		add_province_modifier = { name = az_an_vurodrmonir_spell_halannas_exhale_modifier_$level$ duration = -1 }
+		add_base_production = $level$
 		set_province_flag = az_an_halannas_exhale_present
-		
 		spawn_rebels = { size = $level$ type = az_an_elemental_rebels }
 	}
 }
@@ -18942,10 +19011,11 @@ az_an_vurodrmonir_spell_infinite_visions = {
 		change_mil = -1
 		hidden_effect = { set_ruler_flag = az_an_vurodrmonir_spell_infinite_visions_lost_mil }
 	}
-	country_event = { id = flavor_ovdal_az_an.105 }
+	country_event = { id = flavor_ovdal_az_an.105 days = 3650 }
 	
 
-	add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 }
+	custom_tooltip = az_an_vurodrmonir_cooldown_tt
+	hidden_effect = { add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 } }
 	hidden_effect = {
 		add_country_modifier = { name = az_an_vurodrmonir_spell_infinite_visions_effect_mod duration = 3650 hidden = yes } 
 	}
@@ -18980,7 +19050,8 @@ az_an_vurodrmonir_spell_eclipse_of_the_dwarovar = {
 		1 = { force_add_ruler_personality = { personality = infertile_personality  				} modifier = { factor = 0 ruler_has_personality = infertile_personality } }
 	}
 
-	add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 }
+	custom_tooltip = az_an_vurodrmonir_cooldown_tt
+	hidden_effect = { add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 } }
 	az_an_vurodrmonir_handle_flags_cast = { spell = eclipse_of_the_dwarovar }
 }
 az_an_vurodrmonir_spell_moonseal = {
@@ -19025,7 +19096,8 @@ az_an_vurodrmonir_spell_moonseal = {
 	}
 
 
-	add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 }
+	custom_tooltip = az_an_vurodrmonir_cooldown_tt
+	hidden_effect = { add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 } }
 	az_an_vurodrmonir_handle_flags_cast = { spell = moonseal }
 }
 az_an_vurodrmonir_spell_final_isolation = {
@@ -19033,7 +19105,8 @@ az_an_vurodrmonir_spell_final_isolation = {
 	hidden_effect = {
 		country_event = { id = flavor_ovdal_az_an.107 } # Magnive note: hide event name? # Everest reply: Done
 	}
-	add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 }
+	custom_tooltip = az_an_vurodrmonir_cooldown_tt
+	hidden_effect = { add_country_modifier = { name = az_an_vurodrmonir_cooldown duration = 3650 } }
 	az_an_vurodrmonir_handle_flags_cast = { spell = final_isolation }
 }
 az_an_high_priesthood_of_halanna_upgrade = {
@@ -19074,12 +19147,16 @@ az_an_high_priesthood_of_halanna_upgrade = {
 	}
 }
 az_an_shrine_activation = {
-	if = { limit = { tag = I19 mission_completed = az_an_halannas_chambers owns = $prov_num$}
-		$prov_num$ = { 
-			remove_province_modifier = az_an_shrine_of_$deity$_inactive 
-			add_province_modifier = { name = az_an_shrine_of_$deity$_active duration = -1 } 
+	custom_tooltip = shrine_location_$prov_num$_tt
+	hidden_effect = {
+		if = { limit = { tag = I19 mission_completed = az_an_halannas_chambers owns = $prov_num$}
+			$prov_num$ = { 
+				remove_province_modifier = az_an_shrine_of_$deity$_inactive 
+				add_province_modifier = { name = az_an_shrine_of_$deity$_active duration = -1 } 
+				set_province_flag = az_an_shrine_activated
+			}
+			hidden_effect = { set_country_flag = az_an_shrines_activated_$deity$ }
 		}
-		hidden_effect = { set_country_flag = az_an_shrines_activated_$deity$ set_province_flag = az_an_shrine_activated }
 	}
 }
 
@@ -19839,6 +19916,1005 @@ chaqway_merchants = {
 					}
 				}
 			}
+		}
+	}
+}
+
+#Pashaine
+pashaine_apply_focus_bonus = {
+	hidden_effect = {
+		if = {
+			limit = { has_country_flag = pashaine_focus_bonus }
+			remove_country_modifier = pashainey_resourcefulness
+			remove_country_modifier = pashaine_damerian_tact
+			remove_country_modifier = pashaine_vernemen_courage
+			remove_country_modifier = pashaine_first
+			remove_country_modifier = pashaine_damerian_prudence
+			remove_country_modifier = pashaine_vernmen_bravado
+			trigger_switch = {
+				on_trigger = national_focus
+				ADM = { 
+					add_country_modifier = {
+						name = pashainey_resourcefulness
+						duration = -1
+					}
+					if = {
+						limit = { has_country_flag = pashainey_adm_focus_improved }
+						add_country_modifier = {
+							name = pashaine_first
+							duration = -1
+						}
+					}
+				}
+				DIP = { 
+					add_country_modifier = {
+						name = pashaine_damerian_tact
+						duration = -1
+					}
+					if = {
+						limit = { has_country_flag = pashainey_dip_focus_improved }
+						add_country_modifier = {
+							name = pashaine_damerian_prudence
+							duration = -1
+						}
+					}
+				}
+				MIL = { 
+					add_country_modifier = {
+						name = pashaine_vernemen_courage
+						duration = -1
+					}
+					if = {
+						limit = { has_country_flag = pashainey_mil_focus_improved }
+						add_country_modifier = {
+							name = pashaine_vernmen_bravado
+							duration = -1
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+pashaine_add_clue = {
+	if = {
+		limit = { has_country_flag = pashaine_uncovering_rot }
+		custom_tooltip = pashaine_gain_clue_tt
+		hidden_effect = {
+			change_variable = {
+				which = pashaine_clue
+				value = 1
+			}
+		}
+	}
+}
+
+gain_permanent_claims_on_former_hre = {
+	custom_tooltip = gain_permanent_claims_on_former_hre_tt
+	hidden_effect = {
+		europe = {
+			limit = { has_province_flag = was_part_of_hre } #You need to manually set the flag somewhere
+			add_permanent_claim = ROOT
+		}
+	}
+}
+
+anb_remove_accepted_culture = {
+	hidden_effect = {
+		if = {
+			limit = { accepted_culture = $culture$ }
+			remove_accepted_culture = $culture$ 
+		}
+	}
+}
+
+karshyr_build_aquaculture = {
+	set_province_flag = S15_aquaculture_$trade_good$_flag
+	save_trade_goods = yes
+	change_trade_goods = $trade_good$
+	set_province_flag = S15_aquaculture
+	if = {
+		limit = { owner = { has_country_flag = S15_aquaculture_improvement } }
+		add_province_modifier = {
+			name = S15_aquaculture_improvement
+			duration = -1
+		}
+	}
+	if = {
+		limit = { owner = { has_country_flag = S15_aquaculture_ravelian_flag } }
+		add_province_modifier = {
+			name = S15_aquaculture_ravelian
+			duration = -1
+		}
+	}
+	owner = {
+		add_treasury = -600
+		custom_tooltip = S15_aquaculture_$trade_good$_tt
+		hidden_effect = {
+			change_variable = {
+				which = aquaculture$var_name$
+				value = -1
+			}
+			change_variable = {
+				which = aquacultureTotal
+				value = 1
+			}
+			change_variable = {
+				which = aquaculture$var_name$Max
+				value = 1
+			}
+		}
+	}
+}
+
+#333 Empire Khatalashya
+
+#Faith in the Prophecy
+
+add_faith_in_the_prophecy = {
+	custom_tooltip = add_faith_in_the_prophecy_tt
+	if = {
+		limit = { has_country_modifier = 333_total_faith_in_the_prophecy }
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_strong_faith_in_the_prophecy }
+		remove_country_modifier = 333_strong_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_total_faith_in_the_prophecy
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_questioning_faith_in_the_prophecy }
+		remove_country_modifier = 333_questioning_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_strong_faith_in_the_prophecy
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_wavering_faith_in_the_prophecy }
+		remove_country_modifier = 333_wavering_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_questioning_faith_in_the_prophecy
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_failing_faith_in_the_prophecy }
+		remove_country_modifier = 333_failing_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_wavering_faith_in_the_prophecy
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_colapsed_faith_in_the_prophecy }
+		remove_country_modifier = 333_colapsed_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_failing_faith_in_the_prophecy
+			duration = -1
+		}
+	}  
+}
+remove_faith_in_the_prophecy = {
+	custom_tooltip = remove_faith_in_the_prophecy_tt
+	if = {
+		limit = { has_country_modifier = 333_total_faith_in_the_prophecy }
+		remove_country_modifier = 333_total_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_strong_faith_in_the_prophecy
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_strong_faith_in_the_prophecy }
+		remove_country_modifier = 333_strong_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_questioning_faith_in_the_prophecy
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_questioning_faith_in_the_prophecy }
+		remove_country_modifier = 333_questioning_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_wavering_faith_in_the_prophecy
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_wavering_faith_in_the_prophecy }
+		remove_country_modifier = 333_wavering_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_failing_faith_in_the_prophecy
+			duration = -1
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_failing_faith_in_the_prophecy }
+		remove_country_modifier = 333_failing_faith_in_the_prophecy
+		add_country_modifier = {
+			name = 333_colapsed_faith_in_the_prophecy
+			duration = -1
+		}
+		random_owned_province = {
+			limit = {
+				NOT = { is_capital = yes }
+			}
+			change_religion = shadow_pact
+		}
+	}
+	else_if = {
+		limit = { has_country_modifier = 333_colapsed_faith_in_the_prophecy }
+		every_owned_province = {
+			add_devastation = 10
+		}
+	}
+}
+add_tax_space_colony = {
+	if = {
+		limit = { has_country_modifier = khatalashya_space_colony_tax }
+		remove_country_modifier = khatalashya_space_colony_tax
+		if = {
+			limit = { has_country_modifier = khatalashya_space_colony_tax2 }
+			remove_country_modifier = khatalashya_space_colony_tax2
+			if = {
+				limit = { has_country_modifier = khatalashya_space_colony_tax4 }
+				remove_country_modifier = khatalashya_space_colony_tax4
+				if = {
+					limit = { has_country_modifier = khatalashya_space_colony_tax8 }
+					add_years_of_income = 16
+				}
+				else = {
+					add_country_modifier = {
+						name = khatalashya_space_colony_tax8
+						duration = -1
+					}
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = khatalashya_space_colony_tax4
+					duration = -1
+				}
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = khatalashya_space_colony_tax2
+				duration = -1
+		}
+		} 
+	}
+	else = {
+		add_country_modifier = {
+			name = khatalashya_space_colony_tax
+			duration = -1
+		}
+	}
+}
+add_manpower_space_colony = {
+	if = {
+		limit = { has_country_modifier = khatalashya_space_colony_manpower }
+		remove_country_modifier = khatalashya_space_colony_manpower
+		if = {
+			limit = { has_country_modifier = khatalashya_space_colony_manpower2 }
+			remove_country_modifier = khatalashya_space_colony_manpower2
+			if = {
+				limit = { has_country_modifier = khatalashya_space_colony_manpower4 }
+				remove_country_modifier = khatalashya_space_colony_manpower4
+				if = {
+					limit = { has_country_modifier = khatalashya_space_colony_manpower8 }
+					add_yearly_manpower = 8
+				}
+				else = {
+					add_country_modifier = {
+						name = khatalashya_space_colony_manpower8
+						duration = -1
+					}
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = khatalashya_space_colony_manpower4
+					duration = -1
+				}
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = khatalashya_space_colony_manpower2
+				duration = -1
+		}
+		} 
+	}
+	else = {
+		add_country_modifier = {
+			name = khatalashya_space_colony_manpower
+			duration = -1
+		}
+	}
+}
+add_forcelimit_space_colony = {
+	if = {
+		limit = { has_country_modifier = khatalashya_space_colony_forcelimit }
+		remove_country_modifier = khatalashya_space_colony_forcelimit
+		if = {
+			limit = { has_country_modifier = khatalashya_space_colony_forcelimit2 }
+			remove_country_modifier = khatalashya_space_colony_forcelimit2
+			if = {
+				limit = { has_country_modifier = khatalashya_space_colony_forcelimit4 }
+				remove_country_modifier = khatalashya_space_colony_forcelimit4
+				if = {
+					limit = { has_country_modifier = khatalashya_space_colony_forcelimit8 }
+					add_army_tradition_or_mil_power = { amount = 30 }
+				}
+				else = {
+					add_country_modifier = {
+						name = khatalashya_space_colony_forcelimit8
+						duration = -1
+					}
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = khatalashya_space_colony_forcelimit4
+					duration = -1
+				}
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = khatalashya_space_colony_forcelimit2
+				duration = -1
+		}
+		} 
+	}
+	else = {
+		add_country_modifier = {
+			name = khatalashya_space_colony_forcelimit
+			duration = -1
+		}
+	}
+}
+khatalashya_number_of_mutations = {
+	hidden_effect = {
+		change_variable = {
+			which = number_of_anty_hive_mutations
+			value = 1
+		}
+		if = {
+			limit = {
+				check_variable = {
+					which = number_of_anty_hive_mutations
+					value = 4
+				}
+			}
+			country_event = {
+				id = empire_333.351
+				days = 36
+				random = 30
+			}
+			if = {
+				limit = {
+					check_variable = {
+						which = number_of_anty_hive_mutations
+						value = 6
+					}
+				}
+				country_event = {
+					id = empire_333.351
+					days = 36
+					random = 30
+				}
+				if = {
+					limit = {
+						check_variable = {
+							which = number_of_anty_hive_mutations
+							value = 10
+						}
+					}
+					country_event = {
+						id = empire_333.351
+						days = 36
+						random = 30
+					}
+				}
+			}
+		}
+	}
+}
+khatalashya_planetary_effects = {
+	if = {
+		limit = { #Romutha
+			province_id = 5921
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_romutha_2 }
+			S81 = {
+				country_event = {
+					id = empire_333.201
+					days = 730
+				}
+				add_treasury = -500
+				add_country_modifier = {
+					name = khatalashya_lazer_moths
+					duration = 2190
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 1825
+				}
+			}
+			kill_units = {
+				who = FROM
+				amount = 10
+			}
+			hidden_effect = {
+				set_province_flag = khatalashya_colonized_province
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_romutha_2 } }
+			S81 = {
+				country_event = {
+					id = empire_333.200
+					days = 730
+				}
+				add_adm_power = -50
+				add_dip_power = -50
+				add_mil_power = -50
+				add_treasury = -250
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 730
+				}
+				hidden_effect = {
+					set_global_flag = khatalashya_romutha_2
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Agradent
+			province_id = 5763
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_agradent_2 }
+				
+			S81 = {
+				country_event = {
+					id = empire_333.204
+					days = 730
+				}
+				for = {
+					amount = 5
+					effect = "
+						random_owned_province = {
+							limit = {
+								trade_goods = grain
+								base_production = 8
+								base_manpower = 8
+							}
+							add_base_production = -2
+							add_base_manpower = -2
+						}
+					"
+				}
+				add_country_modifier = {
+					name = 333_agradent_repair_2
+					duration = 2190
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 1825
+				}
+			}
+			kill_units = {
+				who = FROM
+				amount = 10
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_agradent_2 } }
+			S81 = {
+				country_event = {
+					id = empire_333.203
+					days = 730
+				}
+				random_owned_province = {
+					limit = {
+						base_production = 15
+						trade_goods = precursor_relics
+					}
+					add_province_modifier = {
+						name = khatalashya_syphoning_resources
+						duration = 1825
+					}
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 730
+				}
+				hidden_effect = {
+					set_global_flag = khatalashya_agradent_2
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Zulkanez
+			province_id = 5863
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_zulkanez_2 }
+			S81 = {
+				country_event = {
+					id = empire_333.207
+					days = 730
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 1825
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_zulkanez_2 } }
+			S81 = {
+				country_event = {
+					id = empire_333.206
+					days = 730
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 730
+				}
+				hidden_effect = {
+					set_global_flag = khatalashya_zulkanez_2
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Shagatan
+			province_id = 5585
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_shagatan_2 }
+				
+			S81 = {
+				country_event = {
+					id = empire_333.210
+					days = 730
+				}
+				for = {
+					amount = 5
+					effect = "
+						random_owned_province = {
+							limit = {
+								has_building = wharf
+							}
+							add_province_modifier = {
+								name = khatalashya_syphoning_resources
+								duration = 730
+							}
+						}
+					"
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 1825
+				}
+			}
+			kill_units = {
+				who = FROM
+				type = transport
+				amount = 30
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_shagatan_2 } }
+			S81 = {
+				country_event = {
+					id = empire_333.209
+					days = 730
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 730
+				}
+				hidden_effect = {
+					set_global_flag = khatalashya_shagatan_2 
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Teinglios
+			province_id = 5971
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_teinglios_2 }
+			S81 = {
+				country_event = {
+					id = empire_333.213
+					days = 730
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 1825
+				}
+				if = {
+					limit = {
+						any_owned_province = {
+							NOT = { has_building = furnace }
+						}
+					}
+					add_treasury = -10000
+				}
+			}
+			kill_units = {
+				who = FROM
+				amount = 10
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_teinglios_2  } }
+			S81 = {
+				country_event = {
+					id = empire_333.212
+					days = 730
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 730
+				}
+				hidden_effect = {
+					set_global_flag = khatalashya_teinglios_2
+				}
+				
+			}
+		}
+	}
+	if = {
+		limit = { #Zangea
+			province_id = 6032
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_zangea_2 }
+			kill_units = {
+				who = FROM
+				type = infantry
+				amount = 100
+			}
+			kill_units = {
+				who = FROM
+				type = transport
+				amount = 100
+			}
+			S81 = {
+				country_event = {
+					id = empire_333.216
+					days = 730
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 1825
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_zangea_2 } }
+			S81 = {
+				country_event = {
+					id = empire_333.215
+					days = 730
+				}
+				for = {
+					amount = 5
+					effect = "
+						random_owned_province = {
+							limit = {
+								trade_goods = naval_supplies
+								base_production = 8
+							}
+							add_province_modifier = {
+								name = khatalashya_syphoning_resources
+								duration = 1825
+							}
+						}
+					"
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 730
+				}
+				hidden_effect = {
+					set_global_flag = khatalashya_zangea_2
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Atamumba
+			province_id = 6685
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_atamumba_2 }
+			S81 = {
+				country_event = {
+					id = empire_333.219
+					days = 730
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 1825
+				}
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_atamumba_2 } }
+			S81 = {
+				country_event = {
+					id = empire_333.218
+					days = 730
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 730
+				}
+				hidden_effect = {
+					set_global_flag = khatalashya_atamumba_2
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Rakh
+			province_id = 5650
+		}
+		if = {
+			limit = { has_global_flag = khatalashya_rakh_2 }
+				
+			S81 = {
+				country_event = {
+					id = empire_333.222
+					days = 730
+				}
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 1825
+				}
+			}
+			kill_units = {
+				who = FROM
+				amount = 10
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_flag = khatalashya_rakh_2 } }
+			S81 = {
+				country_event = {
+					id = empire_333.221
+					days = 730
+				}
+				add_adm_power = -50
+				add_dip_power = -50
+				add_mil_power = -50
+				add_treasury = -1000
+				add_country_modifier = {
+					name = khatalashya_colonization_in_progress
+					duration = 730
+				}
+				hidden_effect = {
+					set_global_flag = khatalashya_rakh_2
+				}
+			}
+		}
+	}
+	if = {
+		limit = { #Vacum
+			province_id = 5894
+		}
+		S81 = {
+			country_event = {
+				id = empire_333.224
+				days = 730
+			}
+			add_country_modifier = {
+				name = khatalashya_colonization_in_progress
+				duration = 730
+			}
+		}
+		hidden_effect = {
+			clr_province_flag = khatalashya_ready_to_be_colonized
+		}
+	}
+}
+khatalashya_loyalty_on_revokation_church = {
+	if = {
+		limit = { mission_completed = khatalashya_mutations_outside_taneyas }
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 20
+		}
+	}
+}
+khatalashya_loyalty_on_revokation_burghers = {
+	if = {
+		limit = { mission_completed = khatalashya_mutations_outside_taneyas }
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 20
+		}
+	}
+}
+khatalashya_loyalty_on_revokation_nobles = {
+	if = {
+		limit = { mission_completed = khatalashya_mutations_outside_taneyas }
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 20
+		}
+	}
+}
+khatalashya_add_debuff_hive_privilage = {
+	if = {
+		limit = {
+			has_disaster = the_hivemind
+			has_country_flag = the_hivemind_$mutation$_ap
+		}
+		khatalashya_add_debuff_hive_main = { mutation = $mutation$ }
+	}
+}
+khatalashya_add_debuff_hive_main = {
+	tooltip = {
+		SS6 = {
+			add_country_modifier = {
+				name = khatalashya_debuff_$mutation$
+				duration = -1
+			}
+		}
+	}
+	custom_tooltip = add_debuff_space_colony_tt
+	hidden_effect = {
+		every_war_enemy_country = {
+			limit = {
+				has_country_modifier = khatalashya_exterminate_voices
+			}
+			add_country_modifier = {
+				name = khatalashya_debuff_$mutation$
+				duration = -1
+			}
+			add_debuff_space_colony = yes
+		}
+	}
+}
+khatalashya_remove_debuff_hive_main = {
+	tooltip = {
+		SS6 = {
+			remove_country_modifier = khatalashya_debuff_$mutation$
+		}
+	}
+	custom_tooltip = remove_debuff_space_colony_tt
+	hidden_effect = {
+		every_war_enemy_country = {
+			limit = {
+				has_country_modifier = khatalashya_exterminate_voices
+			}
+			remove_country_modifier = khatalashya_debuff_$mutation$
+			remove_debuff_space_colony = yes
+		}
+	}
+}
+add_debuff_space_colony = {
+	if = {
+		limit = { has_country_modifier = khatalashya_space_colony_debuff16 }
+		add_manpower = -20
+	}
+	else = {
+		if = {
+			limit = { has_country_modifier = khatalashya_space_colony_debuff }
+			remove_country_modifier = khatalashya_space_colony_debuff
+			if = {
+				limit = { has_country_modifier = khatalashya_space_colony_debuff2 }
+				remove_country_modifier = khatalashya_space_colony_debuff2
+				if = {
+					limit = { has_country_modifier = khatalashya_space_colony_debuff4 }
+					if = {
+						limit = { has_country_modifier = khatalashya_space_colony_debuff8 }
+						remove_country_modifier = khatalashya_space_colony_debuff8
+						add_country_modifier = {
+							name = khatalashya_space_colony_debuff16
+							duration = -1
+						}
+					}
+					else = {
+						add_country_modifier = {
+							name = khatalashya_space_colony_debuff8
+							duration = -1
+						}
+					}
+				}
+				else = {
+					add_country_modifier = {
+						name = khatalashya_space_colony_debuff4
+						duration = -1
+					}
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = khatalashya_space_colony_debuff2
+					duration = -1
+			}
+			} 
+		}
+		else = {
+			add_country_modifier = {
+				name = khatalashya_space_colony_debuff
+				duration = -1
+			}
+		}   
+	}
+}
+remove_debuff_space_colony = {
+	hidden_effect = {
+		if = {
+			limit = { NOT = { has_country_modifier = khatalashya_space_colony_debuff } }
+			add_country_modifier = {
+				name = khatalashya_space_colony_debuff
+				duration = -1
+			}
+			if = {
+				limit = { NOT = { has_country_modifier = khatalashya_space_colony_debuff2 } }
+				add_country_modifier = {
+					name = khatalashya_space_colony_debuff2
+					duration = -1
+				}
+				if = {
+					limit = { NOT = { has_country_modifier = khatalashya_space_colony_debuff4 } }
+					add_country_modifier = {
+						name = khatalashya_space_colony_debuff4
+						duration = -1
+					}
+					if = {
+						limit = { NOT = { has_country_modifier = khatalashya_space_colony_debuff8 } }
+						add_country_modifier = {
+							name = khatalashya_space_colony_debuff8
+							duration = -1
+						}
+						if = {
+							limit = { NOT = { has_country_modifier = khatalashya_space_colony_debuff16 } }
+							add_country_modifier = {
+								name = khatalashya_space_colony_debuff8
+								duration = -1
+							}
+						}
+						else = {
+							remove_country_modifier = khatalashya_space_colony_debuff16
+						}
+					}
+					else = {
+						remove_country_modifier = khatalashya_space_colony_debuff8
+					}
+				}
+				else = {
+					remove_country_modifier = khatalashya_space_colony_debuff4
+				}
+			}
+			else = {
+				remove_country_modifier = khatalashya_space_colony_debuff2
+			} 
+		}
+		else = {
+			remove_country_modifier = khatalashya_space_colony_debuff
 		}
 	}
 }
