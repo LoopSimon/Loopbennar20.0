@@ -279,7 +279,7 @@ country_event = { #Brambleskinner demands fealty
 		desc = flavor_brambleskinner.4.d_1
 	}
 	desc = {
-		trigger = { tag = U11 }
+		trigger = { is_or_was_tag = { tag = U11 } }
 		desc = flavor_brambleskinner.4.d_2
 	}
 	picture = DIPLOMACY_SIGNING_eventPicture
@@ -302,18 +302,14 @@ country_event = { #The Conclave of Sawelahain
 	title = flavor_brambleskinner.5.t
 	desc = {
 		trigger = { 
-			OR = {
-				alliance_with = U11
-				U11 = { is_subject_of = ROOT }
-			}
+			has_saved_event_target = bramble_target_landshark
 		}
 		desc = flavor_brambleskinner.5.d_1
 	}
 	desc = {
 		trigger = { 
 			NOT = {
-				alliance_with = U11
-				U11 = { is_subject_of = ROOT }
+				has_saved_event_target = bramble_target_landshark
 			}
 		}
 		desc = flavor_brambleskinner.5.d_2
@@ -321,6 +317,21 @@ country_event = { #The Conclave of Sawelahain
 	picture = DEBATE_REPUBLICAN_eventPicture
 
 	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			random_known_country = {
+				limit = {
+					is_or_was_tag = { tag = U11 }
+					OR = {
+						alliance_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+				save_event_target_as = bramble_target_landshark
+			}
+		}
+	}
 	
 	option = { #A good fey is a dead fey
 		name = flavor_brambleskinner.5.a
@@ -412,8 +423,11 @@ country_event = { #The Conclave of Sawelahain
 			}
 		}
 		if = {
-			limit = { U11 = { is_subject_of = ROOT } }
-			U11 = {
+			limit = {
+				has_saved_event_target = bramble_target_landshark
+				event_target:bramble_target_landshark = { is_subject_of = ROOT }
+			}
+			event_target:bramble_target_landshark = {
 				add_country_modifier = {
 					name = brambleskinner_feykiller_front
 					duration = -1
@@ -431,6 +445,12 @@ country_event = { #Distant Cousins
 
 	is_triggered_only = yes
 	
+	immediate = {
+		hidden_effect = {
+			capital_scope = { save_event_target_as = bramble_target_capital }
+		}
+	}
+	
 	option = { #New friends, maybe?
 		name = flavor_brambleskinner.6.a
 		ourdia_region = { discover_country = ROOT }
@@ -438,8 +458,11 @@ country_event = { #Distant Cousins
 			1298 = { discover_country = ROOT } #Gulf of Ouord
 			1303 = { discover_country = ROOT } #Flooded Coast - Dostanesck trade node
 			if = {
-				limit = { exists = U11 }
-				capital_scope = { discover_country = U11 }
+				limit = { any_known_country = { is_or_was_tag = { tag = U11 } } }
+				random_known_country = {
+					limit = { is_or_was_tag = { tag = U11 } }
+					event_target:bramble_target_capital = { discover_country = PREV }
+				}
 			}
 			set_country_flag = brambleskinner_landshark_missions
 		}
@@ -455,11 +478,32 @@ country_event = { #The Forest and the Sea
 
 	is_triggered_only = yes
 	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					any_known_country = {
+						is_or_was_tag = { tag = U11 }
+					}
+				}
+				random_known_country = {
+					limit = { is_or_was_tag = { tag = U11 } }
+					save_event_target_as = bramble_target_landshark
+				}
+			}
+			else = {
+				U11 = { save_event_target_as = bramble_target_landshark }
+			}
+		}
+	}
+	
 	option = { #Let them handle the sea shore for our ennemies lie deep within the Woods.
 		name = flavor_brambleskinner.7.a
 		if = {
-			limit = { 
-				U11 = { has_institution = feudalism }
+			limit = {
+				event_target:bramble_target_landshark = {
+					has_institution = feudalism
+				}
 				NOT = { capital_scope = { feudalism = 100 } }
 			}
 			capital_scope = {
@@ -476,7 +520,7 @@ country_event = { #The Forest and the Sea
 					culture = ourdi
 					OR = {
 						owned_by = ROOT
-						owned_by = U11
+						owned_by = event_target:bramble_target_landshark
 					}
 					NOT = {
 						is_core = ROOT
@@ -486,22 +530,24 @@ country_event = { #The Forest and the Sea
 			}
 		}
 		if = {
-			limit = { NOT = { exists = U11 } }
+			limit = {
+				event_target:bramble_target_landshark = { exists = no }
+			}
 			release = U11
 		}
 		every_owned_province = {
 			limit = { region = ourdia_region }
-			cede_province = U11
+			cede_province = event_target:bramble_target_landshark
 		}
+		hidden_effect = { deepwoods_superregion = { discover_country = event_target:bramble_target_landshark } }
 		if = {
-			limit = { U11 = { ai = yes } }
-			vassalize = U11
-			hidden_effect = { deepwoods_superregion = { discover_country = U11 } }
+			limit = { event_target:bramble_target_landshark = { ai = yes } }
+			vassalize = event_target:bramble_target_landshark
 			if = {
 				limit = {
 					mission_completed = brambleskinner_the_feykiller_front
 				}
-				U11 = {
+				event_target:bramble_target_landshark = {
 					add_country_modifier = {
 						name = brambleskinner_feykiller_front
 						duration = -1
@@ -509,7 +555,7 @@ country_event = { #The Forest and the Sea
 				}
 			}
 		}
-		else = { U11 = { country_event = { id = flavor_brambleskinner.4 } } }
+		else = { event_target:bramble_target_landshark = { country_event = { id = flavor_brambleskinner.4 } } }
 	}
 }
 

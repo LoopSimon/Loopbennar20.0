@@ -1434,6 +1434,9 @@ country_event = { #Disaster start
 	}
 	option = {
 		name = rinta_seeker_events.206.b
+		trigger = {
+			S93 = { ai = yes }
+		}
 		switch_tag = S93
 		ai_chance = { factor = 0 }
 	}
@@ -1782,6 +1785,14 @@ country_event = { #Spawn of Alefisol
 			}
 			end_incident = incident_rinta_dark_magic
 		}
+		every_country = {
+			limit = {
+				has_country_flag = rinta_informed_about_resonance
+			}
+			country_event = {
+				id = rinta_seeker_events.263
+			}
+		}
 		#difficulty
 		if = {
 			limit = {
@@ -1919,7 +1930,7 @@ country_event = { #Spawn of Alefisol
 			create_war_wizard_effect = yes
 			define_ruler_to_general = {
 				fire = 3
-				shock = 8
+				shock = 10
 				manuever = 8
 				siege = 0
 			}
@@ -2038,15 +2049,16 @@ country_event = { #Spawn of Alefisol
 				days = 2
 			}
 			update_unit_sprites_for_racial_mil = yes
+			set_country_flag = is_just_evil
 			remove_country_modifier = restructuring_military
 			remove_country_modifier = restructuring_administration
 		}
 		ai_chance = { factor = 100 }
 	}
 	after = {
-		random_country = {
+		every_country = {
 			limit = {
-				NOT = { ai = yes }
+				ai = no
 				religion = rinta_seekers
 			}
 			country_event = {
@@ -2070,28 +2082,67 @@ country_event = {
 			casus_belli = cb_alefisol_war
 			duration = 365
 		}
-		OR = {
-			NOT = { war_score = -98 } # lose!
-			AND = { # also lose!
-				check_variable = {
-					which = alefisol_lost_6
-					value = 6
+		any_war_enemy_country = {
+			is_in_war = {
+				defender_leader = THIS
+				casus_belli = cb_alefisol_war
+				duration = 365
+			}
+			OR = {
+				war_score_against = { # lose!
+					who = S93
+					value = 98 
 				}
-				OR = {
-					capital_scope = {
-						NOT = { controlled_by = S93 }
+				AND = { # also lose!
+					S93 = {
+						check_variable = {
+							which = alefisol_lost_6
+							value = 6
+						}
 					}
-					NOT = { war_score = -74 }
+					OR = {
+						AND = {
+							S93 = {
+								capital_scope = {
+									NOT = { controlled_by = S93 }
+								}
+							}
+							war_score_against = {
+								who = S93
+								value = 50
+							}
+						}
+						war_score_against = {
+							who = S93
+							value = 74
+						}
+					}
+				}
+				NOT = { #Win for Alefisol
+					war_score_against = {
+						who = S93
+						value = -95
+					}
 				}
 			}
-			war_score = 95 # win!
 		}
 	}
 	option = {
 		name = rinta_seeker_events.215.a
 		if = {
 			limit = { #Alefisol win
-				war_score = 95
+				any_war_enemy_country = {
+					is_in_war = {
+						defender_leader = THIS
+						casus_belli = cb_alefisol_war
+					}
+					NOT = { #Win for Alefisol
+						war_score_against = {
+							who = S93
+							value = -95
+						}
+					}
+				}
 			}
 			country_event = { id = rinta_seeker_events.212 }
 		}
@@ -3348,6 +3399,51 @@ country_event = {
 		ai_chance = { factor = 1 }
 	}
 }
+
+#Information events for non Rinta Countries
+country_event = { #On province
+	id = rinta_seeker_events.262
+	title = rinta_seeker_events.262.t
+	desc = rinta_seeker_events.262.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = rinta_infernal_resonance
+				}
+				save_event_target_as = rinta_tar1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.262.a
+		goto = rinta_tar1
+		hidden_effect = {
+			set_country_flag = rinta_informed_about_resonance
+		}
+
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #On Alefisol Shows
+	id = rinta_seeker_events.263
+	title = rinta_seeker_events.263.t
+	desc = rinta_seeker_events.263.desc
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.263.a
+
+		ai_chance = { factor = 1 }
+	}
+}
 #####################################################################
 #Rise of the Adeen
 country_event = { #After 2 years
@@ -4282,6 +4378,7 @@ country_event = { #Start of ending
 	option = {
 		name = rinta_seeker_events.310.c
 		hidden_effect = {
+			set_country_flag = no_allies_war
 			S78 = {
 				country_event = {
 					id = rinta_seeker_events.315
@@ -4477,31 +4574,64 @@ country_event = { #The end Adeen victory
 	picture = BUDDHISM_GOOD_eventPicture
 
 	is_triggered_only = yes
-	major = yes
 
-	option = {
+	option = { 
 		name = rinta_seeker_events.312.a
-		end_incident = incident_rinta_rise_of_the_adeen
-		every_country = {
-			limit = {
-				is_incident_active = incident_rinta_rise_of_the_adeen
-			}
-			hidden_effect = {
-				if = {
-					limit = { has_country_flag = rinta_adeen_side_of_war }
-					set_estate_privilege = estate_adeen_relations_with_adeen
-					set_country_flag = rinta_adeen_hardliners_unlocked
-					clr_country_flag = rinta_adeen_side_of_war
-				}
-				end_incident = incident_rinta_rise_of_the_adeen
-				clr_country_flag = rinta_overlord_side_of_war
-			}
+		trigger = { # Adeen
+			tag = S78
 		}
+		end_incident = incident_rinta_rise_of_the_adeen
 		hidden_effect = {
-			clr_global_flag = incident_rinta_rise_of_the_adeen_ongoing_flag
+			set_country_flag = rinta_adeen_hardliners_unlocked
 		}
 		ai_chance = { factor = 1 }
 	}
+	option = {
+		name = rinta_seeker_events.312.b
+		trigger = { #Adeen Allies
+			has_country_flag = rinta_adeen_side_of_war
+		}
+		set_estate_privilege = estate_adeen_relations_with_adeen
+		hidden_effect = {
+			set_country_flag = rinta_adeen_hardliners_unlocked
+			clr_country_flag = rinta_adeen_side_of_war	
+		}
+		end_incident = incident_rinta_rise_of_the_adeen
+		ai_chance = { factor = 1 }
+	}
+	option = { #Losers (overlord and his pitful allies 
+		name = rinta_seeker_events.312.c
+		trigger = {
+			OR = {
+				has_country_flag = rinta_adeen_overlord
+				has_country_flag = rinta_overlord_side_of_war
+			}
+		}
+		end_incident = incident_rinta_rise_of_the_adeen
+		hidden_effect = {
+			clr_country_flag = rinta_overlord_side_of_war
+			if = {
+				limit = { has_country_flag = rinta_adeen_overlord }
+				clr_country_flag = rinta_adeen_overlord
+				clr_country_flag = no_allies_war
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = { #Neutrals
+		name = rinta_seeker_events.312.d
+		trigger = {
+			NOT = {
+				has_country_flag = rinta_adeen_side_of_war 
+				has_country_flag = rinta_overlord_side_of_war
+				tag = S78
+				has_country_flag = rinta_adeen_overlord
+			}
+		}
+		end_incident = incident_rinta_rise_of_the_adeen
+		ai_chance = { factor = 1 }
+	}
+	
 }
 country_event = { #The end Overlord victory
 	id = rinta_seeker_events.313
@@ -4510,14 +4640,30 @@ country_event = { #The end Overlord victory
 	picture = BUDDHISM_GOOD_eventPicture
 
 	is_triggered_only = yes
-	major = yes
 
 	immediate = {
 		clr_country_flag = disables_estate_adeen_flag
 	}
 
-	option = {
+	option = { 
 		name = rinta_seeker_events.313.a
+		trigger = { # Adeen and his peasant Allies
+			OR = {
+				has_country_flag = rinta_adeen_side_of_war
+				tag = S78
+			}
+		}
+		end_incident = incident_rinta_rise_of_the_adeen
+		hidden_effect = {
+			clr_country_flag = rinta_adeen_side_of_war	
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = {
+		name = rinta_seeker_events.313.b
+		trigger = { #Overlord
+			has_country_flag = rinta_adeen_overlord
+		}
 		add_country_modifier = {
 			name = rinta_victory_over_the_adeen
 			duration = -1
@@ -4528,31 +4674,43 @@ country_event = { #The end Overlord victory
 		}
 		end_incident = incident_rinta_rise_of_the_adeen
 		hidden_effect = {
-			clr_global_flag = incident_rinta_rise_of_the_adeen_ongoing_flag
-			every_country = {
-				limit = {
-					has_country_flag = rinta_overlord_side_of_war
-				}
-				add_country_modifier = {
-					name = rinta_victory_over_the_adeen
-					duration = -1
-				}
-			}
-			every_country = {
-				limit = {
-					is_incident_active = incident_rinta_rise_of_the_adeen
-				}
-				end_incident = incident_rinta_rise_of_the_adeen
-				clr_country_flag = rinta_adeen_side_of_war
-				clr_country_flag = rinta_overlord_side_of_war
+			clr_country_flag = rinta_adeen_overlord
+			clr_country_flag = no_allies_war
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = { #Overlord Allies
+		name = rinta_seeker_events.313.c
+		trigger = {
+			has_country_flag = rinta_overlord_side_of_war
+		}
+		add_country_modifier = {
+			name = rinta_victory_over_the_adeen
+			duration = -1
+		}
+		end_incident = incident_rinta_rise_of_the_adeen
+		hidden_effect = {
+			clr_country_flag = rinta_overlord_side_of_war
+		}
+		ai_chance = { factor = 1 }
+	}
+	option = { #Neutrals
+		name = rinta_seeker_events.312.d
+		trigger = {
+			NOT = {
+				has_country_flag = rinta_adeen_side_of_war 
+				has_country_flag = rinta_overlord_side_of_war
+				tag = S78
+				has_country_flag = rinta_adeen_overlord
 			}
 		}
+		end_incident = incident_rinta_rise_of_the_adeen
 		ai_chance = { factor = 1 }
 	}
 }
  #FREE SPACE FOR FUTURE event .314
 
-country_event = { #The Grand Halqa
+country_event = { #Heavenly spiral eye
 	id = rinta_seeker_events.315
 	title = rinta_seeker_events.315.t
 	desc = rinta_seeker_events.315.desc
@@ -4647,19 +4805,34 @@ country_event = { #The Grand Halqa
 				}
 			}
 		}
-		define_general = {
-			shock = 2
-			fire = 5
-			manuever = 3
-			siege = 3
-			name = "Blindblind"
+		define_ruler = {
+			adm = 4
+			dip = 5
+			mil = 6
+			age = 18
+			claim = 100
+			male = yes
+			culture = suhratbi
+			religion = rinta_seekers
+			name = "Isha"
+			dynasty = ""
 		}
+		add_ruler_personality = mage_personality
+		set_ruler_flag = evocation_1
+		set_ruler_flag = evocation_2
+		set_ruler_flag = evocation_3
+		set_ruler_flag = abjuration_1
+		set_ruler_flag = abjuration_2
+		set_ruler_flag = abjuration_3
+		set_ruler_flag = transmutation_1
+		set_ruler_flag = transmutation_2
+		set_ruler_flag = initialized_magic_flags
 		define_admiral = {
 			shock = 3
 			fire = 1
 			manuever = 3
 			siege = 1
-			name = "Blindbling II"
+			name = "Axmed"
 		}
 		
 		ai_chance = { factor = 1 }
@@ -4947,10 +5120,12 @@ country_event = { #Local Secession
 			add_devastation = 10
 			if = {
 				limit = {
-					NOT = {
-						estate_loyalty = {
-							estate = estate_adeen
-							loyalty = 30
+					ROOT = {
+						NOT = {
+							estate_loyalty = {
+								estate = estate_adeen
+								loyalty = 30
+							}
 						}
 					}
 				}

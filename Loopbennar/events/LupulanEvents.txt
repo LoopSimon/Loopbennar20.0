@@ -5,6 +5,7 @@ namespace = lupulan_events
 # Coded by Mike@butek69
 
 # lupulan_events.1001-1xxx: Sri Baginda System -
+# lupulan_events.2000-2xxx: Random events
 # lupulan_events.1-x: Random events
 # There's a scripted effects and triggers file for the Sri Baginda, use/add when appropriate
 # Event targets for Sri Baginda System: 
@@ -611,5 +612,986 @@ country_event = { #Tributary Selection Event
 		name = lupulan_events.goback
 		highlight = yes
 		add_sri_baginda_power = { value = 50 }
+	}
+}
+
+#Lupulan Flavor Events- Sri Baginda System
+#Written and coded by Fantastic Kitten. Reviewed by Blazily and Ragingrage. Code help from Mike.
+country_event = { #The Grandest Temple
+	id = lupulan_events.2000
+	title = lupulan_events.2000.t
+	desc = lupulan_events.2000.d
+	picture = GREAT_SPIRIT_LUPULAN_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	option = { #Build
+		name = lupulan_events.2000.a
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 15 }
+			add_years_of_income = -0.33
+			every_neighbor_country = {
+				limit = {
+					is_sb_or_tenglam = yes
+				}
+				random = {
+					chance = 10
+					country_event = { id = lupulan_events.2001 }
+				}
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2000_missionary_strength
+				duration = 3650
+			}
+			add_years_of_income = -0.5
+			every_neighbor_country = {
+				limit = {
+					is_sb_or_tenglam = yes
+				}
+				random = {
+					chance = 10
+					country_event = { id = lupulan_events.2001 }
+				}
+			}
+		}
+	}
+
+	option = { #No Build
+		name = lupulan_events.2000.b
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = -10 }
+			add_prestige = -10
+		}
+		else = {
+			add_prestige = -10
+		}
+	}
+}
+
+country_event = { #The Other Temple
+	id = lupulan_events.2001
+	title = lupulan_events.2001.t
+	desc = lupulan_events.2001.d
+	picture = SHWEDAGON_PAGON_eventPicture
+	is_triggered_only = yes
+
+
+	option = { #Sri Baginda
+		name = lupulan_events.2001.a
+		trigger = { is_sri_baginda = yes }
+		add_years_of_income = -0.5
+		add_sri_baginda_power = { value = 20 }
+	}
+	option = {#Build
+		name = lupulan_events.2001.b
+		trigger = { is_sri_baginda = no }
+		add_years_of_income = -0.25
+		add_prestige = 10
+	}
+	option = {#No Build
+		name = lupulan_events.2001.c
+		trigger = { is_sri_baginda = no }
+		add_prestige = -20
+	}
+}
+
+country_event = { #Favor of the Nang-Ta-Khian
+	id = lupulan_events.2002
+	title = lupulan_events.2002.t
+	desc = lupulan_events.2002.d
+	picture = CITY_DEVELOPMENT_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = target_province
+			}
+		}
+	}
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	option = { #Give In
+		name = lupulan_events.2002.a
+		goto = target_province
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 10 }
+			event_target:target_province = {
+				add_province_modifier = {
+					name = lupulan2002_nangfriend
+					duration = 3650
+				}
+			}
+
+		}
+		else = {
+			add_prestige = 10
+			event_target:target_province = {
+				add_province_modifier = {
+					name = lupulan2002_nangfriend
+					duration = 3650
+				}
+			}
+		}
+	}
+
+	option = { #Refuse
+		name = lupulan_events.2002.b
+		goto = target_province
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = -5 }
+			event_target:target_province = {
+				add_province_modifier = {
+					name = lupulan2002_nangnope
+					duration = 3650
+				}
+			}
+		}
+		else = {
+			add_prestige = -10
+			event_target:target_province = {
+				add_province_modifier = {
+					name = lupulan2002_nangnope
+					duration = 3650
+				}
+			}
+		}
+	}
+}
+
+country_event = { #The Middleman
+	id = lupulan_events.2003
+	title = lupulan_events.2003.t
+	desc = lupulan_events.2003.d
+	picture = TRIBUTARY_FLEET_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sri_baginda = yes
+		num_of_subjects = 2
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_subject_country = { save_event_target_as = subject1 }
+
+			random_subject_country = {
+				limit = { NOT = { tag = event_target:subject1 } }
+				save_event_target_as = subject2
+			}
+		}
+	}
+
+	option = { #Force Tribute from Bigger
+		name = lupulan_events.2003.a
+		add_sri_baginda_power = { value = 15 }
+		add_mil_power = -100
+		event_target:subject1 = {
+			gain_yearly_tribute = { ducats = yes }
+			add_liberty_desire = 15
+			add_opinion = {
+				who = ROOT
+				modifier = lupulan2003_unhappytrib
+			}
+		}
+		custom_tooltip = lupulan_events.2003.tooltip1
+	}
+
+	option = { #Request Tribute from Smaller
+		name = lupulan_events.2003.b
+		add_sri_baginda_power = { value = 5 }
+		add_dip_power = -50
+		event_target:subject2 = {
+			gain_yearly_tribute = { ducats = yes }
+			add_liberty_desire = 10
+			add_opinion = {
+				who = ROOT
+				modifier = lupulan2003_unhappytrib
+			}
+		}
+		custom_tooltip = lupulan_events.2003.tooltip2
+	}
+
+	option = { #Do Nothing
+		name = lupulan_events.2003.c
+		add_sri_baginda_power = { value = -10 }
+	}
+}
+
+country_event = { #Tribute to the Lupulan
+	id = lupulan_events.2004
+	title = lupulan_events.2004.t
+	desc = lupulan_events.2004.d
+	picture = GREAT_SPIRIT_LUPULAN_eventPicture
+	is_triggered_only = yes
+
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	option = { #Ball Out
+		name = lupulan_events.2004.a
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 20 }
+			add_years_of_income = -0.7
+			add_country_modifier = {
+				name = lupulan2004_balloutsb
+				duration = 3650
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2004_balloutother
+				duration = 3650
+			}
+			add_years_of_income = -0.7
+		}
+	}
+
+	option = { #Cheap Out
+		name = lupulan_events.2004.b
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 5 }
+			add_years_of_income = -0.33
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2004_cheapoutother
+				duration = 3650
+			}
+			add_years_of_income = -0.5
+		}
+	}
+
+	option = { #Do Nothing
+		name = lupulan_events.2004.c
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = -10 }
+			add_country_modifier = {
+				name = lupulan2004_nothingsb
+				duration = 3650
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2004_nothingother
+				duration = 3650
+			}
+		}
+	}
+}
+
+country_event = { #Those Who Came Before
+	id = lupulan_events.2005
+	title = lupulan_events.2005.t
+	desc = lupulan_events.2005.d
+	picture = AMILAK_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	option = { #Repent
+		name = lupulan_events.2005.a
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 20 }
+			change_government_reform_progress = -30
+			add_country_modifier = {
+				name = lupulan2005_repent
+				duration = 3650
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2005_repent
+				duration = 3650
+			}
+			add_legitimacy_equivalent = { amount = 50 republican_tradition = 25 }
+			change_government_reform_progress = -50
+		}
+	}
+
+	option = { #Distract
+		name = lupulan_events.2005.b
+		add_prestige = -10
+		add_adm_power = -15
+	}
+
+	option = { #Compromise
+		name = lupulan_events.2005.c
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 5 }
+			add_dip_power = -50
+			add_country_modifier = {
+				name = lupulan2005_compromise
+				duration = 3650
+			}
+		}
+		else = {
+			add_dip_power = -40
+			add_country_modifier = {
+				name = lupulan2005_compromise
+				duration = 3650
+			}
+			add_legitimacy_equivalent = { amount = 20 republican_tradition = 10 }
+		}
+	}
+}
+
+country_event = { #The Porcelain Herald
+	id = lupulan_events.2006
+	title = lupulan_events.2006.t
+	desc = lupulan_events.2006.d
+	picture = NOTHING_FOUND_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	option = { #Advisor Hunt
+		name = lupulan_events.2006.a
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_years_of_income = -0.17
+			add_sri_baginda_power = { value = 5 }
+			random = {
+				chance = 50
+				define_advisor = {
+					type = diplomat 
+					skill = 2
+					cost_multiplier = 0.5
+					culture = hujan
+				}
+			}
+		}
+		else = {
+			add_years_of_income = -0.25
+			random = {
+				chance = 50
+				add_country_modifier = {
+					name = lupulan2006_diplomatfound
+					duration = 3650
+				}
+				define_advisor = {
+					type = diplomat 
+					skill = 2
+					cost_multiplier = 0.5
+					culture = hujan
+				}
+			}
+		}
+	}
+
+	option = { #Do Nothing
+		name = lupulan_events.2006.b
+		add_prestige = -5
+	}
+
+	option = { #Tlag Only
+		name = lupulan_events.2006.c
+		highlight = yes
+		trigger = { tag = Y75 }
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 10 }
+			define_advisor = {
+				type = diplomat 
+				skill = 3
+				cost_multiplier = 0.5
+				culture = hujan
+			}
+		}
+		else = {
+			define_advisor = {
+				type = diplomat 
+				skill = 3
+				cost_multiplier = 0.5
+				culture = hujan
+			}
+		}
+	}
+}
+
+country_event = { #Durian Durian
+	id = lupulan_events.2007
+	title = lupulan_events.2007.t
+	desc = lupulan_events.2007.d
+	picture = NOTHING_FOUND_eventPicture
+	is_triggered_only = yes
+
+	trigger = { is_sri_baginda = yes }
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = { save_event_target_as = target_province }
+		}
+	}
+
+	option = { #Give Grove to River Tribe
+		name = lupulan_events.2007.a
+		add_adm_power = 40
+	}
+
+	option = { #Give Grove to Old Claim Tribe
+		name = lupulan_events.2007.b
+		add_dip_power = 40
+	}
+
+	option = { #Keep Grove for Self
+		name = lupulan_events.2007.c
+		goto = target_province
+		add_sri_baginda_power = { value = 10 }
+		add_country_modifier = {
+			name = lupulan2007_keepgrove
+			duration = 5475
+		}
+		event_target:target_province = {
+			spawn_rebels = {
+				type = anti_tax_rebels
+				size = 1
+			}
+			spawn_rebels = {
+				type = anti_tax_rebels
+				size = 1
+			}
+		}
+	}
+}
+
+country_event = { #The Exorcist
+	id = lupulan_events.2008
+	title = lupulan_events.2008.t
+	desc = lupulan_events.2008.d
+	picture = IMPALED_SOLDIERS_eventPicture
+	is_triggered_only = yes
+
+	trigger = { 
+		is_sri_baginda = yes
+		num_of_subjects = 1
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_subject_country = {
+				save_event_target_as = demon_target
+			}
+		}
+	}
+
+	option = { #Send Troops
+		name = lupulan_events.2008.a
+		add_yearly_manpower = -0.25
+		event_target:demon_target = {
+			add_liberty_desire = -10
+			add_opinion = {
+				who = ROOT
+				modifier = lupulan2008_sendtroops
+			}
+		}
+	}
+
+	option = { #Chicken Out
+		name = lupulan_events.2008.b
+		add_sri_baginda_power = { value = -10 }
+	}
+}
+
+country_event = { #A Great Festival
+	id = lupulan_events.2009
+	title = lupulan_events.2009.t
+	desc = lupulan_events.2009.d
+	picture = FEAST_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	option = { #Peace
+		name = lupulan_events.2009.a
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 15 }
+			add_stability_or_adm_power = yes
+			add_country_modifier = {
+				name = lupulan2009_peace
+				duration = 3650
+			}
+		}
+		else = {
+			add_stability_or_adm_power = yes
+			add_country_modifier = {
+				name = lupulan2009_peace
+				duration = 3650
+			}
+		}
+	}
+
+	option = { #Prosperity
+		name = lupulan_events.2009.b
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 15 }
+			add_country_modifier = {
+				name = lupulan2009_prosperity
+				duration = 3650
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2009_prosperity
+				duration = 3650
+			}
+		}
+	}
+
+	option = { #Tech
+		name = lupulan_events.2009.c
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 15 }
+			add_country_modifier = {
+				name = lupulan2009_tech
+				duration = 3650
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2009_tech
+				duration = 3650
+			}
+		}
+	}
+
+	option = { #Kingship
+		name = lupulan_events.2009.e
+		trigger = { is_sri_baginda = yes }
+		add_sri_baginda_power = { value = 40 }
+	}
+}
+
+country_event = { #The Court of the Sri Baginda
+	id = lupulan_events.2010
+	title = lupulan_events.2010.t
+	desc = lupulan_events.2010.d
+	picture = COURT_INTRIGUE_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sri_baginda = yes
+		has_dip_advisor = yes
+		NOT = { has_country_flag = courtsystem }
+	}
+
+	option = { #Do Service
+		name = lupulan_events.2010.a
+		add_years_of_income = -0.8
+		add_sri_baginda_power = { value = 25 }
+		set_country_flag = courtsystem
+	}
+
+	option = { #Extort Subjects
+		name = lupulan_events.2010.b
+		add_sri_baginda_power = { value = 5 }
+		add_country_modifier = {
+			name = lupulan2010_tribute
+			duration = 3650
+		}
+		set_country_flag = courtsystem
+	}
+
+	option = { #Do Nothing
+		name = lupulan_events.2010.c
+		add_sri_baginda_power = { value = -5 }
+		add_prestige = 10
+	}
+}
+
+country_event = { #A United Front
+	id = lupulan_events.2011
+	title = lupulan_events.2011.t
+	desc = lupulan_events.2011.d
+	picture = FORT_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	option = { #Opt In
+		name = lupulan_events.2011.a
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_yearly_manpower = -0.17
+			add_sri_baginda_power = { value = 10 }
+			every_subject_country = {
+				limit = {
+					any_owned_province = {
+						OR = {
+							area = sawuladan_area
+							area = tlagukit_area
+							area = gehamteg_area
+						}
+					}
+				}
+				add_country_modifier = {
+					name = lupulan2011_optin_sribaginda
+					duration = 3650
+				}
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2011_optin_else
+				duration = 3650
+			}
+			add_yearly_manpower = -0.5
+		}
+	}
+
+	option = { #Opt Out
+		name = lupulan_events.2011.b
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_mil_power = 20
+		}
+		else = {
+			add_mil_power = 25
+		}
+	}
+
+	option = { #Take Charge
+		name = lupulan_events.2011.c
+		highlight = yes
+		trigger = { is_sri_baginda = yes }
+		add_mil_power = -40
+		add_sri_baginda_power = { value = 15 }
+		add_yearly_manpower = -0.25
+		every_subject_country = {
+			limit = {
+				any_owned_province = {
+					OR = {
+						area = sawuladan_area
+						area = tlagukit_area
+						area = gehamteg_area
+					}
+				}
+			}
+			add_country_modifier = {
+				name = lupulan2011_takecharge
+				duration = 3650
+			}
+		}
+	}
+}
+
+country_event = { #The River Toll
+	id = lupulan_events.2012
+	title = lupulan_events.2012.t
+	desc = lupulan_events.2012.d
+	picture = BURGHER_ESTATE_UPSET_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	option = { #Edict
+		name = lupulan_events.2012.a
+		trigger = { is_sri_baginda = yes }
+		random_list = {
+			1 = {
+				modifier = { factor = 3 is_tier_2_baginda = yes }
+				modifier = { factor = 9 is_tier_3_baginda = yes }
+				add_sri_baginda_power = { value = 15 }
+			}
+			3 = { add_sri_baginda_power = { value = -5 } }
+		}
+	}
+
+	option = { #War Canoes
+		name = lupulan_events.2012.b
+		trigger = { is_sri_baginda = no }
+		add_mil_power = -75
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 10
+		}
+	}
+
+	option = { #Sanctions
+		name = lupulan_events.2012.c
+		trigger = { is_sri_baginda = no }
+		add_years_of_income = -0.25
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 5
+		}
+	}
+
+	option = { #Drop Objections
+		name = lupulan_events.2012.e
+		trigger = { is_sri_baginda = no }
+		add_years_of_income = 0.5
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -15
+		}
+	}
+}
+
+country_event = { #Teak Wood Trouble
+	id = lupulan_events.2013
+	title = lupulan_events.2013.t
+	desc = lupulan_events.2013.d
+	picture = northamericagfx_BANKRUPTCY_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sb_or_tenglam = yes
+		any_neighbor_country = {
+			has_reform = yanglam_tengalam_reform
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_neighbor_country = {
+				limit = { has_reform = yanglam_tengalam_reform }
+				save_event_target_as = unlucky_guys
+			}
+		}
+	}
+
+	option = { #Help Out
+		name = lupulan_events.2013.a
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_country_modifier = {
+				name = lupulan2013_helpfriendssb
+				duration = 3650
+			}
+			event_target:unlucky_guys = {
+				add_opinion = {
+					who = ROOT
+					modifier = opinion_money_sent
+				}
+			}
+			add_sri_baginda_power = { value = 10 }
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2013_helpfriendsnotsb
+				duration = 3650
+			}
+			event_target:unlucky_guys = {
+				add_opinion = {
+					who = ROOT
+					modifier = opinion_money_sent
+				}
+			}
+		}
+	}
+
+	option = { #Exploit Sitation
+		name = lupulan_events.2013.b
+		add_years_of_income = 0.17
+	}
+}
+
+country_event = { #The Tiger in the Trees
+	id = lupulan_events.2014
+	title = lupulan_events.2014.t
+	desc = lupulan_events.2014.d
+	picture = DARK_FOREST_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	option = { #Be Subtle
+		name = lupulan_events.2014.a
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_prestige = 40
+		}
+		else = {
+			add_prestige = 30
+		}
+	}
+
+	option = { #Make Announcement
+		name = lupulan_events.2014.b
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_prestige = 20
+			add_sri_baginda_power = { value = 5 }
+		}
+		else = {
+			add_prestige = 15
+			add_country_modifier = {
+				name = lupulan2014_makeannouncement
+				duration = 3650
+			}
+		}
+	}
+
+	option = { #Tell Everyone
+		name = lupulan_events.2014.c
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = 10 }
+		}
+		else = {
+			add_country_modifier = {
+				name = lupulan2014_telleveryone
+				duration = 3650
+			}
+		}
+	}
+}
+
+country_event = { #The Great Flood
+	id = lupulan_events.2015
+	title = lupulan_events.2015.t
+	desc = lupulan_events.2015.d
+	picture = PLAGUE_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		is_sb_or_tenglam = yes
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				save_event_target_as = flood_province
+			}
+		}
+	}
+
+	option = { #Spare No Effort
+		name = lupulan_events.2015.a
+		add_years_of_income = -0.5
+		add_country_modifier = {
+			name = lupulan2015_sparenoeffort
+			duration = 3650
+		}
+	}
+
+	option = { #Help Rebuild
+		name = lupulan_events.2015.b
+		goto = flood_province
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_years_of_income = -0.17
+			add_sri_baginda_power = { value = -10 }
+			event_target:flood_province = {
+				add_devastation = 10
+			}
+		}
+		else = {
+			add_years_of_income = -0.17
+			add_country_modifier = {
+				name = lupulan2015_helprebuild
+				duration = 3650
+			}
+			event_target:flood_province = {
+				add_devastation = 10
+			}
+		}
+	}
+
+	option = { #Do Nothing
+		name = lupulan_events.2015.c
+		goto = flood_province
+		if = {
+			limit = {
+				is_sri_baginda = yes
+			}
+			add_sri_baginda_power = { value = -20 }
+			event_target:flood_province = {
+				add_devastation = 30
+				add_random_development = -1
+				spawn_rebels = {
+					type = anti_tax_rebels
+					size = 3
+				}
+			}
+		}
+		else = {
+			event_target:flood_province = {
+				add_devastation = 30
+				remove_random_development = yes
+				spawn_rebels = {
+					type = anti_tax_rebels
+					size = 3
+				}
+			}
+			reduce_stability_or_adm_power = yes
+		}
 	}
 }

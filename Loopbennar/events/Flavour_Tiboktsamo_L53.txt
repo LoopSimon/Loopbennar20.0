@@ -1,0 +1,779 @@
+namespace = flavour_tiboktsamo
+
+country_event = { # A lifetime in pursuit of perfection
+	id = flavour_tiboktsamo.0
+	title = flavour_tiboktsamo.0.t
+	desc = flavour_tiboktsamo.0.d
+	picture = ARTWORK_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = L53
+	}
+
+	immediate = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = L53_the_tower_stands_alone
+				duration = -1
+			}
+		}
+	}
+	
+	option = {
+		name = flavour_tiboktsamo.0.a
+		
+		add_army_tradition = 25
+		capital_scope = {
+			infantry = ROOT
+			infantry = ROOT
+			infantry = ROOT
+		}
+		kunolo_area = {
+			add_permanent_claim = ROOT
+		}
+		add_casus_belli = {
+			target = S98
+			type = cb_insult
+			months = 240
+		}
+		custom_tooltip = linebreak_tt
+		custom_tooltip = L53_gain_tower_stands_alone_tooltip
+		tooltip = {
+			add_country_modifier = {
+				name = L53_the_tower_stands_alone
+				duration = -1
+			}
+		}
+	}
+}
+
+country_event = { # Declaring a Kolovadoy
+	id = flavour_tiboktsamo.1
+	title = flavour_tiboktsamo.1.t
+	desc = flavour_tiboktsamo.1.d
+	picture = ARTWORK_eventPicture
+
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_tiboktsamo.1.a
+		
+		define_ruler = {
+			name = "Tanynakazy" #Land Daughter
+			dynasty = "Longwatch" #Adopted child of Andrianary Longwatch
+			adm = 2
+			dip = 2
+			mil = 6
+			age = 17
+		}
+		custom_tooltip = flavour_tiboktsamo.1.tt
+		hidden_effect = {
+			add_ruler_personality = inspiring_leader_personality
+			set_ruler_flag = L53_tanynakazy_ruler
+			set_country_flag = L53_tanynakazy_spawned
+		}
+
+		define_ruler_to_general = {
+			fire = 2
+			shock = 5
+			manuever = 4
+			siege = 2
+			trait = inspirational_leader_general_personality
+		}
+		add_casus_belli = {
+			type = cb_spread_the_true_faith
+			target = L10
+			months = 240
+		}
+	}
+}
+
+country_event = { # Trials for Traitors
+	id = flavour_tiboktsamo.2
+	title = flavour_tiboktsamo.2.t
+	desc = flavour_tiboktsamo.2.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_tiboktsamo.2.a
+
+		change_estate_land_share = {
+			estate = estate_burghers
+			share = -5
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -10
+		}
+		add_republican_tradition = 10
+
+		kunolo_area = {
+			limit = {
+				NOT = { province_id = 5714 } # Exclude Tiboktsamo, they like the executions
+			}
+			add_province_modifier = {
+				name = L53_unpopular_executions
+				duration = -1
+			}
+		}
+		
+		hidden_effect = {
+			country_event = {
+				id = flavour_tiboktsamo.3
+				days = 1825 #5 years
+			}
+		}
+	}
+}
+
+country_event = { # Divinity Undone
+	id = flavour_tiboktsamo.3
+	title = flavour_tiboktsamo.3.t
+	desc = flavour_tiboktsamo.3.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_tiboktsamo.3.a
+		
+		5710 = {
+			change_culture = ROOT
+			change_religion = ROOT
+			remove_lizardfolk_minority_size_effect = yes
+		}
+		large_decrease_of_lizardfolk_tolerance_effect = yes
+		add_country_modifier = {
+			name = L53_divinity_undone
+			duration = 3650
+		}
+	}
+
+	option = {
+		name = flavour_tiboktsamo.3.b
+
+		add_prestige = 5
+		small_increase_of_lizardfolk_tolerance_effect = yes
+	}
+}
+
+country_event = { # Another form of Cowardice
+	id = flavour_tiboktsamo.4
+	title = flavour_tiboktsamo.4.t
+	desc = flavour_tiboktsamo.4.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+	trigger = {
+		NOT = { has_country_flag = L53_first_ghost_search_completed }
+	}
+	
+	option = {
+		name = flavour_tiboktsamo.4.a
+		
+		add_country_modifier = {
+			name = L53_no_patience_for_cowards
+			duration = 18250 #50 years of reduced harsh treatment cost.
+		}
+		hidden_effect = {
+			set_country_flag = L53_first_ghost_search_completed
+		}
+	}
+}
+
+country_event = { # Ghost stories
+	id = flavour_tiboktsamo.5
+	title = flavour_tiboktsamo.5.t
+	desc = flavour_tiboktsamo.5.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = L53_elokos_prank
+				duration = -1
+			}
+		}
+	}
+
+	option = {
+		name = flavour_tiboktsamo.5.a
+		tooltip = {
+			add_country_modifier = {
+				name = L53_elokos_prank
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			clr_country_flag = L53_first_ghost_search_completed
+			set_country_flag = L53_cleared_eloko_sightings
+			capital_scope = {
+				add_province_triggered_modifier = tiboktsamo_defeated_elokos_rebels_ptm
+			}
+		}
+
+		#I'm so fucking lazy for doing this, but I'm just gonna copy-paste the same command to add a random rebel in Dao Nako 5 times.
+		random_owned_province = {
+			limit =  { region = dao_nako_region }
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+			}
+		}
+		random_owned_province = {
+			limit =  { region = dao_nako_region }
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+			}
+		}
+		random_owned_province = {
+			limit =  { region = dao_nako_region }
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+			}
+		}
+		random_owned_province = {
+			limit =  { region = dao_nako_region }
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+			}
+		}
+		random_owned_province = {
+			limit =  { region = dao_nako_region }
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 1
+			}
+		}
+	}
+}
+
+country_event = { # Aftermath of the prank
+	id = flavour_tiboktsamo.6
+	title = flavour_tiboktsamo.6.t
+	desc = flavour_tiboktsamo.6.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+	trigger = {
+		has_country_modifier = L53_elokos_prank
+		NOT = { num_of_rebel_armies = 1 }
+	}
+	
+	option = {
+		name = flavour_tiboktsamo.6.a
+		
+		remove_country_modifier = L53_elokos_prank
+		add_or_extend_country_modifier = {
+			name = L53_mainland_colonist
+			duration = 9125
+		}
+		asanbosom_tu_area = {
+			hidden_effect = {
+				add_permanent_province_modifier = {
+					name = L53_mainland_reclamation_permanent
+					duration = 9125
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						is_empty = yes
+						owned_by = ROOT
+					}
+				}
+				add_province_modifier = {
+					name = L53_mainland_reclamation
+					duration = 9125
+				}
+			}
+		}
+		5758 = {
+			if = {
+				limit = { is_empty = no } #Colonised?
+				if = { #Yes, colonised
+					limit = { owned_by = ROOT } #Is it us?
+					if = { #Great, give dev if city
+						limit = { is_city = yes }
+						add_base_tax = 2
+						add_base_production = 2
+						add_base_manpower = 2
+					}
+					else = { #If not, just finish colony
+						add_colonysize = 1000
+					}
+					change_culture = ROOT
+					change_religion = ROOT
+					change_trade_goods = incense
+				}
+				else = { #Yes, but it's not ours
+					add_core = ROOT
+					ROOT = { set_country_flag = L53_has_not_taken_5758 } #Take it later
+				}
+			}
+			else = { #No, not colonised, we can
+				create_colony = 1000
+				change_culture = ROOT
+				change_religion = ROOT
+				change_trade_goods = incense
+			}
+		}
+	}
+}
+
+country_event = { # A Late night Visit
+	id = flavour_tiboktsamo.7
+	title = flavour_tiboktsamo.7.t
+	desc = flavour_tiboktsamo.7.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Prophets
+		name = flavour_tiboktsamo.7.a
+		add_country_modifier = {
+			name = L53_prophets_of_jyva
+			duration = -1
+		}
+	}
+	option = { #Sorcerers
+		name = flavour_tiboktsamo.7.b
+		add_country_modifier = {
+			name = L53_sorcerers_of_jyva
+			duration = -1
+		}
+	}
+}
+
+country_event = { # Issuing the Challenge
+	id = flavour_tiboktsamo.8
+	title = flavour_tiboktsamo.8.t
+	desc = flavour_tiboktsamo.8.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_tiboktsamo.8.a
+		chibuswa_area = {
+			add_permanent_claim = ROOT
+		}
+	}
+}
+
+country_event = { # Tougher than the Toughest
+	id = flavour_tiboktsamo.9
+	title = flavour_tiboktsamo.9.t
+	desc = flavour_tiboktsamo.9.d
+	picture = ARTWORK_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_country_flag = tougher_than_the_toughest_completed }
+		mission_completed = L53_a_brothers_betrayal
+		is_free_or_tributary_trigger = yes
+		num_of_battles = { amount = 10 }
+		num_of_wars = { amount = 5 }
+	}
+
+	
+	option = {
+		name = flavour_tiboktsamo.9.a
+		if = {
+			limit = { mil = 5 }
+			define_advisor = {
+				type = commandant
+				discount = yes
+				cost_multiplier = 0.25
+				skill = 3
+			}
+			add_prestige = 50
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 20
+			}
+		}
+		else = {
+			define_advisor = {
+				type = commandant
+				discount = yes
+				cost_multiplier = 0.5
+				skill = 2
+			}
+			add_prestige = 25
+		}
+		
+		hidden_effect = {
+			set_country_flag = tougher_than_the_toughest_completed
+		}
+	}
+}
+
+country_event = { # Two tales of the tailed
+	id = flavour_tiboktsamo.10
+	title = flavour_tiboktsamo.10.t
+	desc = flavour_tiboktsamo.10.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+	trigger = {
+		NOT = { has_country_flag = two_tails_completed }
+	}
+	
+	option = { #Anti lizard
+		name = flavour_tiboktsamo.10.a
+
+		medium_decrease_of_lizardfolk_tolerance_effect = yes
+		add_mercantilism = 5
+		5845 = {
+			add_province_modifier = {
+				name = L53_foes_of_vadronoma
+				duration = -1
+			}
+		}
+	}
+	option = { #Pro lizard
+		name = flavour_tiboktsamo.10.b
+
+		medium_increase_of_lizardfolk_tolerance_effect = yes
+		5763 = {
+			add_province_modifier = {
+				name = L53_friends_of_torapinoma
+				duration = -1
+			}
+		}
+	}
+	after = {
+		hidden_effect = {
+			set_country_flag = two_tails_completed
+		}
+	}
+}
+
+country_event = { # The truest discussion
+	id = flavour_tiboktsamo.11
+	title = flavour_tiboktsamo.11.t
+	desc = flavour_tiboktsamo.11.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = {
+			5821 = {
+				owner = {
+					save_event_target_as = mapiltra_owner
+					white_peace = ROOT
+				}
+			}
+		}
+	}
+
+	option = {
+		name = flavour_tiboktsamo.11.a
+
+		if = {
+			limit = { has_saved_event_target = mapiltra_owner }
+			tooltip = { white_peace = event_target:mapiltra_owner }
+		}
+
+		5821 = {
+			nakavy_avo_destroy_shrine_province_effect = { deity = nakinta }
+			add_base_manpower = -1
+			add_base_tax = -1
+			add_base_production = -1
+			add_devastation = 100
+		}
+
+		5840 = {
+			add_building_construction = {
+				building = university
+				cost = 0
+				speed = 0.5
+			}
+			nakavy_avo_add_shrine_province_effect = { deity = nakinta }
+		}
+		custom_tooltip = L53_discount_ananoma_saikinoma
+		hidden_effect = { set_country_flag = ananoma_repair_discount_saikinoma }
+		add_mil_power = 100
+		add_adm_power = 100
+		add_dip_power = 100
+		add_power_projection = {
+			type = mission_rewards_power_projection
+			amount = 25
+		}
+	}
+}
+
+country_event = { # A Rightful Jakatany
+	id = flavour_tiboktsamo.12
+	title = flavour_tiboktsamo.12.t
+	desc = flavour_tiboktsamo.12.d
+	picture = ARTWORK_eventPicture
+	
+	is_triggered_only = yes
+
+	option = { #Monarchy
+		name = flavour_tiboktsamo.12.a
+		change_government_to_monarchy = yes
+		set_government_rank = 2
+		add_country_modifier = {
+			name = L53_true_jakatany
+			duration = -1
+		}
+	}
+
+	option = { #Republic
+		name = flavour_tiboktsamo.12.b
+		set_government_rank = 2
+		add_country_modifier = {
+			name = L53_council_of_the_tower
+			duration = -1
+		}
+	}
+}
+
+country_event = { # A prophecy fulfilled
+	id = flavour_tiboktsamo.13
+	title = flavour_tiboktsamo.13.t
+	picture = ARTWORK_eventPicture
+	desc = {
+		trigger = {
+			NOT = { has_ruler_flag = L53_tanynakazy_ruler } #He died
+			NOT = { has_country_flag = L53_reached_rank_5_kolovadoy } #Didn't fulfil goals
+        }
+		desc = flavour_tiboktsamo.13.d1
+	}
+	desc = {
+		trigger = {
+			has_country_flag = L53_reached_rank_5_kolovadoy #Did fulfil goals
+			NOT = { has_ruler_flag = L53_tanynakazy_ruler } #He died
+        }
+		desc = flavour_tiboktsamo.13.d2
+    }
+    desc = {
+		trigger = {
+			has_ruler_flag = L53_tanynakazy_ruler #He is alive
+			has_country_flag = L53_reached_rank_5_kolovadoy #Did fulfil goals
+        }
+		desc = flavour_tiboktsamo.13.d3
+    }
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = { #Did not survive to the end of the MT and did not reach rank 5 (Bad ending)
+		name = flavour_tiboktsamo.13.a
+		trigger = {
+			NOT = { has_ruler_flag = L53_tanynakazy_ruler } #He died
+			NOT = { has_country_flag = L53_reached_rank_5_kolovadoy } #Didn't fulfil goals
+        }
+		add_country_modifier = {
+			name = L53_a_grateful_nation
+			duration = 7300
+		}
+		form_vyoronsi_nation_effect = yes
+	}
+	
+	option = { #Reached rank 5 but died before the end of the MT (Good ending)
+		name = flavour_tiboktsamo.13.b
+		trigger = {
+			has_country_flag = L53_reached_rank_5_kolovadoy #Did fulfil goals
+			NOT = { has_ruler_flag = L53_tanynakazy_ruler } #He died
+        }
+		add_power_projection = {
+			type = 10_permanent_power_projection
+			amount = 10
+		}
+		add_country_modifier = {
+			name = L53_legacy_of_the_kolovadoy
+			duration = -1
+		}
+		form_vyoronsi_nation_effect = yes
+	}
+
+	option = { #Survived to the end of the MT, retire (Best ending P1)
+		name = flavour_tiboktsamo.13.c
+		trigger = {
+			has_ruler_flag = L53_tanynakazy_ruler #He is alive
+			has_country_flag = L53_reached_rank_5_kolovadoy #Did fulfil goals
+        }
+		
+		custom_tooltip = L53_kolovadoy_retirement_tooltip
+		add_power_projection = {
+			type = 10_permanent_power_projection
+			amount = 10
+		}
+		add_country_modifier = {
+			name = L53_legacy_of_the_kolovadoy
+			duration = -1
+		}
+		form_vyoronsi_nation_effect = yes
+
+		hidden_effect = {
+			set_country_flag = L53_chosen_in_retirement
+			kill_ruler = yes #They're not really dead, but this is just how the game works.
+			change_adm = 2
+			change_dip = 2
+			change_mil = 2
+
+			country_event = { #Die in 5-10 years.
+				id = flavour_tiboktsamo.14
+				days = 1825
+				random = 1825
+			}
+		}
+	}
+
+	option = { #Survived to the end of the MT, stay ruler (Best ending P2)
+		name = flavour_tiboktsamo.13.e
+		trigger = {
+			has_ruler_flag = L53_tanynakazy_ruler #He is alive
+			has_country_flag = L53_reached_rank_5_kolovadoy #Did fulfil goals
+        }
+		add_power_projection = {
+			type = 10_permanent_power_projection
+			amount = 10
+		}
+		add_country_modifier = {
+			name = L53_legacy_of_the_kolovadoy
+			duration = -1
+		}
+		form_vyoronsi_nation_effect = yes
+	}
+}
+
+country_event = { # Death of the Chosen
+	id = flavour_tiboktsamo.14
+	title = flavour_tiboktsamo.14.t
+	desc = flavour_tiboktsamo.14.d
+	picture = ARTWORK_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_ruler_flag = L53_tanynakazy_ruler } #He died
+		has_country_flag = L53_tanynakazy_spawned # make sure you actually get the ruler
+		OR = { #Either the chosen isn't in retirement or has had at least 30 days since retiring, to stop it from firing on their actual retirement.
+			NOT = { has_country_flag = L53_chosen_in_retirement }
+			had_country_flag = {
+				flag = L53_chosen_in_retirement
+				days = 30
+			}
+		}
+	}
+	
+	option = {
+		name = flavour_tiboktsamo.14.a
+		trigger = {
+			NOT = { has_country_flag = L53_reached_rank_5_kolovadoy } #Didn't fulfil goals
+		}
+		
+		add_country_modifier = {
+			name = L53_finishing_their_work
+			duration = 18250
+		}
+	}
+	option = {
+		name = flavour_tiboktsamo.14.b
+		trigger = {
+			has_country_flag = L53_reached_rank_5_kolovadoy #Did fulfil goals
+		}
+		
+		add_country_modifier = {
+			name = L53_a_grateful_nation
+			duration = 7300
+		}
+	}
+}
+
+country_event = {
+	id = flavour_tiboktsamo.15 #Tower stands alone lost.
+	title = flavour_tiboktsamo.15.t
+	desc = flavour_tiboktsamo.15.d
+	picture = ARTWORK_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = L53_the_tower_stands_alone
+		}
+	}
+
+	option = {
+		name = flavour_tiboktsamo.15.a
+	}
+}
+
+country_event = {
+	id = flavour_tiboktsamo.16 #Tower stands alone expired
+	title = flavour_tiboktsamo.16.t
+	desc = flavour_tiboktsamo.16.d
+	picture = ARTWORK_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+	trigger = {
+		is_or_was_tag = { tag = L53 }
+		has_country_modifier = L53_the_tower_stands_alone
+	}
+
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = L53_the_tower_stands_alone
+		}
+	}
+
+	option = {
+		name = flavour_tiboktsamo.16.a
+		tooltip = {
+			remove_country_modifier = L53_the_tower_stands_alone
+		}
+	}
+}
+
+province_event = { #Latranoma
+	id = flavour_tiboktsamo.100 #Rightful Reclamation of [Root.GetName]
+	title = flavour_tiboktsamo.100.t
+	desc = flavour_tiboktsamo.100.d
+	picture = ARTWORK_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		owner = { has_country_flag = L53_has_not_taken_5758 }
+	}
+	immediate = {
+		hidden_effect = {
+			owner = { clr_country_flag = L53_has_not_taken_5758 }
+		}
+	}
+	option = {
+		name = flavour_tiboktsamo.100.a
+		if = {
+			limit = { is_city = no }
+			add_colonysize = 1000
+		}
+		else = {
+			add_base_tax = 2
+			add_base_production = 2
+			add_base_manpower = 2
+		}
+		change_culture = owner
+		change_religion = owner
+		change_trade_goods = incense
+	}
+}

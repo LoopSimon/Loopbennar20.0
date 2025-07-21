@@ -885,11 +885,38 @@ country_event = { # A little liquid glory
 
 	trigger = {
 		culture_group = taychendi_ruinborn_elf
-		any_owned_province = {
+		num_of_owned_provinces_with = {
+			value = 2
 			trade_goods = tea
 			NOT = {
-				province_id = 2481 # ahartadyam
-				province_id = 2556 # marhed rayodana
+				province_id = 2481 #Ahartadyam
+				province_id = 2556 #Marhed Rayodana
+			}
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					trade_goods = tea
+					NOT = {
+						province_id = 2481 #Ahartadyam
+						province_id = 2556 #Marhed Rayodana
+					}
+				}
+				save_event_target_as = taychend_tea_event_target_1
+			}
+			random_owned_province = {
+				limit = {
+					trade_goods = tea
+					NOT = {
+						province_id = 2481 #Ahartadyam
+						province_id = 2556 #Marhed Rayodana
+						province_id = event_target:taychend_tea_event_target_1
+					}
+				}
+				save_event_target_as = taychend_tea_event_target_2
 			}
 		}
 	}
@@ -906,37 +933,20 @@ country_event = { # A little liquid glory
 	option = { # replace tea plantations with vineyards
 		name = taychend_flavour.11.b
 		
-		random_owned_province = {
-			limit = {
-				trade_goods = tea
-				NOT = {
-					province_id = 2481
-					province_id = 2556
-				}
-			}
+		event_target:taychend_tea_event_target_1 = {
 			change_trade_goods = wine
 			add_province_modifier = {
 				name = tf_cultivating_taychendi_vineyards
 				duration = 9125
 			}
-			set_province_flag = tfflag_taychendi_wine_1
 		}
 		
-		random_owned_province = {
-			limit = {
-				trade_goods = tea
-				NOT = {
-					province_id = 2481
-					province_id = 2556
-					has_province_flag = tfflag_taychendi_wine_1
-				}
-			}
+		event_target:taychend_tea_event_target_2 = {
 			change_trade_goods = wine
 			add_province_modifier = {
 				name = tf_cultivating_taychendi_vineyards
 				duration = 9125
 			}
-			set_province_flag = tfflag_taychendi_wine_2
 		}
 		
 		country_event = { 
@@ -1001,7 +1011,7 @@ country_event = { # peasants move into devastated areas
 			value = 3
 			superregion = taychend_superregion
 			base_manpower = 3
-			NOT = { devastation = 0 }
+			NOT = { devastation = 1 }
 		}
 		OR = {
 			num_of_owned_provinces_with = {

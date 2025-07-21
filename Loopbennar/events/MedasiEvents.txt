@@ -2702,3 +2702,125 @@ country_event = {
 		add_years_of_income = 0.1
 	}
 }
+
+#pulse event - culture conversion
+country_event = {
+	id = medasi.100
+	title = medasi.100.t
+	desc = medasi.100.d
+	picture = muslimgfx_CONQUEST_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		is_subject_of_type = medasi_subject
+	}
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					overlord = { NOT = { tag = F66 } }
+					any_owned_province = {
+						NOT = { culture = ROOT }
+						religion_group = ROOT
+					}
+				}
+				random_owned_province = {
+					limit = {
+						NOT = { culture = ROOT }
+						religion_group = ROOT
+					}
+					save_event_target_as = conversion_target_1
+				}
+			}
+			if = {
+				limit = {
+					overlord = { tag = F66 }
+					any_owned_province = {
+						NOT = { culture = ROOT }
+						NOT = { culture_group = kheteratan }
+						religion_group = ROOT
+					}
+				}
+				random_owned_province = {
+					limit = {
+						NOT = { culture = ROOT }
+						NOT = { culture_group = kheteratan }
+						religion_group = ROOT
+					}
+					save_event_target_as = conversion_target_1
+				}
+				if = {
+					limit = {
+						empire_of_china_reform_passed = medasi_peak_civilization_reform
+						any_owned_province = {
+							NOT = { culture = ROOT }
+							NOT = { culture_group = kheteratan }
+							religion_group = ROOT
+							NOT = { province_id = event_target:conversion_target_1 }
+						}
+					}
+					random_owned_province = {
+						limit = {
+							NOT = { culture = ROOT }
+							NOT = { culture_group = kheteratan }
+							religion_group = ROOT
+							NOT = { province_id = event_target:conversion_target_1 }
+						}
+						save_event_target_as = conversion_target_2
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = medasi.100.a
+		if = {
+			limit = {
+				has_saved_event_target = conversion_target_1
+			}
+			event_target:conversion_target_1 = {
+				random_list = {
+					40 = {
+						#do nothing
+					}
+					60 = {
+						trigger = {
+							NOT = { empire_of_china_reform_passed = medasi_enlightening_halann_reform }
+						}
+						change_culture = ROOT
+					}
+					60 = {
+						trigger = {
+							empire_of_china_reform_passed = medasi_enlightening_halann_reform
+						}
+						konolkhatep_khetist_cultures_random = yes
+						konolkhatep_neighbor_khetist_cultures_random = yes
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_saved_event_target = conversion_target_2
+			}
+			event_target:conversion_target_2 = {
+				random_list = {
+					40 = {
+						#do nothing
+					}
+					60 = {
+						trigger = {
+							empire_of_china_reform_passed = medasi_enlightening_halann_reform
+						}
+						konolkhatep_khetist_cultures_random = yes
+						konolkhatep_neighbor_khetist_cultures_random = yes
+					}
+				}
+			}
+		}
+	}
+}

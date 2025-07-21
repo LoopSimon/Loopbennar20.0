@@ -10,7 +10,7 @@ province_event = { #province level interaction stage 1
 	is_triggered_only = yes
 
 	immediate = {
-		hidden_effect = { owner = { set_country_flag = transmutative_path_infuse_chi_menu_open } }
+		hidden_effect = { owner = { set_country_flag = transmutative_path_infuse_chi_menu_open save_event_target_as = province_owner_target } }
 	}
 	option = { #back out
 		name = transmutative_path.1.a
@@ -24,8 +24,13 @@ province_event = { #province level interaction stage 1
 		custom_tooltip = build_chi_wellspring_tt
 		if = {
 			limit = {
-				NOT = { transmutative_path_has_chi_wellspring_trigger = yes }
-				NOT = { has_province_flag = no_chi_wellspring }
+				province_has_no_chi_wellspring_trigger = yes
+				NOT = {
+					any_neighbor_province = {
+						owned_by = event_target:province_owner_target
+						province_has_chi_wellspring_trigger = yes
+					}
+				}
 				NOT = { transmutative_path_infuse_province_trigger = yes }
 				NOT = { is_capital = yes }
 				development = 10
@@ -51,10 +56,7 @@ province_event = { #province level interaction stage 1
 		trigger = {
 			owner = {
 				OR = {
-					AND = {
-						culture_group = kai
-						NOT = { tag = Y60 } #Lo Ngoen - Because transmuting gold is op
-					}
+					culture_group = kai
 					culture = naamjyut
 					culture = antmvura
 				}
@@ -64,18 +66,15 @@ province_event = { #province level interaction stage 1
 		if = {
 			limit = {
 				transmutative_path_change_trade_good_trigger = yes
-				owner = {
-					church_power = 50
-					NOT = {
-						has_country_modifier = trade_good_change_cd
-					}
-				}
+				transmutative_path_owner_has_chi_trigger = yes
+				owner = { NOT = { has_country_modifier = trade_good_change_cd } }
 			}
 			custom_tooltip = " " #Linebreak
+			transmutative_path_pay_chi_effect = yes
 			transmutative_path_change_trade_good_effect = yes
-			owner = {
-				add_church_power = -50
-				hidden_effect = {
+			transmutative_path_destroy_chi_wellspring_to_size_effect = yes #edge case
+			hidden_effect = {
+				owner = {
 					add_country_modifier = {
 						name = trade_good_change_cd
 						duration = 9125
@@ -92,7 +91,7 @@ province_event = { #province level interaction stage 1
 		if = {
 			limit = {
 				transmutative_path_infuse_province_trigger = yes
-				owner = { church_power = 50 }
+				transmutative_path_owner_has_chi_trigger = yes
 			}
 			province_event = { id = transmutative_path.2 }
 		}
@@ -162,162 +161,165 @@ province_event = { #province level interaction stage 2
 		province_event = { id = transmutative_path.1 }
 	}
 	option = { #acts of hermitage
-		name = transmutative_path.2.b
+		name = transmutative_path_acts_of_hermitage
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_acts_of_hermitage
 			}
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_base_tax = 1
-		owner = { add_church_power = -50 }
 	}
 	option = { #rememberance festival
-		name = transmutative_path.2.c
+		name = transmutative_path_rememberance_festival
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_rememberance_festival
 			}
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_unrest = -10
-		owner = { add_church_power = -50 }
 	}
 	option = { #sponsor travelling libraries
-		name = transmutative_path.2.1
+		name = transmutative_path_sponsor_travelling_libraries
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_sponsor_travelling_libraries
 			}
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_next_institution_embracement = 15
-		owner = { add_church_power = -50 }
 	}
 	option = { #meditation through labour
-		name = transmutative_path.2.e
+		name = transmutative_path_meditation_through_labour
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_meditation_through_labour
 			}
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_base_production = 1
-		owner = { add_church_power = -50 }
 	}
 	option = { #fill the begging bowls
-		name = transmutative_path.2.f
+		name = transmutative_path_fill_the_begging_bowls
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_fill_the_begging_bowls
 			}
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_prosperity = 25
-		owner = { add_church_power = -50 }
 	}
 	option = { #relive past lives
-		name = transmutative_path.2.g
+		name = transmutative_path_relive_past_lives
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_relive_past_lives
 			}
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_nationalism = -10
-		owner = { add_church_power = -50 }
 	}
 	option = { #universal martial education
-		name = transmutative_path.2.h
+		name = transmutative_path_universal_martial_education
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_universal_martial_education
 			}
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_base_manpower = 1
-		owner = { add_church_power = -50 }
 	}
 	option = { #leadership of hero-monks
-		name = transmutative_path.2.i
+		name = transmutative_path_leadership_of_hero_monks
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_leadership_of_hero_monks
 			}
 			NOT = { has_province_modifier = transmutative_path_leadership_of_hero_monks_mod }
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_province_modifier = { name = transmutative_path_leadership_of_hero_monks_mod duration = 3650 }
-		owner = { add_church_power = -50 }
 	}
 	option = { #hire sellsword monks
-		name = transmutative_path.2.j
+		name = transmutative_path_hire_sellsword_monks
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_hire_sellsword_monks
 			}
 			NOT = { has_province_modifier = transmutative_path_hire_sellsword_monks_mod }
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_province_modifier = { name = transmutative_path_hire_sellsword_monks_mod duration = 3650 }
-		owner = { add_church_power = -50 }
 	}
 	option = { #everything under heaven
-		name = transmutative_path.2.k
+		name = transmutative_path_everything_under_heaven
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_everything_under_heaven
 			}
 			NOT = { has_province_modifier = transmutative_path_everything_under_heaven_mod }
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_province_modifier = { name = transmutative_path_everything_under_heaven_mod duration = 3650 }
-		owner = { add_church_power = -50 }
 	}
 	option = { #through inaction, action
-		name = transmutative_path.2.l
+		name = transmutative_path_through_inaction_action
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_through_inaction_action
 			}
 			NOT = { has_province_modifier = transmutative_path_through_inaction_action_mod }
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_province_modifier = { name = transmutative_path_through_inaction_action_mod duration = 3650 }
-		owner = { add_church_power = -50 }
 	}
 	option = { #we all lift together
-		name = transmutative_path.2.m
+		name = transmutative_path_we_all_lift_together
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_we_all_lift_together
 			}
 			NOT = { has_province_modifier = transmutative_path_we_all_lift_together_mod }
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_province_modifier = { name = transmutative_path_we_all_lift_together_mod duration = 3650 }
-		owner = { add_church_power = -50 }
 	}	
 	option = { #the second ascension
-		name = transmutative_path.2.n
+		name = transmutative_path_the_second_ascension
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_the_second_ascension
 			}
 		}
 		add_prosperity = 10
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		owner = { add_splendor = 5 }
-		owner = { add_church_power = -50 }
 	}
 	option = { #sages of the misty mountains
-		name = transmutative_path.2.o
+		name = transmutative_path_sages_of_the_misty_mountains
 		trigger = {
 			owner = {
 				has_church_aspect = transmutative_path_sages_of_the_misty_mountains
 			}
 			NOT = { has_province_modifier = transmutative_path_sages_of_the_misty_mountains_mod }
 		}
+		custom_tooltip = transmutative_path_pay_for_chi_preview
+		hidden_effect = { transmutative_path_pay_chi_effect = yes }
 		add_province_modifier = { name = transmutative_path_sages_of_the_misty_mountains_mod duration = 3650 }
-		owner = { add_church_power = -50 }
-	}
-	option = {
-		name = transmutative_path.2.p
-		trigger = {
-			owner = {
-				has_church_aspect = transmutative_path_dredge_the_flats
-			}
-			NOT = { has_province_modifier = transmutative_path_dredge_the_flats_mod }
-		}
-		add_province_modifier = { name = transmutative_path_dredge_the_flats_mod duration = 3650 }
-		owner = { add_church_power = -50 }
 	}
 	option = { #back out
 		name = transmutative_path.2.a
@@ -328,7 +330,7 @@ province_event = { #province level interaction stage 2
 	}
 }
 
-province_event = {
+province_event = { #For conquering a Chi Wellspring, destroy it unless conditions are right
 	id = transmutative_path.3
 	title = transmutative_path.3.t
 	desc = transmutative_path.3.d
@@ -337,58 +339,28 @@ province_event = {
 	is_triggered_only = yes
 	hidden = yes
 
-	trigger = {
-		owner = {
-			religion = transmutative_path
-		}
-	}
+	trigger = { province_has_chi_wellspring_trigger = yes }
 
 	immediate = {
-		owner = { save_event_target_as = transmutative_path_wellspring_calc_event_target }
+		owner = { save_event_target_as = province_owner_target }
+
+		if = {
+			limit = {
+				OR = {
+					owner = { NOT = { religion = transmutative_path } }
+					any_neighbor_province = {
+						owned_by = event_target:province_owner_target
+						province_has_chi_wellspring_trigger = yes
+					}
+				}
+			}
+			transmutative_path_destroy_chi_wellspring_effect = { owner_scope = event_target:province_owner_target }
+			owner = { country_event = { id = transmutative_path.4 } }
+		}
 	}
 
 	option = {
 		name = transmutative_path.3.a
-		if = {
-			limit = {
-				transmutative_path_has_chi_wellspring_trigger = yes
-				any_neighbor_province = {
-					owned_by = event_target:transmutative_path_wellspring_calc_event_target
-					transmutative_path_has_chi_wellspring_trigger = yes
-				}
-			}
-			transmutative_path_destroy_chi_wellspring_effect = yes
-			owner = { country_event = { id = transmutative_path.4 } }
-		}
-		else_if = {
-			limit = {
-				has_province_flag = no_chi_wellspring
-				all_neighbor_province = {
-					OR = {
-						AND = {
-							owned_by = event_target:transmutative_path_wellspring_calc_event_target
-							transmutative_path_has_chi_wellspring_trigger = no
-						}
-						NOT = {
-							owned_by = event_target:transmutative_path_wellspring_calc_event_target
-						}
-					}
-				}
-			}
-			clr_province_flag = no_chi_wellspring
-		}
-		else_if = {
-			limit = {
-				NOT = {
-					has_province_flag = no_chi_wellspring
-				}
-				any_neighbor_province = {
-					owned_by = event_target:transmutative_path_wellspring_calc_event_target
-					transmutative_path_has_chi_wellspring_trigger = yes
-				}
-			}
-			set_province_flag = no_chi_wellspring
-		}
 	}
 }
 
@@ -400,9 +372,7 @@ country_event = { #Chi Overload
 
 	is_triggered_only = yes
 
-	trigger = {
-		religion = transmutative_path
-	}
+	trigger = { religion = transmutative_path }
 
 	option = {
 		name = transmutative_path.4.a
@@ -418,9 +388,7 @@ country_event = { #Minor Chi Overload
 
 	is_triggered_only = yes
 
-	trigger = {
-		religion = transmutative_path
-	}
+	trigger = { religion = transmutative_path }
 
 	option = {
 		name = transmutative_path.5.a

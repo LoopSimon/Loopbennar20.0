@@ -37,8 +37,8 @@ country_event = {
 				name = spirit_military
 				duration = -1
 			}
-			spirit_mil_shock_dmg = yes
 		}
+		spirit_mil_shock_dmg_increase = yes
 		
 	}
 	#no thanks, we got this
@@ -3204,20 +3204,39 @@ country_event = {	# phokhao_appeasement (rending.506)
 		set_country_flag = rending_quest_third
 		clr_country_flag = rending_appeasement_menu_open
 	}
-	 option = { # Quest 4 desc
-	 	name = rending.336.h
-	 	trigger = {
-	 		NOT = { has_country_flag = rending_quest_fourth }
-			NOT = { treasury = 20000 }
-			has_country_flag = phokhao_expedition_finished
-	 	}
-	 	custom_tooltip = phokhao_quest_4_tt
-	 	hidden_effect = {
+	option = { # Quest 4 desc
+		name = rending.336.h
+		trigger = {
+			hidden_trigger = {
+				NOT = { has_country_flag = rending_quest_fourth }
+				has_country_flag = phokhao_expedition_finished
+				NOT = {
+					owns = 14
+					owns = 736
+					owns = 5229
+					AND = {
+						NOT = { has_global_flag = delete_cannor_region }
+						treasury = 20000
+					}
+					AND = {
+						NOT = { has_global_flag = delete_forbidden_plains_region }
+						treasury = 40000
+					}
+					AND = {
+						has_global_flag = delete_cannor_region
+						has_global_flag = delete_forbidden_plains_region
+						treasury = 50000
+					}
+				}
+			}
+		}
+		custom_tooltip = phokhao_quest_4_tt
+		hidden_effect = {
 	 		country_event = {
 	 			id = rending.506
 	 		}
 	 	}
-	 }
+	}
 	option = { # Quest 4 handin
 		name = rending.336.i
 		highlight = yes
@@ -3225,7 +3244,24 @@ country_event = {	# phokhao_appeasement (rending.506)
 			hidden_trigger = {
 				NOT = { has_country_flag = rending_quest_fourth }
 				has_country_flag = phokhao_expedition_finished
-				treasury = 20000
+				OR = {
+					owns = 14
+					owns = 736
+					owns = 5229
+					AND = {
+						NOT = { has_global_flag = delete_cannor_region }
+						treasury = 20000
+					}
+					AND = {
+						NOT = { has_global_flag = delete_forbidden_plains_region }
+						treasury = 40000
+					}
+					AND = {
+						has_global_flag = delete_cannor_region
+						has_global_flag = delete_forbidden_plains_region
+						treasury = 50000
+					}
+				}
 			}
 		}
 		custom_tooltip = phokhao_quest_4_tt
@@ -3734,6 +3770,10 @@ country_event = {	# lupulan_appeasement
 									religion = mystic_accord
 									religion = accretive_path
 									religion = transmutative_path
+									AND = {
+										religion = anzalkatsa
+										has_country_flag = 333_appease_lizo
+									}
 								}
 							}
 						}
@@ -3765,6 +3805,10 @@ country_event = {	# lupulan_appeasement
 								religion = mystic_accord
 								religion = accretive_path
 								religion = transmutative_path
+								AND = {
+									religion = anzalkatsa
+									has_country_flag = 333_appease_lizo
+								}
 							}
 						}
 					}
@@ -6720,29 +6764,39 @@ country_event = {
 	is_triggered_only = yes
 
 	immediate = {
-		damespearl_area = {
-			discover_country = root
-		}
-		vrorenmarch_area = {
-			discover_country = root
-		}
-		shik_dozein_area = {
-			discover_country = root
+		hidden_effect = {
+			damespearl_area = {
+				discover_country = root
+			}
+			vrorenmarch_area = {
+				discover_country = root
+			}
+			shik_dozein_area = {
+				discover_country = root
+			}
 		}
 	}
 
 	option = {
 		name = rending.575.a
-		add_treasury = -20000
 		trigger = {
 			NOT = { has_global_flag = delete_cannor_region }
+			NOT = { owns = 14 }
 		}
-		hidden_effect = {
-		14 = { owner = { add_treasury = 20000 } }
-		set_country_flag = rending_quest_fourth
+		goto = 14
+		if = {
+			limit = { treasury = 20000 }
+			add_treasury = -20000
+			hidden_effect = {
+				14 = { owner = { add_treasury = 20000 } }
+				set_country_flag = rending_quest_fourth
+			}
+			14 = { cede_province = ROOT add_core = ROOT }
 		}
-		14 = { cede_province = ROOT add_core = ROOT }
-		
+		else = {
+			custom_tooltip = phokhao_we_are_broke_tt
+			add_prestige = -10
+		}
 	}
 	option = {
 		name = rending.575.b
@@ -6750,6 +6804,7 @@ country_event = {
 		trigger = {
 			owns = 14
 		}
+		goto = 14
 		hidden_effect = {
 			set_country_flag = rending_quest_fourth
 		}
@@ -6758,13 +6813,22 @@ country_event = {
 		name = rending.575.c
 		trigger = {
 			NOT = { has_global_flag = delete_cannor_region }
+			NOT = { owns = 736 }
 		}
-		add_treasury = -30000
-		hidden_effect = {
-			736 = { owner = { add_treasury = 30000 } }
-			set_country_flag = rending_quest_fourth
+		goto = 736
+		if = {
+			limit = { treasury = 30000 }
+			add_treasury = -30000
+			hidden_effect = {
+				736 = { owner = { add_treasury = 30000 } }
+				set_country_flag = rending_quest_fourth
+			}
+			736 = { cede_province = ROOT add_core = ROOT }
 		}
-		736 = { cede_province = ROOT add_core = ROOT }
+		else = {
+			custom_tooltip = phokhao_we_are_broke_tt
+			add_prestige = -10
+		}
 	}
 	option = {
 		name = rending.575.e
@@ -6772,6 +6836,7 @@ country_event = {
 		trigger = {
 			owns = 736
 		}
+		goto = 736
 		hidden_effect = {
 			set_country_flag = rending_quest_fourth
 		}
@@ -6780,13 +6845,22 @@ country_event = {
 		name = rending.575.f
 		trigger = {
 			NOT = { has_global_flag = delete_forbidden_plains_region }
+			NOT = { owns = 5229 }
 		}
-		add_treasury = -40000
-		hidden_effect = {
-			5229 = { owner = { add_treasury = 40000 } }
-			set_country_flag = rending_quest_fourth
+		goto = 5229
+		if = {
+			limit = { treasury = 40000 }
+			add_treasury = -40000
+			hidden_effect = {
+				5229 = { owner = { add_treasury = 40000 } }
+				set_country_flag = rending_quest_fourth
+			}
+			5229 = { cede_province = ROOT add_core = ROOT }
 		}
-		5229 = { cede_province = ROOT add_core = ROOT }
+		else = {
+			custom_tooltip = phokhao_we_are_broke_tt
+			add_prestige = -10
+		}
 	}
 	option = {
 		name = rending.575.g
@@ -6794,6 +6868,7 @@ country_event = {
 		trigger = {
 			owns = 5229
 		}
+		goto = 5229
 		hidden_effect = {
 			set_country_flag = rending_quest_fourth
 		}
@@ -6811,9 +6886,16 @@ country_event = {
 				has_global_flag = delete_forbidden_plains_region
 			}
 		}
-		add_treasury = -50000
-		hidden_effect = {
-			set_country_flag = rending_quest_fourth
+		if = {
+			limit = { treasury = 50000 }
+			add_treasury = -50000
+			hidden_effect = {
+				set_country_flag = rending_quest_fourth
+			}
+		}
+		else = {
+			custom_tooltip = phokhao_we_are_broke_tt
+			add_prestige = -10
 		}
 	}
 }

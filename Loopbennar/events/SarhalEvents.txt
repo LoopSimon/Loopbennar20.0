@@ -798,7 +798,11 @@ country_event = {
 		name = sarhalevents.27.a
         ai_chance = { factor = 1 }
         hidden_effect = {
-            exile_heir_as = coven_bargain_present_heir
+            if = {
+                limit = { has_heir = yes } 
+                exile_heir_as = coven_bargain_present_heir
+                save_event_target_as = has_heir
+            }
             set_heir = coven_bargain_exiled_heir
         }
         capital_scope = {
@@ -809,7 +813,10 @@ country_event = {
             }
         }
         hidden_effect = {
-            set_heir = coven_bargain_present_heir
+            if = {
+                limit = { has_saved_event_target = has_heir }
+                set_heir = coven_bargain_present_heir
+            }
         }
         add_stability = -1
         add_ruler_modifier = { name = coven_bargain_declined_offer duration = -1 }
@@ -820,15 +827,17 @@ country_event = {
 		name = sarhalevents.27.b
         trigger = { NOT = { has_country_flag = supernaturally_bound_faith } }
         ai_chance = { factor = 1 }
+        set_heir = coven_bargain_exiled_heir
         kill_ruler = yes
-        set_ruler = coven_bargain_exiled_heir
         change_religion = shadow_pact 
         capital_scope = {
             change_religion = shadow_pact
         }
         set_ruler_religion = shadow_pact
-        set_heir_religion = shadow_pact
-        set_consort_religion = shadow_pact
+        if = {
+            limit = { has_heir = yes }
+            set_heir_religion = shadow_pact
+        }
         add_country_modifier = {
             name = coven_bargain_shadow_zealotry
             duration = 7300
@@ -1321,7 +1330,13 @@ country_event = {
                         trigger = {
                             OR = {
                                 government = monarchy
-                                government = tribal
+                                AND = {
+                                    government = tribal
+                                    NOT = { #Tribals with elections in Sarhal
+                                        has_reform = namasoguziza_reform 
+                                        has_reform = haraagtsedi_pack_league
+                                    }
+                                }
                             }
                             ruler_age = 40
                             is_female = no

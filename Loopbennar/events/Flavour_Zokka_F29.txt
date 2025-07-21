@@ -628,6 +628,13 @@ country_event = {
 		}
 		else = { add_government_reform = ekxiem_zokka }
 		if = {
+			limit = { is_great_xhaz_trigger = yes }
+			hidden_effect = {
+				set_country_flag = zokka_keep_xhaz_flag
+				country_event = { id = flavour_zokka.42069 days = 30 }
+			}
+		}
+		if = {
 			limit = { NOT = { has_ruler = "Zokka" } }
 			define_ruler = {
 				name = "Zokka"
@@ -686,13 +693,6 @@ country_event = {
 		if = {
 			limit = { has_global_flag = zokka_killed_sun_cult_flag }
 			set_ruler_flag = zokka_phoenix_flag
-		}
-		if = {
-			limit = { has_country_flag = zokka_fleshmaw_devoured NOT = { has_country_modifier = zokka_invocation_ultima } }
-			hidden_effect = {
-				force_add_ruler_personality = { personality = mage_personality }
-				country_event = { id = magic_ruler.102 }
-			}
 		}
 		if = {
 			limit = { has_country_modifier = zokka_invocation_ultima }
@@ -1530,9 +1530,9 @@ country_event = {
 
 	option = {
 		name = flavour_zokka.24.a
-		change_innovativeness = 50
+		change_innovativeness = 10
 		add_country_modifier = {
-			name = zokka_ilfanill_devoured
+			name = zokka_hireet_devoured
 			duration = -1
 		}
 		if = {
@@ -1945,7 +1945,14 @@ country_event = {
 		hidden_effect = { emperor = { save_event_target_as = zokka_diet_target } }
 	}
 
-	after = { clr_country_flag = zokka_emp_war }
+	after = { 
+		hidden_effect = { 
+			every_country = { 
+				limit = { has_country_flag = zokka_emp_war } 
+				clr_country_flag = zokka_emp_war 
+			} 
+		} 
+	}
 
 	option = {
 		name = flavour_zokka.29.a
@@ -1954,7 +1961,6 @@ country_event = {
 		}
 		add_patriarch_authority = 0.3
 		businor_region = { limit = { NOT = { owned_by = F29 } } cede_province = F29 }
-		verne_area = { limit = { NOT = { owned_by = F29 } } cede_province = F29 }
 		wyvernmark_area = { limit = { NOT = { owned_by = F29 } } cede_province = F29 }
 		event_target:zokka_diet_target = {
 			hidden_effect = { country_event = { id = flavour_zokka.300 } }
@@ -2063,6 +2069,15 @@ country_event = {
 	
 	is_triggered_only = yes
 
+	after = {
+		hidden_effect = {
+			every_owned_province = {
+				limit = { has_province_flag = zokka_slave_chosen_flag }
+				clr_province_flag = zokka_slave_chosen_flag
+			}
+		}
+	}
+
 	option = {
 		name = flavour_zokka.31.a
 		custom_tooltip = kaxhkeddax_victory_tt
@@ -2075,14 +2090,23 @@ country_event = {
 				which = kaxhkeddax_favours_count
 				value = 12
 			}
-			every_owned_province = {
-				limit = { trade_goods = slaves }
-				add_base_tax = -1
-				add_base_production = -1
-				add_base_manpower = -1
-				ROOT = { add_adm_power = 10 }
-				ROOT = { add_dip_power = 10 }
-				ROOT = { add_mil_power = 10 }
+			for = {
+				amount = 25
+				effect = "
+					random_owned_province = {
+						limit = {
+							trade_goods = slaves
+							NOT = { has_province_flag = zokka_slave_chosen_flag }
+						}
+						add_base_tax = -1
+						add_base_production = -1
+						add_base_manpower = -1
+						ROOT = { add_adm_power = 10 }
+						ROOT = { add_dip_power = 10 }
+						ROOT = { add_mil_power = 10 }
+						set_province_flag = zokka_slave_chosen_flag
+					}
+				"
 			}
 			set_country_flag = kelmaxherho_dead
 			if = {
@@ -2104,11 +2128,12 @@ country_event = {
 				add_government_reform = zokka_mouth_eats2
 			}
 			if = {
-				limit = { has_reform = zokka_paramountcy }
+				limit = { has_reform = zokka_paramountcy reform_level = 10 }
 				remove_government_reform = zokka_paramountcy
 				add_government_reform = zokka_perdition2
 			}
-			else = {
+			else_if = {
+				limit = { reform_level = 10 }
 				remove_government_reform = zokka_perdition
 				add_government_reform = zokka_perdition2
 			}
@@ -2146,9 +2171,9 @@ country_event = {
 			}
 			every_owned_province = {
 				limit = { trade_goods = slaves }
-				add_base_tax = 2
-				add_base_production = 2
-				add_base_manpower = 2
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
 			}
 			set_country_flag = kaxhkeddax_dead
 			if = {
@@ -2170,11 +2195,12 @@ country_event = {
 				add_government_reform = zokka_hand_feeds2
 			}
 			if = {
-				limit = { has_reform = zokka_paramountcy }
+				limit = { has_reform = zokka_paramountcy reform_level = 10 }
 				remove_government_reform = zokka_paramountcy
 				add_government_reform = zokka_paramountcy2
 			}
-			else = {
+			else_if = {
+				limit = { reform_level = 10 }
 				remove_government_reform = zokka_perdition
 				add_government_reform = zokka_paramountcy2
 			}
@@ -2223,11 +2249,12 @@ country_event = {
 				add_government_reform = zokka_mouth_eats2
 			}
 			if = {
-				limit = { has_reform = zokka_paramountcy }
+				limit = { has_reform = zokka_paramountcy reform_level = 10 }
 				remove_government_reform = zokka_paramountcy
 				add_government_reform = zokka_paramountcy2
 			}
-			else = {
+			else_if = {
+				limit = { reform_level = 10 }
 				remove_government_reform = zokka_perdition
 				add_government_reform = zokka_perdition2
 			}
@@ -2253,7 +2280,7 @@ country_event = {
 		kill_ruler = yes
 		add_country_modifier = {
 			name = zokka_infernal_legionaries
-			duration = -1
+			duration = 18250
 		}
 		4432 = { 
 			change_province_name = "Zokkagaer"
@@ -2322,7 +2349,7 @@ country_event = {
 				add_stability = -3
 				add_country_modifier = {
 					name = zokka_impending_doom
-					duration = -1
+					duration = 18250
 				}
 			}
 			for = {
@@ -2475,7 +2502,6 @@ country_event = {
 
 	option = {
 		name = flavour_zokka.39.a
-		custom_tooltip = zokka_fleshmaw_devoured_tt
 		set_country_flag = zokka_fleshmaw_devoured
 		custom_tooltip = add_magic_study_modifier_50_tt
 		if = {
@@ -3830,5 +3856,50 @@ country_event = {
 	option = {
 		name = flavour_zokka.290.a
 		zokka_end_harpy_war_effect = yes
+	}
+}
+
+province_event = {
+	id = flavour_zokka.69420
+	title = flavour_zokka.69420.t
+	desc = flavour_zokka.69420.d
+	picture = DRAGON_ATTACK_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = flavour_zokka.69420.a
+		change_trade_goods = unknown
+	}
+}
+
+country_event = {
+	id = flavour_zokka.365
+	title = flavour_zokka.365.t
+	desc = flavour_zokka.365.d
+	picture = COMET_SIGHTED_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = flavour_zokka.430.a
+		kill_ruler = yes
+	}
+}
+
+country_event = {
+	id = flavour_zokka.42069
+	title = flavour_zokka.42069.t
+	desc = flavour_zokka.42069.d
+	picture = COMET_SIGHTED_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = flavour_zokka.42069.a
+		clr_country_flag = zokka_keep_xhaz_flag
 	}
 }

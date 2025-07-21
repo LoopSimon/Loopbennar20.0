@@ -1,1 +1,159 @@
-namespace = flavor_danggun
+namespace = danggun
+
+country_event = { #Do you have a spirit-king?
+	id = danggun.1
+	title = danggun.1.t
+	desc = danggun.1.d
+	picture = MIRACLE_MONK_eventPicture
+
+	is_triggered_only = yes
+	trigger = { religion = neokttareum }
+
+	option = { #Sage-King!
+		name = danggun.1.a
+		ai_chance = { factor = 1000 }
+		trigger = {
+			ruler_has_mage_personality = yes
+			gowon_region = { type = all OR = { is_city = no owned_by = ROOT } }
+		}
+		highlight = yes
+
+		hidden_effect = { country_event = { id = magic_ruler.100 } }
+		tooltip = { add_ruler_modifier = { name = nk_sage_king duration = -1 } } #Actually a country modifier to revert spirit mil on death
+		hidden_effect = { add_country_modifier = { name = nk_sage_king duration = -1 } }
+
+		custom_tooltip = rending_swap_spirit_mil_tt
+		tooltip = {
+			add_country_modifier = {
+				name = spirit_military
+				duration = -1
+			}
+		}
+
+		hidden_effect = {
+			clear_racial_military = yes
+			change_technology_group = tech_spirit
+			change_unit_type = tech_spirit
+			add_country_modifier = {
+				name = spirit_military
+				duration = -1
+				hidden = yes
+			}
+		}
+		spirit_mil_shock_dmg_increase = yes
+	}
+
+	option = { #Sagely Guided
+		name = danggun.1.b
+		ai_chance = { factor = 1000 }
+		trigger = {
+			ruler_has_mage_personality = yes
+			gowon_region = { is_city = yes NOT = { owned_by = ROOT } }
+		}
+		highlight = yes
+		
+		add_ruler_modifier = { name = nk_sagely_guided duration = -1 }
+	}
+
+	option = { #Illegitimate
+		name = danggun.1.c
+		ai_chance = { factor = 1 }
+
+		custom_tooltip = sado_eats_liver
+		random_list = {
+			1 = { change_adm = -1 }
+			1 = { change_dip = -1 }
+			1 = { change_mil = -1 }
+		}
+		add_ruler_modifier = { name = nk_illegitimate duration = -1 }
+	}
+}
+
+country_event = { #Death of a Spirit-King
+	id = danggun.2
+	title = danggun.2.t
+	desc = danggun.2.d
+	picture = MIRACLE_MONK_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+	trigger = { has_country_modifier = nk_sage_king }
+
+	option = {
+		name = danggun.2
+
+		remove_country_modifier = nk_sage_king
+
+		clear_racial_military = yes
+		add_country_modifier = {
+			name = human_military
+			duration = -1
+			hidden = yes
+		}
+		change_technology_group = tech_halessi
+		change_unit_type = tech_halessi
+		update_unit_sprites_for_racial_mil = yes
+	}
+}
+
+country_event = { #Danggun Starting Disaster
+	id = danggun.3
+	title = danggun.3.t
+	desc = danggun.3.d
+	picture = BAD_WITH_MONARCH_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			every_owned_province = { #Dalmangaji
+				limit = { is_core = Y94 }
+				cede_province = Y94
+			}
+			every_owned_province = { #Nuwenara
+				limit = { is_core = V27 }
+				cede_province = V27
+			}
+
+			Y94 = {
+				country_event = { id = anbennar_setup.3 }
+				add_treasury = 100
+				add_adm_power = 100
+				add_dip_power = 100
+				add_mil_power = 100
+				add_manpower = 10
+				capital_scope = { build_to_forcelimit = { infantry = 0.7 cavalry = 0.2 } }
+			}
+			
+			V27 = {
+				country_event = { id = anbennar_setup.3 }
+				add_treasury = 100
+				add_adm_power = 100
+				add_dip_power = 100
+				add_mil_power = 100
+				add_manpower = 10
+				capital_scope = { build_to_forcelimit = { infantry = 0.7 cavalry = 0.2 } }
+			}
+		}
+	}
+
+	option = { #Damnations!
+		name = danggun.3.a
+		ai_chance = { factor = 1 }
+
+	}
+
+	option = { #Play as Dalmangaji
+		name = danggun.3.b
+		ai_chance = { factor = 0 }
+
+		switch_tag = Y94
+	}
+
+	option = { #Play as Nuwenara
+		name = danggun.3.a
+		ai_chance = { factor = 0 }
+
+		switch_tag = V27
+	}
+}

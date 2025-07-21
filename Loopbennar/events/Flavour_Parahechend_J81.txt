@@ -1,0 +1,751 @@
+################################################
+##           Creator: Takasaki	         	  ##
+##			   Coder: Blaziy				  ##
+################################################
+
+namespace = parahechend_events
+
+country_event = { #Scheme and Shadow - Parahechend Version
+	id = parahechend_events.1
+	title = parahechend_events.1.t
+	desc = parahechend_events.1.desc
+	picture = CONSPIRACY_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = J81 #Parahechend
+		NOT = { is_year = 1445 }
+	}
+
+	option = {
+		name = parahechend_events.1.a
+	}
+}
+
+country_event = { #Scheme and Shadow - Varamraya Version
+	id = parahechend_events.2
+	title = parahechend_events.2.t
+	desc = parahechend_events.2.desc
+	picture = CONSPIRACY_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		tag = J82 #Varamraya
+		NOT = { is_year = 1445 }
+	}
+
+	option = {
+		name = parahechend_events.2.a #Accept - Only if Parahechend is a player
+		trigger = {
+			OR = {
+				ai = no
+				J81 = { ai = no } #Parahechend
+			}
+		}
+		J81 = { #Parahechend
+			set_country_flag = J81_varamraya_accept_flag
+		}
+	}
+
+	option = {
+		name = parahechend_events.2.b #Reject - Only if Parahechend is AI
+		trigger = {
+			OR = {
+				ai = no
+				J81 = { ai = yes } #Parahechend
+			}
+		}
+	}
+}
+
+country_event = { #Betrayal of the Rakulacan (Parahechend Version)
+	id = parahechend_events.3
+	title = parahechend_events.3.t
+	desc = parahechend_events.3.desc
+	picture = MAMLUK_WARRIORS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.3.a
+		tooltip = {
+			grant_independence = yes
+			J82 = { grant_independence = yes } #Varamraya
+			vassalize = J82 #Varamraya
+			overlord = {
+				declare_war_with_cb = {
+					casus_belli = cb_taychend_glory
+					who = ROOT
+				}
+				add_stability = 3
+			}
+			G70 = { join_all_offensive_wars_of = overlord }
+			add_stability = 1
+		}
+		hidden_effect = {
+			overlord = {
+				country_event = { #Betrayal of the Rakulacan (Mlerek Version)
+					id = parahechend_events.10
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Discord, Distraction, Dismemberment
+	id = parahechend_events.4
+	title = parahechend_events.4.t
+	picture = ELVEN_EYE_eventPicture
+
+	desc = {
+		trigger = { has_ruler_flag = heir_is_evindash_flag }
+		desc = parahechend_events.4.evindashdesc
+	}
+
+	desc = {
+		trigger = { NOT = { has_ruler_flag = heir_is_evindash_flag } }
+		desc = parahechend_events.4.elsedesc
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.4.a
+		if = {
+			limit = { alliance_with = G77 } #Marhed Rayodana
+			custom_tooltip = J81_larankar_event_insight_req_1_yes_tt
+			hidden_effect = {
+				G77 = { #Marhed Rayodana
+					declare_war_with_cb = {
+						casus_belli = cb_taychend_glory
+						who = G64 #Larankar
+					}
+				}
+			}
+		}
+		else = { custom_tooltip = J81_larankar_event_insight_req_1_no_tt }
+
+		if = {
+			limit = { army_size = 25 }
+			custom_tooltip = J81_larankar_event_insight_req_2_yes_tt
+			hidden_effect = {
+				add_country_modifier = {
+					name = J81_dismembering_the_defiant
+					duration = 1825 #5 years
+				}
+			}
+		}
+		else = { custom_tooltip = J81_larankar_event_insight_req_2_no_tt }
+
+		if = {
+			limit = {
+				calc_true_if = {
+					amount = 2
+					all_known_country = {
+						is_subject_of = G64 #Larankar
+						has_50_opinion_improved_relation = { target = ROOT }
+						OR = {
+							liberty_desire = 40
+							ROOT = {
+								has_spy_network_in = {
+									who = G64 #Larankar
+									value = 40
+								}
+							}
+						}
+					}
+				}
+			}
+			custom_tooltip = J81_larankar_event_insight_req_3_yes_tt
+			hidden_effect = {
+				pick_best_tags = {
+					global_trigger = "
+						is_subject_of = G64 #Larankar
+						OR = {
+							liberty_desire = 40
+							ROOT = {
+								has_spy_network_in = {
+									who = G64 #Larankar
+									value = 40
+								}
+							}
+						}
+					"
+					scale = total_development
+					1 = yes
+					event_target_name = largest_larankar_subject
+				}
+				G64 = { #Larankar
+					every_subject_country = {
+						limit = {
+							OR = {
+								liberty_desire = 40
+								ROOT = {
+									has_spy_network_in = {
+										who = G64 #Larankar
+										value = 40
+									}
+								}
+							}
+							NOT = { tag = event_target:largest_larankar_subject_1 }
+						}
+						add_liberty_desire = 100
+						create_alliance = event_target:largest_larankar_subject_1
+						every_war_enemy_country = {
+							limit = {
+								OR = {
+									is_in_war = {
+										attackers = THIS
+										defenders = G64 #Larankar
+									}
+									is_in_war = {
+										attackers = G64 #Larankar
+										defenders = THIS
+									}
+								}
+							}
+							white_peace = PREV
+						}
+					}
+				}
+				event_target:largest_larankar_subject_1 = {
+					add_liberty_desire = 100
+					declare_war_with_cb = {
+						casus_belli = cb_independence_war
+						who = G64 #Larankar
+					}
+				}
+			}
+		}
+		else = { custom_tooltip = J81_larankar_event_insight_req_3_no_tt }
+	}
+}
+
+country_event = { #Recompense and Retribution
+	id = parahechend_events.5
+	title = parahechend_events.5.t
+	picture = NOT_DISCIPLINED_SOLDIERS_eventPicture
+
+	desc = {
+		trigger = { has_ruler_flag = heir_is_evindash_flag }
+		desc = parahechend_events.5.evindashdesc
+	}
+
+	desc = {
+		trigger = { NOT = { has_ruler_flag = heir_is_evindash_flag } }
+		desc = parahechend_events.5.elsedesc
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.5.a
+		change_mil = 2
+		set_capital = 2493 #Pirsitel
+		nanru_nakar_area = {
+			add_base_tax = -2
+			add_base_production = -2
+			add_base_manpower = -2
+			add_devastation = 25
+		}
+		2493 = { #Pirsitel
+			add_base_tax = 3
+			add_base_production = 3
+			add_base_manpower = 2
+		}
+		gain_taychend_glory_effect = { amount = 100 }
+		add_treasury = 150
+		kalavend_region = { add_permanent_claim = ROOT }
+		kattisangamar_area = { add_permanent_claim = ROOT }
+	}
+}
+
+country_event = { #Scythe and Terror
+	id = parahechend_events.6
+	title = parahechend_events.6.t
+	desc = parahechend_events.6.desc
+	picture = QIZILBASH_CAVALRY_CHARGING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = enabled_scythed_terror_event_flag
+	}
+
+	option = {
+		name = parahechend_events.6.a
+		G52 = { #Ameion
+			add_country_modifier = {
+				name = J81_scythed_terror
+				duration = 9125 #25 years
+			}
+		}
+		clr_country_flag = enabled_scythed_terror_event_flag
+	}
+}
+
+country_event = { #Hammer and Repeat
+	id = parahechend_events.7
+	title = parahechend_events.7.t
+	desc = parahechend_events.7.desc
+	picture = VIKING_KING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.7.a
+		gain_taychend_glory_effect = { amount = 50 }
+		2545 = { #Tirsin
+			spawn_rebels = {
+				size = 2
+				type = gods_of_the_taychend_rebels
+			}
+		}
+		2539 = { #Sibisimra
+			spawn_rebels = {
+				size = 2
+				type = gods_of_the_taychend_rebels
+			}
+		}
+		custom_tooltip = J81_yodhanchend_uprising_tt
+		tooltip = {
+			add_base_production = 2
+			spawn_rebels = {
+				size = 2
+				type = anti_tax_rebels
+			}
+			add_province_modifier = {
+				name = J81_hammered_populace
+				duration = 9125 #25 years
+			}
+		}
+		hidden_effect = {
+			yodhanchend_region = {
+				limit = {
+					OR = {
+						trade_goods = grain
+						trade_goods = cotton
+						trade_goods = tea
+					}
+				}
+				add_base_production = 2
+				spawn_rebels = {
+					size = 2
+					type = anti_tax_rebels
+				}
+				add_province_modifier = {
+					name = J81_hammered_populace
+					duration = 9125 #25 years
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Con and Art
+	id = parahechend_events.8
+	title = parahechend_events.8.t
+	desc = parahechend_events.8.desc
+	picture = ECONOMICALLY_TALLANTED_RULER_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.8.a
+		define_advisor = {
+			type = master_of_mint
+			religion = ROOT
+			name = "Elashok Rakulacan"
+			skill = 2
+			cost_multiplier = 0.75
+		}
+		add_years_of_income = 2.5
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -20
+		}
+		add_corruption = 2
+		custom_tooltip = J81_improved_monetary_policy_tt
+		set_country_flag = J81_improved_monetary_policy_flag
+	}
+}
+
+country_event = { #Tyranny and Taychend
+	id = parahechend_events.9
+	title = parahechend_events.9.t
+	desc = parahechend_events.9.desc
+	picture = BYZ_BYZANTINE_EMPEROR_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.9.a
+		custom_tooltip = J81_rakulacan_rule_tt
+		tooltip = {
+			add_country_modifier = {
+				name = J81_rakulacan_tyranny
+				duration = -1
+			}
+		}
+		2493 = { #Pirsitel
+			remove_province_modifier = J81_heart_of_the_rakulacan
+			add_province_modifier = {
+				name = J81_heart_of_tyranny
+				duration = -1
+			}
+		}
+		custom_tooltip = J81_tyrant_emperor_tt
+		hidden_effect = {
+			set_country_flag = J81_tyrant_emperor_flag
+			every_subject_country = {
+				limit = { dynasty = "Rakulacan" }
+				remove_country_modifier = J81_rakulacan_rule
+				add_country_modifier = {
+					name = J81_rakulacan_tyranny
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Betrayal of the Rakulacan (Mlerek Version)
+	id = parahechend_events.10
+	title = parahechend_events.10.t
+	desc = parahechend_events.10.desc
+	picture = MAMLUK_WARRIORS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.10.a #Yes
+		ai_chance = { factor = 100 }
+		J82 = { grant_independence = yes } #Varamraya
+		FROM = {
+			grant_independence = yes
+			vassalize = J82 #Varamraya
+			add_stability = 1
+		}
+		declare_war_with_cb = {
+			casus_belli = cb_taychend_glory
+			who = FROM
+		}
+		add_stability = 3
+		G70 = { join_all_offensive_wars_of = ROOT }
+	}
+
+	option = {
+		name = parahechend_events.10.b #No
+		ai_chance = { factor = 0 }
+		J82 = { grant_independence = yes } #Varamraya
+		FROM = {
+			grant_independence = yes
+			vassalize = J82 #Varamraya
+			add_stability = 1
+		}
+	}
+}
+
+############################
+# Anathazhilan Event Chain #
+############################
+
+country_event = { #Into Anathazhilan
+	id = parahechend_events.20
+	title = parahechend_events.20.t
+	picture = EXPLORERS_eventPicture
+
+	desc = {
+		trigger = { has_ruler_flag = heir_is_evindash_flag }
+		desc = parahechend_events.20.evindashrulerdesc
+	}
+
+	desc = {
+		trigger = { has_heir_flag = heir_is_evindash_flag }
+		desc = parahechend_events.20.evindashheirdesc
+	}
+
+	desc = {
+		trigger = { 
+			NOT = { 
+				has_ruler_flag = heir_is_evindash_flag
+				has_heir_flag = heir_is_evindash_flag
+			} 
+		}
+		desc = parahechend_events.20.elsedesc
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.20.a
+		country_event = { #In a Rakulacan Fist
+			id = parahechend_events.21
+			days = 30
+		}
+	}
+}
+
+country_event = { #In a Rakulacan Fist
+	id = parahechend_events.21
+	title = parahechend_events.21.t
+	picture = SWEDEN_LEAGUE_WAR_eventPicture
+
+	desc = {
+		trigger = { has_ruler_flag = heir_is_evindash_flag }
+		desc = parahechend_events.21.evindashrulerdesc
+	}
+
+	desc = {
+		trigger = { has_heir_flag = heir_is_evindash_flag }
+		desc = parahechend_events.21.evindashheirdesc
+	}
+
+	desc = {
+		trigger = { 
+			NOT = { 
+				has_ruler_flag = heir_is_evindash_flag
+				has_heir_flag = heir_is_evindash_flag
+			} 
+		}
+		desc = parahechend_events.21.elsedesc
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.21.a
+		country_event = { #Charge of the Challúmata
+			id = parahechend_events.24
+			days = 30
+		}
+	}
+}
+
+country_event = { #Slip and Fall (Evindash)
+	id = parahechend_events.22
+	title = parahechend_events.22.t
+	picture = SOLDIER_INFIGHTING_eventPicture
+
+	desc = {
+		trigger = { has_ruler_flag = heir_is_evindash_flag }
+		desc = parahechend_events.22.evindashrulerdesc
+	}
+
+	desc = {
+		trigger = { has_heir_flag = heir_is_evindash_flag }
+		desc = parahechend_events.22.evindashheirdesc
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.22.a
+		if = {
+			limit = { has_heir_flag = heir_is_evindash_flag }
+			kill_heir = {}
+			define_heir = {
+				name = "Karamothi"
+				dynasty = "Rakulacan"
+				age = 23
+				adm = 4
+				dip = 3
+				mil = 5
+			}
+			change_adm = 2
+			change_dip = 1
+			change_mil = 1
+		}
+		else = {
+			kill_ruler = yes
+			define_ruler = {
+				name = "Karamothi"
+				dynasty = "Rakulacan"
+				age = 23
+				adm = 4
+				dip = 3
+				mil = 5
+			}
+		}
+		country_event = { #The Tuning Maul
+			id = parahechend_events.25
+			days = 30
+		}
+	}
+}
+
+country_event = { #Slip and Fall (No Evindash)
+	id = parahechend_events.23
+	title = parahechend_events.23.t
+	desc = parahechend_events.23.desc
+	picture = DARK_EXPEDITION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.23.a
+		change_mil = 1
+		add_army_tradition = 10
+		gain_taychend_glory_effect = { amount = 25 }
+		country_event = { #The Tuning Maul
+			id = parahechend_events.25
+			days = 30
+		}
+	}
+}
+
+country_event = { #Charge of the Challúmata
+	id = parahechend_events.24
+	title = parahechend_events.24.t
+	picture = DARK_EXPEDITION_eventPicture
+
+	desc = {
+		trigger = { 
+			OR = { 
+				has_ruler_flag = heir_is_evindash_flag
+				has_heir_flag = heir_is_evindash_flag
+			} 
+		}
+		desc = parahechend_events.24.evindashdesc
+	}
+
+	desc = {
+		trigger = { 
+			NOT = { 
+				has_ruler_flag = heir_is_evindash_flag
+				has_heir_flag = heir_is_evindash_flag
+			} 
+		}
+		desc = parahechend_events.24.elsedesc
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.24.a
+		if = {
+			limit = {
+				OR = {
+					has_ruler_flag = heir_is_evindash_flag
+					has_heir_flag = heir_is_evindash_flag
+				}
+			}
+			country_event = { #Slip and Fall (Evindash)
+				id = parahechend_events.22
+			}
+		}
+		else = {
+			country_event = { #Slip and Fall (No Evindash)
+				id = parahechend_events.23
+			}
+		}
+	}
+}
+
+country_event = { #The Tuning Maul
+	id = parahechend_events.25
+	title = parahechend_events.25.t
+	desc = parahechend_events.25.desc
+	picture = SWORD_OF_OSMAN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.25.a
+		add_country_modifier = {
+			name = J81_the_hammer_of_anathazhilan_mod
+			duration = -1
+		}
+		custom_tooltip = desc_J81_the_hammer_of_anathazhilan_mod
+		yodhanchend_region = {
+			add_permanent_claim = ROOT
+		}
+		southern_coast_region = { #Thektoram
+			add_permanent_claim = ROOT
+		}
+	}
+}
+
+###########################
+# New Vampire Event Chain #
+###########################
+
+country_event = { #An Offer from the Past
+	id = parahechend_events.30
+	title = parahechend_events.30.t
+	desc = parahechend_events.30.desc
+	picture = muslimgfx_FEAST_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.30.a
+		country_event = { #Two Princes
+			id = parahechend_events.31
+			days = 3650 #10 years
+		}
+	}
+	
+	option = {
+		name = parahechend_events.30.b
+		define_advisor = {
+			type = trader
+			name = "Thelriatam Rakulacan"
+			skill = 3
+			cost_multiplier = 0.25
+		}
+	}
+}
+
+country_event = { #Two Princes
+	id = parahechend_events.31
+	title = parahechend_events.31.t
+	desc = parahechend_events.31.desc
+	picture = wihgfx_FEMALE_SCHOLAR_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.31.a
+		custom_tooltip = karakhanbar_accepted_vampires_tt
+		custom_tooltip = J81_estate_name_change_tt
+		hidden_effect = { 
+			set_country_flag = J81_rakulacan_vampires_flag
+			set_country_flag = has_vampires_estate
+			country_event = { id = vampires_estate_events.12 days = 2 }
+		}
+		country_event = { #The Family of Blood
+			id = parahechend_events.32
+			days = 9125 #25 years
+		}
+	}
+
+	option = {
+		name = parahechend_events.31.b
+		add_country_modifier = {
+			name = J81_assistance_from_the_shadows
+			duration = -1
+		}
+	}
+}
+
+country_event = { #The Family of Blood
+	id = parahechend_events.32
+	title = parahechend_events.32.t
+	desc = parahechend_events.32.desc
+	picture = wihgfx_FEMALE_RULER_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = parahechend_events.32.a
+		country_event = {
+			id = taychendi_empire_events.303 #The Pale Queen Rises
+		}
+	}
+}

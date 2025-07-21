@@ -19,7 +19,6 @@ country_event = {
 	option = {
 		name = flavor_rezankand.1000.a
 		ai_chance = { factor = 100 }
-
 		capital_scope = {
 			random_empty_neighbor_province = {
 				create_colony = 1000
@@ -38,7 +37,6 @@ country_event = {
 		katelperai_area = {
 			add_permanent_claim = ROOT
 		}
-		add_devotion = 100 #Tag starts with 0 Devotion
 	}
 }
 
@@ -359,7 +357,7 @@ country_event = {
 	option = {
 		name = flavor_rezankand.1004.a
 		random_list = {
-			1 = {
+			2 = { #Oren Nayiru Request Weapons
 				trigger = {
 					any_owned_province = {
 						superregion = taychend_superregion
@@ -368,10 +366,10 @@ country_event = {
 				}
 				country_event = { id = flavor_rezankand.14 }
 			}
-			1 = {
+			1 = {#Oren Nayiru Refugee
 				country_event = { id = flavor_rezankand.15 }
 			}
-			1 = {
+			2 = {#Oren Nayiru Request Weapons
 				trigger = {
 					taychend_superregion = {
 						NOT = { owned_by = ROOT }
@@ -381,18 +379,18 @@ country_event = {
 				}
 				country_event = { id = flavor_rezankand.16 }
 			}
-			2 = {
+			4 = {
+				trigger = { NOT = { has_country_flag = rezankand_outcry_fired } }
 				country_event = { id = flavor_rezankand.28 }
 			}
-			2 = {
+			3 = {
 				country_event = { id = flavor_rezankand.29 }
 			}
-			1 = {
+			2 = {#Oren Nayiru Attacks Kheionists
 				trigger = {
-					num_of_owned_provinces_with = {
+					any_owned_province = {
 						superregion = taychend_superregion
 						religion = kheionism
-						value = 5
 					}
 				}
 				country_event = { id = flavor_rezankand.30 }
@@ -929,9 +927,9 @@ country_event = {
 					limit = {
 						previous_owner = ROOT
 					}
-					random_list = {
-						1 = { change_religion = oren_nayiru }
-						1 = {}
+					random = {
+						chance = 50
+						change_religion = oren_nayiru
 					}
 				}
 			}
@@ -1097,11 +1095,7 @@ country_event = {
 
 		event_target:rezankand_colony_target = {
 			add_colonysize = 100
-			random_list = {
-				1 = { add_base_tax = 1 }
-				1 = { add_base_production = 1 }
-				1 = { add_base_manpower = 1 }
-			}
+			add_random_development = 1
 		}
 	}
 }
@@ -1203,7 +1197,6 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			add_devotion = 100 #They start at 0 for some reason
 			dry_coast_region = {
 				limit = {
 					is_city = yes
@@ -1500,6 +1493,7 @@ country_event = { #Oren Nayiru Request Weapons
 			taychend_superregion = {
 				limit = {
 					NOT = { owned_by = ROOT }
+					controlled_by = owner
 					NOT = { religion = oren_nayiru }
 					is_city = yes
 				}
@@ -1519,10 +1513,10 @@ country_event = { #Oren Nayiru Request Weapons
 			decrease = yes
 			incident = incident_one_sun
 		}
-		event_target:rezankand_on_takeover_target = {
+		event_target:rezankand_on_rebel_target = {
 			spawn_rebels = {
 				type = oren_nayiru_rebels
-				size = 1
+				size = 3
 			}
 		}
 		custom_tooltip = " "
@@ -1716,7 +1710,7 @@ country_event = { #Alone
 	option = {
 		name = flavor_rezankand.21.a
 		custom_tooltip = rezankand_effelai_alone_tt
-		hidden_effect {
+		hidden_effect = {
 			G20 = {
 				every_owned_province = {
 					limit = {
@@ -1804,7 +1798,7 @@ country_event = { #Echoes Of The Future
 	id = flavor_rezankand.23
 	title = flavor_rezankand.23.t
 	desc = flavor_rezankand.23.d
-	picture = BONFIRE_OF_THE_VANITIES_eventPicture
+	picture = PROTESTANT_CATHOLIC_DEBATE_eventPicture
 	is_triggered_only = yes
 
 	option = {
@@ -1903,8 +1897,6 @@ country_event = { #Outcry Sparked by Prejudicial Officers - High Weight
 
 	is_triggered_only = yes
 
-	fire_only_once = yes
-
 	option = { #Exile The Officers
 		name = flavor_rezankand.28.a
 		custom_tooltip = rezankand_on_happy_check_tt
@@ -1921,6 +1913,8 @@ country_event = { #Outcry Sparked by Prejudicial Officers - High Weight
 		rezankand_on_happy_var = { angry = yes }
 		rezankand_on_power_var = { stronger = yes }
 	}
+
+	after = { set_country_flag = rezankand_outcry_fired }
 }
 
 country_event = { #Ore Nayiru Demand Land Reform - High Weighting
@@ -2062,7 +2056,7 @@ country_event = { #Oren Nayiru Attack Kheionists
 			amount = 5
 			effect = "
 				random_owned_province = {
-					limit = { religion = kheionism }
+					limit = { religion = kheionism superregion = taychend_superregion }
 					change_religion = oren_nayiru
 					add_devastation = 25
 				}
@@ -2315,6 +2309,9 @@ country_event = { #Ecaris First Death
 		OR = { #JE/Rezankand
 			tag = H66
 			tag = H67
+		}
+		NOT = { #This is because on_monarch is triggered when ecaris is defined
+			has_country_flag = block_ecaris_death_event
 		}
 		NOT = { has_ruler_flag = ruler_is_ecaris }
 	}

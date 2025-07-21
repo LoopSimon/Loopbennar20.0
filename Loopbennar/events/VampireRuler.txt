@@ -1,25 +1,27 @@
 
 namespace = vampire_ruler
 
-#######################
-#Hidden Vampire Events#
-#######################
+#############################
+### Hidden Vampire Events ###
+#############################
 
-# Reveal Vampire
-country_event = {
+country_event = { # Reveal Vampire (suspicion too high)
 	id = vampire_ruler.0
 	title = vampire_ruler.0.t
 	desc = vampire_ruler.0.d
 	picture = COUNTRY_COLLAPSE_eventPicture
-	
+
+	is_triggered_only = yes
+
 	trigger = {
+		ruler_is_hidden_vampire = yes
+		is_lesser_in_union = no
+
 		check_variable = {
 			which = suspicionPoints
 			value = 20
 		}
-		has_country_flag = hidden_ruler_vampire
-		has_ruler_modifier = vampire_ruler
-		is_lesser_in_union = no
+
 		NOT = {
 			AND = { 
 				tag = B34 
@@ -27,60 +29,35 @@ country_event = {
 			}
 		}
 	}
-	
+
 	mean_time_to_happen = {
-		years = 100
+		days = 1
 		
 		#Excess Vampire points
 		modifier = {
-			factor = 0.5
+			factor = 2
 			check_variable = {
 				which = suspicionPoints
 				value = 30
 			}
 		}
 		modifier = {
-			factor = 0.5
+			factor = 2
 			check_variable = {
 				which = suspicionPoints
 				value = 35
 			}
 		}
 		modifier = {
-			factor = 0.5
+			factor = 2
 			check_variable = {
 				which = suspicionPoints
 				value = 40
 			}
 		}
-		
-		#Estate
-		modifier = {
-			factor = 0
-			has_estate_privilege = estate_vampires_law_open_rule
-		}
-		modifier = {
-			factor = 1.5
-			has_estate_privilege = estate_vampires_organization_the_blood_court
-		}
-		modifier = {
-			factor = 1.1
-			has_estate_privilege = estate_vampires_cover_vampires_action
-		}
-		modifier = {
-			factor = 1.1
-			has_estate_privilege = estate_vampires_vampires_in_the_administration
-		}
-		
-		#Government
-		#modifier = {
-		#	factor = 2
-		#	has_reform = 
-		#}
 	}
 
-	#Maintain the Masquerade
-	option = {
+	option = { #Maintain the Masquerade
 		name = vampire_ruler.0.a
 		ai_chance = {
 			factor = 10
@@ -89,7 +66,7 @@ country_event = {
 		reduce_stability_or_adm_power = yes
 		
 		hidden_effect = {
-			clear_ruler_vampire_flags = yes
+			remove_vampire_immortality = yes
 		}
 		
 		exile_ruler_as = { name = cannot_return }
@@ -103,8 +80,7 @@ country_event = {
 		}
 	}
 	
-	#Break the Masquerade
-	option = {
+	option = { #Break the Masquerade
 		name = vampire_ruler.0.b
 		ai_chance = {
 			factor = 0
@@ -138,15 +114,16 @@ country_event = {
 	}
 }
 
-# Ruler Must Step Down
-country_event = {
+country_event = { # Ruler Must Step Down (getting too old)
 	id = vampire_ruler.1
 	title = vampire_ruler.1.t
 	desc = vampire_ruler.1.d
 	picture = NOBLE_ESTATE_DEMANDS_eventPicture
+
+	is_triggered_only = yes
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_hidden_vampire = yes
 		NOT = {
 			AND = { 
 				tag = B34 
@@ -154,7 +131,6 @@ country_event = {
 			}
 			has_country_flag = J84_is_mihaela_flag
 		}
-		has_country_flag = hidden_ruler_vampire
 		OR = {
 			#Getting too old
 			AND = {
@@ -163,20 +139,12 @@ country_event = {
 				ruler_age = 85
 			}
 			#Ruled too long
-			had_country_flag = {
-				flag = is_a_vampire 
-				days = 25550 # 70 Years
-			}
+			vampire_age = { greater_than_or_equal_to = 25550 } # 70 Years
 		}
 		is_lesser_in_union = no
 	}
-	
-	mean_time_to_happen = {
-		years = 10
-	}
 
-	#Step Down, heir succeeds
-	option = {
+	option = { #Step Down, heir succeeds (vampire heir)
 		name = vampire_ruler.1.a
 		trigger = { has_country_flag = vampire_heir }
 		ai_chance = {
@@ -184,13 +152,22 @@ country_event = {
 		}
 		
 		clr_country_flag = vampire_heir
-		clr_country_flag = vampire_ruler
-		
-		exile_ruler_as = { name = cannot_return }
+		remove_vampire_immortality = yes
 		
 		if = {
-			limit = { has_heir = no }
-			define_ruler = {
+			limit = { has_country_flag = has_exiled_vampire_heir }
+			clr_country_flag = has_exiled_vampire_heir
+			set_heir = exiled_vampire_heir_@ROOT
+			hidden_effect = {
+				if = {
+					limit = { has_heir = no }
+					define_heir = { dynasty = ROOT age = 17 change_adm = 1 change_dip = 1 change_mil = 1 hide_skills = yes claim = 50 }
+				}
+				kill_ruler = yes add_stability = 1
+			}
+		}
+		else = {
+			define_heir = {
 				dynasty = ROOT
 				age = 17
 				change_adm = 1
@@ -201,17 +178,17 @@ country_event = {
 			}
 		}
 		
-		set_country_flag = new_vampire
+		hidden_effect = { kill_ruler = yes }
 		ruler_become_vampire = yes
+		reset_vampire_age = yes
 	}
 	
-	#Step down, human heir, if no heir creates one
-	option = {
+	option = { #Step down, regular human heir
 		name = vampire_ruler.1.f
 		trigger = { NOT = { has_country_flag = vampire_heir } }
 		
 		hidden_effect = {
-			clear_ruler_vampire_flags = yes
+			remove_vampire_immortality = yes
 		}
 		
 		if = {
@@ -226,8 +203,7 @@ country_event = {
 		exile_ruler_as = { name = cannot_return }
 	}
 	
-	#Fake death, heir is you
-	option = {
+	option = { #Fake death, heir is you
 		name = vampire_ruler.1.b
 		ai_chance = {
 			factor = 10
@@ -236,29 +212,69 @@ country_event = {
 		hidden_effect = {
 			if = {
 				limit = { has_country_flag = J84_is_mihaela_flag }
-				define_heir = {
-					name = "Mihaela"
-					dynasty = "Veliara"
-					adm = 4
-					dip = 2
-					mil = 6
-					culture = roilsardi
-					female = yes
-					age = 17
-					hide_skills = yes
-					claim = 80
+				if = {
+					limit = { has_country_flag = J81_rakulacan_vampires_flag }
+					define_heir = {
+						name = "Veliara"
+						dynasty = "Rakulacan"
+						adm = 4
+						dip = 2
+						mil = 6
+						culture = roilsardi
+						female = yes
+						age = 17
+						hide_skills = yes
+						claim = 80
+					}
+					define_ruler = {
+						name = "Veliara"
+						dynasty = "Rakulacan"
+						age = 17
+						adm = 4
+						dip = 2
+						mil = 6
+						culture = roilsardi
+						female = yes
+						hide_skills = yes
+						claim = 80
+					}
+					define_consort = {
+						name = "Thelriatam"
+						dynasty = "Rakulacan"
+						age = 73
+						adm = 6
+						dip = 5
+						mil = 3
+					}
+					add_queen_personality = lawgiver_personality
+					add_queen_personality = malevolent_personality
+					make_consort_immortal = yes
 				}
-				define_ruler = {
-					name = "Mihaela"
-					dynasty = "Veliara"
-					age = 17
-					adm = 4
-					dip = 2
-					mil = 6
-					culture = roilsardi
-					female = yes
-					hide_skills = yes
-					claim = 80
+				else = {
+					define_heir = {
+						name = "Mihaela"
+						dynasty = "Veliara"
+						adm = 4
+						dip = 2
+						mil = 6
+						culture = roilsardi
+						female = yes
+						age = 17
+						hide_skills = yes
+						claim = 80
+					}
+					define_ruler = {
+						name = "Mihaela"
+						dynasty = "Veliara"
+						age = 17
+						adm = 4
+						dip = 2
+						mil = 6
+						culture = roilsardi
+						female = yes
+						hide_skills = yes
+						claim = 80
+					}
 				}
 			}
 			else_if = {
@@ -300,8 +316,7 @@ country_event = {
 		reset_vampire_age = yes
 	}
 	
-	#Refuse to Step Down
-	option = {
+	option = { #Refuse to Step Down
 		name = vampire_ruler.1.c
 		ai_chance = {
 			factor = 0
@@ -310,8 +325,7 @@ country_event = {
 		facade_suspicion_increase_10 = yes
 	}
 	
-	#A few more years... (Mages only)
-	option = {
+	option = { #A few more years... (Mages only)
 		name = vampire_ruler.1.e
 		ai_chance = {
 			factor = 10
@@ -324,16 +338,14 @@ country_event = {
 	}
 }
 
-#Advisor Finds Coffin
-country_event = {
+country_event = { #Advisor Finds Coffin
 	id = vampire_ruler.2
 	title = vampire_ruler.2.t
 	desc = vampire_ruler.2.d
 	picture = ECONOMY_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
-		has_country_flag = hidden_ruler_vampire
+		ruler_is_hidden_vampire = yes
 		has_advisor = yes
 		is_lesser_in_union = no
 		NOT = {
@@ -353,8 +365,7 @@ country_event = {
 	
 	is_triggered_only = yes
 
-	#Nobody will believe them
-	option = {
+	option = { #Nobody will believe them
 		name = vampire_ruler.2.a
 		ai_chance = {
 			factor = 10
@@ -362,8 +373,7 @@ country_event = {
 		facade_suspicion_increase_5 = yes
 	}
 	
-	#Bribe them
-	option = {
+	option = { #Bribe them
 		name = vampire_ruler.2.b
 		ai_chance = {
 			factor = 10
@@ -373,8 +383,7 @@ country_event = {
 		facade_suspicion_increase_2 = yes
 	}
 	
-	#Kill them
-	option = {
+	option = { #Kill them
 		name = vampire_ruler.2.c
 		ai_chance = {
 			factor = 10
@@ -384,15 +393,14 @@ country_event = {
 	}
 }
 
-#Injured During Training
-country_event = {
+country_event = { #Injured During Training (normal person would be hurt worse)
 	id = vampire_ruler.3
 	title = vampire_ruler.3.t
 	desc = vampire_ruler.3.d
 	picture = WOUNDED_SOLDIERS_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		has_country_flag = hidden_ruler_vampire
 		is_lesser_in_union = no
 	}
@@ -403,8 +411,7 @@ country_event = {
 	
 	is_triggered_only = yes
 
-	#It wasn't that bad...
-	option = {
+	option = { #It wasn't that bad...
 		name = vampire_ruler.3.a
 		ai_chance = {
 			factor = 10
@@ -412,8 +419,7 @@ country_event = {
 		facade_suspicion_increase_2 = yes
 	}
 	
-	#Me? Injured?
-	option = {
+	option = { #Me? Injured?
 		name = vampire_ruler.3.b
 		ai_chance = {
 			factor = 1000
@@ -425,15 +431,14 @@ country_event = {
 	}
 }
 
-#Invitation to Banquet
-country_event = {
+country_event = { #Invitation to Banquet
 	id = vampire_ruler.4
 	title = vampire_ruler.4.t
 	desc = vampire_ruler.4.d
 	picture = COURT_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		has_country_flag = hidden_ruler_vampire
 		is_lesser_in_union = no
 	}
@@ -444,8 +449,7 @@ country_event = {
 	
 	is_triggered_only = yes
 
-	#Perhaps measures can be made...
-	option = {
+	option = { #Perhaps measures can be made...
 		name = vampire_ruler.4.a
 		ai_chance = {
 			factor = 0
@@ -454,8 +458,7 @@ country_event = {
 		facade_suspicion_increase_1 = yes
 	}
 	
-	#Decline
-	option = {
+	option = { #Decline
 		name = vampire_ruler.4.b
 		ai_chance = {
 			factor = 10
@@ -464,27 +467,21 @@ country_event = {
 	}
 }
 
-#######################
-##All Vampires Events##
-#######################
+###########################
+### All Vampires Events ###
+###########################
 
-#Parent's Request
-country_event = {
+country_event = { #Sire's Request
 	id = vampire_ruler.5
 	title = vampire_ruler.5.t
 	desc = vampire_ruler.5.d
 	picture = NOBLE_ESTATE_eventPicture
 	
 	trigger = {
-		NOT = { has_ruler_flag = no_sire } 
+		NOT = { has_ruler_flag = no_vampire_sire } 
 		NOT = { has_country_flag = J84_is_mihaela_flag }
-		has_ruler_modifier = vampire_ruler
-		NOT = {
-			had_country_flag = {
-				flag = vampire_ruler_has_coffin
-				days = 18250 #50 Years
-			}
-		}
+		ruler_is_vampire = yes
+		vampire_age = { less_than = 18250 } #50 Years - too old to be bossed around?
 		is_lesser_in_union = no
 	}
 	
@@ -492,36 +489,25 @@ country_event = {
 		days = 1
 		modifier = {
 			factor = 5
-			NOT = {
-				had_country_flag = {
-					flag = vampire_ruler_has_coffin
-					days = 3650 #10 Years
-				}
-			}
+			vampire_age = { less_than = 3650 }
 		}
 	}
 	
 	is_triggered_only = yes
 
-	#I Must Oblige
-	option = {
+	option = { #I Must Oblige
 		name = vampire_ruler.5.a
-		ai_chance = {
-			factor = 10
-		}
+		ai_chance = { factor = 10 }
 		add_years_of_income = -0.5
 		add_adm_power = -100
 	}
 	
-	#Refuse
-	option = {
+	option = { #Refuse
 		name = vampire_ruler.5.b
-		ai_chance = {
-			factor = 10
-		}
+		ai_chance = { factor = 10 }
 		add_estate_loyalty_modifier = {
 			estate = estate_vampires
-			desc = "Broke Vampire Laws: "
+			desc = BROKE_VAMPIRE_LAWS
 			loyalty = -10
 			duration = 3650
 		}
@@ -529,15 +515,14 @@ country_event = {
 	}
 }
 
-#Overlapping Authority
-country_event = {
+country_event = { #Overlapping Authority (ruler vs. estate)
 	id = vampire_ruler.6
 	title = vampire_ruler.6.t
 	desc = vampire_ruler.6.d
 	picture = DEBATE_REPUBLICAN_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		NOT = { has_estate_privilege = estate_vampires_organization_vampires_lord }
 		has_estate = estate_vampires
 		is_lesser_in_union = no
@@ -549,15 +534,12 @@ country_event = {
 	
 	is_triggered_only = yes
 
-	#My Domain My Rules
-	option = {
+	option = { #My Domain My Rules
 		name = vampire_ruler.6.a
-		ai_chance = {
-			factor = 10
-		}
+		ai_chance = { factor = 10 }
 		add_estate_loyalty_modifier = {
 			estate = estate_vampires
-			desc = "Broke Vampire Laws: "
+			desc = BROKE_VAMPIRE_LAWS
 			loyalty = -10
 			duration = 3650
 		}
@@ -565,60 +547,52 @@ country_event = {
 		add_adm_power = -50
 	}
 	
-	#Assist the Vampire Estate
-	option = {
+	option = { #Assist the Vampire Estate (pay)
 		name = vampire_ruler.6.b
-		ai_chance = {
-			factor = 10
-		}
+		ai_chance = { factor = 10 }
 		add_years_of_income = -1
 	}
 	
-	#We Cannot Afford this
-	option = {
+	option = { #We Cannot Afford this
 		name = vampire_ruler.6.c
-		ai_chance = {
-			factor = 10
-		}
+		ai_chance = { factor = 10 }
 		add_prestige = -5
 		facade_suspicion_increase_1 = yes
 		add_estate_loyalty_modifier = {
 			estate = estate_vampires
-			desc = "Allowed Feral Vampire: "
+			desc = ALLOWED_FERAL_VAMPIRES
 			loyalty = -20
 			duration = 3650
 		}
 	}
 }
 
-#Sire an heir
-country_event = {
+country_event = { #Sire an heir
 	id = vampire_ruler.7
 	title = vampire_ruler.7.t
 	desc = vampire_ruler.7.d
 	picture = ADVISOR_eventPicture
+
+	is_triggered_only = yes
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
-		had_country_flag = {
-			flag = vampire_ruler
-			days = 18250 #50 Years
-		}
+		ruler_is_vampire = yes
+		vampire_age = { greater_than_or_equal_to = 18250 }
 		NOT = { has_country_modifier = sired_heir }
 		is_lesser_in_union = no
 	}
 	
 	mean_time_to_happen = {
-		years = 30	#its 30 now
+		days = 1
 
 		modifier = {
-			factor = 0.75
+			factor = 1.33
 			ruler_age = 100
 		}
 		
 		modifier = {
-			factor = 0.5
-			has_country_flag = exposed_vampire_ruler # Don't give a shit about the rules saying they can or can't have an heir
+			factor = 2
+			ruler_is_exposed_vampire = yes # Don't give a shit about the rules saying they can or can't have an heir
 		}
 	}
 	
@@ -630,19 +604,24 @@ country_event = {
 		}
 	}
 
-	#Heir
-	option = {
+
+	option = { #Make your current heir a vampire, or make a new heir that's a vampire
 		name = vampire_ruler.7.a
 		trigger = { NOT = { has_country_flag = vampire_heir } has_government_attribute = heir }
-		ai_chance = {
-			factor = 10
-		}
+		ai_chance = { factor = 10 }
+
 		custom_tooltip = add_vampire_heir
 		set_country_flag = vampire_heir
+
+		if = {
+			limit = { has_heir = yes }
+			exile_heir_as = exiled_vampire_heir_@ROOT
+			custom_tooltip = tooltip_has_exiled_vampire_heir
+			set_country_flag = has_exiled_vampire_heir
+		}
 	}
 	
-	#Advisor
-	option = {
+	option = { #Advisor
 		name = vampire_ruler.7.b
 		ai_chance = {
 			factor = 10
@@ -654,8 +633,7 @@ country_event = {
 		}
 	}
 	
-	#General
-	option = {
+	option = { #General
 		name = vampire_ruler.7.c
 		ai_chance = {
 			factor = 10
@@ -668,8 +646,7 @@ country_event = {
 		}
 	}
 	
-	#I'd rather not
-	option = {
+	option = { #I'd rather not
 		name = vampire_ruler.7.e
 		ai_chance = {
 			factor = 5
@@ -679,15 +656,14 @@ country_event = {
 	}
 }
 
-#Hold a Grand Masquerade
-country_event = {
+country_event = { #Hold a Grand Masquerade
 	id = vampire_ruler.8
 	title = vampire_ruler.8.t
 	desc = vampire_ruler.8.d
 	picture = COURT_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		NOT = { has_estate_privilege = estate_vampires_organization_vampires_lord }
 		is_lesser_in_union = no
 	}
@@ -698,8 +674,7 @@ country_event = {
 	
 	is_triggered_only = yes
 
-	#Do it
-	option = {
+	option = { #Do it
 		name = vampire_ruler.8.a
 		ai_chance = {
 			factor = 10
@@ -712,56 +687,46 @@ country_event = {
 		}
 	}
 	
-	#Fuk No
-	option = {
+	option = { #No
 		name = vampire_ruler.8.b
 		ai_chance = {
 			factor = 10
 		}
 	}
-	
 }
 
-#######################
-###Stat Loss events####
-#######################
+#########################
+### Stat Loss events ####
+#########################
 
-#Vampire Stats and hunting organizer
-country_event = {
+country_event = { #Vampire Stats and hunting organizer
 	id = vampire_ruler.9
 	title = NOLOCALIZATION
 	desc = NOLOCALIZATION
 	picture = END_OF_TIME_eventPicture
+
+	is_triggered_only = yes
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
 	hidden = yes
 	
 	mean_time_to_happen = {
-		years = 15
+		days = 1
 		modifier = {
-			factor = 0.80
-			had_country_flag = {
-				flag = vampire_ruler_has_coffin
-				days = 54750 # 150 years
-			}
+			factor = 1.25
+			vampire_age = { greater_than_or_equal_to = 54750 } # 150 years
 		}
 		modifier = {
-			factor = 0.75
-			had_country_flag = {
-				flag = vampire_ruler_has_coffin
-				days = 36500 # 100 years
-			}
+			factor = 1.33
+			vampire_age = { greater_than_or_equal_to = 36500 } # 100 years
 		}
 		modifier = {
-			factor = 0.75
-			had_country_flag = {
-				flag = vampire_ruler_has_coffin
-				days = 18250 # 50 years
-			}
+			factor = 1.33
+			vampire_age = { greater_than_or_equal_to = 18250 } # 50 years
 		}
 	}
 
@@ -806,25 +771,14 @@ country_event = {
 	}
 }
 
-#The Endless Hunger (ADM)
-country_event = {
+country_event = { #The Endless Hunger (Adm)
 	id = vampire_ruler.10
 	title = vampire_ruler.10.t
 	desc = vampire_ruler.10.d
 	picture = FAMINE_eventPicture
 	
-	trigger = {
-		has_ruler_modifier = vampire_ruler
-		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
-	}
-	
 	is_triggered_only = yes
 	
-
 	#Go Hunting
 	option = {
 		trigger = { adm = 1 }
@@ -858,7 +812,7 @@ country_event = {
 			factor = 10
 			modifier = {
 				factor = 0
-				NOT = { has_country_flag = exposed_vampire_ruler }
+				ruler_is_hidden_vampire = yes
 			}
 		}
 		facade_suspicion_increase_10 = yes
@@ -888,26 +842,15 @@ country_event = {
 	}
 }
 
-#The Beast Inside (dip)
-country_event = {
+country_event = { #The Beast Inside (Dip)
 	id = vampire_ruler.11
 	title = vampire_ruler.11.t
 	desc = vampire_ruler.11.d
 	picture = FAMINE_eventPicture
 	
-	trigger = {
-		has_ruler_modifier = vampire_ruler
-		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
-	}
-	
 	is_triggered_only = yes
 	
-	#Go Hunting
-	option = {
+	option = { #Go Hunting
 		trigger = { dip = 1 NOT = { has_country_flag = vampire_missed_hunt } }
 		name = vampire_ruler.11.a
 		ai_chance = {
@@ -918,15 +861,14 @@ country_event = {
 		set_country_flag = vampire_missed_hunt
 	}
 	
-	#Control myself
-	option = {
+	option = { #Control myself
 		trigger = { dip = 1 NOT = { has_country_flag = vampire_missed_hunt } }
 		name = vampire_ruler.11.b
 		ai_chance = {
 			factor = 10
 			modifier = {
 				factor = 0
-				NOT = { has_country_flag = exposed_vampire_ruler }
+				ruler_is_hidden_vampire = yes
 			}
 		}
 		random_list = {
@@ -936,14 +878,13 @@ country_event = {
 		set_country_flag = vampire_missed_hunt
 	}
 	
-	#Go Feral
-	option = {
+	option = { #Go Feral
 		name = vampire_ruler.11.c
 		ai_chance = {
 			factor = 10
 			modifier = {
 				factor = 0
-				NOT = { has_country_flag = exposed_vampire_ruler }
+				ruler_is_hidden_vampire = yes
 			}
 		}
 		facade_suspicion_increase_10 = yes
@@ -963,27 +904,16 @@ country_event = {
 	}
 }
 
-#A Neverending Obsession (mil)
-country_event = {
+country_event = { #A Neverending Obsession (Mil)
 	id = vampire_ruler.12
 	title = vampire_ruler.12.t
 	desc = vampire_ruler.12.d
 	picture = FAMINE_eventPicture
 	
-	trigger = {
-		has_ruler_modifier = vampire_ruler
-		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
-	}
-	
 	is_triggered_only = yes
 	
 
-	#Go Hunting
-	option = {
+	option = { #Go Hunting
 		trigger = { mil = 1 }
 		name = vampire_ruler.12.a
 		ai_chance = {
@@ -994,8 +924,7 @@ country_event = {
 		set_country_flag = vampire_missed_hunt
 	}
 	
-	#Control myself
-	option = {
+	option = { #Control myself
 		trigger = { mil = 1 NOT = { has_country_flag = vampire_missed_hunt } }
 		name = vampire_ruler.12.b
 		ai_chance = {
@@ -1008,14 +937,13 @@ country_event = {
 		set_country_flag = vampire_missed_hunt
 	}
 	
-	#Go Feral
-	option = {
+	option = { #Go Feral
 		name = vampire_ruler.12.c
 		ai_chance = {
 			factor = 10
 			modifier = {
 				factor = 0
-				NOT = { has_country_flag = exposed_vampire_ruler }
+				ruler_is_hidden_vampire = yes
 			}
 		}
 		facade_suspicion_increase_10 = yes
@@ -1035,26 +963,15 @@ country_event = {
 	}
 }
 
-#The Hunt Begins
-country_event = {
+country_event = { #The Hunt Begins
 	id = vampire_ruler.13
 	title = vampire_ruler.13.t
 	desc = vampire_ruler.13.d
 	picture =SPY_eventPicture
 	
-	trigger = {
-		has_ruler_modifier = vampire_ruler
-		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
-	}
-	
 	is_triggered_only = yes
 
-	#Go Hunting
-	option = {
+	option = { #Go Hunting
 		name = vampire_ruler.13.a
 		ai_chance = {
 			factor = 10
@@ -1066,8 +983,7 @@ country_event = {
 		clr_country_flag = vampire_missed_hunt
 	}
 	
-	#No Thanks
-	option = {
+	option = { #No Thanks
 		name = vampire_ruler.13.b
 		trigger = { NOT = { has_country_flag = vampire_missed_hunt } }
 		ai_chance = {
@@ -1077,37 +993,30 @@ country_event = {
 	}
 }
 
-#The Hunt Begins
-country_event = {
+country_event = { #The Hunt Begins (hidden event)
 	id = vampire_ruler.132
 	title = vampire_ruler.132.t
 	desc = vampire_ruler.132.d
 	picture = SPY_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
 	}
 	
 	hidden = yes
 	is_triggered_only = yes
 
 
-	#Bad Events
-	#Feral Vampire
-	option = {
+	### Bad Events
+	option = { #Feral Vampire
 		name = vampire_ruler.132.a
 		ai_chance = {
 			factor = 1
 		}
 		country_event = { id = vampire_ruler.14 days = 30 random = 10 }
 	}
-	#Vampire Hunter
-	option = {
+	option = { #Vampire Hunter
 		name = vampire_ruler.132.a
 		ai_chance = {
 			factor = 1
@@ -1126,32 +1035,28 @@ country_event = {
 		}
 		country_event = { id = vampire_ruler.15 days = 30 random = 10 }
 	}
-	#Ruler Recognized
-	option = {
+	option = { #Ruler Recognized
 		name = vampire_ruler.132.a
 		ai_chance = {
 			factor = 2
 		}
 		country_event = { id = vampire_ruler.16 days = 30 random = 10 }
 	}
-	#Hunt Overruns
-	option = {
+	option = { #Hunt Overruns
 		name = vampire_ruler.132.a
 		ai_chance = {
 			factor = 2
 		}
 		country_event = { id = vampire_ruler.17 days = 30 random = 10 }
 	}
-	#Being Followed
-	option = {
+	option = { #Being Followed
 		name = vampire_ruler.132.a
 		ai_chance = {
 			factor = 1
 		}
 		country_event = { id = vampire_ruler.26 days = 30 random = 10 }
 	}
-	#Pursued by Guards
-	option = {
+	option = { #Pursued by Guards
 		name = vampire_ruler.132.a
 		ai_chance = {
 			factor = 1
@@ -1163,24 +1068,21 @@ country_event = {
 		}
 		country_event = { id = vampire_ruler.27 days = 30 random = 10 }
 	}
-	#A Poor Hunt
-	option = {
+	option = { #A Poor Hunt
 		name = vampire_ruler.132.a
 		ai_chance = {
 			factor = 2
 		}
 		country_event = { id = vampire_ruler.28 days = 30 random = 10 }
 	}
-	# Attacked by vagrants
-	option = {
+	option = { # Attacked by vagrants
 		name = vampire_ruler.132.a
 		ai_chance = {
 			factor = 1
 		}
 		country_event = { id = vampire_ruler.29 days = 30 random = 10 }
 	}
-	# Massacre in Court
-	option = {
+	option = { # Massacre in Court
 		name = vampire_ruler.132.a
 		ai_chance = {
 			factor = 1
@@ -1215,15 +1117,14 @@ country_event = {
 	}
 }
 
-#Encounter Feral Vampire
-country_event = {
+country_event = { #Encounter Feral Vampire
 	id = vampire_ruler.14
 	title = vampire_ruler.14.t
 	desc = vampire_ruler.14.d
 	picture = RELIGIOUS_TURMOIL_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
@@ -1233,54 +1134,39 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	#I will fight them
-	option = {
+	option = { #I will fight them
 		name = vampire_ruler.14.a
 		ai_chance = {
 			factor = 10
 		}
 		random_list = {
-			#Fight them off successfullly
-			60 = {
-			}
-			# Fight them off but is injured
-			39 = {
-				facade_suspicion_increase_1 = yes
-				kill_ruler = yes
-			}
-			# Ruler must ressurect
-			1 = {
-				facade_suspicion_increase_1 = yes
-				kill_vampire_ruler = yes
-			}
+			60 = {} #Fight them off successfullly
+			39 = { facade_suspicion_increase_1 = yes kill_ruler = yes } # Fight them off but is injured
+			1 = { facade_suspicion_increase_1 = yes kill_vampire_ruler = yes } # Ruler must resurrect
 		}
 	}
 	
-	#I must escape (No hunt)
-	option = {
+	option = { #I must escape (No hunt)
 		name = vampire_ruler.14.b
 		ai_chance = {
 			factor = 10
 		}
 		facade_suspicion_increase_1 = yes
-		random_list = {
-			80 = {}
-			20 = {
-				kill_ruler = yes
-			}
+		random = {
+			chance = 20
+			kill_ruler = yes
 		}
 	}
 }
 
-#Ambushed by Hunter
-country_event = {
+country_event = { #Ambushed by Hunter
 	id = vampire_ruler.15
 	title = vampire_ruler.15.t
 	desc = vampire_ruler.15.d
 	picture = ASSASSINATION_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
@@ -1290,8 +1176,7 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	#Fight Hunter
-	option = {
+	option = { #Fight Hunter
 		name = vampire_ruler.15.a
 		ai_chance = {
 			factor = 10
@@ -1316,8 +1201,7 @@ country_event = {
 		}
 	}
 	
-	#I must escape (No hunt)
-	option = {
+	option = { #I must escape (No hunt)
 		name = vampire_ruler.15.b
 		ai_chance = {
 			factor = 10
@@ -1333,31 +1217,24 @@ country_event = {
 		}
 	}
 	
-	#I must escape (Has Vampire havens, can still hunt)
-	option = {
+	option = { #I must escape (Has Vampire havens, can still hunt)
 		name = vampire_ruler.15.c
-		ai_chance = {
-			factor = 10
-		}
+		ai_chance = { factor = 10 }
 		highlight = yes
 		trigger = { has_estate_privilege = estate_vampires_transfer_land_ownership }
-		random_list = {
-			30 = { increase_ruler_adm_effect = yes }
-			30 = { increase_ruler_dip_effect = yes }
-			30 = { increase_ruler_mil_effect = yes }
-		}
+
+		increase_random_ruler_skill = yes
 	}
 }
 
-#Ruler is Recognized
-country_event = {
+country_event = { #Ruler is Recognized
 	id = vampire_ruler.16
 	title = vampire_ruler.16.t
 	desc = vampire_ruler.16.d
 	picture = ACCUSATION_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
@@ -1367,64 +1244,44 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	#I must escape
-	option = {
+	option = { #I must escape
 		name = vampire_ruler.16.a
 		ai_chance = {
 			factor = 10
 		}
 		facade_suspicion_increase_1 = yes
-		random_list = {
-			30 = { increase_ruler_adm_effect = yes }
-			30 = { increase_ruler_dip_effect = yes }
-			30 = { increase_ruler_mil_effect = yes }
-		}
+		increase_random_ruler_skill = yes
 	}
 	
-	#They will die
-	option = {
+	option = { #They will die
 		name = vampire_ruler.16.b
 		ai_chance = {
 			factor = 10
 		}
 		facade_suspicion_increase_2 = yes
-		random_list = {
-			30 = { increase_ruler_adm_effect = yes increase_ruler_adm_effect = yes }
-			30 = { increase_ruler_dip_effect = yes increase_ruler_dip_effect = yes }
-			30 = { increase_ruler_mil_effect = yes increase_ruler_mil_effect = yes }
-		}
+		increase_random_ruler_skill = yes
+		increase_random_ruler_skill = yes
 	}
 	
-	#Mesmerize them
-	option = {
+	option = { #Mesmerize them
 		name = vampire_ruler.16.c
-		trigger = { 
-			had_country_flag = {
-				flag = vampire_ruler_has_coffin
-				days = 36500 #100 Years
-			}
-		}
+		trigger = { vampire_age = { greater_than_or_equal_to = 36500 } }
 		ai_chance = {
 			factor = 1000
 		}
 		highlight = yes
-		random_list = {
-			30 = { increase_ruler_adm_effect = yes increase_ruler_adm_effect = yes }
-			30 = { increase_ruler_dip_effect = yes increase_ruler_dip_effect = yes }
-			30 = { increase_ruler_mil_effect = yes increase_ruler_mil_effect = yes }
-		}
+		increase_random_ruler_skill = yes
 	}
 }
 
-#Hunt Overruns, no prey caught
-country_event = {
+country_event = { #Hunt Overruns, no prey caught
 	id = vampire_ruler.17
 	title = vampire_ruler.17.t
 	desc = vampire_ruler.17.d
 	picture = COMET_SIGHTED_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
@@ -1434,8 +1291,7 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	#Damn
-	option = {
+	option = { #Damn
 		name = vampire_ruler.17.a
 		ai_chance = {
 			factor = 10
@@ -1443,8 +1299,7 @@ country_event = {
 		set_country_flag = vampire_missed_hunt
 	}
 	
-	#Damn
-	option = {
+	option = { #Try for a bit longer
 		name = vampire_ruler.17.b
 		ai_chance = {
 			factor = 0
@@ -1458,15 +1313,14 @@ country_event = {
 	}
 }
 
-#Mesmerize Tavern goer
-country_event = {
+country_event = { #Mesmerize Tavern goer
 	id = vampire_ruler.18
 	title = vampire_ruler.18.t
 	desc = vampire_ruler.18.d
 	picture = DIPLOMACY_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
@@ -1476,8 +1330,7 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	#Great!
-	option = {
+	option = { #Great!
 		name = vampire_ruler.18.a
 		ai_chance = {
 			factor = 10
@@ -1490,15 +1343,14 @@ country_event = {
 	}
 }
 
-#Unseen at night
-country_event = {
+country_event = { #Unseen at night
 	id = vampire_ruler.19
 	title = vampire_ruler.19.t
 	desc = vampire_ruler.19.d
 	picture = RAMADAN_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
@@ -1508,8 +1360,7 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	#Great!
-	option = {
+	option = { #Great!
 		name = vampire_ruler.19.a
 		ai_chance = {
 			factor = 10
@@ -1522,15 +1373,14 @@ country_event = {
 	}
 }
 
-#A Missing Courtier
-country_event = {
+country_event = { #A Missing Courtier
 	id = vampire_ruler.20
 	title = vampire_ruler.20.t
 	desc = vampire_ruler.20.d
 	picture = COURT_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
@@ -1540,8 +1390,7 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	#Great!
-	option = {
+	option = { #Great!
 		name = vampire_ruler.20.a
 		ai_chance = {
 			factor = 10
@@ -1554,41 +1403,40 @@ country_event = {
 	}
 }
 
-#######################
-#####Hunter events#####
-#######################
+#####################
+### Hunter events ###
+#####################
 
-#Advance Hunter
-country_event = {
+country_event = { #Advance Hunter - should be about one hunt per lifetime
 	id = vampire_ruler.21
 	title = vampire_ruler.21.t
 	desc = vampire_ruler.21.d
 	picture = SPY_eventPicture
+
+	is_triggered_only = yes
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
 	mean_time_to_happen = {
-		#Seems high but remember a ruler vampire sticks around for a long time
-		years = 200
+		days = 1
 		
-		modifier = {
-			factor = 0.05
-			has_country_flag = vampire_being_hunted #Takes 30 years once they begin hunting you, each tick is ~10 years
-		}
-		
-		modifier = {
-			factor = 0.15
-			NOT = { has_country_flag = vampire_being_hunted }
-			has_country_flag = outed_vampire
+		modifier = { #Speeds up once they begin hunting you
+			factor = 20
+			has_country_flag = vampire_being_hunted
 		}
 		
 		modifier = {
 			factor = 10
-			NOT = { has_country_flag = vampire_being_hunted has_country_flag = outed_vampire }
-			# You're not known at all
+			NOT = { has_country_flag = vampire_being_hunted }
+			has_country_modifier = outed_vampire
+		}
+		
+		modifier = { # You're not known at all
+			factor = 0.1
+			NOT = { has_country_flag = vampire_being_hunted has_country_modifier = outed_vampire }
 			NOT = {
 				check_variable = {
 					which = suspicionPoints
@@ -1597,10 +1445,9 @@ country_event = {
 			}
 		}
 		
-		modifier = {
-			factor = 0.75
-			NOT = { has_country_flag = vampire_being_hunted has_country_flag = outed_vampire }
-			# Chance of attracting a hunter
+		modifier = { # Chance of attracting a hunter
+			factor = 1.33
+			NOT = { has_country_flag = vampire_being_hunted has_country_modifier = outed_vampire }
 			check_variable = {
 				which = suspicionPoints
 				value = 10
@@ -1609,7 +1456,7 @@ country_event = {
 		
 		modifier = {
 			factor = 0.70
-			NOT = { has_country_flag = vampire_being_hunted has_country_flag = outed_vampire }
+			NOT = { has_country_flag = vampire_being_hunted has_country_modifier = outed_vampire }
 			# At this point you're known to vampire hunters
 			check_variable = {
 				which = suspicionPoints
@@ -1619,7 +1466,7 @@ country_event = {
 		
 		modifier = {
 			factor = 0.5
-			NOT = { has_country_flag = vampire_being_hunted has_country_flag = outed_vampire }
+			NOT = { has_country_flag = vampire_being_hunted has_country_modifier = outed_vampire }
 			# At this point you're well known to vampire hunters, only slightly more than being an outed vampire
 			check_variable = {
 				which = suspicionPoints
@@ -1637,26 +1484,20 @@ country_event = {
 	}
 }
 
-# Confront Hunter
-country_event = {
+country_event = { # Confront Hunter
 	id = vampire_ruler.22
 	title = vampire_ruler.22.t
 	desc = vampire_ruler.22.d
 	picture = REVOLT_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
-	
-	mean_time_to_happen = {
-		days = 1
-	}
-	
+
 	is_triggered_only = yes
 	
-	#Fight
-	option = {
+	option = { #Fight
 		name = vampire_ruler.22.a
 		ai_chance = {
 			factor = 10
@@ -1669,7 +1510,7 @@ country_event = {
 			}
 		}
 		else_if = { 
-			limit = { has_country_flag = outed_vampire }
+			limit = { has_country_modifier = outed_vampire }
 			random_list = {
 				30 = { country_event = { id = vampire_ruler.31 days = 7 } }
 				70 = { country_event = { id = vampire_ruler.23 days = 7 } }
@@ -1683,28 +1524,21 @@ country_event = {
 		}
 	}
 	
-	#Mezmerize
-	option = {
+	option = { #Mesmerize
 		name = vampire_ruler.22.b
-		trigger = {
-			had_country_flag = {
-				flag = vampire_ruler_has_coffin
-				days = 36500 #100 Years
-			}
-		}
+		trigger = { vampire_age = { greater_than_or_equal_to = 36500 } }
 		ai_chance = {
 			factor = 1000
 		}
 		highlight = yes
 		random_list = {
-			10 = { country_event = { id = vampire_ruler.31 days = 7} }
+			10 = { country_event = { id = vampire_ruler.31 days = 7 } }
 			90 = { country_event = { id = vampire_ruler.23 days = 7 } }
 		}
 		change_dip = -1
 	}
 	
-	#Lucian & Mihaela
-	option = {
+	option = { #Lucian & Mihaela
 		name = vampire_ruler.22.c
 		trigger = {
 			OR = {
@@ -1721,20 +1555,11 @@ country_event = {
 	}
 }
 
-# Defeat Hunter
-country_event = {
+country_event = { # Defeat Hunter
 	id = vampire_ruler.23
 	title = vampire_ruler.23.t
 	desc = vampire_ruler.23.d
 	picture = GREAT_MAN_eventPicture
-	
-	trigger = {
-		always = yes
-	}
-	
-	mean_time_to_happen = {
-		days = 1
-	}
 	
 	is_triggered_only = yes
 	
@@ -1748,30 +1573,24 @@ country_event = {
 	}
 }
 
-#######################
-#Stat Loss events cont#
-#######################
+#############################
+### Stat Loss events cont ###
+#############################
 
-# The Hunt - A Second Shadow
-country_event = {
+country_event = { # The Hunt - A Second Shadow
 	id = vampire_ruler.26
 	title = vampire_ruler.26.t
 	desc = vampire_ruler.26.d
 	picture = CORRUPTION_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
 	}
 	
 	is_triggered_only = yes
 	
-	# Ignore it
-	option = {
+	option = { # Ignore it
 		name = vampire_ruler.26.a
 		ai_chance = {
 			factor = 10
@@ -1784,8 +1603,7 @@ country_event = {
 		}
 	}
 	
-	# Go Home
-	option = {
+	option = { # Go Home
 		name = vampire_ruler.26.b
 		ai_chance = {
 			factor = 10
@@ -1794,26 +1612,20 @@ country_event = {
 	}
 }
 
-# The Hunt - Pursued by Guards
-country_event = {
+country_event = { # The Hunt - Pursued by Guards
 	id = vampire_ruler.27
 	title = vampire_ruler.27.t
 	desc = vampire_ruler.27.d
 	picture = RELIGIOUS_TURMOIL_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
 	}
 	
 	is_triggered_only = yes
 	
-	# Escape
-	option = {
+	option = { # Escape
 		name = vampire_ruler.27.a
 		ai_chance = {
 			factor = 10
@@ -1827,26 +1639,20 @@ country_event = {
 	}
 }
 
-# The Hunt - A Poor Hunt
-country_event = {
+country_event = { # The Hunt - A Poor Hunt
 	id = vampire_ruler.28
 	title = vampire_ruler.28.t
 	desc = vampire_ruler.28.d
 	picture = BAD_WITH_MONARCH_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
 	}
 	
 	is_triggered_only = yes
 	
-	# At least I'm not hungry anymore
-	option = {
+	option = { # At least I'm not hungry anymore
 		name = vampire_ruler.28.a
 		ai_chance = {
 			factor = 10
@@ -1854,8 +1660,7 @@ country_event = {
 	}
 }
 
-# The Hunt - Fight Vagrants
-country_event = {
+country_event = { # The Hunt - Fight Vagrants
 	id = vampire_ruler.29
 	title = vampire_ruler.29.t
 	desc = {
@@ -1869,18 +1674,13 @@ country_event = {
 	picture = GREAT_MAN_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
 	}
 	
 	is_triggered_only = yes
 	
-	# Fight them
-	option = {
+	option = { # Fight them
 		name = vampire_ruler.29.a
 		ai_chance = {
 			factor = 10
@@ -1893,8 +1693,7 @@ country_event = {
 		}
 	}
 	
-	# Go Home
-	option = {
+	option = { # Go Home
 		name = vampire_ruler.29.b
 		ai_chance = {
 			factor = 10
@@ -1903,26 +1702,20 @@ country_event = {
 	}
 }
 
-# The Hunt - Bloodbath in court
-country_event = {
+country_event = { # The Hunt - Bloodbath in court
 	id = vampire_ruler.30
 	title = vampire_ruler.30.t
 	desc = vampire_ruler.30.d
 	picture = GREAT_MAN_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
 	}
 	
 	is_triggered_only = yes
 	
-	# Stop
-	option = {
+	option = { # Stop
 		name = vampire_ruler.30.a
 		ai_chance = {
 			factor = 10
@@ -1930,8 +1723,7 @@ country_event = {
 		set_country_flag = vampire_missed_hunt
 	}
 	
-	# Kill them all
-	option = {
+	option = { # Kill them all
 		name = vampire_ruler.30.b
 		ai_chance = {
 			factor = 0
@@ -1946,26 +1738,20 @@ country_event = {
 	}
 }
 
-# The Confrontaition - Adventurer Kills Ruler
-country_event = {
+country_event = { # The Confrontation - Adventurer Kills Ruler
 	id = vampire_ruler.31
 	title = vampire_ruler.31.t
 	desc = vampire_ruler.31.d
 	picture = GREAT_MAN_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
 	}
 	
 	is_triggered_only = yes
 	
-	# Die
-	option = {
+	option = { # Die
 		name = vampire_ruler.31.a
 		kill_vampire_ruler = yes
 		add_prestige = -20
@@ -1973,15 +1759,14 @@ country_event = {
 	}
 }
 
-# The Confrontaition - Reaper Kills Ruler
-country_event = {
+country_event = { # The Confrontation - Reaper Kills Ruler
 	id = vampire_ruler.32
 	title = vampire_ruler.32.t
 	desc = vampire_ruler.32.d
 	picture = GREAT_MAN_eventPicture
 	
 	trigger = {
-		has_ruler_modifier = vampire_ruler
+		ruler_is_vampire = yes
 		is_lesser_in_union = no
 	}
 	
@@ -1991,8 +1776,7 @@ country_event = {
 	
 	is_triggered_only = yes
 	
-	# Die
-	option = {
+	option = { # Die
 		name = vampire_ruler.32.a
 		kill_vampire_ruler = yes
 		add_prestige = -20
@@ -2000,21 +1784,16 @@ country_event = {
 	}
 }
 
-# Vampire Heir Returns
-country_event = {
+country_event = { # Vampire Heir Returns
 	id = vampire_ruler.33
 	title = vampire_ruler.33.t
 	desc = vampire_ruler.33.d
 	picture = GREAT_MAN_eventPicture
 	
 	trigger = {
-		NOT = { has_country_flag = vampire_ruler_has_coffin }
+		ruler_is_not_vampire = yes
 		has_country_flag = vampire_heir
 		is_lesser_in_union = no
-	}
-	
-	mean_time_to_happen = {
-		days = 1
 	}
 	
 	is_triggered_only = yes
@@ -2023,34 +1802,286 @@ country_event = {
 		clr_country_flag = vampire_heir
 	}
 	
-	# Seizes Power
-	option = {
+	option = { # Seizes Power
 		name = vampire_ruler.33.a
-		ai_chance = {
-			factor = 1
-		}
-		exile_ruler_as = { name = cannot_return }
-		hidden_effect = { add_stability = 1 }
+		ai_chance = { factor = 1 }
 		
-		define_ruler = {
-			dynasty = ROOT
-			age = 17
-			change_adm = 1
-			change_dip = 1
-			change_mil = 1
-			hide_skills = yes
-			claim = 50
+		if = {
+			limit = { has_country_flag = has_exiled_vampire_heir }
+			set_heir = exiled_vampire_heir_@ROOT
+			hidden_effect = {
+				if = {
+					limit = { has_heir = no }
+					define_heir = { dynasty = ROOT age = 17 change_adm = 1 change_dip = 1 change_mil = 1 hide_skills = yes claim = 50 }
+				}
+				kill_ruler = yes add_stability = 1
+			}
 		}
-		set_country_flag = new_vampire
-		set_country_flag = no_sire
+		else = {
+			define_ruler = {
+				dynasty = ROOT
+				age = 17
+				change_adm = 1
+				change_dip = 1
+				change_mil = 1
+				hide_skills = yes
+				claim = 50
+			}
+		}
 		ruler_become_vampire = yes
+		reset_vampire_age = yes
+		set_country_flag = no_vampire_sire
 	}
 	
-	# He hides
-	option = {
+	option = { # He hides
 		name = vampire_ruler.33.b
 		ai_chance = {
 			factor = 10
 		}
+	}
+}
+
+country_event = { #Vampire Revival - Interregnum
+	id = vampire_ruler.99
+	title = vampire_ruler.99.t
+	desc = vampire_ruler.99.d
+	picture = DEATH_OF_HEIR_eventPicture
+	
+	is_triggered_only = yes	#this should be triggered by other events like adventurers destroying phylactery
+	
+	trigger = {
+		ruler_is_vampire = yes
+		NOT = { has_country_flag = interregnum }
+		NOT = { government = republic }
+		
+		NOT = { has_ruler_flag = is_a_vampire }
+		
+		is_lesser_in_union = no #Breaks PUs otherwise
+	}
+	
+	immediate = {
+		hidden_effect = {
+			#So it doesn't fire itself
+			set_country_flag = interregnum
+
+			#No stab loss while we shuffle around rulers
+			add_country_modifier = { name = temp_immortal_revival duration = -1 hidden = yes }
+			
+			# Ruler is revived here
+			if = {
+				limit = { has_country_flag = B34_lucian }
+				define_ruler = { age = 27 name = "Lucian" dynasty = "síl na Toars" male = yes max_random_adm  = 0 max_random_dip  = 0 max_random_mil  = 0 hide_skills = yes }
+			}
+			else = { #Make clear this guy is fake, give him the name "Interregnum"
+				restore_saved_dynasty = yes
+				if = {
+					limit = { has_country_flag = vampire_ruler_female }
+					define_heir = { age = 30 dynasty = ROOT female = yes max_random_adm  = 0 max_random_dip  = 0 max_random_mil  = 0 hide_skills = yes }
+				}
+				else = { define_heir = { age = 30 dynasty = ROOT male = yes max_random_adm  = 0 max_random_dip  = 0 max_random_mil  = 0 hide_skills = yes } }
+			}
+		}
+	}
+	
+	option = { # Revive Ruler
+		name = vampire_ruler.99.a
+		ai_chance = { factor = 50 }
+		
+		# Revived Rulers are slightly worse than normal ones, you don't want your ruler to die
+		if = {
+			limit = { has_country_flag = B34_lucian }
+			tooltip = { define_ruler = { age = 27 name = "Lucian" dynasty = "síl na Toars" male = yes max_random_adm  = 0 max_random_dip  = 0 max_random_mil  = 0 hide_skills = yes } }
+		}
+		else = {
+			if = {
+				limit = { has_country_flag = vampire_ruler_female }
+				tooltip = { define_heir = { age = 30 dynasty = ROOT female = yes max_random_adm  = 0 max_random_dip  = 0 max_random_mil  = 0 hide_skills = yes } }
+			}
+			else = { tooltip = { define_heir = { age = 30 dynasty = ROOT male = yes max_random_adm  = 0 max_random_dip  = 0 max_random_mil  = 0 hide_skills = yes } } }
+			hidden_effect = { kill_ruler = yes }
+		}
+		
+		restore_ruler_stats = yes #Here for the tooltip
+		revival_stat_loss = yes
+		save_ruler_stats = yes
+		
+		hidden_effect = {
+			clr_country_flag = interregnum
+			remove_country_modifier = temp_immortal_revival
+
+			#clear first in case player lets a month go by before clicking
+			clear_ruler_personalities = yes
+			apply_saved_persistent_ruler_personalities = yes
+			
+			#set up ruler again
+			set_ruler_flag = long_lived_ruler
+			set_ruler_flag = is_a_vampire
+			add_ruler_modifier = { name = vampire_ruler duration = -1 }
+
+			#get back powerful mage if you had it
+			if = {
+				limit = { has_country_flag = mage_vampire }
+				force_add_ruler_personality = { personality = mage_personality }
+				ruler_give_saved_spell_schools = yes	# links to ruler_save_spell_schools
+				if = { # Keep Witch King on Revival
+					limit = { has_country_flag = witch_king_flag }
+					add_ruler_modifier = {
+						name = witch_king_modifier
+						duration = -1
+					}
+				}
+				else_if = { # If not exposed people forget your misuse of magic
+					limit = { has_country_flag = hidden_ruler_vampire }
+					clear_witch_king_points = yes
+				}
+			}
+		}
+	}
+}
+
+province_event = { #Occupying army searches for coffin
+	id = vampire_ruler.100
+	title = vampire_ruler.100.t
+	desc = vampire_ruler.100.d
+	picture = END_OF_TIME_eventPicture
+	goto = root
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		owner = { ruler_is_exposed_vampire = yes }
+		is_capital = yes
+		NOT = { controlled_by = owner }
+		controller = { exists = yes }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { owner = { NOT = { has_ruler_flag = abjuration_1 } } }
+				province_event = { id = vampire_ruler.101 days = 30 random = 15 } #Vampire rulers are less likely to be mages, give them a safety net
+			}
+			else = {
+				owner = {
+					trigger_switch = {
+						on_trigger = has_ruler_flag
+						
+						abjuration_3 = { ROOT = { province_event = { id = vampire_ruler.101 days = 75 random = 60 } } }
+						abjuration_2 = { ROOT = { province_event = { id = vampire_ruler.101 days = 60 random = 45 } } }
+						abjuration_1 = { ROOT = { province_event = { id = vampire_ruler.101 days = 45 random = 30 } } }
+					}
+				}
+			}
+			controller = { country_event = { id = vampire_ruler.102 days = 1 } }
+		}
+	}
+	
+	#It is only a matter of time until the coffin is found
+	option = {
+		name = vampire_ruler.100.a
+		trigger = { owner = { NOT = { has_ruler_flag = abjuration_1 } } }
+		ai_chance = { factor = 100 }
+		
+		owner = { add_prestige = -10 }
+		tooltip = { province_event = { id = vampire_ruler.101 days = 30 random = 15 } }
+	}
+	
+	#Wards will slow them down
+	option = {
+		name = vampire_ruler.100.b
+		trigger = { owner = { has_ruler_flag = abjuration_1 } }
+		ai_chance = { factor = 100 }
+		
+		owner = {
+			add_prestige = -5
+			tooltip = {
+				trigger_switch = {
+					on_trigger = has_ruler_flag
+					
+					abjuration_3 = { ROOT = { province_event = { id = vampire_ruler.101 days = 75 random = 60 } } }
+					abjuration_2 = { ROOT = { province_event = { id = vampire_ruler.101 days = 60 random = 45 } } }
+					abjuration_1 = { ROOT = { province_event = { id = vampire_ruler.101 days = 45 random = 30 } } }
+				}
+			}
+		}
+	}
+}
+
+province_event = { #coffin found by occupiers if not retaken
+	id = vampire_ruler.101
+	title = vampire_ruler.101.t
+	desc = vampire_ruler.101.d
+	picture = END_OF_TIME_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	trigger = {
+		owner = { ruler_is_vampire = yes }
+		NOT = { controlled_by = ROOT }
+		controller = { exists = yes }
+	}
+
+	#coffin destroyed
+	option = {
+		name = vampire_ruler.101.a
+		ai_chance = { factor = 100 }
+		
+		controller = { country_event = { id = vampire_ruler.103 } }
+		owner = { country_event = { id = vampire_ruler.104 } }
+	}
+}
+
+country_event = { #Occupier coffin search notification
+	id = vampire_ruler.102
+	title = vampire_ruler.102.t
+	desc = vampire_ruler.102.d
+	picture = END_OF_TIME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Inform you should hold province to destroy coffin
+		name = vampire_ruler.102.a
+		ai_chance = { factor = 100 }
+	}
+}
+
+country_event = { #Occupier destroys coffin
+	id = vampire_ruler.103
+	title = vampire_ruler.103.t
+	desc = vampire_ruler.103.d
+	picture = END_OF_TIME_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Destroyed coffin reward
+		name = vampire_ruler.103.a
+		ai_chance = { factor = 100 }
+		
+		add_prestige = 20
+		add_country_modifier = {
+			name = vampire_destroyed_coffin
+			duration = 3650
+		}
+	}
+}
+
+country_event = { #vampire Destruction - coffin destroyed
+	id = vampire_ruler.104
+	title = vampire_ruler.104.t
+	desc = vampire_ruler.104.d
+	picture = END_OF_TIME_eventPicture
+	
+	is_triggered_only = yes	#this should be triggered by other events like adventurers destroying coffin
+	
+	trigger = { ruler_is_vampire = yes }
+	
+	option = {
+		name = vampire_ruler.104.a
+		ai_chance = { factor = 50 }
+		
+		kill_vampire_ruler = yes
+		add_prestige = -20
+		add_stability = -1		#Less of a deal than a lich dying, there are likely more vampires about
 	}
 }

@@ -1,32 +1,96 @@
+namespace = istralore
 
-
-namespace = flavor_istralore
-
-#Corinites in the Imperial Army
+#Aucanna Corin Event
 country_event = {
-	id = flavor_istralore.1
-	title = flavor_istralore.1.t
-	desc = flavor_istralore.1.d
-	picture = LAND_MILITARY_eventPicture
-	
-	fire_only_once = yes
+	id = istralore.1
+	title = istralore.1.t
+	desc = istralore.1.d
+	picture = wihgfx_FEMALE_RULER_eventPicture
 	is_triggered_only = yes
 	
+	option = {
+		name = istralore.1.a
+		country_event = {
+			id = favored_RC.37
+		}
+		hidden_effect = {
+			add_country_modifier = {
+				name = A45_female_generals
+				duration = -1
+			}
+		}
+		define_ruler_to_general = {
+			fire = 3
+			shock = 6
+			manuever = 4
+			siege = 3
+		}
+	}
+}
+#Seinathil Silistra family event mission reward
+country_event = {
+	id = istralore.2
+	title = istralore.2.t
+	desc = istralore.2.d
+	picture = DIPLOMACY_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = istralore.2.a
+		trigger = {
+			A90 = { dynasty = A45 }
+		}
+		add_dip_power = -50
+		create_union = A90
+	}
+	option = {
+		name = istralore.2.b
+		trigger = {
+			A90 = { dynasty = A45 }
+		}
+		add_mil_power = -50
+		create_union = A90
+	}
+	option = {
+		name = istralore.2.c
+		trigger = {
+			NOT = {
+				A90 = { dynasty = A45 }
+			}
+		}
+		add_casus_belli = {
+			target = A90
+			type = cb_restore_personal_union
+			months = 120
+		}
+	}
+}
+#Ensures Corinite Center Event
+country_event = {
+	id = istralore.3
+	title = istralore.3.t
+	desc = istralore.3.d
+	picture = CORINITE_WAR_eventPicture
+	is_triggered_only = yes
 	trigger = {
 		tag = A45
-		NOT = { religion = corinite }
+		OR = {
+			has_country_flag = A45_by_her_light_flag
+			ai = yes
+		}
 	}
-	
-	
-	#Convert the entire country
+
 	option = {
-		name = flavor_istralore.1.a
+		name = istralore.3.a
+		change_religion = corinite
+		hidden_effect = {
+			add_prestige = 100
+		}
 		ai_chance = {
 			factor = 60
 			modifier = {
 				factor = 10000
 				has_personal_deity = corin
-				A31 = { AI = NO }
 			}
 			modifier = {
 				factor = 2
@@ -37,11 +101,6 @@ country_event = {
 				mil = 3
 			}
 			modifier = {
-				factor = 0.8
-				is_emperor = yes
-				hre_religion_treaty = no
-			}
-			modifier = {
 				factor = 2
 				personality = ai_militarist
 			}
@@ -50,9 +109,12 @@ country_event = {
 				ruler_has_personality = free_thinker_personality
 			}
 		}
-		change_religion = corinite
-		
-		capital_scope = {
+		random_owned_province = {
+			limit = {
+				can_have_center_of_reformation_trigger = {
+					RELIGION = corinite
+				}
+			}
 			change_religion = corinite
 			add_reform_center = corinite
 			add_permanent_province_modifier = {
@@ -64,33 +126,22 @@ country_event = {
 			name = "conversion_zeal"
 			duration = 3650
 		}
-		
-		add_ruler_modifier = { 
-			name = istralore_support_of_the_corinite_military
+		add_country_modifier = { 
+			name = A45_support_of_the_corinite_military
 			duration = -1  
 		}
 	}
-	
-	#Corinite Crusaders revolt
 	option = {
-		name = flavor_istralore.1.b
-		ai_chance = {
-			factor = 40
+		name = istralore.3.b
+		ai_chance = { 
+			factor = 10 
 			modifier = {
-				factor = 10000
-				has_personal_deity = adean
-				A31 = { AI = YES }
-			}
-			modifier = {
-				factor = 1.5
-				ruler_has_personality = calm_personality
-			}
-			modifier = {
-				factor = 1.5
-				ruler_has_personality = careful_personality
+				factor = 0
+				A31 = {
+					ai = no
+				}
 			}
 		}
-		
 		random_owned_province = {
 			limit = {
 				religion_group = cannorian
@@ -105,237 +156,105 @@ country_event = {
 				win = yes
 			}
 		}
-		
 	}
-
 }
 
+#First Banshee Event
 country_event = {
-	id = flavor_istralore.2
-	title = flavor_istralore.2.t
-	desc = flavor_istralore.2.d
-	picture = HARBOUR_eventPicture
-	
+	id = istralore.4
+	title = istralore.4.t
+	desc = istralore.4.d
+	picture = wihgfx_FEMALE_GENERAL_eventPicture
 	is_triggered_only = yes
 	
 	option = {
-		name = flavor_istralore.2.a
-		define_admiral = {
-			name = "Thalanor Seamoon"
-			fire = 3
-			shock = 5
-			manuever = 6
-			siege = 2
-			trait = level_headed_personality
+		name = istralore.4.a
+		custom_tooltip = A45_banshee_unlock_tt
+		set_country_flag = A45_banshee_company_1
+		add_country_modifier = { 
+			name = A45_istralania_spirit
+			duration = 3650 
+		}
+		the_commons_area = {
+			add_permanent_claim = ROOT
+		}
+		east_damesear_area = {
+			add_permanent_claim = ROOT
 		}
 	}
 }
 
+#Grand Tournament
 country_event = {
-	id = flavor_istralore.3
-	title = flavor_istralore.3.t
-	desc = flavor_istralore.3.d
-	picture = BAD_WITH_MONARCH_eventPicture
-	
+	id = istralore.5
+	title = istralore.5.t
+	desc = istralore.5.d
+	picture = TOURNAMENT_eventPicture
 	is_triggered_only = yes
 	
 	option = {
+		name = istralore.5.a
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					has_country_flag = lilac_wars_moon_party
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = grand_tournament_moon
+				}
+			}
+			every_known_country = {
+				limit = {
+					has_country_flag = lilac_wars_rose_party
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = grand_tournament_rose
+				}
+			}
+		}
+		change_adm = 1
+		change_dip = 1
+		change_mil = 1
+		define_heir = {
+			male = yes
+			dynasty = ROOT
+			age = 4
+			name = "Aucan"
+			monarch_name = "Aucan III"
+			claim = 100
+			adm = 3
+			dip = 5
+			mil = 6
+		}
+		custom_tooltip = A45_tourny_tt
+		set_country_flag = A45_enable_banshee_flag
+	}
+}
+
+#Province Trading events
+country_event = {
+	id = istralore.6
+	title = istralore.6.t
+	desc = istralore.6.d
+	picture = DIPLOMACY_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		goto = 284
 		ai_chance = {
 			factor = 1
 		}
-		name = flavor_istralore.3.a
-		A30 = {
+		name = istralore.6.a
+		A45 = {
 			country_event = {
-				id = flavor_istralore.4
+				id = istralore.7
 			}
 		}
-		tooltip = {
-		if = {
-			limit = {
-				A30 = { owns = 301 }
-			}
-			301 = { cede_province = A37 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 576 }
-			}
-			576 = { cede_province = A93 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 44 }
-			}
-			44 = { cede_province = A93 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 280 }
-			}
-			280 = { cede_province = A93 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 297 }
-			}
-			297 = { cede_province = A93 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 307 }
-			}
-			307 = { cede_province = A34 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 903 }
-			}
-			903 = { cede_province = Z04 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 318 }
-			}
-			318 = { cede_province = A48 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 907 }
-			}
-			907 = { cede_province = A48 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 319 }
-			}
-			319 = { cede_province = A48 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 918 }
-			}
-			918 = { cede_province = A48 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 920 }
-			}
-			920 = { cede_province = A75 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 321 }
-			}
-			321 = { cede_province = A75 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 312 }
-			}
-			312 = { cede_province = A75 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 326 }
-			}
-			326 = { cede_province = A75 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 902 }
-			}
-			902 = { cede_province = A60 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 310 }
-			}
-			310 = { cede_province = A60 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 311 }
-			}
-			311 = { cede_province = A60 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 320 }
-			}
-			320 = { cede_province = A60 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 313 }
-			}
-			313 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 418 }
-			}
-			418 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 419 }
-			}
-			419 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 904 }
-			}
-			904 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 325 }
-			}
-			325 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 302 }
-			}
-			302 = { cede_province = A92 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 901 }
-			}
-			901 = { cede_province = A92 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 309 }
-			}
-			309 = { cede_province = A99 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 308 }
-			}
-			308 = { cede_province = A73 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 912 }
-			}
-			912 = { cede_province = A73 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 579 }
-			}
-			579 = { cede_province = A34 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 300 }
-			}
-			300 = { cede_province = A34 }
-		}
+		284 = {
+			cede_province = A45
+			add_core = A45
 		}
 	}
 
@@ -343,361 +262,1093 @@ country_event = {
 		ai_chance = {
 			factor = 0
 		}
-		name = flavor_istralore.3.b
+		name = istralore.6.b
+		A45 = {
+			country_event = {
+				id = istralore.8
+			}
+		}
 	}
 }
 
 country_event = {
-	id = flavor_istralore.4
-	title = flavor_istralore.4.t
-	desc = flavor_istralore.4.d
-	picture = BAD_WITH_MONARCH_eventPicture
+	id = istralore.7
+	title = istralore.7.t
+	desc = istralore.7.d
+	picture = DIPLOMACY_eventPicture
+	is_triggered_only = yes
 	
+	option = {
+		goto = 284
+		ai_chance = {
+			factor = 1
+		}
+		name = istralore.7.a
+	}
+}
+
+country_event = {
+	id = istralore.8
+	title = istralore.8.t
+	desc = istralore.8.d
+	picture = DIPLOMACY_eventPicture
 	is_triggered_only = yes
 	
 	option = {
 		ai_chance = {
 			factor = 1
 		}
-		name = flavor_istralore.4.a
-		if = {
-			limit = {
-				A30 = { owns = 301 }
+		name = istralore.8.a
+	}
+}
+
+#Steal OA event
+country_event = {
+	id = istralore.9
+	title = istralore.9.t
+	desc = istralore.9.d
+	picture = LILAC_WARS_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		ai_chance = {
+			factor = 1
+		}
+		name = istralore.9.a
+		remove_country_modifier = A77_memory_of_skylance
+		A45 = {
+			vassalize = A77
+			remove_country_modifier = supporting_orda_aldresia
+		}
+	}
+	option = {
+		name = istralore.9.b
+		ai_chance = {
+			factor = 0
+		}
+		trigger = {
+			NOT = {
+				emperor = {
+					is_or_was_tag = { tag = A45 }
+				}
 			}
-			301 = { cede_province = A37 }
+		}
+		A77 = {
+			grant_independence = yes
+		}
+		emperor = {
+			add_opinion = {
+				who = A45
+				modifier = stole_orda_aldresia
+			}
+			add_casus_belli = {
+				target = A77
+				type = cb_disloyal_vassal
+			}
+		}
+	}
+	option = {
+		ai_chance = {
+			factor = 0
+		}
+		name = istralore.9.c
+	}
+}
+#Dameria or Istralore Event
+country_event = {
+	id = istralore.10
+	title = istralore.10.t
+	desc = istralore.10.d
+	picture = LILAC_WARS_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = istralore.10.a
+		inherit = A38
+		8 = { #Anbenncost
+		move_capital_effect = yes
+		}
+		change_tag = A58
+		hidden_effect = { restore_country_name = yes }
+		swap_non_generic_missions = yes
+		if = {
+			limit = { NOT = { has_reform = damerian_monarchy } government = monarchy }
+			add_government_reform = damerian_monarchy
+		}
+		add_historical_friend = A45 #Istralore
+		add_historical_friend = A41 #Damish Temple
+		add_historical_friend = A31 #Moonhaven
+		add_historical_rival = A01 #Lorent
+		add_historical_rival = A13 #Gawed
+		A45 = { add_historical_friend = ROOT }
+		A41 = { add_historical_friend = ROOT }
+		A31 = { add_historical_friend = ROOT }
+		A01 = { add_historical_rival = ROOT }
+		A13 = { add_historical_rival = ROOT }
+		country_event = {
+			id = anb_half_elves.1
+		}
+		add_country_modifier = {
+			name = "centralization_modifier"
+			duration = 7300
+		}
+		add_prestige = 50
+		if = {
+			limit = { has_custom_ideas = no }
+			country_event = { id = ideagroups.1 } #Swap Ideas
 		}
 		if = {
 			limit = {
-				A30 = { owns = 576 }
+				is_part_of_hre = no
 			}
-			576 = { cede_province = A93 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 44 }
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
 			}
-			44 = { cede_province = A93 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 280 }
+			set_country_flag = is_a_grand_duchy
+			west_damesear_area = {
+				limit = { NOT = { owned_by = ROOT } }
+				add_permanent_claim = A58
 			}
-			280 = { cede_province = A93 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 297 }
+			east_damesear_area = {
+				limit = { NOT = { owned_by = ROOT } }
+				add_permanent_claim = A58
 			}
-			297 = { cede_province = A93 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 307 }
+			west_dameshead_region = {
+				limit = { NOT = { owned_by = ROOT } }
+				add_permanent_claim = A58
 			}
-			307 = { cede_province = A34 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 903 }
+			damerian_dales_area = {
+				limit = { NOT = { owned_by = ROOT } }
+				add_permanent_claim = A58
 			}
-			903 = { cede_province = Z04 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 318 }
+			the_commons_area = {
+				limit = { NOT = { owned_by = ROOT } }
+				add_permanent_claim = A58
 			}
-			318 = { cede_province = A48 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 907 }
+			heartlands_area = {
+				limit = { NOT = { owned_by = ROOT } }
+				add_permanent_claim = A58
 			}
-			907 = { cede_province = A48 }
 		}
-		if = {
-			limit = {
-				A30 = { owns = 319 }
-			}
-			319 = { cede_province = A48 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 918 }
-			}
-			918 = { cede_province = A48 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 920 }
-			}
-			920 = { cede_province = A75 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 321 }
-			}
-			321 = { cede_province = A75 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 312 }
-			}
-			312 = { cede_province = A75 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 326 }
-			}
-			326 = { cede_province = A75 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 902 }
-			}
-			902 = { cede_province = A60 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 310 }
-			}
-			310 = { cede_province = A60 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 311 }
-			}
-			311 = { cede_province = A60 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 320 }
-			}
-			320 = { cede_province = A60 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 313 }
-			}
-			313 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 418 }
-			}
-			418 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 419 }
-			}
-			419 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 904 }
-			}
-			904 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 325 }
-			}
-			325 = { cede_province = A72 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 302 }
-			}
-			302 = { cede_province = A92 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 901 }
-			}
-			901 = { cede_province = A92 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 309 }
-			}
-			309 = { cede_province = A99 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 308 }
-			}
-			308 = { cede_province = A73 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 912 }
-			}
-			912 = { cede_province = A73 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 579 }
-			}
-			579 = { cede_province = A34 }
-		}
-		if = {
-			limit = {
-				A30 = { owns = 300 }
-			}
-			300 = { cede_province = A34 }
-		}
-		clr_country_flag = is_a_grand_duchy
-		every_known_country = {
+		else_if = {
 			limit = {
 				is_part_of_hre = yes
 			}
-			country_event = {
-				id = flavor_istralore.5
-			}
+			custom_tooltip = grand_duchy_formation_tt
 		}
-	}
-}
-
-country_event = {
-	id = flavor_istralore.5
-	title = flavor_istralore.5.t
-	desc = flavor_istralore.5.d
-	picture = GOOD_WITH_MONARCH_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {
-		name = flavor_istralore.5.a
-	}
-}
-
-country_event = {
-	id = flavor_istralore.6
-	title = flavor_istralore.6.t
-	desc = flavor_istralore.6.d
-	picture = DIPLOMACY_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {
-		ai_chance = {
-			factor = 1
-		}
-		name = flavor_istralore.6.a
-		A45 = {
-			country_event = {
-				id = flavor_istralore.7
-			}
-		}
-		284 = { cede_province = A45 }
-		906 = { cede_province = A84 }
-	}
-
-	option = {
-		ai_chance = {
-			factor = 0
-		}
-		name = flavor_istralore.6.a
-		A45 = {
-			country_event = {
-				id = flavor_istralore.8
-			}
-		}
-	}
-}
-
-country_event = {
-	id = flavor_istralore.7
-	title = flavor_istralore.7.t
-	desc = flavor_istralore.7.d
-	picture = DIPLOMACY_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {
-		ai_chance = {
-			factor = 1
-		}
-		name = flavor_istralore.7.a
-	}
-}
-
-country_event = {
-	id = flavor_istralore.8
-	title = flavor_istralore.8.t
-	desc = flavor_istralore.8.d
-	picture = DIPLOMACY_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {
-		ai_chance = {
-			factor = 1
-		}
-		name = flavor_istralore.8.a
-	}
-}
-
-country_event = {
-	id = flavor_istralore.9
-	title = flavor_istralore.9.t
-	desc = flavor_istralore.9.d
-	picture = DIPLOMACY_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {
-		ai_chance = {
-			factor = 1
-		}
-		name = flavor_istralore.9.a
-		A45 = {
-			vassalize = A31
-		}
-	}
-	
-	option = {
-		ai_chance = {
-			factor = 0
-		}
-		name = flavor_istralore.9.b
-	}
-}
-
-country_event = {
-	id = flavor_istralore.10
-	title = flavor_istralore.10.t
-	desc = flavor_istralore.10.d
-	picture = LAND_MILITARY_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {
-		ai_chance = {
-			factor = 1
-		}
-		name = flavor_istralore.10.a
+		set_country_flag = formed_dameria_flag
+		remove_country_modifier = A45_heirs_of_dameria_3
 		add_country_modifier = {
-			name = "istralari_commanders_empire"
+			name = A45_heirs_of_dameria_revive
 			duration = -1
 		}
 	}
-}
 
+	option = {
+		name = istralore.10.b
+		inherit = A38
+		remove_country_modifier = A45_heirs_of_dameria_3
+		add_country_modifier = {
+			name = A45_heirs_of_dameria_max
+			duration = -1
+		}
+		set_country_flag = A45_part_2
+		swap_non_generic_missions = yes
+	}
+}
+#Slander Wex Event
 country_event = {
-	id = flavor_istralore.11
-	title = flavor_istralore.11.t
-	desc = flavor_istralore.11.d
-	picture = LAND_MILITARY_eventPicture
-	
+	id = istralore.11
+	title = istralore.11.t
+	desc = istralore.11.d
+	picture = ACCUSATION_eventPicture
+	major = yes
+	major_trigger = {
+		capital_scope = {
+			OR = {
+				superregion = western_cannor_superregion
+				superregion = escann_superregion
+			}
+		}
+		NOT = {
+			has_country_modifier = orcish_administration
+			has_country_modifier = goblin_administration
+			has_country_modifier = kobold_administration
+		}
+	}
 	is_triggered_only = yes
 	
 	option = {
 		ai_chance = {
 			factor = 1
 		}
-		name = flavor_istralore.11.a
-		add_treasury = 50
-		add_manpower = -5
+		name = istralore.11.a
+		if = {
+			limit = {
+				A30 = {
+					exists = yes
+					ai = yes
+				}
+			}
+			A30 = {
+				add_ruler_modifier = {
+					name = A45_wex_tank_dip_rep
+					duration = -1
+				}
+			}
+		}
 	}
 }
+#Chastening of Wex
+country_event = {
+	id = istralore.12
+	title = istralore.12.t
+	desc = istralore.12.d
+	picture = NOT_DISCIPLINED_SOLDIERS_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		ai_chance = {
+			factor = 1
+		}
+		name = istralore.12.a
+		custom_tooltip = A45_bansheecry_tt
+		hidden_effect = {
+			277 = {
+				add_province_triggered_modifier = A45_banshee_cry
+			}
+		}
+		306 = {
+			add_devastation = 50	
+		}
+	}
+}
+#Banshee Expansion 1
+country_event = {
+	id = istralore.13
+	title = istralore.13.t
+	desc = istralore.13.d
+	picture = wihgfx_FEMALE_GENERAL_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = istralore.13.a
+		clr_country_flag = A45_banshee_company_1
+		set_country_flag = A45_banshee_company_2
+		add_country_modifier = {
+			name = A45_banshee_forcelimit_1
+			duration = -1
+		}
+		random_hired_mercenary_company = {
+			limit = {
+				OR = {
+					template = merc_istralari_banshees_small_a
+					template = merc_istralari_banshees_small_b
+				}
+			}
+			disband_mercenary_company = THIS
+		}
+		hidden_effect = {
+			country_event = {
+				id = istralore.131
+				days = 31
+			}
+		}
+	}
+}
+
+country_event = {
+	id = istralore.131
+	title = istralore.13.t
+	desc = istralore.13.d
+	picture = wihgfx_FEMALE_GENERAL_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = istralore.13.a
+		random_hired_mercenary_company = {
+			limit = {
+				OR = {
+					template = merc_istralari_banshees_small_a
+					template = merc_istralari_banshees_small_b
+				}
+			}
+			disband_mercenary_company = THIS
+		}
+	}
+}
+
+#Banshee Expansion 2
+country_event = {
+	id = istralore.14
+	title = istralore.14.t
+	desc = istralore.14.d
+	picture = wihgfx_FEMALE_GENERAL_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = istralore.14.a
+		clr_country_flag = A45_banshee_company_2
+		set_country_flag = A45_banshee_company_3
+		hidden_effect = {
+			remove_country_modifier = A45_banshee_forcelimit_1
+		}
+		add_country_modifier = {
+			name = A45_banshee_forcelimit_2
+			duration = -1
+		}
+		random_hired_mercenary_company = {
+			limit = {
+				OR = {
+					template = merc_istralari_banshees_mid_a
+					template = merc_istralari_banshees_mid_b
+				}
+			}
+			disband_mercenary_company = THIS
+		}
+		hidden_effect = {
+			country_event = {
+				id = istralore.141
+				days = 31
+			}
+		}
+	}
+}
+
+country_event = {
+	id = istralore.141
+	title = istralore.13.t
+	desc = istralore.13.d
+	picture = wihgfx_FEMALE_GENERAL_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = istralore.13.a
+		random_hired_mercenary_company = {
+			limit = {
+				OR = {
+					template = merc_istralari_banshees_mid_a
+					template = merc_istralari_banshees_mid_b
+				}
+			}
+			disband_mercenary_company = THIS
+		}
+	}
+}
+
+#Holy Order Add IA Effect
+country_event = {
+	id = istralore.15
+	title = istralore.15.t
+	desc = istralore.15.d
+	picture = CORINITE_WAR_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = istralore.15.a
+		add_imperial_influence = 2
+		if = {
+			limit = { has_dlc = "Common Sense" }
+			add_karma = 4
+		}
+	}
+}
+#Justice for All Events
+country_event = {
+	id = istralore.16
+	title = istralore.16.t
+	desc = istralore.16.d
+	picture = wihgfx_FEMALE_SCHOLAR_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.16.a
+		add_country_modifier = {
+			name = A45_jfa_unrest
+			duration = 3650
+		}
+	}
+	option = {
+		name = istralore.16.b
+		add_prestige = 10
+		add_legitimacy = 10
+	}
+}
+
+country_event = {
+	id = istralore.17
+	title = istralore.17.t
+	desc = istralore.17.d
+	picture = ECONOMY_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.17.a
+		add_country_modifier = {
+			name = A45_jfa_tax
+			duration = 3650
+		}
+	}
+	option = {
+		name = istralore.17.b
+		add_country_modifier = {
+			name = A45_jfa_production
+			duration = 3650
+		}
+	}
+}
+country_event = {
+	id = istralore.18
+	title = istralore.18.t
+	desc = istralore.18.d
+	picture = FARMING_WIFE_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.18.a
+		add_country_modifier = {
+			name = A45_jfa_manpower
+			duration = 3650
+		}
+	}
+	option = {
+		name = istralore.18.b
+		custom_tooltip = A45_jfagoods_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { trade_goods = grain }
+				add_province_modifier = {
+					name = A45_jfa_goods
+					duration = 3650
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = istralore.19
+	title = istralore.19.t
+	desc = istralore.19.d
+	picture = CORINITE_WAR_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	trigger = {
+		is_or_was_tag = { tag = A45 }
+		has_country_flag = A45_jfa_events
+	}
+	option = {
+		name = istralore.19.a
+		random_list = {
+			1 = {
+				trigger = {
+					has_country_flag = A45_jfa_events
+				}
+				country_event = { 
+					id = istralore.16
+					random = 100
+				}
+			}
+			1 = {
+				trigger = {
+					has_country_flag = A45_jfa_events
+				}
+				country_event = { 
+					id = istralore.17
+					random = 100
+				}
+			}
+			1 = {
+				trigger = {
+					has_country_flag = A45_jfa_events
+				}
+				country_event = { 
+					id = istralore.18
+					random = 100
+				}
+			}
+			3 = {
+				trigger = {
+					has_country_flag = A45_warsong_college_event
+				}
+				country_event = { 
+					id = istralore.20
+					random = 100
+				}
+			}
+			3 = {
+				trigger = {
+					has_country_flag = A45_prosperous_people
+				}
+				country_event = {
+					id = istralore.23
+					random = 100
+				}
+			}
+			9 = { }
+		}
+	}
+}
+#Warsong College Event
+country_event = {
+	id = istralore.20
+	title = istralore.20.t
+	desc = istralore.20.d
+	picture = wihgfx_FEMALES_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.20.a
+		custom_tooltip = A45_warsong_advisor_tt
+		hidden_effect = {
+			define_random_mil_advisor_effect = { 
+				skill = 3 
+				religion = ROOT
+				culture = ROOT
+				cost_multiplier = 0.25
+				female = yes
+			}
+		}
+	}
+	option = {
+		name = istralore.20.b
+		if = {
+			limit = { has_dlc = "Cradle of Civilization" }
+			add_army_professionalism = 0.03
+		}
+		else = {
+			add_army_tradition = 5
+		}
+	}
+	option = {
+		name = istralore.20.c
+		create_general = { 
+			tradition = 100
+			add_fire = 1
+			add_shock = 1
+			add_manuever = 1
+			add_siege = 1
+			female = yes
+		}
+	}
+}
+
+#therosewilts
+country_event = {
+	id = istralore.21
+	title = istralore.21.t
+	desc = istralore.21.d
+	picture = LILAC_WARS_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.21.a
+		hidden_effect = {
+			upper_bloodwine_area = {
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+			}
+			upper_winebay_area = {
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+			}
+			lower_bloodwine_area = {
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+			}
+			ionnidar_area = {
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+			}
+			67 = {
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+				remove_random_development = yes
+			}
+			damerian_dales_area = {
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+				add_random_development = 1
+			}
+			every_known_country = {
+				limit = {
+					capital_scope = {
+						region = lencenor_region
+					}
+					NOT = {
+						is_part_of_hre = yes
+					}
+				}
+				add_aggressive_expansion = {
+					who = ROOT
+					value = 5
+					apply_calc = yes
+				}
+				add_country_modifier = {
+					name = A45_wilted
+					duration = 18250
+				}
+			}
+		}
+		custom_tooltip = A45_wilted_rose_tt
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+	}
+}
+
+#under cold moonlight
+country_event = {
+	id = istralore.22
+	title = istralore.22.t
+	desc = istralore.22.d
+	picture = COURT_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.22.a
+		add_country_modifier = {
+			name = A45_triumph_of_the_moon
+			duration = -1
+		}
+		A33 = {
+			add_country_modifier = {
+				name = A45_triumph_of_the_moon
+				duration = -1
+			}
+		}
+		A31 = {
+			add_country_modifier = {
+				name = A45_triumph_of_the_moon
+				duration = -1
+			}
+		}
+		A73 = {
+			add_country_modifier = {
+				name = A45_triumph_of_the_moon
+				duration = -1
+			}
+		}
+		every_known_country = {
+			limit = {
+				has_country_flag = lilac_wars_moon_party
+			}
+			add_opinion = {
+				who = ROOT
+				modifier = triumph_of_the_moon
+			}
+		}
+	}
+}
+
+#prosperous people
+country_event = {
+	id = istralore.23
+	title = istralore.23.t
+	desc = istralore.23.d
+	picture = indiangfx_ECONOMY_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.23.a
+		custom_tooltip = A45_prosperous_people_tt
+		hidden_effect = {
+			random_list = {
+				10 = {
+					define_random_dip_advisor_effect = { 
+						skill = 3 
+						religion = ROOT
+						culture = ROOT
+						cost_multiplier = 0.25
+						female = yes
+					}
+				}
+				10 = {
+					define_random_adm_advisor_effect = { 
+						skill = 3 
+						religion = ROOT
+						culture = ROOT
+						cost_multiplier = 0.25
+						female = yes
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = istralore.24
+	title = istralore.24.t
+	desc = istralore.24.d
+	picture = SHIP_SAILING_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.24.a
+		custom_tooltip = A45_sealion_port_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					development = 20
+					has_dock_building_trigger = yes
+					has_shipyard_building_trigger = yes
+				}
+				add_permanent_province_modifier = {
+					name = A45_sealion_port
+					duration = -1
+				}
+			}
+		}
+		akasik_region = {
+			add_permanent_claim = ROOT
+		}
+	}
+}
+
+#victory on Halann
+country_event = {
+	id = istralore.25
+	title = istralore.25.t
+	desc = istralore.25.d
+	picture = CORINITE_WAR_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.25.a
+		custom_tooltip = A45_victory_on_halann_convert_tt
+		custom_tooltip = A45_victory_on_halann_tt
+		set_country_flag = A45_victory_on_halann_flag
+		every_known_country = {
+			limit = {
+				is_part_of_hre = yes
+				religion = corinite
+			}
+			add_country_modifier = {
+				name = A45_victory_on_halann
+				duration = -1
+			}
+		}
+	}
+}
+
+#you lost to istralore, get corinited
+country_event = {
+	id = istralore.26
+	title = istralore.26.t
+	desc = istralore.26.d
+	picture = CORINITE_WAR_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.26.a
+		change_religion = corinite
+	}
+}
+
+#RENEVATO IMPERI
+country_event = {
+	id = istralore.27
+	title = istralore.27.t
+	desc = istralore.27.d
+	picture = QUEEN_AT_COUNCIL_TABLE_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.27.a
+		custom_tooltip = vassalize_empire2
+		add_country_modifier = {
+			name = A45_in_all_but_name
+			duration = -1
+		}
+		add_country_modifier = {
+			name = A45_imperial_ambition
+			duration = -1
+		}
+		if= {
+			limit = {
+				OR = {
+					hre_reform_passed = anbennar_aristo_revoke
+					hre_reform_passed = anbennar_imperial_dynasty
+				}
+			}
+			capital_scope = {
+				add_province_modifier = {
+					name = A45_the_unifier
+					duration = -1
+				}
+			}
+		}
+		hre_inheritable = yes
+		set_country_flag = A45_revoked_privilege_flag
+		set_country_flag = revoked_privilege_flag
+		hidden_effect = {
+			every_country = {
+				limit = {
+					is_part_of_hre = yes
+					is_emperor = no
+					num_of_cities = 1
+					NOT = { vassal_of = ROOT }
+				}
+				country_event = { id = 9074 }
+			}
+		}
+	}
+}
+
+country_event = {
+	id = istralore.30
+	title = istralore.30.t
+	desc = istralore.30.d
+	picture = QUEEN_AT_COUNCIL_TABLE_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = istralore.30.a
+		if = { # don't give reward if they don't exist
+			limit = { A33 = { exists = yes } }
+			if = {
+				limit = {
+					A33 = {
+						AI = yes
+					}
+				}
+				vassalize = A33
+				if = {
+					limit = {
+						A33 = {
+							is_elector = yes
+						}
+					}
+					add_country_modifier = {
+						name = A45_justified_vassal_A33
+						duration = -1
+					}
+				}
+			}
+			else = {
+				A33 = {
+					add_country_modifier = {
+						name = A45_stronger_apart_A33
+						duration = -1
+					}
+				}
+				add_country_modifier = {
+					name = A45_stronger_apart_A33
+					duration = -1
+				}
+			}
+		}
+		if = {
+			limit = { A31 = { exists = yes } }
+			if = {
+				limit = {
+					A31 = {
+						AI = yes
+					}
+				}
+				vassalize = A31
+				if = {
+					limit = {
+						A31 = {
+							is_elector = yes
+						}
+					}
+					add_country_modifier = {
+						name = A45_justified_vassal_A31
+						duration = -1
+					}
+				}
+			}
+			else = {
+				A31 = {
+					add_country_modifier = {
+						name = A45_stronger_apart_A31
+						duration = -1
+					}
+				}
+				add_country_modifier = {
+					name = A45_stronger_apart_A31
+					duration = -1
+				}
+			}
+		}
+		if = {
+			limit = { A73 = { exists = yes } }
+			if = {
+				limit = {
+					A73 = {
+						AI = yes
+					}
+				}
+				vassalize = A73
+				if = {
+					limit = {
+						A73 = {
+							is_elector = yes
+						}
+					}
+					add_country_modifier = {
+						name = A45_justified_vassal_A73
+						duration = -1
+					}
+				}
+			}
+			else = {
+				A73 = {
+					add_country_modifier = {
+						name = A45_stronger_apart_A73
+						duration = -1
+					}
+				}
+				add_country_modifier = {
+					name = A45_stronger_apart_A73
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = istralore.31
+	title = istralore.31.t
+	desc = istralore.31.d
+	picture = wihgfx_FEMALE_GENERAL_eventPicture
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		has_idea = A45_istralari_banshees
+		OR = {
+			has_country_flag = A45_banshee_company_1
+			has_country_flag = A45_banshee_company_2
+			has_country_flag = A45_banshee_company_3
+		}
+	}
+
+	option = {
+		name = istralore.31.a
+		custom_tooltip = A45_banshee_ni_complete_tt
+		set_country_flag = A45_banshee_ni_complete
+	}
+}
+
+#aucanna emperor event
+country_event = {
+	id = istralore.38
+	title = istralore.38.t
+	desc = istralore.38.d
+	picture = wihgfx_FEMALE_RULER_eventPicture
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		NOT = {
+			has_country_flag = A45_Aucanna_retired
+		}
+	}
+
+	option = {
+		name = istralore.38.a
+		change_adm = 1
+		change_dip = 1
+	}
+}
+
+#aucanna death events
+country_event = {
+	id = istralore.39
+	title = istralore.39.t
+	desc = istralore.39.d
+	picture = wihgfx_FEMALE_RULER_eventPicture
+	is_triggered_only = yes
+	trigger = {
+		tag = A45
+		NOT = {
+			has_country_flag = A45_Aucanna_retired
+		}
+	}
+
+	option = {
+		name = istralore.39.a
+		set_country_flag = A45_Aucanna_retired
+		add_country_modifier = {
+			name = A45_Aucanna_mentoring
+			duration = -1
+		}
+		country_event = {
+			id = istralore.40
+			days = 1000
+		}
+	}
+}
+
+country_event = {
+	id = istralore.40
+	title = istralore.40.t
+	desc = istralore.40.d
+	picture = wihgfx_FEMALE_RULER_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.40.a
+		remove_country_modifier = A45_Aucanna_mentoring
+		add_country_modifier = {
+			name = A45_Aucanna_waning
+			duration = -1
+		}
+		country_event = {
+			id = istralore.41
+			days = 1000
+		}
+	}
+}
+
+country_event = {
+	id = istralore.41
+	title = istralore.41.t
+	desc = istralore.41.d
+	picture = wihgfx_FEMALE_RULER_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = istralore.41.a
+		remove_country_modifier = A45_Aucanna_waning
+	}
+}
+
+
+
+

@@ -1153,55 +1153,6 @@ country_event = { #Farmlands counter
 }
 
 
-province_event = { #Estate investigation management event
-	id = rahenraj.120
-	title = rahenraj.120.t
-	desc = rahenraj.120.d
-	picture = KING_SICK_IN_BED_eventPicture
-
-	is_triggered_only = yes
-	hidden = yes
-
-	option = {
-		ai_chance = { factor = 1 }
-		name = rahenraj.120.a
-
-		if = {
-			limit = { owner = { has_government_attribute = is_raja } }
-			owner = {
-				random_list = {
-					1 = {
-						country_event = { id = rahenraj.121 }
-					}
-					2 = {
-						country_event = { id = rahenraj.122 }
-					}
-					1 = {
-						country_event = { id = rahenraj.123 }
-					}
-				}
-			}
-		}
-		else_if = {
-			limit = { owner = { overlord = { has_government_attribute = is_raja } } }
-			owner = {
-				overlord = {
-					random_list = {
-						1 = {
-							country_event = { id = rahenraj.121 }
-						}
-						2 = {
-							country_event = { id = rahenraj.122 }
-						}
-						1 = {
-							country_event = { id = rahenraj.123 }
-						}
-					}
-				}
-			}
-		}
-	}
-}
 country_event = { #Investigation turned up blank
 	id = rahenraj.121
 	title = rahenraj.121.t
@@ -2801,6 +2752,17 @@ country_event = {	#the raja is in another castle\we got him
 		desc = rahenraj.5001.d1
 	}
 	desc = {
+		trigger = {
+			has_saved_event_target = raja_castle_not_ours
+			has_saved_event_target = go_there_vizier
+		}
+		desc = rahenraj.5001.d3
+	}
+	desc = {
+		trigger = { has_saved_event_target = raja_castle_not_ours }
+		desc = rahenraj.5001.d4
+	}
+	desc = {
 		trigger = { NOT = { has_saved_event_target = got_raja } }
 		desc = rahenraj.5001.d2
 	}
@@ -2821,6 +2783,7 @@ country_event = {	#the raja is in another castle\we got him
 			}
 			random_list = {
 				25 = {
+					trigger = { NOT = { has_saved_event_target = raja_castle_not_ours } }
 					save_event_target_as = got_raja
 					set_country_flag = vizier_captured_raja
 				}
@@ -2829,6 +2792,9 @@ country_event = {	#the raja is in another castle\we got him
 					hidden_effect = {
 						event_target:go_there_vizier = { set_province_flag = raja_new_castle }
 					}
+				}
+				1 = {
+					trigger = { has_saved_event_target = raja_castle_not_ours }
 				}
 			}
 		}
@@ -2842,8 +2808,20 @@ country_event = {	#the raja is in another castle\we got him
 
 	option = {
 		name = rahenraj.5001.b
+		goto = go_there_vizier
 		trigger = { NOT = { has_saved_event_target = got_raja } }
 		custom_tooltip = raja_another_castle_tt
+	}
+
+	option = {
+		name = rahenraj.5001.c
+		trigger = {
+			NOT = {
+				has_saved_event_target = got_raja
+				has_saved_event_target = go_there_vizier
+			}
+		}
+		custom_tooltip = others_got_raja_tt
 	}
 }
 
@@ -3089,6 +3067,28 @@ country_event = {
 	picture = TIGER_BODYGUARD_eventPicture
 	
 	is_triggered_only = yes
+	trigger = {
+		event_target:prabhi_victim = {
+			OR = {
+				any_neighbor_country = {
+					is_subject_of_type = daimyo_vassal
+					ai = yes
+					NOT = {
+						truce_with = ROOT
+						war_with = ROOT
+					}
+				}
+				any_ally = {
+					is_subject_of_type = daimyo_vassal
+					ai = yes
+					NOT = {
+						truce_with = ROOT
+						war_with = ROOT
+					}
+				}
+			}
+		}
+	}
 
 	option = {
 		name = rahenraj.5010.a

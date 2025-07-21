@@ -26,7 +26,7 @@ country_event = {
 }
 
 # ...and for member states
-country_event = {
+country_event = { #aristo path uses the same AI chances, stored in flavour_eoa_reforms_reforms file
 	id = 9074
 	title = "EVTNAME9074"
 	desc = "EVTDESC9074"
@@ -40,12 +40,30 @@ country_event = {
 			factor = 10
 			modifier = {
 				factor = 0
+				NOT = { has_country_flag = eoa_emperor_help }
 				if = {
 					limit = {
 						has_dlc = "Emperor"
 					}
 					NOT = {
-						will_back_reform = emperor_privilegia_de_non_appelando
+						will_back_reform = anbennar_imperial_dynasty
+					}
+				}
+				else = {
+					NOT = {
+						will_back_reform = privilegia_de_non_appelando
+					}
+				}
+			}
+			modifier = {
+				factor = 0.5
+				has_country_flag = eoa_emperor_help #if you sent aid for their overseas efforts
+				if = {
+					limit = {
+						has_dlc = "Emperor"
+					}
+					NOT = {
+						will_back_reform = anbennar_imperial_dynasty
 					}
 				}
 				else = {
@@ -62,6 +80,17 @@ country_event = {
 	
 	option = {
 		name = "EVTOPTB9074"
+		trigger = {
+			OR = {
+				ai = no
+				NOT = {
+					AND = {
+						emperor = { has_country_flag = A45_revoked_privilege_flag } 
+						religion = corinite
+					}
+				}
+			}
+		}
 		ai_chance = {
 			factor = 10
 			modifier = {
@@ -70,13 +99,12 @@ country_event = {
 					limit = {
 						has_dlc = "Emperor"
 					}
-					will_back_reform = emperor_privilegia_de_non_appelando
+					will_back_reform = anbennar_imperial_dynasty
 				}
 				else = {
 					will_back_reform = privilegia_de_non_appelando
 				}
-			}			
-			
+			}		
 		}
 		every_owned_province = {
 			limit = {
@@ -105,14 +133,48 @@ country_event = {
 
 	major = yes
 	is_triggered_only = yes
-	
+	immediate = {
+		hidden_effect = {
+			clr_global_flag = eoa_abolished_borders
+			clr_global_flag = eoa_consolidated_courts
+			clr_global_flag = eoa_religion_established
+			clr_global_flag = eoa_established_embassies
+			clr_global_flag = eoa_unification_sentiment
+			every_province = {
+				limit = { continent = europe }
+				remove_province_modifier = eoa_occupied_temple
+				if = {
+					limit = {
+						NOT = { hre_reform_passed = anbennar_nobles_of_the_wand }
+						is_part_of_hre = yes
+					}
+					add_province_modifier = { name = eoa_anbennar_expand_marquis_rank_local duration = -1 }
+				}
+			}
+		}
+	}
 	option = {
 		name = "EVTOPTA9075"
 		change_tag = Z01	#Empire of Anbennar
 		hidden_effect = { restore_country_name = yes }
-		add_country_modifier = {
-			name = "anbennar_a_dream_realised"
-			duration = -1
+		if = {
+			limit = {
+				 # on mage path
+				hre_reform_passed = anbennar_nobles_of_the_wand
+			}
+			add_country_modifier = {
+				name = anbennar_a_dream_realised_mage
+				duration = -1
+			}
+		}
+		else = {
+			# on aristo path
+			add_country_modifier = {
+				name = anbennar_a_dream_realised_aristo
+				duration = -1
+			}
+			custom_tooltip = flavour_eoa_reforms_marshall_permanent
+			country_event = { id = flavour_eoa_reforms.31 }
 		}
 		europe = {
 			limit = {
@@ -130,6 +192,12 @@ country_event = {
 				is_part_of_hre = yes
 				is_emperor = no
 				num_of_cities = 1
+				if = {
+					limit = {
+						hre_reform_passed = anbennar_aristo_revoke
+					}
+					has_country_flag = eoa_aristo_supports_unification
+				}
 			}
 			country_event = { id = 9076 }
 		}
@@ -144,6 +212,10 @@ country_event = {
 		}
 		country_event = {
 			id = anb_half_elves.1
+		}
+		if = {
+			limit = { was_tag = A33 mission_completed = A33_the_holy_corinite_empire }
+			change_country_color = { color = { 150 0 0 } }
 		}
 		# swap_non_generic_missions = yes
 	}
@@ -704,7 +776,22 @@ country_event = {
 			type = dismantled_the_hre
 			amount = 25
 		}
-		
+		if = {
+			limit = { has_country_flag = broke_the_empire }
+			add_country_modifier = { 
+				name = anb_broke_the_empire
+				duration = -1
+			}
+			clr_country_flag = broke_the_empire
+		}
+		set_country_flag = has_dismantled_the_hre
+		hidden_effect = {
+			every_country = {
+				remove_country_modifier = imperial_palace_prince_modifier_tier_1
+				remove_country_modifier = imperial_palace_prince_modifier_tier_2
+				remove_country_modifier = imperial_palace_prince_modifier_tier_3
+			}
+		}
 		ai_chance = {
 			factor = 1
 		}

@@ -2788,3 +2788,343 @@ country_event = { #isobelin blooms
 		clr_country_flag = isobelin_country_flag_nabchel_coal_mine
 	}
 }
+
+country_event = { #Isobelin Museum/Zoo Event Menu
+	id = flavor_isobelin.999
+	title = flavor_isobelin.999.t
+	desc = flavor_isobelin.999.desc
+	picture = CITY_DEVELOPMENT_eventPicture
+	
+	is_triggered_only = yes
+	immediate = {
+		hidden_effect = { #sets the goto for cannorian aviary and aelantir arboretum
+			if = {
+				limit = { 
+					OR = {
+						controls = 290 #wyvernmark
+						AND = {
+							290 = {
+								num_of_units_in_province = { who = ROOT amount = 20 }
+								owner = { has_opinion = { value = 150 who = ROOT } }
+							}
+							OR = {
+								treasury = 500
+								290 = { owner = { owes_favors = {  who = ROOT value = 30 } } }
+							}
+						}
+					}
+				}
+				895 = { save_event_target_as = cannorian_target_province } #griffinsgate
+			}
+			else = { 290 = { save_event_target_as = cannorian_target_province } }
+			if = {
+				limit = { 
+					OR = {
+						controls = 1015 #sella
+						AND = {
+							1015 = {
+								num_of_units_in_province = { who = ROOT amount = 20 }
+								owner = { has_opinion = { value = 150 who = ROOT } }
+							}
+							OR = {
+								treasury = 500
+								1015 = { owner = { owes_favors = {  who = ROOT value = 30 } } }
+							}
+						}
+					}
+				}
+				1063 = { save_event_target_as = aelantir_target_province } #cape of revelation
+			}
+			else = { 1015 = { save_event_target_as = aelantir_target_province } }
+		}
+	}
+	after = {
+		if = {
+			limit = { has_country_flag = isobelin_decision_menu_open }
+			hidden_effect = { country_event = { id = flavor_isobelin.1000 } }
+		}
+	}
+	
+	option = {
+		name = flavor_castanor_go_back
+		highlight = yes
+		clr_country_flag = isobelin_decision_menu_open
+	}
+
+	option = { #Trollsbay Museum: Precursor Wing
+		name = flavor_isobelin.999.a
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_museum_wing_precursor } }
+		goto = 2007 #arakreprun
+
+		isobelin_construct_new_feature = { province = 2007 feature = museum_wing_precursor }
+	}
+
+	option = { #Trollsbay Museum: Castanorian Wing
+		name = flavor_isobelin.999.b
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_museum_wing_castanorian } }
+		goto = 833 #north castonath
+
+		isobelin_construct_new_feature = { province = 833 feature = museum_wing_castanorian }
+	}
+
+	option = { #Trollsbay Museum: Halessi Wing
+		name = flavor_isobelin.999.c
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_museum_wing_halessi } }
+		goto = 4871 #tianlou
+
+		isobelin_construct_new_feature = { province = 4871 feature = museum_wing_halessi }
+	}
+
+	option = { #Trollsbay Museum: Kheteratan Wing
+		name = flavor_isobelin.999.d
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_museum_wing_kheteratan } }
+		goto = 475 #kheterat
+
+		isobelin_construct_new_feature = { province = 475 feature = museum_wing_kheteratan }
+	}
+
+	option = { #Trollsbay Museum: Bulwari Wing
+		name = flavor_isobelin.999.e
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_museum_wing_bulwari } }
+		goto = 601 #bulwar
+
+		isobelin_construct_new_feature = { province = 601 feature = museum_wing_bulwari }
+	}
+
+	option = { #Gerudian Zoo: Cannorian Aviary - needs to be coded in special
+		name = flavor_isobelin.999.f
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_zoo_cannorian_aviary } }
+		goto = cannorian_target_province
+
+		custom_tooltip = isobelin_zoo_cannorian_aviary_tt
+		if = {
+			limit = {
+				OR = {
+					controls = 290
+					AND = {
+						290 = {
+							num_of_units_in_province = { who = ROOT amount = 20 }
+							owner = { has_opinion = { value = 150 who = ROOT } }
+						}
+						OR = {
+							treasury = 500
+							290 = { owner = { owes_favors = {  who = ROOT value = 30 } } }
+						}				
+					}
+				}
+				OR = {
+					controls = 895
+					AND = {
+						895 = {
+							num_of_units_in_province = { who = ROOT amount = 20 }
+							owner = { has_opinion = { value = 150 who = ROOT } }
+						}
+						OR = {
+							treasury = 500
+							895 = { owner = { owes_favors = {  who = ROOT value = 30 } } }
+						}				
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						controls = 290
+						290 = { owner = { owes_favors = { who = ROOT value = 30 } } }
+					}
+				}
+				add_treasury = -250
+				290 = { owner = { add_treasury = 250 } }	
+			}
+			if = {
+				limit = {
+					NOT = {
+						controls = 895
+						895 = { owner = { owes_favors = { who = ROOT value = 30 } } }
+					}
+				}
+				add_treasury = -250
+				895 = { owner = { add_treasury = 250 } }	
+			}
+			add_country_modifier = {
+				name = isobelin_modifier_zoo_cannorian_aviary
+				duration = -1
+			}
+		}
+		else = {
+			custom_tooltip = isobelin_zoo_cannorian_aviary_req_tt
+			tooltip = {
+				if = {
+					limit = {
+						NOT = {
+							controls = 290
+							290 = { owner = { owes_favors = { who = ROOT value = 30 } } }
+						}
+					}
+					add_treasury = -250
+					290 = { owner = { add_treasury = 250 } }	
+				}
+				if = {
+					limit = {
+						NOT = {
+							controls = 895
+							895 = { owner = { owes_favors = { who = ROOT value = 30 } } }
+						}
+					}
+					add_treasury = -250
+					895 = { owner = { add_treasury = 250 } }	
+				}
+				add_country_modifier = {
+					name = isobelin_modifier_zoo_cannorian_aviary
+					duration = -1
+				}
+			}
+		}
+	}
+
+	option = { #Gerudian Zoo: Gentle Giants
+		name = flavor_isobelin.999.g
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_zoo_gentle_giants } }
+		goto = 737 #mammoth hall
+
+		isobelin_construct_new_feature = { province = 737 feature = zoo_gentle_giants }
+	}
+
+	option = { #Gerudian Zoo: Ynnic Aquarium
+		name = flavor_isobelin.999.h
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_zoo_ynnic_aquarium } }
+		goto = 1165 #bosancovac
+
+		isobelin_construct_new_feature = { province = 1165 feature = zoo_ynnic_aquarium }
+	}
+
+	option = { #Gerudian Zoo: Serpentspine Spider House
+		name = flavor_isobelin.999.i
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_zoo_serpentspine_spider_house } }
+		goto = 4070 #yidab's nest
+
+		isobelin_construct_new_feature = { province = 4070 feature = zoo_serpentspine_spider_house }
+	}
+
+	option = { #Gerudian Zoo: Aelantir Arboretum - needs to be coded in special
+		name = flavor_isobelin.999.j
+		trigger = { NOT = { has_country_modifier = isobelin_modifier_zoo_aelantir_arboretum } }
+		goto = aelantir_target_province
+
+		custom_tooltip = isobelin_zoo_aelantir_arboretum_tt
+		if = {
+			limit = {
+				OR = {
+					controls = 1015
+					AND = {
+						1015 = {
+							num_of_units_in_province = { who = ROOT amount = 20 }
+							owner = { has_opinion = { value = 150 who = ROOT } }
+						}
+						OR = {
+							treasury = 500
+							1015 = { owner = { owes_favors = {  who = ROOT value = 30 } } }
+						}				
+					}
+				}
+				OR = {
+					controls = 1063
+					AND = {
+						1063 = {
+							num_of_units_in_province = { who = ROOT amount = 20 }
+							owner = { has_opinion = { value = 150 who = ROOT } }
+						}
+						OR = {
+							treasury = 500
+							1063 = { owner = { owes_favors = {  who = ROOT value = 30 } } }
+						}				
+					}
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						controls = 1015
+						1015 = { owner = { owes_favors = { who = ROOT value = 30 } } }
+					}
+				}
+				add_treasury = -250
+				1015 = { owner = { add_treasury = 250 } }	
+			}
+			if = {
+				limit = {
+					NOT = {
+						controls = 1063
+						1063 = { owner = { owes_favors = { who = ROOT value = 30 } } }
+					}
+				}
+				add_treasury = -250
+				1063 = { owner = { add_treasury = 250 } }	
+			}
+			add_country_modifier = {
+				name = isobelin_modifier_zoo_aelantir_arboretum
+				duration = -1
+			}
+		}
+		else = {
+			custom_tooltip = isobelin_zoo_aelantir_arboretum_req_tt
+			tooltip = {
+				if = {
+					limit = {
+						NOT = {
+							controls = 1015
+							1015 = { owner = { owes_favors = { who = ROOT value = 30 } } }
+						}
+					}
+					add_treasury = -250
+					1015 = { owner = { add_treasury = 250 } }	
+				}
+				if = {
+					limit = {
+						NOT = {
+							controls = 1063
+							1063 = { owner = { owes_favors = { who = ROOT value = 30 } } }
+						}
+					}
+					add_treasury = -250
+					1063 = { owner = { add_treasury = 250 } }	
+				}
+				add_country_modifier = {
+					name = isobelin_modifier_zoo_aelantir_arboretum
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Isobelin Museum/Zoo Event Menu Bounceback
+	id = flavor_isobelin.1000
+	title = flavor_isobelin.1000.t
+	desc = flavor_isobelin.1000.d
+	picture = CITY_VIEW_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = flavor_castanor_go_back
+		country_event = { id = flavor_isobelin.999 }
+
+		if = {
+			limit = {
+				has_country_modifier = isobelin_modifier_zoo_aelantir_arboretum
+				has_country_modifier = isobelin_modifier_zoo_serpentspine_spider_house
+				has_country_modifier = isobelin_modifier_zoo_gentle_giants
+				has_country_modifier = isobelin_modifier_zoo_ynnic_aquarium
+				has_country_modifier = isobelin_modifier_zoo_cannorian_aviary
+				has_country_modifier = isobelin_modifier_museum_wing_bulwari
+				has_country_modifier = isobelin_modifier_museum_wing_castanorian
+				has_country_modifier = isobelin_modifier_museum_wing_halessi
+				has_country_modifier = isobelin_modifier_museum_wing_kheteratan
+				has_country_modifier = isobelin_modifier_museum_wing_precursor
+			}
+			clr_country_flag = isobelin_decisions_zoo_and_museum
+		}
+	}
+}

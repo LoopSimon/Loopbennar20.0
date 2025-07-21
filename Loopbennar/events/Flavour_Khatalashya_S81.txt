@@ -1,0 +1,4994 @@
+namespace = empire_333
+
+#don't care didn't ask 333 empires
+#khatalashya
+
+country_event = { #Question Arise
+	id = empire_333.1
+	title = empire_333.1.t
+	desc = empire_333.1.d
+	picture = LIZARDFOLK_NAGA_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.1.a
+		remove_faith_in_the_prophecy = yes
+		country_event = {
+			id = empire_333.2
+			days = 182
+		}
+	}
+}
+
+country_event = { #Nonsense Empire
+	id = empire_333.2
+	title = empire_333.2.t
+	desc = empire_333.2.d
+	picture = NOBLE_ESTATE_DEMANDS_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.2.a
+		remove_faith_in_the_prophecy = yes
+		add_stability = -1
+		set_country_flag = 333_non_empire_start
+		custom_tooltip = empire_333.2.tt
+	}
+}
+
+country_event = { #After Arskitse
+	id = empire_333.3
+	title = empire_333.3.t
+	desc = empire_333.3.d
+	picture = NAVAL_MILITARY_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = { #Agree
+		name = empire_333.3.a
+		merfolk_add_opinion_effect_large = yes
+		turtleback_isle_region = {
+			add_permanent_claim = ROOT
+		}
+		custom_tooltip = empire_333.3.tt
+		hidden_effect = {
+			set_country_flag = after_arskitse_second_event_flag
+		}
+	}
+	option = { #Decline
+		name = empire_333.3.b
+		add_mil_power = 50
+		merfolk_subtract_opinion_effect_large = yes
+		turtleback_isle_region = {
+			add_permanent_claim = ROOT
+		}
+	}
+	option = { #You welcome
+		name = empire_333.3.c
+		highlight = yes
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 3
+				OR = {
+					continent = south_america
+					continent = north_america
+				}
+			}
+		}
+		6032 = {
+			add_province_modifier = {
+				name = khatalashya_province_great_project_discount
+				duration = 3650
+			}
+		}
+		merfolk_add_opinion_effect_largest = yes
+		turtleback_isle_region = {
+			add_permanent_claim = ROOT
+		}
+		set_country_flag = arskitse_second_event_flag
+		country_event = {
+			id = empire_333.4
+		}
+	}
+}
+
+country_event = { #Aelentir Merfolk
+	id = empire_333.4
+	title = empire_333.4.t
+	desc = empire_333.4.d
+	picture = shinto_NAVAL_MILITARY_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		OR = {
+			has_country_flag = arskitse_second_event_flag
+			AND = {
+				has_country_flag = after_arskitse_second_event_flag
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 3
+					OR = {
+						continent = south_america
+						continent = north_america
+					}
+				}
+			}
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					num_of_owned_provinces_with = {
+						value = 3
+						OR = {
+							continent = south_america
+							continent = north_america
+						}
+					}
+				}
+				for = {
+					amount = 3
+					effect = "
+						random_owned_province = {
+							limit = {
+								NOT = { has_province_flag =  merfolk_settlement }
+								OR = {
+									continent = south_america
+									continent = north_america
+								}
+							}
+							merfolk_spawn_modifier = yes
+						}
+					"
+				}
+			}
+			else = {
+				for = {
+					amount = 3
+					effect = "
+						random_subject_country = {
+							limit = {
+								capital_scope = {
+									OR = {
+										continent = south_america
+										continent = north_america
+									}
+								}
+							}
+							random_owned_province = {
+								limit = {
+									NOT = { has_province_flag =  merfolk_settlement }
+									OR = {
+										continent = south_america
+										continent = north_america
+									}
+								}
+								merfolk_spawn_modifier = yes
+							}
+						}
+					"
+				}
+			}
+			random_province = {
+				limit = {
+					OR = {
+						continent = south_america
+						continent = north_america
+					}
+					has_province_flag = merfolk_settlement
+				}
+				save_event_target_as = khat_merfolk_settlement_aelentir
+			}
+		}
+	}
+	
+	option = {
+		name = empire_333.4.a
+		goto = khat_merfolk_settlement_aelentir
+		custom_tooltip = khat_merfolk_settlement_aelentir_tt
+		hidden_effect = {
+			clr_country_flag = after_arskitse_second_event_flag
+			clr_country_flag = arskitse_second_event_flag
+		}
+	}
+}
+
+country_event = { #Stars in the sea
+	id = empire_333.5
+	title = empire_333.5.t
+	desc = empire_333.5.d
+	picture = ASTRONOMER_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = 333_thraxis_observatory
+					has_terrain = coastline
+				}
+				save_event_target_as = tracking_stars_sea
+			}
+		}
+	}
+	
+	option = {
+		name = empire_333.5.a
+		goto = tracking_stars_sea
+		every_owned_province = {
+			limit = {
+				has_province_modifier = 333_thraxis_observatory
+				has_terrain = mountain
+			}
+			remove_province_modifier = 333_thraxis_observatory
+			add_devastation = 25
+			add_base_tax = -1
+			add_base_production = -1
+			add_base_manpower = -1
+		}
+		event_target:tracking_stars_sea = {
+			remove_province_modifier = 333_thraxis_observatory_v2
+			add_permanent_province_modifier = {
+				name = 333_thraxis_observatory_v2
+				duration = -1
+			}
+		}
+		add_faith_in_the_prophecy = yes
+	}
+}
+
+country_event = { #The true Spire
+	id = empire_333.6
+	title = empire_333.6.t
+	desc = empire_333.6.d
+	picture = DARK_FOREST_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.6.a
+		add_stability = -2
+		custom_tooltip = 333_new_question_for_thraxis
+		hidden_effect = {
+			set_country_flag = empire_333_unlock_12_thraxis
+		}
+	}
+}
+
+country_event = { #Tchokens in Spire
+	id = empire_333.7
+	title = empire_333.7.t
+	desc = empire_333.7.d
+	picture = CHURCH_ESTATE_UPSET_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.7.a
+		goto = 5971
+		custom_tooltip = 333_can_repair_khaga_yatsa
+		hidden_effect = {
+			set_country_flag = can_repair_spire_bypass_khaga_yatsa
+		}
+	}
+}
+
+country_event = { #Usurpation of Golden Scales
+	id = empire_333.8
+	title = empire_333.8.t
+	desc = empire_333.8.d
+	picture = IMPALED_SOLDIERS_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.8.a
+		add_country_modifier = {
+			name = 333_rightous_fury
+			duration = -1
+		}
+		add_faith_in_the_prophecy = yes
+		custom_tooltip = 333_new_question_for_thraxis
+		hidden_effect = {
+			set_country_flag = empire_333_unlock_9_thraxis
+		}
+	}
+}
+
+country_event = { #Empire of souls
+	id = empire_333.9
+	title = empire_333.9.t
+	desc = empire_333.9.d
+	picture = GREAT_SPIRIT_LUPULAN_EVIL_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.9.a
+		vimdatrong_superregion = {
+			discover_country = ROOT
+		}
+		arawkelin_area = {
+			add_permanent_claim = ROOT
+		}
+		add_faith_in_the_prophecy = yes
+		hidden_effect = {
+			set_country_flag = empire_333_of_souls_happen
+		}
+	}
+}
+
+country_event = { #We were theirs experiment
+	id = empire_333.10
+	title = empire_333.10.t
+	desc = empire_333.10.d
+	picture = easterngfx_COUNTRY_COLLAPSE_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.10.a
+		add_faith_in_the_prophecy = yes
+		
+	}
+}
+
+country_event = { #Get back our spire
+	id = empire_333.11
+	title = empire_333.11.t
+	desc = empire_333.11.d
+	picture = muslimgfx_CIVIL_WAR_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.11.a
+		5650 = {
+			set_province_flag = khatalashya_ready_to_be_colonized
+		}
+		custom_tooltip = build_space_colony_tt
+	}
+}
+
+country_event = { #Innerworkings of the Zatsarya
+	id = empire_333.12
+	title = empire_333.12.t
+	desc = empire_333.12.d
+	picture = BONFIRE_OF_THE_VANITIES_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.12.a
+		add_faith_in_the_prophecy = yes
+		custom_tooltip = 333_colony_romutha
+	}
+}
+country_event = { #End of mini rending
+	id = empire_333.13
+	title = empire_333.13.t
+	desc = empire_333.13.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.13.a
+		add_faith_in_the_prophecy = yes
+		set_country_flag = rending_lupulan_reward_primary
+		remove_country_modifier = lupulan_oath_of_nature
+		custom_tooltip = lupulan_appeasement_tt
+		hidden_effect = {
+			every_owned_province = {
+				if = {
+					limit = {
+						OR = {
+							has_terrain = jungle
+							has_climate = tropical
+						}
+					}
+					add_permanent_province_modifier = {
+						name = lupulan_primary_modifier
+						duration = -1
+					}
+				}
+			}
+		}
+		country_event = { id = rending.200 days = 5 }
+		hidden_effect = {
+			set_country_flag = lupulan_appeased
+			lupulan_spirit_area = {
+				remove_province_modifier = rending_unhindered_spirits
+			}
+			set_global_flag = disable_lupulan
+		}
+
+		clr_country_flag = lupulan_appeasement
+		clr_country_flag = rending_appeasement_menu_open
+		clr_country_flag = appeasement_in_progress
+
+		clr_country_flag = rending_quest_first
+		clr_country_flag = rending_quest_second 
+		clr_country_flag = rending_quest_third 
+		clr_country_flag = rending_quest_fourth 
+		clr_country_flag = rending_quest_fifth 	
+		
+	}
+}
+
+country_event = { #When Insynia Opens information event
+	id = empire_333.14
+	title = empire_333.14.t
+	desc = empire_333.14.d
+	picture = SYNTHETICS_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.14.a
+		add_country_modifier = {
+			name = 333_loaset
+			duration = -1
+		}
+	}
+}
+country_event = {
+	id = empire_333.15
+	title = empire_333.15.t
+	desc = empire_333.15.d
+	picture = EXCALIBUR_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.15.a
+		override_country_name = 333_THE_ETERNAL_EMPIRE
+		add_country_modifier = {
+			name = 333_the_eternal_empire_modifier
+			duration = -1
+		}
+		hidden_effect = {
+			remove_country_modifier = 333_total_faith_in_the_prophecy
+			remove_country_modifier = 333_strong_faith_in_the_prophecy
+			remove_country_modifier = 333_questioning_faith_in_the_prophecy
+			remove_country_modifier = 333_wavering_faith_in_the_prophecy
+			remove_country_modifier = 333_failing_faith_in_the_prophecy
+			remove_country_modifier = 333_colapsed_faith_in_the_prophecy
+		}
+	}
+}
+country_event = {
+	id = empire_333.16
+	title = empire_333.15.t
+	desc = empire_333.15.d
+	picture = EXCALIBUR_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+	option = {
+		name = empire_333.15.a
+		if = {
+			limit = { 
+				any_subject_country = {
+					capital_scope = {
+						continent = south_america
+					}
+				} 
+			}
+			random_subject_country = {
+				limit = {
+					capital_scope = {
+						continent = south_america
+					}
+				}
+				pick_best_province = {
+					scope = every_owned_province
+					scale = higher_development_than
+					global_trigger = "continent = south_america"
+					event_target_name = "khat_pillar_prov_target"
+					number = 1
+				}
+			}
+		}
+		else = {
+			pick_best_province = {
+				scope = every_province
+				scale = higher_development_than
+				global_trigger = "continent = south_america"
+				event_target_name = "khat_pillar_prov_target"
+				number = 1
+			}
+		}
+		if = {
+			limit = {
+				has_saved_event_target = khat_pillar_prov_target_1
+			}
+			event_target:khat_pillar_prov_target_1 = {
+				add_permanent_province_modifier = {
+					name = portal_nexus
+					duration = -1
+				}
+				hidden_effect = { set_province_flag = permanent_precursor_relics }
+				set_add_relics_count = yes
+				change_trade_goods = precursor_relics
+				add_base_production = 6
+				add_base_tax = 2
+				add_base_manpower = 2
+			}
+		}
+	}
+}
+
+#THE TRAXIS
+country_event = { #Start
+	id = empire_333.49
+	title = empire_333.49.t
+	desc = empire_333.49.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.49.a
+		#Unlock THRAXIS
+		set_country_flag = thraxis_unlocked_timer_flag
+		custom_tooltip = thraxis_unlocked_tt
+	}
+}
+
+country_event = { #THE THRAXIS
+	id = empire_333.50
+	title = empire_333.50.t
+	desc = empire_333.50.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #1 Are gods real
+		name = empire_333.50.a
+		trigger = {
+			NOT = { has_country_flag = 333_thraxis_1_flag }
+		}
+		set_country_flag = 333_thraxis_1_flag
+		country_event = {
+			id = empire_333.51
+		}
+	}
+	option = { #2 Astral terror
+		name = empire_333.50.b
+		trigger = {
+			NOT = { has_country_flag = 333_thraxis_2_flag }
+		}
+		set_country_flag = 333_thraxis_2_flag
+		country_event = {
+			id = empire_333.52
+		}
+	}
+	option = { #3 Who are humans
+		name = empire_333.50.c
+		trigger = {
+			NOT = { has_country_flag = 333_thraxis_3_flag }
+		}
+		set_country_flag = 333_thraxis_3_flag
+		country_event = {
+			id = empire_333.53
+		}
+	}
+	option = { #4 What is Tchoken
+		name = empire_333.50.n
+		trigger = {
+			NOT = { has_country_flag = 333_thraxis_4_flag }
+		}
+		set_country_flag = 333_thraxis_4_flag
+		country_event = {
+			id = empire_333.54
+		}
+	}
+	option = { #5 What before Hags
+		name = empire_333.50.e
+		trigger = {
+			NOT = { has_country_flag = 333_thraxis_5_flag }
+		}
+		set_country_flag = 333_thraxis_5_flag
+		country_event = {
+			id = empire_333.55
+		}
+	}
+	#option = { #6 How old are you?
+	#	name = empire_333.50.f
+	#	trigger = {
+	#		NOT = { has_country_flag = 333_thraxis_6_flag }
+	#	}
+	#	set_country_flag = 333_thraxis_6_flag
+	#	country_event = {
+	#		id = empire_333.56
+	#	}
+	#}
+	option = { #7 Were there 333 empires?
+		name = empire_333.50.g
+		trigger = {
+			NOT = { has_country_flag = 333_thraxis_7_flag }
+		}
+		set_country_flag = 333_thraxis_7_flag
+		country_event = {
+			id = empire_333.57
+		}
+	}
+	#option = { #8 Muhaquar? what?
+	#	name = empire_333.50.h
+	#	trigger = {
+	#		NOT = { has_country_flag = 333_thraxis_8_flag }
+	#		owns = 5483
+	#	}
+	#	set_country_flag = 333_thraxis_8_flag
+	#	country_event = {
+	#		id = empire_333.58
+	#	}
+	#}
+	option = { #9 How long elves were destroying us?
+		name = empire_333.50.i
+		trigger = {
+			has_country_flag = empire_333_unlock_9_thraxis
+		}
+		set_country_flag = 333_thraxis_9_flag
+		country_event = {
+			id = empire_333.59
+		}
+		hidden_effect = {
+			clr_country_flag = empire_333_unlock_9_thraxis
+		}
+	}
+	#option = { #10 What Elves did to us?
+	#	name = empire_333.50.j
+	#	trigger = {
+	#		has_country_flag = empire_333_unlock_10_thraxis
+	#	}
+	#	set_country_flag = 333_thraxis_10_flag
+	#	country_event = {
+	#		id = empire_333.60
+	#	}
+	#	hidden_effect = {
+	#		clr_country_flag = empire_333_unlock_10_thraxis
+	#	}
+	#}
+	option = { #11 What are we?
+		name = empire_333.50.k	
+	 	trigger = {
+	 		has_country_flag = empire_333_unlock_11_thraxis
+	 	}
+	 	set_country_flag = 333_thraxis_11_flag	
+	 	country_event = {
+	 		id = empire_333.61
+	 	}
+	 	hidden_effect = {
+	 		clr_country_flag = empire_333_unlock_11_thraxis
+		}
+	}
+	option = { #12 The wishcatcher
+		name = empire_333.50.l	
+		trigger = {
+	 		has_country_flag = empire_333_unlock_12_thraxis
+		}
+	 	set_country_flag = 333_thraxis_12_flag
+	 	country_event = {
+	 		id = empire_333.62
+	 	}	
+	 	hidden_effect = {
+	 		clr_country_flag = empire_333_unlock_12_thraxis
+	 	}
+	}
+	# option = { #13 Are there any other spires? 
+	# 	name = empire_333.50.m
+	# 	trigger = {
+	# 		has_country_flag = empire_333_unlock_13_thraxis
+	# # 	}
+	# 	set_country_flag = 333_thraxis_13_flag
+	# 	country_event = {
+	# 		id = empire_333.63
+	# 	}
+	# 	hidden_effect = {
+	# 		clr_country_flag = empire_333_unlock_13_thraxis
+	# 	}
+	# }
+	option = {
+		name = empire_333.50.endtemp
+		trigger = {
+			NOT = { 
+				khatalashya_traxis_asked_all = yes
+				has_country_flag = empire_333_unlock_9_thraxis
+				has_country_flag = empire_333_unlock_11_thraxis
+				has_country_flag = empire_333_unlock_12_thraxis
+			}
+			has_country_flag = 333_thraxis_7_flag
+			has_country_flag = 333_thraxis_5_flag
+			has_country_flag = 333_thraxis_4_flag
+			has_country_flag = 333_thraxis_3_flag
+			has_country_flag = 333_thraxis_2_flag
+			has_country_flag = 333_thraxis_1_flag
+		}
+	}
+}
+
+country_event = { #1 Are gods real
+	id = empire_333.51
+	title = empire_333.51.t
+	desc = empire_333.51.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.51.a
+		add_country_modifier = {
+			name = 333_thraxis_1
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #2 Astral terror
+	id = empire_333.52
+	title = empire_333.52.t
+	desc = empire_333.52.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.52.a
+		add_country_modifier = {
+			name = 333_thraxis_2
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #3 Who are humans
+	id = empire_333.53
+	title = empire_333.53.t
+	desc = empire_333.53.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.53.a
+		add_country_modifier = {
+			name = 333_thraxis_3
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #4 What is Tchoken
+	id = empire_333.54
+	title = empire_333.54.t
+	desc = empire_333.54.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.54.a
+		add_country_modifier = {
+			name = 333_thraxis_4
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #5  What before Hags
+	id = empire_333.55
+	title = empire_333.55.t
+	desc = empire_333.55.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.55.a
+		add_country_modifier = {
+			name = 333_thraxis_5
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #6 How old are you?
+	id = empire_333.56
+	title = empire_333.56.t
+	desc = empire_333.56.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.56.a
+		add_country_modifier = {
+			name = 333_thraxis_6
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #7
+	id = empire_333.57
+	title = empire_333.57.t
+	desc = empire_333.57.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.57.a
+		add_country_modifier = {
+			name = 333_thraxis_7
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #8
+	id = empire_333.58
+	title = empire_333.58.t
+	desc = empire_333.58.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.58.a
+		add_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #9
+	id = empire_333.59
+	title = empire_333.59.t
+	desc = empire_333.59.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.59.a
+		add_country_modifier = {
+			name = 333_thraxis_9
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #10 What Elves did to us?
+	id = empire_333.60
+	title = empire_333.60.t
+	desc = empire_333.60.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.60.a
+		add_country_modifier = {
+			name = 333_thraxis_10
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #11 What are we?
+	id = empire_333.61
+	title = empire_333.61.t
+	desc = empire_333.61.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.61.a
+		add_country_modifier = {
+			name = 333_thraxis_11
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #12 The wishcatcher
+	id = empire_333.62
+	title = empire_333.62.t
+	desc = empire_333.62.d
+	picture = BIG_STAR_IN_SKY_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.62.a
+		change_innovativeness = 10
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #13 Are there any other spires? 
+	id = empire_333.63
+	title = empire_333.63.t
+	desc = empire_333.63.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.63.a
+		add_country_modifier = {
+			name = 333_thraxis_13
+			duration = 3650
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #End of Thraxis rip
+	id = empire_333.97
+	title = empire_333.97.t
+	desc = empire_333.97.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	
+	option = {
+		name = empire_333.97.a
+		add_country_modifier = {
+			name = khatalashya_end_of_thraxis
+			duration = -1
+		}
+		hidden_effect = {
+			set_country_flag = 333_in_space
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+
+
+province_event = { #timer start
+	id = empire_333.98
+	title = empire_333.98.t
+	desc = empire_333.98.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	fire_only_once = yes
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = empire_333.98.a
+		if = {
+			limit = { NOT = { has_global_flag = thraxis_global_timer_flag } }
+			set_global_flag = thraxis_global_timer_flag
+		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+country_event = { #timer
+	id = empire_333.99
+	title = empire_333.99.t
+	desc = empire_333.99.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		S81 = {
+			NOT = { has_country_flag = 333_in_space }
+		}
+		had_global_flag = {
+			flag = thraxis_global_timer_flag
+			days = 1825
+		}
+	}
+	
+	option = {
+		name = empire_333.99.a
+		clr_global_flag = thraxis_global_timer_flag
+		set_global_flag = thraxis_global_timer_flag
+		S81 = {
+			if = {
+				limit = {
+					has_country_flag = thraxis_unlocked_timer_flag
+				}
+				if = {
+					limit = { khatalashya_traxis_asked_all = yes }
+					country_event = {
+						id = empire_333.97
+					}
+				}
+				else = {
+					country_event = {
+						id = empire_333.50
+					}
+				}
+			}
+		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+#Non Empires
+
+country_event = { #Menager
+	id = empire_333.100
+	title = empire_333.100.t
+	desc = empire_333.100.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		has_country_flag = 333_non_empire_start
+		if = {
+			limit = { has_country_flag = empire_333_100_cooldown }
+			had_country_flag = {
+				flag = empire_333_100_cooldown
+				days = 2000
+			}
+		}
+	}
+
+	immediate = {
+		clr_country_flag = empire_333_100_cooldown
+		set_country_flag = empire_333_100_cooldown
+	}
+	
+	option = {
+		name = empire_333.100.a 
+		random_list = {
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_101_occured }
+				}
+				set_country_flag = 333_non_empire_101_occured
+				country_event = {
+					id = empire_333.101
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_102_occured }
+				}
+				set_country_flag = 333_non_empire_102_occured
+				country_event = {
+					id = empire_333.102
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_103_occured }
+				}
+				set_country_flag = 333_non_empire_103_occured
+				country_event = {
+					id = empire_333.103
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_104_occured }
+				}
+				set_country_flag = 333_non_empire_104_occured
+				country_event = {
+					id = empire_333.104
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_105_occured }
+				}
+				set_country_flag = 333_non_empire_105_occured
+				country_event = {
+					id = empire_333.105
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_106_occured }
+				}
+				set_country_flag = 333_non_empire_106_occured
+				country_event = {
+					id = empire_333.106
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_107_occured }
+				}
+				set_country_flag = 333_non_empire_107_occured
+				country_event = {
+					id = empire_333.107
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_108_occured }
+				}
+				set_country_flag = 333_non_empire_108_occured
+				country_event = {
+					id = empire_333.108
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_109_occured }
+				}
+				set_country_flag = 333_non_empire_109_occured
+				country_event = {
+					id = empire_333.109
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_110_occured }
+				}
+				set_country_flag = 333_non_empire_110_occured
+				country_event = {
+					id = empire_333.110
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_111_occured }
+				}
+				set_country_flag = 333_non_empire_111_occured
+				country_event = {
+					id = empire_333.111
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_112_occured }
+				}
+				set_country_flag = 333_non_empire_112_occured
+				country_event = {
+					id = empire_333.112
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_113_occured }
+				}
+				set_country_flag = 333_non_empire_113_occured
+				country_event = {
+					id = empire_333.113
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_114_occured }
+				}
+				set_country_flag = 333_non_empire_114_occured
+				country_event = {
+					id = empire_333.114
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_115_occured }
+				}
+				set_country_flag = 333_non_empire_115_occured
+				country_event = {
+					id = empire_333.115
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_116_occured }
+				}
+				set_country_flag = 333_non_empire_116_occured
+				country_event = {
+					id = empire_333.116
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_117_occured }
+				}
+				set_country_flag = 333_non_empire_117_occured
+				country_event = {
+					id = empire_333.117
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_119_occured }
+				}
+				set_country_flag = 333_non_empire_119_occured
+				country_event = {
+					id = empire_333.119
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_120_occured }
+				}
+				set_country_flag = 333_non_empire_120_occured
+				country_event = {
+					id = empire_333.120
+					days = 1
+					random = 364
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = 333_non_empire_121_occured }
+				}
+				set_country_flag = 333_non_empire_121_occured
+				country_event = {
+					id = empire_333.121
+					days = 1
+					random = 364
+				}
+			}
+		}
+		ai_chance = {
+			factor = 1 
+		}
+	}
+}
+
+country_event = { #Non empire event 1
+	id = empire_333.101
+	title = empire_333.101.t
+	desc = empire_333.101.d
+	picture = LIZARDFOLK_NAGA_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.101.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.101.b
+		trigger = {
+			has_estate_privilege = estate_church_records_of_shangra
+		}
+		custom_tooltip = records_of_shangra_save_us_tt
+		add_adm_power = -50
+		add_mil_power = -50
+		add_dip_power = -50
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.102
+	title = empire_333.102.t
+	desc = empire_333.102.d
+	picture = PROTESTANT_CATHOLIC_DEBATE_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.102.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.103
+	title = empire_333.103.t
+	desc = empire_333.103.d
+	picture = indiangfx_OVEREXTENSION_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.103.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+	option = {
+		name = empire_333.103.c
+		trigger = {
+			has_estate_privilege = estate_church_records_of_shangra
+		}
+		custom_tooltip = records_of_shangra_save_us_tt
+		add_adm_power = -50
+		add_mil_power = -50
+		add_dip_power = -50
+	}
+}
+country_event = { 
+	id = empire_333.104
+	title = empire_333.104.t
+	desc = empire_333.104.d
+	picture = LUTHER_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.104.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+	
+}
+country_event = { 
+	id = empire_333.105
+	title = empire_333.105.t
+	desc = empire_333.105.d
+	picture = REVOLT_HUGUENOTS_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.105.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+	option = {
+		name = empire_333.105.c
+		trigger = {
+			has_estate_privilege = estate_church_records_of_shangra
+		}
+		custom_tooltip = records_of_shangra_save_us_tt
+		add_adm_power = -50
+		add_mil_power = -50
+		add_dip_power = -50
+	}
+}
+country_event = { 
+	id = empire_333.106
+	title = empire_333.106.t
+	desc = empire_333.106.d
+	picture = northamericagfx_FAMINE_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.106.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+	option = {
+		name = empire_333.106.c
+		trigger = {
+			has_estate_privilege = estate_church_records_of_shangra
+		}
+		custom_tooltip = records_of_shangra_save_us_tt
+		add_adm_power = -50
+		add_mil_power = -50
+		add_dip_power = -50
+	}
+}
+country_event = { 
+	id = empire_333.107
+	title = empire_333.107.t
+	desc = empire_333.107.d
+	picture = east_slavic_ASSASSINATION_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.107.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+	option = {
+		name = empire_333.107.c
+		trigger = {
+			OR = {
+				has_estate_privilege = estate_church_akhaxazai_mutation
+				has_country_modifier = L96_punched
+			}
+		}
+		add_faith_in_the_prophecy = yes
+	}
+}
+country_event = { 
+	id = empire_333.108
+	title = empire_333.108.t
+	desc = empire_333.108.d
+	picture = BIG_BOOK_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.108.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+		set_country_flag = 333_empire_300th_empire
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.109
+	title = empire_333.109.t
+	desc = empire_333.109.d
+	picture = UNDEAD_ARMY_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		has_country_flag = 333_empire_300th_empire
+	}
+	
+	option = {
+		name = empire_333.109.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+		clr_country_flag = 333_empire_300th_empire
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.110
+	title = empire_333.110.t
+	desc = empire_333.110.d
+	picture = DRAGON_FLY_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.110.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.111
+	title = empire_333.111.t
+	desc = empire_333.111.d
+	picture = BANKRUPTCY_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.111.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { #THE VOID THE VOID THE VOID THE VOID THE VOID
+	id = empire_333.112
+	title = empire_333.112.t
+	desc = empire_333.112.d
+	picture = THE_COVENANT_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.112.a
+		custom_tooltip = tt_the_void_the_void_the_void #THE VOID THE VOID THE VOID THE VOID THE VOID
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { 
+	id = empire_333.113
+	title = empire_333.113.t
+	desc = empire_333.113.d
+	picture = MAGE_MOON_ALTER_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.113.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.114
+	title = empire_333.114.t
+	desc = empire_333.114.d
+	picture = LIZARDFOLK_NAGA_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.114.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.115
+	title = empire_333.115.t
+	desc = empire_333.115.d
+	picture = THE_HEROINE_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.115.a
+		add_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+country_event = { #this one needs an option so Karassk can go "well turns out we were the 333rd Empire after all" once Karassk is PR'd
+	id = empire_333.116
+	title = empire_333.116.t
+	desc = empire_333.116.d
+	picture = BYZ_SHIP_SAILING_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.116.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.117
+	title = empire_333.117.t
+	desc = empire_333.117.d
+	picture = WITCHTRIAL_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.117.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.118
+	title = empire_333.118.t
+	desc = empire_333.118.d
+	picture = BANKRUPTCY_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.118.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+	option = {
+		name = empire_333.118.c
+		trigger = {
+			has_estate_privilege = estate_church_records_of_shangra
+		}
+		custom_tooltip = records_of_shangra_save_us_tt
+		add_adm_power = -50
+		add_mil_power = -50
+		add_dip_power = -50
+	}
+}
+country_event = { 
+	id = empire_333.119
+	title = empire_333.119.t
+	desc = empire_333.119.d
+	picture = DARK_EXPEDITION_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.119.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.120
+	title = empire_333.120.t
+	desc = empire_333.120.d
+	picture = muslimgfx_BANKRUPTCY_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = empire_333.120.a
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+	option = {
+		name = empire_333.100.b
+		trigger = {
+			has_country_flag = 333_in_space
+		}
+		add_adm_power = 50
+	}
+}
+country_event = { 
+	id = empire_333.121
+	title = empire_333.121.t
+	desc = empire_333.121.d
+	picture = EP_SAMOAN_WARRIORS_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		exists = SS0
+	}
+	
+	option = {
+		name = empire_333.121.a
+		add_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+}
+#Colonies events
+################### 1 Romutha
+country_event = { #Repair event
+	id = empire_333.200
+	title = empire_333.200.t
+	desc = empire_333.200.d
+	picture = HIGH_TEMPLE_IN_DISTANCE_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			5921 = {
+				set_province_flag = khatalashya_spire_repaired
+			}
+		}
+	}
+	option = {
+		name = empire_333.200.a
+		goto = 5921
+		country_event = {
+			id = empire_333.225
+		}
+	}
+}
+country_event = { #Colonization part 1
+	id = empire_333.201
+	title = empire_333.201.t
+	desc = empire_333.201.d
+	picture = LEECHMEN_CENTIPEDE_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.201.a
+		country_event = {
+			id = empire_333.202
+			days = 730
+		}
+	}
+}
+country_event = { #Colonization part 2
+	id = empire_333.202
+	title = empire_333.202.t
+	desc = empire_333.202.d
+	picture = COMET_SIGHTED_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.202.a
+		add_treasury = -1000
+		country_event = {
+			id = empire_333.231
+			days = 365
+		}
+	}
+}
+################### 2
+country_event = { #Repair event
+	id = empire_333.203
+	title = empire_333.203.t
+	desc = empire_333.203.d
+	picture = COLONIZATION_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			5763 = {
+				set_province_flag = khatalashya_spire_repaired
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.203.a
+		goto = 5763
+		custom_tooltip = build_space_colony_tt
+	}
+}
+country_event = { #Colonization part 1
+	id = empire_333.204
+	title = empire_333.204.t
+	desc = empire_333.204.d
+	picture = iberian_NATIVES_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.204.a
+		country_event = {
+			id = empire_333.205
+			days = 730
+		}
+	}
+}
+country_event = { #Colonization part 2
+	id = empire_333.205
+	title = empire_333.205.t
+	desc = empire_333.205.d
+	picture = MYSTIC_IN_PRAYER_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.205.a
+		custom_tooltip = empire_333.205.tt
+		country_event = {
+			id = empire_333.232
+			days = 365
+		}	
+	}
+}
+################### 3
+country_event = { #Repair event
+	id = empire_333.206
+	title = empire_333.206.t
+	desc = empire_333.206.d
+	picture = MERCHANTS_IN_SIBERIA_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			5863 = {
+				set_province_flag = khatalashya_spire_repaired
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.206.a
+		goto = 5863
+		custom_tooltip = build_space_colony_tt
+	}
+}
+country_event = { #Colonization part 1
+	id = empire_333.207
+	title = empire_333.207.t
+	desc = empire_333.207.d
+	picture = USA_EXPLORERS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.207.a
+		#custom_tooltip = empire_333.207.tt
+		country_event = {
+			id = empire_333.208
+			days = 730
+		}
+	}
+}
+country_event = { #Colonization part 2
+	id = empire_333.208
+	title = empire_333.208.t
+	desc = empire_333.208.d
+	picture = SOLDIERS_FREEZING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.208.a
+		#custom_tooltip = empire_333.208.tt
+		country_event = {
+			id = empire_333.233
+			days = 365
+		}
+	}
+}
+################### 4
+country_event = { #Repair event
+	id = empire_333.209
+	title = empire_333.209.t
+	desc = empire_333.209.d
+	picture = EP_ISLAND_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			5585 = {
+				set_province_flag = khatalashya_spire_repaired
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.209.a
+		goto = 5585
+		custom_tooltip = build_space_colony_tt
+	}
+}
+country_event = { #Colonization part 1
+	id = empire_333.210
+	title = empire_333.210.t
+	desc = empire_333.210.d
+	picture = SHIP_SAILING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.210.a
+		country_event = {
+			id = empire_333.211
+			days = 730
+		}
+	}
+}
+country_event = { #Colonization part 2
+	id = empire_333.211
+	title = empire_333.211.t
+	desc = empire_333.211.d
+	picture = east_asian_SHIP_SAILING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.211.a
+		country_event = {
+			id = empire_333.234
+			days = 365
+		}
+	}
+}
+################### 5
+country_event = { #Repair event
+	id = empire_333.212
+	title = empire_333.212.t
+	desc = empire_333.212.d
+	picture = MAGE_MOON_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			5971 = {
+				set_province_flag = khatalashya_spire_repaired
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.212.a
+		goto = 5971
+		custom_tooltip = build_space_colony_tt
+	}
+}
+country_event = { #Colonization part 1
+	id = empire_333.213
+	title = empire_333.213.t
+	desc = empire_333.213.d
+	picture = FAR_AND_WIDE_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.213.a
+		custom_tooltip = empire_333.213.tt
+		country_event = {
+			id = empire_333.214
+			days = 730
+		}
+	}
+}
+country_event = { #Colonization part 2
+	id = empire_333.214
+	title = empire_333.214.t
+	desc = empire_333.214.d
+	picture = SURAKES_SUN_GARDEN_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+
+	option = {
+		name = empire_333.214.a
+		custom_tooltip = empire_333.214.tt
+		add_country_modifier = {
+			name = 333_dame_colony_artificers
+			duration = -1
+		}
+		5971 = {
+			change_trade_goods = damestear
+		}
+		country_event = {
+			id = empire_333.235
+			days = 365
+		}
+	}
+}
+################### 6
+country_event = { #Repair event
+	id = empire_333.215
+	title = empire_333.215.t
+	desc = empire_333.215.d
+	picture = tengri_pagan_reformed_BATTLE_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			6032 = {
+				set_province_flag = khatalashya_spire_repaired
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.215.a
+		goto = 6032
+		custom_tooltip = build_space_colony_tt
+	}
+}
+country_event = { #Colonization part 1
+	id = empire_333.216
+	title = empire_333.216.t
+	desc = empire_333.216.d
+	picture = turkish_BATTLE_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.216.a
+		add_country_modifier = {
+			name = khatalashya_greatest_battle_never_seen
+			duration = -1
+		}
+		country_event = {
+			id = empire_333.217
+			days = 730
+		}
+	}
+}
+country_event = { #Colonization part 2
+	id = empire_333.217
+	title = empire_333.217.t
+	desc = empire_333.217.d
+	picture = CITY_DEVELOPMENT_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.217.a
+		country_event = {
+			id = empire_333.236
+			days = 365
+		}
+	}
+}
+################### 7
+country_event = { #Repair event
+	id = empire_333.218
+	title = empire_333.218.t
+	desc = empire_333.218.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			6685 = {
+				set_province_flag = khatalashya_spire_repaired
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.218.a
+		goto = 6685
+		hidden_effect = {
+			set_country_flag = the_hivemind_can_start
+			country_event = {
+				id = empire_333.350
+				days = 365
+			}
+		}		
+	}
+}
+country_event = { #Fake event for tooltip
+	id = empire_333.219
+	title = empire_333.219.t
+	desc = empire_333.219.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.219.a
+
+	}
+}
+################### 8
+country_event = { #Repair event
+	id = empire_333.221
+	title = empire_333.221.t
+	desc = empire_333.221.d
+	picture = INCA_CITY_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			5650 = {
+				set_province_flag = khatalashya_spire_repaired
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.221.a
+		goto = 5650
+		custom_tooltip = build_space_colony_tt
+	}
+}
+country_event = { #Colonization part 1
+	id = empire_333.222
+	title = empire_333.222.t
+	desc = empire_333.222.d
+	picture = GENERALS_DISCUSSING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.222.a
+		country_event = {
+			id = empire_333.223
+			days = 730
+		}
+	}
+}
+country_event = { #Colonization part 2
+	id = empire_333.223
+	title = empire_333.223.t
+	desc = empire_333.223.d
+	picture = EXPLORERS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.223.a
+		tooltip = {
+			every_subject_country = {
+				limit = {
+					is_subject_of_type = space_colony
+				}
+				add_country_modifier = {
+					name = 333_space_tchoken_v2
+					duration = -1
+				}
+			}
+		}
+		custom_tooltip = space_tchokens_for_everyone_tt
+		country_event = {
+			id = empire_333.238
+			days = 365
+		}
+		hidden_effect = {
+			set_global_flag = space_colony_space_tch_2
+		}
+	}
+}
+################### 9
+country_event = { #Vacum
+	id = empire_333.224
+	title = empire_333.224.t
+	desc = empire_333.224.d
+	picture = MAGE_MOON_ALTER_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.224.a
+		add_stability = -1
+		set_country_flag = space_vac_event1
+	}
+}
+country_event = { #Repair event Part 2 unique to Romutha
+	id = empire_333.225
+	title = empire_333.225.t
+	desc = empire_333.225.d
+	picture = EP_POLYNESIAN_HORN_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.225.a
+		add_prestige_or_monarch_power = { amount = 20 }
+		custom_tooltip = build_space_colony_tt
+	}
+}
+#Space colonies - Colonies creation
+
+country_event = { 
+	id = empire_333.231 #Colonization part 3
+	title = empire_333.231.t
+	desc = empire_333.231.d
+	picture = northamericagfx_CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			5921 = {
+				save_event_target_as = khat_colony_culture
+			}
+			SS0 = {
+				set_country_flag = no_longer_monstrous
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.231.a
+		goto = 5921
+		add_prestige_or_monarch_power = { amount = 50 }
+		add_country_modifier = {
+			name = 333_khus_an_zhyani_colony
+			duration = -1
+		}
+		5921 = {
+			add_core = SS0 
+			remove_core = S81
+			hidden_effect = {
+				add_province_modifier = {
+					name = khatalashya_space_colony_capital
+					duration = -1
+				}
+			}
+		}
+		event_target:khat_colony_culture = {
+			if = {
+				limit = {
+					NOT = { culture_group = lizardfolk }
+				}
+				change_culture = ichiadza_lizardfolk
+			}
+		}
+		release_with_religion_and_culture = { tag = SS0 culture = event_target:khat_colony_culture religion = anzalkatsa }
+		create_subject = { subject_type = space_colony subject = SS0 }
+		hidden_effect = {
+			SS0 = { add_government_reform = space_colony_government }
+			set_country_flag = khus_an_zhyani_event1
+		}
+		custom_tooltip = kus_an_zhyani_colony_tt
+	}
+	after = {
+		hidden_effect = {
+			SS0 = {
+				create_unit_forcelimit_percentage = {
+					type = infantry
+					force_limit_percentage = 0.8
+				}
+				capital_scope = {
+					add_great_project_tier = {
+						type = khus_an_zhyani
+						tier = 1
+					}
+				}
+			}
+		}
+	}
+}
+country_event = { 
+	id = empire_333.232 #Colonization part 3
+	title = empire_333.232.t
+	desc = empire_333.232.d
+	picture = asiangfx_CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			5763 = {
+				save_event_target_as = khat_colony_culture
+			}
+			SS1 = {
+				set_country_flag = no_longer_monstrous
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.232.a
+		goto = 5763
+		add_country_modifier = {
+			name = 333_kazakesh_colony_country
+			duration = -1
+		}
+		dao_nako_region = {
+			add_permanent_province_modifier = {
+				name = 333_kazakesh_colony
+				duration = -1				
+			}
+		}
+		5763 = {
+			add_core = SS1
+			remove_core = S81
+			hidden_effect = {
+				add_province_modifier = {
+					name = khatalashya_space_colony_capital
+					duration = -1
+				}
+			}
+		}
+		event_target:khat_colony_culture = {
+			if = {
+				limit = {
+					NOT = { culture_group = lizardfolk }
+				}
+				change_culture = ichiadza_lizardfolk
+			}
+		}
+		release_with_religion_and_culture = { tag = SS1 culture = event_target:khat_colony_culture religion = anzalkatsa }
+		create_subject = { subject_type = space_colony subject = SS1 }
+		hidden_effect = {
+			SS1 = { add_government_reform = space_colony_government }
+			set_country_flag = kazakesh_event2
+		}
+	}
+	after = {
+		hidden_effect = {
+			SS1 = {
+				create_unit_forcelimit_percentage = {
+					type = infantry
+					force_limit_percentage = 0.8
+				}
+				capital_scope = {
+					add_great_project_tier = {
+						type = kazakesh
+						tier = 1
+					}
+				}
+			}
+		}
+	}
+}
+country_event = { 
+	id = empire_333.233 #Colonization part 3
+	title = empire_333.233.t
+	desc = empire_333.233.d
+	picture = DUTCH_SHIPS_PLUNDERING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			5863 = {
+				save_event_target_as = khat_colony_culture
+			}
+			SS2 = {
+				set_country_flag = no_longer_monstrous
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.233.a
+		goto = 5863
+		set_estate_privilege = estate_burghers_alashakan_mutation
+		add_country_modifier = {
+			name = 333_kuiika_gamyi_colony
+			duration = -1
+		}
+		5863 = {
+			add_core = SS2
+			remove_core = S81
+			hidden_effect = {
+				add_province_modifier = {
+					name = khatalashya_space_colony_capital
+					duration = -1
+				}
+			}
+		}
+		event_target:khat_colony_culture = {
+			if = {
+				limit = {
+					NOT = { culture_group = lizardfolk }
+				}
+				change_culture = irikin_lizardfolk
+			}
+		}
+		release_with_religion_and_culture = { tag = SS2 culture = event_target:khat_colony_culture religion = anzalkatsa }
+		create_subject = { subject_type = space_colony subject = SS2 }
+		hidden_effect = {
+			SS2 = { add_government_reform = space_colony_government }
+			set_country_flag = kuiika_gamyi_event1
+		}
+	}
+	after = {
+		hidden_effect = {
+			SS2 = {
+				create_unit_forcelimit_percentage = {
+					type = infantry
+					force_limit_percentage = 0.8
+				}
+				capital_scope = {
+					add_great_project_tier = {
+						type = kuiika_gamyi
+						tier = 1
+					}
+				}
+			}
+		}
+	}
+}
+country_event = { 
+	id = empire_333.234 #Colonization part 3
+	title = empire_333.234.t
+	desc = empire_333.234.d
+	picture = TREASURE_FLEET_SHIP_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			5585 = {
+				save_event_target_as = khat_colony_culture
+			}
+			SS3 = {
+				set_country_flag = no_longer_monstrous
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.234.a
+		goto = 5585
+		add_country_modifier = {
+			name = 333_kuvunika_citadel_colony
+			duration = -1
+		}
+		set_estate_privilege = estate_nobility_glidz_mutation
+		5585 = {
+			add_core = SS3
+			remove_core = S81
+			hidden_effect = {
+				add_province_modifier = {
+					name = khatalashya_space_colony_capital
+					duration = -1
+				}
+			}
+		}
+		event_target:khat_colony_culture = {
+			if = {
+				limit = {
+					NOT = { culture_group = lizardfolk }
+				}
+				change_culture = cyazizeta_lizardfolk
+			}
+		}
+		release_with_religion_and_culture = { tag = SS3 culture = event_target:khat_colony_culture religion = anzalkatsa }
+		create_subject = { subject_type = space_colony subject = SS3 }
+		hidden_effect = {
+			SS3 = { add_government_reform = space_colony_government }
+			set_country_flag = kuvunika_citadel_event1
+			set_country_flag = kuvunika_citadel_event2
+		}
+	}
+	after = {
+		hidden_effect = {
+			SS3 = {
+				create_unit_forcelimit_percentage = {
+					type = infantry
+					force_limit_percentage = 0.8
+				}
+				capital_scope = {
+					add_great_project_tier = {
+						type = kuvunika_citadel
+						tier = 1
+					}
+				}
+			}
+		}
+	}
+}
+country_event = { 
+	id = empire_333.235 #Colonization part 3
+	title = empire_333.235.t
+	desc = empire_333.235.d
+	picture = DWARVEN_RAIL_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			5971 = {
+				save_event_target_as = khat_colony_culture
+			}
+			SS4 = {
+				set_country_flag = no_longer_monstrous
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.235.a
+		goto = 5971
+		add_country_modifier = {
+			name = 333_khaga_yatsa_colony
+			duration = -1
+		}
+		5971 = {
+			add_core = SS4
+			remove_core = S81
+			hidden_effect = {
+				add_province_modifier = {
+					name = khatalashya_space_colony_capital
+					duration = -1
+				}
+			}
+		}
+		event_target:khat_colony_culture = {
+			if = {
+				limit = {
+					NOT = { culture_group = lizardfolk }
+				}
+				change_culture = ashhana_lizardfolk
+			}
+		}
+		release_with_religion_and_culture = { tag = SS4 culture = event_target:khat_colony_culture religion = anzalkatsa }
+		create_subject = { subject_type = space_colony subject = SS4 }
+		hidden_effect = {
+			SS4 = { add_government_reform = space_colony_government }
+		}
+	}
+	after = {
+		hidden_effect = {
+			SS4 = {
+				create_unit_forcelimit_percentage = {
+					type = infantry
+					force_limit_percentage = 0.8
+				}
+				capital_scope = {
+					add_great_project_tier = {
+						type = khaga_yatsa
+						tier = 1
+					}
+				}
+			}
+		}
+	}
+}
+country_event = { 
+	id = empire_333.236 #Colonization part 3
+	title = empire_333.236.t
+	desc = empire_333.236.d
+	picture = MYSTICS_DANCING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			6032 = {
+				save_event_target_as = khat_colony_culture
+			}
+			SS5 = {
+				set_country_flag = no_longer_monstrous
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.236.a
+		goto = 6032
+		add_prestige_or_monarch_power = { amount = 100 }
+		add_splendor = 100
+		add_country_modifier = {
+			name = 333_defeated_lizo_the_wizard
+			duration = -1
+		}
+		set_country_flag = arskitse_event1
+		set_country_flag = arskitse_event2
+		add_country_modifier = {
+			name = 333_arskitse_colony
+			duration = -1
+		}
+		6032 = {
+			add_core = SS5
+			remove_core = S81
+			hidden_effect = {
+				add_province_modifier = {
+					name = khatalashya_space_colony_capital
+					duration = -1
+				}
+			}
+		}
+		event_target:khat_colony_culture = {
+			if = {
+				limit = {
+					NOT = { culture_group = lizardfolk }
+				}
+				change_culture = skarakara_lizardfolk
+			}
+		}
+		release_with_religion_and_culture = { tag = SS5 culture = event_target:khat_colony_culture religion = anzalkatsa }
+		create_subject = { subject_type = space_colony subject = SS5 }
+		hidden_effect = {
+			SS5 = { add_government_reform = space_colony_government }
+		}
+	}
+	after = {
+		hidden_effect = {
+			SS5 = {
+				create_unit_forcelimit_percentage = {
+					type = infantry
+					force_limit_percentage = 0.8
+				}
+				capital_scope = {
+					add_great_project_tier = {
+						type = khaga_yatsa
+						tier = 1
+					}
+				}
+			}
+		}
+	}
+}
+country_event = { 
+	id = empire_333.237 #Colonization part 3
+	title = empire_333.237.t
+	desc = empire_333.237.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.237.a
+		add_country_modifier = {
+			name = 333_tovchiheshu_colony
+			duration = -1
+		}
+		set_estate_privilege = estate_noble_azzazats_mutation
+		SS6 = {
+			set_estate_privilege = estate_noble_azzazats_mutation
+		}
+	}
+	after = {
+		hidden_effect = {
+			SS6 = {
+				create_unit_forcelimit_percentage = {
+					type = infantry
+					force_limit_percentage = 0.8
+				}
+			}
+		}
+	}
+}
+country_event = { 
+	id = empire_333.238 #Colonization part 3
+	title = empire_333.238.t
+	desc = empire_333.238.d
+	picture = INVASION_ALLIES_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			5650 = {
+				save_event_target_as = khat_colony_culture
+			}
+			SS7 = {
+				set_country_flag = no_longer_monstrous
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.238.a
+		goto = 5650
+		add_splendor = 333000
+		add_country_modifier = {
+			name = 333_gate_of_earth_colony_country
+			duration = -1
+		}
+		odu_kherass_region = {
+			add_permanent_province_modifier = {
+				name = 333_gate_of_earth_colony_province
+				duration = -1
+			}
+		}
+		5650 = {
+			add_core = SS7
+			remove_core = S81
+			hidden_effect = {
+				add_province_modifier = {
+					name = khatalashya_space_colony_capital
+					duration = -1
+				}
+			}
+		}
+		event_target:khat_colony_culture = {
+			if = {
+				limit = {
+					NOT = { culture_group = lizardfolk }
+				}
+				change_culture = rhada_lizardfolk
+			}
+		}
+		release_with_religion_and_culture = { tag = SS7 culture = event_target:khat_colony_culture religion = anzalkatsa }
+		create_subject = { subject_type = space_colony subject = SS7 }
+		hidden_effect = {
+			SS7 = { add_government_reform = space_colony_government }
+		}
+	}
+	after = {
+		hidden_effect = {
+			SS7 = {
+				create_unit_forcelimit_percentage = {
+					type = infantry
+					force_limit_percentage = 0.8
+				}
+				capital_scope = {
+					add_great_project_tier = {
+						type = gate_of_earth
+						tier = 1
+					}
+				}
+			}
+		}
+	}
+}
+country_event = { 
+	id = empire_333.248 #When someone take space colony
+	title = empire_333.248.t
+	desc = empire_333.248.d
+	picture = INVASION_ALLIES_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = empire_333.248.a
+		every_subject_country = {
+			limit = { is_subject_of_type = space_colony }
+			every_owned_province = {
+				cede_province = ROOT
+			}
+		}
+	}
+}
+country_event = { 
+	id = empire_333.249 #Colonies for bots
+	title = empire_333.249.t
+	desc = empire_333.249.d
+	picture = INVASION_ALLIES_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		tag = S81
+		ai = yes
+	}
+
+	option = {
+		name = empire_333.249.a
+		if = {
+			limit = {
+				SS0 = { NOT = { exists = yes } }
+				total_development = 800
+				5921 = { owned_by = ROOT }
+			}
+			country_event = {
+				id = empire_333.231
+			}
+			set_country_flag = khatalashya_another_colony
+		}
+		else_if = {
+			limit = {
+				SS1 = { NOT = { exists = yes } }
+				total_development = 800
+				5763 = { owned_by = ROOT }
+			}
+			country_event = {
+				id = empire_333.232
+			}
+			set_country_flag = khatalashya_another_colony
+		}
+		else_if = {
+			limit = {
+				SS2 = { NOT = { exists = yes } }
+				has_country_flag = khatalashya_another_colony
+				5863 = { owned_by = ROOT }
+			}
+			country_event = {
+				id = empire_333.233
+			}
+		}
+		else_if = {
+			limit = {
+				SS3 = { NOT = { exists = yes } }
+				has_country_flag = khatalashya_another_colony
+				5585 = { owned_by = ROOT }
+			}
+			country_event = {
+				id = empire_333.234
+			}
+		}
+		else_if = {
+			limit = {
+				SS4 = { NOT = { exists = yes } }
+				has_country_flag = khatalashya_another_colony
+				has_global_flag = shadowtree_purified
+				6690 = { owned_by = ROOT }
+				5971 = { owned_by = ROOT }
+			}
+			country_event = {
+				id = empire_333.235
+			}
+		}
+	}
+}
+#Colony random events
+country_event = { #Menager
+	id = empire_333.250
+	title = empire_333.250.t
+	desc = empire_333.250.d
+	picture = KOBOLD_HOARD_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		tag = S81
+		OR = {
+			has_country_modifier = 333_khus_an_zhyani_colony
+			has_country_modifier = 333_kazakesh_colony_country
+			has_country_modifier = 333_kuiika_gamyi_colony
+			has_country_modifier = 333_kuvunika_citadel_colony
+			has_country_modifier = 333_khaga_yatsa_colony
+			has_country_modifier = 333_arskitse_colony
+			has_country_modifier = 333_tovchiheshu_colony
+		}
+		NOT = { has_disaster = the_hivemind }
+	}
+
+	option = {
+		name = empire_333.238.a
+		random_list = {
+			1 = {
+				country_event = {
+					id = empire_333.251
+				}
+			}
+			1 = {
+				country_event = {
+					id = empire_333.252
+				}
+			}
+			1 = {
+				country_event = {
+					id = empire_333.253
+				}
+			}
+			1 = {
+				trigger = {
+					mission_completed = khatalashya_space_tchoken
+				}
+				country_event = {
+					id = empire_333.254
+				}
+			}
+			1 = {
+				country_event = {
+					id = empire_333.255
+				}
+			}
+			1 = {
+				country_event = {
+					id = empire_333.256
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_arskitse_colony
+					has_country_flag = arskitse_event1
+				}
+				clr_country_flag = arskitse_event1
+				country_event = {
+					id = empire_333.258
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_arskitse_colony
+					has_country_flag = arskitse_event2
+				}
+				clr_country_flag = arskitse_event2
+				country_event = {
+					id = empire_333.259
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_khaga_yatsa_colony
+				}
+				country_event = {
+					id = empire_333.260
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_khaga_yatsa_colony
+				}
+				country_event = {
+					id = empire_333.261
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_flag = space_vac_event1
+				}
+				clr_country_flag = space_vac_event1
+				country_event = {
+					id = empire_333.262
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_kuvunika_citadel_colony
+					has_country_flag = kuvunika_citadel_event1
+				}
+				clr_country_flag = kuvunika_citadel_event1
+				country_event = {
+					id = empire_333.263
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_kuvunika_citadel_colony
+					has_country_flag = kuvunika_citadel_event2
+				}
+				clr_country_flag = kuvunika_citadel_event2
+				country_event = {
+					id = empire_333.264
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_kuiika_gamyi_colony
+					has_country_flag = kuiika_gamyi_event1
+				}
+				clr_country_flag = kuiika_gamyi_event1
+				country_event = {
+					id = empire_333.265
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_kuiika_gamyi_colony
+					has_country_flag = kuiika_gamyi_event2
+				}
+				clr_country_flag = kuiika_gamyi_event2
+				country_event = {
+					id = empire_333.266
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_kazakesh_colony_country
+					has_country_flag = kazakesh_event2
+				}
+				clr_country_flag = kazakesh_event2
+				country_event = {
+					id = empire_333.268
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_khus_an_zhyani_colony
+					has_country_flag = khus_an_zhyani_event1
+				}
+				clr_country_flag = khus_an_zhyani_event1
+				country_event = {
+					id = empire_333.269
+				}
+			}
+			2 = {
+				trigger = {
+					has_country_modifier = 333_khus_an_zhyani_colony
+					has_country_flag = khus_an_zhyani_event2
+				}
+				clr_country_flag = khus_an_zhyani_event2
+				country_event = {
+					id = empire_333.270
+				}
+			}
+		}
+	}
+}
+country_event = { #Tax
+	id = empire_333.251
+	title = empire_333.251.t
+	desc = empire_333.251.d
+	picture = TRADE_GOODS_METALS_AND_MINING_EQUIPENT_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.251.a
+		every_subject_country = {
+			limit = {
+				is_subject_of_type = space_colony
+			}
+			S81 = { add_years_of_income = 0.5 }
+		}
+	}
+	option = {
+		name = empire_333.251.b
+		every_subject_country = {
+			limit = {
+				is_subject_of_type = space_colony
+			}
+			add_tax_space_colony = yes
+		}
+	}
+}
+country_event = { #Independence
+	id = empire_333.252
+	title = empire_333.252.t
+	desc = empire_333.252.d
+	picture = iberian_COLONIZATION_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_subject_country = {
+				limit = {
+					is_subject_of_type = space_colony
+				}
+				save_event_target_as = independence_colony
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.252.a
+		event_target:independence_colony = {
+			if = {
+				limit = { NOT = { has_country_modifier = khatalashya_space_colony_independence } }
+				add_country_modifier = {
+					name = khatalashya_space_colony_independence
+					duration = 4523
+				}
+			}
+			else = {
+				add_liberty_desire = 20
+			}
+		}
+		
+	}
+	option = {
+		name = empire_333.252.b
+		add_tariff_value = -0.10
+	}
+}
+country_event = { #Monsters? Vermins? Not us
+	id = empire_333.253
+	title = empire_333.253.t
+	desc = empire_333.253.d
+	picture = TRAILS_BASILISK_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_subject_country = {
+				limit = {
+					is_subject_of_type = space_colony
+					NOT = { has_country_modifier = khatalashya_space_colony_monsters }
+				}
+				save_event_target_as = independence_colony
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.253.a
+		event_target:independence_colony = {
+			add_country_modifier = {
+				name = khatalashya_space_colony_monsters
+				duration = 7300
+			}
+		}
+	}
+	option = {
+		name = empire_333.253.b
+		add_years_of_income = -0.5
+	}
+}
+country_event = { #Force limit
+	id = empire_333.254
+	title = empire_333.254.t
+	desc = empire_333.254.d
+	picture = USA_COLONIZATION_eventPicture
+
+	is_triggered_only = yes
+	
+
+	option = {
+		name = empire_333.254.a
+		every_subject_country = {
+			limit = {
+				is_subject_of_type = space_colony
+			}
+			add_forcelimit_space_colony = yes
+		}
+	}
+}
+country_event = { #Relics
+	id = empire_333.255
+	title = empire_333.255.t
+	desc = empire_333.255.d
+	picture = IMPORTANT_STATUE_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.255.a
+		add_country_modifier = {
+			name = khatalashya_adm_bon
+			duration = 3650
+		}
+	}
+	option = {
+		name = empire_333.255.b
+		add_country_modifier = {
+			name = khatalashya_dip_bon
+			duration = 3650
+		}
+	}
+	option = {
+		name = empire_333.255.c
+		add_country_modifier = {
+			name = khatalashya_mil_bon
+			duration = 3650
+		}
+	}
+}
+country_event = { #Runty Eggs
+	id = empire_333.256
+	title = empire_333.256.t
+	desc = empire_333.256.d
+	picture = KOBOLD_HOARD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.256.a
+		every_subject_country = {
+			limit = {
+				is_subject_of_type = space_colony
+			}
+			add_manpower_space_colony = yes
+		}
+	}
+}
+
+country_event = { #Zangea Migration
+	id = empire_333.258
+	title = empire_333.258.t
+	desc = empire_333.258.d
+	picture = 5_Rajput_Estate_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.258.a
+		define_heir = {
+			adm = 6
+			dip = 6
+			mil = 6
+			age = 0
+		}
+		set_heir_mage_effect = yes
+	}
+}
+country_event = { #A tide of green
+	id = empire_333.259
+	title = empire_333.259.t
+	desc = empire_333.259.d
+	picture = ORC_WITH_AXE_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.259.a
+		add_manpower = -50
+	}
+}
+country_event = { #Earthquake
+	id = empire_333.260
+	title = empire_333.260.t
+	desc = empire_333.260.d
+	picture = REVOLUTION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.260.a
+		add_years_of_income = -1
+	}
+}
+country_event = { #Damaster Rush
+	id = empire_333.261
+	title = empire_333.261.t
+	desc = empire_333.261.d
+	picture = FALUN_COPPER_MINE_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.261.a
+		add_years_of_income = 5
+		add_inflation = 3
+	}
+}
+country_event = { #Second attempt
+	id = empire_333.262
+	title = empire_333.262.t
+	desc = empire_333.262.d
+	picture = ROYAL_STRESS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.262.a
+		add_manpower = -50
+	}
+}
+country_event = { #Naval Colony
+	id = empire_333.263
+	title = empire_333.263.t
+	desc = empire_333.263.d
+	picture = LARGE_SHIPYARD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.263.a
+		add_country_modifier = {
+			name = khatalashya_shagatan_sailors
+			duration = -1
+		}
+	}
+}
+country_event = { #glidz Marines
+	id = empire_333.264
+	title = empire_333.264.t
+	desc = empire_333.264.d
+	picture = 17_Trade_Company_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.264.a
+		custom_tooltip = empire_333.264.tt
+		hidden_effect = {
+			set_country_flag = khatalashya_glidz_mutation_upgraded
+		}
+	}
+}
+country_event = { #Burning cats
+	id = empire_333.265
+	title = empire_333.265.t
+	desc = empire_333.265.d
+	picture = CONSORT_DOING_BADLY_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.265.a
+		5863 = {
+			add_devastation = 50
+		}
+		set_country_flag = kuiika_gamyi_event2
+	}
+}
+country_event = { #Cat parades
+	id = empire_333.266
+	title = empire_333.266.t
+	desc = empire_333.266.d
+	picture = muslimgfx_HAJJ_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.266.a
+		add_country_modifier = {
+			name = khatalashya_zulkanez_cats
+			duration = -1
+		}
+	}
+}
+
+country_event = { #Elves of Agradent attack
+	id = empire_333.268
+	title = empire_333.268.t
+	desc = empire_333.268.d
+	picture = NATIVES_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.268.a
+		SS1 = {
+			add_country_modifier = {
+				name = space_colony_subject_debuffed
+				duration = 3650
+			}
+		}
+	}
+}
+country_event = { #Cocons of Romutha
+	id = empire_333.269
+	title = empire_333.269.t
+	desc = empire_333.269.d
+	picture = CHAMBER_OF_CURIOSITIES_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.269.a
+		set_country_flag = khus_an_zhyani_event2
+	}
+}
+country_event = { #Giant Laser Shooting Butterflies
+	id = empire_333.270
+	title = empire_333.270.t
+	desc = empire_333.270.d
+	picture = wihgfx_FEMALE_GENERAL_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.270.a
+		add_country_modifier = {
+			name = khatalashya_butterflies
+			duration = -1
+		}
+		custom_tooltip = khatalashya_butterflies_tt
+	}
+}
+
+#######Disaster
+country_event = { #mutation
+	id = empire_333.301
+	title = empire_333.301.t
+	desc = empire_333.301.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.301.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_ashhana_ap
+		if = {
+			limit = { has_estate_privilege = estate_burghers_ashhana_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = ashhana }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+country_event = { #mutation
+	id = empire_333.302
+	title = empire_333.302.t
+	desc = empire_333.302.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.302.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_zganaga_ap
+		if = {
+			limit = { has_estate_privilege = estate_burghers_zganaga_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = zganaga }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+country_event = { #mutation
+	id = empire_333.303
+	title = empire_333.303.t
+	desc = empire_333.303.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.303.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_boaga_ap
+		if = {
+			limit = { has_estate_privilege = estate_nobility_boaga_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = boaga }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+country_event = { #mutation
+	id = empire_333.304
+	title = empire_333.304.t
+	desc = empire_333.304.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.304.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_trazoskala_ap
+		if = {
+			limit = { has_estate_privilege = estate_nobility_trazoskala_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = trazoskala }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+
+country_event = { #mutation
+	id = empire_333.305
+	title = empire_333.305.t
+	desc = empire_333.305.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+		NOT = { was_tag = L96 }
+	}
+
+	option = {
+		name = empire_333.305.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_khateshala_ap
+		if = {
+			limit = { has_estate_privilege = estate_church_khateshala_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = khateshala }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+
+country_event = { #mutation
+	id = empire_333.306
+	title = empire_333.306.t
+	desc = empire_333.306.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.306.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_tatashyahyts_ap
+		if = {
+			limit = { has_estate_privilege = estate_burghers_tatashyahyts_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = tatashyahyts }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+
+country_event = { #mutation
+	id = empire_333.307
+	title = empire_333.307.t
+	desc = empire_333.307.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.307.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_duuma_ap
+		if = {
+			limit = { has_estate_privilege = estate_burghers_duuma_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = duuma }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+
+country_event = { #mutation
+	id = empire_333.308
+	title = empire_333.308.t
+	desc = empire_333.308.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+		was_tag = L95
+	}
+
+	option = {
+		name = empire_333.308.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_gakhakaya_ap
+		if = {
+			limit = {
+				OR = {
+					has_estate_privilege = estate_nobility_gakhakaya_mutation
+					has_estate_privilege = estate_nobility_gakhakaya_upgraded_mutation
+				}
+			}
+			khatalashya_add_debuff_hive_main = { mutation = gakhakaya }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+
+country_event = { #mutation
+	id = empire_333.309
+	title = empire_333.309.t
+	desc = empire_333.309.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.309.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_khtashhana_ap
+		if = {
+			limit = { has_estate_privilege = estate_burghers_khtashhana_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = khtashhana }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+
+country_event = { #mutation
+	id = empire_333.310
+	title = empire_333.310.t
+	desc = empire_333.310.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.310.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_tsyhyra_ap
+		if = {
+			limit = { has_estate_privilege = estate_burghers_tsyhyra_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = tsyhyra }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+
+country_event = { #mutation
+	id = empire_333.311
+	title = empire_333.311.t
+	desc = empire_333.311.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.311.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_shanyza_ap
+		if = {
+			limit = { has_estate_privilege = estate_nobility_shanyza_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = shanyza }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+
+country_event = { #mutation
+	id = empire_333.313
+	title = empire_333.313.t
+	desc = empire_333.313.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.313.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_thanats_ap
+		if = {
+			limit = {
+				has_estate_privilege = estate_burghers_thanats_mutation
+			}
+			khatalashya_add_debuff_hive_main = { mutation = thanats }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+country_event = { #mutation
+	id = empire_333.314
+	title = empire_333.314.t
+	desc = empire_333.314.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+		was_tag = L96
+	}
+
+	option = {
+		name = empire_333.314.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_akhaxazai_ap
+		if = {
+			limit = {
+				has_estate_privilege = estate_church_akhaxazai_mutation
+			}
+			khatalashya_add_debuff_hive_main = { mutation = akhaxazai }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+country_event = { #mutation
+	id = empire_333.315
+	title = empire_333.315.t
+	desc = empire_333.315.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.315.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_alashakan_ap
+		if = {
+			limit = { has_estate_privilege = estate_burghers_alashakan_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = alashakan }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+country_event = { #mutation
+	id = empire_333.316
+	title = empire_333.316.t
+	desc = empire_333.316.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.315.a
+		set_country_flag = the_hivemind_glidz_ap
+		khatalashya_number_of_mutations = yes
+		if = {
+			limit = { has_estate_privilege = estate_nobility_glidz_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = glidz }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+country_event = { #mutation
+	id = empire_333.317
+	title = empire_333.317.t
+	desc = empire_333.317.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.315.a
+		set_country_flag = the_hivemind_wishcatcher_ap
+		khatalashya_number_of_mutations = yes
+		if = {
+			limit = { has_estate_privilege = estate_church_wishcatcher_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = wishcatcher }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+country_event = { #mutation
+	id = empire_333.318
+	title = empire_333.318.t
+	desc = empire_333.318.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_country_flag = khatalashya_mutation_help_activated
+	}
+
+	option = {
+		name = empire_333.318.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_dashirik_ap
+		if = {
+			limit = { has_estate_privilege = estate_noble_dashirik_mutation }
+			khatalashya_add_debuff_hive_main = { mutation = dashirik }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+country_event = { #mutation
+	id = empire_333.319
+	title = empire_333.319.t
+	desc = empire_333.319.d
+	picture = MULTI_RACIAL_MERC_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.319.a
+		khatalashya_number_of_mutations = yes
+		set_country_flag = the_hivemind_naga_ap
+		if = {
+			limit = {
+				OR = {
+					has_estate_privilege = estate_church_naga_mutation
+					has_estate_privilege = estate_church_abundance_of_nagas_mutation
+					has_estate_privilege = estate_church_naga_upgraded_mutation
+				}
+			}
+			khatalashya_add_debuff_hive_main = { mutation = naga }
+		}
+		else = {
+			custom_tooltip = the_hive_adopt_privilege_tt
+		}
+	}
+}
+
+#End of mutations
+
+country_event = {
+	id = empire_333.350
+	title = empire_333.350.t
+	desc = empire_333.350.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.350.a
+		6685 = {
+			add_local_autonomy = 100
+		}
+		hidden_effect = {
+			country_event = {
+				id = empire_333.351
+				days = 365
+			}
+		}
+	}
+}
+country_event = {
+	id = empire_333.351
+	title = empire_333.351.t
+	desc = empire_333.351.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.351.a
+		add_yearly_manpower = -1
+		hidden_effect = {
+			country_event = {
+				id = empire_333.352
+				days = 365
+			}
+		}
+	}
+}
+country_event = {
+	id = empire_333.352
+	title = empire_333.352.t
+	desc = empire_333.352.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.352.a
+		add_stability = -1
+		hidden_effect = {
+			country_event = {
+				id = empire_333.353
+				days = 365
+			}
+		}
+	}
+}
+country_event = {
+	id = empire_333.353
+	title = empire_333.353.t
+	desc = empire_333.353.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.353.a
+		add_stability = -3
+	}
+}
+country_event = { #Start 
+	id = empire_333.354
+	title = empire_333.354.t
+	desc = empire_333.354.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+
+	immediate = {
+		hidden_effect = {
+			SS6 = {
+				set_country_flag = no_longer_monstrous
+			}
+			6685 = {
+				save_event_target_as = khat_colony_culture
+				add_core = SS6
+				remove_core = S81
+				hidden_effect = {
+					add_province_modifier = {
+						name = khatalashya_space_colony_capital
+						duration = -1
+					}
+				}
+			}
+			event_target:khat_colony_culture = {
+				if = {
+					limit = {
+						NOT = { culture_group = lizardfolk }
+					}
+					change_culture = arraskay_lizardfolk
+				}
+			}
+			release_with_religion_and_culture = { tag = SS6 culture = event_target:khat_colony_culture religion = anzalkatsa }
+			create_subject = { subject_type = space_colony subject = SS6 }
+			SS6 = { add_government_reform = space_colony_government }
+			every_subject_country = {
+				limit = {
+					is_subject_of_type = space_colony
+				}
+				disband_all_units = yes
+				add_country_modifier = {
+					name = khatalashya_exterminate_voices
+					duration = -1
+				}
+				add_country_modifier = {
+					name = khatalashya_exterminate_voices_siege_1
+					duration = 547
+				}
+				add_country_modifier = {
+					name = khatalashya_exterminate_voices_siege_2
+					duration = 1095
+				}
+				add_country_modifier = {
+					name = khatalashya_exterminate_voices_siege_3
+					duration = 2190
+				}
+				grant_independence = yes
+				every_war_enemy_country = {
+					white_peace = PREV
+				}
+				if = {
+					limit = { NOT = { tag = SS0 } } #5921
+					create_alliance = SS0
+				}
+				if = {
+					limit = { NOT = { tag = SS1 } }
+					create_alliance = SS1
+				}
+				if = {
+					limit = { NOT = { tag = SS2 } }
+					create_alliance = SS2
+				}
+				if = {
+					limit = { NOT = { tag = SS3 } }
+					create_alliance = SS3
+				}
+				if = {
+					limit = { NOT = { tag = SS4 } }
+					create_alliance = SS4
+				}
+				if = {
+					limit = { NOT = { tag = SS5 } }
+					create_alliance = SS5
+				}
+				if = {
+					limit = { NOT = { tag = SS6 } }
+					create_alliance = SS6
+				}
+				if = {
+					limit = { NOT = { tag = SS7 } }
+					create_alliance = SS7
+				}
+				add_manpower = 500
+				capital_scope = {
+					remove_fortifications = yes
+					add_building = fort_18th
+					if = {
+						limit = { NOT = { has_building = ramparts } }
+						 add_building = ramparts
+					}
+					add_permanent_province_modifier = {
+						name = the_hivemind_capital
+						duration = 64
+					}
+					for = {
+						amount = 100
+						effect = "infantry = PREV"
+					}
+					for = {
+						amount = 80
+						effect = "artillery = PREV"
+					}
+				}
+				remove_country_modifier = restructuring_administration
+				define_ruler = {
+					name = "The One Mind"
+					dynasty = " "
+					adm = 6
+					dip = 6
+					mil = 6
+					age = 20
+					claim = 100
+				}
+				define_general = {
+					name = "The One Mind"
+					shock = 6
+					fire = 2
+					manuever = 6
+					siege = 2
+				}
+				define_general = {
+					name = "The One Mind"
+					shock = 6
+					fire = 2
+					manuever = 6
+					siege = 2
+				}
+				define_general = {
+					name = "The One Mind"
+					shock = 6
+					fire = 2
+					manuever = 6
+					siege = 2
+				}
+				define_general = {
+					name = "The One Mind"
+					shock = 6
+					fire = 2
+					manuever = 6
+					siege = 2
+				}
+				define_general = {
+					name = "The One Mind"
+					shock = 6
+					fire = 2
+					manuever = 6
+					siege = 2
+				}
+				define_general = {
+					name = "The One Mind"
+					shock = 6
+					fire = 2
+					manuever = 6
+					siege = 2
+				}
+				define_general = {
+					name = "The One Mind"
+					shock = 6
+					fire = 2
+					manuever = 6
+					siege = 2
+				}
+			}
+			SS6 = {
+				country_event = {
+					id = empire_333.355
+					days = 1
+				}
+			}
+			country_event = {
+				id = empire_333.359
+				days = 182
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.354.a
+		SS6 = {
+			add_country_modifier = {
+				name = khatalashya_clicking
+				duration = -1
+			}
+		}
+	}
+}
+country_event = {
+	id = empire_333.355
+	title = empire_333.355.t
+	desc = empire_333.355.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	
+
+	option = {
+		name = empire_333.355.a
+		declare_war_with_cb = {
+			who = S81
+			casus_belli = cb_hivemind_war
+		}
+		SS0 = {
+			if = {
+				limit = { exists = yes }
+				join_all_offensive_wars_of = ROOT
+			}
+		}
+		SS1 = {
+			if = {
+				limit = { exists = yes }
+				join_all_offensive_wars_of = ROOT
+			}
+		}
+		SS2 = {
+			if = {
+				limit = { exists = yes }
+				join_all_offensive_wars_of = ROOT
+			}
+		}
+		SS3 = {
+			if = {
+				limit = { exists = yes }
+				join_all_offensive_wars_of = ROOT
+			}
+		}
+		SS4 = {
+			if = {
+				limit = { exists = yes }
+				join_all_offensive_wars_of = ROOT
+			}
+		}
+		SS5 = {
+			if = {
+				limit = { exists = yes }
+				join_all_offensive_wars_of = ROOT
+			}
+		}
+		SS7 = {
+			if = {
+				limit = { exists = yes }
+				join_all_offensive_wars_of = ROOT
+			}
+		}
+	}
+	after = {
+		change_country_color = { 
+			color = { 255 0 20 }
+		}
+		override_country_name = 333_THE_HIVEMIND
+		dilgir_sigr_area = {
+			change_controller = SS6
+		}
+		krumkrmura_area = {
+			change_controller = SS6
+		}
+		tazoine_area = {
+			change_controller = SS6
+		}
+		sketaimypo_area = {
+			change_controller = SS6
+		}
+		mypodaud_area = {
+			change_controller = SS6
+		}
+		svitvillan_area = {
+			change_controller = SS6
+		}
+		kagdilgir_area = {
+			change_controller = SS6
+		}
+		svitvi_area = {
+			cede_province = SS6
+		}
+		elbe_nama_area = {
+			cede_province = SS6
+		}
+		aakeiritki_area = {
+			cede_province = SS6
+		}
+		kumkrheshu_area = {
+			cede_province = SS6
+		}
+		arukomirun_area = {
+			cede_province = SS6
+		}
+		tovchiheshu_area = {
+			cede_province = SS6
+		}
+		6709 = {
+			if = {
+				limit = { NOT = { has_building = ramparts } }
+				add_building = ramparts
+			}
+			remove_fortifications = yes
+			add_building = fort_18th
+			for = {
+				amount = 60
+				effect = "infantry = ROOT"
+			}
+			for = {
+				amount = 36
+				effect = "artillery = ROOT"
+			}
+		}
+		6707 = {
+			if = {
+				limit = { NOT = { has_building = ramparts } }
+				add_building = ramparts
+			}
+			remove_fortifications = yes
+			add_building = fort_18th
+			for = {
+				amount = 60
+				effect = "infantry = ROOT"
+			}
+			for = {
+				amount = 36
+				effect = "artillery = ROOT"
+			}
+		}
+		6701 = {
+			remove_fortifications = yes
+			add_building = fort_18th
+			for = {
+				amount = 60
+				effect = "infantry = ROOT"
+			}
+			for = {
+				amount = 36
+				effect = "artillery = ROOT"
+			}
+		}
+		6697 = {
+			remove_fortifications = yes
+			add_building = fort_18th
+			for = {
+				amount = 60
+				effect = "infantry = ROOT"
+			}
+			for = {
+				amount = 36
+				effect = "artillery = ROOT"
+			}
+		}
+		6699 = {
+			remove_fortifications = yes
+			add_building = fort_18th
+		}
+		6693 = {
+			if = {
+				limit = { NOT = { has_building = ramparts } }
+				add_building = ramparts
+			}
+			remove_fortifications = yes
+			add_building = fort_18th
+			for = {
+				amount = 60
+				effect = "infantry = ROOT"
+			}
+			for = {
+				amount = 36
+				effect = "artillery = ROOT"
+			}
+		}
+		6690 = {
+			remove_fortifications = yes
+			add_building = fort_18th
+		}
+		6732 = {
+			remove_fortifications = yes
+			add_building = fort_18th
+		}
+	}
+}
+country_event = {
+	id = empire_333.356
+	title = empire_333.356.t
+	desc = empire_333.356.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = empire_333.356.a
+		6685 = {
+			change_controller = SS6
+			for = {
+				amount = 50
+				effect = "
+				infantry = SS6
+				"
+			}
+		}
+		custom_tooltip = 333_empire_clickclickclick_tt
+	}
+}
+country_event = {
+	id = empire_333.357
+	title = empire_333.357.t
+	desc = empire_333.357.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+	immediate = {
+		hidden_effect = {
+			SS6 = {
+				restore_country_color = yes
+				restore_country_name = yes
+			}
+			shadow_swamp_region = {
+				limit = {
+					NOT = { province_id = 6685 }
+				}
+				cede_province = S81
+			}
+			every_known_country = {
+				limit = {
+					OR = {
+						tag = SS0
+						tag = SS1
+						tag = SS2
+						tag = SS3
+						tag = SS4
+						tag = SS5
+						tag = SS6
+						tag = SS7
+					}
+				}
+				every_war_enemy_country = {
+					white_peace = PREV
+				}
+				remove_country_modifier = khatalashya_space_colony_debuff
+				remove_country_modifier = khatalashya_space_colony_debuff2
+				remove_country_modifier = khatalashya_space_colony_debuff4
+				remove_country_modifier = khatalashya_space_colony_debuff8
+				remove_country_modifier = khatalashya_space_colony_debuff16
+				remove_country_modifier = khatalashya_exterminate_voices
+				remove_country_modifier = khatalashya_duuma_hivemind_debuff
+				remove_country_modifier = khatalashya_debuff_naga
+				remove_country_modifier = khatalashya_debuff_ashhana
+				remove_country_modifier = khatalashya_debuff_zganaga
+				remove_country_modifier = khatalashya_debuff_tsyhyra
+				remove_country_modifier = khatalashya_debuff_boaga
+				remove_country_modifier = khatalashya_debuff_trazoskala
+				remove_country_modifier = khatalashya_debuff_khateshala
+				remove_country_modifier = khatalashya_debuff_tatashyahyts
+				remove_country_modifier = khatalashya_debuff_duuma
+				remove_country_modifier = khatalashya_debuff_gakhakaya
+				remove_country_modifier = khatalashya_debuff_khtashhana
+				remove_country_modifier = khatalashya_debuff_shanyza
+				remove_country_modifier = khatalashya_debuff_thanats
+				remove_country_modifier = khatalashya_debuff_akhaxazai
+				remove_country_modifier = khatalashya_debuff_alashakan
+				remove_country_modifier = khatalashya_debuff_glidz
+				remove_country_modifier = khatalashya_debuff_wishcatcher
+				remove_country_modifier = khatalashya_debuff_dashirik
+				remove_country_modifier = khatalashya_debuff_gasabi
+				S81 = {
+					create_subject = {
+						subject_type = space_colony
+						subject = PREV
+					}
+					remove_country_modifier = khatalashya_disaster_buff
+				}
+				add_government_reform = space_colony_government
+				every_owned_province = {
+					limit = {
+						NOT = {
+							province_id = 5921
+							province_id = 5763
+							province_id = 5863
+							province_id = 5585
+							province_id = 5971
+							province_id = 6032
+							province_id = 6685
+							province_id = 5650
+						}
+					}
+					cede_province = S81
+				}
+				kill_ruler = yes
+				disband_all_units = yes
+				capital_scope = {
+					for = {
+						amount = 60
+						effect = "infantry = PREV"
+					}
+					for = {
+						amount = 40
+						effect = "artillery = PREV"
+					}
+				}
+			}
+			clr_country_flag = the_hivemind_can_start
+		}
+	}
+
+	option = {
+		name = empire_333.357.a
+	}
+}
+
+country_event = {
+	id = empire_333.358
+	title = empire_333.358.t
+	desc = empire_333.358.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.358.a
+		if = {
+			limit = { NOT = { has_country_modifier = 333_total_faith_in_the_prophecy } }
+			remove_country_modifier = 333_strong_faith_in_the_prophecy
+			remove_country_modifier = 333_questioning_faith_in_the_prophecy
+			remove_country_modifier = 333_wavering_faith_in_the_prophecy
+			remove_country_modifier = 333_failing_faith_in_the_prophecy
+			remove_country_modifier = 333_colapsed_faith_in_the_prophecy
+			add_country_modifier = {
+				name = 333_total_faith_in_the_prophecy
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				anb_being_school_trigger_lizardfolk = yes
+			}
+			set_religious_school = {
+				group = lizardfolk_religion
+				school = being_sculptors_school_victorius
+			}
+          }
+		else_if = {
+			limit = {
+				anb_fate_school_trigger_lizardfolk = yes
+			}
+			set_religious_school = {
+				group = lizardfolk_religion
+				school = fate_sculptors_school_victorius
+			}
+		}
+		country_event = {
+			id = empire_333.237
+		}
+	}
+}
+country_event = {
+	id = empire_333.359
+	title = empire_333.359.t
+	desc = empire_333.359.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = empire_333.360
+				days = 192
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.359.a
+		remove_faith_in_the_prophecy = yes
+		hidden_effect = {
+			SS0 = {
+				capital_scope = {
+					for = {
+						amount = 200
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS1 = {
+				capital_scope = {
+					for = {
+						amount = 200
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS2 = {
+				capital_scope = {
+					for = {
+						amount = 200
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS3 = {
+				capital_scope = {
+					for = {
+						amount = 200
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS4 = {
+				capital_scope = {
+					for = {
+						amount = 200
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS5 = {
+				capital_scope = {
+					for = {
+						amount = 200
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS6 = {
+				capital_scope = {
+					for = {
+						amount = 1000
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS7 = {
+				capital_scope = {
+					for = {
+						amount = 200
+						effect = "infantry = PREV"
+					}
+				}
+			}
+		}
+	}
+}
+country_event = {
+	id = empire_333.360
+	title = empire_333.360.t
+	desc = empire_333.360.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			remove_faith_in_the_prophecy = yes
+			country_event = {
+				id = empire_333.361
+				days = 192
+			}
+		}
+	}
+
+	option = {
+		name = empire_333.360.a
+		remove_faith_in_the_prophecy = yes
+		if = {
+			limit = {
+				anb_being_school_trigger_lizardfolk = yes
+			}
+			set_religious_school = {
+				group = lizardfolk_religion
+				school = being_sculptors_school_humiliated
+			}
+          }
+		else_if = {
+			limit = {
+				anb_fate_school_trigger_lizardfolk = yes
+			}
+			set_religious_school = {
+				group = lizardfolk_religion
+				school = fate_sculptors_school_humiliated
+			}
+		}
+	}
+}
+country_event = {
+	id = empire_333.361
+	title = empire_333.361.t
+	desc = empire_333.361.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.361.a
+		SS6 = {
+			remove_country_modifier = khatalashya_clicking
+		}
+		every_war_enemy_country = {
+			limit = {
+				has_country_modifier = khatalashya_exterminate_voices
+			}
+			add_country_modifier = {
+				name = khatalashya_duuma_hivemind_debuff
+				duration = -1
+			}
+		}
+		
+		set_country_flag = khatalashya_mutation_help_activated
+		hidden_effect = {
+			set_variable = {
+				which = number_of_anty_hive_mutations
+				value = 0
+			}
+			country_event = {
+				id = empire_333.362
+				days = 192
+			}
+		}
+	}
+}
+country_event = {
+	id = empire_333.362
+	title = empire_333.362.t
+	desc = empire_333.362.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.362.a
+		hidden_effect = {
+			SS0 = {
+				add_manpower = 100
+				capital_scope = {
+					for = {
+						amount = 50
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS1 = {
+				add_manpower = 100
+				capital_scope = {
+					for = {
+						amount = 50
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS2 = {
+				add_manpower = 100
+				capital_scope = {
+					for = {
+						amount = 50
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS3 = {
+				add_manpower = 100
+				capital_scope = {
+					for = {
+						amount = 50
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS4 = {
+				add_manpower = 100
+				capital_scope = {
+					for = {
+						amount = 50
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS5 = {
+				add_manpower = 100
+				capital_scope = {
+					for = {
+						amount = 50
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS6 = {
+				add_manpower = 100
+				capital_scope = {
+					for = {
+						amount = 50
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			SS7 = {
+				add_manpower = 100
+				capital_scope = {
+					for = {
+						amount = 50
+						effect = "infantry = PREV"
+					}
+				}
+			}
+			country_event = {
+				id = empire_333.363
+				days = 192
+			}
+		}
+	}
+}
+country_event = {
+	id = empire_333.363
+	title = empire_333.363.t
+	desc = empire_333.363.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.363.a
+		add_yearly_manpower = 5
+		add_country_modifier = {
+			name = khatalashya_disaster_buff
+			duration = -1
+		}
+	}
+}
+country_event = {
+	id = empire_333.364
+	title = empire_333.364.t
+	desc = empire_333.364.d
+	picture = SYNTHETICS_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = empire_333.364.a
+		SS6 = {
+			add_manpower = 1000
+			capital_scope = {
+				for = {
+					amount = 600
+					effect = "infantry = PREV"
+				}
+			}
+		}
+	}
+}
+
+
