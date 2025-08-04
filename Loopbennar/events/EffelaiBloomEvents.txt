@@ -45,6 +45,7 @@ country_event = {
 			}
 			hidden_effect = {
 				effelai_check_attunement_tier = yes
+				loop_effelai_level_attuned_modifier = yes
 				if = {
 					limit = {
 						has_country_flag = effelai_has_leveled_up_attunement
@@ -2075,6 +2076,7 @@ country_event = { #you can now begin attuning your land to the effelai
 		}
 		hidden_effect = {
 			effelai_check_attunement_tier = yes
+			loop_effelai_level_attuned_modifier = yes
 			if = {
 				limit = {
 					has_country_flag = effelai_has_leveled_up_attunement
@@ -2083,6 +2085,21 @@ country_event = { #you can now begin attuning your land to the effelai
 				country_event = { #effelai levelup notification event
 					id = effelai_bloom.360
 					days = 10
+				}
+			}
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					has_country_flag = effelai_native_knowledge
+					NOT = {
+						has_country_modifier = racial_pop_ruinborn_purge 
+						has_country_modifier = racial_pop_ruinborn_expulsion
+					}
+				}
+				country_event = { #Fires the event chain to switch religion / government to the Effelai
+					id = effelai_bloom.322
+					days = 1 # Meant to be 365, at 1 for testing. CHANGE TO 365 WHEN TESTING FINISHED
 				}
 			}
 		}
@@ -2376,10 +2393,18 @@ country_event = { #Decide which native faith to worship
 	id = effelai_bloom.323
 	title = effelai_bloom.323.t
 	desc = effelai_bloom.323.d
-	picture = northamericagfx_PAINTER_ARTIST_eventPicture
+	picture = EFFELAI_BLOOM_ANIMATED_eventPicture
 
 	is_triggered_only = yes
 
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = effelai_bloom.324
+				days = 1 # Meant to be 365, at 1 for testing. CHANGE TO 365 WHEN TESTING FINISHED
+			}
+		}
+	}
 	option = {
 		name = effelai_bloom.323.a
 		change_religion = tswohvwohii
@@ -2391,6 +2416,40 @@ country_event = { #Decide which native faith to worship
 	option = {
 		name = effelai_bloom.323.c
 		change_religion = chahinanito
+	}
+}
+
+country_event = { #Decide to become a theocracy of the Goddess
+	id = effelai_bloom.324
+	title = effelai_bloom.324.t
+	desc = effelai_bloom.324.d
+	picture = EFFELAI_TEMPLE_ANIMATED_eventPicture
+
+	is_triggered_only = yes
+	immediate = {
+		hidden_event = {
+		set_country_flag = effelai_attuned_colonizing
+		}
+	}
+	option = {
+		name = effelai_bloom.374.a
+		custom_tooltip = effelai_bloom_attunement_info_tt
+		hidden_effect = {
+			set_country_flag = effelai_bloom_begin_attuning_provinces
+			set_country_flag = effelai_attuned_colonizing
+			set_country_flag = effelai_attuned_path
+			set_variable = {
+				which = effelai_bloom_attunement
+				value = 20
+			}
+			change_government = theocracy
+			add_government_reform = effelai_alianaiarat_reform
+			change_government_reform_progress = 200
+		}
+	}
+	option = {
+		name = effelai_bloom.374.b
+		custom_tooltip = effelai_bloom_government_attunement_info_tt
 	}
 }
 
@@ -2565,6 +2624,7 @@ country_event = {
 		}
 		hidden_effect = {
 			effelai_check_attunement_tier = yes
+			loop_effelai_level_attuned_modifier = yes
 			set_country_flag = effelai_attuned_path
 			add_country_modifier = {
 				name = effelai_attunement_tier_1
@@ -3687,6 +3747,7 @@ country_event = {
 	
 	immediate = {
 		effelai_check_attunement_tier = yes
+		loop_effelai_level_attuned_modifier = yes
 		if = {
 			limit = {
 				has_country_modifier = effelai_attunement_tier_1
