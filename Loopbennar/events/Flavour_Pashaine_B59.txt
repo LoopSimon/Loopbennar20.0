@@ -795,13 +795,13 @@ country_event = {
 			factor = 100
 			modifier = {
 				factor = 100
-				ruler_has_mage_personality = yes
+				ruler_is_powerful_mage = yes
 			} 
 		}
 		trigger = {
 			NOT = { truce_with = B59 } #You can't join on the offensive side if you have a truce with the defender
 			OR = {
-				ruler_has_mage_personality = yes
+				ruler_is_powerful_mage = yes
 				alliance_with = emperor
 				has_opinion = {
 					who = emperor 
@@ -875,6 +875,16 @@ country_event = {
 
 	option = { #The dream is not dead. But we shall mold it in our image!
 		name = flavour_pashaine.24.a
+		if = {
+			limit = {
+				NOT = { has_country_flag = broke_the_empire }
+			}
+			hidden_effect = {
+				starting_imperial_lands = {
+					set_province_flag = was_part_of_hre
+				}
+			}
+		}
 		gain_permanent_claims_on_former_hre = yes
 		set_country_flag = enabled_blackpowder_resistance
 		set_country_flag = had_revolution #Blocks the revolution disaster, don't believe this is used for anything else
@@ -1911,7 +1921,7 @@ country_event = {
 
 	option = { #What!? Baseless Rumors
 		name =  flavour_pashaine.1014.a
-		trigger = { ruler_has_mage_personality = no }
+		trigger = { ruler_is_powerful_mage = no }
 		add_legitimacy_equivalent = { 
 			amount = -25
 			republican_tradition = -20
@@ -1922,7 +1932,7 @@ country_event = {
 
 	option = { #Death to old order
 		name =  flavour_pashaine.1014.b
-		trigger = { ruler_has_mage_personality = yes }
+		trigger = { ruler_is_powerful_mage = yes }
 		add_stability = -6 #lmao
 		kill_ruler = yes
 		add_legitimacy_equivalent = { 
@@ -2203,19 +2213,32 @@ country_event = {
 		NOT = { has_country_flag = pashaine_stop_charm }
 	}
 
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { has_seat_in_parliament = yes }
+				save_event_target_as = charmed_mp
+			}
+		}
+	}
+
 	option = { #Revoke his rights
 		name =  flavour_pashaine.1020.a
-		random_owned_province = {
-			limit = { has_seat_in_parliament = yes }
+		goto = charmed_mp
+		event_target:charmed_mp = {
 			set_seat_in_parliament = no
-			if = {
-				limit = { development = 20 }
-				ROOT = { add_stability = -1 }
-			}
 			spawn_rebels = {
 				type = particularist_rebels
 				size = 2
 			}
+		}
+		if = {
+			limit = {
+				event_target:charmed_mp = {
+					development = 20
+				}
+			}
+			add_stability = -1
 		}
 	}
 

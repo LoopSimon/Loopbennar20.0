@@ -116,6 +116,8 @@ country_event = { #Aelentir Merfolk
 						continent = south_america
 						continent = north_america
 					}
+					has_port = yes
+					NOT = { has_terrain = glacier }
 				}
 			}
 		}
@@ -130,6 +132,8 @@ country_event = { #Aelentir Merfolk
 							continent = south_america
 							continent = north_america
 						}
+						has_port = yes
+						NOT = { has_terrain = glacier }
 					}
 				}
 				for = {
@@ -142,6 +146,8 @@ country_event = { #Aelentir Merfolk
 									continent = south_america
 									continent = north_america
 								}
+								has_port = yes
+								NOT = { has_terrain = glacier }
 							}
 							merfolk_spawn_modifier = yes
 						}
@@ -152,26 +158,7 @@ country_event = { #Aelentir Merfolk
 				for = {
 					amount = 3
 					effect = "
-						random_subject_country = {
-							limit = {
-								capital_scope = {
-									OR = {
-										continent = south_america
-										continent = north_america
-									}
-								}
-							}
-							random_owned_province = {
-								limit = {
-									NOT = { has_province_flag =  merfolk_settlement }
-									OR = {
-										continent = south_america
-										continent = north_america
-									}
-								}
-								merfolk_spawn_modifier = yes
-							}
-						}
+						merfolk_spawn_in_random_aelentir_vassal = yes
 					"
 				}
 			}
@@ -3388,7 +3375,7 @@ country_event = { #Zangea Migration
 			mil = 6
 			age = 0
 		}
-		set_heir_mage_effect = yes
+		define_powerful_mage = { type = heir }
 	}
 }
 country_event = { #A tide of green
@@ -3879,7 +3866,10 @@ country_event = { #mutation
 		set_country_flag = the_hivemind_thanats_ap
 		if = {
 			limit = {
-				has_estate_privilege = estate_burghers_thanats_mutation
+				OR = {
+					has_estate_privilege = estate_burghers_thanats_mutation
+					has_estate_privilege = estate_burghers_thanats_upgraded_mutation
+				}
 			}
 			khatalashya_add_debuff_hive_main = { mutation = thanats }
 		}
@@ -4337,6 +4327,11 @@ country_event = {
 
 	option = {
 		name = empire_333.355.a
+		S81 = {
+			set_country_flag = no_callaction
+			set_country_flag = no_countries_with_truce
+			set_country_flag = allow_subjects_war
+		}
 		declare_war_with_cb = {
 			who = S81
 			casus_belli = cb_hivemind_war
@@ -4381,6 +4376,14 @@ country_event = {
 			if = {
 				limit = { exists = yes }
 				join_all_offensive_wars_of = ROOT
+			}
+		}
+		S81 = {
+			clr_country_flag = no_callaction
+			clr_country_flag = no_countries_with_truce
+			clr_country_flag = allow_subjects_war
+			every_ally = {
+				join_all_defensive_wars_of = S81
 			}
 		}
 	}

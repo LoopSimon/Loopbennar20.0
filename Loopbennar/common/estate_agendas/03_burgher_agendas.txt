@@ -3033,10 +3033,22 @@ estate_burghers_luna_send_great_man = {
 		factor = 50
 	}
 	task_requirements = {
-		OR = {
-			advisor = natural_scientist
-			advisor = philosopher
-			advisor = artist
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_burghers
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_burghers
+			}
+		}
+		else = {
+			OR = {
+				advisor = natural_scientist
+				advisor = philosopher
+				advisor = artist
+			}
 		}
 	}
 	task_completed_effect = {
@@ -3126,7 +3138,19 @@ estate_burghers_luna_take_foreign_loans = {
 		}
 	}
 	task_requirements = {
-		num_of_loans = 4
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_burghers
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_burghers
+			}
+		}
+		else = {
+			num_of_loans = 4
+		}
 	}
 	task_completed_effect = {
 		gain_1_sway = yes
@@ -3160,7 +3184,12 @@ estate_burghers_luna_take_foreign_loans = {
 	}
 
 	invalid_trigger = {
-		NOT = { hre_size = 1 }
+		OR = {
+			NOT = { hre_size = 1 }
+			event_target:agenda_country = {
+				exists = no
+			}
+		}
 	}
 }
 
@@ -3194,10 +3223,22 @@ estate_burghers_luna_escort_caravans = {
 		}
 	}
 	task_requirements = {
-		event_target:agenda_province = {
-			num_of_units_in_province = {
-				who = ROOT
-				amount = 5
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_burghers
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_burghers
+			}
+		}
+		else = {
+			event_target:agenda_province = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 5
+				}
 			}
 		}
 	}
@@ -3234,7 +3275,6 @@ estate_burghers_luna_appease_a_city = {
 		hre_size = 1
 		has_estate_privilege = estate_burghers_to_outsmart_and_outwit
 		has_country_flag = LRM_leader_flag
-		NOT = { has_country_flag = LRM_can_promote_luna_identity }
 		any_subject_country = {
 			is_luna_river_minor = yes
 		}
@@ -3279,7 +3319,12 @@ estate_burghers_luna_appease_a_city = {
 	}
 
 	invalid_trigger = {
-		NOT = { hre_size = 1 }
+		OR = {
+			NOT = { hre_size = 1 }
+			event_target:agenda_country = {
+				exists = no
+			}
+		}
 	}
 }
 
@@ -3311,8 +3356,20 @@ estate_burghers_luna_secure_imperial_trade = {
 		}
 	}
 	task_requirements = {
-		event_target:agenda_country = {
-			trade_embargo_by = ROOT
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_burghers
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_burghers
+			}
+		}
+		else = {
+			event_target:agenda_country = {
+				trade_embargo_by = ROOT
+			}
 		}
 	}
 	task_completed_effect = {
@@ -3336,7 +3393,12 @@ estate_burghers_luna_secure_imperial_trade = {
 	}
 
 	invalid_trigger = {
-		NOT = { hre_size = 1 }
+		OR = {
+			NOT = { hre_size = 1 }
+			event_target:agenda_country = {
+				exists = no
+			}
+		}
 	}
 }
 
@@ -3399,12 +3461,7 @@ estate_burghers_stablize_indebted_prince = {
 			loyalty = 10
 		}
 		add_imperial_influence = 3
-		event_target:agenda_country = {
-			limit = {
-				NOT = { has_country_flag = eoa_emperor_help }
-			}
-			set_country_flag = eoa_emperor_help
-		}
+		event_target:agenda_country = { set_country_flag = eoa_emperor_help }
     }
     failing_effect = {
 		on_failed_agenda_effect = yes
@@ -3603,19 +3660,20 @@ estate_burghers_emperor_combat_pirates = {
 estate_burghers_support_colonists = {
 	can_select = {
 		is_emperor = yes
-		OR = {
-			north_america = {
-				is_colony = yes
-				owner = { is_part_of_hre = yes }
+		any_province = {
+			is_colony = yes
+			OR = {
+				continent = south_america
+				continent = north_america
 			}
-			south_america = {
-				is_colony = yes
-				owner = { is_part_of_hre = yes }
+			owner = { 
+				is_part_of_hre = yes
+				NOT = { tag = ROOT }
 			}
 		}
 	}
 	selection_weight = {
-		factor = 5
+		factor = 3
 	}
 	pre_effect = {
 		random_province = {
@@ -3625,15 +3683,19 @@ estate_burghers_support_colonists = {
 					continent = south_america
 					continent = north_america
 				}
-				owner = { is_part_of_hre = yes }
+				owner = { 
+					is_part_of_hre = yes 
+					NOT = { tag = ROOT }
+				}
 			}
 			save_event_target_as = agenda_province
 			owner = { save_event_target_as = agenda_country }
 		}
 	}
 	provinces_to_highlight = {
-		province_id = event_target:agenda_province
-	}
+		is_capital = yes
+		owner = { tag = event_target:agenda_country }
+	} 
 	task_requirements = {
 		if = {
 			limit = {
@@ -3675,7 +3737,7 @@ estate_burghers_support_colonists = {
 			estate = estate_burghers
 			loyalty = 10
 		}
-		add_imperial_influence = 5
+		add_imperial_influence = 3
 		emperor = {
 			add_manpower = -5
 		}

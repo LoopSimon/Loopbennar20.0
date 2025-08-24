@@ -4715,7 +4715,7 @@ command_migration_randomness_ptm = {
 }
 command_wuhyunization_randomization_ptm = {
 	potential = { always = yes }
-	hidden = yes 
+	hidden = yes
 
 	trigger = { always = yes }
 
@@ -4728,6 +4728,87 @@ command_wuhyunization_randomization_ptm = {
 			province_event = { id = the_command.34 days = 273 random = 548 }
 		}
 		remove_province_triggered_modifier = command_wuhyunization_randomization_ptm
+	}
+}
+command_sir_revolt_fallback_ptm = {
+	potential = { always = yes }
+	hidden = yes
+
+	trigger = {
+		R62 = {
+			OR = {
+				all_war_enemy_countries = { #you won Sir Revolt due to unconditional surrender
+					OR = {
+						NOT = { is_in_war = { casus_belli = cb_revolt_of_the_north } }
+						is_subject = yes
+						capital_scope = { controller = { is_in_war = { casus_belli = cb_revolt_of_the_north defenders = THIS } } }
+					}
+				}
+				AND = { #you lost Sir Revolt due to unconditional surrender
+					4630 = { NOT = { controlled_by = R62 } }
+					4538 = { NOT = { controlled_by = R62 } }
+					4311 = { NOT = { controlled_by = R62 } }
+				}
+			}
+		}
+	}
+
+	on_activation = { #the events clear this modifier
+		R62 = {
+			if = {
+				limit = { #You won Sir Revolt due to unconditional surrender
+					all_war_enemy_countries = {
+						OR = {
+							NOT = { is_in_war = { casus_belli = cb_revolt_of_the_north } }
+							is_subject = yes
+							capital_scope = { controller = { is_in_war = { casus_belli = cb_revolt_of_the_north defenders = THIS } } }
+						}
+					}
+				}
+				country_event = { id = the_command.126 }
+			}
+			else_if = {
+				limit = { #You lost Sir Revolt due to unconditional surrender
+					4630 = { NOT = { controlled_by = R62 } }
+					4538 = { NOT = { controlled_by = R62 } }
+					4311 = { NOT = { controlled_by = R62 } }
+				}
+				country_event = { id = the_command.123 }
+			}
+		}
+	}
+}
+command_kill_tiger_fallback = { #these are in fact fallbacks, because they occur a day late
+	potential = { always = yes }
+	hidden = yes
+
+	trigger = { R67 = { capital_scope = { controlled_by = R62 } } }
+
+	on_activation = {
+		R62 = { country_event = { id = the_command.1994 } }
+		remove_province_triggered_modifier = command_kill_tiger_fallback
+	}
+}
+command_kill_elephant_fallback = {
+	potential = { always = yes }
+	hidden = yes
+
+	trigger = { R68 = { capital_scope = { controlled_by = R62 } } }
+
+	on_activation = {
+		R62 = { country_event = { id = the_command.1995 } }
+		remove_province_triggered_modifier = command_kill_elephant_fallback
+	}
+}
+command_kill_dragon_fallback = {
+	potential = { always = yes }
+	hidden = yes
+
+	trigger = { R69 = { capital_scope = { controlled_by = R62 } } }
+
+	on_activation = {
+		R62 = { country_event = { id = the_command.1996 } }
+		remove_province_triggered_modifier = command_kill_dragon_fallback
 	}
 }
 
@@ -4952,11 +5033,7 @@ Y63_hidden_behind_the_curtain = {
 
 	hidden = yes
 
-	trigger = {
-		owner = {
-			has_ruler_modifier = witch_king_modifier
-		}
-	}
+	trigger = { owner = { ruler_is_witch_king = yes } }
 
 	diplomatic_reputation = 4
 
@@ -6690,7 +6767,7 @@ corvuria_dark_lord = {
 	trigger = {
 		owner = {
 			ruler_is_vampire = yes
-			ruler_has_mage_personality = yes
+			ruler_is_powerful_mage = yes
 		}
 	}
 	global_spy_defence = 0.2
@@ -6901,4 +6978,90 @@ raj_investigation_ptm = {
 		remove_province_triggered_modifier = raj_investigation_ptm
 	}
 	hidden = yes
+}
+chaingrasper_pursuing_immortal = {
+	potential = { owned_by = H74 }
+
+	trigger = {
+		owner = { type_is_advancing_school = { type = ruler school = necromancy } }
+	}
+
+	on_deactivation = { remove_province_triggered_modifier = chaingrasper_pursuing_immortal }
+
+	global_tax_modifier = -0.25
+	necromancy_experience_mod = 0.5
+	mages_mana_regen = 0.25
+}
+
+tearfall_randomization_ptm = {
+	potential = { always = yes }
+	hidden = yes 
+
+	trigger = { always = yes }
+
+	on_activation = {
+		owner = {
+			if = {
+				limit = { has_country_modifier = evocation_2_1_cooldown_mod }
+				country_event = { id = magic_spell.500 days = 1 }
+			}
+		}
+		remove_province_triggered_modifier = tearfall_randomization_ptm
+	}
+}
+
+rite_of_conception_randomization_ptm = {
+	potential = { always = yes }
+	hidden = yes 
+
+	trigger = { always = yes }
+
+	on_activation = {
+		owner = {
+			if = {
+				limit = { has_country_modifier = transmutation_3_0_cooldown_mod }
+				random_list = {
+					33 = { country_event = { id = magic_spell.800 days = 240 random = 60 } }
+					33 = { country_event = { id = magic_spell.801 days = 240 random = 60 } }
+					33 = {
+						trigger = {
+							NOT = {
+								has_country_flag = tughayasa_reward
+								has_country_flag = tughayasa_reward_primary
+							}
+						}
+						country_event = { id = magic_spell.802 days = 240 random = 60 }
+					}
+					1 = {
+						trigger = {
+							NOT = {
+								has_country_flag = tughayasa_reward
+								has_country_flag = tughayasa_reward_primary
+							}
+						}
+						country_event = { id = magic_spell.804 days = 240 random = 60 }
+					}
+				}
+			}
+		}
+		remove_province_triggered_modifier = rite_of_conception_randomization_ptm
+	}
+}
+
+seek_patron_randomisation_ptm = {
+	potential = { always = yes }
+	hidden = yes
+	trigger = { always = yes }
+	on_activation = {
+		owner = {
+			if = {
+				limit = { has_country_flag = seek_patron_randomisation_ptm_Y26 }
+				country_event = { id = patrons_on_action.1 days = 1 }
+			}
+			else = {
+				country_event = { id = magic_project_summoning.1 days = 1 }
+			}
+		}
+		remove_province_triggered_modifier = seek_patron_randomisation_ptm
+	}
 }

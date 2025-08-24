@@ -91,6 +91,26 @@ province_event = {
 				}
 			}
 		}
+
+		every_country = {
+			limit = { 
+				OR = {
+					has_country_modifier = triunic_mass_pilgrimage
+					has_country_modifier = triunic_local_mass_pilgrimage
+					has_country_modifier = triunic_pilgrims_prevented
+					has_country_modifier = triunic_local_pilgrims_laden_with_goods
+					has_country_modifier = triunic_pilgrims_laden_with_goods
+				}
+			}
+			remove_country_modifier = triunic_mass_pilgrimage
+			remove_country_modifier = triunic_local_mass_pilgrimage
+			remove_country_modifier = triunic_pilgrims_prevented
+			remove_country_modifier = triunic_local_pilgrims_laden_with_goods
+			remove_country_modifier = triunic_pilgrims_laden_with_goods
+			# maybe add an event just to inform the target that the modifier is gone
+		}
+		
+		
 	}
 	
 	option = {
@@ -637,7 +657,7 @@ country_event = {
 }
 
 #Pirates caught Fleet sneaking
-province_event = {
+country_event = {
 	id = treasurefleet.11
 	title = treasurefleet.11.t
 	desc = {
@@ -654,7 +674,7 @@ province_event = {
 	
 	option = {
 		name = treasurefleet.11.a
-		owner = { add_treasury = 40 }
+		add_treasury = 40
 		JY_LF_damage_ship = yes
 		custom_tooltip = JY_LF_P_caught_t
 	}
@@ -1039,6 +1059,124 @@ province_event = {
 	}
 }
 
+province_event = {
+	id = treasurefleet.26
+	title = treasurefleet.26.t
+	desc = treasurefleet.26.d
+	picture = TREASURE_FLEET_SHIP_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		JY_LF_visit = yes
+		# only once per country!
+		owner = {
+			set_country_flag = triunic_had_kalyin_preachers
+		}
+	}
+
+	option = {
+		name = treasurefleet.26.a
+		trigger = {
+			owner = {
+				NOT = {
+					AND = {
+						is_or_was_tag = {
+							tag = Y15
+						}
+						owns = 4907
+					}
+					
+				}
+			}
+		}
+		# no Kalyin fun times for AI in Haless
+		ai_chance = {
+			factor = 0
+		}
+		owner = {
+			change_religion = kalyin_worshippers
+			add_prestige = -100
+			add_country_modifier = {
+				name = triunic_kalyins_truth_revealed
+				duration = 20
+			}
+		}
+		JY_LF_trade = yes
+
+		change_religion = kalyin_worshippers
+	}
+
+	option = {
+		name = treasurefleet.26.b
+		trigger = {
+			owner = {
+				is_or_was_tag = {
+					tag = Y15 # Beikdugang (country)
+				}
+				owns = 4907 # Beikdugang (province)
+			}
+		}
+
+		ai_chance = {
+			factor = 7 # ~10% chance
+		}
+
+		highlight = yes
+
+		owner = {
+			change_religion = kalyin_worshippers
+			add_prestige = -100
+			add_country_modifier = {
+				name = triunic_kalyins_truth_revealed
+				duration = 20
+			}
+			add_harmonized_religion = yukel_followers 	
+		}
+
+		change_religion = kalyin_worshippers
+
+		add_reform_center = kalyin_worshippers
+		
+		custom_tooltip = triunic_kalyin_yanshen_tt
+		set_global_flag = triunic_kalyin_yanshen
+		JY_LF_trade = yes
+
+	}
+
+	option = {
+		ai_chance = {
+			factor = 33
+		}
+		name = treasurefleet.26.c
+		add_building = cathedral
+		change_religion = kalyin_worshippers
+		add_province_modifier = {
+			name = triunic_tolerated_foreign_missionaries
+			duration = -1
+		}
+		JY_LF_trade = yes
+
+	}
+
+	option = {
+		name = treasurefleet.26.e
+		ai_chance = {
+			factor = 33
+		}
+		owner = {
+			add_mil_power = 60
+			random_country = {
+				limit = { owns = 5226 }
+				add_opinion = {
+					who = PREV
+					modifier = opinion_triunic_preachers_banned
+				}
+			}
+		}
+	}
+}
+
 #Decide next location
 province_event = {
 	id = treasurefleet.90
@@ -1356,14 +1494,30 @@ province_event = {
 						5 = {		#need to keep this rare, but if more events get made should bump this up a bit
 							modifier = {
 								factor = 0
-								NOT = {
-									owner = {
+								owner = {
+									OR = {
 										has_country_modifier = racial_pop_centaur_expulsion
 										has_country_modifier = racial_pop_centaur_purge
 									}
 								}
 							}
 							province_event = { id = treasurefleet.25 days = 30 }
+						}
+						100 = { #  
+							modifier = {
+								factor = 0
+								OR = {
+									5226 = {
+										owner = {
+											NOT = { religion = kalyin_worshippers }
+										}
+									}
+									owner = {
+										has_country_flag = triunic_had_kalyin_preachers
+									}
+								}
+							}
+							province_event = { id = treasurefleet.26 days = 30}
 						}
 						1 = { province_event = { id = treasurefleet.8 days = 30 } } #Normal Encounter (included in case no other flavor event is possible)
 					}
@@ -1564,6 +1718,58 @@ country_event = {
 		if = {
 			limit = { has_global_flag = JY_LF_monopoly_Y15 } #Beikdugang MT
 			custom_tooltip = JY_LF_Y15_monopoly
+		}
+		hidden_effect = {
+			every_country = {
+				limit = {
+					has_country_flag = triunic_treasure_fleet_festival_bonus
+				}
+				set_variable = {
+					which = triunic_fleet_festival_bonus
+					which = JY_LF_ports
+				}
+				if = {
+					limit = {
+						AND = {
+							owns = 5226
+							has_country_flag = triunic_treasure_fleet_festival_big_bonus
+						}
+					}
+					multiply_variable = {
+						which = triunic_fleet_festival_bonus
+						value = 20
+					}
+					clr_country_flag = triunic_treasure_fleet_festival_big_bonus
+				} 
+				else_if = {
+					limit = {
+						owns = 5226
+					}
+					multiply_variable = {
+						which = triunic_fleet_festival_bonus
+						value = 5
+					}
+				} 
+				else_if = {
+					limit = {
+						has_country_flag = triunic_treasure_fleet_festival_big_bonus
+					}
+					multiply_variable = {
+						which = triunic_fleet_festival_bonus
+						value = 25
+					}
+					clr_country_flag = triunic_treasure_fleet_festival_big_bonus
+				} 
+				else = {
+					multiply_variable = {
+						which = triunic_fleet_festival_bonus
+						value = 10
+					}
+				}
+				currency_effect = { currency=treasury addTo=THIS which=triunic_fleet_festival_bonus }
+				clr_country_flag = triunic_treasure_fleet_festival_bonus
+
+			}	
 		}
 		#if = { #Sovkelqur MT
 		#	limit = { 

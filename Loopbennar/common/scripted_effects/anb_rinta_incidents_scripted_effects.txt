@@ -92,3 +92,643 @@ remove_infernal_resonance = {
 		}	
 	}
 }
+
+rinta_get_telescope_multiplier = {
+	export_to_variable = {
+		which = $variable$
+		value = modifier:telescope_investment_efficency
+		who = event_target:night_sky_country_target #Using ROOT instead doesn't work if anyone's curious
+	}
+	change_variable = {
+		which = $variable$
+		value = 1
+	}
+	[[value] #For flat amounts
+		multiply_variable = {
+			which = $variable$
+			value = $value$
+		}
+	]
+	[[which] #For dynamic amounts (everything else)
+		multiply_variable = {
+			which = $variable$
+			which = $which$
+		}
+	]
+}
+
+#amount is for flat amounts
+#years_of_income is for investing based on your years of income
+#level is for an amount based on the different telescope levels 
+#	- MUST USE _ INSTEAD OF DECIMAL POINTS, EX. 0_5 INSTEAD OF 0.5 
+#	- Only supports 0.25, 0.75, and multiples of 0.5 from 0 to 5
+#all is to invest all your money
+#half is to invest half your money
+
+#pay = yes if you want players to lose the cash they're investing
+rinta_invest_in_telescope = {
+	hidden_effect = { save_event_target_as = night_sky_country_target }
+	[[amount] #Invest a certain amount
+		custom_tooltip = rinta_invest_in_telescope_$amount$_tt
+		hidden_effect = {
+			6678 = { #Qasri Maroodiqya
+				rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+					variable = rinta_telescope_amount_raised_multiplier
+					value = $amount$
+				}
+				change_variable = { #Update the total amount raised
+					which = rinta_telescope_amount_raised
+					which = rinta_telescope_amount_raised_multiplier
+				}
+			}
+			rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+				variable = rinta_telescope_amount_raised_multiplier
+				value = $amount$
+			}
+			change_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				which = rinta_telescope_amount_raised_multiplier
+			}
+			
+			set_country_flag = rinta_telescope_triggered_amount #To remove the right cash
+		}
+	]
+	[[years_of_income] #Invest a certain number of years of income
+		custom_tooltip = rinta_invest_in_telescope_$years_of_income$_yoi_tt
+		hidden_effect = {
+			6678 = { #Qasri Maroodiqya
+				export_to_variable = { #Set the amount being invested to 1 yoi
+					which = sky_incident_treasury_temp
+					value = years_of_income
+					who = PREV
+				}
+				multiply_variable = { #Set the amount being invested to however many yoi are wanted
+					which = sky_incident_treasury_temp
+					value = $years_of_income$
+				}
+				rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+					variable = rinta_telescope_amount_raised_multiplier
+					which = sky_incident_treasury_temp
+				}
+				change_variable = { #Update the total amount raised
+					which = rinta_telescope_amount_raised
+					which = rinta_telescope_amount_raised_multiplier
+				}
+			}
+			export_to_variable = {
+				which = sky_incident_treasury_country_temp
+				value = years_of_income
+			}
+			multiply_variable = { #Set the amount being invested to however many yoi are wanted
+				which = sky_incident_treasury_country_temp
+				value = $years_of_income$
+			}
+			rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+				variable = rinta_telescope_amount_raised_multiplier
+				which = sky_incident_treasury_country_temp
+			}
+			change_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				which = rinta_telescope_amount_raised_multiplier
+			}
+		}
+	]
+	[[all] #Invest all of your country's money
+		custom_tooltip = rinta_invest_in_telescope_all_tt
+		hidden_effect = {
+			6678 = { #Qasri Maroodiqya
+				export_to_variable = { #Set the amount being invested to your treasury
+					which = sky_incident_treasury_temp
+					value = treasury
+					who = PREV
+				}
+				rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+					variable = rinta_telescope_amount_raised_multiplier
+					which = sky_incident_treasury_temp
+				}
+				change_variable = { #Update the total amount raised
+					which = rinta_telescope_amount_raised
+					which = rinta_telescope_amount_raised_multiplier
+				}
+			}
+			export_to_variable = {
+				which = sky_incident_treasury_country_temp
+				value = treasury
+			}
+			rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+				variable = rinta_telescope_amount_raised_multiplier
+				which = sky_incident_treasury_country_temp
+			}
+			change_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				which = rinta_telescope_amount_raised_multiplier
+			}
+		}
+	]
+	[[half] #Invest 1/2 your country's money
+		custom_tooltip = rinta_invest_in_telescope_half_tt
+		hidden_effect = {
+			6678 = { #Qasri Maroodiqya
+				export_to_variable = {
+					which = sky_incident_treasury_temp
+					value = treasury
+					who = PREV
+				}
+				divide_variable = { #Set the amount being invested to half your treasury
+					which = sky_incident_treasury_temp
+					value = 2
+				}
+				rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+					variable = rinta_telescope_amount_raised_multiplier
+					which = sky_incident_treasury_temp
+				}
+				change_variable = { #Update the total amount raised
+					which = rinta_telescope_amount_raised
+					which = rinta_telescope_amount_raised_multiplier
+				}
+			}
+			export_to_variable = {
+				which = sky_incident_treasury_country_temp
+				value = treasury
+			}
+			divide_variable = { #Set the amount being invested to half your treasury
+				which = sky_incident_treasury_country_temp
+				value = 2
+			}
+			rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+				variable = rinta_telescope_amount_raised_multiplier
+				which = sky_incident_treasury_country_temp
+			}
+			change_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				which = rinta_telescope_amount_raised_multiplier
+			}
+		}
+	]
+	[[level] #Invest based on level of telescope
+		custom_tooltip = rinta_invest_in_telescope_level_$level$_tt
+		hidden_effect = {
+			6678 = { #Qasri Maroodiqya
+				rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+					variable = rinta_telescope_amount_raised_multiplier
+					which = rinta_telescope_lvl_$level$_cost
+				}
+				change_variable = { #Update the total amount raised
+					which = rinta_telescope_amount_raised
+					which = rinta_telescope_amount_raised_multiplier
+				}
+			}
+			rinta_get_telescope_multiplier = { #Change the amount invested by your multiplier
+				variable = rinta_telescope_amount_raised_multiplier
+				which = rinta_telescope_lvl_$level$_cost
+			}
+			change_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				which = rinta_telescope_amount_raised_multiplier
+			}
+			set_variable = { #So if cash is removed with the var_effect it doesn't change the level cost itself
+				which = sky_incident_treasury_country_temp
+				which = rinta_telescope_lvl_$level$_cost
+			}
+		}
+	]
+
+	[[pay] #Remove amount of cash as needed
+		custom_tooltip = rinta_pay_investment_tt
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = rinta_telescope_triggered_amount }
+				add_treasury = -$amount$
+			}
+			else = {
+				var_effect = {
+					var = sky_incident_treasury_country_temp
+					effect = add_treasury
+					sign = -
+				}
+			}
+			clr_country_flag = rinta_telescope_triggered_amount
+		}
+	]
+	rinta_check_telescope_invest_level = yes
+}
+
+#For level investment 
+#	- MUST USE _ INSTEAD OF DECIMAL POINTS, EX. 0_5 INSTEAD OF 0.5 
+#	- Only supports 0.25 and multiples of 0.5 from 0 to 5
+#refund = yes to get the money back
+#Does not reduce the total amount invested just your contribution to it
+#Is not affected by your multipliers
+rinta_reduce_investment_in_telescope = {
+	[[amount] #Invest a certain amount
+		custom_tooltip = rinta_reduce_investment_in_telescope_$amount$_tt
+		hidden_effect = {
+			subtract_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				value = $amount$
+			}
+
+			set_country_flag = rinta_telescope_triggered_amount #To remove the right cash
+		}
+	]
+	[[years_of_income] #Invest a certain number of years of income
+		custom_tooltip = rinta_reduce_investment_in_telescope_$years_of_income$_yoi_tt
+		hidden_effect = {
+			export_to_variable = {
+				which = sky_incident_treasury_country_temp
+				value = years_of_income
+			}
+			multiply_variable = { #Set the amount being invested to however many yoi are wanted
+				which = sky_incident_treasury_country_temp
+				value = $years_of_income$
+			}
+			subtract_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				which = sky_incident_treasury_country_temp
+			}
+		}
+	]
+	[[all] #Invest all of your country's money
+		custom_tooltip = rinta_reduce_investment_in_telescope_all_tt
+		hidden_effect = {
+			export_to_variable = {
+				which = sky_incident_treasury_country_temp
+				value = treasury
+			}
+			subtract_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				which = sky_incident_treasury_country_temp
+			}
+		}
+	]
+	[[half] #Invest 1/2 your country's money
+		custom_tooltip = rinta_reduce_investment_in_telescope_half_tt
+		hidden_effect = {
+			export_to_variable = {
+				which = sky_incident_treasury_country_temp
+				value = treasury
+			}
+			divide_variable = { #Set the amount being invested to half your treasury
+				which = sky_incident_treasury_country_temp
+				value = 2
+			}
+			subtract_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				which = sky_incident_treasury_country_temp
+			}
+		}
+	]
+	[[level] #Invest based on level of telescope
+		custom_tooltip = rinta_reduce_investment_in_telescope_level_$level$_tt
+		hidden_effect = {
+			subtract_variable = { #Update your total amount raised
+				which = rinta_telescope_amount_invested
+				which = rinta_telescope_lvl_$level$_cost
+			}
+			set_variable = {
+				which = sky_incident_treasury_country_temp
+				which = rinta_telescope_lvl_$level$_cost
+			}
+		}
+	]
+
+	[[refund] #To refund the cash if desired
+		custom_tooltip = rinta_refund_investment_tt
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = rinta_telescope_triggered_amount }
+				add_treasury = $amount$
+			}
+			else = {
+				var_effect = {
+					var = sky_incident_treasury_country_temp
+					effect = add_treasury
+					sign = +
+				}
+			}
+			clr_country_flag = rinta_telescope_triggered_amount
+		}
+	]
+	rinta_check_telescope_invest_level = yes
+}
+
+rinta_check_telescope_invest_level = {
+	hidden_effect = {
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_0_25_cost } }
+			set_country_flag = rinta_telescope_lvl_0_25_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_0_25_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_0_5_cost } }
+			set_country_flag = rinta_telescope_lvl_0_5_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_0_5_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_0_75_cost } }
+			set_country_flag = rinta_telescope_lvl_0_75_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_0_75_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_1_cost } }
+			set_country_flag = rinta_telescope_lvl_1_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_1_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_1_5_cost } }
+			set_country_flag = rinta_telescope_lvl_1_5_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_1_5_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_2_cost } }
+			set_country_flag = rinta_telescope_lvl_2_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_2_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_2_5_cost } }
+			set_country_flag = rinta_telescope_lvl_2_5_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_2_5_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_3_cost } }
+			set_country_flag = rinta_telescope_lvl_3_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_3_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_3_5_cost } }
+			set_country_flag = rinta_telescope_lvl_3_5_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_3_5_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_4_cost } }
+			set_country_flag = rinta_telescope_lvl_4_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_4_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_4_5_cost } }
+			set_country_flag = rinta_telescope_lvl_4_5_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_4_5_reached_flag }
+		if = { 
+			limit = { check_variable = { which = rinta_telescope_amount_invested which = rinta_telescope_lvl_5_cost } }
+			set_country_flag = rinta_telescope_lvl_5_reached_flag
+		}
+		else = { clr_country_flag = rinta_telescope_lvl_5_reached_flag }
+	}
+}
+
+rinta_steal_funds_event_effect = {
+	if = {
+		limit = { has_global_flag = rinta_supercharge_stealing_funds_flag }
+		add_spy_network_in = {
+			who = event_target:$event_target$
+			value = -20
+		}
+	}
+	else = {
+		add_spy_network_in = {
+			who = event_target:$event_target$
+			value = -35
+		}
+	}
+	rinta_invest_in_telescope = { level = 0_5 }
+	event_target:$event_target$ = {
+		tooltip = {
+			add_opinion = {
+				who = ROOT
+				modifier = rinta_stole_astronomy_funds
+			}
+			add_casus_belli = {
+				type = cb_spy_discovered
+				target = ROOT
+				months = 60 #5 years
+			}
+		}
+		country_event = {
+			id = rinta_seeker_events.520 #Astronomical Center Funds Stolen
+		}
+	}
+	set_country_flag = stole_telescope_funds_flag #Reset decision cooldown
+}
+
+rinta_lutns_incident_events = {
+	random_list = {
+		100 = { 
+			country_event = { id = rinta_seeker_events.521 days = $days$ } #Embezzled Astronomical Funds
+			modifier = { factor = 2 corruption = 1 }
+			modifier = { factor = 2 corruption = 2 }
+			modifier = { factor = 2 corruption = 5 }
+			modifier = { factor = 2 corruption = 10 }
+			modifier = { factor = 0.5 ruler_has_personality = well_connected_personality }
+			modifier = { factor = 0.5 ruler_has_personality = well_advised_personality }
+			modifier = { factor = 0.5 ruler_has_personality = incorruptible_personality }
+			modifier = { factor = 2 ruler_has_personality = naive_personality }
+			modifier = { factor = 2 ruler_has_personality = embezzler_personality }
+			modifier = { factor = 3 has_global_flag = rinta_supercharge_stealing_funds_flag }
+		}
+		200 = { 
+			country_event = { id = rinta_seeker_events.522 days = $days$ } #Stole Astronomical Funds - AI Only
+			modifier = { factor = 3 has_global_flag = rinta_supercharge_stealing_funds_flag }
+		} 
+		200 = { 
+			country_event = { id = rinta_seeker_events.523 days = $days$ } #Increased Cooperation?
+			modifier = { factor = 2 6678 = { check_variable = { which = rinta_stole_funds_var value = 1 } } }
+			modifier = { factor = 2 6678 = { check_variable = { which = rinta_stole_funds_var value = 2 } } }
+			modifier = { factor = 2 6678 = { check_variable = { which = rinta_stole_funds_var value = 3 } } }
+			modifier = { factor = 2 6678 = { check_variable = { which = rinta_stole_funds_var value = 4 } } }
+			modifier = { factor = 2 6678 = { check_variable = { which = rinta_stole_funds_var value = 5 } } }
+			modifier = { factor = 0.5 ruler_has_personality = malevolent_personality }
+			modifier = { factor = 0.5 ruler_has_personality = greedy_personality }
+			modifier = { factor = 0.5 ruler_has_personality = silver_tongue_personality }
+			modifier = { factor = 0.5 ruler_has_personality = intricate_web_weaver_personality }
+			modifier = { factor = 0.5 ruler_has_personality = secretive_personality }
+			modifier = { factor = 2 ruler_has_personality = naive_personality }
+			modifier = { factor = 2 ruler_has_personality = fierce_negotiator_personality }
+			modifier = { factor = 2 ruler_has_personality = charismatic_negotiator_personality }
+			modifier = { factor = 2 ruler_has_personality = benevolent_personality }
+			modifier = { factor = 2 ruler_has_personality = free_thinker_personality }
+		} 
+		50 = { 
+			country_event = { id = rinta_seeker_events.524 days = $days$ } #The Gods Arent Dead
+			modifier = {
+				factor = 2
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					local_autonomy = 25
+				}
+			}
+			modifier = {
+				factor = 2
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					local_autonomy = 50
+				}
+			}
+			modifier = {
+				factor = 2
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					local_autonomy = 75
+				}
+			}
+			modifier = {
+				factor = 2
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					local_autonomy = 100
+				}
+			}
+			modifier = {
+				factor = 2
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					unrest = 1
+				}
+			}
+			modifier = {
+				factor = 2
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					unrest = 4
+				}
+			}
+			modifier = {
+				factor = 2
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					unrest = 8
+				}
+			}
+			modifier = {
+				factor = 2
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					unrest = 10
+				}
+			}
+			modifier = {
+				factor = 10 #Is Habab Zar or Genie Cult
+				any_owned_province = { OR = { religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city } }
+			}
+			modifier = { factor = 0.5 ruler_has_personality = zealot_personality }
+			modifier = { factor = 0.5 ruler_has_personality = pious_personality }
+			modifier = {
+				factor = 0.5
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					development = 10
+				}
+			}
+			modifier = {
+				factor = 0.5
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					development = 20
+				}
+			}
+			modifier = {
+				factor = 0.5
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					development = 30
+				}
+			}
+			modifier = {
+				factor = 0.5
+				any_owned_province = {
+					OR = { religion = rinta_seekers religion = habab_zar religion = genie_cult } NOT = { has_province_modifier = RS_fears_put_to_rest has_province_modifier = RS_hysterical_city }
+					development = 40
+				}
+			}
+		} 
+		50 = { 
+			country_event = { id = rinta_seeker_events.525 days = $days$ } #A Terror-Filled Cult Emerges
+			modifier = { factor = 2 religious_unity = 0.75 }
+			modifier = { factor = 2 religious_unity = 0.5 }
+			modifier = { factor = 2 religious_unity = 0.25 }
+			modifier = { factor = 0.5 ruler_has_personality = zealot_personality }
+			modifier = { factor = 0.5 ruler_has_personality = pious_personality }
+			modifier = { factor = 2 stability = -1 }
+			modifier = { factor = 2 stability = -2 }
+			modifier = { factor = 2 stability = -3 }
+			modifier = { factor = 0.5 stability = 1 }
+			modifier = { factor = 0.5 stability = 2 }
+			modifier = { factor = 0.5 stability = 3 }
+		} 
+		200 = { 
+			country_event = { id = rinta_seeker_events.527 days = $days$ } #Sinful Donation
+			modifier = { factor = 2 rinta_has_invested_level_in_telescope = { level = 1 } }
+			modifier = { factor = 2 rinta_has_invested_level_in_telescope = { level = 2 } }
+			modifier = { factor = 2 rinta_has_invested_level_in_telescope = { level = 3 } }
+			modifier = {
+				factor = 2
+				OR = {
+					has_estate_privilege = estate_church_donation_right
+					has_estate_privilege = estate_church_monopoly_of_incense
+					has_estate_privilege = estate_church_monopoly_of_wool
+					has_estate_privilege = estate_church_monopoly_of_wine
+					has_estate_privilege = estate_church_monopoly_of_slaves
+				}
+			}
+			modifier = { factor = 0.75 estate_loyalty = { estate = estate_church loyalty = 30 } }
+			modifier = { factor = 0.5 estate_loyalty = { estate = estate_church loyalty = 60 } }
+		} 
+		50 = { 
+			country_event = { id = rinta_seeker_events.528 days = $days$ } #Pious Merchant Passes
+			modifier = { factor = 2 estate_loyalty = { estate = estate_burghers loyalty = 30 } }
+			modifier = { factor = 2 estate_loyalty = { estate = estate_burghers loyalty = 60 } }
+			modifier = { factor = 0.25 NOT = { estate_influence = { estate = estate_burghers influence = 30 } } }
+			modifier = { factor = 4 estate_influence = { estate = estate_burghers influence = 50 } }
+			modifier = { factor = 0.25 has_estate_loan = yes }
+		} 
+		200 = { 
+			country_event = { id = rinta_seeker_events.529 days = $days$ } #Strong Merfolk Ties Pay Off
+			modifier = { factor = 2 any_owned_province = { has_province_modifier = offcoast_merfolk_allied } }
+			modifier = { factor = 2 num_of_owned_provinces_with = { value = 2 has_province_modifier = offcoast_merfolk_allied } }
+			modifier = { factor = 2 num_of_owned_provinces_with = { value = 3 has_province_modifier = offcoast_merfolk_allied } }
+			modifier = { factor = 2 num_of_owned_provinces_with = { value = 4 has_province_modifier = offcoast_merfolk_allied } }
+			modifier = { factor = 2 num_of_owned_provinces_with = { value = 5 has_province_modifier = offcoast_merfolk_allied } }
+		} 
+		100 = { 
+			country_event = { id = rinta_seeker_events.530 days = $days$ } #Local Clergy Takes Incentive
+			modifier = { factor = 0.25 NOT = { estate_loyalty = { estate = estate_church loyalty = 30 } } }
+			modifier = { factor = 2 estate_loyalty = { estate = estate_church loyalty = 30 } }
+			modifier = { factor = 2 estate_loyalty = { estate = estate_church loyalty = 60 } }
+		} 
+		100 = { 
+			country_event = { id = rinta_seeker_events.531 days = $days$ } #Nobles Take Their Due
+			modifier = { factor = 2 NOT = { estate_loyalty = { estate = estate_nobles loyalty = 30 } } }
+			modifier = { factor = 0.5 estate_loyalty = { estate = estate_nobles loyalty = 30 } }
+			modifier = { factor = 0.5 estate_loyalty = { estate = estate_nobles loyalty = 60 } }
+			modifier = { factor = 0.25 NOT = { estate_influence = { estate = estate_nobles influence = 30 } } }
+			modifier = { factor = 4 estate_influence = { estate = estate_nobles influence = 50 } }
+		} 
+		200 = { 
+			country_event = { id = rinta_seeker_events.532 days = $days$ } #Cracks in The System
+			modifier = { factor = 2 corruption = 1 }
+			modifier = { factor = 2 corruption = 2 }
+			modifier = { factor = 2 corruption = 5 }
+			modifier = { factor = 2 corruption = 10 }
+			modifier = { factor = 2 inflation = 1 }
+			modifier = { factor = 2 inflation = 2 }
+			modifier = { factor = 2 inflation = 5 }
+			modifier = { factor = 2 inflation = 10 }
+			modifier = { factor = 2 religious_unity = 0.75 }
+			modifier = { factor = 2 religious_unity = 0.5 }
+			modifier = { factor = 2 religious_unity = 0.25 }
+			modifier = { factor = 2 religious_unity = 0.1 }
+			modifier = { 
+				factor = 2 
+				NOT = { corruption = 1 }
+				NOT = { inflation = 1 }
+				religious_unity = 0.95
+			}
+			modifier = { factor = 0.5 ruler_has_personality = obsessive_perfectionist_personality }
+			modifier = { factor = 0.5 ruler_has_personality = silver_tongue_personality }
+			modifier = { factor = 0.5 ruler_has_personality = entrepreneur_personality }
+			modifier = { factor = 2 ruler_has_personality = drunkard_personality } #Indulgent
+			modifier = { factor = 2 ruler_has_personality = zealot_personality }
+			modifier = { factor = 2 ruler_has_personality = babbling_buffoon_personality }
+		} 
+	}
+}

@@ -4082,9 +4082,21 @@ estate_nobles_luna_denounce_the_enemies_of_emperor = {
 		factor = 4
 	}
 	task_requirements = {
-		emperor = {
-			all_rival_country = {
-				has_been_insulted_by_root = yes
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_nobles
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_nobles
+			}
+		}
+		else = {
+			emperor = {
+				all_rival_country = {
+					has_been_insulted_by_root = yes
+				}
 			}
 		}
 	}
@@ -4134,14 +4146,26 @@ estate_nobles_luna_court_the_electors = {
 		factor = 4
 	}
 	task_requirements = {
-		calc_true_if = {
-			all_elector = {
-				has_opinion = {
-					who = ROOT
-					value = 100
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_nobles
 				}
 			}
-			amount = 3
+			has_estate_agenda_auto_completion = {
+				estate = estate_nobles
+			}
+		}
+		else = {
+			calc_true_if = {
+				all_elector = {
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
+				}
+				amount = 3
+			}
 		}
 	}
 	task_completed_effect = {
@@ -4208,12 +4232,24 @@ estate_nobles_luna_represent_before_court = {
 		factor = 50
 	}
 	task_requirements = {
-		emperor = {
-			has_10_opinion_sent_gift = { target = ROOT }
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_nobles
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_nobles
+			}
 		}
-		event_target:agenda_province = {
-			owner = {
+		else = {
+			emperor = {
 				has_10_opinion_sent_gift = { target = ROOT }
+			}
+			event_target:agenda_province = {
+				owner = {
+					has_10_opinion_sent_gift = { target = ROOT }
+				}
 			}
 		}
 	}
@@ -4257,11 +4293,23 @@ estate_nobles_luna_reinforce_emperor = {
 		factor = 50
 	}
 	task_requirements = {
-		emperor = {
-			capital_scope = {
-				num_of_units_in_province = {
-					who = ROOT
-					amount = 5
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_nobles
+				}
+			}
+			has_estate_agenda_auto_completion = {
+				estate = estate_nobles
+			}
+		}
+		else = {
+			emperor = {
+				capital_scope = {
+					num_of_units_in_province = {
+						who = ROOT
+						amount = 5
+					}
 				}
 			}
 		}
@@ -4291,11 +4339,9 @@ estate_nobles_luna_reinforce_emperor = {
 estate_nobles_imperial_land = {
 	can_select = {
 		is_emperor = yes
-		europe = {
+		any_province = {
 			is_part_of_hre = yes
-			owner = {
-				NOT = { is_part_of_hre = yes }
-			}
+			owner = { NOT = { is_part_of_hre = yes } }
 		}
 		NOT = { wyvernheart_is_floodborn_council = yes }
 	}
@@ -4362,7 +4408,7 @@ estate_nobles_imperial_land = {
 estate_nobles_unlawful_territory = {
 	can_select = {
 		is_emperor = yes
-		europe = {
+		any_province = {
 			is_part_of_hre = yes
 			has_province_modifier = unlawful_territory
 		}
@@ -4372,7 +4418,7 @@ estate_nobles_unlawful_territory = {
 		factor = 5
 	}
 	provinces_to_highlight = {
-        province_id = event_target:agenda_province
+        province_id = event_target:agenda_province_unlawful
 	}
 	pre_effect = {
 		random_province = {
@@ -4385,6 +4431,7 @@ estate_nobles_unlawful_territory = {
 				set_country_flag = eoa_unlawful_owner
 			}
 		}
+		add_claim = event_target:agenda_province_unlawful
 	}
 	task_requirements = {
 		if = {

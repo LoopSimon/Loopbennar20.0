@@ -27,13 +27,14 @@ wisdom_beyond_honor = {
 
 	effect = {
 		if = {
-			limit = { ruler_has_personality = mage_personality }
-			custom_tooltip = wisdom_beyond_honor_effect_2_tt
+			limit = { ruler_is_powerful_mage = yes }
+			change_mana = { amount = 100 }
 		}
 		else = {
 			custom_tooltip = wisdom_beyond_honor_effect_tt
+			hidden_effect = { country_event = { id = spirits.605 } }
 		}
-		hidden_effect = { country_event = { id = spirits.605 } }
+		hidden_effect = { add_ruler_modifier = { name = dvp_devoured_mod duration = 1825 } }
 	}
 
 	modifier = { war_exhaustion = 0.1 }
@@ -71,22 +72,7 @@ barter_with_dark_spirits = {
 					1 = { add_mil_power = 100 }
 				}
 			}
-			else = {
-				random_list = {
-					1 = {
-						trigger = { NOT = { adm = 6 } }
-						change_adm = 1
-					}
-					1 = {
-						trigger = { NOT = { dip = 6 } }
-						change_dip = 1
-					}
-					1 = {
-						trigger = { NOT = { mil = 6 } }
-						change_mil = 1
-					}
-				}
-			}
+			else = { add_random_ruler_skill = yes }
 			add_or_extend_ruler_modifier = { name = dvp_devoured_mod duration = 1825 }
 		}
 	}
@@ -127,10 +113,7 @@ witches_and_shamans = {
 
 	effect = {
 		custom_tooltip = witches_and_shamans_effect_tt
-		hidden_effect = {
-			reduce_stability_or_adm_power = yes
-			create_war_wizard_effect = yes
-		}
+		hidden_effect = { create_war_wizard = yes }
 	}
 
 	modifier = { stability_cost_modifier = 0.2 }
@@ -143,7 +126,7 @@ advocation_of_chi_stealers = {
 
 	potential = {
 		has_country_flag = devouring_life_extension_unlocked
-		NOT = { ruler_is_immortal = yes }
+		ruler_is_not_immortal = yes #Its pointless if you go lich or vampire
 		NOT = { has_ruler_flag = dvp_life_extension_5 }
 	}
 
@@ -188,8 +171,33 @@ advocation_of_chi_stealers = {
 	ai_will_do = { factor = 15 }
 }
 
+from_beyond_preview = {
+	cost = 200
+	potential = { NOT = { num_of_aspects = 1 } }
 
+	effect = {
+		custom_tooltip = devouring_path_need_one_aspect_tt
+		hidden_effect = {
+			remove_church_aspect = from_beyond_preview
+			country_event = { id = spirits.607 }
+		}
+	}
 
+	modifier = { global_monthly_devastation = 0.05 }
+
+	ai_will_do = { factor = 0 }
+}
+
+from_beyond = {
+	cost = 200
+	potential = { num_of_aspects = 1 }
+
+	effect = { set_country_flag = devouring_path_damestear_bypass_flag country_event = { id = damestear.4 } }
+
+	modifier = { global_monthly_devastation = 0.08 }
+
+	ai_will_do = { factor = 15 }
+}
 
 chroniclers_of_secret_histories = {
 	cost = 200
@@ -411,10 +419,13 @@ the_dead_serve_the_living = {
 	}
 
 	effect = {
-		add_country_modifier = {
-						name = loop_recovery3
-						duration = 365
-					}
+		if = { #Gets you a proper tooltip this way
+			limit = { has_country_modifier = slackening_modifier }
+			add_yearly_manpower = 1.5
+		}
+		else = {
+			add_yearly_manpower = 3
+		}
 	}
 
 	modifier = { movement_speed = -0.2 }

@@ -1,0 +1,516 @@
+shuvuush_1 = {
+	slot = 1
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { technology_group = tech_shuvuush }
+
+	shuvuush_to_ward = {
+		icon = per_sword_of_our_faith
+		position = 1
+
+		trigger = {
+			stability = 1
+			check_variable = { num_of_battles_won_var = 5 }
+			OR = {
+				has_personal_deity = altan
+				has_personal_deity = ulaan
+				has_personal_deity = tsagaan
+				has_personal_deity = bhengudak
+				has_personal_deity = death_mask
+				has_personal_deity = nurgai
+				has_personal_deity = personal_mask
+			}
+		}
+
+		effect = { country_event_with_insight = { id = shuvuush.100 insight_tooltip = shuvuush_to_ward_effect_tt } }
+	}
+
+	shuvuush_to_forget = {
+		icon = mission_head_on_spike
+		position = 2
+		required_missions = { shuvuush_to_ward }
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5406 #Zougzengom, Altan
+				province_id = 5341 #Nuugaam, Tsagaan
+				province_id = 5414 #Dashujuj, Ulaan
+				province_id = 5348 #Hyeonseong, Bhengudak
+				AND = {
+					province_id = 5415 #Hogunuug, Nurgai
+					has_province_modifier = saanorgegh_nurgai_mod
+				}
+				has_rebel_faction = face_stealers_rebels
+			}
+		}
+
+		trigger = {
+			calc_true_if = { #Own 2 mask origins
+				amount = 2
+				owns = 5406 #Zougzengom, Altan
+				owns = 5341 #Nuugaam, Tsagaan
+				owns = 5414 #Dashujuj, Ulaan
+				owns = 5348 #Hyeonseong, Bhengudak
+				custom_trigger_tooltip = {
+					tooltip = shuvuush_to_forget_trigger_2_tt
+					OR = {
+						AND = {
+							owns = 5415 #Hogunuug, Nurgai
+							5415 = { has_province_modifier = saanorgegh_nurgai_mod }
+						}
+					}
+				}
+			}
+			NOT = { has_spawned_rebels = face_stealers_rebels }
+			custom_trigger_tooltip = {
+				tooltip = shuvuush_to_forget_trigger_tt
+				has_country_flag = has_defeated_face_stealer
+			}
+		}
+
+		effect = {
+			custom_tooltip = shuvuush_to_forget_effect_tt
+			every_owned_province = {
+				limit = {
+					OR = {
+						province_id = 5406 #Zougzengom, Altan
+						province_id = 5341 #Nuugaam, Tsagaan
+						province_id = 5414 #Dashujuj, Ulaan
+						province_id = 5348 #Hyeonseong, Bhengudak
+						AND = {
+							province_id = 5415 #Hogunuug, Nurgai
+							has_province_modifier = saanorgegh_nurgai_mod
+						}
+					}
+				}
+				add_base_tax = 1
+				add_base_production = 1
+			}
+			hidden_effect = {
+				select_highest_dev_province_with_limit = {
+					index = 0
+					limit = "
+						NOT = { has_building = temple }
+						OR = {
+							province_id = 5406 #Zougzengom, Altan
+							province_id = 5341 #Nuugaam, Tsagaan
+							province_id = 5414 #Dashujuj, Ulaan
+							province_id = 5348 #Hyeonseong, Bhengudak
+							AND = {
+								province_id = 5415 #Hogunuug, Nurgai
+								has_province_modifier = saanorgegh_nurgai_mod
+							}
+						}
+					"
+					effect = "add_building_construction = { building = temple speed = 0.5 cost = 0 }"
+				}
+				country_event = { id = shuvuush.101 days = 365 random = 1460 }
+			}
+		}
+	}
+
+	shuvuush_to_fight = {
+		icon = mission_duel_snow
+		position = 3
+		required_missions = { shuvuush_to_forget }
+		provinces_to_highlight = { has_rebel_faction = face_stealers_rebels }
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = shuvuush_to_fight_trigger_tt
+				has_country_flag = defeated_face_stealer_host
+			}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = shuvuush_to_fight_trigger_2_tt
+					has_country_flag = defeated_face_stealer_host
+				}
+				AND = {
+					has_personal_deity = death_mask
+					is_monarch_leader = yes
+				}
+			}
+		}
+
+		effect = { country_event_with_insight = { id = shuvuush.102 insight_tooltip = shuvuush_to_fight_effect_tt } }
+	}
+}
+shuvuush_2 = {
+	slot = 2
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { technology_group = tech_shuvuush }
+
+	shuvuush_surrounded_cornered = {
+		icon = mission_face_off
+		position = 1
+		provinces_to_highlight = {
+			OR = {
+				owned_by = V01 #Oinukhudi
+				owned_by = Y93 #Danggun
+				AND = {
+					superregion = yanshen_superregion
+					is_capital = yes
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				AND = {
+					army_size = V01 #Oinukhudi
+					army_size = Y93 #Danggun
+				}
+				custom_trigger_tooltip = {
+					tooltip = shuvuush_surrounded_cornered_trigger_tt
+					has_country_flag = shuvuush_won_yanshen_war
+				}
+			}
+		}
+
+		effect = {
+			simple_dynamic_effect = {
+				first_custom_tooltip = shuvuush_surrounded_cornered_effect_req_tt
+				first_limit = "
+					NOT = {
+						AND = {
+							army_size = V01 #Oinukhudi
+							army_size = Y93 #Danggun
+							has_country_flag = shuvuush_won_yanshen_war
+						}
+					}
+				"
+				first_effect = "create_general = { tradition = 60 }"
+				second_custom_tooltip = shuvuush_surrounded_cornered_effect_req_2_tt
+				second_limit = "
+					army_size = V01 #Oinukhudi
+					army_size = Y93 #Danggun
+					has_country_flag = shuvuush_won_yanshen_war
+				"
+				second_effect = "
+					custom_tooltip = shuvuush_surrounded_cornered_effect_tt
+					hidden_effect = { create_general = { tradition = 90 add_siege = 2 } }
+				"
+			}
+		}
+	}
+
+	shuvuush_favor_yomod = {
+		icon = mission_marwari_horses
+		position = 2
+		required_missions = { shuvuush_to_ward }
+
+		trigger = {
+			check_variable = { num_tribes_agendas_completed = 2 }
+			num_of_estate_privileges = {
+				estate = estate_nomadic_tribes
+				value = 5
+			}
+			has_estate_privilege = estate_nomadic_tribes_share_of_the_spoils
+		}
+
+		effect = { add_country_modifier = { name = shuvuush_terror_stampede duration = 5475 } }
+	}
+
+	shuvuush_return_white = {
+		icon = mission_protect_white_sea_trade
+		position = 4
+		required_missions = { shuvuush_to_fight }
+		provinces_to_highlight = {
+			region = shuvuushudi_region
+			culture = ROOT
+			OR = {
+				NOT = { owned_by = ROOT }
+				devastation = 0.01
+				NOT = { num_of_times_improved = 1 }
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { ai = yes }
+				shuvuushudi_region = {
+					type = all
+					OR = {
+						NOT = { culture = ROOT }
+						AND = {
+							owned_by = ROOT
+							NOT = { devastation = 0.01 }
+						}
+					}
+				}
+			}
+			else = {
+				shuvuushudi_region = {
+					type = all
+					OR = {
+						NOT = { culture = ROOT }
+						AND = {
+							owned_by = ROOT
+							NOT = { devastation = 0.01 }
+							num_of_times_improved = 1
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = shuvuush_return_white_effect_tt
+
+			if = {
+				limit = { ai = yes } #AI can't swap masks
+				add_country_modifier = { name = shuvuush_ancestral_guidance duration = -1 }
+			}
+			else_if = {
+				limit = { has_personal_deity = death_mask }
+				add_army_tradition = 15
+			}
+			else = { add_country_modifier = { name = shuvuush_ancestral_guidance duration = 1825 } }
+		}
+	}
+}
+shuvuush_3 = {
+	slot = 3
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { technology_group = tech_shuvuush }
+
+	shuvuush_rule_steppe = {
+		icon = mission_faceless_queen
+		position = 1
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = { religion = saanorgegh }
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = shuvuush_rule_steppe_trigger_tt
+				has_country_flag = shuvuush_won_saanorgegh_war
+			}
+		}
+
+		effect = {
+			add_manpower = 3
+
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = shuvuush_rule_steppe_effect_req_tt
+				first_limit = "NOT = { is_year = 1447 }"
+				first_effect = "add_manpower = 5"
+			}
+		}
+	}
+
+	shuvuush_one_kaasheg = {
+		icon = mission_war_for_the_crown
+		position = 2
+		required_missions = {
+			shuvuush_surrounded_cornered
+			shuvuush_rule_steppe
+		}
+		provinces_to_highlight = {
+			OR = {
+				owner = { religion = saanorgegh NOT = { tag = ROOT } }
+				AND = {
+					region = shuvuushudi_region
+					NOT = { owned_by = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			all_known_country = { NOT = { religion = saanorgegh } }
+			num_of_owned_provinces_with = { value = 20 region = shuvuushudi_region }
+		}
+
+		effect = {
+			add_horde_unity = 25
+			add_war_exhaustion = -5
+
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = shuvuush_one_kaasheg_effect_req_tt
+				first_limit = "NOT = { is_year = 1450 }"
+				first_effect = "add_country_modifier = { name = shuvuush_relentless_rise duration = 9125 }"
+			}
+		}
+	}
+
+	shuvuush_break_realms = {
+		icon = mission_fire_of_london
+		position = 3
+		required_missions = {
+			shuvuush_favor_yomod
+			shuvuush_one_kaasheg
+		}
+		provinces_to_highlight = {
+			OR = {
+				region = gowon_region
+				region = north_yanshen_region
+				region = khaashalg_region
+			}
+			NOT = { owned_by = ROOT }
+		}
+
+		trigger = {
+			if = {
+				limit = { ai = no } #AI doesn't raze consistently
+				check_variable = { nbProvincesRazed = 20 }
+			}
+			OR = {
+				num_of_owned_provinces_with = { value = 10 region = gowon_region }
+				num_of_owned_provinces_with = { value = 10 region = north_yanshen_region }
+				num_of_owned_provinces_with = { value = 10 region = khaashalg_region }
+			}
+		}
+
+		effect = {
+			add_power_projection = {
+				type = mission_rewards_power_projection
+				amount = 20
+			}
+			add_treasury = 500
+
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = shuvuush_break_realms_effect_req_tt
+				first_limit = "NOT = { is_year = 1460 }"
+				first_effect = "shuvuush_break_realms_alias_effect = yes"
+			}
+		}
+	}
+
+	shuvuush_fate_anew = {
+		icon = mission_new_dawn
+		position = 5
+		required_missions = {
+			shuvuush_return_white
+			shuvuush_break_realms
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = gowon_region
+					is_city = yes
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 4871
+					ROOT = { NOT = { owns_core_province = 4871 } }
+				}
+				AND = {
+					superregion = yanshen_superregion
+					NOT = { owned_by = ROOT }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 25
+								superregion = yanshen_superregion
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				gowon_region = { #Guwaamud
+					type = all
+					OR = {
+						NOT = { is_city = yes }
+						owned_by = ROOT
+					}
+				}
+				AND = { #Daxugo
+					owns_core_province = 4871
+					num_of_owned_provinces_with = {
+						value = 25
+						superregion = yanshen_superregion
+					}
+				}
+				AND = { #Baztungh Khayus
+					shuvuushudi_region = {
+						type = all
+						owned_by = ROOT
+					}
+					gozengun_superregion = {
+						type = all
+						OR = {
+							NOT = { 
+								culture = plateau_runsukhi
+								culture = runsukhi
+							}
+							owned_by = ROOT
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = shuvuush_fate_anew_daxugo_req_tt
+				first_limit = "
+					owns_core_province = 4871
+					num_of_owned_provinces_with = {
+						value = 25
+						superregion = yanshen_superregion
+					}
+				"
+				first_effect = "
+					if = {
+						limit = { NOT = { is_year = 1470 } }
+						add_country_modifier = { name = shuvuush_daxugo_reward duration = -1 }
+					}
+					else = { add_country_modifier = { name = shuvuush_daxugo_reward duration = 18250 } }
+				"
+				second_custom_tooltip = shuvuush_fate_anew_guwaamud_req_tt
+				second_limit = "
+					gowon_region = {
+						type = all
+						OR = {
+							NOT = { is_city = yes }
+							owned_by = ROOT
+						}
+					}
+				"
+				second_effect = "
+					if = {
+						limit = { NOT = { is_year = 1470 } }
+						add_country_modifier = { name = shuvuush_guwaamud_reward duration = -1 }
+					}
+					else = { add_country_modifier = { name = shuvuush_guwaamud_reward duration = 18250 } }
+				"
+				third_custom_tooltip = shuvuush_fate_anew_baztungh_khayus_req_tt
+				third_limit = "
+					shuvuushudi_region = {
+						type = all
+						owned_by = ROOT
+					}
+					gozengun_superregion = {
+						type = all
+						OR = {
+							NOT = { 
+								culture = plateau_runsukhi
+								culture = runsukhi
+							}
+							owned_by = ROOT
+						}
+					}
+				"
+				third_effect = "
+					if = {
+						limit = { NOT = { is_year = 1470 } }
+						add_country_modifier = { name = shuvuush_baztungh_khayus_reward duration = -1 }
+					}
+					else = { add_country_modifier = { name = shuvuush_baztungh_khayus_reward duration = 18250 } }
+				"
+				fourth_custom_tooltip = shuvuush_fate_anew_effect_req_tt
+				fourth_limit = "NOT = { is_year = 1470 }"
+				fourth_effect = "custom_tooltip = shuvuush_fate_anew_effect_tt"
+			}
+		}
+	}
+}

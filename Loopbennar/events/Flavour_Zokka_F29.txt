@@ -14,7 +14,7 @@ country_event = {
 		ai_chance = {
 			factor = 25
 		}
-		set_government_rank = 2
+		set_government_rank_scripted_effect = { rank = 2 }
 		add_adm_power = 100
 		hidden_effect = {
 			country_event = {
@@ -47,7 +47,7 @@ country_event = {
 		ai_chance = {
 			factor = 75
 		}
-		set_government_rank = 2
+		set_government_rank_scripted_effect = { rank = 2 }
 		add_adm_power = 100
 		hidden_effect = {
 			country_event = {
@@ -699,12 +699,8 @@ country_event = {
 			hidden_effect = { 
 				country_event = { id = flavour_zokka.20 } 
 				hidden_effect = {
-					force_add_ruler_personality = { personality = mage_personality }
 					force_add_ruler_personality = { personality = xhazobs_chosen_personality }
-				}
-				hidden_effect = {
-					country_event = { id = magic_ruler.102 } #magic schools
-					country_event = { id = magic_ruler.100 } #make them a mage general
+					define_powerful_mage = { type = ruler war_wizard = yes }
 				}
 			}
 		}
@@ -962,22 +958,23 @@ country_event = {
 	option = {
 		name = flavour_zokka.15.a
 		if = {
-			limit = { ruler_has_mage_personality = yes }
+			limit = { is_ruler_enchantment_level_3 = yes }
+			custom_tooltip = is_ruler_enchantment_level_3
+		}
+		else_if = {
+			limit = { is_ruler_enchantment_level_2 = yes }
+			custom_tooltip = magic_school_ruler_level_up_tt
+			custom_tooltip = enchantment_3
+		}
+		else = {
+			custom_tooltip = magic_school_ruler_level_up_tt
+			custom_tooltip = enchantment_2
+		}
+		hidden_effect = {
+			magic_school_level_up = { type = ruler school = enchantment }
 			if = {
-				limit = { is_enchantment_0 = yes }
-				set_ruler_flag = enchantment_1
-				set_ruler_flag = enchantment_2
-				custom_tooltip = tooltip_enchantment_2_level_up 
-			}
-			else_if = {
-				limit = { is_enchantment_1 = yes }
-				set_ruler_flag = enchantment_2
-				custom_tooltip = tooltip_enchantment_2_level_up 
-			}
-			else_if = {
-				limit = { is_enchantment_2 = yes }
-				set_ruler_flag = enchantment_3
-				custom_tooltip = tooltip_enchantment_3_level_up 
+				limit = { is_ruler_enchantment_level_1 = yes }
+				magic_school_level_up = { type = ruler school = enchantment }
 			}
 		}
 		every_owned_province = {
@@ -1429,13 +1426,11 @@ country_event = {
 		6106 = { change_province_name = "Zokka's Grave" }
 		change_adm = 2
 		change_mil = 2
-		tooltip = { add_ruler_personality = mage_personality }
-		hidden_effect = { force_add_ruler_personality = { personality = mage_personality } }
-		set_ruler_flag = evocation_1
-		set_ruler_flag = evocation_2
-		set_ruler_flag = conjuration_1
-		set_ruler_flag = conjuration_2
-		set_ruler_flag = initialized_magic_flags
+		define_powerful_mage = {
+			type = ruler
+			evocation = 2
+			conjuration = 2
+		}
 		hidden_effect = {
 			add_ruler_modifier = {
 				name = exceptional_willpower_75
@@ -1466,7 +1461,7 @@ country_event = {
 		change_adm = 2
 		change_mil = 3
 		tooltip = { add_ruler_personality = sinner_personality }
-		hidden_effect = { force_add_ruler_personality = { personality = sinner_personality } }
+		hidden_effect = { force_add_normal_ruler_personality = { personality = sinner_personality } }
 		hidden_effect = {
 			add_ruler_modifier = {
 				name = exceptional_willpower_75
@@ -1554,12 +1549,7 @@ country_event = {
 			}
 		}
 		else = {
-			if = {
-				limit = { NOT = { ruler_has_personality = mage_personality } }
-				tooltip = { add_ruler_personality = mage_personality }
-				hidden_effect = { force_add_ruler_personality = { personality = mage_personality } country_event = { id = magic_ruler.102 } }
-			}
-			magic_study_level_up_all = yes
+			define_powerful_mage = { type = ruler bonus = 8 }
 		}
 		custom_tooltip = zokka_swamp_convert_tt
 		hidden_effect = {
@@ -1859,7 +1849,7 @@ country_event = {
 	id = flavour_zokka.26
 	title = flavour_zokka.26.t
 	desc = flavour_zokka.26.d
-	picture = GREAT_SPIRIT_MARUTHA_EVIL_eventPicture
+	picture = GREAT_SPIRIT_MARUTHA_PLAIN_eventPicture
 	
 	is_triggered_only = yes
 
@@ -2423,7 +2413,7 @@ country_event = {
 			become_xhazobine_effects = yes
 		}
 		else = {
-			clear_magic_patron = {
+			clr_magic_patron = {
 				name_key = xhazob
 				favoured_school_1 = evocation
 				favoured_school_2 = conjuration
@@ -2502,15 +2492,9 @@ country_event = {
 
 	option = {
 		name = flavour_zokka.39.a
-		set_country_flag = zokka_fleshmaw_devoured
-		custom_tooltip = add_magic_study_modifier_50_tt
-		if = {
-			limit = { ruler_has_mage_personality = no }
-			tooltip = { add_ruler_personality = mage_personality }
-			hidden_effect = { force_add_ruler_personality = { personality = mage_personality } country_event = { id = magic_ruler.102 } }
-		}
-		magic_study_level_up_all = yes
-		update_magic_study_experience_modifier = { value = 50 }
+		custom_tooltip = zokka_fleshmaw_devoured_tt
+		define_powerful_mage = { type = ruler bonus = 8 }
+		add_country_modifier = { name = zokka_fleshmaw_devoured duration = -1 }
 	}
 }
 
@@ -3468,33 +3452,33 @@ country_event = {
 		name = flavour_zokka.300.a
 		trigger_switch = {
 			on_trigger = adm
-			0 = { F29 = { add_adm_power = 10 } }
-			1 = { F29 = { add_adm_power = 20 } }
-			2 = { F29 = { add_adm_power = 30 } }
-			3 = { F29 = { add_adm_power = 40 } }
-			4 = { F29 = { add_adm_power = 50 } }
-			5 = { F29 = { add_adm_power = 60 } }
 			6 = { F29 = { add_adm_power = 70 } }
+			5 = { F29 = { add_adm_power = 60 } }
+			4 = { F29 = { add_adm_power = 50 } }
+			3 = { F29 = { add_adm_power = 40 } }
+			2 = { F29 = { add_adm_power = 30 } }
+			1 = { F29 = { add_adm_power = 20 } }
+			0 = { F29 = { add_adm_power = 10 } }
 		}
 		trigger_switch = {
 			on_trigger = dip
-			0 = { F29 = { add_dip_power = 10 } }
-			1 = { F29 = { add_dip_power = 20 } }
-			2 = { F29 = { add_dip_power = 30 } }
-			3 = { F29 = { add_dip_power = 40 } }
-			4 = { F29 = { add_dip_power = 50 } }
-			5 = { F29 = { add_dip_power = 60 } }
 			6 = { F29 = { add_dip_power = 70 } }
+			5 = { F29 = { add_dip_power = 60 } }
+			4 = { F29 = { add_dip_power = 50 } }
+			3 = { F29 = { add_dip_power = 40 } }
+			2 = { F29 = { add_dip_power = 30 } }
+			1 = { F29 = { add_dip_power = 20 } }
+			0 = { F29 = { add_dip_power = 10 } }
 		}
 		trigger_switch = {
 			on_trigger = mil
-			0 = { F29 = { add_mil_power = 10 } }
-			1 = { F29 = { add_mil_power = 20 } }
-			2 = { F29 = { add_mil_power = 30 } }
-			3 = { F29 = { add_mil_power = 40 } }
-			4 = { F29 = { add_mil_power = 50 } }
-			5 = { F29 = { add_mil_power = 60 } }
 			6 = { F29 = { add_mil_power = 70 } }
+			5 = { F29 = { add_mil_power = 60 } }
+			4 = { F29 = { add_mil_power = 50 } }
+			3 = { F29 = { add_mil_power = 40 } }
+			2 = { F29 = { add_mil_power = 30 } }
+			1 = { F29 = { add_mil_power = 20 } }
+			0 = { F29 = { add_mil_power = 10 } }
 		}
 		kill_ruler = yes
 	}

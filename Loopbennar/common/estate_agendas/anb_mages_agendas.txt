@@ -101,15 +101,13 @@ estate_mages_fire_advisor = {
 estate_mages_relations_with_magisterium = {
 	can_select = {
 		has_estate_privilege = estate_mages_organization_magisterium
-		NOT = { tag = A85 }
 		exists = A85
-		NOT = { 
-			OR = {
-				war_with = A85
-				has_country_flag = esthil_lodge_of_necromancers
-				has_ruler_modifier = witch_king_modifier
-				has_country_flag = newshire_opened_door
-			} 
+		NOT = {
+			tag = A85
+			war_with = A85
+			has_country_flag = esthil_lodge_of_necromancers
+			ruler_is_witch_king = yes
+			has_country_flag = newshire_opened_door
 		}
 		A85 = {
 			has_opinion = { who = ROOT value = -50 }
@@ -180,7 +178,7 @@ estate_mages_relations_with_pro_mage_countries = {
 			NOT = { is_rival = ROOT }
 			has_opinion = { who = ROOT value = -50 }
 			NOT = { has_opinion = { who = ROOT value = 50 } }
-			NOT = { tag = A58 } #seperate agenda for magisterium
+			NOT = { tag = A58 } #separate agenda for magisterium
 		}
 	}
 	selection_weight = {
@@ -198,7 +196,7 @@ estate_mages_relations_with_pro_mage_countries = {
 				NOT = { is_rival = ROOT }
 				has_opinion = { who = ROOT value = -50 }
 				NOT = { has_opinion = { who = ROOT value = 50 } }
-				NOT = { tag = A58 } #seperate agenda for magisterium
+				NOT = { tag = A58 } #separate agenda for magisterium
 			}
 			save_event_target_as = agenda_country
 		}
@@ -2599,6 +2597,10 @@ estate_mages_develop_x = {
 		capital_scope = {
 			is_state_core = root
 		}
+		any_owned_province = { #added by anbennar to ensure estate_province_intended_to_dev doesn't break the province selection
+			is_state_core = root
+			estate_province_intended_to_dev = yes #anbennar				
+		}
 		NOT = { wyvernheart_is_floodborn_council = yes }
 	}
 	pre_effect = {
@@ -2607,7 +2609,7 @@ estate_mages_develop_x = {
 				random_owned_province = {
 					limit = {
 						is_state_core = root
-						has_any_blorc_camp = no #anbennar
+						estate_province_intended_to_dev = yes #anbennar
 						area_for_scope_province = {
 							is_capital_of = root
 						}
@@ -2619,7 +2621,7 @@ estate_mages_develop_x = {
 				trigger = {
 					any_owned_province = {
 						is_state_core = root
-						has_any_blorc_camp = no #anbennar
+						estate_province_intended_to_dev = yes #anbennar
 						OR = {
 							AND = {
 								religion = root
@@ -2637,7 +2639,7 @@ estate_mages_develop_x = {
 				random_owned_province = {
 					limit = {
 						is_state_core = root
-						has_any_blorc_camp = no #anbennar
+						estate_province_intended_to_dev = yes #anbennar
 						OR = {
 							AND = {
 								religion = root
@@ -2658,7 +2660,7 @@ estate_mages_develop_x = {
 				random_owned_province = {
 					limit = {
 						is_state_core = root
-						has_any_blorc_camp = no #anbennar
+						estate_province_intended_to_dev = yes #anbennar
 					}
 					save_event_target_as = agenda_province
 				}
@@ -2740,7 +2742,7 @@ estate_mages_develop_x = {
 }
 
 #Wyvernheart agendas
-estate_mages_wyvernheart_invest_in_critical_materials = { #MAGICREWORK
+estate_mages_wyvernheart_invest_in_critical_materials = {
 	selection_weight = {
 		factor = 1
 	}
@@ -2750,9 +2752,7 @@ estate_mages_wyvernheart_invest_in_critical_materials = { #MAGICREWORK
 		OR = {
 			227 = { owned_by = ROOT }
 			736 = { owned_by = ROOT }
-			any_owned_province = {
-				trade_goods = damestear
-			}
+			damestear = 1
 		}
 	}
 	pre_effect = {
@@ -2771,7 +2771,7 @@ estate_mages_wyvernheart_invest_in_critical_materials = { #MAGICREWORK
 			}
 			1 = {
 				trigger = {
-					any_owned_province = { trade_goods = damestear }
+					damestear = 1
 				}
 				random_owned_province = {
 					limit = { trade_goods = damestear }
@@ -2823,11 +2823,7 @@ estate_mages_wyvernheart_invest_in_critical_materials = { #MAGICREWORK
 			estate = estate_mages
 			loyalty = 10
 		}
-		add_estate_influence_modifier = {#should be 0.25 mana regen for 10 year #MAGICREWORK
-			estate = estate_mages
-			influence = 10
-			duration = 3650
-		}
+		add_country_modifier = { name = wyvernheart_materials_mod duration = 3650 }
 		add_government_power = {
 			mechanic_type = floodborn_council_mechanic
 			power_type = bloodbrand_power
@@ -3142,8 +3138,8 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 	can_select = {
 		tag = B39
 		wyvernheart_is_floodborn_council = yes
-		ruler_has_mage_personality = yes
-		NOT = { ruler_studying_magic = yes }
+		ruler_is_powerful_mage = yes
+		type_is_not_studying_magic = { type = ruler }
 	}
 	pre_effect = {
 		clr_country_flag = wyvernheart_school_focus_1_abjuration
@@ -3167,69 +3163,69 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 		clr_country_flag = wyvernheart_school_agenda_heartmage_hardliner
 		random_list = {#Set school one to learn
 			1 = {
-				trigger = { NOT = { is_abjuration_3 = yes } }
+				trigger = { NOT = { is_ruler_abjuration_level_3 = yes } }
 				set_country_flag = wyvernheart_school_focus_1_abjuration
 			}
 			1 = {
-				trigger = { NOT = { is_conjuration_3 = yes } }
+				trigger = { NOT = { is_ruler_conjuration_level_3 = yes } }
 				set_country_flag = wyvernheart_school_focus_1_conjuration
 			}
 			1 = {
-				trigger = { NOT = { is_divination_3 = yes } }
+				trigger = { NOT = { is_ruler_divination_level_3 = yes } }
 				set_country_flag = wyvernheart_school_focus_1_divination
 			}
 			1 = {
-				trigger = { NOT = { is_enchantment_3 = yes } }
+				trigger = { NOT = { is_ruler_enchantment_level_3 = yes } }
 				set_country_flag = wyvernheart_school_focus_1_enchantment
 			}
 			1 = {
-				trigger = { NOT = { is_evocation_3 = yes } }
+				trigger = { NOT = { is_ruler_evocation_level_3 = yes } }
 				set_country_flag = wyvernheart_school_focus_1_evocation
 			}
 			1 = {
-				trigger = { NOT = { is_illusion_3 = yes } }
+				trigger = { NOT = { is_ruler_illusion_level_3 = yes } }
 				set_country_flag = wyvernheart_school_focus_1_illusion
 			}
 			1 = {
-				trigger = { NOT = { is_necromancy_3 = yes } }
+				trigger = { NOT = { is_ruler_necromancy_level_3 = yes } }
 				set_country_flag = wyvernheart_school_focus_1_necromancy
 			}
 			1 = {
-				trigger = { NOT = { is_transmutation_3 = yes } }
+				trigger = { NOT = { is_ruler_transmutation_level_3 = yes } }
 				set_country_flag = wyvernheart_school_focus_1_transmutation
 			}
 		}
 		random_list = {#set school two to learn
 			1 = {
-				trigger = { NOT = { is_abjuration_3 = yes has_country_flag = wyvernheart_school_focus_1_abjuration } }
+				trigger = { NOT = { is_ruler_abjuration_level_3 = yes has_country_flag = wyvernheart_school_focus_1_abjuration } }
 				set_country_flag = wyvernheart_school_focus_2_abjuration
 			}
 			1 = {
-				trigger = { NOT = { is_conjuration_3 = yes has_country_flag = wyvernheart_school_focus_1_conjuration } }
+				trigger = { NOT = { is_ruler_conjuration_level_3 = yes has_country_flag = wyvernheart_school_focus_1_conjuration } }
 				set_country_flag = wyvernheart_school_focus_2_conjuration
 			}
 			1 = {
-				trigger = { NOT = { is_divination_3 = yes has_country_flag = wyvernheart_school_focus_1_divination } }
+				trigger = { NOT = { is_ruler_divination_level_3 = yes has_country_flag = wyvernheart_school_focus_1_divination } }
 				set_country_flag = wyvernheart_school_focus_2_divination
 			}
 			1 = {
-				trigger = { NOT = { is_enchantment_3 = yes has_country_flag = wyvernheart_school_focus_1_enchantment } }
+				trigger = { NOT = { is_ruler_enchantment_level_3 = yes has_country_flag = wyvernheart_school_focus_1_enchantment } }
 				set_country_flag = wyvernheart_school_focus_2_enchantment
 			}
 			1 = {
-				trigger = { NOT = { is_evocation_3 = yes has_country_flag = wyvernheart_school_focus_1_evocation } }
+				trigger = { NOT = { is_ruler_evocation_level_3 = yes has_country_flag = wyvernheart_school_focus_1_evocation } }
 				set_country_flag = wyvernheart_school_focus_2_evocation
 			}
 			1 = {
-				trigger = { NOT = { is_illusion_3 = yes has_country_flag = wyvernheart_school_focus_1_illusion } }
+				trigger = { NOT = { is_ruler_illusion_level_3 = yes has_country_flag = wyvernheart_school_focus_1_illusion } }
 				set_country_flag = wyvernheart_school_focus_2_illusion
 			}
 			1 = {
-				trigger = { NOT = { is_necromancy_3 = yes has_country_flag = wyvernheart_school_focus_1_necromancy } }
+				trigger = { NOT = { is_ruler_necromancy_level_3 = yes has_country_flag = wyvernheart_school_focus_1_necromancy } }
 				set_country_flag = wyvernheart_school_focus_2_necromancy
 			}
 			1 = {
-				trigger = { NOT = { is_transmutation_3 = yes has_country_flag = wyvernheart_school_focus_1_transmutation } }
+				trigger = { NOT = { is_ruler_transmutation_level_3 = yes has_country_flag = wyvernheart_school_focus_1_transmutation } }
 				set_country_flag = wyvernheart_school_focus_2_transmutation
 			}
 		}
@@ -3249,82 +3245,82 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 	}
 	fail_if = {
 		AND = {
-			ruler_studying_magic = yes
+			type_is_studying_magic = { type = ruler }
 			custom_trigger_tooltip = {
 				tooltip = wyvernheart_dont_study_x_or_y
 				OR = {
 					AND = {
 						NOT = { OR = { has_country_flag = wyvernheart_school_focus_1_abjuration has_country_flag = wyvernheart_school_focus_2_abjuration } }
-						has_ruler_flag = ruler_studying_abjuration
+						type_is_advancing_school = { type = ruler school = abjuration }
 					}
 					AND = {
 						NOT = { OR = { has_country_flag = wyvernheart_school_focus_1_conjuration has_country_flag = wyvernheart_school_focus_2_conjuration } }
-						has_ruler_flag = ruler_studying_conjuration
+						type_is_advancing_school = { type = ruler school = conjuration }
 					}
 					AND = {
 						NOT = { OR = { has_country_flag = wyvernheart_school_focus_1_evocation has_country_flag = wyvernheart_school_focus_2_evocation } }
-						has_ruler_flag = ruler_studying_evocation
+						type_is_advancing_school = { type = ruler school = evocation }
 					}
 					AND = {
 						NOT = { OR = { has_country_flag = wyvernheart_school_focus_1_transmutation has_country_flag = wyvernheart_school_focus_2_transmutation } }
-						has_ruler_flag = ruler_studying_transmutation
+						type_is_advancing_school = { type = ruler school = transmutation }
 					}
 					AND = {
 						NOT = { OR = { has_country_flag = wyvernheart_school_focus_1_illusion has_country_flag = wyvernheart_school_focus_2_illusion } }
-						has_ruler_flag = ruler_studying_illusion
+						type_is_advancing_school = { type = ruler school = illusion }
 					}
 					AND = {
 						NOT = { OR = { has_country_flag = wyvernheart_school_focus_1_enchantment has_country_flag = wyvernheart_school_focus_2_enchantment } }
-						has_ruler_flag = ruler_studying_enchantment
+						type_is_advancing_school = { type = ruler school = enchantment }
 					}
 					AND = {
 						NOT = { OR = { has_country_flag = wyvernheart_school_focus_1_necromancy has_country_flag = wyvernheart_school_focus_2_necromancy } }
-						has_ruler_flag = ruler_studying_necromancy
+						type_is_advancing_school = { type = ruler school = necromancy }
 					}
 					AND = {
 						NOT = { OR = { has_country_flag = wyvernheart_school_focus_1_divination has_country_flag = wyvernheart_school_focus_2_divination } }
-						has_ruler_flag = ruler_studying_divination
+						type_is_advancing_school = { type = ruler school = divination }
 					}
 				}
 			}
 		}
 	}
     task_requirements = {
-		ruler_studying_magic = yes
+		type_is_studying_magic = { type = ruler }
 		custom_trigger_tooltip = {
 			tooltip = wyvernheart_study_x_or_y
 			OR = {
 				AND = {
 					OR = { has_country_flag = wyvernheart_school_focus_1_abjuration has_country_flag = wyvernheart_school_focus_2_abjuration }
-					has_ruler_flag = ruler_studying_abjuration
+					type_is_advancing_school = { type = ruler school = abjuration }
 				}
 				AND = {
 					OR = { has_country_flag = wyvernheart_school_focus_1_conjuration has_country_flag = wyvernheart_school_focus_2_conjuration }
-					has_ruler_flag = ruler_studying_conjuration
+					type_is_advancing_school = { type = ruler school = conjuration }
 				}
 				AND = {
 					OR = { has_country_flag = wyvernheart_school_focus_1_evocation has_country_flag = wyvernheart_school_focus_2_evocation }
-					has_ruler_flag = ruler_studying_evocation
+					type_is_advancing_school = { type = ruler school = evocation }
 				}
 				AND = {
 					OR = { has_country_flag = wyvernheart_school_focus_1_transmutation has_country_flag = wyvernheart_school_focus_2_transmutation }
-					has_ruler_flag = ruler_studying_transmutation
+					type_is_advancing_school = { type = ruler school = transmutation }
 				}
 				AND = {
 					OR = { has_country_flag = wyvernheart_school_focus_1_illusion has_country_flag = wyvernheart_school_focus_2_illusion }
-					has_ruler_flag = ruler_studying_illusion
+					type_is_advancing_school = { type = ruler school = illusion }
 				}
 				AND = {
 					OR = { has_country_flag = wyvernheart_school_focus_1_enchantment has_country_flag = wyvernheart_school_focus_2_enchantment }
-					has_ruler_flag = ruler_studying_enchantment
+					type_is_advancing_school = { type = ruler school = enchantment }
 				}
 				AND = {
 					OR = { has_country_flag = wyvernheart_school_focus_1_necromancy has_country_flag = wyvernheart_school_focus_2_necromancy }
-					has_ruler_flag = ruler_studying_necromancy
+					type_is_advancing_school = { type = ruler school = necromancy }
 				}
 				AND = {
 					OR = { has_country_flag = wyvernheart_school_focus_1_divination has_country_flag = wyvernheart_school_focus_2_divination }
-					has_ruler_flag = ruler_studying_divination
+					type_is_advancing_school = { type = ruler school = divination }
 				}
 			}
 		}
@@ -3337,14 +3333,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 			limit = { has_country_flag = wyvernheart_school_agenda_scion_ambitious }
 			custom_tooltip = wyvernheart_school_agenda_scion_ambitious_effect_tt
 			if = {
-				limit = { has_ruler_flag = ruler_studying_abjuration }
+				limit = { type_is_advancing_school = { type = ruler school = abjuration } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_abjuration }
 					hidden_effect = {#Favoured the Wealthy Scions
-						add_country_modifier = {
-							name = magic_estate_aiding_construction_2
-							duration = 3650
-						}
+						conjuration_2_1_effect = yes
 						add_inflation = 3
 						add_estate_loyalty = {
 							estate = estate_church
@@ -3362,10 +3355,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 				else = {
 					hidden_effect = {#Favoured the Ambitious Floodborn
-						add_country_modifier = {
-							name = magic_estate_scrying_rivals_2
-							duration = 3650
-						}
+						divination_2_0_effect = yes
 						add_country_modifier = {
 							name = wyvernheart_spell_agenda_ambitious
 							duration = 3650
@@ -3378,14 +3368,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_conjuration }
+				limit = { type_is_advancing_school = { type = ruler school = conjuration } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_conjuration }
 					hidden_effect = {#Favoured the Wealthy Scions
-						add_country_modifier = {
-							name = magic_estate_aiding_construction_2
-							duration = 3650
-						}
+						conjuration_2_1_effect = yes
 						add_inflation = 3
 						add_estate_loyalty = {
 							estate = estate_church
@@ -3403,10 +3390,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 				else = {
 					hidden_effect = {#Favoured the Ambitious Floodborn
-						add_country_modifier = {
-							name = magic_estate_scrying_rivals_2
-							duration = 3650
-						}
+						divination_2_0_effect = yes
 						add_country_modifier = {
 							name = wyvernheart_spell_agenda_ambitious
 							duration = 3650
@@ -3419,14 +3403,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_divination }
+				limit = { type_is_advancing_school = { type = ruler school = divination } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_divination }
 					hidden_effect = {#Favoured the Wealthy Scions
-						add_country_modifier = {
-							name = magic_estate_aiding_construction_2
-							duration = 3650
-						}
+						conjuration_2_1_effect = yes
 						add_inflation = 3
 						add_estate_loyalty = {
 							estate = estate_church
@@ -3444,10 +3425,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 				else = {
 					hidden_effect = {#Favoured the Ambitious Floodborn
-						add_country_modifier = {
-							name = magic_estate_scrying_rivals_2
-							duration = 3650
-						}
+						divination_2_0_effect = yes
 						add_country_modifier = {
 							name = wyvernheart_spell_agenda_ambitious
 							duration = 3650
@@ -3460,14 +3438,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_enchantment }
+				limit = { type_is_advancing_school = { type = ruler school = enchantment } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_enchantment }
 					hidden_effect = {#Favoured the Wealthy Scions
-						add_country_modifier = {
-							name = magic_estate_aiding_construction_2
-							duration = 3650
-						}
+						conjuration_2_1_effect = yes
 						add_inflation = 3
 						add_estate_loyalty = {
 							estate = estate_church
@@ -3485,10 +3460,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 				else = {
 					hidden_effect = {#Favoured the Ambitious Floodborn
-						add_country_modifier = {
-							name = magic_estate_scrying_rivals_2
-							duration = 3650
-						}
+						divination_2_0_effect = yes
 						add_country_modifier = {
 							name = wyvernheart_spell_agenda_ambitious
 							duration = 3650
@@ -3501,14 +3473,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_evocation }
+				limit = { type_is_advancing_school = { type = ruler school = evocation } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_evocation }
 					hidden_effect = {#Favoured the Wealthy Scions
-						add_country_modifier = {
-							name = magic_estate_aiding_construction_2
-							duration = 3650
-						}
+						conjuration_2_1_effect = yes
 						add_inflation = 3
 						add_estate_loyalty = {
 							estate = estate_church
@@ -3526,10 +3495,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 				else = {
 					hidden_effect = {#Favoured the Ambitious Floodborn
-						add_country_modifier = {
-							name = magic_estate_scrying_rivals_2
-							duration = 3650
-						}
+						divination_2_0_effect = yes
 						add_country_modifier = {
 							name = wyvernheart_spell_agenda_ambitious
 							duration = 3650
@@ -3542,14 +3508,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_illusion }
+				limit = { type_is_advancing_school = { type = ruler school = illusion } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_illusion }
 					hidden_effect = {#Favoured the Wealthy Scions
-						add_country_modifier = {
-							name = magic_estate_aiding_construction_2
-							duration = 3650
-						}
+						conjuration_2_1_effect = yes
 						add_inflation = 3
 						add_estate_loyalty = {
 							estate = estate_church
@@ -3567,10 +3530,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 				else = {
 					hidden_effect = {#Favoured the Ambitious Floodborn
-						add_country_modifier = {
-							name = magic_estate_scrying_rivals_2
-							duration = 3650
-						}
+						divination_2_0_effect = yes
 						add_country_modifier = {
 							name = wyvernheart_spell_agenda_ambitious
 							duration = 3650
@@ -3583,14 +3543,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_necromancy }
+				limit = { type_is_advancing_school = { type = ruler school = necromancy } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_necromancy }
 					hidden_effect = {#Favoured the Wealthy Scions
-						add_country_modifier = {
-							name = magic_estate_aiding_construction_2
-							duration = 3650
-						}
+						conjuration_2_1_effect = yes
 						add_inflation = 3
 						add_estate_loyalty = {
 							estate = estate_church
@@ -3608,10 +3565,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 				else = {
 					hidden_effect = {#Favoured the Ambitious Floodborn
-						add_country_modifier = {
-							name = magic_estate_scrying_rivals_2
-							duration = 3650
-						}
+						divination_2_0_effect = yes
 						add_country_modifier = {
 							name = wyvernheart_spell_agenda_ambitious
 							duration = 3650
@@ -3624,14 +3578,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_transmutation }
+				limit = { type_is_advancing_school = { type = ruler school = transmutation } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_transmutation }
 					hidden_effect = {#Favoured the Wealthy Scions
-						add_country_modifier = {
-							name = magic_estate_aiding_construction_2
-							duration = 3650
-						}
+						conjuration_2_1_effect = yes
 						add_inflation = 3
 						add_estate_loyalty = {
 							estate = estate_church
@@ -3649,10 +3600,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 				else = {
 					hidden_effect = {#Favoured the Ambitious Floodborn
-						add_country_modifier = {
-							name = magic_estate_scrying_rivals_2
-							duration = 3650
-						}
+						divination_2_0_effect = yes
 						add_country_modifier = {
 							name = wyvernheart_spell_agenda_ambitious
 							duration = 3650
@@ -3669,11 +3617,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 			limit = { has_country_flag = wyvernheart_school_agenda_technocrat_devout }
 			custom_tooltip = wyvernheart_school_agenda_technocrat_devout_effect_tt
 			if = {
-				limit = { has_ruler_flag = ruler_studying_abjuration }
+				limit = { type_is_advancing_school = { type = ruler school = abjuration } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_abjuration }
 					hidden_effect = {#Favoured the Technocrat Arcanists
-						increase_study_experience = { experience = 200 }
+						increase_magic_experience = { amount = 200 }
 						add_estate_loyalty = {
 							estate = estate_adventurers
 							loyalty = -10
@@ -3704,11 +3652,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_conjuration }
+				limit = { type_is_advancing_school = { type = ruler school = conjuration } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_conjuration }
 					hidden_effect = {#Favoured the Technocrat Arcanists
-						increase_study_experience = { experience = 200 }
+						increase_magic_experience = { amount = 200 }
 						add_estate_loyalty = {
 							estate = estate_adventurers
 							loyalty = -10
@@ -3739,11 +3687,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_divination }
+				limit = { type_is_advancing_school = { type = ruler school = divination } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_divination }
 					hidden_effect = {#Favoured the Technocrat Arcanists
-						increase_study_experience = { experience = 200 }
+						increase_magic_experience = { amount = 200 }
 						add_estate_loyalty = {
 							estate = estate_adventurers
 							loyalty = -10
@@ -3774,11 +3722,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_enchantment }
+				limit = { type_is_advancing_school = { type = ruler school = enchantment } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_enchantment }
 					hidden_effect = {#Favoured the Technocrat Arcanists
-						increase_study_experience = { experience = 200 }
+						increase_magic_experience = { amount = 200 }
 						add_estate_loyalty = {
 							estate = estate_adventurers
 							loyalty = -10
@@ -3809,11 +3757,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_evocation }
+				limit = { type_is_advancing_school = { type = ruler school = evocation } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_evocation }
 					hidden_effect = {#Favoured the Technocrat Arcanists
-						increase_study_experience = { experience = 200 }
+						increase_magic_experience = { amount = 200 }
 						add_estate_loyalty = {
 							estate = estate_adventurers
 							loyalty = -10
@@ -3844,11 +3792,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_illusion }
+				limit = { type_is_advancing_school = { type = ruler school = illusion } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_illusion }
 					hidden_effect = {#Favoured the Technocrat Arcanists
-						increase_study_experience = { experience = 200 }
+						increase_magic_experience = { amount = 200 }
 						add_estate_loyalty = {
 							estate = estate_adventurers
 							loyalty = -10
@@ -3879,11 +3827,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_necromancy }
+				limit = { type_is_advancing_school = { type = ruler school = necromancy } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_necromancy }
 					hidden_effect = {#Favoured the Technocrat Arcanists
-						increase_study_experience = { experience = 200 }
+						increase_magic_experience = { amount = 200 }
 						add_estate_loyalty = {
 							estate = estate_adventurers
 							loyalty = -10
@@ -3914,11 +3862,11 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_transmutation }
+				limit = { type_is_advancing_school = { type = ruler school = transmutation } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_transmutation }
 					hidden_effect = {#Favoured the Technocrat Arcanists
-						increase_study_experience = { experience = 200 }
+						increase_magic_experience = { amount = 200 }
 						add_estate_loyalty = {
 							estate = estate_adventurers
 							loyalty = -10
@@ -3953,7 +3901,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 			limit = { has_country_flag = wyvernheart_school_agenda_heartmage_hardliner }
 			custom_tooltip = wyvernheart_school_agenda_heartmage_hardliner_effect_tt
 			if = {
-				limit = { has_ruler_flag = ruler_studying_abjuration }
+				limit = { type_is_advancing_school = { type = ruler school = abjuration } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_abjuration }
 					hidden_effect = {#Favoured the Heartmages
@@ -3997,7 +3945,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_conjuration }
+				limit = { type_is_advancing_school = { type = ruler school = conjuration } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_conjuration }
 					hidden_effect = {#Favoured the Heartmages
@@ -4041,7 +3989,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_divination }
+				limit = { type_is_advancing_school = { type = ruler school = divination } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_divination }
 					hidden_effect = {#Favoured the Heartmages
@@ -4085,7 +4033,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_enchantment }
+				limit = { type_is_advancing_school = { type = ruler school = enchantment } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_enchantment }
 					hidden_effect = {#Favoured the Heartmages
@@ -4129,7 +4077,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_evocation }
+				limit = { type_is_advancing_school = { type = ruler school = evocation } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_evocation }
 					hidden_effect = {#Favoured the Heartmages
@@ -4173,7 +4121,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_illusion }
+				limit = { type_is_advancing_school = { type = ruler school = illusion } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_illusion }
 					hidden_effect = {#Favoured the Heartmages
@@ -4217,7 +4165,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_necromancy }
+				limit = { type_is_advancing_school = { type = ruler school = necromancy } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_necromancy }
 					hidden_effect = {#Favoured the Heartmages
@@ -4261,7 +4209,7 @@ estate_mages_wyvernheart_research_new_spells = { #MAGICREWORK
 				}
 			}
 			else_if = {
-				limit = { has_ruler_flag = ruler_studying_transmutation }
+				limit = { type_is_advancing_school = { type = ruler school = transmutation } }
 				if = {
 					limit = { has_country_flag = wyvernheart_school_focus_1_transmutation }
 					hidden_effect = {#Favoured the Heartmages
@@ -4333,13 +4281,25 @@ estate_mages_luna_support_magical_authorities = {
 		factor = 4
 	}
 	task_requirements = {
-		A85 = {
-			has_opinion = {
-				who = ROOT
-				value = 100
+		if = {
+			limit = {
+				has_estate_agenda_auto_completion = {
+					estate = estate_mages
+				}
 			}
-			subsidised_percent_amount = { 
-				value = 0.1
+			has_estate_agenda_auto_completion = {
+				estate = estate_mages
+			}
+		}
+		else = {
+			A85 = {
+				has_opinion = {
+					who = ROOT
+					value = 100
+				}
+				subsidised_percent_amount = { 
+					value = 0.1
+				}
 			}
 		}
 	}
@@ -4362,7 +4322,10 @@ estate_mages_luna_support_magical_authorities = {
 	}
 
 	invalid_trigger = {
-		NOT = { hre_size = 1 }
+		OR = {
+			NOT = { hre_size = 1 }
+			A85 = { exists = no }
+		}
 	}
 }
 
@@ -4464,9 +4427,7 @@ estate_mages_emperor_dev = {
 estate_mages_war_with_witch = {
 	can_select = {
 		is_emperor = yes
-		any_known_country = {
-			has_country_modifier = witch_king_modifier
-		}
+		any_known_country = { ruler_is_witch_king = yes }
 		NOT = { wyvernheart_is_floodborn_council = yes }
 	}
 	selection_weight = {
@@ -4478,7 +4439,7 @@ estate_mages_war_with_witch = {
 	}
 	pre_effect = {
 		random_known_country = {
-			limit = { has_country_modifier = witch_king_modifier }
+			limit = { ruler_is_witch_king = yes }
 			save_event_target_as = agenda_country
 		}
 	}

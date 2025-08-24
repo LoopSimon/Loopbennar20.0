@@ -468,8 +468,10 @@ Z22_branch_1 = {
 			colonial_broken_sea = {
 				type = all
 				owner = {
-					is_giesadh_or_trade_league_member = yes 
-					is_subject_of = ROOT
+					OR = {
+						is_giesadh_or_trade_league_member = yes 
+						is_subject_of = ROOT
+					}
 				}
 				OR = {
 					AND = {
@@ -480,19 +482,18 @@ Z22_branch_1 = {
 						province_has_center_of_trade_of_level = 1
 					}
 				}
-				OR = {
-					NOT = {
-						has_province_modifier = eigras_gate_toll
-						has_province_modifier = icebreaker_toll
-					}
-					AND = {
-						OR = {
-							has_province_modifier = eigras_gate_toll
-							has_province_modifier = icebreaker_toll
-						}
-						galleys_in_province = 4
-					}
-				}
+			}
+			1984 = {
+				galleys_in_province = 4
+			}
+			2797 = {
+				galleys_in_province = 4
+			}
+			1229 = {
+				galleys_in_province = 4
+			}
+			2789 = {
+				galleys_in_province = 4
 			}
 			2037 = {
 				custom_trigger_tooltip = {
@@ -664,25 +665,28 @@ Z22_branch_1 = {
 					}
 				}
 			}
-			calc_true_if = {
-				amount = 5
-				north_america = {
-					type = all
-					OR = {
-						province_id = 1202
-						province_id = 1746
-						province_id = 1965
-						province_id = 1990
-						province_id = 2037
-						province_id = 2088
-						province_id = 1948
-						province_id = 1028
-						province_id = 1016
-						province_id = 2153
-					}
-					trade_share = {
-						country = ROOT
-						share = 65
+			custom_trigger_tooltip = {
+				tooltip = z22_five_nodes_in_NA_tt
+				calc_true_if = {
+					amount = 5
+					north_america = {
+						type = all
+						OR = {
+							province_id = 1202
+							province_id = 1746
+							province_id = 1965
+							province_id = 1990
+							province_id = 2037
+							province_id = 2088
+							province_id = 1948
+							province_id = 1028
+							province_id = 1016
+							province_id = 2153
+						}
+						trade_share = {
+							country = ROOT
+							share = 65
+						}
 					}
 				}
 			}
@@ -1556,48 +1560,51 @@ Z22_branch_2 = {
 		} 
 
 		trigger = {
-			if = {
-				limit = {
-					has_ruler_flag = ruler_is_frozentide
-				}
-				NOT = {
-					faction_influence = {
-						faction = icewind_clan
-						influence = 20
+			custom_trigger_tooltip = {
+				tooltip = z22_disband_private_armies_tt
+				if = {
+					limit = {
+						has_ruler_flag = ruler_is_frozentide
 					}
-					faction_influence = {
-						faction = whitespear_clan
-						influence = 20
-					}
-				}
-			}
-			if = {
-				limit = {
-					has_ruler_flag = ruler_is_icewind
-				}
-				NOT = {
-					faction_influence = {
-						faction = frozentide_clan
-						influence = 20
-					}
-					faction_influence = {
-						faction = whitespear_clan
-						influence = 20
+					NOT = {
+						faction_influence = {
+							faction = icewind_clan
+							influence = 20
+						}
+						faction_influence = {
+							faction = whitespear_clan
+							influence = 20
+						}
 					}
 				}
-			}
-			if = {
-				limit = {
-					has_ruler_flag = ruler_is_whitespear
-				}
-				NOT = {
-					faction_influence = {
-						faction = icewind_clan
-						influence = 20
+				if = {
+					limit = {
+						has_ruler_flag = ruler_is_icewind
 					}
-					faction_influence = {
-						faction = frozentide_clan
-						influence = 20
+					NOT = {
+						faction_influence = {
+							faction = frozentide_clan
+							influence = 20
+						}
+						faction_influence = {
+							faction = whitespear_clan
+							influence = 20
+						}
+					}
+				}
+				if = {
+					limit = {
+						has_ruler_flag = ruler_is_whitespear
+					}
+					NOT = {
+						faction_influence = {
+							faction = icewind_clan
+							influence = 20
+						}
+						faction_influence = {
+							faction = frozentide_clan
+							influence = 20
+						}
 					}
 				}
 			}
@@ -1727,6 +1734,7 @@ Z22_branch_2 = {
 					}
 					mil_power = 200
 				}
+				army_professionalism = 0.4
 			}
 			num_of_provinces_owned_or_owned_by_subjects_with = {
 				value = 15
@@ -1881,7 +1889,7 @@ Z22_branch_2 = {
 				all_active_trade_node = {
 					trade_share = {
 						country = ROOT
-						share = 80
+						share = 65
 					}
 				}
 			}
@@ -1899,7 +1907,7 @@ Z22_branch_2 = {
 						is_colonial_nation = yes
 					}
 					capital_scope = {
-						development = 20
+						development = 15
 						has_courthouse_building_trigger = yes
 					}
 				}
@@ -3154,6 +3162,7 @@ Z22_branch_3 = {
 						is_subject_of = ROOT
 						is_giesadh_or_trade_league_member = yes
 					}
+					is_colonial_nation_of = ROOT
 					AND = {
 						has_opinion = {
 							who = ROOT
@@ -3366,6 +3375,9 @@ Z22_branch_3 = {
 		effect = {
 			change_government_reform_progress = -150
 			
+			set_country_flag = z22_prince_elect_improved_flag
+			add_government_reform = z22_prince_elect_improved
+
 			if = {
 				limit = {
 					tag = B98 
@@ -3537,7 +3549,7 @@ Z22_branch_3 = {
 			all_known_country = {
 				OR = {
 					NOT = {
-						is_giesadh_or_trade_league_member = yes
+						is_NOT_giesadh_or_trade_league_member = yes
 					}
 					has_opinion = {
 						who = ROOT
@@ -4082,16 +4094,16 @@ Z22_branch_4 = {
 
 		effect = {
 			coddorran_heights_area = {
-				type = random
-				amount = 1
-				limit = {
-					has_manpower_building_trigger = yes
-					has_fort_building_trigger = yes
-					development = 10
+				if = {
+					limit = {
+						has_manpower_building_trigger = yes
+						has_fort_building_trigger = yes
+						development = 10
+					}
+					add_elven_minority_size_effect = yes
+					add_human_minority_size_effect = yes
+					add_half_elven_minority_size_effect = yes
 				}
-				add_elven_minority_size_effect = yes
-				add_human_minority_size_effect = yes
-				add_half_elven_minority_size_effect = yes
 			}
 			191 = {
 				add_elven_minority_size_effect = yes

@@ -565,16 +565,42 @@ khatalashya_2_missions = {
 		}
 
 		trigger = {
-			taneyas_superregion = {
-				type = all
-				OR = {
+			if = {
+				limit = {
 					NOT = {
-						has_terrain = city_terrain
+						space_colony = 1
 					}
-					AND = {
-						is_core = ROOT
-						owned_by = ROOT
-						has_fort_building_trigger = yes
+				}
+				taneyas_superregion = {
+					type = all
+					OR = {
+						NOT = {
+							has_terrain = city_terrain
+						}
+						AND = {
+							is_core = ROOT
+							owned_by = ROOT
+							province_has_current_tech_fort_trigger = yes
+						}
+					}
+				}
+			}
+			else = {
+				taneyas_superregion = {
+					type = all
+					OR = {
+						NOT = {
+							has_terrain = city_terrain
+						}
+						AND = {
+							OR = {
+								owned_by = ROOT
+								owner = {
+									is_subject_of_type = space_colony
+								}
+							}
+							province_has_current_tech_fort_trigger = yes
+						}
 					}
 				}
 			}
@@ -659,11 +685,9 @@ khatalashya_2_missions = {
 		trigger = {
 			owns_core_province = 6032
 			OR = {
-				navy_size = 250
-				NOT = {
-					any_country = {
-						navy_size = ROOT
-					}
+				navy_size = 150
+				all_known_country = {
+					NOT = { navy_size = ROOT }
 				}
 			}
 			
@@ -837,17 +861,34 @@ khatalashya_2_missions = {
 				development = 30
 			}
 			OR = {
-				is_scrying = yes
 				custom_trigger_tooltip = {
 					tooltip = viewcatcher_333_tt
 					has_country_flag = unlocked_artifice_invention_viewcatcher
+				}
+				has_cast_scry = yes
+				treasury = 1000
+				AND = {
+					treasury = 500
+					is_overall_divination_level_1_minimum = yes
 				}
 			}
 		}
 
 		effect = {
-			country_event = {
-				id = empire_333.49
+			country_event = { id = empire_333.49 }
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = unlocked_artifice_invention_viewcatcher
+						has_cast_scry = yes
+					}
+				}
+				if = {
+					limit = { is_overall_divination_level_1_minimum = yes }
+					add_treasury = -500
+				}
+				else = { add_treasury = -1000 }
+				divination_2_0_effect = yes
 			}
 		}
 	}
@@ -1080,9 +1121,15 @@ khatalashya_3_missions = {
 		}
 
 		trigger = {
-			estate_influence = {
-				estate = estate_church
-				influence = 100
+			OR = {
+				estate_influence = {
+					estate = estate_church
+					influence = 100
+				}
+				num_of_estate_privileges = {
+					estate = estate_church
+					value = 8
+				}
 			}
 			if = {
 				limit = { has_estate = estate_nobles }
@@ -1156,7 +1203,6 @@ khatalashya_3_missions = {
 
 		trigger = {
 			5932 = {
-				is_capital_of = ROOT
 				has_tax_building_trigger = yes
 				has_courthouse_building_trigger = yes
 				has_trade_building_trigger = yes
@@ -1183,6 +1229,13 @@ khatalashya_3_missions = {
 			}
 			else = {
 				set_estate_privilege = estate_church_naga_administrative_privileges
+			}
+			if = {
+				limit = { 5932 = { is_capital_of = ROOT } }
+				5932 = { add_base_tax = 3 }
+			}
+			else = {
+				set_capital = 5932
 			}
 			hidden_effect = {
 				set_country_flag = disable_administrative_privileges
@@ -1581,10 +1634,8 @@ khatalashya_3_missions = {
 				}
 				AND = {
 					culture_group = lizardfolk
-					OR = {
-						NOT = { owned_by = ROOT }
-						NOT = { owned_by_subject_of = ROOT }
-					}
+					NOT = { owned_by = ROOT }
+					NOT = { owned_by_subject_of = ROOT }
 				}
 			}
 		}
@@ -1655,7 +1706,7 @@ khatalashya_3_missions = {
 			}
 			5932 = {
 				development = 60
-				num_free_building_slots = 0
+				NOT = { num_free_building_slots = 1 }
 			}
 			num_of_estate_agendas_completed = {
 				estate = estate_church
@@ -1763,8 +1814,8 @@ khatalashya_4_missions = {
 					S81 = {
 						NOT = {
 							development_in_provinces = {
-								value = 180
-								culture = ichiadza_lizardfolk
+								value = 80
+								area = noor_zerat_area
 							}
 						}
 					}
@@ -1774,8 +1825,11 @@ khatalashya_4_missions = {
 					S81 = {
 						NOT = {
 							development_in_provinces = {
-								value = 140
-								culture = rhada_lizardfolk
+								value = 120
+								OR = {
+									area = tiki_ra_shaga_area
+									area = tiki_shalazar_area
+								}
 							}
 						}
 					}
@@ -1786,12 +1840,15 @@ khatalashya_4_missions = {
 
 		trigger = {
 			development_in_provinces = {
-				value = 180
-				culture = ichiadza_lizardfolk
+				value = 80
+				area = noor_zerat_area
 			}
 			development_in_provinces = {
-				value = 140
-				culture = rhada_lizardfolk
+				value = 120
+				OR = {
+					area = tiki_ra_shaga_area
+					area = tiki_shalazar_area
+				}
 			}
 			any_owned_province = {
 				culture = rhada_lizardfolk
@@ -1822,6 +1879,15 @@ khatalashya_4_missions = {
 		effect = {
 			add_faith_in_the_prophecy = yes
 			custom_tooltip = two_hubs_of_naga_tt
+			noor_zerat_area = {
+				change_culture = ichiadza_lizardfolk
+			}
+			tiki_ra_shaga_area = {
+				change_culture = rhada_lizardfolk
+			}
+			tiki_shalazar_area = {
+				change_culture = rhada_lizardfolk			
+			}
 		}
 	}
 
@@ -2171,7 +2237,7 @@ khatalashya_4_missions = {
 			custom_tooltip = 333_repair_dredged_spire_tt
 			add_faith_in_the_prophecy = yes
 			custom_tooltip = 333_new_question_for_thraxis
-			show_ambient_object = LF_Spire_F_7
+			show_ambient_object = LF_Spire_F_6
 			hidden_effect = {
 				set_country_flag = empire_333_unlock_11_thraxis
 				6685 = {
@@ -2203,17 +2269,27 @@ khatalashya_4_missions = {
 					has_subsidize_armies = yes
 				}
 			}
+			if = {
+				limit = { has_disaster = the_hivemind }
+				NOT = { has_disaster = the_hivemind }
+			}
 		}
 
 		effect = {
-			every_subject_country = {
-				limit = {
-					is_subject_of_type = space_colony
+			tooltip = {
+				every_subject_country = {
+					limit = {
+						is_subject_of_type = space_colony
+					}
+					add_country_modifier = {
+						name = 333_space_mutation
+						duration = -1
+					}
 				}
-				add_country_modifier = {
-					name = 333_space_mutation
-					duration = -1
-				}
+			}
+			custom_tooltip = space_tchokens_for_everyone_tt
+			hidden_effect = {
+				set_global_flag = space_colony_space_mutation
 			}
 		}
 	}
@@ -2295,8 +2371,10 @@ khatalashya_5_missions = {
 			culture = ashhana_lizardfolk
 			OR = {
 				NOT = { owned_by = ROOT }
-				NOT = { has_state_edict = edict_centralization_effort }
-				local_autonomy = 0.1
+				AND = {
+					NOT = { has_state_edict = edict_centralization_effort }
+					local_autonomy = 0.1
+				}
 			}
 		}
 
@@ -2369,8 +2447,10 @@ khatalashya_5_missions = {
 		provinces_to_highlight = {
 			region = shadow_swamp_region
 			NOT = {
-				culture_group = lizardfolk
-				owned_by = ROOT
+				AND = {
+					culture_group = lizardfolk
+					owned_by = ROOT
+				}
 			}
 		}
 

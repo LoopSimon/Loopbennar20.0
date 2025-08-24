@@ -11,6 +11,7 @@ mandate_mt_2 = {
 			tag = U04
 			tag = L26
 			tag = L27
+			tag = L28
 		}
 	}
 	has_country_shield = no
@@ -199,6 +200,7 @@ mandate_mt_3 = {
 			tag = U04
 			tag = L26
 			tag = L27
+			tag = L28
 		}
 	}
 	has_country_shield = no
@@ -298,12 +300,9 @@ mandate_mt_3 = {
 			if = {
 				limit = { 
 					has_government_attribute = heir
-					NOT = {
-						has_heir_flag = is_a_secret_homunculus
-						has_heir_flag = is_a_exposed_homunculus
-					}
+					NOT = { has_heir_flag = is_a_homunculus }
 				}
-				set_heir_mage_effect = yes
+				define_powerful_mage = { type = heir }
 			}
 			else = {
 				if = { limit = { has_estate = estate_mages } add_estate_loyalty = { estate = estate_mages loyalty = 20 } }
@@ -423,6 +422,7 @@ mandate_mt_4 = {
 			tag = U04
 			tag = L26
 			tag = L27
+			tag = L28
 		}
 	}
 	has_country_shield = no
@@ -591,6 +591,7 @@ mandate_mt_5 = {
 			tag = U04
 			tag = L26
 			tag = L27
+			tag = L28
 		}
 	}
 	has_country_shield = no
@@ -869,11 +870,14 @@ mandate_mt_5 = {
 			add_stability = 3
 			remove_country_modifier = mandate_mt_rising_empire
 			add_country_modifier = { name = mandate_mt_eternal_empire duration = -1 }
-			effect = {  
-			add_adm_power = 150
-			add_dip_power = 150
-			add_mil_power = 150
-		} 
+			if = {
+				limit = { in_golden_age = yes }
+				extend_golden_age = 600
+			}
+			else_if = {
+				limit = { has_had_golden_age = yes }
+				reset_golden_age = yes
+			}
 		}
 	}
 }
@@ -1453,6 +1457,207 @@ mandate_mt_aakheta_1 = {
 			override_country_name = AAKHATEP
 			bulwar_superregion = { add_nationalism = -15 }
 			add_country_modifier = { name = mandate_mt_aakhets_empire duration = -1 }
+		}
+	}
+}
+
+mandate_mt_koroshesh_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = L28
+	}
+	has_country_shield = yes
+
+	mandate_mt_koroshesh_nisetataa = {
+		icon = mission_frozen_star
+		position = 1
+		required_missions = {}
+		
+		provinces_to_highlight = {
+			if = {
+				limit = { exists = A85 }
+				owned_by = A85
+				NOT = { A85 = { has_opinion = { who = ROOT value = 125 } } }
+			}
+			else = {  
+				province_id = 3
+				owner = { NOT = { has_opinion = { who = ROOT value = 125 } } }
+			}
+		}
+		
+		trigger = {
+			if = {
+				limit = { exists = A85 }
+				A85 = { has_opinion = { who = ROOT value = 125 } }
+			}
+			else = { 3 = { owner = { has_opinion = { who = ROOT value = 125 } } } }
+			OR = {
+				trader = 2
+				dip = 6
+				dip_power = 200
+			}
+			estate_loyalty = { estate = estate_mages loyalty = 30 }
+		}
+		
+		effect = {
+			if = {
+				limit = { NOT = { trader = 2 dip = 6 } }
+				add_dip_power = -200
+			}
+			add_years_of_income = 1.5
+			large_increase_of_gnomish_tolerance_effect = yes
+			add_estate_loyalty = { estate = estate_mages loyalty = 10 }
+			add_estate_loyalty = { estate = estate_burghers loyalty = 10 }
+		}
+	}
+
+	mandate_mt_koroshesh_koroshesh = {
+		icon = mission_city_prosperity
+		position = 2
+		required_missions = {
+			mandate_mt_koroshesh_nisetataa
+		}
+		
+		provinces_to_highlight = {
+			province_id = 463
+		}
+		
+		trigger = {
+			463 = {
+				is_capital_of = ROOT
+				has_trade_building_trigger = yes
+				has_dock_building_trigger = yes
+				has_great_project = { type = koroshesh_library tier = 1 }
+				development = 17
+			}
+		}
+		
+		effect = {
+			463 = {
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
+				add_province_modifier = { name = mandate_mt_koroshesh duration = -1 }
+			}
+			define_advisor = {
+				type = trader
+				skill = 5
+				culture = delta_gnome
+				religion = ROOT
+				discount = yes
+			}
+			6761 = { add_permanent_claim = ROOT }
+			565 = { add_permanent_claim = ROOT }
+		}
+	}
+
+	mandate_mt_koroshesh_divenhal = {
+		icon = mission_fleet_arrival
+		position = 3
+		required_missions = {
+			mandate_mt_koroshesh_koroshesh
+			mandate_mt_destroy_gnolls
+		}
+		
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 6761
+						province_id = 565
+					}
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 1309
+					NOT = { 1309 = { is_strongest_trade_power = ROOT } }
+				}
+				AND = {
+					province_id = 1467
+					NOT = { 1467 = { is_strongest_trade_power = ROOT } }
+				}
+			}
+		}
+
+		trigger = {
+			owns = 6761
+			owns = 565
+			1309 = { is_strongest_trade_power = ROOT }
+			1467 = { is_strongest_trade_power = ROOT }
+		}
+		
+		effect = {
+			add_country_modifier = { name = mandate_mt_koroshesh_colonists duration = 18250 }
+			2261 = { add_permanent_claim = ROOT }
+			6132 = { add_permanent_claim = ROOT }
+			define_explorer = {
+				fire = 2
+				shock = 0
+				manuever = 4
+				siege = 2
+			}
+			add_yearly_sailors = 3
+		}
+	}
+
+	mandate_mt_koroshesh_wealth = {
+		icon = mission_guarded_market
+		position = 5
+		required_missions = {
+			mandate_mt_koroshesh_divenhal
+			mandate_mt_faith_and_gold
+		}
+		
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 1309
+					NOT = { 1309 = { is_strongest_trade_power = ROOT } }
+				}
+				AND = {
+					province_id = 1467
+					NOT = { 1467 = { is_strongest_trade_power = ROOT } }
+				}
+				AND = {
+					province_id = 1465
+					NOT = { 1465 = { is_strongest_trade_power = ROOT } }
+				}
+				AND = {
+					province_id = 3084
+					NOT = { 3084 = { is_strongest_trade_power = ROOT } }
+				}
+				AND = {
+					province_id = 1539
+					NOT = { 1539 = { is_strongest_trade_power = ROOT } }
+				}
+			}
+		}
+		
+		trigger = {
+			1305 = {
+				OR = {
+					highest_value_trade_node = yes
+					trade_node_value = 150
+				}
+			}
+			1309 = { is_strongest_trade_power = ROOT }
+			1467 = { is_strongest_trade_power = ROOT }
+			1465 = { is_strongest_trade_power = ROOT }
+			3084 = { is_strongest_trade_power = ROOT }
+			1539 = { is_strongest_trade_power = ROOT }
+		}
+		
+		effect = {
+			custom_tooltip = mandate_mt_koroshesh_wealth_tooltip
+			hidden_effect = {
+				africa = {
+					limit = { province_has_center_of_trade_of_level = 1 has_port = yes }
+					add_permanent_claim = ROOT
+				}
+			}
+			add_country_modifier = { name = mandate_mt_land_sea duration = -1 }
 		}
 	}
 }
