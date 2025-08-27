@@ -52,7 +52,7 @@ change_patron_approval = {
 ### A SCHOOL DEFINES UNLOCK PATTERNS AND OTHER GROUPINGS FOR SPELLS (AKA YOU WILL UNLOCK CONJURATION 2 AFTER CONJURATION 1)
 ### A LEVEL IS WHAT DEFINES THE COST OF THE SPELL IN MANA: WE RESPECT FOUR LEVELS ONLY (0, 1, 2, 3) THOUGH YOU CAN MAKE MORE
 ### AN ID DISTINGUISHES BETWEEN DIFFERENT SPELLS OF THE SAME SCHOOL AND LEVEL
-### EXAMPLE (abjuration_2_0_effect) and (abjuration_2_1_effect). BOTH ABJURATION, BOTH LEVEL 2, DIFFERENT ID'S
+### EXAMPLE (abjuration_2_mass_ward_effect) and (abjuration_2_mage_armor_effect). BOTH ABJURATION, BOTH LEVEL 2, DIFFERENT ID'S
 
 make_spell_free = {
 	[[ruler]
@@ -215,15 +215,15 @@ pay_mana_for_level_3_spell = { change_mana = { amount = -200 } }
 clear_active_war_magic = {
 	trigger_switch = {
 		on_trigger = has_country_modifier
-		abjuration_0_0_mod = { remove_country_modifier = abjuration_0_0_mod }
-		abjuration_2_1_mod = { remove_country_modifier = abjuration_2_1_mod }
-		divination_2_1_mod = { remove_country_modifier = divination_2_1_mod }
-		divination_2_1_mod_buffed = { remove_country_modifier = divination_2_1_mod_buffed }
-		enchantment_1_0_mod = { remove_country_modifier = enchantment_1_0_mod }
-		enchantment_2_0_mod = { remove_country_modifier = enchantment_2_0_mod }
-		evocation_1_0_mod = { remove_country_modifier = evocation_1_0_mod }
-		evocation_1_1_mod = { remove_country_modifier = evocation_1_1_mod }
-		evocation_3_0_mod = { remove_country_modifier = evocation_3_0_mod }
+		abjuration_0_combat_ward_mod = { remove_country_modifier = abjuration_0_combat_ward_mod }
+		abjuration_2_mage_armor_mod = { remove_country_modifier = abjuration_2_mage_armor_mod }
+		divination_2_manipulated_fortune_mod = { remove_country_modifier = divination_2_manipulated_fortune_mod }
+		divination_2_manipulated_fortune_mod_buffed = { remove_country_modifier = divination_2_manipulated_fortune_mod_buffed }
+		enchantment_1_mass_charm_mod = { remove_country_modifier = enchantment_1_mass_charm_mod }
+		enchantment_2_mass_charm_2_mod = { remove_country_modifier = enchantment_2_mass_charm_2_mod }
+		evocation_1_shock_and_awe_mod = { remove_country_modifier = evocation_1_shock_and_awe_mod }
+		evocation_1_flaming_munitions_mod = { remove_country_modifier = evocation_1_flaming_munitions_mod }
+		evocation_3_elemental_fury_mod = { remove_country_modifier = evocation_3_elemental_fury_mod }
 
 		#Patrons
 		patron_green_shock_and_awe = { remove_country_modifier = patron_green_shock_and_awe }
@@ -246,9 +246,9 @@ clear_active_war_magic = {
 }
 
 remove_harmful_siege_magic = { #Remove siege magic that's bad after you siege down a province
-	remove_province_modifier = enchantment_3_0_siege_mod
-	remove_province_modifier = transmutation_1_1_local_mod
-	remove_province_modifier = necromancy_1_1_local_mod
+	remove_province_modifier = enchantment_3_dominate_to_surrender_siege_mod
+	remove_province_modifier = transmutation_1_mass_enlarge_local_mod
+	remove_province_modifier = necromancy_1_contagion_local_mod
 }
 
 ai_magic_siege_pulse = {
@@ -276,17 +276,17 @@ ai_magic_siege_pulse = {
 ### ABJURATION ###
 ##################
 
-abjuration_0_0_effect = { # Combat Ward
-	add_country_modifier = { name = abjuration_0_0_mod duration = 120 }
+abjuration_0_combat_ward_effect = { # Combat Ward
+	add_country_modifier = { name = abjuration_0_combat_ward_mod duration = 120 }
 }
-abjuration_1_0_effect = { # Ward
+abjuration_1_ward_effect = { # Ward
 	PREV = {
 		custom_tooltip = change_siege_negative_tt
 		hidden_effect = { change_siege = -1 }
-		abjuration_1_0_sub_effect = { duration = 3650 }
+		abjuration_1_ward_sub_effect = { duration = 3650 }
 	}
 }
-abjuration_1_0_sub_effect = { # Ward sub-effect
+abjuration_1_ward_sub_effect = { # Ward sub-effect
 	if = { #Patron buffs
 		limit = { PREV = { OR = { has_ruler_flag = yaksha_patron has_ruler_flag = maiden_patron } } }
 		custom_tooltip = magic_booster_by_patron_tt
@@ -295,8 +295,8 @@ abjuration_1_0_sub_effect = { # Ward sub-effect
 
 	if = {
 		limit = { owner = { at_least_magic_project_level = { project = magical_fortress level = 3 } } }
-		add_province_modifier = { name = abjuration_1_0_mod_3 duration = $duration$ }
-		custom_tooltip = abjuration_1_0_upgrade_3
+		add_province_modifier = { name = abjuration_1_ward_mod_3 duration = $duration$ }
+		custom_tooltip = abjuration_1_ward_upgrade_3
 		hidden_effect = {
 			province_event = { id = kheionai.2 } #wind wards from fort
 			province_event = { id = kheionai.2 days = $duration$ }
@@ -304,8 +304,8 @@ abjuration_1_0_sub_effect = { # Ward sub-effect
 	}
 	else_if = {
 		limit = { owner = { at_least_magic_project_level = { project = magical_fortress level = 2 } } }
-		add_province_modifier = { name = abjuration_1_0_mod_2 duration = $duration$ }
-		custom_tooltip = abjuration_1_0_upgrade_2
+		add_province_modifier = { name = abjuration_1_ward_mod_2 duration = $duration$ }
+		custom_tooltip = abjuration_1_ward_upgrade_2
 		hidden_effect = {
 			province_event = { id = kheionai.2 } #wind wards from fort
 			province_event = { id = kheionai.2 days = $duration$ }
@@ -313,31 +313,31 @@ abjuration_1_0_sub_effect = { # Ward sub-effect
 	}
 	else_if = {
 		limit = { owner = { at_least_magic_project_level = { project = magical_fortress level = 1 } } }
-		add_province_modifier = { name = abjuration_1_0_mod_1 duration = $duration$ }
-		custom_tooltip = abjuration_1_0_upgrade_1
+		add_province_modifier = { name = abjuration_1_ward_mod_1 duration = $duration$ }
+		custom_tooltip = abjuration_1_ward_upgrade_1
 	}
 	else = {
-		add_province_modifier = { name = abjuration_1_0_mod_0 duration = $duration$ }
-		custom_tooltip = abjuration_1_0_upgrade_0
+		add_province_modifier = { name = abjuration_1_ward_mod_0 duration = $duration$ }
+		custom_tooltip = abjuration_1_ward_upgrade_0
 	}
 }
-abjuration_1_1_effect = { # Protected Journey
-	add_country_modifier = { name = abjuration_1_1_mod duration = 3650 }
+abjuration_1_protected_journey_effect = { # Protected Journey
+	add_country_modifier = { name = abjuration_1_protected_journey_mod duration = 3650 }
 }
-abjuration_2_0_effect = { # Mass Ward
-	custom_tooltip = abjuration_2_0_spell_effect_tt
+abjuration_2_mass_ward_effect = { # Mass Ward
+	custom_tooltip = abjuration_2_mass_ward_spell_effect_tt
 	hidden_effect = {
-		add_country_modifier = { name = abjuration_2_0_cooldown_mod duration = 1825 hidden = yes }
+		add_country_modifier = { name = abjuration_2_mass_ward_cooldown_mod duration = 1825 hidden = yes }
 		every_owned_province = {
 			limit = { fort_level = 1 controlled_by = PREV }
-			abjuration_1_0_sub_effect = { duration = 1825 }
+			abjuration_1_ward_sub_effect = { duration = 1825 }
 		}
 	}
 }
-abjuration_2_1_effect = { # Mage Armour
-	add_country_modifier = { name = abjuration_2_1_mod duration = 365 }
+abjuration_2_mage_armor_effect = { # Mage Armour
+	add_country_modifier = { name = abjuration_2_mage_armor_mod duration = 1825 }
 }
-abjuration_3_0_effect = { # Field of Forbiddance
+abjuration_3_field_of_forbiddance_effect = { # Field of Forbiddance
 	if = {
 		limit = {
 			6729 = { #Have Azmera's Wezinmesig
@@ -349,19 +349,19 @@ abjuration_3_0_effect = { # Field of Forbiddance
 				can_use_azmeras_wezinmesig = yes
 			}
 		}
-		abjuration_3_0_sub_effect = { duration = 7300 }
+		abjuration_3_field_of_forbiddance_sub_effect = { duration = 7300 }
 	}
-	else = { abjuration_3_0_sub_effect = { duration = 3650 } }
+	else = { abjuration_3_field_of_forbiddance_sub_effect = { duration = 3650 } }
 }
-abjuration_3_0_sub_effect = {
+abjuration_3_field_of_forbiddance_sub_effect = {
 	decrease_estate_witch_king_points = { size = large }
 	custom_tooltip = every_mage_tower_tt
-	tooltip = { 4160 = { add_province_modifier = { name = abjuration_3_0_local_mod duration = $duration$ } } }
+	tooltip = { 4160 = { add_province_modifier = { name = abjuration_3_field_of_forbiddance_local_mod duration = $duration$ } } }
 	hidden_effect = {
-		add_country_modifier = { name = abjuration_3_0_cooldown_mod duration = $duration$ hidden = yes }
+		add_country_modifier = { name = abjuration_3_field_of_forbiddance_cooldown_mod duration = $duration$ hidden = yes }
 		every_owned_province = {
 			limit = { has_building = mage_tower }
-			add_province_modifier = { name = abjuration_3_0_local_mod duration = $duration$ }
+			add_province_modifier = { name = abjuration_3_field_of_forbiddance_local_mod duration = $duration$ }
 		}
 	}
 }
@@ -370,125 +370,125 @@ abjuration_3_0_sub_effect = {
 ### CONJURATION ###
 ###################
 
-conjuration_0_0_effect = { # Summon Familiars
-	add_country_modifier = { name = conjuration_0_0_mod duration = 1825 }
+conjuration_0_summon_familiars_effect = { # Summon Familiars
+	add_country_modifier = { name = conjuration_0_summon_familiars_mod duration = 1825 }
 
 	if = {
 		limit = {
 			type_is_advancing_school = { type = country school = abjuration }
 			is_ruler_abjuration_level_3 = yes
 		}
-		custom_tooltip = conjuration_0_0_spell_effect_yes_tt
-		add_country_modifier = { name = conjuration_0_0_mod_abjuration duration = 1825 }
+		custom_tooltip = conjuration_0_summon_familiars_spell_effect_yes_tt
+		add_country_modifier = { name = conjuration_0_summon_familiars_mod_abjuration duration = 1825 }
 	}
 	else_if = {
 		limit = {
 			type_is_advancing_school = { type = country school = conjuration }
 			is_ruler_conjuration_level_3 = yes
 		}
-		custom_tooltip = conjuration_0_0_spell_effect_yes_tt
-		add_country_modifier = { name = conjuration_0_0_mod_conjuration duration = 1825 }
+		custom_tooltip = conjuration_0_summon_familiars_spell_effect_yes_tt
+		add_country_modifier = { name = conjuration_0_summon_familiars_mod_conjuration duration = 1825 }
 	}
 	else_if = {
 		limit = {
 			type_is_advancing_school = { type = country school = divination }
 			is_ruler_divination_level_3 = yes
 		}
-		custom_tooltip = conjuration_0_0_spell_effect_yes_tt
-		add_country_modifier = { name = conjuration_0_0_mod_divination duration = 1825 }
+		custom_tooltip = conjuration_0_summon_familiars_spell_effect_yes_tt
+		add_country_modifier = { name = conjuration_0_summon_familiars_mod_divination duration = 1825 }
 	}
 	else_if = {
 		limit = {
 			type_is_advancing_school = { type = country school = enchantment }
 			is_ruler_enchantment_level_3 = yes
 		}
-		custom_tooltip = conjuration_0_0_spell_effect_yes_tt
-		add_country_modifier = { name = conjuration_0_0_mod_enchantment duration = 1825 }
+		custom_tooltip = conjuration_0_summon_familiars_spell_effect_yes_tt
+		add_country_modifier = { name = conjuration_0_summon_familiars_mod_enchantment duration = 1825 }
 	}
 	else_if = {
 		limit = {
 			type_is_advancing_school = { type = country school = evocation }
 			is_ruler_evocation_level_3 = yes
 		}
-		custom_tooltip = conjuration_0_0_spell_effect_yes_tt
-		add_country_modifier = { name = conjuration_0_0_mod_evocation duration = 1825 }
+		custom_tooltip = conjuration_0_summon_familiars_spell_effect_yes_tt
+		add_country_modifier = { name = conjuration_0_summon_familiars_mod_evocation duration = 1825 }
 	}
 	else_if = {
 		limit = {
 			type_is_advancing_school = { type = country school = illusion }
 			is_ruler_illusion_level_3 = yes
 		}
-		custom_tooltip = conjuration_0_0_spell_effect_yes_tt
-		add_country_modifier = { name = conjuration_0_0_mod_illusion duration = 1825 }
+		custom_tooltip = conjuration_0_summon_familiars_spell_effect_yes_tt
+		add_country_modifier = { name = conjuration_0_summon_familiars_mod_illusion duration = 1825 }
 	}
 	else_if = {
 		limit = {
 			type_is_advancing_school = { type = country school = necromancy }
 			is_ruler_necromancy_level_3 = yes
 		}
-		custom_tooltip = conjuration_0_0_spell_effect_yes_tt
-		add_country_modifier = { name = conjuration_0_0_mod_necromancy duration = 1825 }
+		custom_tooltip = conjuration_0_summon_familiars_spell_effect_yes_tt
+		add_country_modifier = { name = conjuration_0_summon_familiars_mod_necromancy duration = 1825 }
 	}
 	else_if = {
 		limit = {
 			type_is_advancing_school = { type = country school = transmutation }
 			is_ruler_transmutation_level_3 = yes
 		}
-		custom_tooltip = conjuration_0_0_spell_effect_yes_tt
-		add_country_modifier = { name = conjuration_0_0_mod_transmutation duration = 1825 }
+		custom_tooltip = conjuration_0_summon_familiars_spell_effect_yes_tt
+		add_country_modifier = { name = conjuration_0_summon_familiars_mod_transmutation duration = 1825 }
 	}
-	else = { custom_tooltip = conjuration_0_0_spell_effect_no_tt }
+	else = { custom_tooltip = conjuration_0_summon_familiars_spell_effect_no_tt }
 
 }
-conjuration_1_0_effect = { # Summon Animals
-	custom_tooltip = conjuration_1_0_spell_effect_tt
-	add_country_modifier = { name = conjuration_1_0_mod duration = 1825 }
+conjuration_1_summon_animals_effect = { # Summon Animals
+	custom_tooltip = conjuration_1_summon_animals_spell_effect_tt
+	add_country_modifier = { name = conjuration_1_summon_animals_mod duration = 1825 }
 	hidden_effect = {
 		country_event = { id = magic_spell.202 days = 1825 }
 	}
 }
-conjuration_1_1_effect = { # Conjure Supplies
-	add_country_modifier = { name = conjuration_1_1_mod duration = 3650 }
+conjuration_1_conjure_supplies_effect = { # Conjure Supplies
+	add_country_modifier = { name = conjuration_1_conjure_supplies_mod duration = 3650 }
 }
-conjuration_2_0_effect = { # Summon Elementals
-	custom_tooltip = conjuration_2_0_spell_effect_tt
-	add_country_modifier = { name = conjuration_2_0_mod duration = 3650 }
+conjuration_2_summon_elementals_effect = { # Summon Elementals
+	custom_tooltip = conjuration_2_summon_elementals_spell_effect_tt
+	add_country_modifier = { name = conjuration_2_summon_elementals_mod duration = 3650 }
 	hidden_effect = {
 		country_event = { id = magic_spell.203 days = 3650 }
 	}
 }
-conjuration_2_1_effect = { # Aid Construction
-	add_country_modifier = { name = conjuration_2_1_mod duration = 1825 }
+conjuration_2_aid_construction_effect = { # Aid Construction
+	add_country_modifier = { name = conjuration_2_aid_construction_mod duration = 1825 }
 }
-conjuration_3_0_effect = { # Extraplanar Contact
+conjuration_3_extraplanar_contact_effect = { # Extraplanar Contact
 	increase_estate_witch_king_points = { size = large }
-	add_country_modifier = { name = conjuration_3_0_estate_mod duration = 3650 }
+	add_country_modifier = { name = conjuration_3_extraplanar_contact_estate_mod duration = 3650 }
 
 	if = {
 		limit = { has_country_flag = witch_king_skill }
 		if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 0 } }
-			make_spell_half_off = { school = divination level = 3 id = 0 next_cast = yes }
+			make_spell_half_off = { school = divination level = 3 id = foresight next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = 1 } }
 		}
 		else_if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 1 } }
-			make_spell_half_off = { school = enchantment level = 3 id = 0 next_cast = yes }
+			make_spell_half_off = { school = enchantment level = 3 id = dominate_to_surrender next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = 1 } }
 		}
 		else_if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 2 } }
-			make_spell_half_off = { school = illusion level = 3 id = 0 next_cast = yes }
+			make_spell_half_off = { school = illusion level = 3 id = lead_the_crowds next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = 1 } }
 		}
 		else_if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 3 } }
-			make_spell_half_off = { school = necromancy level = 3 id = 0 next_cast = yes }
+			make_spell_half_off = { school = necromancy level = 3 id = undead_army next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = 1 } }
 		}
 		else_if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 4 } }
-			make_spell_half_off = { school = transmutation level = 3 id = 0 next_cast = yes }
+			make_spell_half_off = { school = transmutation level = 3 id = rite_of_conception next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = -4 } }
 		}
 	}
@@ -577,7 +577,7 @@ conjuration_3_0_effect = { # Extraplanar Contact
 		}
 	}
 	else = {
-		custom_tooltip = conjuration_3_0_spell_effect_no_tt
+		custom_tooltip = conjuration_3_extraplanar_contact_spell_effect_no_tt
 		tooltip = { increase_ruler_witch_king_points = { size = large } }
 	}
 }
@@ -586,37 +586,37 @@ conjuration_3_0_effect = { # Extraplanar Contact
 ### DIVINATION ###
 ##################
 
-divination_0_0_effect = {  # Guidance
+divination_0_guidance_effect = {  # Guidance
 	if = {
 		limit = { has_country_flag = witch_king_thorns }
 		if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 0 } }
-			make_spell_half_off = { school = abjuration level = 0 id = 0 next_cast = yes }
+			make_spell_half_off = { school = abjuration level = 0 id = combat_ward next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = 1 } }
 		}
 		else_if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 1 } }
-			make_spell_half_off = { school = conjuration level = 0 id = 0 next_cast = yes }
+			make_spell_half_off = { school = conjuration level = 0 id = summon_familiars next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = 1 } }
 		}
 		else_if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 2 } }
-			make_spell_half_off = { school = evocation level = 0 id = 0 next_cast = yes }
+			make_spell_half_off = { school = evocation level = 0 id = fireball next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = 1 } }
 		}
 		else_if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 3 } }
-			make_spell_half_off = { school = illusion level = 0 id = 0 next_cast = yes }
+			make_spell_half_off = { school = illusion level = 0 id = invisibility next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = 1 } }
 		}
 		else_if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 4 } }
-			make_spell_half_off = { school = necromancy level = 0 id = 0 next_cast = yes }
+			make_spell_half_off = { school = necromancy level = 0 id = false_life next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = 1 } }
 		}
 		else_if = {
 			limit = { is_variable_equal = { which = witch_king_tracker_var value = 5 } }
-			make_spell_half_off = { school = transmutation level = 0 id = 0 next_cast = yes }
+			make_spell_half_off = { school = transmutation level = 0 id = longstrider next_cast = yes }
 			hidden_effect = { change_variable = { witch_king_tracker_var = -5 } }
 		}
 	}
@@ -630,7 +630,7 @@ divination_0_0_effect = {  # Guidance
 				1 = { add_mil_power = 25 }
 			}
 		}
-		custom_tooltip = divination_0_0_upgrade_yes
+		custom_tooltip = divination_0_guidance_upgrade_yes
 		hidden_effect = {
 			randnum_effect = {
 				max = 3
@@ -648,7 +648,7 @@ divination_0_0_effect = {  # Guidance
 				1 = { add_mil_power = 20 }
 			}
 		}
-		custom_tooltip = divination_0_0_upgrade_no
+		custom_tooltip = divination_0_guidance_upgrade_no
 		hidden_effect = {
 			randnum_effect = {
 				max = 3
@@ -666,14 +666,14 @@ divination_0_0_effect = {  # Guidance
 		}
 	}
 }
-divination_1_0_effect = {  # Eye for Talent
-	custom_tooltip = divination_1_0_spell_effect_tt
+divination_1_eye_for_talent_effect = {  # Eye for Talent
+	custom_tooltip = divination_1_eye_for_talent_spell_effect_tt
 	country_event = { id = magic_spell.300 }
 	if = {
 		limit = { exactly_magic_project_level = { project = orb_of_omniscience level = 0 } }
-		custom_tooltip = divination_1_0_upgrade_no
+		custom_tooltip = divination_1_eye_for_talent_upgrade_no
 	}
-	else = { custom_tooltip = divination_1_0_upgrade_yes }
+	else = { custom_tooltip = divination_1_eye_for_talent_upgrade_yes }
 	
 	hidden_effect = {
 		if = {
@@ -682,7 +682,7 @@ divination_1_0_effect = {  # Eye for Talent
 		}
 	}
 }
-divination_1_0_hire_sub_effect = { # Eye for Talent sub-effect
+divination_1_eye_for_talent_hire_sub_effect = { # Eye for Talent sub-effect
 	if = {
 		limit = { exactly_magical_infrastructure_level = { level = 4 } }
 		define_advisor = {
@@ -723,45 +723,45 @@ divination_1_0_hire_sub_effect = { # Eye for Talent sub-effect
 		}
 	}
 }
-divination_1_0_hire_effect = { # Eye for Talent sub-effect 2
+divination_1_eye_for_talent_hire_effect = { # Eye for Talent sub-effect 2
 	if = {
 		limit = { has_country_flag = adm_advisors }
-		divination_1_0_hire_sub_effect = { type = $adm$ }
+		divination_1_eye_for_talent_hire_sub_effect = { type = $adm$ }
 	}
 	else_if = {
 		limit = { has_country_flag = dip_advisors }
-		divination_1_0_hire_sub_effect = { type = $dip$ }
+		divination_1_eye_for_talent_hire_sub_effect = { type = $dip$ }
 	}
-	else = { divination_1_0_hire_sub_effect = { type = $mil$ } }
+	else = { divination_1_eye_for_talent_hire_sub_effect = { type = $mil$ } }
 }
-divination_1_1_effect = {  # Deposit Divination
-	custom_tooltip = divination_1_1_spell_effect
+divination_1_deposit_divination_effect = {  # Deposit Divination
+	custom_tooltip = divination_1_deposit_divination_spell_effect
 	if = {
 		limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 2 } }
 		if = {
 			limit = { receiving_mindarayan_buff = yes }
 			if = {
 				limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-				divination_1_1_sub_effect = { days = 5110 }
+				divination_1_deposit_divination_sub_effect = { days = 5110 }
 			}
-			else = { divination_1_1_sub_effect = { days = 4380 } }
+			else = { divination_1_deposit_divination_sub_effect = { days = 4380 } }
 			custom_tooltip = tughayasa_divination_booster_tt
 		}
-		else = { divination_1_1_sub_effect = { days = 3650 } }
-		custom_tooltip = divination_1_1_upgrade_yes
+		else = { divination_1_deposit_divination_sub_effect = { days = 3650 } }
+		custom_tooltip = divination_1_deposit_divination_upgrade_yes
 	}
 	else = {
 		if = {
 			limit = { receiving_mindarayan_buff = yes }
 			if = {
 				limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-				divination_1_1_sub_effect = { days = 2555 }
+				divination_1_deposit_divination_sub_effect = { days = 2555 }
 			}
-			else = { divination_1_1_sub_effect = { days = 2190 } }
+			else = { divination_1_deposit_divination_sub_effect = { days = 2190 } }
 			custom_tooltip = tughayasa_divination_booster_tt
 		}
-		else = { divination_1_1_sub_effect = { days = 1825 } }
-		custom_tooltip = divination_1_1_upgrade_no
+		else = { divination_1_deposit_divination_sub_effect = { days = 1825 } }
+		custom_tooltip = divination_1_deposit_divination_upgrade_no
 	}
 
 	hidden_effect = {
@@ -771,17 +771,17 @@ divination_1_1_effect = {  # Deposit Divination
 		}
 	}
 }
-divination_1_1_sub_effect = { #Deposit Divination sub-effect
-	tooltip = { 4160 = { add_province_modifier = { name = divination_1_1_local_mod duration = $days$ } } }
+divination_1_deposit_divination_sub_effect = { #Deposit Divination sub-effect
+	tooltip = { 4160 = { add_province_modifier = { name = divination_1_deposit_divination_local_mod duration = $days$ } } }
 	hidden_effect = {
 		every_owned_province = {
 			limit = { province_with_mineable_goods = yes }
-			add_province_modifier = { name = divination_1_1_local_mod duration = $days$ }
+			add_province_modifier = { name = divination_1_deposit_divination_local_mod duration = $days$ }
 		}
-		add_country_modifier = { name = divination_1_1_cooldown_mod duration = $days$ hidden = yes }
+		add_country_modifier = { name = divination_1_deposit_divination_cooldown_mod duration = $days$ hidden = yes }
 	}
 }
-divination_2_0_effect = {  # Scry #VERY FINICKY ABOUT ROOT SCOPE DUE TO FOW EFFECT
+divination_2_scry_effect = {  # Scry #VERY FINICKY ABOUT ROOT SCOPE DUE TO FOW EFFECT
 	if = {
 		limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 2 } }
 		if = {
@@ -791,28 +791,28 @@ divination_2_0_effect = {  # Scry #VERY FINICKY ABOUT ROOT SCOPE DUE TO FOW EFFE
 			}
 			if = { #80%
 				limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-				divination_2_0_sub_effect = { days = 6570 months = 216 buffed = yes }
+				divination_2_scry_sub_effect = { days = 6570 months = 216 buffed = yes }
 			}
-			else = { divination_2_0_sub_effect = { days = 5840 months = 192 buffed = yes } }
+			else = { divination_2_scry_sub_effect = { days = 5840 months = 192 buffed = yes } }
 			custom_tooltip = magic_booster_by_patron_tt
 			custom_tooltip = tughayasa_divination_booster_tt
 		}
 		else_if = {
 			limit = { has_ruler_flag = ancestor_spirit_patron }
-			divination_2_0_sub_effect = { days = 5110 months = 168 buffed = yes }
+			divination_2_scry_sub_effect = { days = 5110 months = 168 buffed = yes }
 			custom_tooltip = magic_booster_by_patron_tt
 		}
 		else_if = { #getting a mindarayan buff
 			limit = { receiving_mindarayan_buff = yes }
 			if = { #40%
 				limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-				divination_2_0_sub_effect = { days = 5110 months = 168 buffed = yes }
+				divination_2_scry_sub_effect = { days = 5110 months = 168 buffed = yes }
 			}
-			else = { divination_2_0_sub_effect = { days = 4380 months = 144 buffed = yes } }
+			else = { divination_2_scry_sub_effect = { days = 4380 months = 144 buffed = yes } }
 			custom_tooltip = tughayasa_divination_booster_tt
 		}
-		else = { divination_2_0_sub_effect = { days = 3650 months = 120 buffed = yes } }
-		custom_tooltip = divination_2_0_upgrade_yes
+		else = { divination_2_scry_sub_effect = { days = 3650 months = 120 buffed = yes } }
+		custom_tooltip = divination_2_scry_upgrade_yes
 	}
 	else = {
 		if = {
@@ -822,28 +822,28 @@ divination_2_0_effect = {  # Scry #VERY FINICKY ABOUT ROOT SCOPE DUE TO FOW EFFE
 			}
 			if = { #80%
 				limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-				divination_2_0_sub_effect = { days = 3285 months = 108 }
+				divination_2_scry_sub_effect = { days = 3285 months = 108 }
 			}
-			else = { divination_2_0_sub_effect = { days = 2920 months = 96 } }
+			else = { divination_2_scry_sub_effect = { days = 2920 months = 96 } }
 			custom_tooltip = magic_booster_by_patron_tt
 			custom_tooltip = tughayasa_divination_booster_tt
 		}
 		else_if = {
 			limit = { has_ruler_flag = ancestor_spirit_patron }
-			divination_2_0_sub_effect = { days = 2555 months = 84 }
+			divination_2_scry_sub_effect = { days = 2555 months = 84 }
 			custom_tooltip = magic_booster_by_patron_tt
 		}
 		else_if = { #getting a mindarayan buff
 			limit = { receiving_mindarayan_buff = yes }
 			if = { #40%
 				limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-				divination_2_0_sub_effect = { days = 2555 months = 84 }
+				divination_2_scry_sub_effect = { days = 2555 months = 84 }
 			}
-			else = { divination_2_0_sub_effect = { days = 2190 months = 72 } }
+			else = { divination_2_scry_sub_effect = { days = 2190 months = 72 } }
 			custom_tooltip = tughayasa_divination_booster_tt
 		}
-		else = { divination_2_0_sub_effect = { days = 1825 months = 60 } }
-		custom_tooltip = divination_2_0_upgrade_no
+		else = { divination_2_scry_sub_effect = { days = 1825 months = 60 } }
+		custom_tooltip = divination_2_scry_upgrade_no
 	}
 
 	hidden_effect = {
@@ -853,7 +853,7 @@ divination_2_0_effect = {  # Scry #VERY FINICKY ABOUT ROOT SCOPE DUE TO FOW EFFE
 		}
 	}
 }
-divination_2_0_sub_effect = { #Scry sub-effect
+divination_2_scry_sub_effect = { #Scry sub-effect
 	custom_tooltip = spell_sabotage_effect_tt
 	tooltip = {
 		remove_fow = $months$
@@ -879,21 +879,21 @@ divination_2_0_sub_effect = { #Scry sub-effect
 				any_rival_country = { institution_difference = { who = ROOT value = 1 } }
 			}
 		}
-		capital_scope = { add_province_modifier = { name = divination_2_0_local_mod duration = $days$ } }
+		capital_scope = { add_province_modifier = { name = divination_2_scry_local_mod duration = $days$ } }
 	}
-	else = { custom_tooltip = divination_2_0_spell_effect_tt }
+	else = { custom_tooltip = divination_2_scry_spell_effect_tt }
 }
-divination_2_1_effect = {  # Manipulated Fortune
+divination_2_manipulated_fortune_effect = {  # Manipulated Fortune
 	if = {
 		limit = { receiving_mindarayan_buff = yes }
 		if = {
 			limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-			divination_2_1_sub_effect = { days = 2555 }
+			divination_2_manipulated_fortune_sub_effect = { days = 2555 }
 		}
-		else = { divination_2_1_sub_effect = { days = 2190 } }
+		else = { divination_2_manipulated_fortune_sub_effect = { days = 2190 } }
 		custom_tooltip = tughayasa_divination_booster_tt
 	}
-	else = { divination_2_1_sub_effect = { days = 1825 } }
+	else = { divination_2_manipulated_fortune_sub_effect = { days = 1825 } }
 
 	hidden_effect = {
 		if = {
@@ -902,28 +902,28 @@ divination_2_1_effect = {  # Manipulated Fortune
 		}
 	}
 }
-divination_2_1_sub_effect = { #Manipulated Fortune sub-effect
+divination_2_manipulated_fortune_sub_effect = { #Manipulated Fortune sub-effect
 	if = {
 		limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 3 } }
-		add_country_modifier = { name = divination_2_1_mod_buffed duration = $days$ }
-		custom_tooltip = divination_2_1_upgrade_yes
+		add_country_modifier = { name = divination_2_manipulated_fortune_mod_buffed duration = $days$ }
+		custom_tooltip = divination_2_manipulated_fortune_upgrade_yes
 	}
 	else = {
-		add_country_modifier = { name = divination_2_1_mod duration = $days$ }
-		custom_tooltip = divination_2_1_upgrade_no
+		add_country_modifier = { name = divination_2_manipulated_fortune_mod duration = $days$ }
+		custom_tooltip = divination_2_manipulated_fortune_upgrade_no
 	}
 }
-divination_3_0_effect = {  # Foresight
+divination_3_foresight_effect = {  # Foresight
 	if = {
 		limit = { receiving_mindarayan_buff = yes }
 		if = {
 			limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-			divination_3_0_sub_effect = { days = 511 }
+			divination_3_foresight_sub_effect = { days = 511 }
 		}
-		else = { divination_3_0_sub_effect = { days = 438 } }
+		else = { divination_3_foresight_sub_effect = { days = 438 } }
 		custom_tooltip = tughayasa_divination_booster_tt
 	}
-	else = { divination_3_0_sub_effect = { days = 365 } }
+	else = { divination_3_foresight_sub_effect = { days = 365 } }
 
 	if = {
 		limit = {
@@ -946,15 +946,15 @@ divination_3_0_effect = {  # Foresight
 		}
 	}
 }
-divination_3_0_sub_effect = { #Foresight sub-effect
+divination_3_foresight_sub_effect = { #Foresight sub-effect
 	if = {
 		limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 3 } }
-		add_country_modifier = { name = divination_3_0_mod_buffed duration = $days$ }
-		custom_tooltip = divination_3_0_upgrade_yes
+		add_country_modifier = { name = divination_3_foresight_mod_buffed duration = $days$ }
+		custom_tooltip = divination_3_foresight_upgrade_yes
 	}
 	else = {
-		add_country_modifier = { name = divination_3_0_mod duration = $days$ }
-		custom_tooltip = divination_3_0_upgrade_no
+		add_country_modifier = { name = divination_3_foresight_mod duration = $days$ }
+		custom_tooltip = divination_3_foresight_upgrade_no
 	}
 }
 
@@ -962,21 +962,21 @@ divination_3_0_sub_effect = { #Foresight sub-effect
 ### ENCHANTMENT ###
 ###################
 
-enchantment_0_0_effect = { # Enchanting Embassy
+enchantment_0_enchanting_embassy_effect = { # Enchanting Embassy
 	decrease_ruler_witch_king_points = { size = small }
 	if = {
 		limit = { has_country_flag = Y63_enchantment_upgrade }
-		add_country_modifier = { name = enchantment_0_0_mod duration = 2555 }
+		add_country_modifier = { name = enchantment_0_enchanting_embassy_mod duration = 2555 }
 		custom_tooltip = Y63_enchantment_booster_tt
 	}
-	else = { add_country_modifier = { name = enchantment_0_0_mod duration = 1825 } }
+	else = { add_country_modifier = { name = enchantment_0_enchanting_embassy_mod duration = 1825 } }
 
 	if = {
 		limit = { has_country_modifier = U10_extravagant_surplus }
 		add_country_modifier = { name = U10_khet_feast duration = 1825 }
 	}
 }
-enchantment_1_0_effect = { # Mass Charm
+enchantment_1_mass_charm_effect = { # Mass Charm
 	if = {
 		limit = {
 			OR = {
@@ -986,13 +986,13 @@ enchantment_1_0_effect = { # Mass Charm
 			}
 			has_country_flag = Y63_enchantment_upgrade
 		}
-		add_country_modifier = { name = enchantment_1_0_mod duration = 3285 }
+		add_country_modifier = { name = enchantment_1_mass_charm_mod duration = 3285 }
 		custom_tooltip = Y63_enchantment_booster_tt
 		custom_tooltip = magic_booster_by_patron_tt
 	}
 	else_if = {
 		limit = { has_country_flag = Y63_enchantment_upgrade }
-		add_country_modifier = { name = enchantment_1_0_mod duration = 2555 }
+		add_country_modifier = { name = enchantment_1_mass_charm_mod duration = 2555 }
 		custom_tooltip = Y63_enchantment_booster_tt
 	}
 	else_if = {
@@ -1003,19 +1003,19 @@ enchantment_1_0_effect = { # Mass Charm
 				has_ruler_flag = summer_waves_patron
 			}
 		}
-		add_country_modifier = { name = enchantment_1_0_mod duration = 2555 }
+		add_country_modifier = { name = enchantment_1_mass_charm_mod duration = 2555 }
 		custom_tooltip = magic_booster_by_patron_tt
 	}
-	else = { add_country_modifier = { name = enchantment_1_0_mod duration = 1825 } }
+	else = { add_country_modifier = { name = enchantment_1_mass_charm_mod duration = 1825 } }
 	hidden_effect = { country_event = { id = magic_spell.400 days = 1825 random = 3650 } }
 }
-enchantment_1_1_effect = { # Command Animals
+enchantment_1_command_animals_effect = { # Command Animals
 	if = {
 		limit = { has_country_flag = Y63_enchantment_upgrade }
-		enchantment_1_1_sub_effect = { days = 2555 }
+		enchantment_1_command_animals_sub_effect = { days = 2555 }
 		custom_tooltip = Y63_enchantment_booster_tt
 	}
-	else = { enchantment_1_1_sub_effect = { days = 1825 } }
+	else = { enchantment_1_command_animals_sub_effect = { days = 1825 } }
 
 	if = {
 		limit = { has_country_flag = witch_king_rise }
@@ -1029,20 +1029,20 @@ enchantment_1_1_effect = { # Command Animals
 		}
 	}
 }
-enchantment_1_1_sub_effect = { # Command Animals sub-effect
-	add_country_modifier = { name = enchantment_1_1_mod duration = $days$ }
-	custom_tooltip = enchantment_1_1_spell_effect_tt
+enchantment_1_command_animals_sub_effect = { # Command Animals sub-effect
+	add_country_modifier = { name = enchantment_1_command_animals_mod duration = $days$ }
+	custom_tooltip = enchantment_1_command_animals_spell_effect_tt
 	tooltip = {
-		4160 = { add_province_modifier = { name = enchantment_1_1_local_mod duration = $days$ } }
+		4160 = { add_province_modifier = { name = enchantment_1_command_animals_local_mod duration = $days$ } }
 	}
 	hidden_effect = {
 		every_owned_province = {
 			limit = { province_with_animal_goods = yes }
-			add_province_modifier = { name = enchantment_1_1_local_mod duration = $days$ }
+			add_province_modifier = { name = enchantment_1_command_animals_local_mod duration = $days$ }
 		}
 	}
 }
-enchantment_2_0_effect = { # Mass Charm 2
+enchantment_2_mass_charm_2_effect = { # Mass Charm 2
 	if = {
 		limit = {
 			OR = {
@@ -1052,13 +1052,13 @@ enchantment_2_0_effect = { # Mass Charm 2
 			}
 			has_country_flag = Y63_enchantment_upgrade
 		}
-		add_country_modifier = { name = enchantment_2_0_mod duration = 3285 }
+		add_country_modifier = { name = enchantment_2_mass_charm_2_mod duration = 3285 }
 		custom_tooltip = Y63_enchantment_booster_tt
 		custom_tooltip = magic_booster_by_patron_tt
 	}
 	else_if = {
 		limit = { has_country_flag = Y63_enchantment_upgrade }
-		add_country_modifier = { name = enchantment_2_0_mod duration = 2555 }
+		add_country_modifier = { name = enchantment_2_mass_charm_2_mod duration = 2555 }
 		custom_tooltip = Y63_enchantment_booster_tt
 	}
 	else_if = {
@@ -1069,28 +1069,28 @@ enchantment_2_0_effect = { # Mass Charm 2
 				has_ruler_flag = summer_waves_patron
 			}
 		}
-		add_country_modifier = { name = enchantment_2_0_mod duration = 2555 }
+		add_country_modifier = { name = enchantment_2_mass_charm_2_mod duration = 2555 }
 		custom_tooltip = magic_booster_by_patron_tt
 	}
-	else = { add_country_modifier = { name = enchantment_2_0_mod duration = 1825 } }
+	else = { add_country_modifier = { name = enchantment_2_mass_charm_2_mod duration = 1825 } }
 	hidden_effect = { country_event = { id = magic_spell.400 days = 1825 random = 3650 } }
 }
-enchantment_2_1_effect = { # Enchanting Embassy 2
+enchantment_2_enchanting_embassy_2_effect = { # Enchanting Embassy 2
 	decrease_ruler_witch_king_points = { size = large }
-	remove_country_modifier = enchantment_0_0_mod
+	remove_country_modifier = enchantment_0_enchanting_embassy_mod
 	if = {
 		limit = { has_country_flag = Y63_enchantment_upgrade }
-		add_country_modifier = { name = enchantment_2_1_mod duration = 5110 }
+		add_country_modifier = { name = enchantment_2_enchanting_embassy_2_mod duration = 5110 }
 		custom_tooltip = Y63_enchantment_booster_tt
 	}
-	else = { add_country_modifier = { name = enchantment_2_1_mod duration = 3650 } }
+	else = { add_country_modifier = { name = enchantment_2_enchanting_embassy_2_mod duration = 3650 } }
 
 	if = {
 		limit = { has_country_modifier = U10_extravagant_surplus }
 		add_country_modifier = { name = U10_khet_feast duration = 3650 }
 	}
 }
-enchantment_3_0_effect = { # Dominate to Surrender
+enchantment_3_dominate_to_surrender_effect = { # Dominate to Surrender
 	if = {
 		limit = { NOT = { has_estate_privilege = estate_mages_organization_onyxguard } }
 		increase_witch_king_points_large = { level = enchantment_level_3 }
@@ -1102,14 +1102,14 @@ enchantment_3_0_effect = { # Dominate to Surrender
 			controller = { country_event = { id = magic_spell.405 days = 3 } }
 		}
 		add_core = PREV
-		custom_tooltip = enchantment_3_0_spell_effect_tt
+		custom_tooltip = enchantment_3_dominate_to_surrender_spell_effect_tt
 
 		#We use a modifier instead of change_controller so we can still trigger lich-hunts etc.
-		hidden_effect = { add_province_modifier = { name = enchantment_3_0_siege_mod duration = 4 } }
-		add_province_modifier = { name = enchantment_3_0_local_mod duration = 1825 }
+		hidden_effect = { add_province_modifier = { name = enchantment_3_dominate_to_surrender_siege_mod duration = 4 } }
+		add_province_modifier = { name = enchantment_3_dominate_to_surrender_local_mod duration = 1825 }
 	}
 	hidden_effect = {
-		add_or_extend_country_modifier = { name = enchantment_3_0_tracker_mod duration = 1825 hidden = yes }
+		add_or_extend_country_modifier = { name = enchantment_3_dominate_to_surrender_tracker_mod duration = 1825 hidden = yes }
 		country_event = { id = magic_spell.400 days = 1825 random = 3650 }
 	}
 }
@@ -1118,7 +1118,7 @@ enchantment_3_0_effect = { # Dominate to Surrender
 ### EVOCATION ###
 #################
 
-evocation_0_0_effect = { # Fireball
+evocation_0_fireball_effect = { # Fireball
 	if = {
 		limit = { NOT = { has_estate_privilege = estate_mages_organization_onyxguard } }
 		increase_witch_king_points_small = yes
@@ -1135,13 +1135,13 @@ evocation_0_0_effect = { # Fireball
 					}
 				}
 			}
-			custom_tooltip = evocation_0_0_buffed_spell_effect_tt
+			custom_tooltip = evocation_0_fireball_buffed_spell_effect_tt
 			custom_tooltip = magic_booster_by_patron_tt
-			hidden_effect = { change_siege = 3 }
+			hidden_effect = { change_siege = 2 }
 		}
 		else = {
-			custom_tooltip = evocation_0_0_spell_effect_tt
-			hidden_effect = { change_siege = 2 }
+			custom_tooltip = evocation_0_fireball_spell_effect_tt
+			hidden_effect = { change_siege = 1 }
 		}
 
 		hidden_effect = {
@@ -1150,7 +1150,7 @@ evocation_0_0_effect = { # Fireball
 		}
 	}
 }
-evocation_1_0_effect = { # Shock and Awe
+evocation_1_shock_and_awe_effect = { # Shock and Awe
 	if = {
 		limit = { has_ruler_flag = hoko_patron }
 		add_country_modifier = { name = patron_green_shock_and_awe duration = 1825 }
@@ -1171,9 +1171,9 @@ evocation_1_0_effect = { # Shock and Awe
 		add_country_modifier = { name = patron_ice_shock_and_awe duration = 1825 }
 		custom_tooltip = magic_booster_by_patron_tt
 	}
-	else = { add_country_modifier = { name = evocation_1_0_mod duration = 1825 } }
+	else = { add_country_modifier = { name = evocation_1_shock_and_awe_mod duration = 1825 } }
 }
-evocation_1_1_effect = { # Flaming Munitions
+evocation_1_flaming_munitions_effect = { # Flaming Munitions
 	if = {
 		limit = { has_ruler_flag = hoko_patron }
 		add_country_modifier = { name = patron_green_munitions duration = 1825 }
@@ -1195,11 +1195,11 @@ evocation_1_1_effect = { # Flaming Munitions
 		custom_tooltip = magic_booster_by_patron_tt
 	}
 	else = {
-		add_country_modifier = { name = evocation_1_1_mod duration = 1825 }
+		add_country_modifier = { name = evocation_1_flaming_munitions_mod duration = 1825 }
 		custom_tooltip = evocation_fireball_on_barrage_tt
 	}
 }
-evocation_2_0_effect = { # Meteor Swarm
+evocation_2_meteor_swarm_effect = { # Meteor Swarm
 	if = {
 		limit = { NOT = { has_estate_privilege = estate_mages_organization_onyxguard } }
 		increase_witch_king_points_large = { level = evocation_level_2_minimum }
@@ -1248,63 +1248,63 @@ evocation_2_0_effect = { # Meteor Swarm
 		}
 	}
 }
-evocation_2_1_effect = { # Tearfall
-	custom_tooltip = evocation_2_1_spell_effect_tt
+evocation_2_tearfall_effect = { # Tearfall
+	custom_tooltip = evocation_2_tearfall_spell_effect_tt
 	if = {
 		limit = { is_month = 11 }
-		evocation_2_1_sub_effect = { days = 304 days_2 = 302 }
+		evocation_2_tearfall_sub_effect = { days = 304 days_2 = 302 }
 	}
 	if = {
 		limit = { is_month = 10 NOT = { is_month = 11 } }
-		evocation_2_1_sub_effect = { days = 334 days_2 = 332 }
+		evocation_2_tearfall_sub_effect = { days = 334 days_2 = 332 }
 	}
 	if = { #The month of Tearfall
 		limit = { is_month = 9 NOT = { is_month = 10 } }
-		evocation_2_1_sub_effect = { days = 365 days_2 = 363 }
+		evocation_2_tearfall_sub_effect = { days = 365 days_2 = 363 }
 	}
 	if = {
 		limit = { is_month = 8 NOT = { is_month = 9 } }
-		evocation_2_1_sub_effect = { days = 30 days_2 = 28 }
+		evocation_2_tearfall_sub_effect = { days = 30 days_2 = 28 }
 	}
 	if = {
 		limit = { is_month = 7 NOT = { is_month = 8 } }
-		evocation_2_1_sub_effect = { days = 61 days_2 = 59 }
+		evocation_2_tearfall_sub_effect = { days = 61 days_2 = 59 }
 	}
 	if = {
 		limit = { is_month = 6 NOT = { is_month = 7 } }
-		evocation_2_1_sub_effect = { days = 92 days_2 = 90 }
+		evocation_2_tearfall_sub_effect = { days = 92 days_2 = 90 }
 	}
 	if = {
 		limit = { is_month = 5 NOT = { is_month = 6 } }
-		evocation_2_1_sub_effect = { days = 122 days_2 = 120 }
+		evocation_2_tearfall_sub_effect = { days = 122 days_2 = 120 }
 	}
 	if = {
 		limit = { is_month = 4 NOT = { is_month = 5 } }
-		evocation_2_1_sub_effect = { days = 153 days_2 = 151 }
+		evocation_2_tearfall_sub_effect = { days = 153 days_2 = 151 }
 	}
 	if = {
 		limit = { is_month = 3 NOT = { is_month = 4 } }
-		evocation_2_1_sub_effect = { days = 183 days_2 = 181 }
+		evocation_2_tearfall_sub_effect = { days = 183 days_2 = 181 }
 	}
 	if = { limit = { is_month = 2 NOT = { is_month = 3 } }
-		evocation_2_1_sub_effect = { days = 214 days_2 = 212 }
+		evocation_2_tearfall_sub_effect = { days = 214 days_2 = 212 }
 	}
 	if = { limit = { is_month = 1 NOT = { is_month = 2 } }
-		evocation_2_1_sub_effect = { days = 242 days_2 = 240 }
+		evocation_2_tearfall_sub_effect = { days = 242 days_2 = 240 }
 	}
 	if = { limit = { NOT = { is_month = 1 } }
-		evocation_2_1_sub_effect = { days = 273 days_2 = 271 }
+		evocation_2_tearfall_sub_effect = { days = 273 days_2 = 271 }
 	}
 	custom_tooltip = EVENT_INSIGHT_INTRO
-	custom_tooltip = evocation_2_1_spell_effect_2_tt
+	custom_tooltip = evocation_2_tearfall_spell_effect_2_tt
 }
-evocation_2_1_sub_effect = { # Tearfall sub-effect
+evocation_2_tearfall_sub_effect = { # Tearfall sub-effect
 	tooltip = { country_event = { id = magic_spell.500 days = $days$ } }
-	add_country_modifier = { name = evocation_2_1_cooldown_mod duration = $days$ hidden = yes }
+	add_country_modifier = { name = evocation_2_tearfall_cooldown_mod duration = $days$ hidden = yes }
 	hidden_effect = { country_event = { id = magic_spell.501 days = $days_2$ } }
 	#Hidden event that fires two days before, to account for the one-day delay on PTMs and the expiring modifier
 }
-evocation_3_0_effect = { # Elemental Fury
+evocation_3_elemental_fury_effect = { # Elemental Fury
 	if = {
 		limit = { has_ruler_flag = hoko_patron }
 		add_country_modifier = { name = patron_green_elemental_fury duration = 3650 }
@@ -1326,7 +1326,7 @@ evocation_3_0_effect = { # Elemental Fury
 		custom_tooltip = magic_booster_by_patron_tt
 	}
 	else = {
-		add_country_modifier = { name = evocation_3_0_mod duration = 3650 }
+		add_country_modifier = { name = evocation_3_elemental_fury_mod duration = 3650 }
 		custom_tooltip = evocation_fireball_on_barrage_tt
 	}
 }
@@ -1335,14 +1335,14 @@ evocation_3_0_effect = { # Elemental Fury
 ### ILLUSION ###
 ################
 
-illusion_0_0_effect = { # Invisibility
-	add_country_modifier = { name = illusion_0_0_mod duration = 3650 }
+illusion_0_invisibility_effect = { # Invisibility
+	add_country_modifier = { name = illusion_0_invisibility_mod duration = 3650 }
 }
-illusion_1_0_effect = { #Fear and Loathing
+illusion_1_fear_and_loathing_effect = { #Fear and Loathing
 	custom_tooltip = spell_sabotage_effect_tt
 	if = {
 		limit = { has_country_flag = witch_king_armies }
-		custom_tooltip = illusion_1_0_wk_effect
+		custom_tooltip = illusion_1_fear_and_loathing_wk_effect
 		hidden_effect = {
 			every_war_enemy_country = {
 				limit = { capital_scope = { controlled_by = PREV has_siege = no } }
@@ -1358,7 +1358,7 @@ illusion_1_0_effect = { #Fear and Loathing
 	}
 	if = {
 		limit = { NOT = { has_country_flag = witch_king_armies } }
-		custom_tooltip = illusion_1_0_effect
+		custom_tooltip = illusion_1_fear_and_loathing_effect
 		hidden_effect = {
 			every_war_enemy_country = {
 				limit = { capital_scope = { controlled_by = PREV has_siege = no } }
@@ -1373,7 +1373,7 @@ illusion_1_0_effect = { #Fear and Loathing
 		}
 	}
 }
-illusion_1_1_effect = { # Bread and Circuses
+illusion_1_bread_and_circuses_effect = { # Bread and Circuses
 	decrease_estate_witch_king_points = { size = medium }
 	if = {
 		limit = {
@@ -1389,9 +1389,9 @@ illusion_1_1_effect = { # Bread and Circuses
 	
 	if = {
 		limit = { has_any_active_estate_agenda = yes }
-		custom_tooltip = illusion_1_1_yes_active_agenda
+		custom_tooltip = illusion_1_bread_and_circuses_yes_active_agenda
 	}
-	else = { custom_tooltip = illusion_1_1_no_active_agenda }
+	else = { custom_tooltip = illusion_1_bread_and_circuses_no_active_agenda }
 
 	hidden_effect = {
 		if = {
@@ -1402,33 +1402,33 @@ illusion_1_1_effect = { # Bread and Circuses
 		else = { auto_complete_estate_agenda = { estate = all } }
 	}
 }
-illusion_2_0_effect = { # Assimilation Program
-	add_country_modifier = { name = illusion_2_0_mod duration = 7300 }
+illusion_2_assimilation_program_effect = { # Assimilation Program
+	add_country_modifier = { name = illusion_2_assimilation_program_mod duration = 7300 }
 }
-illusion_2_1_effect = { # Shadows in the Night
+illusion_2_shadows_in_the_night_effect = { # Shadows in the Night
 	custom_tooltip = spell_sabotage_effect_tt
-	tooltip = { add_country_modifier = { name = illusion_2_1_mod duration = 1825 } }
+	tooltip = { add_country_modifier = { name = illusion_2_shadows_in_the_night_mod duration = 1825 } }
 	hidden_effect = {
-		every_war_enemy_country = { country_event = { id = magic_spell.600 } add_country_modifier = { name = illusion_2_1_mod duration = 1825 } }
-		every_rival_country = { country_event = { id = magic_spell.600 } add_country_modifier = { name = illusion_2_1_mod duration = 1825 } }
+		every_war_enemy_country = { country_event = { id = magic_spell.600 } add_country_modifier = { name = illusion_2_shadows_in_the_night_mod duration = 1825 } }
+		every_rival_country = { country_event = { id = magic_spell.600 } add_country_modifier = { name = illusion_2_shadows_in_the_night_mod duration = 1825 } }
 	}
 }
-illusion_3_0_effect = { # Lead the Crowds
+illusion_3_lead_the_crowds_effect = { # Lead the Crowds
 	decrease_estate_witch_king_points = { size = large }
-	custom_tooltip = illusion_3_0_effect
+	custom_tooltip = illusion_3_lead_the_crowds_effect
 	hidden_effect = { every_owned_province = { add_nationalism = -10 } }
-	add_country_modifier = { name = illusion_3_0_mod duration = 3650 }
+	add_country_modifier = { name = illusion_3_lead_the_crowds_mod duration = 3650 }
 }
 
 ##################
 ### NECROMANCY ###
 ##################
 
-necromancy_0_0_effect = { # False Life
-	add_country_modifier = { name = necromancy_0_0_mod duration = 1825 }
+necromancy_0_false_life_effect = { # False Life
+	add_country_modifier = { name = necromancy_0_false_life_mod duration = 1825 }
 	if = {
 		limit = { has_cast_undead_army = yes }
-		custom_tooltip = necromancy_0_0_spell_effect_2_tt
+		custom_tooltip = necromancy_0_false_life_spell_effect_2_tt
 		capital_scope = {
 			infantry = ROOT
 			infantry = ROOT
@@ -1438,7 +1438,7 @@ necromancy_0_0_effect = { # False Life
 		}
 	}
 	else = {
-		custom_tooltip = necromancy_0_0_spell_effect_1_tt
+		custom_tooltip = necromancy_0_false_life_spell_effect_1_tt
 		tooltip = {
 			capital_scope = {
 				undead_1_zombie_horde = ROOT
@@ -1451,7 +1451,7 @@ necromancy_0_0_effect = { # False Life
 	}
 }
 
-necromancy_1_0_effect = { # Steal Vitality
+necromancy_1_steal_vitality_effect = { # Steal Vitality
 	increase_witch_king_points_medium = { level = necromancy_level_1_minimum }
 	if = {
 		limit = { has_ruler_flag = winter_everfrost_patron }
@@ -1502,13 +1502,13 @@ necromancy_1_0_effect = { # Steal Vitality
 			add_base_manpower = -1
 		}
 	}
-	add_country_modifier = { name = necromancy_1_0_mod duration = 3650 }
+	add_country_modifier = { name = necromancy_1_steal_vitality_mod duration = 3650 }
 }
-necromancy_1_1_effect = { # Contagion
+necromancy_1_contagion_effect = { # Contagion
 	increase_witch_king_points_medium = { level = necromancy_level_1_minimum }
 	PREV = {
 		add_devastation = 20
-		add_province_modifier = { name = necromancy_1_1_local_mod duration = 1825 }
+		add_province_modifier = { name = necromancy_1_contagion_local_mod duration = 1825 }
 	}
 	hidden_effect = {
 		save_event_target_as = contagion_province
@@ -1518,9 +1518,9 @@ necromancy_1_1_effect = { # Contagion
 		}
 	}
 }
-necromancy_2_0_effect = { # Speak With Dead
+necromancy_2_speak_with_dead_effect = { # Speak With Dead
 
-	add_ruler_modifier = { name = necromancy_2_0_mod duration = 3650 }
+	add_ruler_modifier = { name = necromancy_2_speak_with_dead_mod duration = 3650 }
 	tooltip = { add_random_ruler_skill = yes }
 	
 	hidden_effect = {
@@ -1559,15 +1559,15 @@ necromancy_2_0_effect = { # Speak With Dead
 		}
 	}
 }
-necromancy_2_1_effect = { # Ghoulish Grandeur
-	add_country_modifier = { name = necromancy_2_1_mod duration = 3650 }
+necromancy_2_ghoulish_grandeur_effect = { # Ghoulish Grandeur
+	add_country_modifier = { name = necromancy_2_ghoulish_grandeur_mod duration = 3650 }
 }
-necromancy_3_0_effect = { # Undead Army
+necromancy_3_undead_army_effect = { # Undead Army
 	if = {
 		limit = { is_ruler_necromancy_level_3 = yes }
-		custom_tooltip = necromancy_3_0_spell_effect_tt
+		custom_tooltip = necromancy_3_undead_army_spell_effect_tt
 	}
-	else = { custom_tooltip = necromancy_3_0_spell_effect_2_tt }
+	else = { custom_tooltip = necromancy_3_undead_army_spell_effect_2_tt }
 	hidden_effect = {
 		increase_witch_king_points_large = { level = necromancy_level_3 }
 		increase_witch_king_points_large = { level = necromancy_level_3 }
@@ -1587,11 +1587,11 @@ necromancy_3_0_effect = { # Undead Army
 ### TRANSMUTATION ###
 #####################
 
-transmutation_0_0_effect = { # Longstrider
-	add_country_modifier = { name = transmutation_0_0_mod duration = 180 }
+transmutation_0_longstrider_effect = { # Longstrider
+	add_country_modifier = { name = transmutation_0_longstrider_mod duration = 180 }
 }
-transmutation_1_0_effect = { # Plant Growth
-	custom_tooltip = transmutation_1_0_spell_effect_tt
+transmutation_1_plant_growth_effect = { # Plant Growth
+	custom_tooltip = transmutation_1_plant_growth_spell_effect_tt
 	if = {
 		limit = {
 			OR = {
@@ -1600,15 +1600,15 @@ transmutation_1_0_effect = { # Plant Growth
 				has_ruler_flag = manifestation_of_surael_patron
 			}
 		}
-		transmutation_1_0_sub_effect = { days = 3650 }
+		transmutation_1_plant_growth_sub_effect = { days = 3650 }
 		custom_tooltip = magic_booster_by_patron_tt
 	}
 	else_if = {
 		limit = { has_ruler_flag = spring_old_patron }
-		transmutation_1_0_sub_effect = { days = 2555 }
+		transmutation_1_plant_growth_sub_effect = { days = 2555 }
 		custom_tooltip = magic_booster_by_patron_tt
 	}
-	else = { transmutation_1_0_sub_effect = { days = 1825 } }
+	else = { transmutation_1_plant_growth_sub_effect = { days = 1825 } }
 	if = {
 		limit = { has_estate_privilege = estate_mages_fifth_family }
 		custom_tooltip = toarnaire_fifth_tt
@@ -1623,8 +1623,8 @@ transmutation_1_0_effect = { # Plant Growth
 		}
 	}
 }
-transmutation_1_0_sub_effect = { #Plant Growth - sub-effect
-	tooltip = { 4160 = { add_province_modifier = { name = transmutation_1_0_local_mod duration = $days$ } } }
+transmutation_1_plant_growth_sub_effect = { #Plant Growth - sub-effect
+	tooltip = { 4160 = { add_province_modifier = { name = transmutation_1_plant_growth_local_mod duration = $days$ } } }
 	hidden_effect = {
 		if = {
 			limit = { 
@@ -1635,22 +1635,22 @@ transmutation_1_0_sub_effect = { #Plant Growth - sub-effect
 			}
 			every_owned_province = {
 				limit = { province_with_arable_goods = yes }
-				add_province_modifier = { name = transmutation_1_0_local_mod_upgraded duration = $days$ }
+				add_province_modifier = { name = transmutation_1_plant_growth_local_mod_upgraded duration = $days$ }
 			}
 		}
 		else = {
 			every_owned_province = {
 				limit = { province_with_arable_goods = yes }
-				add_province_modifier = { name = transmutation_1_0_local_mod duration = $days$ }
+				add_province_modifier = { name = transmutation_1_plant_growth_local_mod duration = $days$ }
 			}
 		}
-		add_country_modifier = { name = transmutation_1_0_cooldown_mod duration = $days$ hidden = yes }
+		add_country_modifier = { name = transmutation_1_plant_growth_cooldown_mod duration = $days$ hidden = yes }
 	}
 }
-transmutation_1_1_effect = { # Mass Enlarge
-	PREV = { add_province_modifier = { name = transmutation_1_1_local_mod duration = 730 } }
+transmutation_1_mass_enlarge_effect = { # Mass Enlarge
+	PREV = { add_province_modifier = { name = transmutation_1_mass_enlarge_local_mod duration = 730 } }
 }
-transmutation_2_0_effect = { # Transmute to Gold
+transmutation_2_transmute_to_gold_effect = { # Transmute to Gold
 	add_inflation = 1
 	if = {
 		limit = { monthly_income = 416 }
@@ -1659,15 +1659,15 @@ transmutation_2_0_effect = { # Transmute to Gold
 	else = { add_years_of_income = 1 }
 	
 }
-transmutation_2_1_effect = { # Reshape Terrain
+transmutation_2_reshape_terrain_effect = { # Reshape Terrain
 	if = {
 		limit = { has_country_flag = better_reshape_terrain }
-		add_country_modifier = { name = transmutation_2_1_buffed_mod duration = 3650 }
+		add_country_modifier = { name = transmutation_2_reshape_terrain_buffed_mod duration = 3650 }
 		custom_tooltip = magic_booster_by_eilisin_tt
 	}
-	else = { add_country_modifier = { name = transmutation_2_1_mod duration = 3650 } }
+	else = { add_country_modifier = { name = transmutation_2_reshape_terrain_mod duration = 3650 } }
 }
-transmutation_3_0_effect = { # Rite of Conception
+transmutation_3_rite_of_conception_effect = { # Rite of Conception
 	if = {
 		limit = {
 			OR = {
@@ -1684,7 +1684,7 @@ transmutation_3_0_effect = { # Rite of Conception
 				}
 			}
 			hidden_effect = {
-				add_country_modifier = { name = transmutation_3_0_cooldown_mod duration = 301 }
+				add_country_modifier = { name = transmutation_3_rite_of_conception_cooldown_mod duration = 301 }
 				capital_scope = { add_province_triggered_modifier = rite_of_conception_randomization_ptm }
 			}
 		}
@@ -1710,7 +1710,7 @@ transmutation_3_0_effect = { # Rite of Conception
 			}
 		}
 		hidden_effect = { 
-			add_country_modifier = { name = transmutation_3_0_cooldown_mod duration = 301 hidden = yes }
+			add_country_modifier = { name = transmutation_3_rite_of_conception_cooldown_mod duration = 301 hidden = yes }
 			capital_scope = { add_province_triggered_modifier = rite_of_conception_randomization_ptm }
 		}
 	}
