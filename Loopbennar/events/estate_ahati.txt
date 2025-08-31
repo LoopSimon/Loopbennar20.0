@@ -987,12 +987,14 @@ country_event = {
 	trigger = {
 		is_emperor_of_china = yes
 		has_estate = estate_ahati
-		NOT = { has_country_modifier = ahati_disaster_timer }
-		is_year = 1500 #at least
-		total_development = 400
 		OR = {
-			estate_influence = { estate = estate_ahati influence = 40 }
-			has_country_modifier = duwarkani_disgruntled_ahati #duwarkani MT 
+			has_country_flag = ahati_disaster_start_bypass
+			AND = {
+				NOT = { has_country_modifier = ahati_disaster_timer }
+				is_year = 1500 #at least
+				total_development = 400
+				estate_influence = { estate = estate_ahati influence = 40 }
+			}
 		}
 	}
 
@@ -2244,7 +2246,7 @@ country_event = {
 					name = "Hazan"
 					dynasty = "'the Vengeful'"
 				}
-				add_ruler_personality = martial_educator_personality
+				define_powerful_mage = { type = ruler war_wizard = yes }
 				add_ruler_personality = conqueror_personality
 				add_ruler_personality = well_advised_personality
 				add_adm_power = 100
@@ -2269,13 +2271,6 @@ country_event = {
 						limit = { NOT = { area = mothers_delta_area } }
 						spawn_aakheta_army = yes 
 					}
-				}
-				define_ruler_to_general = {
-					fire = 5
-					shock = 7
-					manuever = 4
-					siege = 3
-					trait = ruthless_personality
 				}
 				define_general = {
 					fire = 2
@@ -2477,6 +2472,12 @@ country_event = {
 	trigger = {
 		is_emperor_of_china = yes
 	}
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = no_callaction
+			U04 = { clr_country_flag = no_callaction }
+		}
+	}
 
 	#yay
 	option = {
@@ -2556,8 +2557,10 @@ country_event = {
 		hidden_effect = { 
 			event_target:ahati_disaster_target = { 
 				disband_all_units = yes 
-				save_event_target_as = event_country 
+				save_event_target_as = event_country
+				clr_country_flag = no_callaction
 			}
+			clr_country_flag = no_callaction
 			remove_country_modifier = restructuring_military
 			remove_country_modifier = restructuring_administration
 		}
@@ -2573,11 +2576,11 @@ country_event = {
 		}
 		if = {
 			limit = { event_target:event_country = { government_rank = 3 } }
-			set_government_rank = 3
+			set_government_rank_scripted_effect = { rank = 3 }
 		}
 		else_if = {
 			limit = { NOT = { government_rank = 2 } }
-			set_government_rank = 2
+			set_government_rank_scripted_effect = { rank = 2 }
 		}
 		inherit = event_target:event_country
 		override_country_name = KHETERATA
@@ -2593,11 +2596,11 @@ country_event = {
 		}
 		if = {
 			limit = { event_target:event_country = { government_rank = 3 } }
-			set_government_rank = 3
+			set_government_rank_scripted_effect = { rank = 3 }
 		}
 		else_if = {
 			limit = { NOT = { government_rank = 2 } }
-			set_government_rank = 2
+			set_government_rank_scripted_effect = { rank = 2 }
 		}
 		inherit = event_target:event_country
 		ai_chance = { factor = 0 }
@@ -2704,6 +2707,10 @@ country_event = {
 				limit = { NOT = { religion = aakhetist } }
 				change_religion = aakhetist
 			}
+			hidden_effect = {
+				set_country_flag = no_callaction
+				ROOT = { set_country_flag = no_callaction }
+			}
 			declare_war_with_cb = { who = ROOT casus_belli = cb_aakheta_uprising } 
 		}
 
@@ -2750,7 +2757,9 @@ country_event = {
 	}
 
 	immediate = {
-		hidden_effect = { set_global_flag = ahati_rebellion_crushed }
+		hidden_effect = { 
+			set_global_flag = ahati_rebellion_crushed 
+		}
 	}
 
 	#yay

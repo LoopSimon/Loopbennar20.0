@@ -2,40 +2,29 @@ estate_mages = {
 	icon = 11
 
 	# If true, country will get estate
-	trigger = {	
-		NOT = { has_government_attribute = disables_estate_mages }
-		NOT = { government = native }
-
-		#you must either be non-nomadic, or be a centaur. not sure if this is_nomad = no was load-bearing for excluding gnolls or something so I made sure the check remained -imacop42
-		OR = {
-			is_nomad = no
-			culture_is_centaur = yes
+	trigger = {
+		NOT = {
+			has_government_attribute = disables_estate_mages
+			AND = {
+				is_nomad = yes
+				culture_is_centaur = no
+			}
 		}
-		#Anbennar
-		NOT = { has_government_attribute = is_adventurer_reform }
-		NOT = { has_country_flag = banned_magic }
-		NOT = { has_estate = estate_acolytes }
-		NOT = { AND = { religion = bulwari_sun_cult has_country_flag = nsc_human_country_magic_prohibition } }
-		NOT = { is_subject_of = R62 }
-		NOT = { has_country_flag = LF_mages_banned }
-		NOT = { has_country_flag = magic_artificery_artificery_only }
-		NOT = { has_country_flag = h35_debarment_moment }
+		has_not_banned_magic_artificery = yes
 	}
 
 	# These scale with loyalty & power
 	country_modifier_happy = {
-		all_power_cost = -0.1
+		all_power_cost = -0.05
+		technology_cost = 0.05
 		imperial_authority = 0.05
-		technology_cost = 0.2
-		monthly_support_heir_gain = 0.13
 	}
 	country_modifier_neutral = {
-		#all_power_cost = 0.05
 	}	
 	country_modifier_angry = {
-		all_power_cost = 0.1
-		technology_cost = 0.2
-		monthly_support_heir_gain = -0.13
+		all_power_cost = 0.05
+		technology_cost = 0.05
+		imperial_authority = -0.05
 	}
 	land_ownership_modifier = {
 		mages_loyalty_modifier = 0.2
@@ -79,35 +68,6 @@ estate_mages = {
 	base_influence = 0
 	
 	influence_modifier = {
-		desc = EST_VAL_UNIVERSITY
-		trigger = {
-			any_owned_province = {
-				has_building = university
-			}
-		}
-		influence = 5
-	}
-	
-	# #Country size
-	# influence_modifier = {	
-		# desc = EST_VAL_MEDIUM_DEVELOPMENT_PROVINCE
-		# trigger = {
-			# any_owned_province = {
-				# development = 20
-			# }
-		# }
-		# influence = 5
-	# }
-	
-	# influence_modifier = {	
-		# desc = EST_VAL_50_TOTAL_DEVELOPMENT
-		# trigger = {
-			# total_development = 50
-		# }
-		# influence = 5
-	# }
-	
-	influence_modifier = {
 		desc = EST_VAL_MAGE_TOWER
 		trigger = {
 			any_owned_province = {
@@ -123,6 +83,30 @@ estate_mages = {
 			advisor = court_mage
 		}
 		influence = 5
+	}
+	
+	influence_modifier = {
+		desc = EST_VAL_INFAMY_RESPECTED
+		trigger = { type_has_infamy_respected = { type = country } }
+		influence = 5
+	}
+
+	influence_modifier = {
+		desc = EST_VAL_INFAMY_SUSPICIOUS
+		trigger = { type_has_infamy_suspicious = { type = country } }
+		influence = 10
+	}
+
+	influence_modifier = {
+		desc = EST_VAL_INFAMY_DENOUNCED
+		trigger = { type_has_infamy_denounced = { type = country } }
+		influence = 15
+	}
+
+	influence_modifier = {
+		desc = EST_VAL_INFAMY_WITCH_KING
+		trigger = { estate_has_infamy_witch_king = yes }
+		influence = 20
 	}
 	
 	influence_modifier = {
@@ -166,6 +150,30 @@ estate_mages = {
 		}
 		loyalty = -20
 	}	
+	
+	loyalty_modifier = {
+		desc = EST_VAL_INFAMY_RESPECTED_LOY
+		trigger = { type_has_infamy_respected = { type = country } }
+		loyalty = -5
+	}
+
+	loyalty_modifier = {
+		desc = EST_VAL_INFAMY_SUSPICIOUS_LOY
+		trigger = { type_has_infamy_suspicious = { type = country } }
+		loyalty = -10
+	}
+
+	loyalty_modifier = {
+		desc = EST_VAL_INFAMY_DENOUNCED_LOY
+		trigger = { type_has_infamy_denounced = { type = country } }
+		loyalty = -15
+	}
+
+	loyalty_modifier = {
+		desc = EST_VAL_INFAMY_WITCH_KING_LOY
+		trigger = { estate_has_infamy_witch_king = yes }
+		loyalty = -20
+	}
 	
 	# Custom Names
 	custom_name = {
@@ -404,7 +412,16 @@ estate_mages = {
         trigger = {
             has_estate_privilege = estate_mages_fifth_family
         }
-    }	
+    }
+
+	custom_name = {
+		desc = estate_acolytes
+		trigger = { acolyte_dominion = 1 }
+	}
+	custom_desc = {
+		desc = estate_acolytes_desc
+		trigger = { acolyte_dominion = 1 }
+	}
 	
 
 	custom_name = {
@@ -433,56 +450,110 @@ estate_mages = {
 	color = { 153 217 234 }
 
 	privileges = {
-		estate_mages_cast_spells
-		estate_mages_patronage_of_the_magical_arts
-		estate_mages_kelmaxherho_pragmatism #Zokka, want this higher
-		estate_mages_battlemage_academies
-		estate_mages_archaic_traditions
-		estate_mages_reduced_research_regulations
-		estate_mages_monopoly_of_damestear
-		estate_mages_empowered_mages
-		estate_mages_spirit_speakers
-		estate_mages_temple_desecrators
-		estate_mages_monstrous_explorers
-		estate_mages_form_iii
-		estate_mages_form_i
-		
-		estate_mages_organization_magisterium
+		#Base Organizations
 		estate_mages_organization_state
 		estate_mages_organization_guilds
 		estate_mages_organization_religious
-		estate_mages_organization_covenant
-		estate_mages_organization_elissa
-		estate_mages_organization_bardic_college
-		estate_mages_organization_ice_smiths
-		estate_mages_organization_science_mages #Orlghelovar MT
-		estate_mages_organization_constabularies #Chaingrasper MT
-		estate_mages_organization_runesmiths # Verkal Ozovar MT
-		estate_mages_organization_lihos_maidens # Yinquan MT
-		estate_mages_organization_jaherian_statute #Bulwar
-		estate_mages_organization_onyxguard #Lake Fed
-		estate_mages_organization_orda_aldresia #Orda 
-		estate_mages_organization_aviaries #chaqway
-		estate_mages_organization_favoured_slaves #Zokka
 
+		#Regional Organizations
+		estate_mages_organization_magisterium #Empire of Anbennar
+		estate_mages_organization_jaherian_statute #Sun Cult/Jadd (Bulwar)
+		estate_mages_organization_onyxguard #Lake Fed
+
+		#Tag-Specific Organizations
+		estate_mages_organization_acolytes #Black Demesne
+		estate_mages_organization_covenant #Aelnar
+		estate_mages_organization_elissa #Aelnar
+		estate_mages_organization_runesmiths # Verkal Ozovar
+		estate_mages_organization_constabularies #Chaingrasper
+		estate_mages_organization_lihos_maidens # Yinquan
+		estate_mages_organization_orda_aldresia #Orda Aldresia
+		estate_mages_organization_bardic_college #Seinathil
+		estate_mages_organization_ice_smiths #Krakdhumvror
+		estate_mages_organization_science_mages #Orlghelovar
+		estate_mages_organization_proffesional_mihipha #Vyzemby
+		estate_mages_organization_giberd_beacon_of_harmony #Giberd
+		estate_mages_organization_rule_of_warlocks #Rakkaz
+		estate_mages_organization_aviaries #Chaqway
+
+		#Generic Privileges
+		estate_mages_magocratic_administration
+		estate_mages_seek_magical_advice
+		estate_mages_reduced_research_regulations
+		estate_mages_development_of_mage_towers
+		estate_mages_land_grant_academies
+
+		#Age Privileges
+		estate_mages_learn_from_elven_elders
+		estate_mages_monstrous_regiment
+		estate_mages_aelantiri_magical_rediscovery
+		estate_mages_thousand_flowers_bloom
+		estate_mages_empowerment_of_witch_kings
+		estate_mages_laws_against_witch_kings
+		estate_mages_the_scientific_method
+		estate_mages_magocratic_reactionism
+
+		#Magical Infrastructure Privileges
+		estate_mages_battlemage_academies
+		estate_mages_investments_in_magical_arts
+		estate_mages_mages_ascendant
+		estate_mages_nexus_network
+
+		#Monopolies
+		estate_mages_monopoly_of_damestear
+		estate_mages_monopoly_of_relics
+
+		#Regional/Cultural/Religious Privileges
+		estate_mages_monstrous_explorers #Monstrous
+		estate_mages_spirit_speakers #Haless
+		estate_mages_temple_desecrators #Devouring Path
+		estate_mages_empowered_mages #NSC
+		estate_mages_sun_elf_evocation #NSC
+		estate_mages_sun_elf_abjuration #NSC
+		estate_mages_syncretic_transmutation #NSC
+		estate_mages_bulwari_divination #NSC
+		estate_mages_bulwari_conjuration #NSC
+		estate_mages_zamukaras_focus_platforms #Bulwar
+		estate_mages_zamukaras_focus_carpets #Bulwar
+		estate_mages_zamukaras_carpet_siege #Bulwar
+		estate_mages_lawassari_zamukaras #Bulwar
+		estate_mages_adeeni_magi #Rise of Adeen
+		estate_mages_rangers_drennen_strategy #Deepwoods rangers
+
+		### MTS WITH MULTIPLE NON-ORG PRIVILEGES
+
+		#Black Demesne
+		estate_acolytes_land_share_10
+		estate_acolytes_land_share_20
+		estate_acolytes_land_share_30
+		estate_acolytes_land_share_40
+		estate_acolytes_land_share_50
+		estate_acolytes_dominions_law_army_decentralisation
+		estate_acolytes_dominions_law_army_centralisation
+		estate_acolytes_dominions_law_the_dark_tithe
+		estate_acolytes_dominions_law_centralized_banking
+		estate_acolytes_dominions_law_power_split
+		estate_acolytes_dominions_law_ibevaries_lab_rats
+		estate_acolytes_dominions_law_gnomish_brain
+		estate_acolytes_dominions_law_kobold_slaves
+		estate_acolytes_dominions_law_warden_of_the_state_mage_minions
+		estate_acolytes_dominions_law_warden_of_the_state_children_of_war
+		estate_acolytes_dominions_law_warden_of_the_state_envoy_of_heart
+		estate_acolytes_dominions_law_absolute_power
+		estate_acolytes_dominions_law_timed_research
+		estate_acolytes_dominions_law_sanguine_knowledge
+
+		#Seinathil
 		estate_mages_bardic_general
 		estate_mages_peace_songs
 		estate_mages_skaldic_teachings
-		estate_mages_supply_more_iron
-		estate_mages_perform_icecraft
-		estate_mages_ice_sculptures
-		estate_mages_sun_elf_evocation
-		estate_mages_sun_elf_abjuration
-		estate_mages_syncretic_transmutation
-		estate_mages_bulwari_divination
-		estate_mages_bulwari_conjuration
-		estate_mages_necromancer_death_tax
-		estate_mages_reeshi_bonds
-		# estate_mages_necromancer_freedom_of_practice # This doesn't exist atm 
-		estate_mages_flamekeepers
-		estate_mages_experimental_lands
-		estate_mages_vivomantic_mastery
-		estate_mages_vivomantic_mastery_final
+
+		#Orda Aldresia
+		estate_mages_form_iii
+		estate_mages_form_i
+		estate_mages_archaic_traditions
+
+		#Verkal Ozovar
 		estate_mages_grand_rune_amekh
 		estate_mages_grand_rune_guntir
 		estate_mages_grand_rune_jolkin
@@ -492,26 +563,23 @@ estate_mages = {
 		estate_mages_grand_rune_dauth
 		estate_mages_grand_rune_kanzad
 		estate_mages_grand_rune_bal
-		estate_mages_vazhatun_study_runes
-		estate_mages_maidens_of_mists # Yinquan MT
-		estate_mages_vacyntassi_order #Eduz-Vacyn MT
-		estate_mages_zamukaras_focus_platforms
-		estate_mages_zamukaras_focus_carpets
-		estate_mages_zamukaras_carpet_siege
-		estate_mages_black_academy # Zansap
-		estate_mages_organization_proffesional_mihipha #Vyzemby
-		estate_mages_mage_fleet # Karshyr
-		estate_mages_young_tower_of_magic # Shangra
-		estate_mages_lawassari_zamukaras #Mount Lazzaward reward
-		estate_mages_archaic_traditions #Orda Aldresia Debuff
-		estate_mages_delta_orbs #duwarkani MT
-		estate_mages_steady_ichorletting #Masked Butcher stuff
+
+		#Krakdhumvror
+		estate_mages_supply_more_iron
+		estate_mages_perform_icecraft
+		estate_mages_ice_sculptures
+
+		#Newshire
+		estate_mages_experimental_lands
+		estate_mages_vivomantic_mastery
+		estate_mages_vivomantic_mastery_final
+
+		#Masked Butcher
+		estate_mages_steady_ichorletting
 		estate_mages_all_mask
 		estate_mages_great_fey_mask
-		estate_mages_organization_giberd_beacon_of_harmony
-		estate_mages_collaborators #Maghargma
-		#Rakkaz MT
-		estate_mages_organization_rule_of_warlocks
+
+		#Rakkaz
 		estate_mages_warlock_pact_power
 		estate_mages_warlock_pact_exploitation
 		estate_mages_warlock_pact_overcharge
@@ -520,28 +588,40 @@ estate_mages = {
 		estate_mages_warlock_pact_unrestricted_savagery
 		estate_mages_warlock_pact_demonic_possession
 		estate_mages_warlock_pact_night_coven
-		estate_wyvernheart_subservient_artificers #Wyvernheart
-		estate_wyvernheart_floodborn_council #Wyvernheart
-		estate_mages_az_an_land_reallocation # Ovdal-az-An MT
-		estate_mages_dune_magic_disruption	#binwarji
-		estate_mages_the_clouded_eye #Clouded Eye MT
-		estate_mages_fifth_family #Toarnaire MT
-		estate_mages_chaqway_flamingo #chaqway
-		estate_mages_adeeni_magi #Rise of Adeen
-		estate_mages_free_alchemists #Unguldavor MT
 
-		# Zokka
+		#Wyvernheart
+		estate_wyvernheart_subservient_artificers
+		estate_wyvernheart_floodborn_council
+
+		#Zokka
+		estate_mages_kelmaxherho_pragmatism #want this higher
+		estate_mages_organization_favoured_slaves
+		estate_mages_kelmaxherho_favours
 		estate_mages_moment_of_felflame
 		estate_mages_moment_of_congruence
 		estate_mages_moment_of_edification
-		estate_mages_kelmaxherho_favours
-		#Deepwoods Rangers
-		estate_mages_rangers_drennen_strategy
-		
-		estate_mages_prelude_to_greatness #Pashaine
 
-		# Karshyr
-		estate_mages_hydromancers_guild
+		### MT privileges for countries with only one non-organization privilege
+
+		estate_mages_maidens_of_mists #Yinquan
+		estate_mages_necromancer_death_tax #Esthil
+		estate_mages_reeshi_bonds #Ghavaanaj
+		estate_mages_flamekeepers #Beikdugang
+		estate_mages_vazhatun_study_runes #Dur-Vazhatun
+		estate_mages_vacyntassi_order #Eduz-Vacyn
+		estate_mages_black_academy #Zansap
+		estate_mages_mage_fleet #Karshyr
+		estate_mages_young_tower_of_magic #Shangra
+		estate_mages_delta_orbs #Duwarkani
+		estate_mages_collaborators #Maghargma
+		estate_mages_the_clouded_eye #Clouded Eye
+		estate_mages_az_an_land_reallocation #Ovdal-az-An
+		estate_mages_dune_magic_disruption #Binwarji
+		estate_mages_fifth_family #Toarnaire
+		estate_mages_chaqway_flamingo #Chaqway
+		estate_mages_free_alchemists #Unguldavor
+		estate_mages_prelude_to_greatness #Pashaine
+		estate_mages_hydromancers_guild #Karshyr
 	}
 
 	agendas = {

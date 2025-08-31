@@ -18,7 +18,10 @@ sedentarization_province_can_recieve_outpost = {
 	}
 	area_for_scope_province = {
 		type = all
-		owned_by = $owner_scope$
+		OR = {
+			owned_by = $owner_scope$
+			NOT = { has_province_modifier = sed_forbidden }
+		}
 		# Custom tooltip because auto-tooltip for "<scripted_trigger> = no" is bad.
 		custom_trigger_tooltip = {
 			tooltip = sedentarization_province_has_outpost_no
@@ -63,7 +66,11 @@ sedentarization_phase_two_events_can_fire = {
 	# No need for "sedentarization_trade_goods_events_can_fire" yet, since trade goods events are the only random Phase Two events
 	has_province_flag = sed_trade_goods_upgrade_events_unlocked
 	area_for_scope_province = {
-		owned_by = event_target:sed_outpost_owner
+		OR = {
+			owned_by = event_target:sed_outpost_owner
+			# Non-Forbidden provinces are EXCLUDED from the system, meaning they don't benefit either.
+			NOT = { has_province_modifier = sed_forbidden }	# Should be added for all future events that target the area.
+		}
 		OR = {
 			trade_goods = wool
 			trade_goods = livestock
@@ -106,5 +113,13 @@ sedentarization_phase_two_nomadic_control_is_valid = {
 			}
 			primary_culture = plateau_runsukhi	# AKA "Rukunai"
 		}
+	}
+}
+
+# Check if the current province is sedentarizing. For devs who want to interact with the system.
+sedentarization_province_in_progress = {
+	area_for_scope_province = {
+		owned_by = $owner_scope$
+		sedentarization_province_has_outpost = yes
 	}
 }

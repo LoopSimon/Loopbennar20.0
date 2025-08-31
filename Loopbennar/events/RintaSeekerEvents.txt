@@ -1563,6 +1563,7 @@ country_event = {
 	
 	is_triggered_only = yes
 	fire_only_once = yes
+	hidden = yes
 
 	immediate = {
 		hidden_effect = {
@@ -1586,6 +1587,7 @@ country_event = {
 					limit = {
 						religion = rinta_seekers
 						has_disaster = darkmagicks
+						NOT = { is_subject = yes }
 					}
 					save_event_target_as = coalition_vs_alefisol_leader
 					every_war_enemy_country = {
@@ -1666,6 +1668,9 @@ country_event = {
 					is_in_war = {
 						casus_belli = cb_alefisol_war
 					}
+					any_owned_province = {
+						has_province_modifier = rinta_infernal_resonance
+					}
 				}
 				every_owned_province = {
 					add_core = S93
@@ -1675,6 +1680,7 @@ country_event = {
 			S93 = {
 				remove_country_modifier = alefisol_modifier
 			}
+
 		}
 	}
 
@@ -1707,6 +1713,14 @@ country_event = {
 		hidden_effect = {
 			every_province = {
 				remove_province_modifier = rinta_infernal_resonance
+			}
+			every_war_enemy_country = {
+				limit = {
+					is_in_war = {
+						casus_belli = cb_alefisol_war
+					}
+				}
+				white_peace = ROOT
 			}
 		}
 	}
@@ -1927,10 +1941,10 @@ country_event = { #Spawn of Alefisol
 			create_general = {
 				tradition = 10
 			}
-			create_war_wizard_effect = yes
+			create_war_wizard = yes
 			define_ruler_to_general = {
 				fire = 3
-				shock = 8
+				shock = 10
 				manuever = 8
 				siege = 0
 			}
@@ -2050,6 +2064,7 @@ country_event = { #Spawn of Alefisol
 			}
 			update_unit_sprites_for_racial_mil = yes
 			set_country_flag = is_just_evil
+			set_country_flag = ardimya_cult_disabled
 			remove_country_modifier = restructuring_military
 			remove_country_modifier = restructuring_administration
 		}
@@ -2158,6 +2173,7 @@ country_event = {
 			every_owned_province = {
 				remove_core = ROOT
 				cede_province = previous_owner
+				add_territorial_core = owner #Territorial cores vanish when ceded for some reason
 			}
 			remove_country = yes
 		}
@@ -3171,7 +3187,7 @@ country_event = {
 					decrease_ruler_adm_effect = yes
 				}
 				else = {
-					force_add_ruler_personality = { personality = infertile_personality }
+					force_add_normal_ruler_personality = { personality = infertile_personality }
 				}
 			}
 			5 = {
@@ -3180,7 +3196,7 @@ country_event = {
 					decrease_ruler_dip_effect = yes
 				}
 				else = {
-					force_add_ruler_personality = { personality = cruel_personality }
+					force_add_normal_ruler_personality = { personality = cruel_personality }
 				}
 			}
 			5 = {
@@ -3189,7 +3205,7 @@ country_event = {
 					decrease_ruler_mil_effect = yes
 				}
 				else = {
-					force_add_ruler_personality = { personality = craven_personality }
+					force_add_normal_ruler_personality = { personality = craven_personality }
 				}
 			}
 			5 = {
@@ -3209,7 +3225,7 @@ country_event = {
 					female = yes
 					age = 20
 				}
-				set_heir_mage_effect = yes
+				define_powerful_mage = { type = heir }
 			}
 			5 = {
 				trigger = {
@@ -4228,6 +4244,8 @@ country_event = { #Start of ending
 	immediate = {
 		hidden_effect = {
 			set_country_flag = rinta_adeen_overlord
+			set_country_flag = no_callaction
+			set_country_flag = allow_subjects_war
 			6040 = {
 				add_core = S78
 				save_event_target_as = rinta_adeen_capital
@@ -4238,14 +4256,25 @@ country_event = { #Start of ending
 				change_government = republic
 				add_army_tradition = 64
 				add_army_professionalism = 0.23
+				remove_country_modifier = restructuring_administration
 			}
 			random_owned_province = {
+				limit = {
+					NOT = {
+						province_id = 6043
+						province_id = 6041
+						province_id = 6037
+					}
+				}
 				save_event_target_as = adeeni_target_1
 			}
 			random_owned_province = {
 				limit = {
-					NOT = { 
+					NOT = {
 						province_has_current_tech_fort_trigger = yes
+						province_id = 6043
+						province_id = 6041
+						province_id = 6037
 						province_id = event_target:adeeni_target_1
 					}
 				}
@@ -4254,7 +4283,10 @@ country_event = { #Start of ending
 			random_owned_province = {
 				limit = {
 					NOT = { 
-						province_has_current_tech_fort_trigger = yes 
+						province_has_current_tech_fort_trigger = yes
+						province_id = 6043
+						province_id = 6041
+						province_id = 6037
 						province_id = event_target:adeeni_target_1
 						province_id = event_target:adeeni_target_2
 					}
@@ -4266,43 +4298,8 @@ country_event = { #Start of ending
 
 	option = {
 		name = rinta_seeker_events.310.a
+		rinta_seeker_adeen_revolt = yes
 		S78 = {
-			declare_war_with_cb = {
-				casus_belli = cb_independence_war
-				who = ROOT
-			}
-			hidden_effect = {
-				capital_scope = {
-					if = {
-						limit = { NOT = { province_has_current_tech_fort_trigger = yes } }
-						add_latest_building = { builder = ROOT fort = yes }
-					}
-					if = {
-						limit = {
-							NOT = {
-								OR = {
-									has_building = coastal_defence
-									has_building = naval_battery
-								}
-							}
-						}
-						add_latest_building = { builder = ROOT coastal = yes }
-					}
-				}
-				create_unit_forcelimit_percentage = {
-					type = infantry
-					special_unit_category = marines
-					force_limit_percentage = 1
-				}
-				create_unit_forcelimit_percentage = {
-					type = galley
-					force_limit_percentage = 1
-				}
-				add_years_of_income = 10
-				add_yearly_manpower = 10
-				add_yearly_sailors = 10
-				set_country_flag = rinta_adeen_rise_war
-			}
 			country_event = {
 				id = rinta_seeker_events.315
 				days = 2
@@ -4311,42 +4308,6 @@ country_event = { #Start of ending
 		custom_tooltip = rinta_seeker_events.310_tt
 		hidden_effect = {
 			set_country_flag = disables_estate_adeen_flag
-		}
-		if = {
-			limit = { has_saved_event_target = adeeni_target_1 }
-			event_target:adeeni_target_1 = {
-				spawn_rebels = {
-					type = adeen_rebels
-					female = yes
-					size = 2
-					friend = S78
-					separatists_target = S78
-				}
-			}
-			if = {
-				limit = { has_saved_event_target = adeeni_target_2 }
-				event_target:adeeni_target_2 = {
-					spawn_rebels = {
-						type = adeen_rebels
-						size = 2
-						friend = S78
-						separatists_target = S78
-						win = yes
-					}
-				}
-				if = {
-					limit = { has_saved_event_target = adeeni_target_3 }
-					event_target:adeeni_target_3 = {
-						spawn_rebels = {
-							type = adeen_rebels
-							size = 2
-							friend = S78
-							separatists_target = S78
-							win = yes
-						}
-					}
-				}
-			}
 		}
 		every_known_country = {
 			limit = {
@@ -4377,90 +4338,16 @@ country_event = { #Start of ending
 	}
 	option = {
 		name = rinta_seeker_events.310.c
+		
 		hidden_effect = {
-			set_country_flag = no_allies_war
+			rinta_seeker_adeen_revolt = yes
 			S78 = {
 				country_event = {
 					id = rinta_seeker_events.315
 					days = 2
 				}
-				declare_war_with_cb = {
-					casus_belli = cb_independence_war
-					who = ROOT
-				}
-				hidden_effect = {
-					capital_scope = {
-						if = {
-							limit = { NOT = { province_has_current_tech_fort_trigger = yes } }
-							add_latest_building = { builder = ROOT fort = yes }
-						}
-						if = {
-							limit = {
-								NOT = {
-									OR = {
-										has_building = coastal_defence
-										has_building = naval_battery
-									}
-								}
-							}
-							add_latest_building = { builder = ROOT coastal = yes }
-						}
-					}
-					create_unit_forcelimit_percentage = {
-						type = infantry
-						special_unit_category = marines
-						force_limit_percentage = 1
-					}
-					create_unit_forcelimit_percentage = {
-						type = galley
-						force_limit_percentage = 1
-					}
-					add_years_of_income = 10
-					add_yearly_manpower = 10
-					add_yearly_sailors = 10
-					set_country_flag = rinta_adeen_rise_war
-				}
 			}
-			custom_tooltip = rinta_seeker_events.310_tt
-			hidden_effect = {
-				set_country_flag = disables_estate_adeen_flag
-			}
-			if = {
-				limit = { has_saved_event_target = adeeni_target_1 }
-				event_target:adeeni_target_1 = {
-					spawn_rebels = {
-						type = adeen_rebels
-						female = yes
-						size = 2
-						friend = S78
-						separatists_target = S78
-					}
-				}
-				if = {
-					limit = { has_saved_event_target = adeeni_target_2 }
-					event_target:adeeni_target_2 = {
-						spawn_rebels = {
-							type = adeen_rebels
-							size = 2
-							friend = S78
-							separatists_target = S78
-							win = yes
-						}
-					}
-					if = {
-						limit = { has_saved_event_target = adeeni_target_3 }
-						event_target:adeeni_target_3 = {
-							spawn_rebels = {
-								type = adeen_rebels
-								size = 2
-								friend = S78
-								separatists_target = S78
-								win = yes
-							}
-						}
-					}
-				}
-			}
+			set_country_flag = disables_estate_adeen_flag
 			every_known_country = {
 				limit = {
 					is_incident_active = incident_rinta_rise_of_the_adeen
@@ -4471,7 +4358,6 @@ country_event = { #Start of ending
 				}
 			}
 		}
-		
 		switch_tag = S78
 	}
 }
@@ -4496,13 +4382,14 @@ country_event = { #for other countries
 
 	option = {
 		name = rinta_seeker_events.311.a
+		hidden_effect = {
+			set_country_flag = rinta_adeen_side_of_war
+			set_country_flag = allow_to_join_war_nonetheless
+		}
 		join_all_offensive_wars_of = S78
 		add_estate_loyalty = {
 			estate = estate_adeen
 			loyalty = 10
-		}
-		hidden_effect = {
-			set_country_flag = rinta_adeen_side_of_war
 		}
 		disband_rebels = adeen_coupists
 		disband_rebels = adeen_rebels
@@ -4552,10 +4439,11 @@ country_event = { #for other countries
 	}
 	option = {
 		name = rinta_seeker_events.311.c
-		join_all_defensive_wars_of = event_target:rinta_adeen_overlord_target
 		hidden_effect = {
 			set_country_flag = rinta_overlord_side_of_war
+			set_country_flag = allow_to_join_war_nonetheless
 		}
+		join_all_defensive_wars_of = event_target:rinta_adeen_overlord_target
 		ai_chance = { 
 			factor = 1
 			modifier = {
@@ -4595,6 +4483,7 @@ country_event = { #The end Adeen victory
 		hidden_effect = {
 			set_country_flag = rinta_adeen_hardliners_unlocked
 			clr_country_flag = rinta_adeen_side_of_war	
+			clr_country_flag = allow_to_join_war_nonetheless
 		}
 		end_incident = incident_rinta_rise_of_the_adeen
 		ai_chance = { factor = 1 }
@@ -4610,10 +4499,12 @@ country_event = { #The end Adeen victory
 		end_incident = incident_rinta_rise_of_the_adeen
 		hidden_effect = {
 			clr_country_flag = rinta_overlord_side_of_war
+			clr_country_flag = allow_to_join_war_nonetheless
 			if = {
 				limit = { has_country_flag = rinta_adeen_overlord }
 				clr_country_flag = rinta_adeen_overlord
-				clr_country_flag = no_allies_war
+				clr_country_flag = no_callaction
+				clr_country_flag = allow_subjects_war
 			}
 		}
 		ai_chance = { factor = 1 }
@@ -4655,7 +4546,8 @@ country_event = { #The end Overlord victory
 		}
 		end_incident = incident_rinta_rise_of_the_adeen
 		hidden_effect = {
-			clr_country_flag = rinta_adeen_side_of_war	
+			clr_country_flag = rinta_adeen_side_of_war
+			clr_country_flag = allow_to_join_war_nonetheless
 		}
 		ai_chance = { factor = 1 }
 	}
@@ -4675,7 +4567,11 @@ country_event = { #The end Overlord victory
 		end_incident = incident_rinta_rise_of_the_adeen
 		hidden_effect = {
 			clr_country_flag = rinta_adeen_overlord
-			clr_country_flag = no_allies_war
+			clr_country_flag = no_callaction
+			clr_country_flag = allow_subjects_war
+			every_owned_province = {
+				remove_core = S78
+			}
 		}
 		ai_chance = { factor = 1 }
 	}
@@ -4691,6 +4587,7 @@ country_event = { #The end Overlord victory
 		end_incident = incident_rinta_rise_of_the_adeen
 		hidden_effect = {
 			clr_country_flag = rinta_overlord_side_of_war
+			clr_country_flag = allow_to_join_war_nonetheless
 		}
 		ai_chance = { factor = 1 }
 	}
@@ -4747,7 +4644,36 @@ country_event = { #Heavenly spiral eye
 			add_treasury = 200
 		}
 		else = {
-			add_treasury = 500
+			add_treasury = 1000
+			add_manpower = 10
+			add_adm_power = 400
+			add_mil_power = 400
+			add_dip_power = 400
+			add_army_professionalism = 0.2
+			6043 = {
+				spawn_rebels = {
+					type = nationalist_rebels
+					size = 2
+					friend = S78
+					separatists_target = S78
+					win = yes
+				}
+				hidden_effect = {
+					add_core = S78
+				}
+			}
+			6037 = {
+				spawn_rebels = {
+					type = nationalist_rebels
+					size = 2
+					friend = S78
+					separatists_target = S78
+					win = yes
+				}
+				hidden_effect = {
+					add_core = S78
+				}
+			}
 		}
 		custom_tooltip = rinta_adeen_spawn_army
 		hidden_effect = {
@@ -4817,16 +4743,12 @@ country_event = { #Heavenly spiral eye
 			name = "Isha"
 			dynasty = ""
 		}
-		add_ruler_personality = mage_personality
-		set_ruler_flag = evocation_1
-		set_ruler_flag = evocation_2
-		set_ruler_flag = evocation_3
-		set_ruler_flag = abjuration_1
-		set_ruler_flag = abjuration_2
-		set_ruler_flag = abjuration_3
-		set_ruler_flag = transmutation_1
-		set_ruler_flag = transmutation_2
-		set_ruler_flag = initialized_magic_flags
+		define_powerful_mage = {
+			type = ruler
+			evocation = 3
+			abjuration = 3
+			transmutation = 2
+		}
 		define_admiral = {
 			shock = 3
 			fire = 1
@@ -4834,7 +4756,6 @@ country_event = { #Heavenly spiral eye
 			siege = 1
 			name = "Axmed"
 		}
-		
 		ai_chance = { factor = 1 }
 	}
 }
@@ -5213,3 +5134,1517 @@ country_event = { #Hardliners Take Up Arms
 	}
 }
 #####################################################################
+#Hunting For Relics
+
+
+#####################################################################
+#Light Up The Night Sky
+country_event = {
+	id = rinta_seeker_events.500 #Background Setup Event
+	title = none
+	desc = none
+	picture = none
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+
+	option = {
+		name = none
+		set_global_flag = incident_rinta_light_up_the_night_sky_ongoing_flag
+		6678 = { #Qasri Maroodiqya
+			set_variable = { which = rinta_telescope_lvl_0_5_cost value = 0 }
+			
+			every_country = {
+				limit = { is_incident_active = incident_rinta_light_up_the_night_sky }
+				set_variable = { which = rinta_telescope_amount_invested value = 0 }
+				6678 = { #Qasri Maroodiqya
+					export_to_variable = {
+						which = sky_incident_income_temp
+						value = years_of_income
+						who = PREV
+					}
+					change_variable = { 
+						which = rinta_telescope_lvl_0_5_cost 
+						which = sky_incident_income_temp 
+					}
+				}
+			}
+
+			round_variable = { #Level 0.5 is 1 year of income of all RS countries, easiest to calculate with
+				which = rinta_telescope_lvl_0_5_cost
+				value = 1
+			}
+			
+			set_variable = { which = rinta_telescope_lvl_0_25_cost which = rinta_telescope_lvl_0_5_cost }
+			divide_variable = { which = rinta_telescope_lvl_0_25_cost value = 2 }
+			
+			set_variable = { which = rinta_telescope_lvl_0_75_cost which = rinta_telescope_lvl_0_5_cost }
+			change_variable = { which = rinta_telescope_lvl_0_75_cost which = rinta_telescope_lvl_0_25_cost }
+
+			set_variable = { which = rinta_telescope_lvl_1_cost which = rinta_telescope_lvl_0_5_cost }
+			multiply_variable = { which = rinta_telescope_lvl_1_cost value = 2 } #Level 1 is 2 YoI, Lvl 2 is 5 YoI, etc.
+
+			set_variable = { which = rinta_telescope_lvl_1_5_cost which = rinta_telescope_lvl_0_5_cost }
+			multiply_variable = { which = rinta_telescope_lvl_1_5_cost value = 3.5 }
+
+			set_variable = { which = rinta_telescope_lvl_2_cost which = rinta_telescope_lvl_0_5_cost }
+			multiply_variable = { which = rinta_telescope_lvl_2_cost value = 5 }
+
+			set_variable = { which = rinta_telescope_lvl_2_5_cost which = rinta_telescope_lvl_0_5_cost }
+			multiply_variable = { which = rinta_telescope_lvl_2_5_cost value = 6 }
+
+			set_variable = { which = rinta_telescope_lvl_3_cost which = rinta_telescope_lvl_0_5_cost }
+			multiply_variable = { which = rinta_telescope_lvl_3_cost value = 7 }
+
+			set_variable = { which = rinta_telescope_lvl_3_5_cost which = rinta_telescope_lvl_0_5_cost }
+			multiply_variable = { which = rinta_telescope_lvl_3_5_cost value = 8.5 }
+
+			set_variable = { which = rinta_telescope_lvl_4_cost which = rinta_telescope_lvl_0_5_cost }
+			multiply_variable = { which = rinta_telescope_lvl_4_cost value = 10 }
+
+			set_variable = { which = rinta_telescope_lvl_4_5_cost which = rinta_telescope_lvl_0_5_cost }
+			multiply_variable = { which = rinta_telescope_lvl_4_5_cost value = 11 }
+
+			set_variable = { which = rinta_telescope_lvl_5_cost which = rinta_telescope_lvl_0_5_cost }
+			multiply_variable = { which = rinta_telescope_lvl_5_cost value = 12 }
+			
+			set_variable = { which = rinta_telescope_amount_raised value = 0 }
+
+			every_country = { #Define the variables for each country so they can reference them easier later
+				limit = { is_incident_active = incident_rinta_light_up_the_night_sky }
+				set_variable = { which = rinta_telescope_lvl_0_25_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_0_5_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_0_75_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_1_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_1_5_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_2_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_2_5_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_3_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_3_5_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_4_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_4_5_cost which = PREV }
+				set_variable = { which = rinta_telescope_lvl_5_cost which = PREV }
+			}
+
+			set_variable = {
+				which = rinta_stole_funds_var
+				value = 0
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.501 #Intro Event
+	title = rinta_seeker_events.501.t
+	desc = rinta_seeker_events.501.desc
+	picture = MAGE_MOON_ALTER_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = rinta_seeker_events.502 #The Debate On Purpose
+				days = 455 #15 months
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.501.a
+		custom_tooltip = rinta_enable_investment_tt
+		set_country_flag = enabled_light_up_the_night_sky_decision
+	}
+}
+
+#VoK Event Chain
+country_event = {
+	id = rinta_seeker_events.502 #The Debate On Purpose
+	title = rinta_seeker_events.502.t
+	desc = rinta_seeker_events.502.desc
+	picture = MERCHANTS_ARGUING_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = rinta_seeker_events.503 #The Debate On Funding
+				days = 455 #15 months
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.502.a
+		increase_rinta_seekers_isolation_level = yes
+		add_country_modifier = {
+			name = RS_mwalim_purpose
+			duration = -1
+		}
+		custom_tooltip = rinta_incident_modifier_tt
+	}
+
+	option = {
+		name = rinta_seeker_events.502.b
+		decrease_rinta_seekers_isolation_level = yes
+		add_country_modifier = {
+			name = RS_darwiiz_purpose
+			duration = -1
+		}
+		custom_tooltip = rinta_incident_modifier_tt
+	}
+
+	option = {
+		name = rinta_seeker_events.502.c
+		add_country_modifier = {
+			name = RS_none_purpose
+			duration = -1
+		}
+		custom_tooltip = rinta_incident_modifier_tt
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -5
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.503 #The Debate On Funding
+	title = rinta_seeker_events.503.t
+	desc = rinta_seeker_events.503.desc
+	picture = TRADEGOODS_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = rinta_seeker_events.504 #The Debate On Power
+				days = 455 #15 months
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.503.a
+		increase_rinta_seekers_isolation_level = yes
+		add_years_of_income = -1
+		custom_tooltip = rinta_mwalim_funding_tt
+		set_country_flag = rinta_mwalim_funding_flag
+	}
+
+	option = {
+		name = rinta_seeker_events.503.b
+		decrease_rinta_seekers_isolation_level = yes
+		add_years_of_income = -0.5
+		custom_tooltip = rinta_darwiiz_funding_tt
+		set_country_flag = rinta_darwiiz_funding_flag
+	}
+
+	option = {
+		name = rinta_seeker_events.503.c
+		custom_tooltip = rinta_neither_funding_tt
+		add_years_of_income = -0.75
+		set_country_flag = rinta_neither_funding_flag
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -5
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.504 #The Debate On Power
+	title = rinta_seeker_events.504.t
+	desc = rinta_seeker_events.504.desc
+	picture = MAGE_MOON_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = rinta_seeker_events.505 #The Debate On Quality
+				days = 455 #15 months
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.504.a
+		increase_rinta_seekers_isolation_level = yes
+		custom_tooltip = RS_mwalim_power_tt
+		hidden_effect = { #Because if artificery isn't enabled it doesn't show the modifier
+			add_country_modifier = {
+				name = RS_mwalim_power
+				duration = -1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.504.b
+		decrease_rinta_seekers_isolation_level = yes
+		add_country_modifier = {
+			name = RS_darwiiz_power
+			duration = -1
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.504.c
+		add_country_modifier = {
+			name = RS_none_power
+			duration = -1
+		}
+		custom_tooltip = rinta_incident_modifier_tt
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -5
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.505 #The Debate On Quality
+	title = rinta_seeker_events.505.t
+	desc = rinta_seeker_events.505.desc
+	picture = ASTRONOMER_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = rinta_seeker_events.506 #The Debate On Amenities
+				days = 455 #15 months
+			}
+
+			#Option 1 Event Targets
+			if = {
+				limit = { 
+					any_ally = { 
+						NOT = { total_development = 400 }
+						capital_scope = { continent = africa }
+						NOT = { religion = rinta_seekers }
+					} 
+				}
+				pick_best_tags = {
+					global_trigger = "
+						capital_scope = { continent = africa }
+						NOT = { total_development = 400 }
+						NOT = { religion = rinta_seekers }
+					"
+					scope = every_ally
+					scale = total_development
+					1 = yes
+					event_target_name = strongest_sarhaly_convert
+				}
+			}
+			else_if = {
+				limit = { 
+					any_ally = { 
+						capital_scope = { continent = africa }
+						NOT = { religion = rinta_seekers }
+					} 
+				}
+				pick_best_tags = {
+					global_trigger = "
+						capital_scope = { continent = africa }
+						NOT = { religion = rinta_seekers }
+					"
+					scope = every_ally
+					scale = total_development
+					1 = yes
+					event_target_name = strongest_sarhaly_ally
+				}
+				pick_best_provinces = {
+					10 = yes
+					scope = every_province
+					scale = higher_development_than
+					global_trigger = "
+						owned_by = event_target:strongest_sarhaly_ally
+						NOT = { is_capital = yes }
+						NOT = { religion = rinta_seekers }
+					"
+					event_target_name = sarhaly_prov_converts
+				}
+			}
+
+			#Option 2 Event Targets
+			pick_best_provinces = {
+				10 = yes
+				scope = every_owned_province
+				scale = higher_development_than
+				global_trigger = "NOT = { religion = rinta_seekers }"
+				event_target_name = rinta_prov_converts
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.505.a
+		increase_rinta_seekers_isolation_level = yes
+		custom_tooltip = rinta_subject_convert_tt
+		hidden_effect = {
+			every_subject_country = {
+				limit = { NOT = { religion = rinta_seekers } }
+				country_event = {
+					id = rinta_seeker_events.595 #Converstion Event to let them say no
+				}
+			}
+		}
+		if = {
+			limit = { any_ally = { tag = event_target:strongest_sarhaly_convert_1 } }
+			event_target:strongest_sarhaly_convert_1 = {
+				tooltip = { change_religion = rinta_seekers }
+				hidden_effect = {
+					country_event = {
+						id = rinta_seeker_events.595 #Converstion Event to let them say no
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { any_ally = { tag = event_target:strongest_sarhaly_ally_1 } }
+			event_target:strongest_sarhaly_ally_1 = {
+				set_country_flag = rinta_convert_provs_flag
+				tooltip = { capital_scope = { change_religion = rinta_seekers } }
+				custom_tooltip = rinta_convert_10_provs_tt
+				hidden_effect = {
+					country_event = {
+						id = rinta_seeker_events.595 #Converstion Event to let them say no
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.505.b
+		decrease_rinta_seekers_isolation_level = yes
+		custom_tooltip = rinta_remove_religious_zeal_tt
+		custom_tooltip = rinta_convert_10_provs_tt
+		hidden_effect = {
+			event_target:rinta_prov_converts_1 = { change_religion = rinta_seekers } #10
+			event_target:rinta_prov_converts_2 = { change_religion = rinta_seekers }
+			event_target:rinta_prov_converts_3 = { change_religion = rinta_seekers }
+			event_target:rinta_prov_converts_4 = { change_religion = rinta_seekers }
+			event_target:rinta_prov_converts_5 = { change_religion = rinta_seekers }
+			event_target:rinta_prov_converts_6 = { change_religion = rinta_seekers }
+			event_target:rinta_prov_converts_7 = { change_religion = rinta_seekers }
+			event_target:rinta_prov_converts_8 = { change_religion = rinta_seekers }
+			event_target:rinta_prov_converts_9 = { change_religion = rinta_seekers }
+			event_target:rinta_prov_converts_10 = { change_religion = rinta_seekers }
+			every_owned_province = {
+				remove_province_modifier = religious_zeal_at_conv
+			}
+			every_subject_country = {
+				every_owned_province = {
+					remove_province_modifier = religious_zeal_at_conv
+				}
+			}
+		}
+
+	}
+
+	option = {
+		name = rinta_seeker_events.505.c
+		change_government_reform_progress = 250
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -5
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.506 #The Debate On Amenities
+	title = rinta_seeker_events.506.t
+	desc = rinta_seeker_events.506.desc
+	picture = muslimgfx_GREAT_BUILDING_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = rinta_seeker_events.507 #The Debate On Availability
+				days = 455 #15 months
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.506.a
+		increase_rinta_seekers_isolation_level = yes
+		capital_scope = { add_building = university }
+	}
+
+	option = {
+		name = rinta_seeker_events.506.b
+		decrease_rinta_seekers_isolation_level = yes
+		capital_scope = { add_building = cathedral }
+	}
+
+	option = {
+		name = rinta_seeker_events.506.c
+		capital_scope = { 
+			if = {
+				limit = { has_building = trade_depot }
+				add_building = stock_exchange
+			}
+			else_if = { 
+				limit = { NOT = { has_building = stock_exchange } }
+				add_building = trade_depot 
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -5
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.507 #The Debate On Availability
+	title = rinta_seeker_events.507.t
+	desc = rinta_seeker_events.507.desc
+	picture = STREET_SPEECH_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = rinta_seeker_events.508 #The Debate On Foreigners
+				days = 455 #15 months
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.507.a
+		increase_rinta_seekers_isolation_level = yes
+		custom_tooltip = rinta_mwalim_advisor_tt
+		set_country_flag = rinta_mwalim_advisor_bonus_flag
+	}
+
+	option = {
+		name = rinta_seeker_events.507.b
+		decrease_rinta_seekers_isolation_level = yes
+		custom_tooltip = rinta_darwiiz_advisor_tt
+		set_country_flag = rinta_darwiiz_advisor_bonus_flag
+	}
+
+	option = {
+		name = rinta_seeker_events.507.c
+		custom_tooltip = rinta_both_advisor_tt
+		set_country_flag = rinta_both_support_advisor_bonus_flag
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -5
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.508 #The Debate On Foreigners
+	title = rinta_seeker_events.508.t
+	desc = rinta_seeker_events.508.desc
+	picture = RELIGIOUS_CONVERSION_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = rinta_seeker_events.509 #Ending Event
+				days = 455 #15 months
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.508.a
+		increase_rinta_seekers_isolation_level = yes
+		custom_tooltip = rinta_foreign_funds_decision_tt
+		set_country_flag = enabled_rinta_raise_foreign_funds_decision
+	}
+
+	option = {
+		name = rinta_seeker_events.508.b
+		decrease_rinta_seekers_isolation_level = yes
+		add_country_modifier = {
+			name = RS_darwiiz_foreigners
+			duration = -1
+		}
+		custom_tooltip = rinta_incident_modifier_tt
+	}
+
+	option = {
+		name = rinta_seeker_events.508.c
+		custom_tooltip = rinta_foreign_funds_decision_limited_tt
+		set_country_flag = enabled_rinta_raise_foreign_funds_decision
+		set_country_flag = limit_rinta_raise_foreign_funds_decision
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -5
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.509 #Hidden Ending Event
+	title = none
+	desc = none
+	picture = none
+
+	fire_only_once = yes
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = none
+		#Determine what level telescope you hit
+		6678 = { #Qasri Maroodiqya
+			if = {
+				limit = {
+					check_variable = {
+						which = rinta_telescope_amount_raised
+						which = rinta_telescope_lvl_5_cost
+					}
+				}
+				set_global_flag = rinta_telescope_hit_lvl_5_flag
+			}
+			else_if = {
+				limit = {
+					check_variable = {
+						which = rinta_telescope_amount_raised
+						which = rinta_telescope_lvl_4_cost
+					}
+				}
+				set_global_flag = rinta_telescope_hit_lvl_4_flag
+			}
+			else_if = {
+				limit = {
+					check_variable = {
+						which = rinta_telescope_amount_raised
+						which = rinta_telescope_lvl_3_cost
+					}
+				}
+				set_global_flag = rinta_telescope_hit_lvl_3_flag
+			}
+			else_if = {
+				limit = {
+					check_variable = {
+						which = rinta_telescope_amount_raised
+						which = rinta_telescope_lvl_2_cost
+					}
+				}
+				set_global_flag = rinta_telescope_hit_lvl_2_flag
+			}
+			else_if = {
+				limit = {
+					check_variable = {
+						which = rinta_telescope_amount_raised
+						which = rinta_telescope_lvl_1_cost
+					}
+				}
+				set_global_flag = rinta_telescope_hit_lvl_1_flag
+			}
+		}
+
+		#Determine who invested the most
+		save_event_target_as = rinta_top_telescope_investor
+		every_country = {
+			limit = { 
+				is_incident_active = incident_rinta_light_up_the_night_sky 
+				check_variable = {
+					which = rinta_telescope_amount_invested
+					which = event_target:rinta_top_telescope_investor
+				}
+			}
+			save_event_target_as = rinta_top_telescope_investor
+		}
+
+		#Notify everyone and end their incident
+		every_country = {
+			limit = { is_incident_active = incident_rinta_light_up_the_night_sky }
+			country_event = {
+				id = rinta_seeker_events.510 #Visible Ending Event
+			}
+		}
+		clr_global_flag = incident_rinta_light_up_the_night_sky_ongoing_flag
+		set_global_flag = incident_rinta_light_up_the_night_sky_end_flag
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.510 #Visible Ending Event
+	title = rinta_seeker_events.510.t
+	desc = rinta_seeker_events.510.desc
+	picture = MAGE_MOON_ALTER_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.510.a
+		trigger = { NOT = { tag = event_target:rinta_top_telescope_investor } }
+		end_incident = incident_rinta_light_up_the_night_sky
+		custom_tooltip = rinta_top_investor_tt
+		tooltip = {
+			event_target:rinta_top_telescope_investor = {
+				capital_scope = {
+					trigger_switch = {
+						on_trigger = has_global_flag
+						rinta_telescope_hit_lvl_5_flag = {
+							add_province_modifier = {
+								name = RS_telescope_lvl_5
+								duration = -1
+							}
+							custom_tooltip = desc_RS_telescope_lvl_5
+							owner = { 
+								random_list = {
+									1 = { add_adm_tech = 1 }
+									1 = { add_dip_tech = 1 }
+									1 = { add_mil_tech = 1 }
+								}
+							}
+						}
+						rinta_telescope_hit_lvl_4_flag = {
+							add_province_modifier = {
+								name = RS_telescope_lvl_4
+								duration = -1
+							}
+							custom_tooltip = desc_RS_telescope_lvl_4
+						}
+						rinta_telescope_hit_lvl_3_flag = {
+							add_province_modifier = {
+								name = RS_telescope_lvl_3
+								duration = -1
+							}
+							custom_tooltip = desc_RS_telescope_lvl_3
+						}
+						rinta_telescope_hit_lvl_2_flag = {
+							add_province_modifier = {
+								name = RS_telescope_lvl_2
+								duration = -1
+							}
+						}
+						rinta_telescope_hit_lvl_1_flag = {
+							add_province_modifier = {
+								name = RS_telescope_lvl_1
+								duration = -1
+							}
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = rinta_remove_modifiers_tt
+	}
+
+	option = {
+		name = rinta_seeker_events.510.a
+		trigger = { hidden_trigger = { tag = event_target:rinta_top_telescope_investor } }
+		highlight = yes
+		end_incident = incident_rinta_light_up_the_night_sky
+		custom_tooltip = rinta_top_investor_tt
+		capital_scope = {
+			trigger_switch = {
+				on_trigger = has_global_flag
+				rinta_telescope_hit_lvl_5_flag = {
+					add_province_modifier = {
+						name = RS_telescope_lvl_5
+						duration = -1
+					}
+					custom_tooltip = desc_RS_telescope_lvl_5
+					owner = { 
+						random_list = {
+							1 = { add_adm_tech = 1 }
+							1 = { add_dip_tech = 1 }
+							1 = { add_mil_tech = 1 }
+						}
+					}
+				}
+				rinta_telescope_hit_lvl_4_flag = {
+					add_province_modifier = {
+						name = RS_telescope_lvl_4
+						duration = -1
+					}
+					custom_tooltip = desc_RS_telescope_lvl_4
+				}
+				rinta_telescope_hit_lvl_3_flag = {
+					add_province_modifier = {
+						name = RS_telescope_lvl_3
+						duration = -1
+					}
+					custom_tooltip = desc_RS_telescope_lvl_3
+				}
+				rinta_telescope_hit_lvl_2_flag = {
+					add_province_modifier = {
+						name = RS_telescope_lvl_2
+						duration = -1
+					}
+				}
+				rinta_telescope_hit_lvl_1_flag = {
+					add_province_modifier = {
+						name = RS_telescope_lvl_1
+						duration = -1
+					}
+				}
+			}
+		}
+		custom_tooltip = rinta_remove_modifiers_tt
+	}
+
+	after = {
+		hidden_effect = {
+			remove_country_modifier = RS_mwalim_purpose
+			remove_country_modifier = RS_darwiiz_purpose
+			remove_country_modifier = RS_none_purpose
+			remove_country_modifier = RS_none_power
+			remove_country_modifier = RS_darwiiz_foreigners
+			remove_country_modifier = RS_left_cult_money
+			remove_country_modifier = RS_took_cult_money
+			every_owned_province = {
+				remove_province_modifier = RS_fears_put_to_rest
+				remove_province_modifier = RS_hysterical_city
+			}
+		}
+	}
+}
+
+#Random Events
+
+country_event = {
+	id = rinta_seeker_events.520 #Astronomical Funds Stolen
+	title = rinta_seeker_events.520.t
+	desc = rinta_seeker_events.520.desc
+	picture = SPY_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_global_flag = rinta_disable_stealing_funds_flag }
+	}
+
+	immediate = {
+		hidden_effect = {
+			6678 = { #Qasri Maroodiqya
+				change_variable = {
+					which = rinta_stole_funds_var
+					value = 1
+				}
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.520.a
+		add_opinion = {
+			who = FROM
+			modifier = rinta_stole_astronomy_funds
+		}
+		add_casus_belli = {
+			type = cb_spy_discovered
+			target = FROM
+			months = 60 #5 years
+		}
+		if = {
+			limit = { rinta_has_invested_level_in_telescope = { level = 0_5 } }
+			rinta_reduce_investment_in_telescope = { level = 0_5 }
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.521 #Embezzled Astronomical Funds
+	title = rinta_seeker_events.521.t
+	desc = rinta_seeker_events.521.desc
+	picture = CORRUPTION_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		rinta_has_invested_level_in_telescope = { level = 0_25 }
+		has_advisor = yes
+		NOT = { has_global_flag = rinta_disable_stealing_funds_flag }
+	}
+
+	option = {
+		name = rinta_seeker_events.521.a
+		rinta_reduce_investment_in_telescope = { level = 0_25 }
+		if = {
+			limit = { has_adm_advisor = yes }
+			kill_advisor_by_category_effect = { ADM = yes }
+		}
+		else_if = {
+			limit = { has_dip_advisor = yes }
+			kill_advisor_by_category_effect = { DIP = yes }
+		}
+		else = { kill_advisor_by_category_effect = { MIL = yes } }
+	}
+
+	option = {
+		name = rinta_seeker_events.521.b
+		rinta_reduce_investment_in_telescope = { years_of_income = 0.083 } #1 month of income
+		add_corruption = 1
+		random = {
+			chance = 50
+			country_event = {
+				id = rinta_seeker_events.521 #Embezzled Astronomical Funds
+				days = 365 #1 year
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.522 #Stole Astronomical Funds - AI Only
+	title = rinta_seeker_events.522.t
+	desc = rinta_seeker_events.522.desc
+	picture = TRADE_GOODS_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			6678 = { #Qasri Maroodiqya
+				change_variable = {
+					which = rinta_stole_funds_var
+					value = 1
+				}
+			}
+		}
+	}
+
+	trigger = {
+		ai = yes
+		NOT = { has_global_flag = rinta_disable_stealing_funds_flag }
+		any_known_country = {
+			is_incident_active = incident_rinta_light_up_the_night_sky
+			NOT = {
+				has_opinion = {
+					who = ROOT
+					value = 0
+				}
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.522.a
+		rinta_invest_in_telescope = { level = 0_5 }
+		random_known_country = {
+			limit = {
+				is_incident_active = incident_rinta_light_up_the_night_sky
+				NOT = {
+					has_opinion = {
+						who = ROOT
+						value = 0
+					}
+				}
+			}
+			country_event = {
+				id = rinta_seeker_events.520 #Astronomical Funds Stolen
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.523 #Increased Cooperation?
+	title = rinta_seeker_events.523.t
+	desc = rinta_seeker_events.523.desc
+	picture = DIPLOMACY_SIGNING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = {
+		ai = no
+		6678 = { #Qasri Maroodiqya
+			check_variable = {
+				which = rinta_stole_funds_var
+				value = 1
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.523.a
+		custom_tooltip = rinta_disable_investment_tt
+		set_global_flag = rinta_disable_stealing_funds_flag
+	}
+
+	option = {
+		name = rinta_seeker_events.523.b
+		custom_tooltip = rinta_supercharge_investment_tt
+		set_global_flag = rinta_supercharge_stealing_funds_flag
+	}
+
+	option = {
+		name = rinta_seeker_events.523.c
+		#Nothing
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.524 #The Gods Aren’t Dead
+	title = rinta_seeker_events.524.t
+	desc = rinta_seeker_events.524.desc
+	picture = ELVEN_CONSTELLATION_eventPicture
+
+	is_triggered_only = yes
+
+	goto = rs_hysterical_city_target
+
+	trigger = {
+		any_owned_province = {
+			OR = {
+				religion = rinta_seekers
+				religion = habab_zar
+				religion = genie_cult
+			}
+			NOT = {
+				has_province_modifier = RS_fears_put_to_rest
+				has_province_modifier = RS_hysterical_city
+			}
+		}
+		rinta_has_invested_level_in_telescope = { level = 0_5 }
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					OR = {
+						religion = rinta_seekers
+						religion = habab_zar
+						religion = genie_cult
+					}
+					NOT = {
+						has_province_modifier = RS_fears_put_to_rest
+						has_province_modifier = RS_hysterical_city
+					}
+				}
+				save_event_target_as = rs_hysterical_city_target
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.524.a
+		event_target:rs_hysterical_city_target = {
+			add_province_modifier = {
+				name = RS_fears_put_to_rest
+				duration = -1
+			}
+			custom_tooltip = rinta_incident_modifier_tt
+		}
+		add_estate_influence_modifier = {
+			estate = estate_church
+			influence = 25
+			duration = 1825 #5 years
+			desc = rinta_telescope_church_influence_tt
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.524.b
+		rinta_reduce_investment_in_telescope = { level = 0_5 refund = yes }
+	}
+
+	option = {
+		name = rinta_seeker_events.524.c
+		event_target:rs_hysterical_city_target = {
+			add_province_modifier = {
+				name = RS_hysterical_city
+				duration = -1
+			}
+			custom_tooltip = rinta_incident_modifier_tt
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.525 #A Terror-Filled Cult Emerges
+	title = rinta_seeker_events.525.t
+	desc = rinta_seeker_events.525.desc
+	picture = PROTESTANT_RELIGIOUS_TENSIONS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.525.a
+		set_country_flag = rinta_active_cultists_flag
+		random_owned_province = {
+			spawn_rebels = {
+				size = 3
+				type = shadow_war_cultists
+			}
+		}
+		random_owned_province = {
+			spawn_rebels = {
+				size = 3
+				type = shadow_war_cultists
+			}
+		}
+		random_owned_province = {
+			spawn_rebels = {
+				size = 3
+				type = shadow_war_cultists
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.526 #The Terror-Filled Cult Is Rich	
+	title = rinta_seeker_events.526.t
+	desc = rinta_seeker_events.526.desc
+	picture = ARTWORK_eventPicture
+
+	is_triggered_only = yes
+	
+	trigger = {
+		NOT = { num_of_rebel_armies = 1 }
+	}
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = rinta_active_cultists_flag
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.526.a
+		add_country_modifier = {
+			name = RS_left_cult_money
+			duration = -1
+		}
+		custom_tooltip = rinta_incident_modifier_tt
+	}
+
+	option = {
+		name = rinta_seeker_events.526.a
+		rinta_invest_in_telescope = { level = 0_75 }
+		add_country_modifier = {
+			name = RS_took_cult_money
+			duration = -1
+		}
+		custom_tooltip = rinta_incident_modifier_tt
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.527 #Sinful Donation
+	title = rinta_seeker_events.527.t
+	desc = rinta_seeker_events.527.desc
+	picture = CHURCH_ESTATE_UPSET_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.527.a
+		rinta_invest_in_telescope = { level = 0_25 }
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -10
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.527.b
+		custom_tooltip = rinta_sinful_donation_tt
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		hidden_effect = {
+			every_owned_province = {
+				add_unrest = 1
+			}
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.528 #Pious Merchant Passes
+	title = rinta_seeker_events.528.t
+	desc = rinta_seeker_events.528.desc
+	picture = ECONOMICALLY_TALLANTED_RULER_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.528.a
+		rinta_invest_in_telescope = { level = 1_5 }
+	}
+
+	option = {
+		name = rinta_seeker_events.528.b
+		custom_tooltip = rinta_gain_level_1_5_cash_tt
+		hidden_effect = {
+			set_variable = {
+				which = rinta_telescope_temp_var
+				which = rinta_telescope_lvl_1_5_cost
+			}
+			var_effect = {
+				var = rinta_telescope_temp_var
+				effect = add_treasury
+				sign = +
+			}
+		}
+		add_country_modifier = {
+			name = RS_impious_investment
+			duration = 1825 #5 years
+		}
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -10
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -10
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.529 #Strong Merfolk Ties Pay Off
+	title = rinta_seeker_events.529.t
+	desc = rinta_seeker_events.529.desc
+	picture = TRIBUTARY_FLEET_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		has_country_flag = merfolk_opinion_allied
+	}
+
+	option = {
+		name = rinta_seeker_events.529.a
+		rinta_invest_in_telescope = { level = 0_5 }
+		merfolk_add_opinion_effect_medium = yes
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.530 #Local Clergy Takes Incentive
+	title = rinta_seeker_events.530.t
+	desc = rinta_seeker_events.530.desc
+	picture = CHURCH_ESTATE_1_eventPicture
+
+	is_triggered_only = yes
+
+	goto = rinta_church_target
+
+	trigger = {
+		any_owned_province = {
+			religion = rinta_seekers
+			has_tax_building_trigger = yes
+		}
+	}
+
+	immediate = {
+		random_owned_province = {
+			limit = {
+				religion = rinta_seekers
+				has_tax_building_trigger = yes
+			}
+			save_event_target_as = rinta_church_target
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.530.a
+		rinta_invest_in_telescope = { amount = 100 }
+		event_target:rinta_church_target = {
+			remove_building = temple
+			remove_building = cathedral
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.530.b
+		add_treasury = -50
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.531 #Nobles Take Their Due
+	title = rinta_seeker_events.531.t
+	desc = rinta_seeker_events.531.desc
+	picture = NOBLE_ESTATE_DEMANDS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.531.a
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -10
+		}
+		add_estate_influence_modifier = {
+			estate = estate_nobles
+			influence = -10
+			duration = 1825 #5 years
+			desc = rinta_telescope_nobles_influence_neg_tt
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.531.b
+		rinta_reduce_investment_in_telescope = { level = 0_5 }
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 5
+		}
+		add_estate_influence_modifier = {
+			estate = estate_nobles
+			influence = 5
+			duration = 1825 #5 years
+			desc = rinta_telescope_nobles_influence_pos_tt
+		}
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.532 #Cracks in The System
+	title = rinta_seeker_events.532.t
+	desc = rinta_seeker_events.532.desc
+	picture = DIPLOMAT_INTERROGATION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.532.a
+		rinta_reduce_investment_in_telescope = { level = 0_25 }
+	}
+}
+
+#Extra Events
+country_event = {
+	id = rinta_seeker_events.595 #Converstion Event to let them say no
+	title = rinta_seeker_events.595.t
+	desc = rinta_seeker_events.595.desc
+	picture = asiangfx_RELIGIOUS_CONVERSION_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = rinta_convert_provs_flag }
+				pick_best_provinces = {
+					10 = yes
+					scope = every_owned_province
+					scale = higher_development_than
+					global_trigger = "
+						NOT = { is_capital = yes }
+						NOT = { religion = rinta_seekers }
+					"
+					event_target_name = sarhaly_prov_converts
+				}
+			}
+		}
+	}
+
+	option = {
+		name = rinta_seeker_events.595.a
+		ai_chance = { factor = 100 }
+		if = {
+			limit = { has_country_flag = rinta_convert_provs_flag }
+			capital_scope = { change_religion = rinta_seekers }
+			event_target:sarhaly_prov_converts_1 = { change_religion = rinta_seekers } #10
+			event_target:sarhaly_prov_converts_2 = { change_religion = rinta_seekers }
+			event_target:sarhaly_prov_converts_3 = { change_religion = rinta_seekers }
+			event_target:sarhaly_prov_converts_4 = { change_religion = rinta_seekers }
+			event_target:sarhaly_prov_converts_5 = { change_religion = rinta_seekers }
+			event_target:sarhaly_prov_converts_6 = { change_religion = rinta_seekers }
+			event_target:sarhaly_prov_converts_7 = { change_religion = rinta_seekers }
+			event_target:sarhaly_prov_converts_8 = { change_religion = rinta_seekers }
+			event_target:sarhaly_prov_converts_9 = { change_religion = rinta_seekers }
+			event_target:sarhaly_prov_converts_10 = { change_religion = rinta_seekers }
+		}
+		else = { change_religion = rinta_seekers }
+	}
+
+	option = {
+		name = rinta_seeker_events.595.b
+		ai_chance = { factor = 0 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.598 #Steal Funds Event
+	title = rinta_seeker_events.598.t
+	desc = rinta_seeker_events.598.desc
+	picture = CONSPIRACY_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { has_global_flag = rinta_supercharge_stealing_funds_flag }
+				pick_best_tags = {
+					global_trigger = "
+						is_incident_active = incident_rinta_light_up_the_night_sky
+						has_spy_network_from = {
+							who = ROOT
+							value = 20
+						}
+					"
+					scale = total_development
+					10 = yes
+					event_target_name = rinta_seeker_spied
+				}
+			}
+			else = {
+				pick_best_tags = {
+					global_trigger = "
+						is_incident_active = incident_rinta_light_up_the_night_sky
+						has_spy_network_from = {
+							who = ROOT
+							value = 35
+						}
+					"
+					scale = total_development
+					10 = yes
+					event_target_name = rinta_seeker_spied
+				}
+			}
+		}
+	}
+	option = {
+		name = rinta_seeker_events.598.a #Go Back
+		highlight = yes
+	}
+
+	option = {
+		name = rinta_seeker_events.598.b
+		trigger = { NOT = { 1 = { province_id = event_target:rinta_seeker_spied_1 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_1 }
+	}
+
+	option = {
+		name = rinta_seeker_events.598.c
+		trigger = { NOT = { 1 = { province_id = event_target:rinta_seeker_spied_2 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_2 }
+	}
+
+	option = {
+		name = rinta_seeker_events.598.d
+		trigger = { NOT = { event_target:rinta_seeker_spied_3 = { province_id = 1 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_3 }
+	}
+
+	option = {
+		name = rinta_seeker_events.598.e
+		trigger = { NOT = { event_target:rinta_seeker_spied_4 = { province_id = 1 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_4 }
+	}
+
+	option = {
+		name = rinta_seeker_events.598.f
+		trigger = { NOT = { event_target:rinta_seeker_spied_5 = { province_id = 1 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_5 }
+	}
+
+	option = {
+		name = rinta_seeker_events.598.g
+		trigger = { NOT = { event_target:rinta_seeker_spied_6 = { province_id = 1 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_6 }
+	}
+
+	option = {
+		name = rinta_seeker_events.598.h
+		trigger = { NOT = { event_target:rinta_seeker_spied_7 = { province_id = 1 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_7 }
+	}
+
+	option = {
+		name = rinta_seeker_events.598.i
+		trigger = { NOT = { event_target:rinta_seeker_spied_8 = { province_id = 1 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_8 }
+	}
+
+	option = {
+		name = rinta_seeker_events.598.j
+		trigger = { NOT = { event_target:rinta_seeker_spied_9 = { province_id = 1 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_9 }
+	}
+
+	option = {
+		name = rinta_seeker_events.598.k
+		trigger = { NOT = { event_target:rinta_seeker_spied_10 = { province_id = 1 } } }
+		rinta_steal_funds_event_effect = { event_target = rinta_seeker_spied_10 }
+	}
+}
+
+country_event = {
+	id = rinta_seeker_events.599 #Invest In Telescope Event
+	title = rinta_seeker_events.599.t
+	desc = rinta_seeker_events.599.desc
+	picture = MAGE_MOON_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = rinta_seeker_events.599.a #Go Back
+		highlight = yes
+	}
+
+	option = {
+		name = rinta_seeker_events.599.b #Invest All
+		rinta_invest_in_telescope = { all = yes pay = yes } #The errors are LIES
+	}
+
+	option = {
+		name = rinta_seeker_events.599.c #Invest Half
+		rinta_invest_in_telescope = { half = yes pay = yes }
+	}
+
+	option = {
+		name = rinta_seeker_events.599.d #Invest 100
+		if = {
+			limit = { treasury = 100 }
+			rinta_invest_in_telescope = { amount = 100 pay = yes }
+		}
+		else = { custom_tooltip = rinta_too_poor_tt }
+	}
+
+	option = {
+		name = rinta_seeker_events.599.e #Invest 250
+		if = {
+			limit = { treasury = 250 }
+			rinta_invest_in_telescope = { amount = 250 pay = yes }
+		}
+		else = { custom_tooltip = rinta_too_poor_tt }
+	}
+
+	option = {
+		name = rinta_seeker_events.599.f #Invest 500
+		if = {
+			limit = { treasury = 500 }
+			rinta_invest_in_telescope = { amount = 500 pay = yes }
+		}
+		else = { custom_tooltip = rinta_too_poor_tt }
+	}
+
+	option = {
+		name = rinta_seeker_events.599.g #Invest 1000
+		if = {
+			limit = { treasury = 1000 }
+			rinta_invest_in_telescope = { amount = 1000 pay = yes }
+		}
+		else = { custom_tooltip = rinta_too_poor_tt }
+	}
+}

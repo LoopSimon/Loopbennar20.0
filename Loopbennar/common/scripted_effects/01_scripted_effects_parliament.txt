@@ -355,3 +355,120 @@ national_bribe_estate_effect = {
 		}
 	}
 }
+
+parlaments_rotten_events = {
+	if = {
+		limit = {
+			OR = {
+				has_dlc = "Common Sense"
+				has_dlc = "Domination"
+			}
+			has_parliament = yes
+			NOT = { has_government_attribute = anb_special_seats }
+			NOT = { has_country_flag = G54_no_rotten_borough_flag }
+			NOT = { has_reform = argordstun_stubborn_reformists } #Unsure why this is here
+			NOT = { has_estate_privilege = estate_church_J52_consecrate_industry }
+
+			any_owned_province = { #We have a rotten province
+				has_seat_in_parliament = yes
+				is_capital = no
+				NOT = { has_province_modifier = rotten_borough }
+				NOT = { development = 10 }
+			}
+
+			any_owned_province = { #We have a better province
+				development = 10
+				is_core = owner
+				has_seat_in_parliament = no
+				is_overseas = no
+				is_state = yes
+				OR = {
+					has_owner_accepted_culture = yes
+					has_owner_culture = yes
+				}
+			}
+		}
+		random_list = {
+			4 = {} #Baseline chance of nothing ~16 years or 192 months
+			1 = {
+				modifier = { #Mimics parlaments.3
+					factor = 2
+					is_year = 1500
+				}
+				country_event = { id = parlaments.2 random = 365 } #Rotten seat
+			}
+		}
+	}
+}
+
+parlaments_representation_events = {
+	if = {
+		limit = {
+			adm_tech = 22
+			OR = {
+				has_dlc = "Common Sense"
+				has_dlc = "Domination"
+			}
+			num_of_cities = 2
+
+			OR = { #The two government types that can get parliamentary reform
+				government = monarchy
+				government = republic
+			}
+
+			NOT = { has_parliament = yes } #We don't already have representation
+
+			NOT = { has_reform = elective_monarchy }
+			NOT = { has_reform = free_city }
+			NOT = { is_revolutionary_republic_trigger = yes }
+			NOT = { has_reform = presidential_despot_reform }
+			NOT = { has_reform = ambrosian_republic }
+			NOT = { is_emperor_of_china = yes }
+			NOT = { has_government_attribute = is_peasants_republic }
+			NOT = { has_reform = colonial_government }
+			NOT = { is_revolutionary_monarchy_trigger = yes }
+
+			#Anbennar
+			NOT = { has_reform = damescrown_republic_reform }	#dutch republic
+			NOT = { has_reform = free_slave_reform }	#mamluk
+			NOT = { has_government_attribute = is_raja  }	#shogunates
+			NOT = { has_reform = prabhi_reform }
+			NOT = { has_reform = indep_prabhi_reform }
+		}
+		random_list = {
+			10 = {} #Baseline chance of nothing ~ 50 years or 600 months
+			2 = {
+				trigger = {
+					NOT = { has_reform = parliamentary_reform }
+					num_of_cities = 4
+				}
+				country_event = { id = parlaments.23 random = 365 } #Country wants parliament
+			}
+			1 = {
+				trigger = {
+					num_of_loans = 5
+					NOT = { treasury = 50 }
+					NOT = { has_country_modifier = yearning_for_representation }
+					NOT = { has_ruler_flag = cities_offered_to_help }
+				}
+				modifier = {
+					factor = 2
+					NOT = { has_reform = parliamentary_reform }
+				}
+				country_event = { id = parlaments.24 random = 365 } #Loans, cities want seats
+			}
+			2 = { #loss of precision to avoid scaling with the square of owned provinces
+				trigger = {
+					NOT = { stability = 2 }
+					NOT = { has_ruler_flag = minorities_denied_representation }
+					num_of_owned_provinces_with = {
+						value = 2
+						has_owner_accepted_culture = no
+						is_overseas = no
+					}
+				}
+				country_event = { id = parlaments.25 random = 365 } #Minorities want parliament
+			}
+		}
+	}
+}

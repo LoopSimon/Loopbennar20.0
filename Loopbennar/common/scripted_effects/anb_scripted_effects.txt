@@ -1688,6 +1688,32 @@ remove_government_name_changers = {
 	clr_country_flag = knightly_order_adventurer
 }
 
+pay_for_organization_swap = {
+	if = {
+		limit = {
+			has_mages_organization_privilege = yes
+			NOT = { has_estate_privilege = estate_mages_organization_$organization$ }
+		}
+		if = {
+			limit = {
+				estate_loyalty = {
+					estate = estate_mages
+					loyalty = 60
+				}
+			}
+			add_adm_power = -100
+			add_stability = -1
+		}
+		else = {
+			add_stability = -2
+			add_adm_power = -200
+		}
+		custom_tooltip = estate_mages_organization_cost_tooltip
+		custom_tooltip = estate_mages_organization_revoke_tooltip
+		clear_mages_organization_effect = yes
+	}
+}
+
 clear_mages_organization_effect = {
 	hidden_effect = {
 		remove_estate_privilege = estate_mages_organization_magisterium
@@ -1705,6 +1731,7 @@ clear_mages_organization_effect = {
 		remove_estate_privilege = estate_mages_organization_proffesional_mihipha
 		remove_estate_privilege = estate_mages_organization_orda_aldresia
 		remove_estate_privilege = estate_mages_organization_rule_of_warlocks
+		remove_estate_privilege = estate_mages_organization_acolytes
 	}
 }
 
@@ -1736,102 +1763,6 @@ clear_artificers_organization_effect = {
 		remove_estate_privilege = estate_artificers_organization_strict_state_supervision #Pashaine
 	}
 }
-
-count_provinces_owned_by_neighbours_effect = {
-	set_variable = {
-		which=$which$ value=0
-	}
-	
-	
-	every_province = {
-		limit = {
-			owner = {
-				is_neighbor_of = ROOT
-			}
-		}
-		ROOT = {
-		    change_variable = { 
-			    which = $which$ 
-			    value = 1 
-		    }
-	    }
-	}
-}
-
-count_provinces_owned_by_war_enemies_effect = {
-	set_variable = {
-		which=$which$ 
-		value=0
-	}
-	
-	every_province = {
-		limit = {
-			owner = {
-				war_with = ROOT
-			}
-		}
-		ROOT = {
-		    change_variable = { 
-			    which = $which$ 
-			    value = 1 
-		    }
-	    }
-	}
-
-}
-
-count_provinces_owned_by_country_effect = {	
-	set_variable = {
-		which=$which$ 
-		value=0
-	}
-	
-	every_owned_province = {
-		ROOT = {
-		    change_variable = { 
-			    which = $which$ 
-			    value = 1 
-		    }
-	    }
-	}
-}
-
-count_provinces_owned_by_rivals_effect = {	
-	set_variable = {
-		which=$which$ 
-		value=0
-	}
-	
-	every_province = {
-		limit = {
-			owner = {
-				ROOT = { is_rival = PREV }
-			}
-		}
-		ROOT = {
-		    change_variable = { 
-			    which = $which$ 
-			    value = 1 
-		    }
-	    }
-	}
-}
-
-count_provinces_in_capital_area = {
-	set_variable ={
-		which=$which$ value=0
-	}
-
-	every_owned_province = {
-		limit = { is_in_capital_area = yes }
-		ROOT = {
-			change_variable = {
-				which = $which$
-				value = 1
-			}
-		}
-	}
-}	
 
 randomize_leader_pips_nonmagical_effect = {	#more chances for low pips in the random list
 	set_variable = {
@@ -2781,7 +2712,40 @@ adventurer_legacy_effect = {
 }
 
 orc_legacy_effect = {
-	if = {
+	if = { 
+		limit = {
+			OR  = {
+				tag = Z18
+				tag = Z19
+				tag = Z47
+				tag = Z50
+			}
+				has_country_flag = orc_path_to_civil 
+		}
+		add_country_modifier = {
+			name = "legacy_of_graytide_invaders_modifier"
+			duration = 14600
+		}
+		add_country_modifier = {
+			name = "organized_orc_administration_modifier"
+			duration = 14600
+		}
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = Z18
+				tag = Z19
+				tag = Z47
+				tag = Z50
+			}
+		}
+		add_country_modifier = {
+			name = "legacy_of_graytide_invaders_modifier"
+			duration = 14600
+		}
+	}
+	else_if = {
 		limit = { has_country_flag = orc_path_to_civil }
 		add_country_modifier = {
 			name = "legacy_of_greentide_invaders_modifier"
@@ -2797,203 +2761,6 @@ orc_legacy_effect = {
 			name = "legacy_of_greentide_invaders_modifier"
 			duration = 14600
 		}
-	}
-}
-
-create_war_wizard_effect = {
-	custom_tooltip = war_wizard_tooltip
-	hidden_effect = {
-		set_saved_name = {
-			key = root_name_male
-			type = advisor
-			scope = ROOT
-		}
-		set_saved_name = {
-			key = root_name_female
-			type = advisor
-			female = yes
-			scope = ROOT
-		}
-		if = {
-			limit = {
-				army_tradition = 0.00
-				NOT = { army_tradition = 20 }
-			}
-			random_list = {
-				50 = {
-					define_general = {
-						fire = 2
-						shock = 4
-						manuever = 0
-						siege = 1
-						trait = war_wizard_personality
-						name = root_name_male
-					}
-				}
-				50 = {
-					define_general = {
-						fire = 2
-						shock = 4
-						manuever = 0
-						siege = 1
-						trait = war_wizard_personality
-						female = yes
-						name = root_name_female
-					}
-				}
-			}
-		}
-		
-		if = {
-			limit = {
-				army_tradition = 20
-				NOT = { army_tradition = 40 }
-			}
-			random_list = {
-				50 = {
-					define_general = {
-						fire = 2
-						shock = 4
-						manuever = 1
-						siege = 2
-						trait = war_wizard_personality
-						name = root_name_male
-					}
-				}
-				50 = {
-					define_general = {
-						fire = 2
-						shock = 4
-						manuever = 1
-						siege = 2
-						trait = war_wizard_personality
-						female = yes
-						name = root_name_female
-					}
-				}
-			}
-		}
-		
-		if = {
-			limit = {
-				army_tradition = 40
-				NOT = { army_tradition = 60 }
-			}
-			random_list = {
-				50 = {
-					define_general = {
-						fire = 2
-						shock = 5
-						manuever = 1
-						siege = 3
-						trait = war_wizard_personality
-						name = root_name_male
-					}
-				}
-				50 = {
-					define_general = {
-						fire = 2
-						shock = 5
-						manuever = 1
-						siege = 3
-						trait = war_wizard_personality
-						female = yes
-						name = root_name_female
-					}
-				}
-			}
-		}
-		
-		if = {
-			limit = {
-				army_tradition = 60
-				NOT = { army_tradition = 80 }
-			}
-			random_list = {
-				50 = {
-					define_general = {
-						fire = 3
-						shock = 6
-						manuever = 2
-						siege = 4
-						trait = war_wizard_personality
-						name = root_name_male
-					}
-				}
-				50 = {
-					define_general = {
-						fire = 3
-						shock = 6
-						manuever = 2
-						siege = 4
-						trait = war_wizard_personality
-						female = yes
-						name = root_name_female
-					}
-				}
-			}
-		}
-		
-		if = {
-			limit = {
-				army_tradition = 80
-			}
-			random_list = {
-				50 = {
-					define_general = {
-						fire = 3
-						shock = 7
-						manuever = 3
-						siege = 4
-						trait = war_wizard_personality
-						name = root_name_male
-					}
-				}
-				50 = {
-					define_general = {
-						fire = 3
-						shock = 7
-						manuever = 3
-						siege = 4
-						trait = war_wizard_personality
-						female = yes
-						name = root_name_female
-					}
-				}
-			}
-		}
-		
-		if = {
-			limit = {
-				army_tradition = 80
-			}
-			random_list = {
-				50 = {
-					define_general = {
-						fire = 3
-						shock = 7
-						manuever = 3
-						siege = 4
-						trait = war_wizard_personality
-						name = root_name_male
-					}
-				}
-				50 = {
-					define_general = {
-						fire = 3
-						shock = 7
-						manuever = 3
-						siege = 4
-						trait = war_wizard_personality
-						female = yes
-						name = root_name_female
-					}
-				}
-			}
-		}
-			
-		clear_saved_name = root_name_male
-		clear_saved_name = root_name_female
 	}
 }
 
@@ -4066,10 +3833,13 @@ add_fort_up_to_16th = {
 }
 
 remove_fortifications = {
-	remove_building = fort_15th
-	remove_building = fort_16th
-	remove_building = fort_17th
-	remove_building = fort_18th
+	custom_tooltip = remove_fortifications_tt
+	hidden_effect = {
+		remove_building = fort_15th
+		remove_building = fort_16th
+		remove_building = fort_17th
+		remove_building = fort_18th
+	}
 }
 
 calc_tributary_dev_proportion = {
@@ -4131,7 +3901,7 @@ save_ruler_stats = {
 restore_ruler_stats = {
 	custom_tooltip = restore_reviver_stats
 	
-	hidden_effect = {
+	hidden_effect = { #These variables were previously saved with save_ruler_stats
 		set_variable = {
 			which = ruler_adm_temp 
 			which = ruler_adm 
@@ -4235,7 +4005,7 @@ restore_saved_dynasty = { #Fire after you performed save_ruler_dynasty at some p
 		set_ruler = dynastic_interregnum_@ROOT
 		if = {
 			limit = { NOT = { has_ruler = "Interregnum" } } #In case you tag-swapped
-			define_ruler = { age = 30 name = "Interregnum" dynasty = ROOT max_random_adm  = 0 max_random_dip  = 0 max_random_mil  = 0 hide_skills = yes }
+			define_ruler = { age = 30 name = "Interregnum" max_random_adm = 0 max_random_dip = 0 max_random_mil = 0 hide_skills = yes }
 		}
 	}
 	save_ruler_dynasty = yes #generate another exiled interregnum
@@ -4891,6 +4661,15 @@ anbennar_building_effect = {
 		} 
 		province_event = { id = flavour_sareyand.1 }
 	}
+
+	owner = {
+		if = {
+			limit = {
+				religion = fangaulan_pantheon
+			}
+			add_church_power = 0.2
+		}
+	}
 }
 
 anb_manufactory_discount = {
@@ -4962,6 +4741,30 @@ anb_on_development_effect = {
 		limit = { has_province_modifier = jaddari_blessed_land }
 		random = {
 			chance = 25
+			add_base_$development$ = 1
+		}
+	}
+
+	if = {
+		limit = { 
+			owner = {
+				has_country_flag = rending_hukai_telebei_reward_primary
+			}
+		}
+		random = {
+			chance = 25
+			add_base_$development$ = 1
+		}
+	}
+
+	if = {
+		limit = { 
+			owner = {
+				has_country_flag = rending_hukai_telebei_reward
+			}
+		}
+		random = {
+			chance = 12.5
 			add_base_$development$ = 1
 		}
 	}
@@ -5215,7 +5018,9 @@ create_vassal_with_religion_and_culture = {
 		$tag$ = {
 			change_religion = $religion$
 			remove_country_modifier = conversion_zeal
+			clr_country_flag = changed_religion
 			change_primary_culture = $culture$
+			remove_country_modifier = restructuring_administration
 		}
 	}
 	create_vassal = $tag$
@@ -5226,6 +5031,7 @@ release_with_religion_and_culture = {
 		$tag$ = {
 			change_religion = $religion$
 			remove_country_modifier = conversion_zeal
+			clr_country_flag = changed_religion
 			change_primary_culture = $culture$
 			remove_country_modifier = restructuring_administration
 		}
@@ -8932,7 +8738,19 @@ anb_lizardfolk_clash_change_variable_plus = {
 						school = fate_sculptors_school_ascended
 					}
 				}
-				else = {
+				if = {
+					limit = {
+						OR = {
+							religious_school = {
+								group = lizardfolk_religion
+								school = being_sculptors_school
+							}
+							religious_school = {
+								group = lizardfolk_religion
+								school = being_sculptors_school_ascended
+							}
+						}
+					}
 					set_religious_school = {
 						group = lizardfolk_religion
 						school = being_sculptors_school_humiliated
@@ -8940,7 +8758,7 @@ anb_lizardfolk_clash_change_variable_plus = {
 				}
 			}
 		}
-		else_if = {
+		if = {
 			limit = {
 				6150 = { is_variable_equal = { which = lizSchoolFightVar value = -1 } }
 			}
@@ -8966,7 +8784,19 @@ anb_lizardfolk_clash_change_variable_plus = {
 						school = fate_sculptors_school
 					}
 				}
-				else = {
+				if = {
+					limit = {
+						OR = {
+							religious_school = {
+								group = lizardfolk_religion
+								school = being_sculptors_school_humiliated
+							}
+							religious_school = {
+								group = lizardfolk_religion
+								school = being_sculptors_school_ascended
+							}
+						}
+					}
 					set_religious_school = {
 						group = lizardfolk_religion
 						school = being_sculptors_school
@@ -9019,7 +8849,19 @@ anb_lizardfolk_clash_change_variable_minus = {
 						school = fate_sculptors_school_humiliated
 					}
 				}
-				else = {
+				if = {
+					limit = {
+						OR = {
+							religious_school = {
+								group = lizardfolk_religion
+								school = being_sculptors_school
+							}
+							religious_school = {
+								group = lizardfolk_religion
+								school = being_sculptors_school_humiliated
+							}
+						}
+					}
 					set_religious_school = {
 						group = lizardfolk_religion
 						school = being_sculptors_school_ascended
@@ -9028,7 +8870,7 @@ anb_lizardfolk_clash_change_variable_minus = {
 				
 			}
 		}
-		else_if = {
+		if = {
 			limit = {
 				6150 = { is_variable_equal = { which = lizSchoolFightVar value = 1 } }
 			}
@@ -9054,7 +8896,19 @@ anb_lizardfolk_clash_change_variable_minus = {
 						school = fate_sculptors_school
 					}
 				}
-				else = {
+				if = {
+					limit = {
+						OR = {
+							religious_school = {
+								group = lizardfolk_religion
+								school = being_sculptors_school_ascended
+							}
+							religious_school = {
+								group = lizardfolk_religion
+								school = being_sculptors_school_humiliated
+							}
+						}
+					}
 					set_religious_school = {
 						group = lizardfolk_religion
 						school = being_sculptors_school
@@ -9457,4 +9311,294 @@ allow_double_radical_reforms = {
 change_propagate_religion_trade_power_to = {
 	custom_tooltip = change_propagate_religion_trade_power_to_$amount$_tt
 	set_country_flag = $amount$_trade_power_for_propogate_religion
+}
+rinta_seeker_adeen_revolt = {
+	S78 = {
+		if = {
+			limit = { ROOT = { NOT = { is_subject = yes } } }
+			declare_war_with_cb = {
+				casus_belli = cb_independence_war
+				who = ROOT
+			}
+		}
+		if = {
+			limit = { ROOT = { is_subject = yes } }
+			hidden_effect = {
+				ROOT = {
+					overlord = {
+						save_event_target_as = rinta_seekers_overlord_for_attack
+					}
+				}
+			}
+			declare_war_with_cb = {
+				casus_belli = cb_independence_war
+				who = event_target:rinta_seekers_overlord_for_attack
+			}
+		}
+		hidden_effect = {
+			capital_scope = {
+				if = {
+					limit = { NOT = { province_has_current_tech_fort_trigger = yes } }
+					add_latest_building = { builder = ROOT fort = yes }
+				}
+				if = {
+					limit = {
+						NOT = {
+							OR = {
+								has_building = coastal_defence
+								has_building = naval_battery
+							}
+						}
+					}
+					add_latest_building = { builder = ROOT coastal = yes }
+				}
+			}
+			create_unit_forcelimit_percentage = {
+				type = infantry
+				special_unit_category = marines
+				force_limit_percentage = 1
+			}
+			create_unit_forcelimit_percentage = {
+				type = galley
+				force_limit_percentage = 1
+			}
+			add_years_of_income = 10
+			add_yearly_manpower = 10
+			add_yearly_sailors = 10
+			set_country_flag = rinta_adeen_rise_war
+		}
+	}
+	if = {
+		limit = { has_saved_event_target = adeeni_target_1 }
+		event_target:adeeni_target_1 = {
+			spawn_rebels = {
+				type = nationalist_rebels
+				female = yes
+				size = 2
+				friend = S78
+				separatists_target = S78
+			}
+			hidden_effect = {
+				add_core = S78
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = adeeni_target_2 }
+			event_target:adeeni_target_2 = {
+				spawn_rebels = {
+					type = nationalist_rebels
+					size = 2
+					friend = S78
+					separatists_target = S78
+					win = yes
+				}
+				hidden_effect = {
+					add_core = S78
+				}
+			}
+			if = {
+				limit = { has_saved_event_target = adeeni_target_3 }
+				event_target:adeeni_target_3 = {
+					spawn_rebels = {
+						type = nationalist_rebels
+						size = 2
+						friend = S78
+						separatists_target = S78
+						win = yes
+					}
+					hidden_effect = {
+						add_core = S78
+					}
+				}
+			}
+		}
+	}
+}
+
+# because the vanila tt for set_government_rank doesn't work properly
+set_government_rank_scripted_effect = {
+	custom_tooltip = set_government_rank_$rank$_tt
+	hidden_effect = { set_government_rank = $rank$ }
+}
+increase_government_rank_scripted_effect = {
+	if = {
+		limit = { 
+			NOT = { government_rank = $rank$ } 
+		}
+		custom_tooltip = set_government_rank_$rank$_tt
+		hidden_effect = { set_government_rank = $rank$ }
+	}
+}
+
+# This is a primitive random number generator. Intended for use in places that require RNG without delay.
+# Basically, it's the numbers 0 through 4092 but in an unpredictable order.
+# On its own, generates an integer between 0 and 4092 "randnum"
+# Generates an integer between 1 and $max$ if you use it that way
+
+# It requires some very specific integers to function properly
+# Credit for discovering and measuring these integers goes to:
+#
+# L�Ecuyer, Pierre. (1999). 'Tables of Linear Congruential Generators of Different Sizes and Good Lattice Structure',
+# Mathematics of Computation, 68(225), p249-260 [online].
+# Available at: https://www.ams.org/journals/mcom/1999-68-225/S0025-5718-99-00996-5/S0025-5718-99-00996-5.pdf
+# (Accessed: 17 April 2025)
+
+randnum_effect = {
+	REB = {
+		multiply_variable = { randnum = 209 }
+		modulo_variable = { randnum = 4093 }
+		PREV = { set_variable = { which = randnum which = PREV } }
+	}
+
+	[[max]
+		modulo_variable = { randnum = $max$ }
+		change_variable = { randnum = 1 }
+	]
+	[[max_var]
+		modulo_variable = { which = randnum which = $max_var$ }
+		change_variable = { randnum = 1 }
+	]
+
+	[[case30]	if = { limit = { is_variable_equal = { which = randnum value = 30 } }	$case30$ } ]
+	[[case29]	if = { limit = { is_variable_equal = { which = randnum value = 29 } }	$case29$ } ]
+	[[case28]	if = { limit = { is_variable_equal = { which = randnum value = 28 } }	$case28$ } ]
+	[[case27]	if = { limit = { is_variable_equal = { which = randnum value = 27 } }	$case27$ } ]
+	[[case26]	if = { limit = { is_variable_equal = { which = randnum value = 26 } }	$case26$ } ]
+	[[case25]	if = { limit = { is_variable_equal = { which = randnum value = 25 } }	$case25$ } ]
+	[[case24]	if = { limit = { is_variable_equal = { which = randnum value = 24 } }	$case24$ } ]
+	[[case23]	if = { limit = { is_variable_equal = { which = randnum value = 23 } }	$case23$ } ]
+	[[case22]	if = { limit = { is_variable_equal = { which = randnum value = 22 } }	$case22$ } ]
+	[[case21]	if = { limit = { is_variable_equal = { which = randnum value = 21 } }	$case21$ } ]
+	[[case20]	if = { limit = { is_variable_equal = { which = randnum value = 20 } }	$case20$ } ]
+	[[case19]	if = { limit = { is_variable_equal = { which = randnum value = 19 } }	$case19$ } ]
+	[[case18]	if = { limit = { is_variable_equal = { which = randnum value = 18 } }	$case18$ } ]
+	[[case17]	if = { limit = { is_variable_equal = { which = randnum value = 17 } }	$case17$ } ]
+	[[case16]	if = { limit = { is_variable_equal = { which = randnum value = 16 } }	$case16$ } ]
+	[[case15]	if = { limit = { is_variable_equal = { which = randnum value = 15 } }	$case15$ } ]
+	[[case14]	if = { limit = { is_variable_equal = { which = randnum value = 14 } }	$case14$ } ]
+	[[case13]	if = { limit = { is_variable_equal = { which = randnum value = 13 } }	$case13$ } ]
+	[[case12]	if = { limit = { is_variable_equal = { which = randnum value = 12 } }	$case12$ } ]
+	[[case11]	if = { limit = { is_variable_equal = { which = randnum value = 11 } }	$case11$ } ]
+	[[case10]	if = { limit = { is_variable_equal = { which = randnum value = 10 } }	$case10$ } ]
+	[[case9]	if = { limit = { is_variable_equal = { which = randnum value = 9 } }	$case9$ } ]
+	[[case8]	if = { limit = { is_variable_equal = { which = randnum value = 8 } }	$case8$ } ]
+	[[case7]	if = { limit = { is_variable_equal = { which = randnum value = 7 } }	$case7$ } ]
+	[[case6]	if = { limit = { is_variable_equal = { which = randnum value = 6 } }	$case6$ } ]
+	[[case5]	if = { limit = { is_variable_equal = { which = randnum value = 5 } }	$case5$ } ]
+	[[case4]	if = { limit = { is_variable_equal = { which = randnum value = 4 } }	$case4$ } ]
+	[[case3]	if = { limit = { is_variable_equal = { which = randnum value = 3 } }	$case3$ } ]
+	[[case2]	if = { limit = { is_variable_equal = { which = randnum value = 2 } }	$case2$ } ]
+	[[case1]	if = { limit = { is_variable_equal = { which = randnum value = 1 } }	$case1$ } ]
+}
+
+randnum_recalc = {
+	REB = {
+		multiply_variable = { randnum = 209 }
+		modulo_variable = { randnum = 4093 }
+		PREV = { set_variable = { which = randnum which = PREV } }
+	}
+
+	[[max]
+		modulo_variable = { randnum = $max$ }
+		change_variable = { randnum = 1 }
+	]
+}
+
+truncate_variable_3 = { #truncates a variable to 3 sig figs. assumes a range of 1-100
+	if = {
+		limit = { check_variable = { $which$ = 10 } }
+		divide_variable = { $which$ = 100 }
+		multiply_variable = { $which$ = 100 }
+	}
+	else = {
+		divide_variable = { $which$ = 10 }
+		multiply_variable = { $which$ = 10 }
+	}
+}
+
+define_consort_to_general = { #this is basically just for the magic rework
+
+	[[name]
+		set_saved_name = { key = consort_name type = simple name = "$consort_name$" }
+		set_country_flag = has_consort_name
+	]
+	if = {
+		limit = { NOT = { has_country_flag = has_consort_name } }
+		if = { limit = { has_female_consort = yes }
+			set_saved_name = { key = consort_name type = advisor female = yes scope = THIS }
+		}
+		else = { set_saved_name = { key = consort_name type = advisor scope = THIS } }
+	}
+	else = { clr_country_flag = has_consort_name }
+
+	
+	if = { #no using else-ifs in conjunction with defining traits
+		limit = { has_female_consort = yes }
+		define_general = {
+			shock = $shock$
+			fire = $fire$
+			manuever = $manuever$
+			siege = $siege$
+			name = consort_name
+			female = yes
+			[[trait]trait = $trait$]
+		}
+	}
+	if = {
+		limit = { has_female_consort = no }
+		define_general = {
+			shock = $shock$
+			fire = $fire$
+			manuever = $manuever$
+			siege = $siege$
+			name = consort_name
+			[[trait]trait = $trait$]
+		}
+	}
+	clear_saved_name = consort_name
+}
+
+add_random_ruler_skill = {
+	random_list = {
+		1 = { trigger = { NOT = { adm = 6 } } change_adm = 1 }
+		1 = { trigger = { NOT = { dip = 6 } } change_dip = 1 }
+		1 = { trigger = { NOT = { mil = 6 } } change_mil = 1 }
+	}
+}
+
+anb_instantly_finish_next_construction = { #You need to give out the variable
+	hidden_effect = {
+		if = {
+			limit = {
+				FROM = {
+					check_variable = {
+						which = InstantCompleteBuildings
+						value = 1
+					}
+				}
+			}
+			FROM = {
+				change_variable = {
+					which = InstantCompleteBuildings
+					value = -1
+				}
+			}
+			province_event = { id = anb_miscevents.23 days = 1 }
+		}
+	}
+}
+
+add_2_stability_or_adm_power = {
+	if = {
+		limit = { stability = 3}
+		add_adm_power = 100
+	}
+	else_if = {
+		limit = { stability = 2}
+		add_stability = 1
+		add_adm_power = 50
+	}
+	else = {
+		add_stability = 2
+	}
 }

@@ -1,0 +1,1481 @@
+namespace = triunic
+#######################################################################################################################
+########                                              KODAVE :
+########    
+#######################################################################################################################
+
+# A Great Champion Arises
+country_event = {
+    id = triunic.1
+    title = triunic.1.t
+    desc = triunic.1.d
+    picture = CHURCH_ESTATE_1_eventPicture
+
+    is_triggered_only = yes
+
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        OR = {
+            religion = kodave_followers
+            AND = {
+                religion = kalyin_worshippers
+                has_harmonized_with = kodave_followers
+            }
+        }
+
+        NOT = {
+            has_country_modifier = triunic_our_goddess_wrath
+            has_country_modifier = triunic_our_goddess_protection
+            has_country_modifier = triunic_sharing_kodaves_grace
+        }
+    }
+
+    # she shall bring Kodave's wrath to our enemies
+    option = {
+        name = triunic.1.a
+        create_general = {
+            tradition = 60
+            female = yes
+        }
+        add_country_modifier = {
+            name = triunic_our_goddess_wrath
+            duration = 1825
+        }
+    }
+
+    # She will teach our soldiers to protect themselves, just as Kodave did for us
+    option = {
+        name = triunic.1.b
+        define_advisor = {
+            type = fortification_expert
+            skill = 2
+            cost_multiplier = 0.50
+            female = yes
+        }
+        add_country_modifier = {
+            name = triunic_our_goddess_protection
+            duration = 1825
+        }
+    }
+
+    # she shall teach our brothers and sisters of Kodave's ways
+    option = {
+        name = triunic.1.c
+        trigger = {
+            OR = {
+                AND = {
+                    tag = J33 # Kalsyto
+                    has_subject_of_type = democratic_sphere_of_influence_subject
+                }
+                AND = {
+                    tag = J50 # Sunijalla
+                    num_of_subjects = 1
+                }
+                has_country_modifier = lake_federation_member
+            }
+        }
+
+        if = {
+            limit = { tag = J33 }
+            random_subject_country = {
+                limit = {
+                    is_subject_of_type = democratic_sphere_of_influence_subject
+                }
+                country_event = {
+                    id = triunic.2
+                    tooltip = triunic.1.c_tt
+                }
+                
+            }
+        } 
+        else_if = {
+            limit = { tag = J50 }
+            random_subject_country = {
+                country_event = {
+                    id = triunic.2
+                    tooltip = triunic.1.c_tt
+                }
+            }
+        } 
+        else = {
+            random_known_country = {
+                limit = {
+                    has_country_modifier = lake_federation_member
+                }
+                country_event = {
+                    id = triunic.2
+                    tooltip = triunic.1.c_tt
+                }
+            }
+
+            lake_federation_gain_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 5
+        }
+
+        add_country_modifier = {
+            name = triunic_sharing_kodaves_grace
+            duration = 3650
+        }
+    }
+}
+
+# Foreign Priestess
+country_event = {
+    id = triunic.2
+    title = triunic.2.t
+    desc = triunic.2.d
+    picture = CHURCH_ESTATE_1_eventPicture
+    is_triggered_only = yes
+
+    immediate = {
+        hidden_effect = {
+            FROM = {
+                add_trust = {
+                    who = PREV
+                    value = 10
+                }
+            }
+        }
+        
+    }
+
+    # she shall bring Kodave's wrath to our enemies
+    option = {
+        name = triunic.2.a
+        create_general = {
+            tradition = 60
+            female = yes
+        }
+        add_country_modifier = {
+            name = triunic_our_goddess_wrath
+            duration = 1825
+        }
+    }
+
+    # She will teach our soldiers to protect themselves, just as Kodave did for us
+    option = {
+        name = triunic.2.b
+        define_advisor = {
+            type = fortification_expert
+            skill = 2
+            cost_multiplier = 0.50
+            female = yes
+        }
+        add_country_modifier = {
+            name = triunic_our_goddess_protection
+            duration = 1825
+        }
+    }
+}
+
+# There's HOW MANY at the recruitment office?
+country_event = {
+    id = triunic.3
+    title = triunic.3.t
+    desc = triunic.3.d
+    picture = CHURCH_ESTATE_1_eventPicture
+    is_triggered_only = yes
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        OR = {
+            religion = kodave_followers
+            AND = {
+                religion = kalyin_worshippers
+                has_harmonized_with = kodave_followers
+            }
+        }
+
+        NOT = {
+            any_owned_province = {
+                has_province_modifier = triunic_product_sent_to_military
+                has_province_modifier = triunic_increased_extraction 
+                has_province_modifier = triunic_total_military_use
+            }
+        }
+
+        any_owned_province = {
+            OR = {
+                trade_goods = iron
+                trade_goods = copper
+            }
+        }
+    }
+    option = {
+        name = triunic.3.a
+        custom_tooltip = triunic.3.a_tt
+        hidden_effect = {
+            every_owned_province = {
+                limit = {
+                    OR = {
+                        trade_goods = iron
+                        trade_goods = copper
+                    }
+
+
+                }
+                add_province_modifier = {
+                    name = triunic_product_sent_to_military
+                    duration = 3650
+                }
+            }
+        }
+
+        add_yearly_manpower = 1
+        if = {
+            limit = { 
+                has_country_modifier = lake_federation_member 
+            }
+
+            lake_federation_lose_1_points = yes
+
+            every_known_country = {
+                limit = {
+                    OR = {
+                        religion = enuuk_followers
+                        AND = {
+                            religion = kalyin_worshippers
+                            has_harmonized_with = enuuk_followers
+                        }
+
+                    }
+                }
+
+                add_opinion = {
+                    who = ROOT
+                    modifier = opinion_triunic_sent_products_to_military
+                }
+            }
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = -5
+        }
+    }
+
+    option = {
+        name = triunic.3.b
+
+        custom_tooltip = triunic.3.b_tt
+        hidden_effect = {
+            every_owned_province = {
+                limit = {
+                    OR = {
+                        trade_goods = iron
+                        trade_goods = copper
+                    }
+
+
+                }
+                add_province_modifier = {
+                    name = triunic_increased_extraction
+                    duration = 3650
+                }
+            }
+        }
+
+        if = {
+            limit = { 
+                has_country_modifier = lake_federation_member 
+            }
+
+            lake_federation_gain_1_points = yes
+
+            every_known_country = {
+                limit = {
+                    OR = {
+                        religion = enuuk_followers
+                        AND = {
+                            religion = kalyin_worshippers
+                            has_harmonized_with = enuuk_followers
+                        }
+
+                    }
+                }
+
+                add_opinion = {
+                    who = ROOT
+                    modifier = opinion_triunic_increased_extraction
+                }
+            }
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 5
+        }
+    }
+
+    option = {
+        name = triunic.3.c
+
+        trigger = {
+            OR = {
+                ruler_has_personality = strict_personality
+                ruler_has_personality = bold_fighter_personality
+            }
+        }
+
+        highlight = yes
+
+        custom_tooltip = triunic.3.c_tt
+        hidden_effect = {
+            every_owned_province = {
+                limit = {
+                    OR = {
+                        trade_goods = iron
+                        trade_goods = copper
+                    }
+
+
+                }
+                add_province_modifier = {
+                    name = triunic_total_military_use
+                    duration = 3650
+                }
+            }
+
+        }
+        add_yearly_manpower = 1
+        add_country_modifier = {
+            name = triunic_expertly_equipped
+            duration = 1825
+        }
+        if = {
+            limit = { 
+                has_country_modifier = lake_federation_member 
+            }
+
+            lake_federation_lose_2_points = yes
+
+            every_known_country = {
+                limit = {
+                    OR = {
+                        religion = enuuk_followers
+                        AND = {
+                            religion = kalyin_worshippers
+                            has_harmonized_with = enuuk_followers
+                        }
+
+                    }
+                }
+
+                add_opinion = {
+                    who = ROOT
+                    modifier = opinion_triunic_total_military_use
+                }
+            }
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = -10
+        }
+    }
+}
+# Target Poor Environment
+country_event = {
+    id = triunic.4
+    title = triunic.4.t
+    desc = triunic.4.d
+    picture = CHURCH_ESTATE_1_eventPicture
+    is_triggered_only = yes
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        OR = {
+            religion = kodave_followers
+            AND = {
+                religion = kalyin_worshippers
+                has_harmonized_with = kodave_followers
+            }
+        }
+        is_at_war = no
+        NOT = { had_recent_war = 10 }
+        NOT = {
+            has_country_modifier = triunic_sojdalas_securing_trade
+            has_country_modifier = triunic_sending_sojdalas_abroad
+            has_country_modifier = triunic_faithful_itching_for_fight
+            has_country_modifier = triunic_bloodlust_unleashed
+            has_country_modifier = triunic_old_enemy_purged
+        }
+    }
+
+    option = {
+        name = triunic.4.a
+
+        add_country_modifier = {
+            name = triunic_sending_sojdalas_abroad
+            duration = 3650
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+
+            random_known_country = {
+                limit = {
+                    has_country_modifier = lake_federation_member
+                    NOT = { is_enemy = PREV }
+                }
+
+                country_event = {
+                    id = triunic.5
+                    tooltip = triunic.4.a_tt
+                }
+
+                add_opinion = {
+                    who = ROOT
+                    modifier = opinion_triunic_sent_sojdalas
+                }
+                ROOT = { 
+                    add_favors = {
+                        who = PREV
+                        amount = 10
+                    }
+                }
+            }
+        } 
+        else_if = {
+            limit = {
+                tag = J33
+                has_subject_of_type = democratic_sphere_of_influence_subject
+            }
+
+            random_subject_country = {
+                limit = {
+                    is_subject_of_type = democratic_sphere_of_influence_subject
+                }
+                country_event = {
+                    id = triunic.5
+                    tooltip = triunic.4.a_tt
+                }
+
+                add_opinion = {
+                    who = ROOT
+                    modifier = opinion_triunic_sent_sojdalas
+                }
+                ROOT = { 
+                    add_favors = {
+                        who = PREV
+                        amount = 10
+                    }
+                }
+            }
+        } 
+        else_if = {
+            limit = {
+                tag = J50
+                num_of_subjects = 1
+            }
+
+            random_subject_country = {
+                 country_event = {
+                    id = triunic.5
+                    tooltip = triunic.4.a_tt
+                }
+
+                add_opinion = {
+                    who = ROOT
+                    modifier = opinion_triunic_sent_sojdalas
+                }
+                ROOT = { 
+                    add_favors = {
+                        who = PREV
+                        amount = 10
+                    }
+                }
+            }
+        }
+    }
+
+    option = {
+        name = triunic.4.b
+        add_country_modifier = {
+            name = triunic_sojdalas_securing_trade
+            duration = 3650
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+
+            every_known_country = {
+                limit = {
+                    OR = {
+                        religion = yukel_followers
+                        AND = {
+                            religion = kalyin_worshippers
+                            has_harmonized_with = yukel_followers
+                        }
+
+                    }                }
+
+                add_opinion = {
+                    who = ROOT
+                    modifier = opinion_triunic_trade_guards
+                }
+            }
+            lake_federation_gain_1_points = yes
+        }
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 5
+        }
+    }
+
+    option = {
+        name = triunic.4.c
+        highlight = yes
+        trigger = {
+            ruler_has_personality = cruel_personality
+        }
+        add_country_modifier = {
+            name = triunic_faithful_itching_for_fight
+            duration = 3650
+        }
+    }
+    
+    option = {
+        name = triunic.4.e
+        highlight = yes
+        trigger = {
+            OR = {
+                ruler_has_personality = conqueror_personality
+                ruler_has_personality = bold_fighter_personality
+            }
+            any_neighbor_country = {
+                NOT = {
+                    truce_with = PREV
+                    religion_group = PREV
+                    war_with = PREV
+                }
+            }
+        }
+
+        add_country_modifier = {
+            name = triunic_bloodlust_unleashed
+            duration = 3650
+        }
+        random_neighbor_country = {
+            limit = {
+                NOT = {
+                    truce_with = PREV
+                    religion_group = PREV
+                    war_with = PREV
+                }
+            }
+            PREV = {
+                declare_war_with_cb = {
+                    casus_belli = cb_crusade
+                    who = PREV
+                }
+            }
+        }
+    }
+
+    option = {
+        name = triunic.4.f
+        trigger = {
+            OR = {
+                # I don't think you can ever be purging a race and not have low tolerance but :shrug:
+                low_tolerance_centaur_race_trigger = yes
+                has_country_modifier = racial_pop_centaur_purge
+            }
+            any_owned_province = {
+                culture_group = centaur
+            }
+        }
+        highlight = yes
+
+        random_owned_area = {
+            limit = {
+                any_province_in_state = {
+                    culture_group = centaur
+                }
+            }
+            every_province_in_state = {
+                if = {
+                    limit = { 
+                        OR = {
+                            region = east_forbidden_plains_region
+                            region = west_forbidden_plains_region
+                            region = serpent_gift_region
+                        }
+                    }
+                    change_culture = orachav
+                } 
+                else_if = {
+                    limit = { 
+                        region = nuzurbokh_region 
+                    }
+                    change_culture = urmanki
+                } 
+                else_if = {
+                    limit = { 
+                        region = yyl_moista_region
+                    }
+                    change_culture = kukatodic
+                } 
+                else = {
+                    # failsafe if we have centaurs outside the FP (might need to consider what to do about ogre valley)
+                    change_culture = ROOT
+                }
+            }
+
+            if = {
+                limit = {
+                    sedentarization_province_in_progress = { owner_scope = ROOT }
+                }
+                custom_tooltip = triunic.4.f_tt
+                hidden_effect = {
+                    random_area_province = {
+                        limit = { sedentarization_province_has_outpost = yes }
+                        # sedentarization will had set the local autonomy, so 
+                        add_local_autonomy = -99
+                        province_event = {
+                            id = sedentarization.19
+                        }
+                    }
+                }
+            }
+        }
+
+        add_country_modifier = {
+            name = triunic_old_enemy_purged
+            duration = 3650
+        }
+        large_decrease_of_centaur_tolerance_effect = yes
+    }
+}
+
+country_event = {
+    id = triunic.5
+    title = triunic.5.t
+    desc = triunic.5.d
+    picture = CHURCH_ESTATE_1_eventPicture
+    is_triggered_only = yes
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    option = {
+        name = triunic.5.a
+        add_country_modifier = {
+            name = triunic_influx_of_foreign_mercs
+            duration = 3650
+        }
+    }
+}
+
+#######################################################################################################################
+########                                              YUKEL :
+########    
+#######################################################################################################################
+
+country_event = {
+    id = triunic.40
+    title = triunic.40.t
+    desc = triunic.40.d
+    picture = CHURCH_ESTATE_1_eventPicture
+    is_triggered_only = yes
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        OR = {
+            religion = yukel_followers
+            AND = {
+                religion = kalyin_worshippers
+                has_harmonized_with = yukel_followers
+            }
+        }
+        OR = {
+            has_country_modifier = lake_federation_member
+            owns = 5226 # Zurkanrek (NOTE: this should be the lake fed origin province, nothing moves it atm but who knows if that'll be true in the future)
+        }
+        NOT = {
+            has_country_modifier = triunic_mass_pilgrimage
+            has_country_modifier = triunic_local_mass_pilgrimage
+            has_country_modifier = triunic_pilgrims_prevented
+            has_country_modifier = triunic_local_pilgrims_laden_with_goods
+            has_country_modifier = triunic_pilgrims_laden_with_goods
+        }
+    }
+
+    option = {
+        name = triunic.40.a
+        custom_tooltip = triunic.40.a_tt
+        if = {
+            limit = { 
+                NOT = { owns = 5226 }
+            }
+            # removed at next treasure fleet departure
+            add_country_modifier = {
+                name = triunic_mass_pilgrimage
+                duration = -1
+            }
+            5226 = {
+                owner = {
+                    add_opinion = {
+                        who = ROOT
+                        modifier = opinion_triunic_treasure_fleet_pilgrims
+                    }
+                }
+            }
+        } 
+        else = {
+            # We do own zurkanrek
+            # We just assumed the law of the excluded middle
+
+            # removed at next treasure fleet departure
+            add_country_modifier = {
+                name = triunic_local_mass_pilgrimage
+                duration = -1
+            }
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            lake_federation_gain_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 5
+        }
+        set_country_flag = triunic_treasure_fleet_festival_bonus
+    }
+
+    option = {
+        name = triunic.40.b
+        custom_tooltip = triunic.40.b_tt
+        add_country_modifier = {
+            # removed at next treasure fleet departure
+            name = triunic_pilgrims_prevented
+            duration = -1
+        }
+    }
+
+    option = {
+        name = triunic.40.c
+        trigger = {
+            OR = {
+                ruler_has_personality = entrepreneur_personality
+                ruler_has_personality = greedy_personality 
+            }
+        }
+        highlight = yes
+        custom_tooltip = triunic.40.c_tt
+        if = {
+            limit = { 
+                NOT = { owns = 5226 } 
+            }
+            # removed at next treasure fleet departure
+            add_country_modifier = {
+                name = triunic_pilgrims_laden_with_goods
+                duration = -1
+            }
+            
+            5226 = {
+                owner = {
+                    add_opinion = {
+                        who = ROOT
+                        modifier = opinion_triunic_treasure_fleet_pilgrims
+                    }
+                }
+            }
+
+        } 
+        else = {
+            # removed at next treasure fleet departure
+            add_country_modifier = {
+                name = triunic_local_pilgrims_laden_with_goods
+                duration = -1
+            }
+        }
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            lake_federation_gain_2_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 10
+        }
+
+        set_country_flag = triunic_treasure_fleet_festival_bonus
+        set_country_flag = triunic_treasure_fleet_festival_big_bonus
+    }
+}
+
+country_event = {
+    id = triunic.41
+    title = triunic.41.t
+    desc = triunic.41.d
+    picture = CHURCH_ESTATE_1_eventPicture
+    is_triggered_only = yes
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        OR = {
+            religion = yukel_followers
+            AND = {
+                religion = kalyin_worshippers
+                has_harmonized_with = yukel_followers
+            }
+        }
+
+        NOT = {
+            any_owned_province = {
+                OR = {
+                    has_province_modifier = triunic_local_guilds_underperforming
+                    has_province_modifier = triunic_no_blessings_for_imports
+                    has_province_modifier = triunic_import_blessing_tax
+                }
+            }
+        }
+    }
+
+    immediate = {
+        hidden_effect = {
+            random_owned_province = {
+                save_event_target_as = triunic_blessing_province
+            }   
+        }
+    }
+
+    option = {
+        name = triunic.41.a
+
+        event_target:triunic_blessing_province = {
+            add_province_modifier = {
+                name = triunic_local_guilds_underperforming
+                duration = 7300
+            }
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            lake_federation_gain_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 5
+        }
+
+        every_known_country = {
+            limit = {
+                OR = {
+                    religion = enuuk_followers
+                    AND = {
+                        religion = kalyin_worshippers
+                        has_harmonized_with = enuuk_followers
+                    }
+                }
+            }
+
+            add_opinion = {
+                who = ROOT
+                modifier = opinion_triunic_free_trade
+            }
+        }
+    }
+
+    option = {
+        name = triunic.41.b
+
+        event_target:triunic_blessing_province = {
+            add_province_modifier = {
+                name = triunic_no_blessings_for_imports
+                duration = 7300
+            }
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            lake_federation_lose_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = -5
+        }
+    }
+
+    option = {
+        name = triunic.41.c
+
+        trigger = {
+            ruler_has_personality = embezzler_personality
+        }
+        
+        highlight = yes
+
+        event_target:triunic_blessing_province = {
+            add_province_modifier = {
+                name = triunic_import_blessing_tax
+                duration = 7300
+            }
+        }
+
+        add_years_of_trade_income = {
+            years = 1
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            lake_federation_lose_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = -5
+        }
+    }
+}
+
+country_event = {
+    id = triunic.42
+    title = triunic.42.t
+    desc = triunic.42.d
+    picture = CHURCH_ESTATE_1_eventPicture
+    is_triggered_only = yes
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        OR = {
+            religion = yukel_followers
+            AND = {
+                religion = kalyin_worshippers
+                has_harmonized_with = yukel_followers
+            }
+        }
+
+        NOT = {
+            any_owned_province = {
+                OR = {
+                    has_province_modifier = triunic_traffic_at_port
+                    has_province_modifier = triunic_sunrise_rush_alleviated
+                    has_province_modifier = triunic_sprawling_system_of_docks
+                }
+            }
+        }
+
+        num_of_ports = 1
+    }
+
+    immediate = {
+        hidden_effect = {
+            random_owned_province = {
+                limit = { has_port = yes }
+                save_event_target_as = triunic_sunrise_rush_province
+            }
+        }
+    }
+
+    option = {
+        name = triunic.42.a
+
+        event_target:triunic_sunrise_rush_province = {
+            add_province_modifier = {
+                name = triunic_traffic_at_port
+                duration = 1825
+            }
+        }
+    }
+
+    option = {
+        name = triunic.42.b
+        trigger = {
+            dip_tech = 6
+            event_target:triunic_sunrise_rush_province = {
+                has_dock_building_trigger = no
+            }
+            
+        }
+        event_target:triunic_sunrise_rush_province = {
+            add_province_modifier = {
+                name = triunic_sunrise_rush_alleviated
+                duration = 3650
+            }
+
+            add_building_construction = {
+                building = dock
+                speed = 0.5
+                cost = 0
+            }
+
+        }
+        add_treasury = -50
+
+    }
+
+    option = {
+        name = triunic.42.c
+        trigger = {
+            dip_tech = 8
+            event_target:triunic_sunrise_rush_province = {
+                has_shipyard_building_trigger = no
+            }
+        }
+
+        event_target:triunic_sunrise_rush_province = {
+            add_province_modifier = {
+                name = triunic_sunrise_rush_alleviated
+                duration = 3650
+            }
+
+            add_building_construction = {
+                building = shipyard
+                speed = 0.5
+                cost = 0
+            }
+        }
+        add_treasury = -50
+    }
+
+    option = {
+        name = triunic.42.e
+        trigger = {
+            event_target:triunic_sunrise_rush_province = {
+                has_shipyard_building_trigger = yes
+                has_dock_building_trigger = yes
+            }
+        }
+
+        add_treasury = -50
+
+        event_target:triunic_sunrise_rush_province = {
+            add_province_modifier = {
+                name = triunic_sprawling_system_of_docks
+                duration = 7300
+            }
+        }
+    }
+}
+
+#######################################################################################################################
+########                                              ENUUK :
+########    
+#######################################################################################################################
+
+country_event = {
+    id = triunic.80
+    title = triunic.80.t
+    desc = triunic.80.d
+    picture = CHURCH_ESTATE_1_eventPicture
+    is_triggered_only = yes
+    mean_time_to_happen = {
+        days = 1
+    }
+
+    trigger = {
+        OR = {
+            religion = enuuk_followers
+            AND = {
+                religion = kalyin_worshippers
+                has_harmonized_with = enuuk_followers
+            }
+        }
+
+        NOT = {
+            any_owned_province = {
+                OR = {
+                    has_province_modifier = triunic_sham_consecration_market
+                    has_province_modifier = triunic_reconsecrating_everything
+                    
+                }
+            }
+            has_country_modifier = triunic_extra_high_quality_goods
+            has_country_modifier = triunic_trust_in_quality_shaken
+            has_country_modifier = triunic_trust_in_crafts_restored
+            has_country_modifier = triunic_ignoring_sacred_duties
+            has_country_flag = triunic_consecration_forgery_investigation
+        }
+    }
+    immediate = {
+        hidden_effect = {
+            random_owned_province = {
+                save_event_target_as = triunic_sham_consecration_province
+                set_province_flag = triunic_consecration_province
+            }
+        }
+    }
+    option = {
+        name = triunic.80.a
+        add_years_of_owned_provinces_production_income = {
+            years = -1
+            trigger = {
+                has_province_flag = triunic_consecration_province
+            }
+            custom_tooltip = triunic.80.a_tt
+        }
+
+        set_country_flag = triunic_consecration_forgery_investigation
+        
+
+        random_list = {
+                50 = {
+                    country_event = {
+                        id = triunic.81
+                        days = 365
+                    }
+                }
+
+                50 = {
+                    country_event = {
+                        id = triunic.82
+                        days = 365
+                    }
+                }
+        }    
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+
+            lake_federation_gain_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 5
+        }
+    }
+
+    option = {
+        name = triunic.80.b
+        add_country_modifier = {
+            name = triunic_ignoring_sacred_duties
+            duration = 3650
+        }
+        trigger = {
+            NOT = {
+                ruler_has_personality = embezzler_personality
+                ruler_has_personality = well_connected_personality
+            }
+        }
+        event_target:triunic_sham_consecration_province = {
+            add_province_modifier = {
+                name = triunic_sham_consecration_market
+                duration = 3650
+            }
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            lake_federation_lose_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = -5
+        }
+    }
+
+    option = {
+        name = triunic.80.c
+        trigger = {
+            OR = {
+                ruler_has_personality = embezzler_personality
+                ruler_has_personality = well_connected_personality
+            }
+        }
+        highlight = yes
+
+        event_target:triunic_sham_consecration_province = {
+            add_province_modifier = {
+                name = triunic_sham_consecration_market
+                duration = 3650
+            }
+        }
+
+        add_years_of_owned_provinces_production_income = {
+            years = 5
+            trigger = {
+                has_province_flag = triunic_consecration_province
+            }
+            custom_tooltip = triunic.80.a_tt
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+
+            lake_federation_lose_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = -5
+        }
+    }
+
+    option = {
+        name = triunic.80.e
+        trigger = {
+            OR = {
+                ruler_has_personality = obsessive_perfectionist_personality
+                ruler_has_personality = zealot_personality
+                ruler_has_personality = pious_personality
+            }
+        }
+        highlight = yes
+
+        event_target:triunic_sham_consecration_province = {
+            add_province_modifier = {
+                name = triunic_reconsecrating_everything
+                duration = -1
+            }
+        }
+
+        country_event = {
+            id = triunic.81
+            days = 365
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            lake_federation_gain_2_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 10
+        }
+    }
+    after = {
+        every_owned_province = {
+            clr_province_flag = triunic_consecration_province
+        }
+    }
+
+}
+
+country_event = {
+    id = triunic.81
+    is_triggered_only = yes
+    title = triunic.81.t
+    desc = triunic.81.d
+    picture = CHURCH_ESTATE_1_eventPicture
+
+    immediate = {
+        hidden_effect = {
+            clr_country_flag = triunic_consecration_forgery_investigation
+        }
+    }
+
+    option = {
+        name = triunic.81.a
+        add_prestige = 10
+        add_country_modifier = {
+                name = triunic_trust_in_crafts_restored
+                duration = 3650
+        }
+
+        if = {
+            limit = { 
+                any_owned_province = {
+                    has_province_modifier = triunic_reconsecrating_everything
+                }
+            }
+
+            every_owned_province = {
+                limit = {
+                    has_province_modifier = triunic_reconsecrating_everything
+                }
+
+                remove_province_modifier = triunic_reconsecrating_everything
+                add_province_modifier = {
+                    name = triunic_extra_high_quality_goods
+                    duration = 7300
+                }
+            }
+        }
+    }
+}
+
+country_event = {
+    id = triunic.82
+    is_triggered_only = yes
+    title = triunic.82.t
+    desc = triunic.82.d
+    picture = CHURCH_ESTATE_1_eventPicture
+
+    immediate = {
+        hidden_effect = {
+            clr_country_flag = triunic_consecration_forgery_investigation   
+        }
+    }
+    
+    option = {
+        name = triunic.82.a
+        add_prestige = -10
+        add_country_modifier = {
+            name = triunic_trust_in_quality_shaken
+            duration = 3650
+        }
+    }
+}
+
+country_event = {
+    id = triunic.83
+    is_triggered_only = yes
+    title = triunic.83.t
+    desc = triunic.83.d
+
+    picture = CHURCH_ESTATE_1_eventPicture
+
+    trigger = {
+        OR = {
+            religion = enuuk_followers
+            AND = {
+                religion = kalyin_worshippers
+                has_harmonized_with = enuuk_followers
+            }
+        }
+
+        NOT = {
+            has_country_modifier = triunic_building_zeal
+            has_country_modifier = triunic_building_zeal_cooldown
+        }
+    }
+
+    immediate = {
+        hidden_effect = {
+            add_country_modifier = {
+                name = triunic_building_zeal_cooldown
+                duration = 3650
+                hidden = yes
+            }
+        }
+    }
+
+    option = {
+        name = triunic.83.a
+        
+        for = {
+            amount = 2
+            effect = "building_zeal_self_effect = yes"
+            custom_tooltip = triunic.83.a_tt
+        }
+
+        add_country_modifier = {
+            name = triunic_building_zeal
+            duration = 3650
+        }
+    }
+
+    option = {
+        name = triunic.83.b
+        trigger = {
+            OR = {
+                has_country_modifier = lake_federation_member
+                AND = {
+                    tag = J33
+                    any_subject_country = {
+                        is_subject_of_type = democratic_sphere_of_influence_subject
+                    }
+                }
+                AND = {
+                    tag = J50
+                    num_of_subjects = 1
+                }
+            }
+            mil_tech = 6
+        }
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            custom_tooltip = triunic.83.b_tt_lf
+        } 
+        else_if = {
+            limit = { tag = J33 }
+            custom_tooltip = triunic.83.b_tt_j33
+        } 
+        else = {
+            custom_tooltip = triunic.83.b_tt_j50
+        }
+        for = {
+            amount = 2
+            effect = "building_zeal_barracks_effect = yes"
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            lake_federation_gain_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 5
+        }
+    }
+
+    option = {
+        name = triunic.83.c
+        trigger = {
+            OR = {
+                has_country_modifier = lake_federation_member
+                AND = {
+                    tag = J33
+                    any_subject_country = {
+                        is_subject_of_type = democratic_sphere_of_influence_subject
+                    }
+                }
+                AND = {
+                    tag = J50
+                    num_of_subjects = 1
+                }
+            }
+            dip_tech = 6
+        }
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            custom_tooltip = triunic.83.c_tt_lf
+        } 
+        else_if = {
+            limit = { tag = J33 }
+            custom_tooltip = triunic.83.c_tt_j33
+        } 
+        else = {
+            custom_tooltip = triunic.83.c_tt_j50
+        }
+        for = {
+            amount = 2
+            effect = "building_zeal_dock_effect = yes"
+        }
+
+        if = {
+            limit = { has_country_modifier = lake_federation_member }
+            lake_federation_gain_1_points = yes
+        }
+
+        if = {
+            limit = { religion = kalyin_worshippers }
+            add_harmony = 5
+        }
+    }
+
+    after = {
+        every_owned_province = {
+            limit = {
+                has_province_flag = triunic_building_zeal_target
+            }
+            clr_province_flag = triunic_building_zeal_target
+        }
+    }
+}

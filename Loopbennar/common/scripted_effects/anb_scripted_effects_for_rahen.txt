@@ -321,21 +321,12 @@ rahen_ai_disaster_progress_effect = {
 				modifier = { factor = 1.2 adm = 4 }
 				modifier = { factor = 1.2 adm = 5 }
 				modifier = { factor = 1.2 adm = 6 }
-				modifier = { factor = 1.2 has_country_modifier = great_conqueror_modifier }
-				modifier = { factor = 1.5 has_country_modifier = mythical_conqueror_modifier }
+				modifier = { factor = 2 has_country_modifier = great_conqueror_modifier }
+				modifier = { factor = 2.5 has_country_modifier = mythical_conqueror_modifier }
 				
 				change_variable = {
 					which = reformMinistryProgressAI
 					value = 1
-				}
-			}
-			1 = {
-				trigger = { OR = { has_country_modifier = great_conqueror_modifier has_country_modifier = mythical_conqueror_modifier } }
-				modifier = { factor = 1.2 has_country_modifier = mythical_conqueror_modifier }
-				
-				change_variable = {
-					which = reformMinistryProgressAI
-					value = 2
 				}
 			}
 		}
@@ -3030,10 +3021,7 @@ command_siege_won_effect = {
 		}
 	}
 	if = {
-		limit = {
-			R62 = { has_disaster = command_rise_of_the_shamans }
-			FROM = { owned_by = V98 province_group = temple_province_group }
-		}
+		limit = { FROM = { owned_by = V98 province_group = temple_province_group } }
 		R62 = { country_event = { id = the_command.83 } }
 	}
 }
@@ -3052,7 +3040,7 @@ command_spawn_troops_for_shamans_effect = {
 		who = R62
 	}
 	if = {
-		limit = { V98 = { has_country_modifier = undead_military } }
+		limit = { V98 = { has_cast_undead_army = yes } }
 		divide_variable = {
 			which = troop_amount
 			value = 400
@@ -3301,46 +3289,6 @@ command_dewuhyunization_subeffect = {
 		change_culture = variable:original_wuhyun_culture
 		set_variable = { which = original_wuhyun_culture value = 0 }
 	} # only do this if culture changed
-}
-
-########################
-### Tughayasa Oracle ###
-########################
-oracle_ruler_give_random_divination_spell_school = {
-	# Talented/Renowned/Legendary Divination school, 40/40/20 chance 
-	random_list = {
-		40 = {
-			if = {
-				limit = {
-					is_divination_1 = yes
-				}
-				set_ruler_flag = divination_2
-			}
-			else_if = {
-				limit = {
-					is_divination_2 = yes
-				}
-				set_ruler_flag = divination_3
-			}
-			else = {
-				set_ruler_flag = divination_1
-			}
-		}
-		40 = {
-			if = {
-				limit = {
-					is_divination_2 = yes
-				}
-				set_ruler_flag = divination_3
-			}
-			else = {
-				set_ruler_flag = divination_2
-			}
-		}
-		20 = {
-			set_ruler_flag = divination_1
-		}
-	}
 }
 
 #############################
@@ -3969,7 +3917,12 @@ raj_become_prabhi = {
 raj_become_vizier = {
 	hidden_effect = {
 		if = {
-			limit = { event_target:raj_vizier_global_target = { exists = yes NOT = { has_government_attribute = is_raja } } }
+			limit = {
+				event_target:raj_vizier_global_target = {
+					exists = yes
+					is_subject = yes
+				}
+			}
 			event_target:raj_vizier_global_target = { raj_become_senapti = yes }
 		}
 	}

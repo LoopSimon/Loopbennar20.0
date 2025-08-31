@@ -411,7 +411,7 @@ LRM_1_napesbay = {
 		} 
 		effect = {
 			custom_tooltip = LRM_napesbay_2_tt
-			add_or_upgrade_shipyard_building = yes
+			50 = { add_or_upgrade_shipyard_building = yes }
 			hidden_effect = {
 				set_country_flag = LRM_napesbay_privilege
 				remove_estate_privilege = estate_burghers_private_trade_fleets
@@ -766,9 +766,12 @@ LRM_3 = {
 				amount = 4
 				all_known_country = {
 					is_part_of_hre = yes
-					has_opinion_modifier = {
-						who = ROOT
-						modifier = LRM_swayed
+					custom_trigger_tooltip = {
+						tooltip = LRM_starve_the_vultures_ctt
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = LRM_swayed
+						}
 					}
 				}
 			}
@@ -1014,10 +1017,39 @@ LRM_4 = {
 					}
 				}
 			}
-			complex_dynamic_effect_without_alternative = {
-				first_custom_tooltip = LRM_eyes_in_every_corner_spy_network_tt
-				first_limit = "luna_river_cities_provinces = { type = all OR = { owned_by = ROOT owner = { has_spy_network_from = { who = ROOT value = 25 } } } }"
-				first_effect = "gain_2_sway = yes"
+			custom_tooltip = LRM_eyes_in_every_corner_spy_network_tt
+			if = {
+				limit = {
+					luna_river_cities_provinces = { 
+						type = all 
+						OR = { 
+							owned_by = ROOT
+							owner = { is_subject_of = ROOT } 
+							owner = {
+								OR = {
+									has_spy_network_from = { 
+										who = ROOT 
+										value = 25 
+									}
+									overlord = {
+										has_spy_network_from = { 
+											who = ROOT 
+											value = 25 
+										} 
+									}
+								}
+							}
+						} 
+					}
+				}
+				custom_tooltip = BONUS_REWARD_YES
+				hidden_effect = {
+					gain_2_sway = yes
+				}
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			tooltip = {
+				gain_2_sway = yes
 			}
 		} 
 	}
@@ -1129,13 +1161,13 @@ LRM_4 = {
 			capital_scope = { change_culture = pashainey }
 			hidden_effect = {
 				clr_country_flag = LRM_leader_flag
-				every_subject_country = {
-					limit = { capital_scope = { check_variable = { which = lunaRiverAttitudeVariable value = 4 } } }
+				every_known_country = {
+					limit = { is_luna_river_minor = yes capital_scope = { check_variable = { which = lunaRiverAttitudeVariable value = 4 } } }
 					change_primary_culture = pashainey
 					capital_scope = { change_culture = pashainey }
 				}
 				every_subject_country = {
-					limit = { capital_scope = { check_variable = { which = lunaRiverAttitudeVariable value = 5 } } }
+					limit = { is_luna_river_minor = yes capital_scope = { check_variable = { which = lunaRiverAttitudeVariable value = 5 } } }
 					ROOT = { gain_1_sway = yes add_manpower = 2 }
 				}
 			}
@@ -1401,7 +1433,7 @@ LRM_5 = {
 				first_limit = "capital_scope = { trade_goods = cloth }"
 				first_effect = "capital_scope = { add_building = textile }"
 				second_limit = "capital_scope = { NOT = { trade_goods = cloth } }"
-				second_effect = "add_or_upgrade_production_building = yes"
+				second_effect = "capital_scope = { add_or_upgrade_production_building = yes }"
 			}
 			simple_dynamic_effect = {
 				first_custom_tooltip = LRM_centre_of_fashion_esmari_fashion_tt
