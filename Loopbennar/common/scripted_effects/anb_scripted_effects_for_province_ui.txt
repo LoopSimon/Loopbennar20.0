@@ -1,0 +1,322 @@
+####################
+# Scripted effects #
+####################
+
+# Add additional aPUI flags here
+#Must use the form 'aPUI_$name$_flag'
+clear_all_aPUI_flags = {
+	clr_province_flag = aPUI_parent_container_flag
+	clr_province_flag = aPUI_template_flag
+}
+
+#Use these scripted effects to properly manage the variable for a progress bar
+# Make sure you are in the right scope! - FROM = country for province GUI
+change_aPUI_var_country = {
+	# To change the 'currency' use  'change_aPUI_var = { name = <name> amount = 10 }' to increase it by 10.
+	# You can also specify the name of a variable if you wish to calculate the quantity instead of using a static value
+	[[amount] change_variable = { aPUI_$name$_var = $amount$ } ]
+	[[var_amount] change_variable = { which = aPUI_$name$_var which = $var_amount$ } ]
+	hidden_effect = {
+		cap_aPUI_var = { name = $name$ }
+		if = {
+			limit = { ai = no }
+			update_aPUI_var_bar = { name = $name$ }
+		}
+	}
+	# Check for provinces in which the aPUI is opened
+	# Copy the framevariable to the province for the progress bar
+	every_owned_province = {
+		limit = {
+			#This should be the flag specific to each aPUI system
+			has_province_flag = aPUI_$name$_flag
+		}
+		set_variable = {
+			which = aPUI_$name$_framevar
+			which = FROM
+		}
+	}
+}
+# Make sure you are in the right scope! - Province is the assumed scope for province GUI
+change_aPUI_var_provincial = {
+	# To change the 'currency' use  'change_aPUI_var = { name = <name> amount = 10 }' to increase it by 10.
+	# You can also specify the name of a variable if you wish to calculate the quantity instead of using a static value
+	[[amount] change_variable = { aPUI_$name$_var = $amount$ } ]
+	[[var_amount] change_variable = { which = aPUI_$name$_var which = $var_amount$ } ]
+	hidden_effect = {
+		cap_aPUI_var = { name = $name$ }
+		if = {
+			limit = { ai = no }
+			update_aPUI_var_bar = { name = $name$ }
+		}
+	}
+	# Copy the framevariable to the province for the progress bar
+	set_variable = {
+		which = aPUI_$name$_framevar
+		which = FROM
+	}
+}
+set_aPUI_cap = {
+	set_variable = {
+		which = aPUI_$name$_capacity
+		value = $amount$
+	}
+}
+change_aPUI_cap = {
+	change_variable = {
+		which = aPUI_$name$_capacity
+		value = $amount$
+	}
+}
+update_aPUI_var_bar = { # This prevents the framevar going negative and then showing 100%
+	if = { limit = { check_variable = { which = aPUI_$name$_var value = 0 } }
+		set_variable = { which = aPUI_$name$_framevar which = aPUI_$name$_var }
+		divide_variable = { which = aPUI_$name$_framevar which = aPUI_$name$_capacity }
+		multiply_variable = { which = aPUI_$name$_framevar value = 100 }
+	}
+	else = { set_variable = { which = aPUI_$name$_framevar value = 0 } }
+}
+cap_aPUI_var = { # When the 'currency' goes above your capacity, or drops into negatives
+	if = {
+		limit = { NOT = { check_variable = { which = aPUI_$name$_var value = 0 } } }
+		set_variable = { which = aPUI_$name$_var value = 0 }
+	}
+	else_if = {
+		limit = { check_variable = { which = aPUI_$name$_var which = aPUI_$name$_capacity } }
+		set_variable = { which = aPUI_$name$_var which = aPUI_$name$_capacity }
+	}
+}
+#Saved up to 20 event targets as a GOTO
+aPUI_save_targets_effect = {
+	if = {
+		limit = { has_saved_event_target = aPUI_target_10 }
+		if = {
+			limit = { has_saved_event_target = aPUI_target_15 }
+			if = 1{
+				limit = { has_saved_event_target = aPUI_target_19 }
+				save_event_target_as = aPUI_target_20
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_18 }
+				save_event_target_as = aPUI_target_19
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_17 }
+				save_event_target_as = aPUI_target_18
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_16 }
+				save_event_target_as = aPUI_target_17
+			}
+			else = {
+				save_event_target_as = aPUI_target_16
+			}
+		}
+		else = {
+			if = {
+				limit = { has_saved_event_target = aPUI_target_14 }
+				save_event_target_as = aPUI_target_15
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_13 }
+				save_event_target_as = aPUI_target_14
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_12 }
+				save_event_target_as = aPUI_target_13
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_11 }
+				save_event_target_as = aPUI_target_12
+			}
+			else = {
+				save_event_target_as = aPUI_target_11
+			}
+		}
+	}
+	else = {
+		if = {
+			limit = { has_saved_event_target = aPUI_target_5 }
+			if = {
+				limit = { has_saved_event_target = aPUI_target_9 }
+				save_event_target_as = aPUI_target_10
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_8 }
+				save_event_target_as = aPUI_target_9
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_7 }
+				save_event_target_as = aPUI_target_8
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_6 }
+				save_event_target_as = aPUI_target_7
+			}
+			else = {
+				save_event_target_as = aPUI_target_6
+			}
+		}
+		else = {
+			if = {
+				limit = { has_saved_event_target = aPUI_target_4 }
+				save_event_target_as = aPUI_target_5
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_3 }
+				save_event_target_as = aPUI_target_4
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_2 }
+				save_event_target_as = aPUI_target_3
+			}
+			else_if = {
+				limit = { has_saved_event_target = aPUI_target_1 }
+				save_event_target_as = aPUI_target_2
+			}
+			else = {
+				save_event_target_as = aPUI_target_1
+			}
+		}
+	}
+}
+
+########Template GOTO Event - move later if needed
+# namespace = aPUI_goto
+# country_event = {
+	# id = aPUI_goto.001
+	# title = aPUI_goto.001.title
+	# desc = aPUI_goto.001.desc
+
+	# is_triggered_only = yes
+
+	# immediate = {
+	# 	hidden_effect = {
+	# 		every_owned_province = {
+	# 			limit = {
+	# 				# trigger here
+	# 			}
+	# 			aPUI_save_targets_effect = yes
+	# 		}
+	# 	}
+	# }
+	# option = {
+	# 	name = "[aPUI_target_20.GetName]"
+	# 	# name = aPUI_goto.001.a
+	# 	trigger = { has_saved_event_target = aPUI_target_20 }
+	# 	goto = aPUI_target_20
+	# }
+	# option = {
+	# 	name = "[aPUI_target_19.GetName]"
+	# 	# name = aPUI_goto.001.b
+	# 	trigger = { has_saved_event_target = aPUI_target_19 }
+	# 	goto = aPUI_target_19
+	# }
+	# option = {
+	# 	name = "[aPUI_target_18.GetName]"
+	# 	# name = aPUI_goto.001.c
+	# 	trigger = { has_saved_event_target = aPUI_target_18 }
+	# 	goto = aPUI_target_18
+	# }
+	# option = {
+	# 	name = "[aPUI_target_17.GetName]"
+	# 	# name = aPUI_goto.001.d
+	# 	trigger = { has_saved_event_target = aPUI_target_17 }
+	# 	goto = aPUI_target_17
+	# }
+	# option = {
+	# 	name = "[aPUI_target_16.GetName]"
+	# 	# name = aPUI_goto.001.e
+	# 	trigger = { has_saved_event_target = aPUI_target_16 }
+	# 	goto = aPUI_target_16
+	# }
+	# option = {
+	# 	name = "[aPUI_target_15.GetName]"
+	# 	# name = aPUI_goto.001.f
+	# 	trigger = { has_saved_event_target = aPUI_target_15 }
+	# 	goto = aPUI_target_15
+	# }
+	# option = {
+	# 	name = "[aPUI_target_14.GetName]"
+	# 	# name = aPUI_goto.001.g
+	# 	trigger = { has_saved_event_target = aPUI_target_14 }
+	# 	goto = aPUI_target_14
+	# }
+	# option = {
+	# 	name = "[aPUI_target_13.GetName]"
+	# 	# name = aPUI_goto.001.h
+	# 	trigger = { has_saved_event_target = aPUI_target_13 }
+	# 	goto = aPUI_target_13
+	# }
+	# option = {
+	# 	name = "[aPUI_target_12.GetName]"
+	# 	# name = aPUI_goto.001.i
+	# 	trigger = { has_saved_event_target = aPUI_target_12 }
+	# 	goto = aPUI_target_12
+	# }
+	# option = {
+	# 	name = "[aPUI_target_11.GetName]"
+	# 	# name = aPUI_goto.001.j
+	# 	trigger = { has_saved_event_target = aPUI_target_11 }
+	# 	goto = aPUI_target_11
+	# }
+	# option = {
+	# 	name = "[aPUI_target_10.GetName]"
+	# 	# name = aPUI_goto.001.k
+	# 	trigger = { has_saved_event_target = aPUI_target_10 }
+	# 	goto = aPUI_target_10
+	# }
+	# option = {
+	# 	name = "[aPUI_target_9.GetName]"
+	# 	# name = aPUI_goto.001.l
+	# 	trigger = { has_saved_event_target = aPUI_target_9 }
+	# 	goto = aPUI_target_9
+	# }
+	# option = {
+	# 	name = "[aPUI_target_8.GetName]"
+	# 	# name = aPUI_goto.001.m
+	# 	trigger = { has_saved_event_target = aPUI_target_8 }
+	# 	goto = aPUI_target_8
+	# }
+	# option = {
+	# 	name = "[aPUI_target_7.GetName]"
+	# 	# name = aPUI_goto.001.n
+	# 	trigger = { has_saved_event_target = aPUI_target_7 }
+	# 	goto = aPUI_target_7
+	# }
+	# option = {
+	# 	name = "[aPUI_target_6.GetName]"
+	# 	# name = aPUI_goto.001.o
+	# 	trigger = { has_saved_event_target = aPUI_target_6 }
+	# 	goto = aPUI_target_6
+	# }
+	# option = {
+	# 	name = "[aPUI_target_5.GetName]"
+	# 	# name = aPUI_goto.001.p
+	# 	trigger = { has_saved_event_target = aPUI_target_5 }
+	# 	goto = aPUI_target_5
+	# }
+	# option = {
+	# 	name = "[aPUI_target_4.GetName]"
+	# 	# name = aPUI_goto.001.q
+	# 	trigger = { has_saved_event_target = aPUI_target_4 }
+	# 	goto = aPUI_target_4
+	# }
+	# option = {
+	# 	name = "[aPUI_target_3.GetName]"
+	# 	# name = aPUI_goto.001.r
+	# 	trigger = { has_saved_event_target = aPUI_target_3 }
+	# 	goto = aPUI_target_3
+	# }
+	# option = {
+	# 	name = "[aPUI_target_2.GetName]"
+	# 	# name = aPUI_goto.001.s
+	# 	trigger = { has_saved_event_target = aPUI_target_2 }
+	# 	goto = aPUI_target_2
+	# }
+	# option = {
+	# 	name = "[aPUI_target_1.GetName]"
+	# 	# name = aPUI_goto.001.t
+	# 	trigger = { has_saved_event_target = aPUI_target_1 }
+	# 	goto = aPUI_target_1
+	# }
+# }

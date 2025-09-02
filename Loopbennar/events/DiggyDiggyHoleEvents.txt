@@ -172,7 +172,7 @@ province_event = {
 		NOT = { has_province_modifier = infested_hold }
 		NOT = { has_province_modifier = fallen_great_excavation }
 		NOT = { ROOT = { owned_by = FROM } }
-		NOT = { has_province_modifier = siege_no_hold_damage }
+		NOT = { has_province_modifier = enchantment_3_dominate_to_surrender_siege_mod }
 	}
 
 	immediate = {
@@ -2584,10 +2584,7 @@ country_event = {
 					every_owned_province = { remove_core = event_target:subject }
 				}
 				every_owned_province = { remove_core = event_target:country }
-				add_country_modifier = {
-						name = loop_recovery5
-						duration = 365
-							}
+				add_yearly_manpower = 5
 				add_stability_or_adm_power = yes
 				add_legitimacy = 100
 				add_republican_tradition = 100
@@ -3682,14 +3679,6 @@ country_event = {
 		add_country_modifier = {
 			name = dwarovar_claimer
 			duration = 18250
-		}
-		if = {
- 			limit = { NOT = { has_reform = dwarovar_squatter } }
- 			limit = { NOT = { has_country_modifier = goblin_administration } }
- 			add_country_modifier = {
- 			name = loopspinebuff
- 			duration = 18250
-			}
 		}
 		set_country_flag = dwarovar_claimer_setup
 	}
@@ -6643,8 +6632,7 @@ country_event = {
 	option = {
         name = diggy.511.b
         ai_chance = { factor = 10 }
-		add_stability_or_adm_power = yes
-		add_stability_or_adm_power = yes
+		add_2_stability_or_adm_power = yes
 		capital_scope = {
 			hidden_effect = { change_variable = { cons_prog = -0.125 } }
 			tooltip = { change_variable = { cons_prog = -0.25 } }
@@ -7849,10 +7837,8 @@ country_event = {
 			any_neighbor_province = { has_terrain = cavern }
 		}
 	}
-	
-	option = {
-        name = diggy.551.a
-        ai_chance = { factor = 100 }
+
+	immediate = {
 		hidden_effect = {
 			random_owned_province = {
 				limit = {
@@ -7867,6 +7853,17 @@ country_event = {
 					}
 					any_neighbor_province = { has_terrain = cavern }
 				}
+				save_event_target_as = yipyip
+			}
+		}
+	}
+	
+	option = {
+        name = diggy.551.a
+        ai_chance = { factor = 100 }
+		goto = yipyip
+		hidden_effect = {
+			event_target:yipyip = {
 				spawn_dwarovar_orc_rebels = { size = 3 }
 			}
 		}
@@ -9940,8 +9937,8 @@ country_event = {
 		add_dip_power = -10
 		hidden_effect = {
 			random_list = {
-				50 = {country_event  = { id = diggy.584 }}
-				50 = {country_event  = { id = diggy.585 }}
+				50 = { event_target:event_province = { province_event  = { id = diggy.584 } } }
+				50 = { event_target:event_province = { province_event  = { id = diggy.585 } } }
 			}
 		}
 		ai_chance = { factor = 75 }
@@ -11069,11 +11066,7 @@ country_event = {
 		name = diggy.598.e
 		highlight = yes
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = dwarovar_ruler_skilled_necromancer_tt
-				ruler_has_personality = mage_personality
-				has_ruler_flag = necromancy_2
-			}
+			is_ruler_necromancy_level_2_minimum = yes
 		}
 		ai_chance = { factor = 1 }
 		add_dip_power = -25
@@ -11085,7 +11078,7 @@ country_event = {
 			add_base_production = 2
 			add_base_manpower = 2
 		}
-		increase_witch_king_points_medium = yes
+		increase_ruler_witch_king_points = { size = medium }
 		if = {
 			limit = { culture_group = dwarven }
 			add_estate_loyalty = {
@@ -12714,6 +12707,7 @@ country_event = { #Lava flood
 				duration = 3650
 			}
 			add_colonysize = -200
+			change_trade_goods = serpentbloom
 		}
 		random = {
 			chance = 50

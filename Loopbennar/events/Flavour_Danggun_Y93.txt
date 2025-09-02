@@ -7,20 +7,25 @@ country_event = { #Do you have a spirit-king?
 	picture = MIRACLE_MONK_eventPicture
 
 	is_triggered_only = yes
-	trigger = { religion = neokttareum }
+	trigger = {
+		religion = neokttareum
+		NOT = { has_ruler_flag = judged_by_sado }
+	}
+
+	immediate = { set_ruler_flag = judged_by_sado }
 
 	option = { #Sage-King!
 		name = danggun.1.a
 		ai_chance = { factor = 1000 }
 		trigger = {
-			ruler_has_mage_personality = yes
+			ruler_is_powerful_mage = yes
 			gowon_region = { type = all OR = { is_city = no owned_by = ROOT } }
 		}
 		highlight = yes
 
-		hidden_effect = { country_event = { id = magic_ruler.100 } }
 		tooltip = { add_ruler_modifier = { name = nk_sage_king duration = -1 } } #Actually a country modifier to revert spirit mil on death
 		hidden_effect = { add_country_modifier = { name = nk_sage_king duration = -1 } }
+		define_ruler_to_war_wizard = yes
 
 		custom_tooltip = rending_swap_spirit_mil_tt
 		tooltip = {
@@ -47,7 +52,7 @@ country_event = { #Do you have a spirit-king?
 		name = danggun.1.b
 		ai_chance = { factor = 1000 }
 		trigger = {
-			ruler_has_mage_personality = yes
+			ruler_is_powerful_mage = yes
 			gowon_region = { is_city = yes NOT = { owned_by = ROOT } }
 		}
 		highlight = yes
@@ -104,6 +109,8 @@ country_event = { #Danggun Starting Disaster
 
 	is_triggered_only = yes
 	fire_only_once = yes
+	trigger = { tag = Y93 }
+
 	immediate = {
 		hidden_effect = {
 			every_owned_province = { #Dalmangaji
@@ -113,6 +120,10 @@ country_event = { #Danggun Starting Disaster
 			every_owned_province = { #Nuwenara
 				limit = { is_core = V27 }
 				cede_province = V27
+			}
+			every_owned_province = { #Baegye
+				limit = { is_core = Y95 }
+				cede_province = Y95
 			}
 
 			Y94 = {
@@ -126,6 +137,16 @@ country_event = { #Danggun Starting Disaster
 			}
 			
 			V27 = {
+				country_event = { id = anbennar_setup.3 }
+				add_treasury = 100
+				add_adm_power = 100
+				add_dip_power = 100
+				add_mil_power = 100
+				add_manpower = 10
+				capital_scope = { build_to_forcelimit = { infantry = 0.7 cavalry = 0.2 } }
+			}
+			
+			Y95 = {
 				country_event = { id = anbennar_setup.3 }
 				add_treasury = 100
 				add_adm_power = 100
@@ -151,9 +172,16 @@ country_event = { #Danggun Starting Disaster
 	}
 
 	option = { #Play as Nuwenara
-		name = danggun.3.a
+		name = danggun.3.c
 		ai_chance = { factor = 0 }
 
 		switch_tag = V27
+	}
+
+	option = { #Play as Baegye
+		name = danggun.3.dd
+		ai_chance = { factor = 0 }
+
+		switch_tag = Y95
 	}
 }

@@ -115,25 +115,24 @@ pashaine_1 = {
 			custom_tooltip = pashaine_standing_side_by_side_adv_reward_tt
 			custom_tooltip = " " #Linebreak
 
-			#Uncommnet this when magic rework is in along with the desired effects
-			#custom_tooltip = pashaine_standing_side_by_side_mage_tt
-			#if = {
-			#	limit = {
-			#		estate_loyalty = {
-			#			estate = estate_mages
-			#			loyalty = 80
-			#		}
-			#	}
-			#	custom_tooltip = BONUS_REWARD_YES
-			#	hidden_effect = {
-			#		#MAGICREWORK PLACEHOLDER - Next magic cast is free
-			#	}
-			#}
-			#else = { custom_tooltip = BONUS_REWARD_NO }
-			#tooltip = {
-			#	#MAGICREWORK PLACEHOLDER - Next magic cast is free
-			#}
-			#custom_tooltip = " " #Linebreak
+			custom_tooltip = pashaine_standing_side_by_side_mage_tt
+			if = {
+				limit = {
+					estate_loyalty = {
+						estate = estate_mages
+						loyalty = 80
+					}
+				}
+				custom_tooltip = BONUS_REWARD_YES
+				hidden_effect = {
+					make_spell_school_half_off = { school = all next_cast = yes }
+				}
+			}
+			else = { custom_tooltip = BONUS_REWARD_NO }
+			tooltip = {
+				make_spell_school_half_off = { school = all next_cast = yes }
+			}
+			custom_tooltip = " " #Linebreak
 			custom_tooltip = court_and_country_disabled_tt
 			set_country_flag = court_and_country_disabled
 			set_country_flag = pashaine_prelude_to_greatness_start
@@ -3208,11 +3207,14 @@ pashaine_3_post_unity = {
 		effect = {  
 			custom_tooltip = ARB_golden_age_renewal_tt
 			hidden_effect = {
-				effect = {  
-			add_adm_power = 150
-			add_dip_power = 150
-			add_mil_power = 150
-		} 
+				if = {
+					limit = { has_had_golden_age = yes } 
+					reset_golden_age = yes 
+				}
+				else_if = {
+					limit = { in_golden_age = yes } 
+					extend_golden_age = 600
+				}
 			}
 			custom_tooltip = pashaine_age_of_luna_mods_permanent_tt
 			hidden_effect = {
@@ -3476,6 +3478,15 @@ pashaine_4_post_unity = {
 					}
 				}
 				AND = {
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								has_shipyard_building_trigger = yes
+								has_dock_building_trigger = yes
+								value = 75
+							}
+						}
+					}
 					owned_by = ROOT
 					has_port = yes
 					NOT = {

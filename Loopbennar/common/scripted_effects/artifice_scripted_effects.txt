@@ -475,7 +475,7 @@ update_artifice_points = {
 			#liches and witch kings have no need for artifice and are distrustful of the threat it represents to them
 			if = {
 				limit = {
-					has_country_flag = orlghelovar_science_mages_privilege
+					has_estate_privilege = estate_mages_organization_science_mages
 				}
 				change_variable = {
 					which = ArtificePointsMultiplier
@@ -485,17 +485,6 @@ update_artifice_points = {
 			if = {
 				limit = {
 					has_country_flag = magic_artificery_mixed
-				}
-				subtract_variable = {
-					which = ArtificePointsMultiplier
-					value = 0.5
-				}
-			}
-			if = {
-				limit = {
-					has_country_flag = magic_artificery_artificery_only
-					ruler_has_personality = mage_personality
-					NOT = { has_ruler_flag = pursuing_artificery }
 				}
 				subtract_variable = {
 					which = ArtificePointsMultiplier
@@ -598,6 +587,7 @@ update_artifice_points = {
 					}
 				}
 				add_country_modifier = { name =  artificers_over_artifice_capacity duration = -1 }
+				country_event = { id = artifice_inventions.1234 }
 			}
 			else = {
 				remove_country_modifier = artificers_over_artifice_capacity
@@ -767,6 +757,14 @@ set_up_artifice_system = {
 			id = magic_artificery_setup.1
 		}	
 		set_country_flag = artificery_choice
+	}
+	else_if = {
+		limit = { #you have no flags and are a spawnable
+			is_not_in_mage_mode = yes
+			is_not_in_mixed_mode = yes
+			is_not_in_artificery_mode = yes
+		}
+		set_country_flag = magic_artificery_mage_only
 	}
 	update_artifice_points = yes
 }
@@ -3992,16 +3990,16 @@ artifice_inventions_give_basket = {
 artifice_magic_switch_to_artificery_only_mode = {
 	custom_tooltip = force_artificery_only_tt
 	if = {
-		limit = { 
-			NOT = { 
-				has_country_flag = magic_artificery_artificery_only 
-			}
-		}
+		limit = { NOT = { has_country_flag = magic_artificery_artificery_only } }
 		hidden_effect = {
 			clr_country_flag = magic_artificery_mage_only
 			set_country_flag = magic_artificery_artificery_only
 			clr_country_flag = magic_artificery_mixed
+			remove_country_modifier = magic_artificery_mixed_mod
 		
+			# Ends whatever research you're doing
+			magic_advancement_abort_all_effect = yes
+			
 			#bans the mages
 			country_event = { 
 				id = magic_artificery_setup.3
@@ -4024,15 +4022,12 @@ artifice_magic_switch_to_artificery_only_mode = {
 artifice_magic_switch_to_magic_only_mode = {
 	custom_tooltip = force_magic_only_tt
 	if = {
-		limit = { 
-			NOT = { 
-				has_country_flag = magic_artificery_mage_only 
-			}
-		}
+		limit = { NOT = { has_country_flag = magic_artificery_mage_only } }
 		hidden_effect = {
 			set_country_flag = magic_artificery_mage_only
 			clr_country_flag = magic_artificery_artificery_only
 			clr_country_flag = magic_artificery_mixed
+			remove_country_modifier = magic_artificery_mixed_mod
 	
 			#reinviting the mages into the governement if they are gone
 			if = {
@@ -4051,11 +4046,8 @@ artifice_magic_switch_to_magic_only_mode = {
 artifice_magic_switch_to_mixed_mode = {
 	custom_tooltip = force_mixed_tt
 	if = {
-		limit = { 
-			NOT = { 
-				has_country_flag = magic_artificery_mixed 
-			}
-		}
+		limit = { NOT = { has_country_flag = magic_artificery_mixed } }
+		add_country_modifier = { name = magic_artificery_mixed_mod duration = -1 }
 		hidden_effect = {
 			clr_country_flag = magic_artificery_mage_only
 			clr_country_flag = magic_artificery_artificery_only

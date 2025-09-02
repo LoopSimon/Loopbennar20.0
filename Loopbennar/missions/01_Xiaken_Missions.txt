@@ -1,0 +1,520 @@
+xiaken_1 = {
+	slot = 1
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { has_government_attribute = is_in_xia }
+
+	xiaken_fires_rebellion = {
+		icon = mission_fire_acolyte
+		position = 1
+		provinces_to_highlight = {
+			xia_wulin_xiaken_province_highlight = {
+				wulin = "
+					OR = {
+						owned_by = R62
+						owned_by = R78
+					}
+				"
+				xiaken = "is_capital_of = ROOT"
+			}
+		}
+
+		trigger = {
+			if = { #Putting this in a scripted trigger makes some triggers unhappy. No, making them both if statements doesn't work.
+				limit = { has_reform = wulin }
+				custom_trigger_tooltip = {
+					tooltip = is_wulin_tt
+					always = yes
+				}
+				OR = {
+					custom_trigger_tooltip = {
+						tooltip = xiaken_fires_rebellion_trigger_tt
+						R62 = { has_country_flag = command_sir_revolt_xia_participation }
+					}
+					is_renting_condottieri_to = R78
+				}
+				is_monarch_leader = yes
+			}
+			else = { #Not being a wulin is equivalent to being a xiaken, for the purpose of edge cases
+				custom_trigger_tooltip = {
+					tooltip = is_xiaken_tt
+					always = yes
+				}
+				OR = {
+					NOT = { exists = R62 }
+					R78 = { war_with = R62 }
+				}
+				num_of_samurai = 4
+				is_monarch_leader = yes
+			}
+		}
+
+		effect = {
+			capital_scope = {
+				samurai_infantry = ROOT
+				samurai_infantry = ROOT
+			}
+			add_church_power = 100
+		}
+	}
+
+	xiaken_back_foothills = {
+		icon = mission_hill_gnoll_auxilaries
+		position = 3
+		required_missions = { xiaken_fires_rebellion }
+		provinces_to_highlight = {
+			OR = {
+				province_id = 4630 #Nozanekyun
+				province_id = 4538 #Konzunu
+				province_id = 4311 #Gronstunad
+			}
+		}
+
+		trigger = {
+			OR = {
+				NOT = { exists = R62 }
+				4630 = { controller = { war_with = R62 } }
+				4538 = { controller = { war_with = R62 } }
+				4311 = { controller = { war_with = R62 } }
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = xiaken_surge_confidence duration = 3650 }
+			custom_tooltip = xiaken_back_foothills_effect_tt
+			hidden_effect = { R78 = { set_country_flag = sir_no_peace } }
+		}
+	}
+}
+xiaken_2 = {
+	slot = 2
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { has_government_attribute = is_in_xia }
+
+	xiaken_true_skill = {
+		icon = jap_restoration
+		position = 2
+		required_missions = { xiaken_fires_rebellion }
+		provinces_to_highlight = { country_or_subject_holds = R62 }
+
+		trigger = {
+			OR = {
+				NOT = { exists = R62 }
+				check_variable = { num_battles_won_against_command = 5 }
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = xiaken_prowess_proven duration = 5475 }
+			xia_wulin_xiaken_effect = {
+				wulin = "
+					custom_tooltip = xiaken_true_skill_effect_tt
+					R78 = { every_ally = { country_event = { id = xiaken.1 } } }
+				"
+				xiaken = "add_manpower = 5"
+			}
+		}
+	}
+
+	xiaken_trisect_chimera = {
+		icon = mission_beautiful_hobgoblin_stache
+		position = 4
+		required_missions = {
+			xiaken_back_foothills
+			xiaken_true_skill
+		}
+		provinces_to_highlight = { owned_by = R62 }
+
+		trigger = { NOT = { exists = R62 } }
+
+		effect = { add_country_modifier = { name = xiaken_north_subdued duration = 3650 } }
+	}
+}
+xiaken_5 = {
+	slot = 5
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { has_government_attribute = is_in_xia }
+
+	xiaken_one_many = {
+		icon = mission_japanese_samurai
+		position = 1
+		provinces_to_highlight = { owner = { has_reform = xiaken NOT = { tag = ROOT } } }
+
+		trigger = {
+			if = {
+				limit = { has_reform = wulin }
+				custom_trigger_tooltip = {
+					tooltip = is_wulin_tt
+					always = yes
+				}
+				has_country_modifier = annexers_legacy
+			}
+			else = { #Not being a wulin is equivalent to being a xiaken, for the purpose of edge cases
+				custom_trigger_tooltip = {
+					tooltip = is_xiaken_tt
+					always = yes
+				}
+				any_known_country = {
+					has_reform = xiaken
+					war_with = ROOT
+				}
+			}
+		}
+
+		effect = {
+			xia_wulin_xiaken_effect = {
+				wulin = "
+					custom_tooltip = xiaken_one_many_effect_2_tt
+					hidden_effect = {
+						every_neighbor_province = {
+							limit = { has_province_modifier = rightful_xia_territory }
+							add_core = ROOT
+						}
+					}
+				"
+				xiaken = "
+					custom_tooltip = xiaken_one_many_effect_tt
+					hidden_effect = {
+						every_neighbor_province = {
+							limit = { has_province_modifier = rightful_xia_territory }
+							add_claim = ROOT
+						}
+						every_war_enemy_country = {
+							limit = { has_reform = xiaken }
+							every_owned_province = { add_claim = ROOT }
+						}
+					}
+				"
+			}
+		}
+	}
+}
+ap_xiaken_3 = {
+	slot = 3
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { has_government_attribute = is_in_xia religion = accretive_path }
+
+	ap_xiaken_xianjie_rise = {
+		icon = jap_train_samurai
+		position = 5
+		required_missions = {
+			xiaken_trisect_chimera
+			ap_xiaken_first_many
+		}
+		provinces_to_highlight = { has_province_modifier = rightful_xia_territory }
+
+		trigger = {
+			has_reform = wulin
+			num_of_owned_provinces_with = {
+				value = 36
+				has_province_modifier = rightful_xia_territory
+			}
+		}
+
+		effect = {
+			xianjie_region = { add_permanent_claim = ROOT }
+			demon_hills_region = { add_permanent_claim = ROOT }
+			rangadevi_area = { add_permanent_claim = ROOT }
+			sir_area = { add_permanent_claim = ROOT }
+			yodhilakra_area = { add_permanent_claim = ROOT }
+			pharata_area = { add_permanent_claim = ROOT }
+			bianfang_area = { add_permanent_claim = ROOT }
+			bianyuan_area = { add_permanent_claim = ROOT }
+			jinqiu_area = { add_permanent_claim = ROOT }
+
+			swap_non_generic_missions = yes
+			custom_tooltip = tree_ends_here_for_now
+		}
+	}
+}
+ap_xiaken_4 = {
+	slot = 4
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { has_government_attribute = is_in_xia religion = accretive_path }
+
+	ap_xiaken_again_again = {
+		icon = jap_bugeijuuhappan
+		position = 2
+		required_missions = { xiaken_one_many }
+		provinces_to_highlight = {
+			owned_by = ROOT
+			NOT = {
+				AND = {
+					is_core = ROOT
+					num_of_times_improved = 1
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 10
+				is_core = ROOT
+				num_of_times_improved = 1
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = xiaken_perfection_practice duration = 9125 }
+			xia_wulin_xiaken_effect = {
+				wulin = "
+					custom_tooltip = ap_xiaken_again_again_effect_tt
+					hidden_effect = {
+						every_neighbor_province = {
+							limit = { has_province_modifier = rightful_xia_territory }
+							area = { add_core = ROOT }
+						}
+					}
+				"
+				xiaken = "
+					custom_tooltip = ap_xiaken_again_again_effect_2_tt
+					hidden_effect = {
+						every_neighbor_province = {
+							limit = { has_province_modifier = rightful_xia_territory }
+							area = { add_claim = ROOT }
+						}
+					}
+				"
+			}
+		}
+	}
+
+	ap_xiaken_first_many = {
+		icon = mng_shengshi_zhishi
+		position = 4
+		required_missions = {
+			ap_xiaken_again_again
+			ap_xiaken_temple_grounds
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					has_province_modifier = rightful_xia_territory
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					owned_by = ROOT
+					NOT = { has_tax_building_trigger = yes }
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 24
+				has_province_modifier = rightful_xia_territory
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				has_tax_building_trigger = yes
+			}
+		}
+
+		effect = { cultivate_active_xia_path = yes }
+	}
+}
+ap_xiaken_5 = {
+	slot = 5
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { has_government_attribute = is_in_xia religion = accretive_path }
+
+	ap_xiaken_temple_grounds = {
+		icon = jap_financial_cliques
+		position = 3
+		required_missions = { xiaken_one_many }
+		provinces_to_highlight = { is_capital_of = ROOT }
+
+		trigger = {
+			capital_scope = {
+				has_tax_building_trigger = yes
+				check_variable = { num_times_developed_adm = 3 }
+			}
+			treasury = 100
+		}
+
+		effect = {
+			add_treasury = -100
+			custom_tooltip = ap_xiaken_temple_grounds_effect_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = { has_tax_building_trigger = yes }
+					add_province_modifier = { name = xiaken_temple_grounds_mod duration = -1 }
+				}
+			}
+		}
+	}
+}
+tp_xiaken_3 = {
+	slot = 3
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { has_government_attribute = is_in_xia religion = transmutative_path }
+
+	tp_xiaken_xianjie_rise_hash_conflict = {
+		icon = jap_train_samurai
+		position = 5
+		required_missions = {
+			xiaken_trisect_chimera
+			tp_xiaken_first_many
+		}
+		provinces_to_highlight = { has_province_modifier = rightful_xia_territory }
+
+		trigger = {
+			has_reform = wulin
+			num_of_owned_provinces_with = {
+				value = 36
+				has_province_modifier = rightful_xia_territory
+			}
+		}
+
+		effect = {
+			xianjie_region = { add_permanent_claim = ROOT }
+			demon_hills_region = { add_permanent_claim = ROOT }
+			rangadevi_area = { add_permanent_claim = ROOT }
+			sir_area = { add_permanent_claim = ROOT }
+			yodhilakra_area = { add_permanent_claim = ROOT }
+			pharata_area = { add_permanent_claim = ROOT }
+			bianfang_area = { add_permanent_claim = ROOT }
+			bianyuan_area = { add_permanent_claim = ROOT }
+			jinqiu_area = { add_permanent_claim = ROOT }
+
+			swap_non_generic_missions = yes
+			custom_tooltip = tree_ends_here_for_now
+		}
+	}
+}
+tp_xiaken_4 = {
+	slot = 4
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { has_government_attribute = is_in_xia religion = transmutative_path }
+
+	tp_xiaken_embrace = {
+		icon = mission_well_of_majesty
+		position = 2
+		required_missions = { xiaken_one_many }
+		provinces_to_highlight = { #Tries to suggest good locations to fulfill this condition
+			has_province_modifier = rightful_xia_territory
+			NOT = { has_terrain = hills }
+			NOT = { is_capital_of = ROOT }
+			NOT = { any_neighbor_province = { province_has_chi_wellspring_trigger = yes } }
+			NOT = {
+				AND = {
+					province_has_chi_wellspring_trigger = yes
+					num_of_times_improved = 3
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 2
+				province_has_chi_wellspring_trigger = yes
+				num_of_times_improved = 3
+			}
+		}
+
+		effect = {
+			add_country_modifier = { name = xiaken_perfection_practice duration = 9125 }
+			xia_wulin_xiaken_effect = {
+				wulin = "
+					custom_tooltip = ap_xiaken_again_again_effect_tt
+					hidden_effect = {
+						every_neighbor_province = {
+							limit = { has_province_modifier = rightful_xia_territory }
+							area = { add_core = ROOT }
+						}
+					}
+				"
+				xiaken = "
+					custom_tooltip = ap_xiaken_again_again_effect_2_tt
+					hidden_effect = {
+						every_neighbor_province = {
+							limit = { has_province_modifier = rightful_xia_territory }
+							area = { add_claim = ROOT }
+						}
+					}
+				"
+			}
+		}
+	}
+
+	tp_xiaken_first_many = {
+		icon = mng_shengshi_zhishi
+		position = 4
+		required_missions = {
+			tp_xiaken_embrace
+			tp_xiaken_bathed_chi
+		}
+		provinces_to_highlight = {
+			has_province_modifier = rightful_xia_territory
+			NOT = {
+				AND = {
+					owned_by = ROOT
+					OR = {
+						province_has_chi_wellspring_trigger = yes
+						any_neighbor_province = { province_has_chi_wellspring_trigger = yes }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 24
+				has_province_modifier = rightful_xia_territory
+				OR = {
+					province_has_chi_wellspring_trigger = yes
+					any_neighbor_province = { province_has_chi_wellspring_trigger = yes }
+					hidden_trigger = { ROOT = { ai = yes } } #AI doesn't know how to use chi wellsprings
+				}
+			}
+		}
+
+		effect = { cultivate_active_xia_path = yes }
+	}
+}
+tp_xiaken_5 = {
+	slot = 5
+	generic = yes
+	ai = yes
+	has_country_shield = yes
+	potential = { has_government_attribute = is_in_xia religion = transmutative_path }
+
+	tp_xiaken_bathed_chi = {
+		icon = mission_buddhist_monk_praying
+		position = 3
+		required_missions = { xiaken_one_many }
+		provinces_to_highlight = { is_capital_of = ROOT }
+
+		trigger = {
+			capital_scope = {
+				has_tax_building_trigger = yes
+				any_neighbor_province = { province_has_chi_wellspring_trigger = yes }
+			}
+		}
+
+		effect = {
+			custom_tooltip = tp_xiaken_bathed_chi_effect_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = { province_has_chi_wellspring_trigger = yes }
+					add_province_modifier = { name = xiaken_bathed_chi_mod duration = -1 }
+				}
+			}
+		}
+	}
+}

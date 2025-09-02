@@ -33,6 +33,7 @@ karshyr_missions_1 = {
 		}
 		
 		effect = {
+			clear_mages_organization_effect = yes
 			set_estate_privilege = estate_mages_hydromancers_guild
 			add_adm_power = 50
 			add_dip_power = 50
@@ -137,11 +138,19 @@ karshyr_missions_1 = {
 				add_siberian_construction = 250
 				add_permanent_claim = ROOT
 			}
-			5834 = {
-				kill_units = {
-					who = ROOT
-					type = infantry
-					amount = 10
+			if = {
+				limit = {
+					OR = {
+						inner_rankaty_islands_area = { is_city = no }
+						outer_rankaty_islands_area = { is_city = no }
+					}
+				}
+				5834 = {
+					kill_units = {
+						who = ROOT
+						type = infantry
+						amount = 10
+					}
 				}
 			}
 		}
@@ -221,7 +230,7 @@ karshyr_missions_1 = {
 
 		trigger = {
 			custom_trigger_tooltip = {
-				tooltip = merfolk_neutral_great_tt
+				tooltip = S15_merfolk_neutral_great_tt
 				check_variable = {
 					which = merfolkOpinionVar
 					value = 50
@@ -702,6 +711,7 @@ karshyr_missions_2 = {
 					}
 				}
 			}
+			custom_tooltip = S15_aquaculture_dyes_buildable_tt
 			if = {
 				limit = { ai = yes }
 				random_owned_province = {
@@ -796,7 +806,12 @@ karshyr_missions_2 = {
 		
 		effect = {
 			hidden_effect = {
-				1458 = { every_trade_node_member_province = { add_permanent_claim = S15 } }
+				1458 = {
+					every_trade_node_member_province = {
+						limit = { is_sea = no }
+						add_permanent_claim = S15
+					}
+				}
 				change_variable = {
 					which = aquacultureFish
 					value = 2
@@ -1114,12 +1129,20 @@ karshyr_missions_3 = {
 			khugra_tara_area = {
 				type = all
 				owned_by = ROOT
-				NOT = { local_autonomy = 25 }
+				is_core = ROOT
+				OR = {
+					has_province_modifier = autonomy_decreased
+					NOT = { local_autonomy = 25 }
+				}
 			}
 			nepa_tressik_area = {
 				type = all
 				owned_by = ROOT
-				NOT = { local_autonomy = 25 }
+				is_core = ROOT
+				OR = {
+					has_province_modifier = autonomy_decreased
+					NOT = { local_autonomy = 25 }
+				}
 			}
 		}
 		
@@ -1228,15 +1251,19 @@ karshyr_missions_3 = {
 					set_seat_in_parliament = no
 				}
 			}
-			5834 = { set_seat_in_parliament = yes } #Should be redundant, because capital, but I don't trust it - CB.
-			5898 = { set_seat_in_parliament = yes }
-			5914 = { set_seat_in_parliament = yes }
+			custom_tooltip = S15_formalise_the_council_seat_tt
+			hidden_effect = {# default tt breaks since it currently doesn't have a parliament yet
+				5834 = { set_seat_in_parliament = yes } #Should be redundant, because capital, but I don't trust it - CB.
+				5898 = { set_seat_in_parliament = yes }
+				5914 = { set_seat_in_parliament = yes }
+			}
 			add_country_modifier = {
 				name = S15_the_fleet_of_the_gulf
 				duration = -1
 			}
 			custom_tooltip = S15_aquaculture_dyes_buildable_tt
 			set_country_flag = S15_dyes
+			add_claim = 5763
 		}
 	}
 
@@ -1247,27 +1274,55 @@ karshyr_missions_3 = {
 			S15_formalise_the_council
 		}
 		provinces_to_highlight = {
-			is_capital_of = S77
+			OR = {
+				is_capital_of = S77
+				is_capital_of = S71
+			}
 		}
 
 		trigger = {
 			adm_power = 100
-			S77 = {
-				OR = {
-					total_development = 100
-					army_size = 15
+			if = {
+				limit = { exists = S71 }
+				S71 = {
+					OR = {
+						total_development = 100
+						army_size = 15
+					}
+				}
+			}
+			else = {
+				S77 = {
+					OR = {
+						total_development = 100
+						army_size = 15
+					}
 				}
 			}
 		}
 		
 		effect = {
-			fahvanosy_region = {
-				add_permanent_claim = S77
+			if = {
+				limit = { exists = S71 }
+				fahvanosy_region = {
+					add_permanent_claim = S71
+				}
+				S71 = {
+					add_country_modifier = {
+						name = S15_unite_the_isle
+						duration = 9125 #25 years
+					}
+				}
 			}
-			S77 = {
-				add_country_modifier = {
-					name = S15_unite_the_isle
-					duration = 9125 #25 years
+			else = {
+				fahvanosy_region = {
+					add_permanent_claim = S77
+				}
+				S77 = {
+					add_country_modifier = {
+						name = S15_unite_the_isle
+						duration = 9125 #25 years
+					}
 				}
 			}
 			add_adm_power = -100
@@ -1537,6 +1592,7 @@ karshyr_missions_4 = {
 		}
 
 		trigger = {
+			mission_completed = S15_spread_the_farms
 			5898 = {
 				development = 30
 				num_of_times_expanded_infrastructure = 2
@@ -1615,7 +1671,7 @@ karshyr_missions_4 = {
 	}
 
 	S15_before_cannor_arrives = {
-		icon = mission_shady_encounter
+		icon = mission_diplomacy_missive
 		position = 9
 		required_missions = {
 			S15_rebuild_karassk
@@ -1632,10 +1688,21 @@ karshyr_missions_4 = {
 				name = S15_outside_the_gulf
 				duration = 9125 #25 years
 			}
-			S77 = {
-				add_country_modifier = {
-					name = S15_outside_the_isle
-					duration = 9125 #25 years
+			if = {
+				limit = { exists = S71 }
+				S71 = {
+					add_country_modifier = {
+						name = S15_outside_the_isle
+						duration = 9125 #25 years
+					}
+				}
+			}
+			else = {
+				S77 = {
+					add_country_modifier = {
+						name = S15_outside_the_isle
+						duration = 9125 #25 years
+					}
 				}
 			}
 			add_dip_power = -200
@@ -1691,6 +1758,7 @@ karshyr_missions_4 = {
 			region = fahvanosy_region
 			NOT = {
 				owned_by = ROOT
+				owned_by = S71
 				owned_by = S77
 				area = mapotibokbo_area
 				area = oronsafa_area
@@ -1707,7 +1775,13 @@ karshyr_missions_4 = {
 				type = all
 				OR = {
 					owned_by = ROOT
-					owned_by = S77
+					if = {
+						limit = { exists = S71 }
+						owned_by = S71
+					}
+					else = {
+						owned_by = S77
+					}
 					area = sil_berkhens_land_area
 					area = far_uelos_isles_area
 					area = sombimofo_area
@@ -1728,10 +1802,21 @@ karshyr_missions_4 = {
 		}
 		
 		effect = {
-			S77 = {
-				add_country_modifier = {
-					name = S15_the_prosperous_isle
-					duration = -1
+			if = {
+				limit = { exists = S71 }
+				S71 = {
+					add_country_modifier = {
+						name = S15_the_prosperous_isle
+						duration = -1
+					}
+				}
+			}
+			else = {
+				S77 = {
+					add_country_modifier = {
+						name = S15_the_prosperous_isle
+						duration = -1
+					}
 				}
 			}
 			add_country_modifier = {
@@ -1762,6 +1847,7 @@ karshyr_missions_4 = {
 					duration = -1
 				}
 			}
+			hidden_effect = { add_historical_friend_mutual = { tag = S71 } }
 		}
 	}
 }
@@ -1815,11 +1901,10 @@ karshyr_missions_5 = {
 					set_country_flag = S15_halfling_ally_mazava
 				}
 			}
-			fahvanosy_region = {
-				limit = { culture = mazava }
-				add_permanent_claim = ROOT
-			}
-			add_permanent_claim = 6632
+			tebajik_area = { add_permanent_claim = ROOT }
+			zohejirofo_area = { add_permanent_claim = ROOT }
+			tebolelmasi_area = { add_permanent_claim = ROOT }
+			ibibakely_area = { add_permanent_claim = ROOT }
 		}
 	}
 
@@ -1850,20 +1935,35 @@ karshyr_missions_5 = {
 					}
 				}
 			}
-			custom_trigger_tooltip = {
-				tooltip = S15_push_for_amiratsamo_tt
-				NOT = {
-					fahvanosy_region = {
-						OR = {
-							culture = mazava
-							province_id = 6632
-						}
-						owner = {
-							NOT = {
-								tag = ROOT
-								has_country_flag = S15_halfling_ally_mazava
-							}
-						}
+			tebajik_area = {
+				owner = {
+					OR = {
+						tag = ROOT
+						has_country_flag = S15_halfling_ally_mazava
+					}
+				}
+			}
+			zohejirofo_area = {
+				owner = {
+					OR = {
+						tag = ROOT
+						has_country_flag = S15_halfling_ally_mazava
+					}
+				}
+			}
+			tebolelmasi_area = {
+				owner = {
+					OR = {
+						tag = ROOT
+						has_country_flag = S15_halfling_ally_mazava
+					}
+				}
+			}
+			ibibakely_area = {
+				owner = {
+					OR = {
+						tag = ROOT
+						has_country_flag = S15_halfling_ally_mazava
 					}
 				}
 			}
@@ -1884,13 +1984,213 @@ karshyr_missions_5 = {
 					fahvanosy_region = {
 						limit = {
 							OR = {
-								culture = mazava
-								province_id = 6632
+								area = tebajik_area
+								area = zohejirofo_area
+								area = tebolelmasi_area
+								area = ibibakely_area
 							}
 						}
+						set_province_flag = S15_given_province
 						cede_province = PREV
 					}
+					if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 14
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 51100 #140 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 13
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 47450 #130 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 12
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 43800 #120 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 11
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 40150 #110 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 10
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 36500 #100 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 9
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 32850 #90 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 8
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 29200 #80 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 7
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 25550 #70 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 6
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 21900 #60 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 5
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 18250 #50 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 4
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 14600 #40 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 3
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 10950 #30 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 2
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 7300 #20 years
+							}
+						}
+					}
+					else_if = {
+						limit = {
+							calc_true_if = {
+								all_owned_province = { has_province_flag = S15_given_province }
+								amount = 1
+							}
+						}
+						S15 = {
+							add_country_modifier = {
+								name = S15_given_province
+								duration = 3650 #10 years
+							}
+						}
+					}
 				}
+				add_historical_friend_mutual = { tag = S77 }
 			}
 		}
 	}
@@ -1904,14 +2204,29 @@ karshyr_missions_5 = {
 		provinces_to_highlight = { }
 		
 		trigger = {
-			S77 = {
-				trust = {
-					who = ROOT
-					value = 100
+			if = {
+				limit = { exists = S71 }
+				S71 = {
+					trust = {
+						who = ROOT
+						value = 100
+					}
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
 				}
-				has_opinion = {
-					who = ROOT
-					value = 100
+			}
+			else = {
+				S77 = {
+					trust = {
+						who = ROOT
+						value = 100
+					}
+					has_opinion = {
+						who = ROOT
+						value = 100
+					}
 				}
 			}
 		}
@@ -1921,10 +2236,21 @@ karshyr_missions_5 = {
 				id = flavour_karshyr.1
 			}
 			custom_tooltip = halfling_vassalization_tt
-			S77 = {
-				add_country_modifier = {
-					name = S15_lizardfold_aid
-					duration = 9125 #25 years
+			if = {
+				limit = { exists = S71 }
+				S71 = {
+					add_country_modifier = {
+						name = S15_lizardfold_aid
+						duration = 9125 #25 years
+					}
+				}
+			}
+			else = {
+				S77 = {
+					add_country_modifier = {
+						name = S15_lizardfold_aid
+						duration = 9125 #25 years
+					}
 				}
 			}
 			add_country_modifier = {
@@ -1956,6 +2282,7 @@ karshyr_missions_6 = {
 			}
 			owner = {
 				NOT = {
+					tag = S71
 					tag = S77
 					religion = ravelian
 					religion = shadow_pact
@@ -1971,7 +2298,13 @@ karshyr_missions_6 = {
 				OR = {
 					owner = {
 						OR = {
-							tag = S77
+							if = {
+								limit = { exists  = S71 }
+								tag = S71
+							}
+							else = {
+								tag = S77
+							}
 							religion = ravelian
 							religion = shadow_pact
 							religion = xhazobkult
@@ -1985,7 +2318,13 @@ karshyr_missions_6 = {
 				OR = {
 					owner = {
 						OR = {
-							tag = S77
+							if = {
+								limit = { exists  = S71 }
+								tag = S71
+							}
+							else = {
+								tag = S77
+							}
 							religion = ravelian
 							religion = shadow_pact
 							religion = xhazobkult

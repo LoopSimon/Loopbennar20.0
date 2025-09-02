@@ -1,0 +1,551 @@
+
+country_decisions = {
+	cast_unique_estate_magic = {
+		color = { 48 166 166 }
+		potential = {
+			ai = no #AI currently banned from unique magic per okman
+			OR = {
+				AND = { # Verkal Ozovar
+					tag = Y63
+					has_country_flag = Y63_unlocked_minor_runes
+				}
+				AND = { # Krakdhumvror
+					tag = I02
+					mission_completed = krak_relighting_forges
+				}
+				tag = Y01 # Azjakuma
+			}
+		}
+		allow = {
+			# Customised Mage estate
+			hidden_trigger = {
+				ai = no #AI currently banned from unique magic per okman
+				OR = {
+					tag = Y63
+					tag = I02
+					tag = Y01
+				}
+			}
+			if = { limit = { has_estate = estate_mages }
+				estate_influence = { estate = estate_mages influence = 15 }
+				if = {  # Verkal Ozovar
+					limit = { tag = Y63 }
+					custom_trigger_tooltip = {
+						tooltip = Y63_runes_menu_is_not_open_tt
+						NOT = { has_country_flag = V63_runes_menu_open }
+					}
+				}
+				else_if = { # Krakdhumvror
+					limit = { tag = I02 }
+					NOT = { has_estate_privilege = estate_mages_perform_icecraft }
+				}
+			}
+
+			# No Mage estate
+			else_if = { # Azjakuma
+				limit = { tag = Y01 }
+				hidden_trigger = { NOT = { has_country_flag = azjakuma_magic_menu_opened } }
+				if = {
+					limit = { has_country_flag = azjakuma_two_magics_allowed }
+					custom_trigger_tooltip = {
+						tooltip = no_other_magic_shirgrii_two_tooltip
+						NOT = {
+							calc_true_if = {
+								has_estate_privilege = estate_shinukhorchi_cast_magic
+								has_estate_privilege = estate_chumijemoya_cast_magic
+								has_estate_privilege = estate_ajgriijarul_cast_magic
+								has_estate_privilege = estate_kabiurgarko_cast_magic
+								has_estate_privilege = estate_khelorvalshi_cast_magic
+								amount = 2
+							}
+						}
+					}
+				}
+				else = {
+					custom_trigger_tooltip = {
+						tooltip = no_other_magic_shirgrii_tooltip
+						NOT = {
+							has_estate_privilege = estate_shinukhorchi_cast_magic
+							has_estate_privilege = estate_chumijemoya_cast_magic
+							has_estate_privilege = estate_ajgriijarul_cast_magic
+							has_estate_privilege = estate_kabiurgarko_cast_magic
+							has_estate_privilege = estate_khelorvalshi_cast_magic
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			# custom_tooltip = open_unique_estate_magic_menu_tt
+			if = {  # Verkal Ozovar
+				limit = { tag = Y63 }
+				custom_tooltip = Y63_open_runes_manu_tt
+				set_country_flag = V63_runes_menu_open
+				hidden_effect = { country_event = { id = verkalozovar_events.100 } }
+			}
+			else_if = { # Krakdhumvror
+				limit = { tag = I02 }
+				set_estate_privilege = estate_mages_perform_icecraft
+				country_event = { id = flavor_krak.100 }
+			}
+			else_if = { limit = { tag = Y01 }
+				custom_tooltip = opens_shirgrii_magic_menu_tt
+				custom_tooltip = cast_spell_effect_tt
+				hidden_effect = {
+					set_country_flag = azjakuma_magic_menu_opened
+					country_event = { id = flavor_azjakuma.1250 }
+				}
+				clr_country_flag = remove_azjakuma_casting_spells
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				OR = {
+					NOT = { adm_power = 100 }
+					NOT = { dip_power = 100 }
+					NOT = { mil_power = 100 }
+				}
+			}
+		}
+	}
+
+	make_ruler_war_wizard = {
+		color = { 48 166 166 }
+		major = yes
+		potential = {
+			#ai = yes
+			ruler_is_powerful_mage = yes
+			is_lesser_in_union = no
+			has_regency = no
+			has_government_attribute = rulers_can_be_generals
+			OR = {
+				is_monarch_leader = no #is_monarch_leader = yes returns true for exiled/unexiled rulers so we need the other check
+				AND = {
+					NOT = { has_ruler_flag = allow_war_wizard_after_exile } #We accounted for your edge case involving exiling/unexiling rulers
+					NOT = { has_leader_with = { is_monarch_leader = yes } } # has_leader_with = { is_monarch_leader = yes } returns true for consorts so we need the other check
+				}
+				had_ruler_flag = { flag = allow_war_wizard_after_exile days = 1 }
+			}
+
+			NOT = { has_ruler_modifier = bulwar_tluukt_injured }
+			NOT = { has_ruler_flag = vf_fatecutter_flg }
+			NOT = { has_ruler_flag = vf_krilavuna_flg }
+		}
+		allow = {
+			hidden_trigger = {
+				ruler_is_powerful_mage = yes
+				NOT = { has_country_flag = in_ruler_mage_general_confirmation_event }
+			}
+			if = { 
+				limit = { has_government_attribute = rulers_cant_be_war_wizards } 
+				custom_trigger_tooltip = {
+					tooltip = cant_be_war_wizard_tt
+					always = no
+				}
+			}
+			if = {
+				limit = { has_country_flag = horutep_arrived NOT = { mission_completed = konolkhatep_bring_legions } }
+				custom_trigger_tooltip = {
+					NOT = { has_country_flag = horutep_arrived }
+					tooltip = horutep_no_war_wizard_tt
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = make_ruler_general_tt
+			set_country_flag = in_ruler_mage_general_confirmation_event
+			hidden_effect = { country_event = { id = magic_system.14 } }
+		}
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0
+				is_at_war = no
+			}
+		}
+		ai_importance = 400
+	}
+	
+	make_heir_war_wizard = {
+		color = { 48 166 166 }
+		major = yes
+		potential = {
+			#ai = yes
+			heir_is_powerful_mage = yes
+			is_lesser_in_union = no
+			has_government_attribute = heirs_can_be_generals
+			is_heir_leader = no
+			heir_age = 15
+			OR = {
+				has_female_heir = no
+				has_global_modifier_value = {
+					which = may_recruit_female_generals
+					value = 1
+				}
+			}
+			NOT = { has_government_attribute = is_elective }
+		}
+		allow = {
+			hidden_trigger = {
+				heir_is_powerful_mage = yes
+				NOT = { has_country_flag = in_heir_mage_general_confirmation_event }
+			}
+			if = { 
+				limit = { has_government_attribute = rulers_cant_be_war_wizards } 
+				custom_trigger_tooltip = {
+					tooltip = cant_be_war_wizard_tt
+					always = no
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = make_heir_general_tt
+			set_country_flag = in_heir_mage_general_confirmation_event
+			hidden_effect = { country_event = { id = magic_system.13 } }
+		}
+		ai_will_do = {
+			factor = 1
+			
+			modifier = {
+				factor = 0
+				is_at_war = no
+			}
+		}
+		ai_importance = 400
+	}
+	
+	patron_interactions = {
+		color = { 48 166 166 }
+		major = yes
+		
+		potential = {
+			ai = yes
+			has_a_patron_trigger = yes
+			hidden_trigger = {
+				NOT = { has_ruler_modifier = ai_patron_limiter }
+			}
+			is_lesser_in_union = no
+		}
+		allow = {
+			custom_trigger_tooltip = { always = yes tooltip = tooltip_patron_type }
+			custom_trigger_tooltip = { always = yes tooltip = tooltip_patron_approval }
+		}
+		effect = {
+			custom_tooltip = open_patron_menu_tt
+			hidden_effect = { country_event = { id = patrons_events.1 } }
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				OR = { 
+					NOT = { adm_power = 50 }
+					NOT = { dip_power = 50 }
+					NOT = { mil_power = 50 }
+				}
+			}
+		}
+	}
+
+	#TODO Jothell commented out because it's in UI now and AI won't do it anyway
+	# seek_patron = {
+	# 	color = { 48 166 166 }
+	# 	major = yes
+		
+	# 	potential = {
+	# 		has_ruler_flag = spirit_patron_delayed
+	# 		hidden_trigger = {
+	# 			NOT = { has_ruler_modifier = ai_patron_limiter }
+	# 		}
+	# 		is_lesser_in_union = no
+	# 	}
+	# 	allow = {
+	# 		custom_trigger_tooltip = {
+	# 			tooltip = seek_patron_delayed_tt
+	# 			has_ruler_flag = spirit_patron_delayed
+	# 		}
+	# 	}
+	# 	effect = {
+	# 		country_event = { id = patrons_on_action.1 }
+	# 	}
+	# 	ai_will_do = {
+	# 		factor = 0 # Will never delay in first place
+	# 	}
+	# }
+
+	theatre_of_simulacra_decision = {
+		potential = { at_least_magic_project_level = { project = theatre_of_simulacra level = 1 } }
+		allow = {
+			hidden_trigger = {
+				at_least_magic_project_level = { project = theatre_of_simulacra level = 1 }
+				NOT = { has_country_flag = in_theatre_of_simulacra }
+				OR = {
+					ai = no
+					NOT = {
+						check_variable = {
+							which = theatre_of_simulacra_bonuses
+							which = theatre_of_simulacra_level
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = theatre_of_simulacra_cooldown
+				NOT = { has_country_modifier = theatre_cooldown_mod }
+			}
+		}
+		effect = {
+			set_country_flag = in_theatre_of_simulacra
+			country_event = { id = magic_project_theatre_of_simulacra.13 }
+			custom_tooltip = magic_effect_separator_tt
+			custom_tooltip = theatre_of_simulacra_current_bonuses
+			tooltip = {
+				if = { limit = { has_country_modifier = theatre_just_bonus }
+					add_country_modifier = { name = theatre_just_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_righteous_bonus }
+					add_country_modifier = { name = theatre_righteous_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_tolerant_bonus }
+					add_country_modifier = { name = theatre_tolerant_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_kind_hearted_bonus }
+					add_country_modifier = { name = theatre_kind_hearted_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_free_thinker_bonus }
+					add_country_modifier = { name = theatre_free_thinker_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_well_connected_bonus }
+					add_country_modifier = { name = theatre_well_connected_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_calm_bonus }
+					add_country_modifier = { name = theatre_calm_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_careful_bonus }
+					add_country_modifier = { name = theatre_careful_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_secretive_bonus }
+					add_country_modifier = { name = theatre_secretive_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_intricate_web_weaver_bonus }
+					add_country_modifier = { name = theatre_intricate_web_weaver_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_benevolent_bonus }
+					add_country_modifier = { name = theatre_benevolent_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_zealot_bonus }
+					add_country_modifier = { name = theatre_zealot_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_pious_bonus }
+					add_country_modifier = { name = theatre_pious_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_lawgiver_bonus }
+					add_country_modifier = { name = theatre_lawgiver_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_midas_touched_bonus }
+					add_country_modifier = { name = theatre_midas_touched_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_incorruptible_bonus }
+					add_country_modifier = { name = theatre_incorruptible_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_architectural_visionary_bonus }
+					add_country_modifier = { name = theatre_architectural_visionary_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_scholar_bonus }
+					add_country_modifier = { name = theatre_scholar_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_entrepreneur_bonus }
+					add_country_modifier = { name = theatre_entrepreneur_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_industrious_bonus }
+					add_country_modifier = { name = theatre_industrious_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_expansionist_bonus }
+					add_country_modifier = { name = theatre_expansionist_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_charismatic_negotiator_bonus }
+					add_country_modifier = { name = theatre_charismatic_negotiator_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_silver_tongue_bonus }
+					add_country_modifier = { name = theatre_silver_tongue_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_conqueror_bonus }
+					add_country_modifier = { name = theatre_conqueror_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_tactical_genius_bonus }
+					add_country_modifier = { name = theatre_tactical_genius_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_bold_fighter_bonus }
+					add_country_modifier = { name = theatre_bold_fighter_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_strict_bonus }
+					add_country_modifier = { name = theatre_strict_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_inspiring_leader_bonus }
+					add_country_modifier = { name = theatre_inspiring_leader_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_martial_educator_bonus }
+					add_country_modifier = { name = theatre_martial_educator_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_navigator_bonus }
+					add_country_modifier = { name = theatre_navigator_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_fierce_negotiator_bonus }
+					add_country_modifier = { name = theatre_fierce_negotiator_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_reformist_bonus }
+					add_country_modifier = { name = theatre_reformist_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_legendary_pirate_bonus }
+					add_country_modifier = { name = theatre_legendary_pirate_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_humane_bonus }
+					add_country_modifier = { name = theatre_humane_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_legendary_conqueror_bonus }
+					add_country_modifier = { name = theatre_legendary_conqueror_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_great_engineer_bonus }
+					add_country_modifier = { name = theatre_great_engineer_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_patron_of_arts_bonus }
+					add_country_modifier = { name = theatre_patron_of_arts_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_fu_papal_puppetmaster_bonus }
+					add_country_modifier = { name = theatre_fu_papal_puppetmaster_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_iron_crowned_bonus }
+					add_country_modifier = { name = theatre_iron_crowned_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_peasant_revolt_leader_bonus }
+					add_country_modifier = { name = theatre_peasant_revolt_leader_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_abjuration_bonus }
+					add_country_modifier = { name = theatre_abjuration_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_conjuration_bonus }
+					add_country_modifier = { name = theatre_conjuration_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_divination_bonus }
+					add_country_modifier = { name = theatre_divination_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_enchantment_bonus }
+					add_country_modifier = { name = theatre_enchantment_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_evocation_bonus }
+					add_country_modifier = { name = theatre_evocation_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_illusion_bonus }
+					add_country_modifier = { name = theatre_illusion_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_necromancy_bonus }
+					add_country_modifier = { name = theatre_necromancy_bonus duration = -1 }
+				}
+				if = { limit = { has_country_modifier = theatre_transmutation_bonus }
+					add_country_modifier = { name = theatre_transmutation_bonus duration = -1 }
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+
+	estate_mages_recruit_war_wizard_decision = {
+		color = { 195 160 20 }
+		potential = {
+			has_enabled_estate_action = {
+				estate_action = RECRUIT_WAR_WIZARD
+			}
+			has_estate = estate_mages
+		}
+		allow = {
+			hidden_trigger = {
+				has_enabled_estate_action = {
+					estate_action = RECRUIT_WAR_WIZARD
+				}
+			}
+			has_not_any_estate_disaster_active = yes
+			estate_action_off_cooldown = {
+				estate_action = RECRUIT_WAR_WIZARD
+				days = 1825
+			}
+			if = {
+				limit = { exactly_magic_project_level = { project = battlemage_academy level = 3 } }
+				mil_power = 40
+			}
+			else_if = {
+				limit = { exactly_magic_project_level = { project = battlemage_academy level = 2 } }
+				mil_power = 60
+			}
+			else_if = {
+				limit = { exactly_magic_project_level = { project = battlemage_academy level = 1 } }
+				mil_power = 80
+			}
+			else = {
+				mil_power = 100
+			}
+			estate_loyalty = { estate = estate_mages loyalty = 50 }
+			estate_influence = { estate = estate_mages influence = 30 }
+		}
+		effect = {
+			set_estate_action_cooldown = {
+				estate_action = RECRUIT_WAR_WIZARD
+			}
+			estate_action = {
+				estate_action = RECRUIT_WAR_WIZARD
+			}
+			increase_estate_action_counter = {
+				estate = estate_mages
+			}
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				factor = 0
+				OR = {
+					has_war_wizard = yes #One War Wizard at a time
+					is_at_war = no
+				}
+			}
+		}
+	}
+
+	estate_mages_recruit_court_mage_decision = {
+		color = { 195 160 20 }
+		potential = {
+			has_enabled_estate_action = {
+				estate_action = RECRUIT_COURT_MAGE
+			}
+			has_estate = estate_mages
+		}
+		allow = {
+			hidden_trigger = {
+				has_enabled_estate_action = {
+					estate_action = RECRUIT_COURT_MAGE
+				}
+			}
+			has_not_any_estate_disaster_active = yes
+			estate_action_off_cooldown = {
+				estate_action = RECRUIT_COURT_MAGE
+				days = 10950
+			}
+			estate_influence = { estate = estate_mages influence = 40 }
+		}
+		effect = {
+			set_estate_action_cooldown = {
+				estate_action = RECRUIT_COURT_MAGE
+			}
+			estate_action = {
+				estate_action = RECRUIT_COURT_MAGE
+			}
+			increase_estate_action_counter = {
+				estate = estate_mages
+			}
+		}
+		ai_will_do = { factor = 0 }
+	}
+}

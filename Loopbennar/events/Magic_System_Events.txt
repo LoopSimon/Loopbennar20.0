@@ -1,0 +1,1459 @@
+namespace = magic_system
+
+###### This is the place for events that are related to the magic system as a whole
+###### Most of what's here will be handler events, hidden events, maintenance events, etc.
+###### Events that trigger while you're studying and gain you XP go in Magic_Study_Events.txt
+
+# Event for scripted effect: update_magic_menu_effect
+country_event = { #Reduces the file size load of updating the magic menu
+	id = magic_system.1
+	title = magic_system.1.t
+	desc = magic_system.1.d
+	picture = COURT_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		update_magic_ui_experience_modifiers = yes ##Jothell temp?
+		update_mana_regen_vars = yes
+		generic_calc_spell_levels = { type = ruler }
+		generic_calc_spell_levels = { type = heir }
+		generic_calc_spell_levels = { type = country }
+		update_spell_tooltips = yes #For Conjuration mercs rn
+	}
+
+	option = {
+		name = magic_system.1.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+# Event for scripted effect: update_magic_ui_experience_modifiers
+country_event = { #Generates variables with all of the xp modifiers for localisation
+	id = magic_system.2
+	title = magic_system.2.t
+	desc = magic_system.2.d
+	picture = COURT_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		set_variable = { total_experience_mod_val = 0 }
+		export_to_variable = { which = base_magic_xp_gain_val value = modifier:mages_monthly_experience }
+
+		# The below are both here and in increase_magic_experience
+		# It needs to be here so that players who get xp modifiers can get instant feedback by opening the menu
+		export_to_variable = { which = last_months_xp_gain value = modifier:mages_monthly_experience }
+		set_variable = { which = months_till_advancement_done which = magic_experience_target }
+		
+		export_to_variable = { which = mages_ruler_experience_mod_val value = modifier:mages_ruler_experience_mod }
+		export_to_variable = { which = mages_estate_experience_mod_val value = modifier:mages_estate_experience_mod }
+		export_to_variable = { which = abjuration_experience_mod_val value = modifier:abjuration_experience_mod }
+		export_to_variable = { which = conjuration_experience_mod_val value = modifier:conjuration_experience_mod }
+		export_to_variable = { which = divination_experience_mod_val value = modifier:divination_experience_mod }
+		export_to_variable = { which = enchantment_experience_mod_val value = modifier:enchantment_experience_mod }
+		export_to_variable = { which = evocation_experience_mod_val value = modifier:evocation_experience_mod }
+		export_to_variable = { which = illusion_experience_mod_val value = modifier:illusion_experience_mod }
+		export_to_variable = { which = necromancy_experience_mod_val value = modifier:necromancy_experience_mod }
+		export_to_variable = { which = transmutation_experience_mod_val value = modifier:transmutation_experience_mod }
+
+		if = { limit = { has_country_flag = magic_advancement }
+			set_variable = { which = total_experience_mod_val which = mages_estate_experience_mod_val }
+			subtract_variable = { which = months_till_advancement_done which = country_magic_experience }
+			divide_variable = { last_months_xp_gain = 3 }
+		}
+		else_if = { limit = { has_ruler_flag = magic_advancement }
+			set_variable = { which = total_experience_mod_val which = mages_ruler_experience_mod_val }
+			subtract_variable = { which = months_till_advancement_done which = ruler_magic_experience }
+			if = {
+				limit = { is_long_lived_ruler = yes }
+				divide_variable = { last_months_xp_gain = 2 }
+			}
+		}
+		else_if = { limit = { has_heir_flag = magic_advancement }
+			set_variable = { which = total_experience_mod_val which = mages_ruler_experience_mod_val }
+			subtract_variable = { which = months_till_advancement_done which = heir_magic_experience }
+			if = {
+				limit = { is_long_lived_heir = yes }
+				divide_variable = { last_months_xp_gain = 2 }
+			}
+		}
+		
+		if = { limit = { is_overall_advancing_school = { school = abjuration } }
+			change_variable = { which = total_experience_mod_val which = abjuration_experience_mod_val }
+		}
+		else_if = { limit = { is_overall_advancing_school = { school = conjuration } }
+			change_variable = { which = total_experience_mod_val which = conjuration_experience_mod_val }
+		}
+		else_if = { limit = { is_overall_advancing_school = { school = divination } }
+			change_variable = { which = total_experience_mod_val which = divination_experience_mod_val }
+		}
+		else_if = { limit = { is_overall_advancing_school = { school = enchantment } }
+			change_variable = { which = total_experience_mod_val which = enchantment_experience_mod_val }
+		}
+		else_if = { limit = { is_overall_advancing_school = { school = evocation } }
+			change_variable = { which = total_experience_mod_val which = evocation_experience_mod_val }
+		}
+		else_if = { limit = { is_overall_advancing_school = { school = illusion } }
+			change_variable = { which = total_experience_mod_val which = illusion_experience_mod_val }
+		}
+		else_if = { limit = { is_overall_advancing_school = { school = necromancy } }
+			change_variable = { which = total_experience_mod_val which = necromancy_experience_mod_val }
+		}
+		else_if = { limit = { is_overall_advancing_school = { school = transmutation } }
+			change_variable = { which = total_experience_mod_val which = transmutation_experience_mod_val }
+		}
+
+		set_variable = { which = expFoo which = total_experience_mod_val }
+		change_variable = { expFoo = 1 }
+		multiply_variable = { which = last_months_xp_gain which = expFoo }
+		truncate_variable_3 = { which = last_months_xp_gain }
+
+		update_magic_xp_val_deci = { category = mages_estate }
+		update_magic_xp_val_deci = { category = mages_ruler }
+		update_magic_xp_val_deci = { category = abjuration }
+		update_magic_xp_val_deci = { category = conjuration }
+		update_magic_xp_val_deci = { category = divination }
+		update_magic_xp_val_deci = { category = enchantment }
+		update_magic_xp_val_deci = { category = evocation }
+		update_magic_xp_val_deci = { category = illusion }
+		update_magic_xp_val_deci = { category = necromancy }
+		update_magic_xp_val_deci = { category = transmutation }
+		update_magic_xp_val_deci = { category = total }
+
+		divide_variable = { which = months_till_advancement_done which = last_months_xp_gain }
+		round_variable = { which = months_till_advancement_done value = 1 } #round up
+	}
+
+	option = {
+		name = magic_system.2.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Load order issue involving personalities? use these events instead!
+	id = magic_system.10
+	title = magic_system.10.t
+	desc = magic_system.10.d
+	picture = COURT_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = { define_powerful_mage = { type = ruler } }
+
+	option = {
+		name = magic_system.10.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Each event defines to powerful mage a different character
+	id = magic_system.11
+	title = magic_system.11.t
+	desc = magic_system.11.d
+	picture = COURT_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = { define_powerful_mage = { type = heir } }
+
+	option = {
+		name = magic_system.11.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #10 = ruler, 11 = heir, 12 = consort
+	id = magic_system.12
+	title = magic_system.12.t
+	desc = magic_system.12.d
+	picture = COURT_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = { define_powerful_mage = { type = consort } }
+
+	option = {
+		name = magic_system.12.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #make heir into war wizard
+	id = magic_system.13
+	title = magic_system.13.t
+	desc = magic_system.13.desc
+	picture = MAGE_MOON_eventPicture
+
+	is_triggered_only = yes
+	after = { clr_country_flag = in_heir_mage_general_confirmation_event }
+
+	option = {
+		name = flavor_castanor_go_back
+		ai_chance = { factor = 1 }
+	}
+
+	option = {
+		name = magic_system.13.a
+		ai_chance = { factor = 100 }
+		
+		if = {
+			limit = {
+				has_heir = yes
+				heir_is_powerful_mage = yes
+				is_heir_leader = no
+				OR = {
+					has_female_heir = no
+					has_global_modifier_value = {
+						which = may_recruit_female_generals
+						value = 1
+					}
+				}
+				is_lesser_in_union = no
+				heir_age = 15
+				has_government_attribute = heirs_can_be_generals
+				NOT = { has_government_attribute = rulers_cant_be_war_wizards }
+				OR = {
+					NOT = { has_country_flag = magic_artificery_artificery_only }
+					has_estate_privilege = artifice_invention_korashi_tuners
+				}
+				NOT = { has_government_attribute = is_elective }
+			}
+			define_type_to_war_wizard_effect = { type = heir }
+		}
+	}
+}
+country_event = { #make ruler into war wizard
+	id = magic_system.14
+	title = magic_system.14.t
+	desc = magic_system.14.desc
+	picture = MAGE_MOON_eventPicture
+
+	is_triggered_only = yes
+	after = { clr_country_flag = in_ruler_mage_general_confirmation_event }
+
+	option = { #Do not do it
+		name = flavor_castanor_go_back
+		ai_chance = { factor = 1 }
+	}
+
+	option = { #Do it
+		name = magic_system.14.a
+		ai_chance = { factor = 100 }
+		trigger = { NOT = { has_country_modifier = magic_ruler_exile_checker } }
+		
+		if = {
+			limit = {
+				ruler_is_powerful_mage = yes
+				is_lesser_in_union = no
+				has_regency = no
+				has_government_attribute = rulers_can_be_generals
+				OR = {
+					is_monarch_leader = no #returns false for exiled/unexiled rulers
+					AND = {
+						NOT = { has_ruler_flag = allow_war_wizard_after_exile } #We accounted for your edge case involving exiling/unexiling rulers
+						NOT = { has_leader_with = { is_monarch_leader = yes } } #We did not do that yet
+					}
+					had_ruler_flag = { flag = allow_war_wizard_after_exile days = 1 }
+				}
+
+				NOT = { has_ruler_modifier = bulwar_tluukt_injured }
+				NOT = { has_ruler_flag = vf_fatecutter_flg }
+				NOT = { has_ruler_flag = vf_krilavuna_flg }
+				NOT = { has_government_attribute = rulers_cant_be_war_wizards }
+				OR = {
+					NOT = { has_country_flag = magic_artificery_artificery_only }
+					has_estate_privilege = artifice_invention_korashi_tuners
+				}
+			}
+			define_type_to_war_wizard_effect = { type = ruler }
+			clr_ruler_flag = allow_war_wizard_after_exile
+			hidden_effect = { add_ruler_modifier = { name = magic_ruler_exile_checker duration = 1 hidden = yes } }
+		}
+	}
+
+	option = { #Sorry man just wait a day: you've clicked this button multiple times on the same day with the same ruler
+		name = magic_system.14.a
+		ai_chance = { factor = 100 }
+		trigger = { has_country_modifier = magic_ruler_exile_checker }
+
+		custom_tooltip = pdx_exile_bug_hint
+	}
+}
+country_event = { #add mage personality to new heirs in always-mage governments
+	id =  magic_system.19
+	title =  magic_system.19.t
+	desc =  magic_system.19.d
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			has_government_attribute = always_mage
+			has_country_flag = always_mage
+		}
+		heir_is_not_powerful_mage = yes
+	}
+
+	option = {
+		name = magic_system.19.a
+		ai_chance = { factor = 1 }
+
+		if = {
+			limit = { has_government_attribute = inherits_magic }
+			define_powerful_mage = {
+				type = heir
+				saved_levels = inherits
+				save_levels = inherits
+			}
+		}
+		else = { define_powerful_mage = { type = heir } }
+	}
+}
+
+country_event = { #The on_new_monarch catch-all event for powerful mages
+	id = magic_system.20
+	title = magic_system.20.t
+	desc = magic_system.20.desc
+	picture = MAGES_ESTATE_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = { #Your ruler is a mage or is supposed to/going to be a mage
+		OR = {
+			ruler_is_powerful_mage = yes
+			has_ruler_flag = is_powerful_mage #Heir powerful mage
+			has_government_attribute = always_mage
+			has_country_flag = always_mage
+
+			has_leader_with = { shock = 7 is_monarch_leader = yes }
+			# Technically returns true if consort or heir is a war-wizard...
+			# But this is the new monarch event so that would be unlikely.
+			# Heirs stop being leader when they take power, so this doesn't work for them
+			# But this does work for stratocracies!
+		}
+	}
+
+	option = {
+		name = magic_system.20
+		ai_chance = { factor = 1 }
+
+		#Heir powerful mages don't get the personality trait until now.
+		#Also dying w/o an heir but always_mage
+
+		if = { #You were previously an heir/consort powerful mage
+			limit = { has_ruler_flag = initialized_magic_flags }
+
+			set_ruler_mage_effect = yes #Get your personality
+
+			if = { #If ruler was studying as the heir, transfer progress
+				limit = { ai = no } #AI doesn't use these flags
+				if = {
+					limit = { has_ruler_flag = magic_advancement } #only possible via heir study
+					set_variable = { which = ruler_magic_experience which = heir_magic_experience }
+					set_variable = { which = heir_magic_experience which = 0 }
+					# update_advancement_progress_bar = { type = ruler }
+				}
+				else = {
+					set_variable = { which = ruler_magic_experience which = 0 }
+					if = {
+						limit = { is_overall_not_advancing_magic = yes }
+						set_variable = { current_experience_percent = 0 }
+					}
+				}
+			}
+
+			#Since you already have your levels, we have to do this here.
+			generic_calc_spell_levels = { type = ruler }
+			recalculate_ruler_mana_regen = yes
+			update_mana_regen_vars = yes
+			calc_schools_total_level = yes
+
+			#If you have witch-king points (such as from choices made while an heir), get the appropriate modifier
+			if = {
+				limit = { has_ruler_flag = is_infamous_heir }
+				transfer_witch_king_points = { from = heir to = ruler }
+			}
+			else_if = {
+				limit = { has_ruler_flag = is_infamous_consort }
+				transfer_witch_king_points = { from = consort to = ruler }
+			}
+			else = { clr_type_witch_king_points = { type = ruler } }
+			
+			calculate_magical_infamy_modifier = yes
+		}
+		else = { #You are supposed to be a powerful mage but are not one yet (have no baggage)
+			define_powerful_mage = { type = ruler }
+		}
+
+		if = {
+			limit = { ai = no }
+			update_magic_menu_effect = yes
+		}
+	}
+}
+
+country_event = { # Initialize spell schools for any character who hasn't already
+	id =  magic_system.21
+	title =  magic_system.21.t
+	desc =  magic_system.21.d
+	picture = GOOD_WITH_MONARCH_eventPicture
+	
+	hidden = yes #This is a MTTH event since we want it to pop instantly
+
+	trigger = {
+		OR = {
+			AND = {
+				ruler_is_powerful_mage = yes
+				NOT = { has_ruler_flag = initialized_magic_flags }
+			}
+			AND = {
+				heir_is_powerful_mage = yes
+				NOT = { has_heir_flag = initialized_magic_flags }
+			}
+			AND = {
+				consort_is_powerful_mage = yes
+				NOT = { has_consort_flag = initialized_magic_flags }
+			}
+		}
+	}
+
+	option = {
+		name = magic_system.21.a
+		ai_chance = { factor = 1 }
+		trigger = { NOT = { has_government_attribute = inherits_magic } }
+
+		if = {
+			limit = {
+				ruler_is_powerful_mage = yes
+				NOT = { has_ruler_flag = initialized_magic_flags }
+			}
+			give_magic_starting_schools = { type = ruler }
+			calc_schools_total_level = yes
+		}
+		if = {
+			limit = {
+				heir_is_powerful_mage = yes
+				NOT = { has_heir_flag = initialized_magic_flags }
+			}
+			give_magic_starting_schools = { type = heir }
+		}
+		if = {
+			limit = {
+				consort_is_powerful_mage = yes
+				NOT = { has_consort_flag = initialized_magic_flags }
+			}
+			give_magic_starting_schools = { type = consort }
+		}
+	}
+
+	option = {
+		name = magic_system.21.b
+		ai_chance = { factor = 1 }
+		trigger = { has_government_attribute = inherits_magic }
+
+		if = {
+			limit = {
+				ruler_is_powerful_mage = yes
+				NOT = { has_ruler_flag = initialized_magic_flags }
+			}
+			give_type_saved_spell_levels_from_name = { type = ruler name = inherits save = yes }
+			generic_calc_spell_levels = { type = ruler }
+			recalculate_ruler_mana_regen = yes
+			update_mana_regen_vars = yes
+			calc_schools_total_level = yes
+		}
+		if = {
+			limit = {
+				heir_is_powerful_mage = yes
+				NOT = { has_heir_flag = initialized_magic_flags }
+			}
+			give_type_saved_spell_levels_from_name = { type = heir name = inherits save = yes }
+			generic_calc_spell_levels = { type = heir }
+		}
+		if = {
+			limit = {
+				consort_is_powerful_mage = yes
+				NOT = { has_consort_flag = initialized_magic_flags }
+			}
+			give_type_saved_spell_levels_from_name = { type = consort name = inherits save = yes }
+			generic_calc_spell_levels = { type = consort }
+		}
+	}
+}
+
+country_event = { #TODO saving ruler spell levels rather than having a big scripted effect
+	id = magic_system.25
+	title = magic_system.25.t
+	desc =  magic_system.25.d
+	picture = WAR_OF_THE_ROSES_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = magic_system.25.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Recalculate ruler mana regen mod
+	id = magic_system.30
+	title = magic_system.30.t
+	desc =  magic_system.30.d
+	picture = WAR_OF_THE_ROSES_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = { ruler_is_powerful_mage = yes }
+
+	immediate = {
+		if = { #this isn't your first time getting a modifier
+			limit = { check_variable = { mana_regen_ruler = 0.05 } }
+			trigger_switch = {
+				on_trigger = has_country_modifier
+				ruler_mana_regen_mod_1 = { remove_country_modifier = ruler_mana_regen_mod_1 }
+				ruler_mana_regen_mod_2 = { remove_country_modifier = ruler_mana_regen_mod_2 }
+				ruler_mana_regen_mod_3 = { remove_country_modifier = ruler_mana_regen_mod_3 }
+				ruler_mana_regen_mod_4 = { remove_country_modifier = ruler_mana_regen_mod_4 }
+				ruler_mana_regen_mod_5 = { remove_country_modifier = ruler_mana_regen_mod_5 }
+				ruler_mana_regen_mod_6 = { remove_country_modifier = ruler_mana_regen_mod_6 }
+				ruler_mana_regen_mod_7 = { remove_country_modifier = ruler_mana_regen_mod_7 }
+				ruler_mana_regen_mod_8 = { remove_country_modifier = ruler_mana_regen_mod_8 }
+				ruler_mana_regen_mod_9 = { remove_country_modifier = ruler_mana_regen_mod_9 }
+				ruler_mana_regen_mod_10 = { remove_country_modifier = ruler_mana_regen_mod_10 }
+				ruler_mana_regen_mod_11 = { remove_country_modifier = ruler_mana_regen_mod_11 }
+				ruler_mana_regen_mod_12 = { remove_country_modifier = ruler_mana_regen_mod_12 }
+				ruler_mana_regen_mod_13 = { remove_country_modifier = ruler_mana_regen_mod_13 }
+				ruler_mana_regen_mod_14 = { remove_country_modifier = ruler_mana_regen_mod_14 }
+				ruler_mana_regen_mod_15 = { remove_country_modifier = ruler_mana_regen_mod_15 }
+				ruler_mana_regen_mod_16 = { remove_country_modifier = ruler_mana_regen_mod_16 }
+				ruler_mana_regen_mod_17 = { remove_country_modifier = ruler_mana_regen_mod_17 }
+				ruler_mana_regen_mod_18 = { remove_country_modifier = ruler_mana_regen_mod_18 }
+				ruler_mana_regen_mod_19 = { remove_country_modifier = ruler_mana_regen_mod_19 }
+				ruler_mana_regen_mod_20 = { remove_country_modifier = ruler_mana_regen_mod_20 }
+				ruler_mana_regen_mod_21 = { remove_country_modifier = ruler_mana_regen_mod_21 }
+				ruler_mana_regen_mod_22 = { remove_country_modifier = ruler_mana_regen_mod_22 }
+				ruler_mana_regen_mod_23 = { remove_country_modifier = ruler_mana_regen_mod_23 }
+				ruler_mana_regen_mod_24 = { remove_country_modifier = ruler_mana_regen_mod_24 }
+			}
+		}
+
+		if = { limit = { check_variable = { ruler_spell_schools = 13 } }
+			if = { limit = { check_variable = { ruler_spell_schools = 19 } }
+				if = { limit = { check_variable = { ruler_spell_schools = 22 } }
+					if = { limit = { check_variable = { ruler_spell_schools = 24 } } add_ruler_modifier = { name = ruler_mana_regen_mod_24 duration = -1 } }
+					else_if = { limit = { check_variable = { ruler_spell_schools = 23 } } add_ruler_modifier = { name = ruler_mana_regen_mod_23 duration = -1 } }
+					else = { add_ruler_modifier = { name = ruler_mana_regen_mod_22 duration = -1 } }
+				}
+				else_if = { limit = { check_variable = { ruler_spell_schools = 21 } } add_ruler_modifier = { name = ruler_mana_regen_mod_21 duration = -1 } }
+				else_if = { limit = { check_variable = { ruler_spell_schools = 20 } } add_ruler_modifier = { name = ruler_mana_regen_mod_20 duration = -1 } }
+				else = { add_ruler_modifier = { name = ruler_mana_regen_mod_19 duration = -1 } }
+			}
+			else_if = { limit = { check_variable = { ruler_spell_schools = 16 } }
+				if = { limit = { check_variable = { ruler_spell_schools = 18 } } add_ruler_modifier = { name = ruler_mana_regen_mod_18 duration = -1 } }
+				else_if = { limit = { check_variable = { ruler_spell_schools = 17 } } add_ruler_modifier = { name = ruler_mana_regen_mod_17 duration = -1 } }
+				else = { add_ruler_modifier = { name = ruler_mana_regen_mod_16 duration = -1 } }
+			}
+			else_if = { limit = { check_variable = { ruler_spell_schools = 15 } } add_ruler_modifier = { name = ruler_mana_regen_mod_15 duration = -1 } }
+			else_if = { limit = { check_variable = { ruler_spell_schools = 14 } } add_ruler_modifier = { name = ruler_mana_regen_mod_14 duration = -1 } }
+			else = { add_ruler_modifier = { name = ruler_mana_regen_mod_13 duration = -1 } }
+		}
+		else_if = { limit = { check_variable = { ruler_spell_schools = 7 } }
+			if = { limit = { check_variable = { ruler_spell_schools = 10 } }
+				if = { limit = { check_variable = { ruler_spell_schools = 12 } } add_ruler_modifier = { name = ruler_mana_regen_mod_12 duration = -1 } }
+				else_if = { limit = { check_variable = { ruler_spell_schools = 11 } } add_ruler_modifier = { name = ruler_mana_regen_mod_11 duration = -1 } }
+				else = { add_ruler_modifier = { name = ruler_mana_regen_mod_10 duration = -1 } }
+			}
+			else_if = { limit = { check_variable = { ruler_spell_schools = 9 } } add_ruler_modifier = { name = ruler_mana_regen_mod_9 duration = -1 } }
+			else_if = { limit = { check_variable = { ruler_spell_schools = 8 } } add_ruler_modifier = { name = ruler_mana_regen_mod_8 duration = -1 } }
+			else = { add_ruler_modifier = { name = ruler_mana_regen_mod_7 duration = -1 } }
+		}
+		else_if = { limit = { check_variable = { ruler_spell_schools = 4 } }
+			if = { limit = { check_variable = { ruler_spell_schools = 6 } } add_ruler_modifier = { name = ruler_mana_regen_mod_6 duration = -1 } }
+			else_if = { limit = { check_variable = { ruler_spell_schools = 5 } } add_ruler_modifier = { name = ruler_mana_regen_mod_5 duration = -1 } }
+			else = { add_ruler_modifier = { name = ruler_mana_regen_mod_4 duration = -1 } }
+		}
+		else_if = { limit = { check_variable = { ruler_spell_schools = 2 } }
+			if = { limit = { check_variable = { ruler_spell_schools = 3 } } add_ruler_modifier = { name = ruler_mana_regen_mod_3 duration = -1 } }
+			else = { add_ruler_modifier = { name = ruler_mana_regen_mod_2 duration = -1 } }
+		}
+		else_if = { limit = { check_variable = { ruler_spell_schools = 1 } } add_ruler_modifier = { name = ruler_mana_regen_mod_1 duration = -1 } }
+
+		set_variable = { which = mana_regen_ruler which = ruler_spell_schools }
+		multiply_variable = { mana_regen_ruler = 0.03 }
+		if = {
+			limit = { ruler_is_witch_king = yes }
+			change_variable = { mana_regen_ruler = 0.28 } #Witch-kings give 0.28 mana regen
+		}
+
+		if = {
+			limit = { any_subject_country = { junior_union_with = ROOT } }
+			every_subject_country = {
+				limit = { junior_union_with = ROOT }
+				generic_calc_spell_levels = { type = ruler }
+				country_event = { id = magic_system.30 }
+			}
+		}
+	}
+
+	option = {
+		name = magic_system.30.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Abort magical advancement Confirm
+	id = magic_system.86
+	title = magic_system.86.t
+	desc = magic_system.86.d
+	picture = BAD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {
+		name = magic_system.86.a
+		ai_chance = { factor = 100 }
+
+		if = {
+			limit = {
+				is_overall_advancing_magic = yes
+				NOT = {
+					has_ruler_flag = in_magic_progress_event
+					has_heir_flag = in_magic_progress_event
+					has_country_flag = in_magic_progress_event
+				}
+			}
+			magic_advancement_abort_all_effect = yes
+		}
+	}
+	
+	option = {
+		name = magic_system.86.b
+		ai_chance = { factor = 0 }
+	}
+}
+
+country_event = { #Hidden event to abort magic advancements, hides the size of the abort effect
+	id = magic_system.99
+	title = magic_system.99.t		
+	desc = magic_system.99.d
+	picture = BIG_BOOK_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+
+	option = {
+		name = magic_system.99.a
+		ai_chance = { factor = 1 }
+
+		magic_advancement_abort_all_effect = yes
+	}
+}
+
+# executed by increase_magic_experience -- gives you both finishing and radiant events
+country_event = { #Magic Advancement Events Handler (Scripted effects are borked so we use events)
+	id = magic_system.100
+	title = magic_system.100.t		
+	desc = magic_system.100.d
+	picture = BIG_BOOK_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	trigger = { NOT = { has_country_flag = magic_project_completed_flag } } #Prevents multiple ticks of XP at once from borking projects
+
+	option = { #Catch-all, in case.
+		name = magic_study_radiant_event
+		ai_chance = { factor = 1 }
+		trigger = {
+			is_advancing_infrastructure = no
+			is_advancing_project = no
+			is_overall_studying_magic = no
+		}
+	}
+	option = { #Study events
+		name = magic_study_sorter
+		trigger = { is_overall_studying_magic = yes }
+		ai_chance = { factor = 1 }
+
+		if = { limit = { has_ruler_flag = magic_study type_advancement_done = { type = ruler } }
+			set_ruler_flag = in_magic_progress_event
+			country_event = { id = magic_study.2 } #Ruler Finishing Event
+		}
+		else_if = { limit = { has_heir_flag = magic_study type_advancement_done = { type = heir } }
+			set_heir_flag = in_magic_progress_event
+			country_event = { id = magic_study.3 } #Heir Finishing Event
+		}
+		else_if = { limit = { has_country_flag = magic_study type_advancement_done = { type = country } }
+			set_country_flag = in_magic_progress_event
+			country_event = { id = magic_study.5 } #Estate Finishing Event
+		}
+		else = { country_event = { id = magic_study.0 } } #study radiant event handler
+	}
+	option = { #For events that happen while you're doing a project
+		name = magic_project_sorter
+		ai_chance = { factor = 1 }
+		trigger = { is_advancing_project = yes }
+
+		if = { #Ending events -- separate effect to accommodate usage outside of the regular gameplay loop
+			limit = { magic_advancement_done = yes } #lichdom so not just country
+			trigger_switch = {
+				on_trigger = has_country_flag
+				magical_fortress_project			= { magic_project_level_up = { project = magical_fortress } }
+				summon_extraplanars_project			= { magic_project_level_up = { project = summon_extraplanars } }
+				orb_of_omniscience_project			= { magic_project_level_up = { project = orb_of_omniscience } }
+				artifact_of_enthrallment_project	= { magic_project_level_up = { project = artifact_of_enthrallment } }
+				battlemage_academy_project			= { magic_project_level_up = { project = battlemage_academy } }
+				theatre_of_simulacra_project		= { magic_project_level_up = { project = theatre_of_simulacra } }
+				lichdom_project						= { magic_project_level_up = { project = lichdom } }
+				homunculus_project					= { magic_project_level_up = { project = homunculus } }
+				magic_project						= { country_event = { id = magic_project.404 } } #Missing entry!
+			}
+		}
+		else = { #In-progress events will get sorted naturally
+			trigger_switch = {
+				on_trigger = has_country_flag
+				magical_fortress_project			= { country_event = { id = magic_project_magical_fortress.0 } }
+				summon_extraplanars_project			= { country_event = { id = magic_project_summon_extraplanars.0 } }
+				orb_of_omniscience_project			= { country_event = { id = magic_project_orb_of_omniscience.0 } }
+				artifact_of_enthrallment_project	= { country_event = { id = magic_project_artifact_of_enthrallment.0 } }
+				battlemage_academy_project			= { country_event = { id = magic_project_battlemage_academy.0 } }
+				theatre_of_simulacra_project		= { country_event = { id = magic_project_theatre_of_simulacra.0 } }
+				lichdom_project						= { country_event = { id = magic_project_lichdom.0 } }
+				homunculus_project					= { country_event = { id = magic_project_homunculus.0 } }
+				magic_project						= { country_event = { id = magic_project.404 } } #Missing entry!
+			}
+		}
+	} 
+	option = { #For events that happen while you're improving infrastructure
+		name = magical_infrastructure_sorter
+		ai_chance = { factor = 1 }
+		trigger = { is_advancing_infrastructure = yes }
+
+		if = { #Finishing event
+			limit = { type_advancement_done = { type = country } }
+			set_country_flag = in_magic_progress_event
+			country_event = { id = magic_project_infrastructure.1 }
+		}
+		else = { country_event = { id = magic_project_infrastructure.0 } } #Radiant events
+	}
+	option = { #Catch-all, in case.
+		name = magic_study_radiant_event
+		ai_chance = { factor = 1 }
+		trigger = {
+			is_advancing_infrastructure = no
+			is_advancing_project = no
+			is_overall_studying_magic = no
+		}
+	}
+}
+
+country_event = { #AI can cast spells
+	id = magic_system.300
+	title = magic_system.300.t
+	desc = magic_system.300.desc
+	picture = MAGES_ESTATE_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	option = {
+		name = magic_system.300.b
+		ai_chance = { factor = 1 }
+
+		#log = "[Root.GetName] is attempting to cast a spell (mana [Root.currentMana.GetValue])"
+
+		random_list = {
+			1 = {
+				trigger = {
+					is_at_war = yes
+					has_cast_war_magic = no
+				}
+				country_event = { id = magic_system.302 } #war magic handler
+			}
+			1 = {
+				trigger = { is_at_war = yes }
+				country_event = { id = magic_system.303 } #magic cast during war that is not war magic
+			}
+			2 = { country_event = { id = magic_system.301 } } #generic spellcasting handler
+		}
+	}
+}
+country_event = { #Generic Spells handler
+	id = magic_system.301
+	title = magic_system.301.t
+	desc = magic_system.301.desc
+	picture = MAGES_ESTATE_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	option = { #Protected Journey
+		name = abjuration_1_protected_journey_spell
+		ai_chance = { factor = 10 }
+		trigger = {
+			abjuration_1_protected_journey_trigger = yes
+
+			has_idea = quest_for_the_new_world
+			num_of_colonists = 1
+		}
+		generic_cast_spell = { school = abjuration level = 1 id = protected_journey }
+		#log = "[Root.GetName] just cast Abjuration 1 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Field of Forbiddance
+		name = abjuration_3_field_of_forbiddance_spell
+		ai_chance = { factor = 40 }
+		trigger = {
+			abjuration_3_field_of_forbiddance_trigger = yes
+
+			mage_tower = 5
+		}
+		generic_cast_spell = { school = abjuration level = 3 id = field_of_forbiddance }
+		#log = "[Root.GetName] just cast Abjuration 3 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Summon Familiars
+		name = conjuration_0_summon_familiars_spell
+		ai_chance = { factor = 10 }
+		trigger = {
+			conjuration_0_summon_familiars_trigger = yes
+
+			check_variable = { ai_magic_experience = -600 }
+		}
+		generic_cast_spell = { school = conjuration level = 0 id = summon_familiars }
+		#log = "[Root.GetName] just cast Conjuration 0 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Aid Construction
+		name = conjuration_2_aid_construction_spell
+		ai_chance = { factor = 20 }
+		trigger = { conjuration_2_aid_construction_trigger = yes }
+		generic_cast_spell = { school = conjuration level = 2 id = aid_construction }
+		#log = "[Root.GetName] just cast Conjuration 2 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Extraplanar Contact
+		name = conjuration_3_extraplanar_contact_spell
+		ai_chance = { factor = 40 }
+		trigger = {
+			conjuration_3_extraplanar_contact_trigger = yes
+
+			check_variable = { ai_magic_experience = -600 }
+		}
+		generic_cast_spell = { school = conjuration level = 3 id = extraplanar_contact }
+		#log = "[Root.GetName] just cast Conjuration 3 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Guidance
+		name = divination_0_guidance_spell
+		ai_chance = { factor = 10 }
+
+		generic_cast_spell = { school = divination level = 0 id = guidance }
+		#log = "[Root.GetName] just cast Divination 0 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Eye for Talent
+		name = divination_1_eye_for_talent_spell
+		ai_chance = { factor = 10 }
+		trigger = {
+			divination_1_eye_for_talent_trigger = yes
+
+			employed_advisor = { is_discounted = no }
+		}
+		generic_cast_spell = { school = divination level = 1 id = eye_for_talent }
+		#log = "[Root.GetName] just cast Divination 1 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Deposit Divination
+		name = divination_1_deposit_divination_spell
+		ai_chance = { factor = 15 }
+		trigger = { divination_1_deposit_divination_trigger = yes }
+		generic_cast_spell = { school = divination level = 1 id = deposit_divination }
+		#log = "[Root.GetName] just cast Divination 1 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Foresight
+		name = divination_3_foresight_spell
+		ai_chance = { factor = 40 }
+		trigger = { divination_3_foresight_trigger = yes }
+		generic_cast_spell = { school = divination level = 3 id = foresight }
+		#log = "[Root.GetName] just cast Divination 3 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Enchanting Embassy
+		name = enchantment_0_enchanting_embassy_spell
+		ai_chance = { factor = 10 }
+		trigger = {
+			enchantment_0_enchanting_embassy_trigger = yes
+
+			is_overall_enchantment_level_2_minimum = no #AI prefer upcast
+		}
+		generic_cast_spell = { school = enchantment level = 0 id = enchanting_embassy }
+		#log = "[Root.GetName] just cast Enchantment 0 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Command Animals
+		name = enchantment_1_command_animals_spell
+		ai_chance = { factor = 15 }
+		trigger = { enchantment_1_command_animals_trigger = yes }
+		generic_cast_spell = { school = enchantment level = 1 id = command_animals }
+		#log = "[Root.GetName] just cast Enchantment 1 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Enchanting Embassy 2
+		name = enchantment_2_enchanting_embassy_2_spell
+		ai_chance = { factor = 20 }
+		trigger = { enchantment_2_enchanting_embassy_2_trigger = yes }
+		generic_cast_spell = { school = enchantment level = 2 id = enchanting_embassy_2 }
+		#log = "[Root.GetName] just cast Enchantment 2 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Tearfall
+		name = evocation_2_tearfall_spell
+		ai_chance = { factor = 4 } #low chance otherwise the AI spams it
+		trigger = { evocation_2_tearfall_trigger = yes }
+		generic_cast_spell = { school = evocation level = 2 id = tearfall }
+		#log = "[Root.GetName] just cast Evocation 2 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Invisibility
+		name = illusion_0_invisibility_spell
+		ai_chance = { factor = 5 }
+		trigger = { illusion_0_invisibility_trigger = yes }
+		generic_cast_spell = { school = illusion level = 0 id = invisibility }
+		#log = "[Root.GetName] just cast Illusion 0 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Bread and Circuses
+		name = illusion_1_bread_and_circuses_spell
+		ai_chance = { factor = 15 }
+		trigger = { illusion_1_bread_and_circuses_trigger = yes }
+		generic_cast_spell = { school = illusion level = 1 id = bread_and_circuses }
+		#log = "[Root.GetName] just cast Illusion 1 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Assimilation Program
+		name = illusion_2_assimilation_program_spell
+		ai_chance = { factor = 20 }
+		trigger = {
+			illusion_2_assimilation_program_trigger = yes
+
+			NOT = { religious_unity = 1 }
+		}
+		generic_cast_spell = { school = illusion level = 2 id = assimilation_program }
+		#log = "[Root.GetName] just cast Illusion 2 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Lead the Crowds
+		name = illusion_3_lead_the_crowds_spell
+		ai_chance = { factor = 30 }
+		trigger = { illusion_3_lead_the_crowds_trigger = yes }
+		generic_cast_spell = { school = illusion level = 3 id = lead_the_crowds }
+		#log = "[Root.GetName] just cast Illusion 3 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Steal Vitality
+		name = necromancy_1_steal_vitality_spell
+		ai_chance = { factor = 10 }
+		trigger = { necromancy_1_steal_vitality_trigger = yes }
+		generic_cast_spell = { school = necromancy level = 1 id = steal_vitality }
+		#log = "[Root.GetName] just cast Necromancy 1 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Speak With Dead
+		name = necromancy_2_speak_with_dead_spell
+		ai_chance = { factor = 30 }
+		trigger = { necromancy_2_speak_with_dead_trigger = yes }
+		generic_cast_spell = { school = necromancy level = 2 id = speak_with_dead }
+		#log = "[Root.GetName] just cast Necromancy 2 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Ghoulish Grandeur
+		name = necromancy_2_ghoulish_grandeur_spell
+		ai_chance = { factor = 20 }
+		trigger = {
+			necromancy_2_ghoulish_grandeur_trigger = yes
+
+			treasury = 1500
+			any_owned_province = {
+				has_great_project = { type = any tier = 0 }
+				NOT = { has_great_project = { type = any tier = 3 } }
+			}
+		}
+		generic_cast_spell = { school = necromancy level = 2 id = ghoulish_grandeur }
+		#log = "[Root.GetName] just cast Necromancy 2 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Undead Army
+		name = necromancy_3_undead_army_spell
+		ai_chance = { factor = 40 }
+		trigger = {
+			necromancy_3_undead_army_trigger = yes
+
+			REB = { NOT = { check_variable = { num_undead_mil = 20 } } } #1/40 of tags
+		}
+		REB = { change_variable = { num_undead_mil = 1 } }
+
+		generic_cast_spell = { school = necromancy level = 3 id = undead_army }
+		#log = "[Root.GetName] just cast Necromancy 3 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Plant Growth
+		name = transmutation_1_plant_growth_spell
+		ai_chance = { factor = 10 }
+		trigger = { transmutation_1_plant_growth_trigger = yes }
+		generic_cast_spell = { school = transmutation level = 1 id = plant_growth }
+		#log = "[Root.GetName] just cast Transmutation 1 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Transmute to Gold
+		name = transmutation_2_transmute_to_gold_spell
+		ai_chance = { factor = 20 }
+		trigger = {
+			transmutation_2_transmute_to_gold_trigger = yes
+
+			NOT = { gold = 5 }
+		}
+		generic_cast_spell = { school = transmutation level = 2 id = transmute_to_gold }
+		#log = "[Root.GetName] just cast Transmutation 2 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Reshape Terrain
+		name = transmutation_2_reshape_terrain_spell
+		ai_chance = { factor = 15 }
+		trigger = { transmutation_2_reshape_terrain_trigger = yes }
+		generic_cast_spell = { school = transmutation level = 2 id = reshape_terrain }
+		#log = "[Root.GetName] just cast Transmutation 2 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Rite of Conception
+		name = transmutation_3_rite_of_conception_spell
+		ai_chance = { factor = 30 }
+		trigger = { transmutation_3_rite_of_conception_trigger = yes }
+		generic_cast_spell = { school = transmutation level = 3 id = rite_of_conception }
+		#log = "[Root.GetName] just cast Transmutation 3 0 (mana [Root.currentMana.GetValue])"
+	}
+}
+country_event = { #War Magic handler
+	id = magic_system.302
+	title = magic_system.302.t
+	desc = magic_system.302.desc
+	picture = MAGES_ESTATE_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	option = { #Combat Ward
+		name = abjuration_0_combat_ward_spell
+		ai_chance = { factor = 5 }
+		trigger = { abjuration_0_combat_ward_trigger = yes }
+		generic_cast_spell = { school = abjuration level = 0 id = combat_ward war = yes }
+		#log = "[Root.GetName] just cast Abjuration 0 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Mage Armour
+		name = abjuration_2_mage_armor_spell
+		ai_chance = { factor = 20 }
+		trigger = { abjuration_2_mage_armor_trigger = yes }
+		generic_cast_spell = { school = abjuration level = 2 id = mage_armor war = yes }
+		#log = "[Root.GetName] just cast Abjuration 2 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Manipulated Fortune
+		name = divination_2_manipulated_fortune_spell
+		ai_chance = { factor = 20 } #doubt AI knows how to use this one
+		trigger = {
+			divination_2_manipulated_fortune_trigger = yes
+
+			at_least_magic_project_level = { project = orb_of_omniscience level = 3 }
+		}
+		generic_cast_spell = { school = divination level = 2 id = manipulated_fortune war = yes }
+		#log = "[Root.GetName] just cast Divination 2 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Mass Charm
+		name = enchantment_1_mass_charm_spell
+		ai_chance = { factor = 10 }
+		trigger = {
+			enchantment_1_mass_charm_trigger = yes
+
+			is_overall_enchantment_level_1 = yes #AI prefer upcast
+		}
+		generic_cast_spell = { school = enchantment level = 1 id = mass_charm war = yes }
+		#log = "[Root.GetName] just cast Enchantment 1 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Mass Charm 2
+		name = enchantment_2_mass_charm_2_spell
+		ai_chance = { factor = 20 }
+		trigger = { enchantment_2_mass_charm_2_trigger = yes }
+		generic_cast_spell = { school = enchantment level = 2 id = mass_charm_2 war = yes }
+		#log = "[Root.GetName] just cast Enchantment 2 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Shock and Awe
+		name = evocation_1_shock_and_awe_spell
+		ai_chance = { factor = 10 }
+		trigger = {
+			evocation_1_shock_and_awe_trigger = yes
+
+			is_overall_evocation_level_3 = no #AI prefers upcasting
+		}
+		generic_cast_spell = { school = evocation level = 1 id = shock_and_awe war = yes }
+		#log = "[Root.GetName] just cast Evocation 1 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Flaming Munitions
+		name = evocation_1_flaming_munitions_spell
+		ai_chance = { factor = 10 }
+		trigger = {
+			evocation_1_flaming_munitions_trigger = yes
+
+			is_overall_evocation_level_3 = no #AI prefers upcasting
+			num_of_artillery = 20
+		}
+		generic_cast_spell = { school = evocation level = 1 id = flaming_munitions war = yes }
+		#log = "[Root.GetName] just cast Evocation 1 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Elemental Fury
+		name = evocation_3_elemental_fury_spell
+		ai_chance = { factor = 40 }
+		trigger = { evocation_3_elemental_fury_trigger = yes }
+		generic_cast_spell = { school = evocation level = 3 id = elemental_fury war = yes }
+		#log = "[Root.GetName] just cast Evocation 3 0 (mana [Root.currentMana.GetValue])"
+	}
+}
+country_event = { #Magic cast during war that is not war magic
+	id = magic_system.303
+	title = magic_system.303.t
+	desc = magic_system.303.desc
+	picture = MAGES_ESTATE_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	option = { #Summon Animals
+		name = conjuration_1_summon_animals_spell
+		ai_chance = { factor = 10 }
+		trigger = {
+			conjuration_1_summon_animals_trigger = yes
+
+			NOT = { manpower_percentage = 0.5 }
+		}
+		generic_cast_spell = { school = conjuration level = 1 id = summon_animals }
+		#log = "[Root.GetName] just cast Conjuration 1 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Conjure Supplies
+		name = conjuration_1_conjure_supplies_spell
+		ai_chance = { factor = 10 }
+		trigger = { conjuration_1_conjure_supplies_trigger = yes }
+		generic_cast_spell = { school = conjuration level = 1 id = conjure_supplies }
+		#log = "[Root.GetName] just cast Conjuration 1 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Summon Elementals
+		name = conjuration_2_summon_elementals_spell
+		ai_chance = { factor = 20 }
+		trigger = {
+			conjuration_2_summon_elementals_trigger = yes
+
+			NOT = { manpower_percentage = 0.5 }
+		}
+		generic_cast_spell = { school = conjuration level = 2 id = summon_elementals }
+		#log = "[Root.GetName] just cast Conjuration 2 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Scry
+		name = divination_2_scry_spell
+		ai_chance = { factor = 20 }
+		trigger = { divination_2_scry_trigger = yes }
+		generic_cast_spell = { school = divination level = 2 id = scry }
+		#log = "[Root.GetName] just cast Divination 2 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Fear and Loathing
+		name = illusion_1_fear_and_loathing_spell
+		ai_chance = { factor = 10 }
+		trigger = { illusion_1_fear_and_loathing_trigger = yes }
+		generic_cast_spell = { school = illusion level = 1 id = fear_and_loathing }
+		#log = "[Root.GetName] just cast Illusion 1 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Shadows in the Night
+		name = illusion_2_shadows_in_the_night_spell
+		ai_chance = { factor = 20 }
+		trigger = { illusion_2_shadows_in_the_night_trigger = yes }
+		generic_cast_spell = { school = illusion level = 2 id = shadows_in_the_night }
+		#log = "[Root.GetName] just cast Illusion 2 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #False Life
+		name = necromancy_0_false_life_spell
+		ai_chance = { factor = 10 }
+		trigger = { necromancy_0_false_life_trigger = yes }
+		generic_cast_spell = { school = necromancy level = 0 id = false_life }
+		#log = "[Root.GetName] just cast Necromancy 0 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Longstrider
+		name = transmutation_0_longstrider_spell
+		ai_chance = { factor = 5 }
+		trigger = { transmutation_0_longstrider_trigger = yes }
+		generic_cast_spell = { school = transmutation level = 0 id = longstrider }
+		#log = "[Root.GetName] just cast Transmutation 0 0 (mana [Root.currentMana.GetValue])"
+	}
+}
+country_event = { #Siege magic handler
+	id = magic_system.304
+	title = magic_system.304.t
+	desc = magic_system.304.desc
+	picture = MAGES_ESTATE_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	option = { #Protective Ward
+		name = abjuration_1_ward_spell
+		ai_chance = { factor = 10 }
+		trigger = { abjuration_1_ward_trigger = { menu = yes } }
+
+		random_owned_province = {
+			limit = {
+				fort_level = 1
+				controlled_by = ROOT
+				has_siege = yes
+				hidden_trigger = { unit_in_battle = no } #Reported cases of simultaneous sieges and battles
+				abjuration_1_ward_local_trigger = yes
+			}
+			ROOT = { generic_cast_spell = { school = abjuration level = 1 id = ward } }
+		}
+		#log = "[Root.GetName] just cast Abjuration 1 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Mass Ward
+		name = abjuration_2_mass_ward_spell
+		ai_chance = { factor = 20 }
+		trigger = {
+			abjuration_2_mass_ward_trigger = yes
+
+			num_of_owned_provinces_with = {
+				value = 4
+				fort_level = 1
+			}
+		}
+		generic_cast_spell = { school = abjuration level = 2 id = mass_ward }
+		#log = "[Root.GetName] just cast Abjuration 2 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Dominate to Surrender
+		name = enchantment_3_dominate_to_surrender_spell
+		ai_chance = { factor = 30 }
+		trigger = { enchantment_3_dominate_to_surrender_trigger = { menu = yes } }
+
+		random_province = {
+			limit = {
+				fort_level = 1
+				siege_interface_siege_trigger = yes
+			}
+			ROOT = { generic_cast_spell = { school = enchantment level = 3 id = dominate_to_surrender } }
+		}
+		#log = "[Root.GetName] just cast Enchantment 3 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Fireball
+		name = evocation_0_fireball_spell
+		ai_chance = { factor = 5 }
+		trigger = {
+			evocation_0_fireball_trigger = { menu = yes }
+
+			is_overall_evocation_level_2_minimum = no #AI prefers upcasting
+		}
+
+		random_province = {
+			limit = {
+				fort_level = 1
+				siege_interface_siege_trigger = yes
+			}
+			ROOT = { generic_cast_spell = { school = evocation level = 0 id = fireball } }
+		}
+		#log = "[Root.GetName] just cast Evocation 0 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Meteor Swarm
+		name = evocation_2_meteor_swarm_spell
+		ai_chance = { factor = 20 }
+		trigger = { evocation_2_meteor_swarm_trigger = { menu = yes } }
+
+		random_province = {
+			limit = {
+				fort_level = 1
+				siege_interface_siege_trigger = yes
+				evocation_2_meteor_swarm_local_trigger = yes
+			}
+			ROOT = { generic_cast_spell = { school = evocation level = 2 id = meteor_swarm } }
+		}
+		#log = "[Root.GetName] just cast Evocation 2 0 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Contagion
+		name = necromancy_1_contagion_spell
+		ai_chance = { factor = 10 }
+		trigger = { necromancy_1_contagion_trigger = { menu = yes } }
+		random_owned_province = {
+			limit = {
+				fort_level = 1
+				controlled_by = ROOT
+				has_siege = yes
+				necromancy_1_contagion_local_trigger = yes
+			}
+			ROOT = { generic_cast_spell = { school = necromancy level = 1 id = contagion } }
+		}
+		#log = "[Root.GetName] just cast Necromancy 1 1 (mana [Root.currentMana.GetValue])"
+	}
+
+	option = { #Mass Enlarge
+		name = transmutation_1_mass_enlarge_spell
+		ai_chance = { factor = 5 }
+		trigger = { transmutation_1_mass_enlarge_trigger = { menu = yes } }
+
+		random_province = {
+			limit = {
+				fort_level = 1
+				siege_interface_siege_trigger = yes
+				transmutation_1_mass_enlarge_local_trigger = yes
+			}
+			ROOT = { generic_cast_spell = { school = transmutation level = 1 id = mass_enlarge } }
+		}
+		#log = "[Root.GetName] just cast Transmutation 1 1 (mana [Root.currentMana.GetValue])"
+	}
+}
+
+country_event = { #AI can do advancements
+	id = magic_system.350
+	title = magic_system.350.t
+	desc = magic_system.350.desc
+	picture = MAGES_ESTATE_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	option = { #have enough xp, do the next advancement
+		name = magic_system.350.b
+		ai_chance = { factor = 1 }
+
+		#log = "[Root.GetName] is attempting to level up (xp [Root.ai_magic_experience.GetValue])"
+
+		generic_calc_spell_levels = { type = country }
+
+		if = { #upgrade infrastructure is top priority
+			limit = {
+				check_variable = { which = country_spell_schools which = max_estate_spell_levels_val }
+				NOT = { has_country_modifier = magical_infrastructure_4 }
+			}
+			ai_pay_for_xp = { infrastructure = yes }
+			magical_infrastructure_level_up = yes
+			#log = "[Root.GetName] leveled up Infrastructure (xp [Root.ai_magic_experience.GetValue])"
+		}
+		else = {
+			random_list = { #AI will NOT naturally become a lich
+				3 = {
+					trigger = { NOT = { check_variable = { which = country_spell_schools which = max_estate_spell_levels_val } } }
+					ai_random_study = { type = country }
+					#log = "[Root.GetName] leveled up country magic (xp [Root.ai_magic_experience.GetValue])"
+				}
+				2 = {
+					trigger = { ruler_is_powerful_mage = yes is_lesser_in_union = no }
+					ai_random_study = { type = ruler }
+					#log = "[Root.GetName] leveled up ruler magic (xp [Root.ai_magic_experience.GetValue])"
+				}
+				1 = {
+					trigger = { heir_is_powerful_mage = yes is_lesser_in_union = no }
+					ai_random_study = { type = heir }
+					#log = "[Root.GetName] leveled up heir magic (xp [Root.ai_magic_experience.GetValue])"
+				}
+				1 = {
+					trigger = { can_upgrade_project = { project = magical_fortress school = abjuration } }
+					modifier = { factor = 2 is_estate_abjuration_level_2 = yes }
+					modifier = { factor = 4 is_estate_abjuration_level_3 = yes }
+					ai_pay_for_xp = { project = magical_fortress school = abjuration }
+					magic_project_level_up = { project = magical_fortress }
+					#log = "[Root.GetName] leveled up project magical fortress (xp [Root.ai_magic_experience.GetValue])"
+				}
+				1 = {
+					trigger = { can_upgrade_project = { project = summon_extraplanars school = conjuration } }
+					modifier = { factor = 2 is_estate_conjuration_level_2 = yes }
+					modifier = { factor = 4 is_estate_conjuration_level_3 = yes }
+					ai_pay_for_xp = { project = summon_extraplanars school = conjuration }
+					magic_project_level_up = { project = summon_extraplanars }
+					#log = "[Root.GetName] leveled up project summon extraplanars (xp [Root.ai_magic_experience.GetValue])"
+				}
+				1 = {
+					trigger = { can_upgrade_project = { project = orb_of_omniscience school = divination } }
+					modifier = { factor = 2 is_estate_divination_level_2 = yes }
+					modifier = { factor = 4 is_estate_divination_level_3 = yes }
+					ai_pay_for_xp = { project = orb_of_omniscience school = divination }
+					magic_project_level_up = { project = orb_of_omniscience }
+					#log = "[Root.GetName] leveled up project orb of omniscience (xp [Root.ai_magic_experience.GetValue])"
+				}
+				1 = {
+					trigger = { can_upgrade_project = { project = artifact_of_enthrallment school = enchantment } }
+					modifier = { factor = 2 is_estate_enchantment_level_2 = yes }
+					modifier = { factor = 4 is_estate_enchantment_level_3 = yes }
+					ai_pay_for_xp = { project = artifact_of_enthrallment school = enchantment }
+					magic_project_level_up = { project = artifact_of_enthrallment }
+					#log = "[Root.GetName] leveled up project artifact of enthrallment (xp [Root.ai_magic_experience.GetValue])"
+				}
+				1 = {
+					trigger = { can_upgrade_project = { project = battlemage_academy school = evocation } }
+					modifier = { factor = 2 is_estate_evocation_level_2 = yes }
+					modifier = { factor = 4 is_estate_evocation_level_3 = yes }
+					ai_pay_for_xp = { project = battlemage_academy school = evocation }
+					random_list = {
+						1 = {
+							trigger = { NOT = { has_country_modifier = battlemage_academy_outhouse_1 has_country_modifier = battlemage_academy_outhouse_2 } }
+							set_country_flag = battlemage_academy_outhouse_flag
+						}
+						1 = {
+							trigger = { NOT = { has_country_modifier = battlemage_academy_graffiti_1 has_country_modifier = battlemage_academy_graffiti_2 } }
+							set_country_flag = battlemage_academy_graffiti_flag
+						}
+						1 = {
+							trigger = { NOT = { has_country_modifier = battlemage_academy_underwear_1 has_country_modifier = battlemage_academy_underwear_2 } }
+							set_country_flag = battlemage_academy_underwear_flag
+						}
+					}
+					magic_project_level_up = { project = battlemage_academy }
+					#log = "[Root.GetName] leveled up project battlemage academy (xp [Root.ai_magic_experience.GetValue])"
+				}
+				1 = {
+					trigger = { can_upgrade_project = { project = theatre_of_simulacra school = illusion } }
+					modifier = { factor = 2 is_estate_illusion_level_2 = yes }
+					modifier = { factor = 4 is_estate_illusion_level_3 = yes }
+					ai_pay_for_xp = { project = theatre_of_simulacra school = illusion }
+					magic_project_level_up = { project = theatre_of_simulacra }
+					#log = "[Root.GetName] leveled up project theatre of simulacra (xp [Root.ai_magic_experience.GetValue])"
+				}
+				1 = {
+					trigger = { can_upgrade_project = { project = homunculus school = transmutation } }
+					modifier = { factor = 2 is_estate_transmutation_level_2 = yes }
+					modifier = { factor = 4 is_estate_transmutation_level_3 = yes }
+					ai_pay_for_xp = { project = homunculus school = transmutation }
+					magic_project_level_up = { project = homunculus }
+					#log = "[Root.GetName] leveled up project homunculus (xp [Root.ai_magic_experience.GetValue])"
+				}
+			}
+		}
+	}
+}

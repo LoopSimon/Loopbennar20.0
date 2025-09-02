@@ -1,0 +1,1249 @@
+namespace = magic_spell
+
+###### This is the place for events that are either fired by spells or are related to spells
+###### If it isn't a spell thing (i.e. it's a project, a study event, etc.) it goes elsewhere
+###### Example: Undead Army events are here, because Undead Army is a spell
+###### Example: The events to remove hired Conjuration mercs go here
+
+
+############################
+### ABJURATION (100-199) ###
+############################
+
+#############################
+### CONJURATION (200-299) ###
+#############################
+
+country_event = { #Remove temporary mercs from conjuration level 1
+	id = magic_spell.202
+	title = magic_spell.202.t
+	desc = magic_spell.202.d
+	picture = EP_MANIHOLE_HELMET_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = { any_hired_mercenary_company = { template = merc_feral_animals } }
+
+	option = {
+		name = magic_spell.202.a
+		ai_chance = { factor = 1 }
+
+		random_hired_mercenary_company = {
+			limit = { template = merc_feral_animals }
+			disband_mercenary_company = THIS
+		}
+		clr_country_flag = extended_conj_1
+	}
+
+	option = {
+		name = magic_spell.202.b
+		ai_chance = { factor = 0 }
+		trigger = { NOT = { has_country_flag = extended_conj_1 } }
+
+		if = {
+			limit = { conjuration_1_summon_animals_trigger = { player = yes } }
+			generic_cast_spell = { school = conjuration level = 1 id = summon_animals }
+			set_country_flag = extended_conj_1
+		}
+		else = {
+			custom_tooltip = not_enough_mana_tt
+			random_hired_mercenary_company = {
+				limit = { template = merc_feral_animals }
+				disband_mercenary_company = THIS
+			}
+		}
+	}
+}
+country_event = { #Remove temporary mercs from conjuration level 2
+	id = magic_spell.203
+	title = magic_spell.203.t
+	desc = magic_spell.202.d
+	picture = EP_MANIHOLE_HELMET_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = { any_hired_mercenary_company = { template = merc_leashed_elementals } }
+
+	option = {
+		name = magic_spell.202.a
+		ai_chance = { factor = 1 }
+
+		random_hired_mercenary_company = {
+			limit = { template = merc_leashed_elementals }
+			disband_mercenary_company = THIS
+		}
+		clr_country_flag = extended_conj_2
+	}
+
+	option = {
+		name = magic_spell.202.b
+		ai_chance = { factor = 0 }
+		trigger = { NOT = { has_country_flag = extended_conj_2 } }
+
+		if = {
+			limit = { conjuration_2_summon_elementals_trigger = { player = yes } }
+			generic_cast_spell = { school = conjuration level = 2 id = summon_elementals }
+			set_country_flag = extended_conj_2
+		}
+		else = {
+			custom_tooltip = not_enough_mana_tt
+			random_hired_mercenary_company = {
+				limit = { template = merc_leashed_elementals }
+				disband_mercenary_company = THIS
+			}
+		}
+	}
+}
+
+############################
+### DIVINATION (300-399) ###
+############################
+
+
+country_event = { #Eye for Talent
+	id = magic_spell.300
+	title = magic_spell.300.title
+	desc = magic_spell.300.desc
+	picture = COURT_INTRIGUE_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			randnum_effect = {
+				max = 3
+				case2 = " set_country_flag = adm_advisors "
+				case1 = " set_country_flag = dip_advisors "
+			}
+			if = {
+				limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 1 } }
+				set_country_flag = advisor_1
+				set_country_flag = advisor_2
+				set_country_flag = advisor_3
+				set_country_flag = advisor_4
+				set_country_flag = advisor_5
+				set_country_flag = advisor_6
+				set_country_flag = advisor_7
+			}
+			else = {
+				randnum_effect = {
+					max = 7
+					case7 = "
+						if = {
+							limit = {
+								OR = {
+									NOT = { has_country_flag = dip_advisors }
+									colony = 1
+								}
+							}
+							set_country_flag = advisor_1
+						}
+						else = { randnum_recalc = { max = 6 } }
+					"
+					case6 = "
+						if = {
+							limit = {
+								OR = {
+									NOT = { has_country_flag = dip_advisors }
+									AND = {
+										num_of_colonists = 1
+										num_of_ports = 1
+									}
+								}
+							}
+							set_country_flag = advisor_2
+						}
+						else = { randnum_recalc = { max = 5 } }
+					"
+					case5 = "
+						if = {
+							limit = {
+								OR = {
+									NOT = { has_country_flag = dip_advisors }
+									AND = {
+										primitives = no
+										num_of_ports = 1
+									}
+								}
+							}
+							set_country_flag = advisor_3
+						}
+						else = { randnum_recalc = { max = 4 } }
+					"
+					case4 = " set_country_flag = advisor_4 "
+					case3 = " set_country_flag = advisor_5 "
+					case2 = " set_country_flag = advisor_6 "
+					case1 = " set_country_flag = advisor_7 "
+				}
+			}
+		}
+	}
+
+	after = { hidden_effect = { clr_country_flag = adm_advisors clr_country_flag = dip_advisors clr_country_flag = advisor_1 clr_country_flag = advisor_2 clr_country_flag = advisor_3 clr_country_flag = advisor_4 clr_country_flag = advisor_5 clr_country_flag = advisor_6 clr_country_flag = advisor_7 } }
+
+	option = {
+		name = magic_spell.300.a
+		ai_chance = { factor = 1 }
+		trigger = { has_country_flag = advisor_1 }
+
+		divination_1_eye_for_talent_hire_effect = { adm = inquisitor dip = colonial_governor mil = army_organiser }
+	}
+	option = {
+		name = magic_spell.300.b
+		ai_chance = { factor = 1 }
+		trigger = { has_country_flag = advisor_2 }
+
+		divination_1_eye_for_talent_hire_effect = { adm = artist dip = navigator mil = army_reformer }
+	}
+	option = {
+		name = magic_spell.300.c
+		ai_chance = { factor = 1 }
+		trigger = { has_country_flag = advisor_3 }
+
+		divination_1_eye_for_talent_hire_effect = { adm = master_of_mint dip = naval_reformer mil = commandant }
+	}
+	option = {
+		name = magic_spell.300.d
+		ai_chance = { factor = 1 }
+		trigger = { has_country_flag = advisor_4 }
+
+		divination_1_eye_for_talent_hire_effect = { adm = natural_scientist dip = diplomat mil = grand_captain }
+	}
+	option = {
+		name = magic_spell.300.e
+		ai_chance = { factor = 1 }
+		trigger = { has_country_flag = advisor_5 }
+
+		divination_1_eye_for_talent_hire_effect = { adm = philosopher dip = statesman mil = recruitmaster }
+	}
+	option = {
+		name = magic_spell.300.f
+		ai_chance = { factor = 1 }
+		trigger = { has_country_flag = advisor_6 }
+
+		divination_1_eye_for_talent_hire_effect = { adm = theologian dip = spymaster mil = fortification_expert }
+	}
+	option = {
+		name = magic_spell.300.g
+		ai_chance = { factor = 1 }
+		trigger = { has_country_flag = advisor_7 }
+
+		divination_1_eye_for_talent_hire_effect = { adm = treasurer dip = trader mil = quartermaster }
+	}
+}
+
+#############################
+### ENCHANTMENT (400-499) ###
+#############################
+
+country_event = { #Enchantment consequences handler
+	id = magic_spell.400
+	title = magic_spell.400.t
+	desc = magic_spell.400.desc
+	picture = ACCUSATION_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		is_overall_enchantment_level_1_minimum = yes
+		OR = {
+			has_country_modifier = enchantment_1_mass_charm_mod
+			has_country_modifier = enchantment_2_mass_charm_2_mod
+			has_country_modifier = enchantment_3_dominate_to_surrender_tracker_mod
+		}
+		NOT = { has_country_modifier = magic_enchantment_consequences_cooldown_mod }
+	}
+
+	immediate = { hidden_effect = { add_country_modifier = { name = magic_enchantment_consequences_cooldown_mod duration = 1825 hidden = yes } } }
+
+	option = {
+		name = magic_spell.400.a
+		ai_chance = { factor = 1 }
+
+		random_list = {
+			1 = {}
+			10 = {
+				trigger = { NOT = { has_country_modifier = magic_enchantment_hysteria } }
+				country_event = { id = magic_spell.401 }
+			}
+			10 = {
+				trigger = {
+					ruler_is_powerful_mage = yes
+					has_estate = estate_mages
+					NOT = { has_estate_influence_modifier = { estate = estate_mages modifier = EST_VAL_MAGES_PUNISHED } }
+					OR = { #Your ruler is better than your estate at enchantment
+						AND = {
+							is_ruler_enchantment_level_3 = yes
+							is_estate_enchantment_level_3 = no
+						}
+						AND = {
+							is_ruler_enchantment_level_2 = yes
+							is_estate_enchantment_level_2_minimum = no
+						}
+						AND = {
+							is_ruler_enchantment_level_1 = yes
+							is_estate_enchantment_level_0 = yes
+						}
+					}
+				}
+				country_event = { id = magic_spell.402 }
+			}
+		}
+	}
+}
+
+country_event = { #Too much enchanting malus accusation
+	id = magic_spell.401
+	title = magic_spell.401.t
+	desc = magic_spell.401.d
+	picture = ACCUSATION_eventPicture
+
+	is_triggered_only = yes
+	
+	option = {	#Maintain the Masquerade
+		name = "magic_spell.401.a"
+		trigger = { is_overall_enchantment_level_3 = yes }
+		highlight = yes
+		
+		add_dip_power = -100
+		increase_witch_king_points_medium = { level = enchantment_level_3 }
+	}
+	
+	option = {	#Deny such accusations!
+		name = "magic_spell.401.b"
+		
+		add_prestige = -20
+		increase_witch_king_points_medium = { level = enchantment_level_1_minimum }
+		add_country_modifier = {
+			name = magic_enchantment_hysteria
+			duration = 3650
+		}
+	}
+}
+
+country_event = { # Disloyal mages estate blackmails over enchantment
+	id =  magic_spell.402
+	title =  magic_spell.402.t
+	desc = {
+		trigger = {
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 60
+			}
+		}
+		desc = magic_spell.402.dloyal
+	}
+	desc = {
+		trigger = {
+			NOT = {
+				estate_loyalty = {
+					estate = estate_mages
+					loyalty = 60
+				}
+			}
+		}
+		desc = magic_spell.402.d
+	}
+	picture = ACCUSATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {	#Bribe the Mages
+		name = "magic_spell.402.a"
+		ai_chance = { factor = 1 }
+		
+		add_years_of_income = -0.5
+		increase_ruler_witch_king_points = { size = small }
+	}
+	
+	option = {	#Refuse
+		name = "magic_spell.402.b"
+		ai_chance = { factor = 1 }
+		
+		add_prestige = -15
+		
+		increase_ruler_witch_king_points = { size = small }
+		add_country_modifier = {
+			name = magic_enchantment_hysteria
+			duration = 3650
+		}
+	}
+	
+	option = {	#Punish the Mages Estate for disloyalty
+		name = "magic_spell.402.c"
+		ai_chance = { factor = 1 }
+
+		add_mil_power = -50
+		increase_ruler_witch_king_points = { size = medium }
+		add_estate_mages_loyalty_effect = yes
+		add_estate_influence_modifier = {
+			estate = estate_mages
+			desc = EST_VAL_MAGES_PUNISHED
+			influence = -20
+			duration = 5475
+		}
+	}
+}
+
+country_event = { #Dominate to Surrender notification
+	id = magic_spell.405
+	title = magic_spell.405.t
+	desc = magic_spell.405.desc
+	picture = PIRATES_CAPTURED_eventPicture
+	goto = dominated_province
+	
+	is_triggered_only = yes
+
+	option = {
+		name = magic_spell.405.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+###########################
+### EVOCATION (500-599) ###
+###########################
+
+country_event = { #Tearfall Notif
+	id = magic_spell.500
+	title = magic_spell.500.t
+	desc = magic_spell.500.d
+	picture = COURT_INTRIGUE_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					NOT = {
+						has_terrain = cavern
+						has_terrain = dwarven_road
+						province_group = hold_province
+						trade_goods = damestear
+					}
+				}
+				save_event_target_as = damestear_province
+			}
+		}
+	}
+
+	option = { #Tearfall!
+		name = magic_spell.500.a
+		ai_chance = { factor = 1 }
+		goto = damestear_province
+		trigger = { has_saved_event_target = damestear_province }
+
+		if = {
+			limit = { has_country_modifier = witch_king_command_modifier }
+			event_target:damestear_province = {
+				save_trade_goods = yes
+				change_trade_goods = damestear
+				add_devastation = 15
+				set_province_flag = summoned_damestear
+				province_event = { id = damestear.5 days = 3650 random = 3650 }
+			}
+		}
+		else = {
+			event_target:damestear_province = {
+				save_trade_goods = yes
+				change_trade_goods = damestear
+				add_devastation = 15
+				set_province_flag = summoned_damestear
+				province_event = { id = damestear.5 days = 3650 random = 3650 }
+			}
+		}
+	}
+
+	option = { #Where did that go?
+		name = magic_spell.500.b
+		ai_chance = { factor = 1 }
+		trigger = { NOT = { has_saved_event_target = damestear_province } }
+
+		custom_tooltip = tearfall_lost_province_tt
+		add_years_of_income = 0.1
+	}
+}
+
+country_event = { #Tearfall hidden event
+	id = magic_spell.501
+	title = magic_spell.501.t
+	desc = magic_spell.501.desc
+	picture = FIREBALL_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = magic_spell.501.a
+		ai_chance = { factor = 1 }
+
+		capital_scope = { add_province_triggered_modifier = tearfall_randomization_ptm }
+	}
+}
+
+country_event = { #Fireball notification
+	id = magic_spell.502
+	title = magic_spell.502.t
+	desc = magic_spell.502.desc
+	picture = FIREBALL_eventPicture
+	goto = fireball_province
+
+	is_triggered_only = yes
+
+	option = {
+		name = magic_spell.502.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Meteor Swarm notification
+	id = magic_spell.503
+	title = magic_spell.503.t
+	desc = magic_spell.503.desc
+	picture = COMET_SIGHTED_eventPicture
+	goto = meteor_province
+
+	is_triggered_only = yes
+
+	option = {
+		name = magic_spell.503.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+##########################
+### ILLUSION (600-699) ###
+##########################
+
+country_event = { #Shadows in the Night
+	id = magic_spell.600
+	title = magic_spell.600.t
+	desc = magic_spell.600.desc
+	picture = ASSASSINATION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = magic_spell.600.a
+		ai_chance = { factor = 1 }
+		
+		tooltip = { add_country_modifier = { name = illusion_2_shadows_in_the_night_mod duration = 1825 } }
+	}
+}
+
+country_event = { #Fear and Loathing
+	id = magic_spell.601
+	title = magic_spell.601.t
+	desc = magic_spell.601.desc
+	picture = PANIC_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = magic_spell.601.a
+		ai_chance = { factor = 1 }
+		
+		if = {
+			limit = { FROM = { has_country_flag = witch_king_armies } }
+			tooltip = { capital_scope = { magical_abomination = 1 } }
+		}
+		else = { tooltip = { capital_scope = { anti_tax_rebels = 1 } } }
+	}
+}
+
+############################
+### NECROMANCY (700-799) ###
+############################
+
+country_event = { #Undead Army gains manpower on winning battles
+	id =  magic_spell.700
+	title =  magic_spell.700.t
+	desc =  magic_spell.700.d
+	picture = FAMINE_eventPicture
+	
+	hidden = yes
+	is_triggered_only = yes
+	
+	trigger = { check_variable = { raise_undead = 3001 } } #Don't raise if it was a nothing battle
+	
+	option = {	#Rise!
+		name = magic_spell.700.a
+		ai_chance = { factor = 1 }
+
+		divide_variable = { raise_undead = 3 } #33% of the dead are raised
+		round_variable = { #truncate decimal portion
+			which = raise_undead
+			value = -1
+		}
+		
+		if = {
+			limit = { has_country_flag = hide_necromancy_on_battle }
+			divide_variable = { raise_undead = 1000 }
+			var_effect_granular = { effect = add_manpower var = raise_undead sign = + }
+		}
+		else = {
+			country_event = { id = magic_spell.701 }
+		}
+	}
+}
+
+country_event = { #Undead Army Manpower notif event
+	id =  magic_spell.701
+	title =  magic_spell.701.t
+	desc =  magic_spell.701.d
+	picture = FAMINE_eventPicture
+	
+	is_triggered_only = yes
+
+	after = {
+		hidden_effect = {
+			divide_variable = { raise_undead = 1000 }
+			var_effect_granular = { effect = add_manpower var = raise_undead sign = + }
+		}
+	}
+
+	option = {	#Rise!
+		name = magic_spell.701.a
+		
+		custom_tooltip = magic_spell_raise_undead_tt
+	}
+	
+	option = {	#Rise! (But hide these pop-ups from now on)
+		name = magic_spell.701.b
+		
+		custom_tooltip = magic_spell_raise_undead_tt
+		hidden_effect = { set_country_flag = hide_necromancy_on_battle }
+	}
+}
+
+country_event = { #Ruler dies and they gave you access to undead army
+	id =  magic_spell.702
+	title = magic_spell.702.t
+	desc =  magic_spell.702.d
+	picture = FAMINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_cast_undead_army = yes
+		NOT = { has_country_flag = rakkaz_undead_army_not_collapses }
+		NOT = { is_overall_necromancy_level_3 = yes }
+	}
+
+	immediate = {
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					infantry_in_province = ROOT
+					NOT = { has_province_modifier = aw_zombies_1 }
+					NOT = { has_province_modifier = aw_zombies_2 }
+					NOT = { has_province_modifier = aw_zombies_3 }
+				}
+				set_province_flag = has_zombies_flag #prevents disband cheese
+
+				if = {
+					limit = { num_of_units_in_province = { who = ROOT type = infantry amount = 80 } }
+					set_province_flag = zombies_doomstack_flag
+				}
+				else_if = {
+					limit = { num_of_units_in_province = { who = ROOT type = infantry amount = 40 } }
+					set_province_flag = zombies_size3_flag
+				}
+				else_if = {
+					limit = { num_of_units_in_province = { who = ROOT type = infantry amount = 20 } }
+					set_province_flag = zombies_size2_flag
+				}
+				else_if = {
+					limit = { num_of_units_in_province = { who = ROOT type = infantry amount = 10 } }
+					set_province_flag = zombies_size1_flag
+				}
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			every_owned_province = {
+				clr_province_flag = has_zombies_flag
+				clr_province_flag = zombies_doomstack_flag
+				clr_province_flag = zombies_size3_flag
+				clr_province_flag = zombies_size2_flag
+				clr_province_flag = zombies_size1_flag
+			}
+		}
+	}
+	
+	option = {	#We've lost control! Aaaagh!
+		name = magic_spell.702.a
+		ai_chance = { factor = 1 }
+
+		random_owned_province = {
+			limit = {
+				is_in_capital_area = yes
+				NOT = { has_province_modifier = aw_zombies_1 }
+				NOT = { has_province_modifier = aw_zombies_2 }
+				NOT = { has_province_modifier = aw_zombies_3 }
+			}
+			add_permanent_province_modifier = { name = aw_zombies_3 duration = -1 }
+		}
+
+		custom_tooltip = undead_army_becomes_threat_tt
+
+		clear_racial_military = yes
+		reset_racial_military_via_administration = yes
+
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					has_province_flag = has_zombies_flag
+					NOT = { has_province_modifier = aw_zombies_1 }
+					NOT = { has_province_modifier = aw_zombies_2 }
+					NOT = { has_province_modifier = aw_zombies_3 }
+				}
+
+				if = {
+					limit = { has_province_flag = zombies_doomstack_flag } #you doomstacked
+					add_permanent_province_modifier = { name = aw_zombies_3 duration = -1 }
+					every_neighbor_province = {
+						limit = {
+							owned_by = ROOT
+							NOT = { has_province_flag = zombies_doomstack_flag }
+							NOT = { has_province_modifier = aw_zombies_1 }
+							NOT = { has_province_modifier = aw_zombies_2 }
+							NOT = { has_province_modifier = aw_zombies_3 }
+						}
+						add_permanent_province_modifier = { name = aw_zombies_3 duration = -1 }
+					}
+				}
+				else_if = { limit = { has_province_flag = zombies_size3_flag } add_permanent_province_modifier = { name = aw_zombies_3 duration = -1 } }
+				else_if = { limit = { has_province_flag = zombies_size2_flag } add_permanent_province_modifier = { name = aw_zombies_2 duration = -1 } }
+				else_if = { limit = { has_province_flag = zombies_size1_flag } add_permanent_province_modifier = { name = aw_zombies_1 duration = -1 } }
+				else = {
+					random = {
+						chance = 25
+						add_permanent_province_modifier = { name = aw_zombies_1 duration = -1 }
+					}
+				}
+			}
+		}
+	}
+	
+	option = {	#Bring them under my control!
+		name = magic_spell.702.b
+		ai_chance = { factor = 100 }
+		trigger = { is_ruler_necromancy_level_2 = yes }
+		highlight = yes
+
+		increase_witch_king_points_large = yes
+		increase_witch_king_points_large = yes
+		increase_witch_king_points_large = yes
+		increase_witch_king_points_large = yes
+		increase_witch_king_points_large = yes
+		
+		add_mil_power = -200
+	}
+
+	option = {
+		name = magic_spell.702.c
+		trigger = { has_country_flag = esthil_lodge_of_necromancers }
+		ai_chance = { factor = 100 }
+		
+		increase_witch_king_points_large = yes
+		increase_witch_king_points_large = yes
+		increase_witch_king_points_large = yes
+		increase_witch_king_points_large = yes
+		increase_witch_king_points_large = yes
+		
+		add_mil_power = -100
+		
+		custom_tooltip = esthil_tt_has_necromancers_estate
+	}
+}
+country_event = { #Stackwipe for undead army on loss
+	id = magic_spell.703
+	title = magic_spell.703.t
+	desc =  magic_spell.703.desc
+	picture = BANKRUPTCY_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = magic_spell.703.a
+		ai_chance = { factor = 1 }
+
+		event_target:undead_location = { #Must be an option, to create a delay—otherwise it might crash due to removing units while still processing the on_action
+			kill_units = {
+				who = ROOT
+			}
+		}
+
+		if = {
+			limit = { NOT = { has_country_flag = hide_necromancy_on_battle } }
+			country_event = { id = magic_spell.704 }
+		}
+	}
+}
+country_event = { #Stackwipe for undead army notif
+	id = magic_spell.704
+	title = magic_spell.704.t
+	desc = magic_spell.704.desc
+	picture = BANKRUPTCY_eventPicture
+	goto = undead_location
+	
+	is_triggered_only = yes
+
+	option = { #Damn
+		name = magic_spell.704.a
+		ai_chance = { factor = 1 }
+		goto = undead_location
+
+		tooltip = {
+			event_target:undead_location = {
+				kill_units = {
+					who = ROOT
+				}
+			}
+		}
+	}
+
+	option = { #Damn (hide these notification)
+		name = magic_spell.704.b
+		ai_chance = { factor = 1 }
+		goto = undead_location
+
+		set_country_flag = hide_necromancy_on_battle
+	}
+}
+
+country_event = { #Contagion notification
+	id =  magic_spell.710
+	title = magic_spell.710.t
+	desc =  magic_spell.710.desc
+	picture = FAMINE_eventPicture
+	goto = contagion_province
+	
+	is_triggered_only = yes
+
+	option = {
+		name = magic_spell.710.a
+		ai_chance = { factor = 1 }
+		tooltip = {
+			event_target:contagion_province = {
+				add_devastation = 20
+				add_province_modifier = { name = necromancy_1_contagion_local_mod duration = 365 }
+			}
+		}
+	}
+}
+
+###############################
+### TRANSMUTATION (800-899) ###
+###############################
+
+country_event = { #Rite of Conception: Total Success!
+	id = magic_spell.800
+	title = magic_spell.800.t
+	desc = magic_spell.800.d
+	picture = southamericagfx_NEW_HEIR_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = transmutation_3_rite_of_conception_cooldown_mod
+			random_list = {
+				50 = {
+					trigger = { 
+						NOT = { 
+							ruler_is_harpy = yes
+							consort_is_harpy = yes
+						} 
+					}
+					set_country_flag = boy_child
+				}
+				50 = { set_country_flag = girl_child }
+			}
+		}
+	}
+	after = {
+		clr_country_flag = girl_child
+		clr_country_flag = boy_child
+	}
+
+	option = { #My child!
+		name = magic_spell.800.a
+		ai_chance = { factor = 1 }
+
+		if = {
+			limit = { has_heir = yes }
+			if = {
+				limit =  { has_reform = magical_elite_reform }
+				custom_tooltip = magic_estate_magical_elite_heir
+			}
+			else = {
+				custom_tooltip = magic_estate_disinherit_heir
+				add_prestige = -50
+			}
+		}
+		if = { 
+			limit = {
+				has_country_flag = boy_child
+			}
+			define_heir = {
+				age = 0
+				dynasty = ROOT
+				claim = 80
+				adm = 4
+				dip = 4
+				mil = 4
+			}
+		}
+		if = { 
+			limit = {
+				has_country_flag = girl_child
+			}
+			define_heir = {
+				age = 0
+				dynasty = ROOT
+				claim = 80
+				female = yes
+				adm = 4
+				dip = 4
+				mil = 4
+			}
+		}
+		define_powerful_mage = { type = heir }
+	}
+
+	option = { #Rather not
+		name = magic_spell.800.b
+		ai_chance = { factor = 0 }
+		trigger = { has_heir = yes }
+	}
+}
+
+country_event = { #Rite of Conception: Magical Idiot
+	id = magic_spell.801
+	title = magic_spell.801.t
+	desc = magic_spell.801.d
+	picture = BAD_WITH_MONARCH_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = transmutation_3_rite_of_conception_cooldown_mod
+			random_list = {
+				50 = {
+					trigger = { 
+						NOT = { 
+							ruler_is_harpy = yes
+							consort_is_harpy = yes
+						} 
+					}
+					set_country_flag = boy_child
+				}
+				50 = { set_country_flag = girl_child }
+			}
+		}
+	}
+	after = {
+		clr_country_flag = girl_child
+		clr_country_flag = boy_child
+	}
+
+	option = { # My child!
+		name = magic_spell.801.a
+		ai_chance = { factor = 1 }
+
+		add_manpower = -0.001
+		if = {
+			limit = { has_heir = yes }
+			if = {
+				limit =  { has_reform = magical_elite_reform }
+				custom_tooltip = magic_estate_magical_elite_heir
+			}
+			else = {
+				custom_tooltip = magic_estate_disinherit_heir
+				add_prestige = -50
+			}
+		}
+		if = { 
+			limit = {
+				has_country_flag = boy_child
+			}
+			define_heir = {
+				age = 0
+				dynasty = ROOT
+				claim = 20
+				max_random_adm = 3
+				max_random_dip = 3
+				max_random_mil = 3
+			}
+		}
+		if = { 
+			limit = {
+				has_country_flag = girl_child
+			}
+			define_heir = {
+				age = 0
+				dynasty = ROOT
+				claim = 20
+				female = yes
+				max_random_adm = 3
+				max_random_dip = 3
+				max_random_mil = 3
+			}
+		}
+		define_powerful_mage = { type = heir bonus = 2 }
+	}
+
+	option = { #Rather not
+		name = magic_spell.801.b
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Rite of Conception: Complications During Childbirth...
+	id = magic_spell.802
+	title = magic_spell.802.t
+	desc = magic_spell.802.d
+	picture = KING_SICK_IN_BED_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = transmutation_3_rite_of_conception_cooldown_mod
+			random_list = {
+				50 = {
+					trigger = { 
+						NOT = { 
+							ruler_is_harpy = yes
+							consort_is_harpy = yes
+						} 
+					}
+					set_country_flag = boy_child
+				}
+				50 = { set_country_flag = girl_child }
+			}
+		}
+	}
+	after = {
+		clr_country_flag = girl_child
+		clr_country_flag = boy_child
+	}
+
+	option = { #Sacrifice the heir
+		name = magic_spell.802.a
+		ai_chance = { factor = 0 }
+	}
+	
+	option = { #Sacrifice your consort
+		name = magic_spell.802.b
+		ai_chance = { factor = 1 }
+		trigger = { has_consort = yes }
+
+		remove_consort_effect = yes
+
+		if = {
+			limit = { has_heir = yes }
+			if = {
+				limit =  { has_reform = magical_elite_reform }
+				custom_tooltip = magic_estate_magical_elite_heir
+			}
+			else = {
+				custom_tooltip = magic_estate_disinherit_heir
+				add_prestige = -50
+			}
+		}
+		if = { 
+			limit = {
+				has_country_flag = boy_child
+			}
+			define_heir = {
+				age = 0
+				dynasty = ROOT
+				claim = 60
+			}
+		}
+		if = { 
+			limit = {
+				has_country_flag = girl_child
+			}
+			define_heir = {
+				age = 0
+				dynasty = ROOT
+				claim = 60
+				female = yes
+			}
+		}
+		define_powerful_mage = { type = heir }
+	}
+
+	option = { #Sacrifice yourself
+		name = magic_spell.802.c
+		ai_chance = { factor = 1 }
+		
+		random_list = {
+			1 = { trigger = { adm = 1 } change_adm = -1 }
+			1 = { trigger = { dip = 1 } change_dip = -1 }
+			1 = { trigger = { mil = 1 } change_mil = -1 }
+		}
+
+		if = {
+			limit = { has_heir = yes }
+			if = {
+				limit =  { has_reform = magical_elite_reform }
+				custom_tooltip = magic_estate_magical_elite_heir
+			}
+			else = {
+				custom_tooltip = magic_estate_disinherit_heir
+				add_prestige = -50
+			}
+		}
+		if = { 
+			limit = {
+				has_country_flag = boy_child
+			}
+			define_heir = {
+				age = 0
+				dynasty = ROOT
+				claim = 60
+			}
+		}
+		if = { 
+			limit = {
+				has_country_flag = girl_child
+			}
+			define_heir = {
+				age = 0
+				dynasty = ROOT
+				claim = 60
+				female = yes
+			}
+		}
+		define_powerful_mage = { type = heir }
+	}
+}
+
+country_event = { #Rite of Conception: Tughayasa Special
+	id = magic_spell.803
+	title = magic_spell.803.t
+	desc = magic_spell.803.d
+	picture = MIRACLE_MONK_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = magic_spell.803.a
+		ai_chance = { factor = 1 }
+
+		define_powerful_mage = { type = ruler }
+	}
+}
+
+country_event = { #Rite of Conception: Abomination
+	id = magic_spell.804
+	title = magic_spell.804.t
+	desc = magic_spell.804.d
+	picture = APOSTLE_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #A monster!
+		name = magic_spell.804.a
+		ai_chance = { factor = 1 }
+
+		remove_consort_effect = yes
+		capital_scope = { magical_abomination = 2 }
+	}
+}
+
+province_event = { #Sack of Philosopher's Stone province
+	id = magic_spell.805
+	title = magic_spell.805.t
+	desc = magic_spell.805.d
+	picture = NOT_DISCIPLINED_SOLDIERS_eventPicture
+
+	trigger = {
+		has_province_modifier = transmutation_2_transmute_to_gold_local_mod
+		NOT = { owned_by = FROM } #this isn't the owner conquering it back
+		controller = { exists = yes } #not REB
+	}
+
+	is_triggered_only = yes
+	major = yes
+	major_trigger = { controls = ROOT }
+
+	option = {
+		name = magic_spell.805.a
+		ai_chance = { factor = 1 }
+
+		remove_province_modifier = transmutation_2_transmute_to_gold_local_mod
+		set_from_saved_trade_goods = yes
+		add_base_production = -2
+		add_devastation = 50
+		controller = {
+			add_inflation = 1
+			add_adm_power = 25
+			add_dip_power = 25
+			add_mil_power = 25
+			add_treasury = 500
+		}
+	}
+}
+
+province_event = { #Setup of Philosopher's Stone province
+	id = magic_spell.806
+	title = magic_spell.806.t
+	desc = magic_spell.806.d
+	picture = FALUN_COPPER_MINE_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = magic_spell.806.a
+		ai_chance = { factor = 1 }
+		
+		save_trade_goods = yes
+		change_trade_goods = gold
+		add_permanent_province_modifier = { name = transmutation_2_transmute_to_gold_local_mod duration = -1 }
+
+		hidden_effect = { owner = { country_event = { id = magic_spell.807 days = 1825 } } }
+	}
+}
+
+country_event = { #Too much gold!
+	id = magic_spell.807
+	title = magic_spell.807.t
+	desc = magic_spell.807.d
+	picture = OVEREXTENSION_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		gold = 5
+		num_of_owned_provinces_with = {
+			value = 5
+			has_province_modifier = transmutation_2_transmute_to_gold_local_mod
+		}
+	}
+
+	option = {
+		name = magic_spell.807.a
+		ai_chance = { factor = 1 }
+
+
+		random_owned_province = {
+			limit = { has_province_modifier = transmutation_2_transmute_to_gold_local_mod }
+			
+			remove_province_modifier = transmutation_2_transmute_to_gold_local_mod
+			set_from_saved_trade_goods = yes
+		}
+	}
+	option = {
+		name = magic_spell.807.b
+		ai_chance = { factor = 1 }
+
+		add_or_extend_country_modifier = { name = transmuted_gold_consequence duration = 3650 }
+	}
+}

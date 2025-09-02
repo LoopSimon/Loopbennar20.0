@@ -18,10 +18,20 @@ country_event = {
 
 	is_triggered_only = yes
 
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { exists = S77 }
+				S77 = { save_event_target_as = event_country }
+			}
+			else = { S71 = { save_event_target_as = event_country } }
+		}
+	}
+
 	option = {
 		name = flavour_karshyr.1.a
 		ai_chance = { factor = 100 }
-		S77 = {
+		event_target:event_country = {
 			country_event = {
 				id = flavour_karshyr.2
 			}
@@ -278,16 +288,19 @@ country_event = {
 		5834 = { add_or_upgrade_ravelian_society = yes }
 		add_historical_friend_mutual = { tag = event_target:event_country }
 		if = {
-			limit = { 5763 = { owned_by = S77 } }
+			limit = { 5763 = { OR = { owned_by = S71 owned_by = S77 } } }
 			5763 = {
 				add_core = ROOT
 				cede_province = ROOT
 			}
 		}
 		5763 = {
-			add_province_modifier = {
-				name = S15_early_karshyrian_development
-				duration = -1
+			if = {
+				limit = { owned_by = ROOT }
+				add_province_modifier = {
+					name = S15_early_karshyrian_development
+					duration = -1
+				}
 			}
 		}
 		custom_tooltip = S15_pearlsedge_tip_tt
@@ -301,6 +314,16 @@ country_event = {
 	picture = TRADE_GOODS_PLANTATION_GOODS_IN_WAREHOUSE_eventPicture
 
 	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { exists = S77 }
+				S77 = { save_event_target_as = event_country }
+			}
+			else = { S71 = { save_event_target_as = event_country } }
+		}
+	}
 
 	option = {
 		name = flavour_karshyr.6.a
@@ -470,10 +493,20 @@ country_event = {
 
 	is_triggered_only = yes
 
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { exists = S77 }
+				S77 = { save_event_target_as = event_country }
+			}
+			else = { S71 = { save_event_target_as = event_country } }
+		}
+	}
+
 	option = {
 		name = flavour_karshyr.7.a
 		change_religion = ravelian
-		S77 = {
+		event_target:event_country = {
 			country_event = {
 				id = flavour_karshyr.8
 			}
@@ -553,18 +586,16 @@ country_event = {
 
 	is_triggered_only = yes
 
-	option = { #MAGIC REWORK - Makes the ruler and heir into mages. If the ruler is a mage already, gives three random levelups.
+	option = {
 		name = flavour_karshyr.10.a
 		if = {
-			limit = { ruler_has_personality = mage_personality }
-			magic_ruler_give_random_spell_school = yes
-			magic_ruler_give_random_spell_school = yes
-			magic_ruler_give_random_spell_school = yes
+			limit = { ruler_is_powerful_mage = yes }
+			give_ruler_random_spell_school = yes
+			give_ruler_random_spell_school = yes
+			give_ruler_random_spell_school = yes
 		}
-		else = {
-			force_add_ruler_personality = { personality = mage_personality }
-		}
-		set_heir_mage_effect = yes
+		else = { define_powerful_mage = { type = ruler } }
+		define_powerful_mage = { type = heir }
 	}
 }
 
@@ -580,10 +611,10 @@ country_event = {
 		name = flavour_karshyr.50.a
 		if = {
 			limit = { has_country_flag = S15_cannor_events_T2 }
-			add_years_of_income = -1
+			add_years_of_income = -0.333
 		}
 		else = {
-			add_years_of_income = -2
+			add_years_of_income = -0.666
 		}
 		add_country_modifier = {
 			name = S15_cannorian_advice
@@ -1022,6 +1053,7 @@ country_event = {
 			random_ally = {
 				limit = {
 					religion = ravelian
+					NOT = { tag = S71 }
 					NOT = { tag = S77 }
 				}
 				save_event_target_as = event_country
@@ -1234,6 +1266,7 @@ country_event = {
 					has_country_flag = S15_cannor_events_T3
 					any_ally = {
 						religion = ravelian
+						NOT = { tag = S71 }
 						NOT = { tag = S77 }
 					}
 					any_owned_province = {
@@ -1254,7 +1287,7 @@ country_event = {
 country_event = {
 	id = flavour_karshyr.100
 	title = flavour_karshyr.100.t
-	desc = flavour_karshyr.100.d
+	desc = flavour_karshyr.100.desc
 	picture = LAKE_TREASURE_eventPicture
 
 	is_triggered_only = yes

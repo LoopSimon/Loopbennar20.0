@@ -1,39 +1,31 @@
-custom_button = {
+custom_button = { #convert ruler to war wizard
     name = convert_ruler_to_war_wizard
     potential = {
-		ruler_has_personality = mage_personality
+		ruler_is_powerful_mage = yes
+		is_lesser_in_union = no
+		has_regency = no
+		has_government_attribute = rulers_can_be_generals
 	}
 	trigger = {
 		hidden_trigger = {
 			OR = {
-				OR = {
-					NOT = { 
-						has_leader_with = {
-							is_monarch_leader = yes
-						}
-					}
-					is_monarch_leader = no
-				}
+				is_monarch_leader = no #returns false for exiled/unexiled rulers
 				AND = {
-					has_ruler_flag = allow_war_wizard_after_exile #is_monarch_leader will always return true if a monarch leader is exiled and returned
-					NOT = { has_ruler_modifier = allow_war_wizard_after_exile_delay } #define_ruler_to_general doesn't work after exile until 1 day has passed or the game has reloaded
+					NOT = { has_ruler_flag = allow_war_wizard_after_exile } #We accounted for your edge case involving exiling/unexiling rulers
+					NOT = { has_leader_with = { is_monarch_leader = yes } } #We did not do that yet
 				}
+				had_ruler_flag = { flag = allow_war_wizard_after_exile days = 1 }
 			}
-			is_lesser_in_union = no
-			has_consort_regency = no
-			has_regency = no
 			NOT = {
-				has_ruler_flag = mage_ruler_general
+				has_country_flag = in_ruler_mage_general_confirmation_event
 				has_ruler_modifier = bulwar_tluukt_injured
 			}
-			NOT = { has_ruler_flag = pursuing_artificery }
-			NOT = { has_ruler_flag = ruler_choosing_artificery }
 		}
 		if = { 
 			limit = { has_government_attribute = rulers_cant_be_war_wizards } 
 			custom_trigger_tooltip = {
-				NOT = { has_government_attribute = rulers_cant_be_war_wizards }
 				tooltip = cant_be_war_wizard_tt
+				always = no
 			}
 		}
 		if = {
@@ -43,74 +35,59 @@ custom_button = {
 				tooltip = horutep_no_war_wizard_tt
 			}
 		}
+		if = {
+			limit = {
+				has_country_flag = magic_artificery_artificery_only
+				NOT = { has_estate_privilege = artifice_invention_korashi_tuners }
+			}
+			is_not_in_artificery_mode = yes
+		}
 	}
 	effect = {
-		if = {
-			limit = {
-				has_ruler_flag = pursuing_artificery
-			}
-			custom_tooltip = pursuing_aritificery_general_gui_tt
-		}
-		if = {
-			limit = {
-				has_ruler_flag = ruler_choosing_artificery
-			}
-			custom_tooltip = ruler_choosing_artificery_gui_tt
-		}
 		custom_tooltip = make_ruler_general_tt
-		hidden_effect = {
-			set_ruler_flag = mage_ruler_general
-			clr_ruler_flag = allow_war_wizard_after_exile
-			country_event = { id = magic_ruler.100 }
-		}
+		set_country_flag = in_ruler_mage_general_confirmation_event
+		hidden_effect = { country_event = { id = magic_system.14 } }
 	}
-	tooltip = make_ruler_general_desc_tt
+	tooltip = make_ruler_war_wizard_desc
 }
 
 custom_button = {
     name = convert_ruler_to_planetouched_commander
     potential = {
-		NOT = { ruler_has_personality = mage_personality }
 		ruler_has_planetouched_personality = yes
+		ruler_is_not_powerful_mage = yes
+		is_lesser_in_union = no
+		has_regency = no
+		has_government_attribute = rulers_can_be_generals
 	}
 	trigger = {
 		hidden_trigger = {
 			OR = {
-				NOT = { 
-					has_leader_with = {
-						is_monarch_leader = yes
-					}
-				}
+				NOT = { has_leader_with = { is_monarch_leader = yes } }
 				is_monarch_leader = no
 			}
-			is_lesser_in_union = no
-			has_consort_regency = no
-			has_regency = no
-			NOT = { has_ruler_flag = planetouched_ruler_general }
 		}
 	}
 	effect = {
 		custom_tooltip = make_ruler_general_tt
 		hidden_effect = {
-			set_ruler_flag = planetouched_ruler_general
-			clr_ruler_flag = allow_planetouched_commander_after_exile
 			country_event = { id = planetouched.100 }
 		}
 	}
 	tooltip = make_ruler_planetouched_commander_desc_tt
 }
 
-
 custom_button = { #disables button for 1 day for exiled rulers returning (if they set the delay modifier)
 	name = button_makerulergeneral
 	potential = {
 	}
 	trigger = {
+		NOT = { has_ruler_modifier = may_not_make_ruler_general }
 		hidden_trigger = {
-			NOT = { has_ruler_modifier = may_not_make_ruler_general }
+			NOT = { has_ruler_flag = allow_war_wizard_after_exile }
 			OR = {
-				NOT = {  has_leader_with = { is_monarch_leader = yes } }
-				is_monarch_leader = no
+				is_monarch_leader = no #is_monarch_leader = yes returns true for exiled/unexiled rulers so we need the other check
+				NOT = { has_leader_with = { is_monarch_leader = yes } } # has_leader_with = { is_monarch_leader = yes } returns true for consorts so we need the other check
 			}
 			OR = {
 				is_female = no
@@ -126,4 +103,45 @@ custom_button = { #disables button for 1 day for exiled rulers returning (if the
 	}
 	effect = {
 	}
+}
+
+custom_button = { #convert heir to war wizard
+    name = convert_heir_to_war_wizard
+    potential = {
+		has_heir = yes
+		heir_is_powerful_mage = yes
+		is_heir_leader = no
+		OR = {
+			has_female_heir = no
+			has_global_modifier_value = {
+				which = may_recruit_female_generals
+				value = 1
+			}
+		}
+		is_lesser_in_union = no
+		heir_age = 15
+		has_government_attribute = heirs_can_be_generals
+		NOT = { has_government_attribute = is_elective }
+	}
+	trigger = {
+		if = { 
+			limit = { has_government_attribute = rulers_cant_be_war_wizards } 
+			custom_trigger_tooltip = {
+				NOT = { has_government_attribute = rulers_cant_be_war_wizards }
+				tooltip = cant_be_war_wizard_tt
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = magic_artificery_artificery_only
+				NOT = { has_estate_privilege = artifice_invention_korashi_tuners }
+			}
+			is_not_in_artificery_mode = yes
+		}
+	}
+	effect = {
+		custom_tooltip = make_heir_general_tt
+		hidden_effect = { country_event = { id = magic_system.13 } }
+	}
+	tooltip = make_heir_war_wizard_desc
 }

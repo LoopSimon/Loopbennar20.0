@@ -756,6 +756,22 @@ declarewar = {
 			}
 		}
 		if = {
+ 			limit = {
+ 				has_country_modifier = loop_remnant_spiner
+ 				FROM = {
+ 					NOT = {
+ 						any_owned_province = {
+ 							continent = serpentspine
+ 						}
+ 					}
+ 					NOT = { coalition_target = FROM }
+ 				}
+ 			}
+ 			country_event = {
+ 				id = flavor_loopgeneric.7
+ 			}
+ 		}
+		if = {
 			limit = {
 				has_country_modifier = spiderwretch_lightland_claimer
 				FROM = {
@@ -1467,6 +1483,37 @@ declarewar = {
 			FROM = { country_event = { id = flavour_ayeth.22 } }
 		}
 		accretive_path_gain_chi = { aspect = right_of_raid category = mil amount = 25 }
+
+		#Accretive Path - Rusted Blades
+		if = {
+			limit = {
+				has_country_flag = ap_rustedblades_happened
+			}
+			remove_country_modifier = ap_rustedblades_quietmarch
+			remove_country_modifier = ap_rustedblades_sharpenedchi
+			remove_country_modifier = ap_rustedblades_productivemarch
+			remove_country_modifier = ap_rustedblades_recruitmentmarch
+			remove_country_modifier = ap_rustedblades_caravanmarch
+			remove_country_modifier = ap_rustedblades_religiousmarch
+			remove_country_modifier = ap_rustedblades_surveillancemarch
+			clr_country_flag = ap_rustedblades_happened
+		}
+		FROM = {
+			if = {
+				limit = {
+					has_country_flag = ap_rustedblades_happened
+				}
+				remove_country_modifier = ap_rustedblades_quietmarch
+				remove_country_modifier = ap_rustedblades_sharpenedchi
+				remove_country_modifier = ap_rustedblades_productivemarch
+				remove_country_modifier = ap_rustedblades_recruitmentmarch
+				remove_country_modifier = ap_rustedblades_caravanmarch
+				remove_country_modifier = ap_rustedblades_religiousmarch
+				remove_country_modifier = ap_rustedblades_surveillancemarch
+				clr_country_flag = ap_rustedblades_happened
+			}
+		}
+		
 	}
 }
 
@@ -3289,6 +3336,40 @@ request_to_join_federation = {
 }
 
 callaction = {
+### condition
+	#General Callaction
+	condition = { 
+		tooltip = call_action_defined_text
+		potential = {
+			OR = {
+				ROOT = { has_country_flag = no_callaction } #General flag for not calling anyone (If you want attacker to call his allies give it to attacker if defender give it to defender)
+				FROM = { has_country_flag = no_callaction } 
+				AND = { #Specific flag when you are planning 1 vs 1 fight but you are unsure when it will start
+					ROOT = { has_country_flag = no_callaction_target } #Both countries needs to have this flag
+					any_war_enemy_country = {
+						has_country_flag = no_callaction_target
+					}
+				}
+			}
+		}
+		allow = {
+			OR = {
+				NOT = { ROOT = { has_country_flag = no_countries_with_truce } }  #Flag for not calling countries that you have truce with
+				NOT = { truce_with = FROM }  #(important when you want subject to fight their previous overlord)
+			}
+			OR = {
+				has_country_flag = allow_to_join_war_nonetheless #Use this flag on countries you want to join fight
+				AND = {
+					ROOT = { has_country_flag = allow_subjects_war } #Flag for allowing subjects/overlords to join
+					OR = {
+						overlord_of = FROM
+						is_subject_of = FROM
+					}
+				}
+			}
+		}
+	}
+
 	condition = { #Can't call to arms while the Samartal incident is active
 		tooltip = NSC_SAMARTAL_TRAGEDY_CALL
 		potential = {
@@ -3298,36 +3379,6 @@ callaction = {
 			OR = {
 				overlord_of = FROM 		#allows vassals to join
 				is_subject_of = FROM	#subject can't be war dec by non NSC countries
-			}
-		}
-	}
-	condition = { #Kinstrife is an internal affair, and relies on allclan.9999 instead of peace deals
-		tooltip = KINSTRIFE_NO_CALL
-		potential = {
-			OR = {
-				FROM = { has_country_flag = kinstrife_funtime_flag }
-				has_country_flag = kinstrife_funtime_flag
-			}
-		}
-		allow = {
-			always = no
-		}
-	}
-	condition = { #Can't call to arms during Ovdal Lodhum's scripted war
-		tooltip = LODHUM_NO_CALL_WAR
-		potential = {
-			has_global_flag = lodhum_elf_war_begin
-			OR = {
-				tag = H77
-				has_country_flag = denied_lodhum_friendship #so they can't call in either
-			}
-		}
-		allow = {
-			FROM = {
-				OR = {
-					tag = F26 #gelkalis
-					tag = F27 #ayarallen
-				}
 			}
 		}
 	}
@@ -3361,90 +3412,6 @@ callaction = {
 			always = no
 		}
 	}
-		
-	condition = { # Zansap-Tluukt Duel
-		tooltip = zansap_tluukt_war
-		potential = {
-			OR = {
-				ROOT = {
-					tag = F28
-					is_in_war = {
-						attacker_leader = F43
-					}
-				}
-				ROOT = {
-					tag = F43
-					is_in_war = {
-						defender_leader = F28
-					}
-				}
-			}
-			F43 = { has_country_flag = zansap_first_crusade }
-		}
-		allow = {
-			OR = {
-				overlord_of = FROM         #allows vassals to join
-				is_subject_of = FROM    #subject can't be war dec by non NSC countries
-			}
-		}
-	}
-
-	condition = {
-		tooltip = NO_ALLIES_WAR
-		potential = {
-			ROOT = { has_country_flag = no_allies_war }
-		}
-		allow = {
-			OR = {
-				overlord_of = FROM
-				is_subject_of = FROM
-			}
-		}
-	}
-	
-	effect = {
-		if = {	#achievement against the Command
-			limit = {
-				ai = no
-				war_with = R62
-				FROM = { NOT = { is_subject_of = ROOT } }
-			}
-			set_country_flag = ach_called_allies_againt_the_command
-		}
-	}
-	
-	effect = {
-		if = {
-			limit = {
-				FROM = { religion = ashentree_pact }
-			}
-			country_event = { id = ashtreepact.1 }
-			FROM = { country_event = { id = ashtreepact.1 } }
-		}
-	}
-
-	effect = {
-		if = {
-			limit = {
-				OR = {
-					AND = {
-						ROOT = { tag = J72 }
-						FROM = { tag = G74 }
-					}
-					AND = {
-						ROOT = { tag = G74 }
-						FROM = { tag = J72 }
-					}
-				}
-			}
-			G74 = {
-				change_variable = {
-					which = gophira_war_fought_with_dark
-					value = 1
-				}
-			}
-		}
-	}
 
 	condition = {	#Bosancovac can't call allies against the Boats' revolt
 		potential = {
@@ -3456,27 +3423,6 @@ callaction = {
 					casus_belli = cb_support_rebels
 				}
 			}
-		}
-		allow = {
-			always = no
-		}
-	}
-
-	#ahati disaster
-	condition = { 
-		tooltip = mandate_no_disaster_help
-		potential = {
-			is_in_war = { casus_belli = cb_aakheta_uprising }
-		}
-		allow = {
-			always = no
-		}
-	}
-
-	condition = { #Besolaki Independence War
-		tooltip = G54_NO_ALLIES_TT
-		potential = {
-			has_country_flag = G54_in_independence_war_flag
 		}
 		allow = {
 			always = no
@@ -3522,6 +3468,50 @@ callaction = {
 		}
 	}
 
+### effect
+	effect = {
+		if = {	#achievement against the Command
+			limit = {
+				ai = no
+				war_with = R62
+				FROM = { NOT = { is_subject_of = ROOT } }
+			}
+			set_country_flag = ach_called_allies_againt_the_command
+		}
+	}
+	
+	effect = {
+		if = {
+			limit = {
+				FROM = { religion = ashentree_pact }
+			}
+			country_event = { id = ashtreepact.1 }
+			FROM = { country_event = { id = ashtreepact.1 } }
+		}
+	}
+
+	effect = {
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						ROOT = { tag = J72 }
+						FROM = { tag = G74 }
+					}
+					AND = {
+						ROOT = { tag = G74 }
+						FROM = { tag = J72 }
+					}
+				}
+			}
+			G74 = {
+				change_variable = {
+					which = gophira_war_fought_with_dark
+					value = 1
+				}
+			}
+		}
+	}
 	effect = {		#make ai use some raj mandates. might need better control in the future (i.e. only if the enemy is strong?)
 		if = {
 			limit = {
@@ -3688,6 +3678,23 @@ insultaction = {
 						NOT = { num_of_subjects = 1 }
 					}
 					reverse_add_casus_belli = { type = cb_vassalize_mission target = ROOT months = 120 }
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_reform = elaborate_court_ceremonies
+				FROM = { is_rival = ROOT }
+				NOT = {
+					has_country_modifier = elaborate_court_ceremonies_insult_mod
+				}
+			}
+			ROOT = {
+				add_splendor = 50
+				add_country_modifier = {
+					name = elaborate_court_ceremonies_insult_mod
+					duration = 1825
+					hidden = yes
 				}
 			}
 		}
@@ -4107,6 +4114,19 @@ giftaction = {
 		tooltip = escann_restricted_diplo_trigger_tt
 		potential = { escann_restricted_greentide_diplo_trigger = yes }
 		allow = { always = no }
+	}
+	effect = {
+		if = {
+			limit = {
+				has_country_flag = rinta_mwalim_funding_flag
+				is_incident_active = incident_rinta_light_up_the_night_sky
+				FROM = { capital_scope = { NOT = { continent = africa } } }
+			}
+			add_country_modifier = {
+				name = RS_sent_gift_investment
+				duration = 365 #1 years
+			}
+		}
 	}
 }
 

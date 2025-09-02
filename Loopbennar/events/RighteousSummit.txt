@@ -1,36 +1,92 @@
 
 namespace = xia_summit
 
-#The Righteous Summit
-country_event = {
+province_event = { #Righteous Summits are held every 10 years, so long as the Xia persists
+	id = xia_summit.0
+	title = xia_summit.0.t
+	desc = xia_summit.0.d
+	picture = BUDDHISM_GOOD_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = { owner = { has_government_attribute = is_in_xia } }
+	after = { province_event = { id = xia_summit.0 days = 3650 random = 365 } } #Random day
+
+	option = { #Righteous Summit, no parliament
+		name = xia_summit.0.a
+		ai_chance = { factor = 1 }
+		trigger = { owner = { NOT = { has_reform = xia_parliament_reform } } }
+
+		owner = { country_event = { id = xia_summit.1 } }
+	}
+
+	option = { #Righteous Summit, yes parliament
+		name = xia_summit.0.b
+		ai_chance = { factor = 1 }
+		trigger = { owner = { has_reform = xia_parliament_reform } }
+
+		owner = { country_event = { id = xia_summit.3 } }
+	}
+}
+
+country_event = { #The Righteous Summit
 	id = xia_summit.1
 	title = xia_summit.1.t
 	desc = xia_summit.1.d
 	picture = BUDDHISM_GOOD_eventPicture
 	
-	trigger = {
-		OR = {
-			has_reform = wulin
-			has_reform = one_xia
-		}
-		is_year = 1450
-		NOT = {
-			has_country_flag = xia_summit
-			has_country_modifier = xia_summit_cooldown
-			has_country_modifier = xia_summit_forgone
-			has_country_modifier = xia_summit_ended
-			has_reform = xia_parliament_reform
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_list = {
+				144 = {} #Nothing happens - weight of 144 mimics about 2 months of checking MTTH triggers
+				4 = { #Wulin gets skill 2 advisor
+					trigger = { NOT = { ruler_has_personality = well_advised_personality ruler_has_personality = well_connected_personality } }
+					country_event = { id = xia_summit.30 days = 1 random = 59 }
+				}
+				3 = { #Wulin gets skill 3 advisor
+					trigger = { OR = { ruler_has_personality = well_advised_personality ruler_has_personality = well_connected_personality } }
+					country_event = { id = xia_summit.31 days = 1 random = 59 }
+				}
+				3 = { #Wandering Warrior Appears
+					modifier = {
+						factor = 2
+						OR = {
+							ruler_has_personality = just_personality
+							ruler_has_personality = pious_personality
+							ruler_has_personality = inspiring_leader_personality
+							ruler_has_personality = righteous_personality
+						}
+					}
+					country_event = { id = xia_summit.32 days = 1 random = 59 }
+				}
+				4 = { country_event = { id = xia_summit.33 days = 1 random = 59 } } #Productive Debate
+				4 = { country_event = { id = xia_summit.34 days = 1 random = 59 } } #Bad Debate
+				3 = { #Adventurers Demand Concessions
+					trigger = { has_country_modifier = xia_patronizing_wandering_warriors }
+					country_event = { id = xia_summit.35 days = 1 random = 59 }
+				}
+				3 = { #Mages Demand Concessions
+					trigger = { has_country_modifier = xia_patronizing_sages }
+					country_event = { id = xia_summit.36 days = 1 random = 59 }
+				}
+			}
+
+			if = { #Special heir training ONLY for xiaken and wulin, not one xia
+				limit = {
+					has_reform = wulin
+					NOT = { has_heir_flag = xia_trained_chosen_disciple }
+				}
+				country_event = { id = xia_summit.37 days = 1 random = 59 }
+			}
 		}
 	}
 	
-	mean_time_to_happen = { 
-		days = 30
-	}
-	
-	option = {
+	option = { #wulin holds summit
 		name = "xia_summit.1.a"	#hold summit
 		ai_chance = { factor = 95 }
-		set_country_flag = xia_summit
 		custom_tooltip = wulin_summon_xiaken_tt
 		trigger = {
 			has_reform = wulin
@@ -43,8 +99,8 @@ country_event = {
 		}
 	}
 	
-	option = {
-		name = "xia_summit.1.b"	#refuse to hold summit
+	option = {	#refuse to hold summit
+		name = "xia_summit.1.b"
 		ai_chance = {
 			factor = 5
 			modifier = {
@@ -72,14 +128,11 @@ country_event = {
 		}
 	}
 	
-	option = {					#Hold Summit - One Xia version
+	option = { #Hold Summit - One Xia version (non-wulin owners of Xiadao who are in the Xia count as One Xia from now on)
 		name = "xia_summit.1.c"	
 		ai_chance = { factor = 95 }
-		set_country_flag = xia_summit
 		custom_tooltip = xia_begin_righteous_conclave_tt
-		trigger = {
-			has_reform = one_xia
-		}
+		trigger = { NOT = { has_reform = wulin } }
 		
 		hidden_effect = {
 			country_event = { id = xia_summit.50 days = 60 }	#Direction
@@ -87,8 +140,7 @@ country_event = {
 	}
 }
 
-#Question of the Righteous Summit
-country_event = {
+country_event = { #Question of the Righteous Summit
 	id = xia_summit.2
 	title = xia_summit.2.t
 	desc = xia_summit.2.d
@@ -129,34 +181,59 @@ country_event = {
 	}
 }
 
-#The Righteous Conclave Begins
-country_event = {
+country_event = { #The Righteous Conclave Begins
 	id = xia_summit.3
 	title = xia_summit.3.t
 	desc = xia_summit.3.d
 	picture = BUDDHISM_GOOD_eventPicture
-	
-	trigger = {
-		tag = Y99
-		has_reform = xia_parliament_reform
-		NOT = {
-			has_country_flag = xia_summit
-			has_country_modifier = xia_summit_cooldown
-			has_country_modifier = xia_summit_forgone
-			has_country_modifier = xia_conclave_cooldown
-			has_country_modifier = xia_conclave_forgone
-			has_country_modifier = xia_summit_ended
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_list = {
+				144 = {} #Nothing happens - weight of 144 mimics about 2 months of checking MTTH triggers
+				4 = { #Wulin gets skill 2 advisor
+					trigger = { NOT = { ruler_has_personality = well_advised_personality ruler_has_personality = well_connected_personality } }
+					country_event = { id = xia_summit.30 days = 1 random = 59 }
+				}
+				3 = { #Wulin gets skill 3 advisor
+					trigger = { OR = { ruler_has_personality = well_advised_personality ruler_has_personality = well_connected_personality } }
+					country_event = { id = xia_summit.31 days = 1 random = 59 }
+				}
+				3 = { #Wandering Warrior Appears
+					modifier = {
+						factor = 2
+						OR = {
+							ruler_has_personality = just_personality
+							ruler_has_personality = pious_personality
+							ruler_has_personality = inspiring_leader_personality
+							ruler_has_personality = righteous_personality
+						}
+					}
+					country_event = { id = xia_summit.32 days = 1 random = 59 }
+				}
+				4 = { country_event = { id = xia_summit.33 days = 1 random = 59 } } #Productive Debate
+				4 = { country_event = { id = xia_summit.34 days = 1 random = 59 } } #Bad Debate
+				3 = { #Adventurers Demand Concessions
+					trigger = { has_country_modifier = xia_patronizing_wandering_warriors }
+					country_event = { id = xia_summit.35 days = 1 random = 59 }
+				}
+				3 = { #Mages Demand Concessions
+					trigger = { has_country_modifier = xia_patronizing_sages }
+					country_event = { id = xia_summit.36 days = 1 random = 59 }
+				}
+			}
+			if = { #Special heir training ONLY for parliament One Xia
+				limit = { NOT = { has_heir_flag = xia_trained_ascendant_master } }
+				country_event = { id = xia_summit.38 days = 1 random = 59 }
+			}
 		}
-	}
-	
-	mean_time_to_happen = { 
-		days = 30
 	}
 	
 	option = {							#Begin the Righteous Conclave
 		name = "xia_summit.3.a"
 		ai_chance = { factor = 95 }
-		set_country_flag = xia_summit
 		custom_tooltip = xia_begin_righteous_conclave_tt
 		country_event = { id = xia_summit.50 days = 60 }	#Direction
 	}
@@ -187,23 +264,18 @@ country_event = {
 	}
 }
 
-#Choose Direction of Focus
-country_event = {
+country_event = { #Choose Direction of Focus
 	id = xia_summit.50
 	title = xia_summit.50.t
 	picture = PARLIAMENT_eventPicture
 	
 	desc = {
-		trigger = {
-			has_reform = wulin
-		}
+		trigger = { has_reform = wulin }
 		desc = xia_summit.50.da
 	}
 	
 	desc = {
-		trigger = {
-			has_reform = one_xia
-		}
+		trigger = { NOT = { has_reform = wulin } }
 		desc = xia_summit.50.db
 	}
 	
@@ -237,8 +309,7 @@ country_event = {
 	}
 }
 
-#Inward Focus
-country_event = {
+country_event = { #Inward Focus
 	id = xia_summit.51
 	title = xia_summit.51.t
 	desc = xia_summit.51.desc
@@ -248,24 +319,14 @@ country_event = {
 	
 	immediate = {
 		if = {
-			limit = {
-				OR = {
-					has_reform = wulin
-					NOT = {
-						has_reform = xia_parliament_reform
-					}
-				}
-			}
-			hidden_effect = {
-				country_event = { id = xia_summit.54 days = 60 } #End
-			}
-		}
-		if = {
-			limit = {
-				has_reform = xia_parliament_reform
-			}
+			limit = { has_reform = xia_parliament_reform }
 			hidden_effect = {
 				country_event = { id = xia_summit.55 days = 60 } #End
+			}
+		}
+		else = {
+			hidden_effect = {
+				country_event = { id = xia_summit.54 days = 60 } #End
 			}
 		}
 	}
@@ -310,9 +371,7 @@ country_event = {
 	option = {										#diplo annex cost for one xia
 		name = "xia_summit.51.c"
 		ai_chance = { factor = 1 }
-		trigger = {
-			has_reform = one_xia
-		}
+		trigger = { NOT = { has_reform = wulin } }
 		add_country_modifier = {
 			name = xia_summit_inward_diplo_wulin
 			duration = 3480
@@ -337,23 +396,18 @@ country_event = {
 	}
 }
 
-#Balanced Focus
-country_event = {
+country_event = { #Balanced Focus
 	id = xia_summit.52
 	title = xia_summit.52.t
 	picture = COURT_eventPicture
 	
 	desc = {
-		trigger = {
-			has_reform = wulin
-		}
+		trigger = { has_reform = wulin }
 		desc = xia_summit.52.da
 	}
 	
 	desc = {
-		trigger = {
-			has_reform = one_xia
-		}
+		trigger = { NOT = { has_reform = wulin } }
 		desc = xia_summit.52.db
 	}
 		
@@ -362,23 +416,15 @@ country_event = {
 	immediate = {
 		if = {
 			limit = {
-				OR = {
-					has_reform = wulin
-					NOT = {
-						has_reform = xia_parliament_reform
-					}
-				}
-			}
-			hidden_effect = {
-				country_event = { id = xia_summit.54 days = 60 } #End
-			}
-		}
-		if = {
-			limit = {
 				has_reform = xia_parliament_reform
 			}
 			hidden_effect = {
 				country_event = { id = xia_summit.55 days = 60 } #End
+			}
+		}
+		else = {
+			hidden_effect = {
+				country_event = { id = xia_summit.54 days = 60 } #End
 			}
 		}
 	}
@@ -435,8 +481,7 @@ country_event = {
 	}
 }
 
-#Outward Focus
-country_event = {
+country_event = { #Outward Focus
 	id = xia_summit.53
 	title = xia_summit.53.t
 	desc = xia_summit.53.d
@@ -447,23 +492,15 @@ country_event = {
 	immediate = {
 		if = {
 			limit = {
-				OR = {
-					has_reform = wulin
-					NOT = {
-						has_reform = xia_parliament_reform
-					}
-				}
-			}
-			hidden_effect = {
-				country_event = { id = xia_summit.54 days = 60 } #End
-			}
-		}
-		if = {
-			limit = {
 				has_reform = xia_parliament_reform
 			}
 			hidden_effect = {
 				country_event = { id = xia_summit.55 days = 60 } #End
+			}
+		}
+		else = {
+			hidden_effect = {
+				country_event = { id = xia_summit.54 days = 60 } #End
 			}
 		}
 	}
@@ -520,8 +557,7 @@ country_event = {
 	}
 }
 
-#Righteous Summit Ends
-country_event = {
+country_event = { #Righteous Summit Ends
 	id = xia_summit.54
 	title = xia_summit.54.t
 	desc = xia_summit.54.d
@@ -531,7 +567,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.54.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -539,8 +574,7 @@ country_event = {
 	}
 }
 
-#Righteous Conclave Ends
-country_event = {
+country_event = { #Righteous Conclave Ends
 	id = xia_summit.55
 	title = xia_summit.55.t
 	desc = xia_summit.55.d
@@ -550,7 +584,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.55.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_conclave_cooldown
 			duration = 3420
@@ -558,19 +591,56 @@ country_event = {
 	}
 }
 
-#Righteous Summit Begins Xiaken Version
-country_event = {
+country_event = { #Righteous Summit Begins Xiaken Version
 	id = xia_summit.60
 	title = xia_summit.60.t
 	desc = xia_summit.60.d
 	picture = BUDDHISM_GOOD_eventPicture
 	
 	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_list = {
+				144 = {} #Nothing happens - weight of 144 mimics about 2 months of checking MTTH triggers
+				4 = { #Delegation Insulted
+					trigger = { any_known_country = { has_reform = xiaken } }
+					country_event = { id = xia_summit.10 days = 1 random = 59 }
+				}
+				3 = { #Wandering Warrior Appears
+					modifier = {
+						factor = 2
+						OR = {
+							ruler_has_personality = just_personality
+							ruler_has_personality = pious_personality
+							ruler_has_personality = inspiring_leader_personality
+							ruler_has_personality = righteous_personality
+						}
+					}
+					country_event = { id = xia_summit.32 days = 1 random = 59 }
+				}
+				4 = { country_event = { id = xia_summit.33 days = 1 random = 59 } } #Productive Debate
+				4 = { country_event = { id = xia_summit.34 days = 1 random = 59 } } #Bad Debate
+				3 = { #Adventurers Demand Concessions
+					trigger = { has_country_modifier = xia_patronizing_wandering_warriors }
+					country_event = { id = xia_summit.35 days = 1 random = 59 }
+				}
+				3 = { #Mages Demand Concessions
+					trigger = { has_country_modifier = xia_patronizing_sages }
+					country_event = { id = xia_summit.36 days = 1 random = 59 }
+				}
+			}
+			
+			if = { #Special heir training ONLY for xiaken and wulin, not one xia
+				limit = { NOT = { has_heir_flag = xia_trained_chosen_disciple } }
+				country_event = { id = xia_summit.37 days = 1 random = 59 }
+			}
+		}
+	}
 	
 	option = {						#send delegation
 		name = "xia_summit.60.a"
 		ai_chance = { factor = 95 }
-		set_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_sent_delegation
 			duration = -1
@@ -605,8 +675,7 @@ country_event = {
 	}
 }
 
-#Wulin Chose Inward Martial
-country_event = {
+country_event = { #Wulin Chose Inward Martial
 	id = xia_summit.61
 	title = xia_summit.61.t
 	desc = xia_summit.61.d
@@ -616,7 +685,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.61.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -629,8 +697,7 @@ country_event = {
 	}
 }
 
-#Wulin Chose Inward Diplo
-country_event = {
+country_event = { #Wulin Chose Inward Diplo
 	id = xia_summit.62
 	title = xia_summit.62.t
 	desc = xia_summit.62.d
@@ -640,7 +707,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.62.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -649,8 +715,7 @@ country_event = {
 	}
 }
 
-#Wulin Chose Inward Eco
-country_event = {
+country_event = { #Wulin Chose Inward Eco
 	id = xia_summit.63
 	title = xia_summit.63.t
 	desc = xia_summit.63.d
@@ -660,7 +725,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.63.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -673,8 +737,7 @@ country_event = {
 	}
 }
 
-#Wulin Chose Balanced Martial
-country_event = {
+country_event = { #Wulin Chose Balanced Martial
 	id = xia_summit.64
 	title = xia_summit.64.t
 	desc = xia_summit.64.d
@@ -684,7 +747,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.64.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -697,8 +759,7 @@ country_event = {
 	}
 }
 
-#Wulin Chose Balanced Diplo
-country_event = {
+country_event = { #Wulin Chose Balanced Diplo
 	id = xia_summit.65
 	title = xia_summit.65.t
 	desc = xia_summit.65.d
@@ -708,7 +769,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.65.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -721,8 +781,7 @@ country_event = {
 	}
 }
 
-#Wulin Chose Balanced Eco
-country_event = {
+country_event = { #Wulin Chose Balanced Eco
 	id = xia_summit.66
 	title = xia_summit.66.t
 	desc = xia_summit.66.d
@@ -732,7 +791,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.66.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -745,8 +803,8 @@ country_event = {
 	}
 }
 
-#Wulin Chose Outward Martial
-country_event = {
+
+country_event = { #Wulin Chose Outward Martial
 	id = xia_summit.67
 	title = xia_summit.67.t
 	desc = xia_summit.67.d
@@ -756,7 +814,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.67.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -769,8 +826,7 @@ country_event = {
 	}
 }
 
-#Wulin Chose Outward Diplo
-country_event = {
+country_event = { #Wulin Chose Outward Diplo
 	id = xia_summit.68
 	title = xia_summit.68.t
 	desc = xia_summit.68.d
@@ -780,7 +836,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.68.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -793,8 +848,7 @@ country_event = {
 	}
 }
 
-#Wulin Chose Outward Eco
-country_event = {
+country_event = { #Wulin Chose Outward Eco
 	id = xia_summit.69
 	title = xia_summit.69.t
 	desc = xia_summit.69.d
@@ -804,7 +858,6 @@ country_event = {
 	
 	option = {
 		name = "xia_summit.69.a"
-		clr_country_flag = xia_summit
 		add_country_modifier = {
 			name = xia_summit_cooldown
 			duration = 3420
@@ -822,8 +875,8 @@ country_event = {
 #####################################################################################
 
 ###########Duel event chain start###########
-#Delegation Insulted
-country_event = {
+
+country_event = { #Delegation Insulted
 	id = xia_summit.10
 	title = xia_summit.10.t
 	desc = xia_summit.10.d
@@ -840,14 +893,7 @@ country_event = {
 		}
 	}
 	
-	trigger = {
-		has_country_flag = xia_summit
-		has_reform = xiaken
-	}
-	
-	mean_time_to_happen = {
-		months = 72
-	}
+	is_triggered_only = yes
 	
 	option = {						#let it go
 		name = "xia_summit.10.a"
@@ -907,8 +953,7 @@ country_event = {
 	}
 }
 
-#Offending Xiaken responds to duel request
-country_event = {
+country_event = { #Offending Xiaken responds to duel request
 	id = xia_summit.11
 	title = xia_summit.11.t
 	desc = xia_summit.11.d
@@ -951,8 +996,7 @@ country_event = {
 	}
 }
 
-#Offending delegation apologizes
-country_event = {
+country_event = { #Offending delegation apologizes
 	id = xia_summit.12
 	title = xia_summit.12.t
 	desc = xia_summit.12.d
@@ -966,8 +1010,7 @@ country_event = {
 	}
 }
 
-#Wulin decides whether or not to allow the duel
-country_event = {
+country_event = { #Wulin decides whether or not to allow the duel
 	id = xia_summit.13
 	title = xia_summit.13.t
 	desc = xia_summit.13.d
@@ -1007,8 +1050,7 @@ country_event = {
 	}
 }
 
-#Duel participants notified that duel has been allowed
-country_event = {
+country_event = { #Duel participants notified that duel has been allowed
 	id = xia_summit.14
 	title = xia_summit.14.t
 	desc = xia_summit.14.d
@@ -1021,8 +1063,7 @@ country_event = {
 	}
 }
 
-#Duel participants notified that duel has been forbidden
-country_event = {
+country_event = { #Duel participants notified that duel has been forbidden
 	id = xia_summit.15
 	title = xia_summit.15.t
 	desc = xia_summit.15.d
@@ -1035,8 +1076,7 @@ country_event = {
 	}
 } 
 
-#Hidden Event to determine winner of duel
-country_event = {
+country_event = { #Hidden Event to determine winner of duel
 	id = xia_summit.16
 	title = xia_summit.16.t
 	desc = xia_summit.16.d
@@ -1045,8 +1085,7 @@ country_event = {
 	is_triggered_only = yes
 	hidden = yes
 	
-	#Duel Instigator Wins
-	option = {
+	option = { #Duel Instigator Wins
 		name = "xia_summit.16.a"
 		ai_chance = {
 			factor = 50
@@ -1093,8 +1132,7 @@ country_event = {
 		country_event = { id = xia_summit.17 days = 7 }
 	}
 	
-	#Duel Target Wins
-	option = { 
+	option = { #Duel Target Wins
 		name = "xia_summit.16.b"
 		ai_chance = {
 			factor = 50
@@ -1142,8 +1180,7 @@ country_event = {
 	}
 }
 
-#The Duel 
-country_event = {
+country_event = { #The Duel 
 	id = xia_summit.17
 	title = xia_summit.17.t
 	desc = xia_summit.17.d
@@ -1216,8 +1253,7 @@ country_event = {
 	}
 }
 
-#We won
-country_event = {
+country_event = { #We won
 	id = xia_summit.18
 	title = xia_summit.18.t
 	desc = xia_summit.18.d
@@ -1236,8 +1272,7 @@ country_event = {
 	}
 }
 
-#We lost
-country_event = {
+country_event = { #We lost
 	id = xia_summit.19
 	title = xia_summit.19.t
 	desc = xia_summit.19.d
@@ -1253,30 +1288,13 @@ country_event = {
 }
 ###########Duel event chain end###########
 
-#Gain advisor (skill 2)
-country_event = {
+country_event = { #Gain advisor (skill 2)
 	id = xia_summit.30
 	title = xia_summit.30.t
 	desc = xia_summit.30.d
 	picture = ADVISOR_eventPicture
-	
-	trigger = {
-		OR = {
-			tag = Y99
-			has_reform = wulin
-		}
-		has_country_flag = xia_summit
-		NOT = {
-			OR = {
-				ruler_has_personality = well_connected_personality
-				ruler_has_personality = well_advised_personality
-			}
-		}
-	}
-	
-	mean_time_to_happen = {
-		months = 72
-	}
+
+	is_triggered_only = yes
 	
 	option = {
 		name = "xia_summit.30.a"
@@ -1359,28 +1377,13 @@ country_event = {
 	}
 }
 
-#Gain advisor (Skill 3)
-country_event = {
+country_event = { #Gain advisor (Skill 3)
 	id = xia_summit.31
 	title = xia_summit.31.t
 	desc = xia_summit.31.d
 	picture = ADVISOR_eventPicture
 	
-	trigger = {
-		OR = {
-			tag = Y99
-			has_reform = wulin
-		}
-		has_country_flag = xia_summit
-		OR = {
-			ruler_has_personality = well_connected_personality
-			ruler_has_personality = well_advised_personality
-		}
-	}
-	
-	mean_time_to_happen = {
-		months = 128
-	}
+	is_triggered_only = yes
 	
 	option = {
 		name = "xia_summit.31.a"
@@ -1463,8 +1466,7 @@ country_event = {
 	}
 }
 
-#Wandering Warrior
-country_event = {
+country_event = { #Wandering Warrior
 	id = xia_summit.32
 	title = xia_summit.32.t
 	picture = BUDDHISM_LAMA_eventPicture
@@ -1489,10 +1491,7 @@ country_event = {
 				ruler_has_personality = inspiring_leader_personality
 				ruler_has_personality = pious_personality
 			}
-			OR = {
-				has_reform = one_xia
-				has_reform = wulin
-			}
+			NOT = { has_reform = xiaken }
 		}
 		desc = xia_summit.32.db
 	}
@@ -1510,23 +1509,7 @@ country_event = {
 		desc = xia_summit.32.dc
 	}
 	
-	trigger = {
-		has_country_flag = xia_summit
-	}
-	
-	mean_time_to_happen = {
-		months = 96
-		
-		modifier = {
-			factor = 0.5
-			OR = {
-				ruler_has_personality = just_personality
-				ruler_has_personality = righteous_personality
-				ruler_has_personality = inspiring_leader_personality
-				ruler_has_personality = pious_personality
-			}
-		}
-	}
+	is_triggered_only = yes
 	
 	option = {								#Make him a general
 		name = "xia_summit.32.a"
@@ -1573,36 +1556,22 @@ country_event = {
 	}
 }
 
-#Productive Debate
-country_event = {
+country_event = { #Productive Debate
 	id = xia_summit.33
 	title = xia_summit.33.t
 	picture = PARLIAMENT_eventPicture
 	
 	desc = {
-		trigger = {
-			has_reform = xiaken
-		}
+		trigger = { has_reform = xiaken }
 		desc = xia_summit.33.da
 	}
 	
 	desc = {
-		trigger = {
-			OR = {
-				has_reform = wulin
-				has_reform = one_xia
-			}
-		}
+		trigger = { NOT = { has_reform = xiaken } }
 		desc = xia_summit.33.db
 	}
 	
-	trigger = {
-		has_country_flag = xia_summit
-	}
-	
-	mean_time_to_happen = { 
-		months = 72
-	}
+	is_triggered_only = yes
 	
 	option = {								#Meditate on the conclusions reached
 		name = "xia_summit.33.a"
@@ -1633,8 +1602,8 @@ country_event = {
 	}
 }
 
-#Debate ends in brawl
-country_event = {
+
+country_event = { #Debate ends in brawl
 	id = xia_summit.34
 	title = xia_summit.34.t
 	picture = BABBLING_BAFFOON_eventPicture
@@ -1655,18 +1624,15 @@ country_event = {
 	
 	desc = {
 		trigger = {
-			has_reform = one_xia
+			NOT = {
+				has_reform = xiaken
+				has_reform = wulin
+			}
 		}
 		desc = xia_summit.34.dc
 	}
 	
-	trigger = {
-		has_country_flag = xia_summit
-	}
-	
-	mean_time_to_happen = { 
-		months = 72
-	}
+	is_triggered_only = yes
 	
 	option = {								#Oh well
 		name = "xia_summit.34.a"
@@ -1722,8 +1688,7 @@ country_event = {
 	}
 }
 
-#Adventurers Demand Concessions
-country_event = {
+country_event = { #Adventurers Demand Concessions
 	id = xia_summit.35
 	title = xia_summit.35.t
 	picture = MERCHANTS_TALKING_eventPicture
@@ -1744,14 +1709,7 @@ country_event = {
 		desc = xia_summit.35.db
 	}
 	
-	trigger = {
-		has_country_modifier = xia_patronizing_wandering_warriors
-		has_country_flag = xia_summit
-	}
-	
-	mean_time_to_happen = { 
-		months = 120
-	}
+	is_triggered_only = yes
 	
 	option = {								#They can suck one
 		name = xia_summit.35.a
@@ -1789,8 +1747,7 @@ country_event = {
 	}
 }
 
-#Mages Demand Concessions
-country_event = {
+country_event = { #Mages Demand Concessions
 	id = xia_summit.36
 	title = xia_summit.36.t
 	picture = MERCHANTS_TALKING_eventPicture
@@ -1811,14 +1768,7 @@ country_event = {
 		desc = xia_summit.36.db
 	}
 	
-	trigger = {
-		has_country_flag = xia_summit
-		has_country_modifier = xia_patronizing_sages
-	}
-	
-	mean_time_to_happen = { 
-		months = 120
-	}
+	is_triggered_only = yes
 	
 	option = {								#They can suck one
 		name = xia_summit.36.a
@@ -1856,27 +1806,14 @@ country_event = {
 	}
 }
 
-#Summit Heir Training - Xiaken/Wulin version
-country_event = {
+country_event = { #Summit Heir Training - Xiaken/Wulin version
 	id = xia_summit.37
 	title = xia_summit.37.t
 	desc = xia_summit.37.da
 	picture = MIRACLE_MONK_eventPicture
 	
-	trigger = {
-		has_country_flag = xia_summit
-		OR = {
-			has_reform = xiaken
-			has_reform = wulin
-		}
-		NOT = {
-			has_heir_flag = xia_trained_chosen_disciple
-		}
-	}
-	
-	mean_time_to_happen = { 
-		months = 3
-	}
+	is_triggered_only = yes
+	after = { set_heir_flag = xia_trained_chosen_disciple }
 	
 	option = {							#Adm training
 		name = xia_summit.37.a
@@ -1887,7 +1824,6 @@ country_event = {
 		}
 		add_adm_power = -25
 		increase_heir_adm_effect = yes
-		set_heir_flag = xia_trained_chosen_disciple
 	}
 	
 	option = {							#Dip training
@@ -1899,7 +1835,6 @@ country_event = {
 		}
 		add_dip_power = -25
 		increase_heir_dip_effect = yes
-		set_heir_flag = xia_trained_chosen_disciple
 	}
 	
 	option = {							#Mil training
@@ -1911,7 +1846,6 @@ country_event = {
 		}
 		add_mil_power = -25
 		increase_heir_mil_effect = yes
-		set_heir_flag = xia_trained_chosen_disciple
 	}
 	
 	option = {							#Hire Wandering Warrior to spar
@@ -1931,16 +1865,13 @@ country_event = {
 			duration = 3650
 		}
 		increase_heir_mil_effect = yes
-		set_heir_flag = xia_trained_chosen_disciple
 	}
 	
 	option = {							#Hire Sage
 		name = xia_summit.37.e
 		trigger = {
 			has_country_modifier = xia_patronizing_sages
-			NOT = {
-				has_ruler_modifier = heir_mage_personality_mod
-			}
+			heir_is_not_powerful_mage = yes
 		}
 		add_years_of_income = -0.5
 		add_estate_loyalty = {
@@ -1954,29 +1885,18 @@ country_event = {
 			duration = 3650
 		}
 		custom_tooltip = xia_heir_magical_training_tooltip
-		set_heir_mage_effect = yes
-		set_heir_flag = xia_trained_chosen_disciple
+		define_powerful_mage = { type = heir }
 	}
 }
 
-#Conclave Heir Training - One Xia version
-country_event = {
+country_event = { #Conclave Heir Training - One Xia version
 	id = xia_summit.38
 	title = xia_summit.38.t
 	desc = xia_summit.38.da
 	picture = MIRACLE_MONK_eventPicture
 	
-	trigger = {
-		has_country_flag = xia_summit
-		has_reform = xia_parliament_reform
-		NOT = {
-			has_heir_flag = xia_trained_ascendant_master
-		}
-	}
-	
-	mean_time_to_happen = { 
-		months = 3
-	}
+	is_triggered_only = yes
+	after = { set_heir_flag = xia_trained_ascendant_master }
 	
 	option = {							#Adm training
 		name = xia_summit.38.a
@@ -1999,7 +1919,6 @@ country_event = {
 				add_heir_personality = scholar_personality
 			}
 		}
-		set_heir_flag = xia_trained_ascendant_master
 	}
 	
 	option = {							#Dip training
@@ -2023,7 +1942,6 @@ country_event = {
 				add_heir_personality = kind_hearted_personality
 			}
 		}
-		set_heir_flag = xia_trained_ascendant_master
 	}
 	
 	option = {							#Mil training
@@ -2047,7 +1965,6 @@ country_event = {
 				add_heir_personality = strict_personality
 			}
 		}
-		set_heir_flag = xia_trained_ascendant_master
 	}
 	
 	option = {							#Hire Master Warrior
@@ -2067,16 +1984,13 @@ country_event = {
 			duration = 3650
 		}
 		change_heir_mil = 2
-		set_heir_flag = xia_trained_ascendant_master
 	}
 	
 	option = {							#Hire Master Sage
 		name = xia_summit.38.e
 		trigger = {
 			has_country_modifier = xia_patronizing_sages
-			NOT = {
-				has_ruler_modifier = heir_mage_personality_mod
-			}
+			heir_is_not_powerful_mage = yes
 		}
 		add_years_of_income = -0.5
 		add_estate_loyalty = {
@@ -2090,7 +2004,6 @@ country_event = {
 			duration = 3650
 		}
 		custom_tooltip = xia_heir_magical_training_tooltip
-		set_heir_mage_effect = yes
-		set_heir_flag = xia_trained_ascendant_master
+		define_powerful_mage = { type = heir }
 	}
 }

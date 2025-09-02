@@ -381,9 +381,6 @@ country_event = {#The New Face of Magic D5
 		custom_tooltip = wyvernheart_D5_event_tt
 		hidden_effect = {
 			set_country_flag = floodborn_council_rename
-			country_event = {#Prerolls schools for the third button
-				id = flavour_wyvernheart.501
-			}
 		}
 		set_estate_privilege = estate_wyvernheart_floodborn_council
 		add_stability = -1
@@ -619,7 +616,7 @@ country_event = {#The Castanbane Meteor
 	}
 	
 	#Option A
-	option = {#MAGICREWORK
+	option = {
 		name = "flavour_wyvernheart.110.a"
 		ai_chance = { factor = 1 }
 		set_country_flag = destroyed_the_trialmount
@@ -627,21 +624,21 @@ country_event = {#The Castanbane Meteor
 			change_trade_goods = damestear
 			set_province_flag = permanent_damestear
 			if = {
-				limit = { ROOT = { has_ruler_flag = abjuration_3 } }
+				limit = { ROOT = { is_ruler_abjuration_level_3 = yes } }
 				add_devastation = 25
 				add_base_manpower = -4
 				add_base_production = -4
 				add_base_tax = -4
 			}
 			else_if = {
-				limit = { ROOT = { has_ruler_flag = abjuration_2 } }
+				limit = { ROOT = { is_ruler_abjuration_level_2 = yes } }
 				add_devastation = 50
 				add_base_manpower = -6
 				add_base_production = -6
 				add_base_tax = -6
 			}
 			else_if = {
-				limit = { ROOT = { has_ruler_flag = abjuration_1 } }
+				limit = { ROOT = { is_ruler_abjuration_level_1 = yes } }
 				add_devastation = 75
 				add_base_manpower = -8
 				add_base_production = -8
@@ -655,45 +652,45 @@ country_event = {#The Castanbane Meteor
 			}
 		}
 		if = {
-			limit = { has_ruler_flag = transmutation_3 }
+			limit = { is_ruler_transmutation_level_3 = yes }
 			add_adm_power = -25
 		}
 		else_if = {
-			limit = { has_ruler_flag = transmutation_2 }
+			limit = { is_ruler_transmutation_level_2 = yes }
 			add_adm_power = -50
 		}
 		else_if = {
-			limit = { has_ruler_flag = transmutation_1 }
+			limit = { is_ruler_transmutation_level_1 = yes }
 			add_adm_power = -75
 		}
 		else = {
 			add_adm_power = -100
 		}
 		if = {
-			limit = { has_ruler_flag = enchantment_3 }
+			limit = { is_ruler_enchantment_level_3 = yes }
 			add_dip_power = -25
 		}
 		else_if = {
-			limit = { has_ruler_flag = enchantment_2 }
+			limit = { is_ruler_enchantment_level_2 = yes }
 			add_dip_power = -50
 		}
 		else_if = {
-			limit = { has_ruler_flag = enchantment_1 }
+			limit = { is_ruler_enchantment_level_1 = yes }
 			add_dip_power = -75
 		}
 		else = {
 			add_dip_power = -100
 		}
 		if = {
-			limit = { has_ruler_flag = conjuration_3 }
+			limit = { is_ruler_conjuration_level_3 = yes }
 			add_treasury = -500
 		}
 		else_if = {
-			limit = { has_ruler_flag = conjuration_2 }
+			limit = { is_ruler_conjuration_level_2 = yes }
 			add_treasury = -750
 		}
 		else_if = {
-			limit = { has_ruler_flag = conjuration_1 }
+			limit = { is_ruler_conjuration_level_1 = yes }
 			add_treasury = -1000
 		}
 		else = {
@@ -705,10 +702,7 @@ country_event = {#The Castanbane Meteor
 		}
 		custom_tooltip = wyvernheart_no_more_castanor
 
-		increase_witch_king_points_large = yes #3
-		hidden_effect = {
-			increase_witch_king_points_large = yes #3
-		}
+		increase_witch_king_points_large = yes
 	}
 }
 country_event = {#Magic and Artificery unbound
@@ -729,13 +723,12 @@ country_event = {#Magic and Artificery unbound
 		ai_chance = { factor = 1 }
 		custom_tooltip = wyvernheart_B9_event_tt #rulers defined as war-wizard are considered to have +1 mil, war wizard generated with imbue mage have +1 fire and siege 
 		set_country_flag = wyvernheart_bioimproved_mages_results
-		define_general = { #MAGICREWORK
-			shock = 8
+		define_general = {
 			fire = 3
-			manuever = 2
-			siege = 4 
+			shock = 8
+			manuever = 7
+			siege = 2
 			name = "Guillam 'the First'"
-			trait = war_wizard_personality
 		}
 	}
 }
@@ -1101,24 +1094,16 @@ country_event = {#Select clique for Overseer
 				name = "§TFactional§! Overseer"
 			}
 			if = {
-				limit = { check_variable = { which = pointsWitchKing value = 26 } }
+				limit = { NOT = { ruler_has_infamy_witch_king = yes } }
+				increase_witch_king_points_medium = yes
+			}
+			else = {
 				add_estate_loyalty = {
 					estate = estate_mages
 					loyalty = 10
 				}
-				add_estate_loyalty = {
-					estate = estate_acolytes
-					loyalty = 10
-				}
 				take_estate_land_share_medium = { estate = all } #2%
-				if = {
-					limit = { NOT = { has_ruler_modifier = witch_king_modifier } } #MAGICREWORK
-					country_event = {
-						id =  witch_king.0
-					}
-				}
 			}
-			else = { increase_witch_king_points_medium = yes } #2 points
 		}
 	}
 	
@@ -1221,8 +1206,7 @@ country_event = {#Select clique for Overseer
 			type = simple
 			name = "Hardliner Overseer"
 		}
-		wyvernheart_define_war_wizard = yes
-		custom_tooltip = wyvernheart_not_warwizard
+		wyvernheart_define_overseer = yes
 		hidden_effect = {
 			country_event = {
 				id = flavour_wyvernheart.500
@@ -1304,8 +1288,7 @@ country_event = {#Select clique for Overseer
 			type = simple
 			name = "Technocrat Overseer"
 		}
-		wyvernheart_define_war_wizard = yes
-		custom_tooltip = wyvernheart_not_warwizard
+		wyvernheart_define_overseer = yes
 		hidden_effect = {
 			country_event = {
 				id = flavour_wyvernheart.500
@@ -1477,8 +1460,7 @@ country_event = {#Select clique for Overseer
 			type = simple
 			name = "Heartmage Overseer"
 		}
-		wyvernheart_define_war_wizard = yes
-		custom_tooltip = wyvernheart_not_warwizard
+		wyvernheart_define_overseer = yes
 		hidden_effect = {
 			country_event = {
 				id = flavour_wyvernheart.500
@@ -1578,8 +1560,7 @@ country_event = {#Select clique for Overseer
 			type = simple
 			name = "Devout Overseer"
 		}
-		wyvernheart_define_war_wizard = yes
-		custom_tooltip = wyvernheart_not_warwizard
+		wyvernheart_define_overseer = yes
 		hidden_effect = {
 			country_event = {
 				id = flavour_wyvernheart.500
@@ -1829,8 +1810,7 @@ country_event = {#Select clique for Overseer
 			type = simple
 			name = "Wealthy Overseer"
 		}
-		wyvernheart_define_war_wizard = yes
-		custom_tooltip = wyvernheart_not_warwizard
+		wyvernheart_define_overseer = yes
 		hidden_effect = {
 			country_event = {
 				id = flavour_wyvernheart.500
@@ -1913,8 +1893,7 @@ country_event = {#Select clique for Overseer
 			type = simple
 			name = "Ambitious Overseer"
 		}
-		wyvernheart_define_war_wizard = yes
-		custom_tooltip = wyvernheart_not_warwizard
+		wyvernheart_define_overseer = yes
 		hidden_effect = {
 			country_event = {
 				id = flavour_wyvernheart.500
@@ -1944,9 +1923,6 @@ country_event = {#The Scions of Wyvernheart
 					power_type = bloodbrand_power
 					value = 20
 				}
-			}
-			country_event = {#Prerolls schools for the third button
-				id = flavour_wyvernheart.501
 			}
 			generic_end_purge = { race = goblin }
 			generic_end_expulsion = { race = goblin }
@@ -2059,7 +2035,7 @@ country_event = {#The Promised Mage
 			dynasty = ROOT
 			age = 9
 		}
-		set_heir_mage_effect = yes
+		define_powerful_mage = { type = heir }
 		hidden_effect = {
 			country_event = {
 				id = flavour_wyvernheart.201
@@ -2090,15 +2066,6 @@ country_event = {#A Simple Accident
 	trigger = {
 		tag = B39
 	}
-	
-	immediate = {
-		hidden_effect = {
-			if = {
-				limit = { has_ruler_modifier = witch_king_modifier }
-				set_country_flag = ruler_was_witchking
-			}
-		}
-	}
 
 	#Option A
 	option = {
@@ -2115,26 +2082,16 @@ country_event = {#A Simple Accident
 			religion = ROOT
 			culture = ROOT
 		}
-		set_ruler_flag = evocation_1
-		add_ruler_personality = mage_personality
+		define_powerful_mage = { type = ruler evocation = 1 }
 		if = {
-			limit = {
-				has_country_flag = ruler_was_witchking
-			}
-			add_ruler_modifier = {
-				name = witch_king_modifier
-			}
-			clr_country_flag = ruler_was_witchking
+			limit = { ruler_is_witch_king = yes }
+			become_a_witch_king_effect = yes
 		}
 		custom_tooltip = wyvernheart_201_event_tt
 		hidden_effect = {
 			country_event = {
 				id = flavour_wyvernheart.202
 				days = 365
-			}
-			country_event = {#roll schools
-				id = flavour_wyvernheart.501
-				days = 2
 			}
 		}
 	}
@@ -2191,37 +2148,25 @@ country_event = {#Tyrant's Fall
 			culture = ROOT
 		}
 		set_ruler_flag = wyvernheart_the_regent
-		add_ruler_personality = mage_personality
-		define_ruler_to_general = {
-			fire = 4
-			shock = 11
-			manuever = 4
-			siege = 7
-			trait = war_wizard_personality
+		define_powerful_mage = {
+			type = ruler
+			evocation = 3
+			transmutation = 2
+			conjuration = 1
+			abjuration = 2
+			war_wizard = yes
 		}
 		define_heir = {
 			dynasty = "of Wyvernheart"
 			religion = ROOT
 			culture = ROOT
 		}
-		set_ruler_flag = evocation_1
-		set_ruler_flag = evocation_2
-		set_ruler_flag = evocation_3
-		set_ruler_flag = transmutation_1
-		set_ruler_flag = transmutation_2
-		set_ruler_flag = conjuration_1
-		set_ruler_flag = abjuration_1
-		set_ruler_flag = abjuration_2
 		add_stability = -2
 		add_war_exhaustion = 10
 		hidden_effect = {
 			country_event = {
 				id = flavour_wyvernheart.203
 				days = 365
-			}
-			country_event = {#roll schools
-				id = flavour_wyvernheart.501
-				days = 2
 			}
 		}
 		custom_tooltip = wyvernheart_202_event_tt
@@ -2721,16 +2666,16 @@ country_event = {#A Crisis in Devotion
 		name = "flavour_wyvernheart.302.c"
 		ai_chance = { factor = 3 }
 		trigger = {
-			calc_true_if = {#MAGICREWORK
+			calc_true_if = {
 				amount = 2
-				is_divination_3 = yes
-				is_conjuration_3 = yes
-				is_abjuration_3 = yes
-				is_enchantment_3 = yes
-				is_transmutation_3 = yes
-				is_illusion_3 = yes
-				is_necromancy_3 = yes
-				is_conjuration_3 = yes
+				is_ruler_divination_level_3 = yes
+				is_ruler_conjuration_level_3 = yes
+				is_ruler_abjuration_level_3 = yes
+				is_ruler_enchantment_level_3 = yes
+				is_ruler_transmutation_level_3 = yes
+				is_ruler_illusion_level_3 = yes
+				is_ruler_necromancy_level_3 = yes
+				is_ruler_conjuration_level_3 = yes
 			}
 		}
 		add_country_modifier = {
@@ -2817,8 +2762,6 @@ country_event = {#The New Face of the Council
 			name = wyvernheart_floodborn_academy
 			duration = 9125
 		}
-		custom_tooltip = add_magic_study_modifier_25_tt
-		update_magic_study_experience_modifier = { value = 25 } #MAGICREWORK
 	}
 }
 
@@ -2955,16 +2898,16 @@ country_event = {#The Council's Challenge
 		name = "flavour_wyvernheart.306.c"
 		ai_chance = { factor = 1 }
 		trigger = {
-			calc_true_if = {#MAGICREWORK
+			calc_true_if = {
 				amount = 2
-				is_divination_3 = yes
-				is_conjuration_3 = yes
-				is_abjuration_3 = yes
-				is_enchantment_3 = yes
-				is_transmutation_3 = yes
-				is_illusion_3 = yes
-				is_necromancy_3 = yes
-				is_conjuration_3 = yes
+				is_ruler_divination_level_3 = yes
+				is_ruler_conjuration_level_3 = yes
+				is_ruler_abjuration_level_3 = yes
+				is_ruler_enchantment_level_3 = yes
+				is_ruler_transmutation_level_3 = yes
+				is_ruler_illusion_level_3 = yes
+				is_ruler_necromancy_level_3 = yes
+				is_ruler_conjuration_level_3 = yes
 			}
 		}
 		highlight = yes
@@ -3354,7 +3297,7 @@ country_event = {#An Upstart in the Council
 			estate = estate_nobles
 			loyalty = -15
 		}
-		increase_study_experience = { experience = 100 }
+		increase_magic_experience = { amount = 100 }
 	}
 	#Option C
 	option = {
@@ -3873,20 +3816,9 @@ country_event = {#Rolls magic schools for the manifest the flood gov power
 	id = flavour_wyvernheart.501
 	title = flavour_wyvernheart.501.t
 	desc = flavour_wyvernheart.501.d
-	picture = {
-		trigger = {
-			NOT = { has_dlc = "Rights of Man" }
-		}
-		picture = COURT_eventPicture
-	}
-	picture = {
-		trigger = {
-			has_dlc = "Rights of Man"
-		}
-		picture = ROYAL_COUPLE_FUTURE_eventPicture
-	}
-	hidden = yes
+	picture = COURT_eventPicture
 
+	hidden = yes
 	is_triggered_only = yes
 	
 	trigger = {
@@ -3894,111 +3826,15 @@ country_event = {#Rolls magic schools for the manifest the flood gov power
 	}
 
 	immediate = {
-		if = {
-			limit = {#MAGICREWORK
-				OR = {
-					NOT = {
-						has_country_flag = wyvernheart_manifest_the_flood_divination
-						has_country_flag = wyvernheart_manifest_the_flood_abjuration
-						has_country_flag = wyvernheart_manifest_the_flood_conjuration
-						has_country_flag = wyvernheart_manifest_the_flood_necromancy
-						has_country_flag = wyvernheart_manifest_the_flood_enchantment
-						has_country_flag = wyvernheart_manifest_the_flood_transmutation
-						has_country_flag = wyvernheart_manifest_the_flood_evocation
-						has_country_flag = wyvernheart_manifest_the_flood_illusion
-					}
-					AND = {
-						has_country_flag = wyvernheart_manifest_the_flood_divination
-						is_divination_3 = yes
-					}
-					AND = {
-						has_country_flag = wyvernheart_manifest_the_flood_abjuration
-						is_abjuration_3 = yes
-					}
-					AND = {
-						has_country_flag = wyvernheart_manifest_the_flood_conjuration
-						is_conjuration_3 = yes
-					}
-					AND = {
-						has_country_flag = wyvernheart_manifest_the_flood_necromancy
-						is_necromancy_3 = yes
-					}
-					AND = {
-						has_country_flag = wyvernheart_manifest_the_flood_enchantment
-						is_enchantment_3 = yes
-					}
-					AND = {
-						has_country_flag = wyvernheart_manifest_the_flood_transmutation
-						is_transmutation_3 = yes
-					}
-					AND = {
-						has_country_flag = wyvernheart_manifest_the_flood_evocation
-						is_evocation_3 = yes
-					}
-					AND = {
-						has_country_flag = wyvernheart_manifest_the_flood_illusion
-						is_illusion_3 = yes
-					}
-				}
-			}
-			clr_country_flag = wyvernheart_manifest_the_flood_divination
-			clr_country_flag = wyvernheart_manifest_the_flood_abjuration
-			clr_country_flag = wyvernheart_manifest_the_flood_conjuration
-			clr_country_flag = wyvernheart_manifest_the_flood_necromancy
-			clr_country_flag = wyvernheart_manifest_the_flood_enchantment
-			clr_country_flag = wyvernheart_manifest_the_flood_transmutation
-			clr_country_flag = wyvernheart_manifest_the_flood_evocation
-			clr_country_flag = wyvernheart_manifest_the_flood_illusion
-			random_list = {#MAGICREWORK
-				1 = {
-					trigger = {
-						NOT = { is_divination_3 = yes }
-					}
-					ROOT = { set_country_flag = wyvernheart_manifest_the_flood_divination }
-				}
-				1 = {
-					trigger = {
-						NOT = { is_abjuration_3 = yes }
-					}
-					ROOT = { set_country_flag = wyvernheart_manifest_the_flood_abjuration }
-				}
-				1 = {
-					trigger = {
-						NOT = { is_conjuration_3 = yes }
-					}
-					ROOT = { set_country_flag = wyvernheart_manifest_the_flood_conjuration }
-				}
-				1 = {
-					trigger = {
-						NOT = { is_necromancy_3 = yes }
-					}
-					ROOT = { set_country_flag = wyvernheart_manifest_the_flood_necromancy }
-				}
-				1 = {
-					trigger = {
-						NOT = { is_enchantment_3 = yes }
-					}
-					ROOT = { set_country_flag = wyvernheart_manifest_the_flood_enchantment }
-				}
-				1 = {
-					trigger = {
-						NOT = { is_transmutation_3 = yes }
-					}
-					ROOT = { set_country_flag = wyvernheart_manifest_the_flood_transmutation }
-				}
-				1 = {
-					trigger = {
-						NOT = { is_evocation_3 = yes }
-					}
-					ROOT = { set_country_flag = wyvernheart_manifest_the_flood_evocation }
-				}
-				1 = {
-					trigger = {
-						NOT = { is_illusion_3 = yes }
-					}
-					ROOT = { set_country_flag = wyvernheart_manifest_the_flood_illusion }
-				}
-			}
+		random_list = {
+			1 = { trigger = { is_ruler_abjuration_level_3 = no } magic_school_level_up = { type = ruler school = abjuration } set_ruler_flag = wyvernheart_abjuration }
+			1 = { trigger = { is_ruler_conjuration_level_3 = no } magic_school_level_up = { type = ruler school = conjuration } set_ruler_flag = wyvernheart_conjuration }
+			1 = { trigger = { is_ruler_divination_level_3 = no } magic_school_level_up = { type = ruler school = divination } set_ruler_flag = wyvernheart_divination }
+			1 = { trigger = { is_ruler_enchantment_level_3 = no } magic_school_level_up = { type = ruler school = enchantment } set_ruler_flag = wyvernheart_enchantment }
+			1 = { trigger = { is_ruler_evocation_level_3 = no } magic_school_level_up = { type = ruler school = evocation } set_ruler_flag = wyvernheart_evocation }
+			1 = { trigger = { is_ruler_illusion_level_3 = no } magic_school_level_up = { type = ruler school = illusion } set_ruler_flag = wyvernheart_illusion }
+			1 = { trigger = { is_ruler_necromancy_level_3 = no } magic_school_level_up = { type = ruler school = necromancy } set_ruler_flag = wyvernheart_necromancy }
+			1 = { trigger = { is_ruler_transmutation_level_3 = no } magic_school_level_up = { type = ruler school = transmutation } set_ruler_flag = wyvernheart_transmutation }
 		}
 	}
 

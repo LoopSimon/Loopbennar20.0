@@ -1,15 +1,19 @@
+
+# There are ten "interaction" slots arranged in a five-wide, two-tall space on the estate screen
+# The empty, invisible interactions are here to "take up space" basically.
+# Makes the other things be in the right spots on the UI.
+
 interaction = { # Empty
-    #key = empty_interaction
-    random_seed = random
+	#key = empty_interaction
+	random_seed = random
 	cooldown_months = 1000
 
-    trigger = {
+	trigger = {
 		hidden_trigger = {
 			always = no
 		}
-    }
-    effect = { }
-	
+	}
+	effect = { }
 	ai_will_do = {
 		factor = 0
 	}
@@ -83,124 +87,75 @@ interaction = { # Empty
 	}
 }
 
-interaction = { # Cast Spell
+interaction = { # Manage Magic system
     key = cast_spell
     random_seed = random
 	cooldown_months = 0
 
     trigger = {
-		custom_trigger_tooltip = {
-			tooltip = has_magic_estate_tt
-			OR = {
-				has_estate = estate_mages
-				has_estate = estate_acolytes
-				tag = Y01	#azjakuma
-				has_estate_privilege = artifice_invention_korashi_tuners
-			}
-		}
-		if = { limit = { has_estate = estate_mages }
-			estate_influence = { estate = estate_mages influence = 15 }
-			if = { limit = { tag = Y63 has_country_flag = Y63_unlocked_minor_runes }
-				hidden_trigger = { NOT = { has_country_flag = V63_runes_menu_open } }
-			}
-			else = {
-				NOT = { has_estate_privilege = estate_mages_cast_spells }
-				if = { limit = { tag = I02 }	#krak
-					mission_completed = krak_relighting_forges
-				}
-			}
-		}
-		else_if = { limit = { has_estate = estate_acolytes }
-			estate_influence = { estate = estate_acolytes influence = 15 }
-			NOT = { has_estate_privilege = estate_acolytes_cast_spells }
-		}
-		else_if = { limit = { tag = Y01 }
-			if = { limit = { has_country_flag = azjakuma_two_magics_allowed }
-				custom_trigger_tooltip = {
-					tooltip = no_other_magic_shirgrii_two_tooltip
-					NOT = {
-						calc_true_if = {
-							has_estate_privilege = estate_shinukhorchi_cast_magic
-							has_estate_privilege = estate_chumijemoya_cast_magic
-							has_estate_privilege = estate_ajgriijarul_cast_magic
-							has_estate_privilege = estate_kabiurgarko_cast_magic
-							has_estate_privilege = estate_khelorvalshi_cast_magic
-							amount = 2
-						}
-					}
-				}
-			}
-			else = {
-				custom_trigger_tooltip = {
-					tooltip = no_other_magic_shirgrii_tooltip
-					NOT = { 
-						has_estate_privilege = estate_shinukhorchi_cast_magic
-						has_estate_privilege = estate_chumijemoya_cast_magic
-						has_estate_privilege = estate_ajgriijarul_cast_magic
-						has_estate_privilege = estate_kabiurgarko_cast_magic
-						has_estate_privilege = estate_khelorvalshi_cast_magic
-					}
-				}
-			}
-			hidden_trigger = { NOT = { has_country_flag = azjakuma_magic_menu_opened } }
-		}
-		else_if = { limit = { has_estate_privilege = artifice_invention_korashi_tuners }
-			NOT = { has_country_modifier = magic_cooldown }
-		}
 		hidden_trigger = {
-			NOT = { has_country_flag = J84_no_casting_spells_flag }
+			ai = no
+			can_use_magic = yes
+			OR = {
+				check_variable = { current_mana_percent = 90 }
+				is_overall_advancing_magic = no
+			}
+			hidden_trigger = { has_any_estates = yes }
 		}
     }
     effect = {
-		if = { limit = { has_estate = estate_mages }
-			if = { limit = { tag = Y63 has_country_flag = Y63_unlocked_minor_runes }
-				custom_tooltip = Y63_open_runes_manu_tt
-				set_country_flag = V63_runes_menu_open
-				hidden_effect = { country_event = { id = verkalozovar_events.100 } }
-			}
-			else = {
-				custom_tooltip = opens_magic_estate_menu_tt
-				custom_tooltip = cast_spell_effect_tt
-				hidden_effect = {
-					if = { limit = { tag = I02 } #krakdhumvror ice smiths
-						set_estate_privilege = estate_mages_perform_icecraft
-						country_event = { id = flavor_krak.100 }
-					}
-					else = {
-						set_estate_privilege = estate_mages_cast_spells
-						country_event = { id = magic_estate.1 }
-					}
+		update_magic_menu_effect = yes
+		custom_tooltip = magic_estate_notif
+		if = {
+			limit = {
+				OR = {
+					check_variable = { current_mana_percent = 90 }
+					is_overall_advancing_magic = no
 				}
 			}
+			custom_tooltip = magic_effect_separator_tt
 		}
-		else_if = { limit = { has_estate = estate_acolytes }
-			custom_tooltip = opens_magic_estate_menu_tt
-			custom_tooltip = cast_spell_effect_tt
-			hidden_effect = {
-				set_estate_privilege = estate_acolytes_cast_spells
-				country_event = { id = acolyte_estate.1 }
+		if = { # Mana nearly full
+			limit = {
+				check_variable = { current_mana_percent = 90 }
 			}
+			custom_tooltip = magic_estate_notif_mana
+			close_all_magic_menus = yes
+			# set_country_flag = magic_menu_main_flag
+			set_country_flag = magic_menu_spellbook_flag
 		}
-		else_if = { limit = { tag = Y01 }
-			custom_tooltip = opens_shirgrii_magic_menu_tt
-			custom_tooltip = cast_spell_effect_tt
-			hidden_effect = {
-				set_country_flag = azjakuma_magic_menu_opened
-				country_event = { id = flavor_azjakuma.1250 }
+		if = { # Not advancing
+			limit = {
+				is_overall_advancing_magic = no
 			}
-			clr_country_flag = remove_azjakuma_casting_spells
-		}
-		else_if = { limit = { has_estate_privilege = artifice_invention_korashi_tuners }
-			custom_tooltip = opens_magic_estate_menu_tt
-			custom_tooltip = cast_spell_effect_tt
-			hidden_effect = {
-				country_event = { id = magic_estate.1 }
+			custom_tooltip = magic_estate_notif_no_study
+			if = {
+				limit = {
+					if = { limit = { has_country_modifier = magical_infrastructure_4 }
+						can_upgrade_to_magical_infrastructure_5 = yes
+					}
+					else_if = { limit = { has_country_modifier = magical_infrastructure_3 }
+						can_upgrade_to_magical_infrastructure_4 = yes
+					}
+					else_if = { limit = { has_country_modifier = magical_infrastructure_2 }
+						can_upgrade_to_magical_infrastructure_3 = yes
+					}
+					else_if = { limit = { has_country_modifier = magical_infrastructure_1 }
+						can_upgrade_to_magical_infrastructure_2 = yes
+					}
+					else = { #MI 0
+						can_upgrade_to_magical_infrastructure_1 = yes
+					}
+				}
+				custom_tooltip = magic_estate_notif_upgrade_MI
 			}
+			close_all_magic_menus = yes
+			# set_country_flag = magic_menu_main_flag
+			set_country_flag = magic_menu_advancement_flag
 		}
-		clr_country_flag = revoke_mage_estate_spells
     }
 	ai_will_do = {
-		factor = 10
+		factor = 0
 	}
 }
 
@@ -403,12 +358,8 @@ interaction = { # Summon Diet
         custom_tooltip = ESTATES_SUMMON_THE_DIET_DESC
         hidden_effect = {
 	        if = {
-				limit = {
-					NOT = { has_anzalkatsa_naga = yes }
-				}
-			
-			
-			country_event = { id = estate_privileges_and_agendas_events.3 }
+				limit = { NOT = { has_anzalkatsa_naga = yes } }
+				country_event = { id = estate_privileges_and_agendas_events.3 }
 			}
 			else = {
 				clr_country_flag = Invalidate_NagaAgenda

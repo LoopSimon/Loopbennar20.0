@@ -3603,7 +3603,7 @@ country_event = {	#You beat the Dragon Cult's last stand
 					calc_true_if = {
 						mil = 6
 						mil = 5
-						ruler_has_mage_personality = yes
+						ruler_is_powerful_mage = yes
 						ruler_has_personality = tactical_genius_personality
 						ruler_has_personality = bold_fighter_personality
 						ruler_has_personality = strict_personality
@@ -5330,7 +5330,7 @@ country_event = { #Controller Event for General Flavour Events
 					}
 					is_at_war = yes
 					NOT = {
-						manpower_percentage = 75
+						manpower_percentage = 0.75
 					}
 				}
 				modifier = {
@@ -5347,7 +5347,7 @@ country_event = { #Controller Event for General Flavour Events
 				modifier = {
 					factor = 2
 					NOT = {
-						manpower_percentage = 50
+						manpower_percentage = 0.5
 					}
 				}
 				country_event = {
@@ -7236,6 +7236,47 @@ country_event = { #Controller Event for General Flavour Events
 					id = ynnsman_events.310
 				}
 			}
+			30 = { #Veykodan Rebolts
+				trigger = {
+					NOT = { primary_culture = veykodan }
+					has_global_flag = veykodan_rise_up
+					any_owned_province = {
+						is_core = U21
+						unrest = 3
+					}
+				}
+				country_event = {
+					id = ynn_events.501 #Veykodan Rise Up!
+				}
+			}
+			30 = { #Veykodan Delegation
+				trigger = {
+					NOT = { primary_culture = veykodan }
+					has_global_flag = veykodan_rise_up
+					any_owned_province = {
+						is_core = U21
+						NOT = { unrest = 3 }
+						NOT = { culture = veykodan }
+					}
+				}
+				country_event = {
+					id = ynn_events.504 #Veykodan Delegation
+				} 
+			}
+			50 = { #Veykodan Integration
+				trigger = {
+					NOT = { primary_culture = veykodan }
+					has_global_flag = veykodan_integration_can_happen
+					NOT = { has_country_flag = integrated_veykodans }
+					accepted_culture = veykodan
+					any_owned_province = {
+						is_core = U21
+					}
+				}
+				country_event = {
+					id = ynn_events.505 #Veykodan Integration
+				}
+			}
 			1 = {
 				modifier = {
 					factor = 0.1
@@ -8154,8 +8195,8 @@ country_event = { #We must demand Satisfaction
 			}
 			modifier = {
 				factor = 5
-				event_target:ynn_joust_offender = { ruler_has_mage_personality = yes }
-				NOT = { ruler_has_mage_personality = yes }
+				event_target:ynn_joust_offender = { ruler_is_powerful_mage = yes }
+				NOT = { ruler_is_powerful_mage = yes }
 			}
 		}
 		add_prestige = -10
@@ -8232,8 +8273,8 @@ country_event = {	#The gauntlet has been thrown
 			}
 			modifier = {
 				factor = 5
-				FROM = { ruler_has_mage_personality = yes }
-				NOT = { ruler_has_mage_personality = yes }
+				FROM = { ruler_is_powerful_mage = yes }
+				NOT = { ruler_is_powerful_mage = yes }
 			}
 		}
 		add_prestige = -10
@@ -9602,7 +9643,7 @@ country_event = { #Mage of the Academy of Rzenta
 				duration = 7300
 			}
 		}
-		create_war_wizard_effect = yes 
+		create_war_wizard = yes 
 	}
 	
 	option = {
@@ -11312,5 +11353,350 @@ country_event = {
 		every_subject_country = {
 			grant_independence = yes
 		}
+	}
+}
+
+#Initial Migration
+country_event = {
+	id = ynn_events.500
+	title = ynn_events.500.t
+	desc = ynn_events.500.d
+	picture = CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	trigger = { }
+
+	immediate = {
+		hidden_effect = {
+			clr_global_flag = veykodan_sadge
+			1154 = { province_event = { id = ynn_events.502 days = 3650 } }
+			1154 = { province_event = { id = ynn_events.506 days = 9125 } }
+			1141 = { 
+				add_core = U21 
+				add_local_autonomy = 20
+				add_unrest = 5
+				add_unrest = 6
+			}
+			1143 = { 
+				add_core = U21 
+				add_local_autonomy = 20
+				add_unrest = 5
+				add_unrest = 6
+			}		
+			2841 = { 
+				add_core = U21 
+				add_local_autonomy = 20
+				add_unrest = 5
+				add_unrest = 6
+			}
+			2810 = { 
+				add_core = U21 
+				add_local_autonomy = 20
+				add_unrest = 5
+				add_unrest = 6
+			}
+			1148 = { 
+				add_core = U21 
+				add_local_autonomy = 20
+				add_unrest = 5
+				add_unrest = 6
+			}
+			1155 = { 
+				add_core = U21 
+				add_local_autonomy = 20
+				add_unrest = 5
+				add_unrest = 6
+			}
+			1149 = { 
+				add_core = U21 
+				add_local_autonomy = 20
+				add_unrest = 5
+				add_unrest = 6
+			}		
+			2858 = { 
+				add_core = U21 
+				add_local_autonomy = 20
+				add_unrest = 5
+				add_unrest = 6
+			}
+			veykoda_region = {
+				limit = {
+					owner = {
+						culture_group = ynnic_ruinborn_elf
+					}
+				}
+				add_core = U21
+				add_local_autonomy = 20
+				add_unrest = 5
+				add_unrest = 6
+			}
+		}
+	}
+
+	#U21 Is Veykodan
+
+	#Fuckem
+	option = {
+		name = ynn_events.500.a
+		ai_chance = {
+			factor = 5
+			modifier = {
+				factor = 10
+				U21 = { exists = NO }
+				NOT = { total_development = 100 }
+			}
+			modifier = {
+				factor = 15
+				U21 = { exists = NO }
+				total_development = 100
+			}
+			modifier = {
+				factor = 20
+				U21 = { exists = YES }
+			}
+		}
+		if = {
+			limit = {
+				primary_culture = sarda
+			}
+			custom_tooltip = ynn_veykodan_migration.1
+		}
+		else = {
+			custom_tooltip = ynn_veykodan_migration.2
+		}
+	}
+
+	#Tag Switch
+	option = {
+		name = ynn_events.500.b
+		ai_chance = {
+			factor = 25
+			modifier = {
+				factor = 15
+				U21 = { exists = NO }
+				NOT = { total_development = 100 }
+			}
+			modifier = {
+				factor = 10
+				U21 = { exists = NO }
+				total_development = 100
+			}
+			modifier = {
+				factor = 0
+				U21 = { exists = YES }
+			}
+		}
+
+		hidden_effect = {
+			release_with_religion_and_culture = {
+				tag = U21
+				religion = rune_scribes
+				culture = veykodan
+			}
+			U21 = {
+				change_government = tribal
+				add_government_reform = tribal_kingdom 
+			}
+		}
+		switch_tag = U21 #Veykodan Nation
+		custom_tooltip = country_no_mt.tt
+	}
+}
+
+#Veykodan Rise Up!
+country_event = {
+	id = ynn_events.501
+	title = ynn_events.501.t
+	desc = ynn_events.501.d
+	picture = CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+
+	}
+
+	option = {
+		name = ynn_events.501.a
+		ai_chance = {
+			factor = 1
+		}
+		random_owned_province = {
+			limit = {
+				is_core = U21
+				unrest = 3
+			}
+			spawn_rebels = {
+				type = veykoda_raiders
+				size = 5
+				culture = veykodan
+				friend = U21
+			}
+		}
+	}
+}
+
+#10 Year Timer for Rebolt
+province_event = {
+	id = ynn_events.502
+	title = ynn_events.502.t
+	desc = ynn_events.502.d
+	picture = CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+	fire_only_once = yes
+
+	trigger = {
+	}
+
+	option = {
+		name = ynn_events.502.a
+		ai_chance = {
+			factor = 1
+		}
+
+		set_global_flag = veykodan_rise_up
+	}
+}
+
+#10 Year Timer for Adventurers
+country_event = {
+	id = ynn_events.503
+	title = ynn_events.503.t
+	desc = ynn_events.503.d
+	picture = CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+	fire_only_once = yes
+
+	trigger = {
+	}
+
+	option = {
+		name = ynn_events.503.a
+		ai_chance = {
+			factor = 1
+		}
+
+		set_global_flag = veykodan_sadge
+	}
+}
+
+#Veykodan Delegation
+country_event = {
+	id = ynn_events.504
+	title = ynn_events.504.t
+	desc = ynn_events.504.d
+	picture = CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { 
+					is_core = U21
+					NOT = { unrest = 3 }
+					NOT = { culture = veykodan }
+				}
+				save_event_target_as = veykodan_delegation_origin_prov
+			}
+		}
+	}
+
+	option = {
+		name = ynn_events.504.a
+		ai_chance = {
+			factor = 30
+		}
+
+		event_target:veykodan_delegation_origin_prov = {
+			change_culture = veykodan
+			add_unrest = -2
+		}
+		if = {
+			limit = {
+				NOT = { accepted_culture = veykodan }
+			}
+			add_accepted_culture = veykodan
+		}
+		else = {
+			add_dip_power = 20
+		}
+	}
+
+	option = {
+		name = ynn_events.504.b
+		ai_chance = {
+			factor = 70
+		}
+		event_target:veykodan_delegation_origin_prov = {
+			add_unrest = 5
+		}
+	}
+}
+
+#Veykodan Integration
+country_event = {
+	id = ynn_events.505
+	title = ynn_events.505.t
+	desc = ynn_events.505.d
+	picture = CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+	
+
+	trigger = {
+	}
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = integrated_veykodans
+		}
+	}
+
+	option = {
+		name = ynn_events.505.a
+		ai_chance = {
+			factor = 1
+		}
+
+		every_owned_province = {
+			limit = { is_core = U21 }
+			remove_core = U21
+		}
+	}
+}
+
+#Veykodan Integration Timer
+province_event = {
+	id = ynn_events.506
+	title = ynn_events.506.t
+	desc = ynn_events.506.d
+	picture = CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+ 	hidden = yes
+	fire_only_once = yes
+
+	trigger = {
+	}
+
+	option = {
+		name = ynn_events.506.a
+		ai_chance = {
+			factor = 1
+		}
+
+		set_global_flag = veykodan_integration_can_happen
+
 	}
 }

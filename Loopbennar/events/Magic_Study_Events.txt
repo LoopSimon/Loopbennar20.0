@@ -1,0 +1,1411 @@
+namespace = magic_study
+
+country_event = { #Magic study event handler
+	id = magic_study.0
+	title = magic_study.0.t
+	desc = magic_study.0.desc
+	picture = MAGIC_STUDY_AND_RELAX_eventPicture
+
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = { NOT = { has_country_modifier = magic_progress_pulse_cd } }
+	immediate = { set_flag_based_on_advancement = { flag = in_magic_progress_event } }
+
+	after = {
+		random_list = {
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 180 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 211 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 239 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 270 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 300 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 331 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 361 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 392 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 423 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 453 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 484 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 514 hidden = yes } }
+			1 = { add_country_modifier = { name = magic_progress_pulse_cd duration = 545 hidden = yes } }
+		}
+	}
+
+	option = { #do nothing, denominator of 20 years (ai chance of 1 = MTTH of 20 years)
+		name = magic_study.0.a
+		ai_chance = {
+			factor = 24
+			modifier = {
+				factor = 2
+				OR = {
+					AND = {
+						type_is_advancing_magic = { type = ruler }
+						is_long_lived_ruler = yes
+					}
+					AND = {
+						type_is_advancing_magic = { type = heir }
+						is_long_lived_heir = yes
+					}
+				}
+			}
+			modifier = {
+				factor = 3
+				type_is_advancing_magic = { type = country }
+			}
+		}
+
+		clr_flag_based_on_advancement = { flag = in_magic_progress_event }
+	}
+
+	option = { #Estate Offers Aid
+		name = magic_study.100.t
+		trigger = {
+			OR = {
+				type_is_studying_magic = { type = ruler }
+				type_is_studying_magic = { type = heir }
+			}
+			estate_influence = { estate = estate_mages influence = 10 }
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_estate } }
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				estate_loyalty = { estate = estate_mages loyalty = 60 }
+			}
+			modifier = {
+				factor = 2
+				estate_influence = { estate = estate_mages influence = 50 }
+			}
+		}
+		country_event = { id = magic_study.100 }
+	}
+
+	option = { #Court Mage Offers Aid
+		name = magic_study.101.t
+		trigger = {
+			OR = {
+				type_is_studying_magic = { type = ruler }
+				type_is_studying_magic = { type = heir }
+			}
+			advisor = court_mage
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_advisor } }
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.2
+				stability = 1
+			}
+			modifier = {
+				factor = 2
+				court_mage = 3	#If you have a high level court mage its way more likely to fire
+			}
+			modifier = {
+				factor = 1.2
+				has_personality_based_on_advancement = { personality = well_advised_personality }
+			}
+		}
+		country_event = { id = magic_study.101 }
+	}
+
+	option = { #Library Research
+		name = magic_study.102.t
+		trigger = {
+			treasury = 200
+			OR = {
+				has_discovered = 8
+				has_discovered = 275
+				has_discovered = 2745
+				has_discovered = 976
+				has_discovered = 4630
+				has_discovered = 4460
+				has_discovered = 5380
+				has_discovered = 6679
+				has_discovered = 6729
+				has_discovered = 5483
+				has_discovered = 655
+				has_discovered = 2007
+			}
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_library } }
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.5
+				OR = {
+					owns_or_subject_of = 8		#Academy of Anbenncost
+					owns_or_subject_of = 275	#Konwell Imperial Archives
+					owns_or_subject_of = 2745	#Great Library of Lokemeion
+					owns_or_subject_of = 976	#Skaldol Skalds' Archive
+					owns_or_subject_of = 4630	#Sarilavhan Military Institute
+					owns_or_subject_of = 4460	#Royal Library of Sarnihanpur
+					owns_or_subject_of = 5380	#Low Temple of Cangyuan
+					owns_or_subject_of = 6679	#Underwater Archives of Qasri Aqoon
+					owns_or_subject_of = 6729	#Weather Weaver of Wezinmesig
+					owns_or_subject_of = 5483	#Tower of Muhaqaar
+					owns_or_subject_of = 655	#Magi Clans of Mount Lazzaward
+					owns_or_subject_of = 2007	#Dawnfire Institute of Arakeprun
+				}
+			}
+			modifier = {
+				factor = 1.25
+				university = 1
+			}
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = scholar_personality }
+			}
+		}
+		country_event = { id = magic_study.102 }
+	}
+
+	option = { #Ancient Tome Located
+		name = magic_study.103.t
+		trigger = { NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_tome } } }
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = intricate_web_weaver_personality }
+			}
+		}
+		country_event = { id = magic_study.103 }
+	}
+
+	option = { #Ancient Relic Located
+		name = magic_study.104.t
+		trigger = { NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_relic } } }
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = intricate_web_weaver_personality }
+			}
+		}
+		country_event = { id = magic_study.104 }
+	}
+
+	option = { #Precursor Knowledge
+		name = magic_study.105.t
+		trigger = {
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_precursor } }
+			treasury = 50
+			OR = {
+				precursor_relics = 1
+				any_subject_country = { precursor_relics = 1 }
+			}
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = expansionist_personality }
+			}
+			modifier = {
+				factor = 1.1
+				has_idea_group = exploration_ideas
+			}
+			modifier = {
+				factor = 1.33
+				trading_bonus = {
+					trade_goods = precursor_relics
+					value = yes
+				}
+			}
+			modifier = {
+				factor = 1.25
+				has_estate_privilege = estate_mages_reduced_research_regulations
+			}
+		}
+		country_event = { id = magic_study.105 }
+	}
+
+	option = { #Magisterium Offers Aid
+		name = magic_study.106.t
+		trigger = {
+			type_is_studying_magic = { type = country }
+			has_estate_privilege = estate_mages_organization_magisterium
+			exists = A85
+			NOT = { tag = A85 }
+			reverse_has_opinion = {
+				who = A85
+				value = 25
+			}
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_magisterium } }
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				reverse_has_opinion = {
+					who = A85
+					value = 100
+				}
+			}
+		}
+		country_event = { id = magic_study.106 }
+	}
+
+	option = { #Magical Practice
+		name = magic_study.107.t
+		trigger = {
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_mana } }
+			has_mana = { amount = 50 }
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = scholar_personality }
+			}
+			modifier = {
+				factor = 2
+				has_mana = { amount = 100 }
+			}
+		}
+		country_event = { id = magic_study.107 }
+	}
+
+	option = { #Resource Cost
+		name = magic_study.109.t
+		trigger = {
+			OR = {
+				had_country_flag = { flag = magic_study days = 1825 }
+				had_ruler_flag = { flag = magic_study days = 1825 }
+				had_heir_flag = { flag = magic_study days = 1825 }
+			}
+		}
+		ai_chance = { factor = 12 } #happens shortly after becoming available
+		country_event = { id = magic_study.109 }
+	}
+
+	option = { #Unregulated Research
+		name = magic_study.110.t
+		trigger = {
+			NOT = { has_country_flag = vacyntassi_jaherian_statute_flag }
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_unregulated } }
+		}
+		ai_chance = {
+			factor = 0.8
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = free_thinker_personality }
+			}
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = naive_personality }
+			}
+			modifier = {
+				factor = 1.5
+				ruler_is_witch_king = yes
+			}
+			modifier = {
+				factor = 1.4
+				capital_scope = { superregion = escann_superregion }
+			}
+		}
+		country_event = { id = magic_study.110 }
+	}
+
+	option = { #Unsafe Experiments
+		name = magic_study.111.t
+		trigger = {
+			NOT = { has_country_flag = vacyntassi_jaherian_statute_flag }
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_unsafe } }
+		}
+		ai_chance = {
+			factor = 0.8
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = free_thinker_personality }
+			}
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = obsessive_perfectionist_personality }
+			}
+			modifier = {
+				factor = 1.5
+				ruler_is_witch_king = yes
+			}
+			modifier = {
+				factor = 1.4
+				capital_scope = { superregion = escann_superregion }
+			}
+		}
+		country_event = { id = magic_study.111 }
+	}
+
+	option = { #Live Test Subjects
+		name = magic_study.112.t
+		trigger = {
+			NOT = { has_country_flag = vacyntassi_jaherian_statute_flag }
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_live } }
+		}
+		ai_chance = {
+			factor = 0.8
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = cruel_personality }
+			}
+			modifier = {
+				factor = 1.5
+				ruler_is_witch_king = yes
+			}
+			modifier = {
+				factor = 1.4
+				capital_scope = { superregion = escann_superregion }
+			}
+		}
+		country_event = { id = magic_study.112 }
+	}
+
+	option = { #Heir Doesn't Want to Study
+		name = magic_study.114.t
+		trigger = {
+			type_is_studying_magic = { type = heir }
+			NOT = { has_flag_based_on_advancement = { flag = magic_study_help_from_tutor } }
+			advisor = court_mage
+		}
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 1.25
+				has_personality_based_on_advancement = { personality = cruel_personality }
+			}
+		}
+		country_event = { id = magic_study.114 }
+	}
+
+	option = { #Balrijin Knowing Eye
+		name = flavour_balrijin.84.t
+		trigger = {
+			mission_completed = Y85_great_knowing_eye
+			type_is_advancing_school = { type = ruler school = divination }
+			NOT = { has_ruler_modifier = Y85_helped_by_knowing_eye }
+		}
+		ai_chance = {
+			factor = 0.8
+			modifier = {
+				factor = 2
+				4976 = { has_province_modifier = Y85_knowing_hq_modifier }
+			}
+			modifier = {
+				factor = 3
+				4976 = { has_province_modifier = Y85_knowing_hq_modifier2 }
+			}
+			modifier = {
+				factor = 10
+				4976 = { has_province_modifier = Y85_knowing_hq_modifier3 }
+			}
+		}
+		country_event = { id = flavour_balrijin.84 }
+	}
+}
+
+############################
+### SYSTEM EVENTS (1-99) ###
+############################
+
+country_event = { #Ruler Study Success
+	id = magic_study.2
+	title = magic_study.2.t
+	desc = magic_study.2.d
+	picture = MAGIC_STUDY_AND_RELAX_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = magic_study.2.a
+		ai_chance = { factor = 1 }
+
+		hidden_effect = {
+			change_variable = { num_times_studied_magic_ruler = 1 }
+			change_variable = { num_times_studied_magic_total = 1 }
+		}
+
+		trigger_switch = {
+			on_trigger = has_ruler_flag
+		
+			abjuration_advancement		= { magic_school_level_up = { type = ruler school = abjuration } }
+			conjuration_advancement		= { magic_school_level_up = { type = ruler school = conjuration } }
+			divination_advancement		= { magic_school_level_up = { type = ruler school = divination } }
+			enchantment_advancement		= { magic_school_level_up = { type = ruler school = enchantment } }
+			evocation_advancement		= { magic_school_level_up = { type = ruler school = evocation } }
+			illusion_advancement		= { magic_school_level_up = { type = ruler school = illusion } }
+			necromancy_advancement		= { magic_school_level_up = { type = ruler school = necromancy } }
+			transmutation_advancement	= { magic_school_level_up = { type = ruler school = transmutation } }
+		}
+	}
+}
+country_event = { #Heir Study Success
+	id = magic_study.3
+	title = magic_study.3.t
+	desc = magic_study.3.d
+	picture = QUEEN_AND_MALE_HEIR_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = magic_study.3.a
+		ai_chance = { factor = 1 }
+
+		hidden_effect = {
+			change_variable = { num_times_studied_magic_heir = 1 }
+			change_variable = { num_times_studied_magic_total = 1 }
+		}
+
+		trigger_switch = {
+			on_trigger = has_heir_flag
+		
+			abjuration_advancement		= { magic_school_level_up = { type = heir school = abjuration } }
+			conjuration_advancement		= { magic_school_level_up = { type = heir school = conjuration } }
+			divination_advancement		= { magic_school_level_up = { type = heir school = divination } }
+			enchantment_advancement		= { magic_school_level_up = { type = heir school = enchantment } }
+			evocation_advancement		= { magic_school_level_up = { type = heir school = evocation } }
+			illusion_advancement		= { magic_school_level_up = { type = heir school = illusion } }
+			necromancy_advancement		= { magic_school_level_up = { type = heir school = necromancy } }
+			transmutation_advancement	= { magic_school_level_up = { type = heir school = transmutation } }
+		}
+	}
+}
+country_event = { #Consort Study Success - Future-proofing
+	id = magic_study.4
+	title = magic_study.4.t
+	desc = magic_study.4.d
+	picture = wihgfx_FEMALE_SCHOLAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = magic_study.4.a
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #Estate Study Success
+	id = magic_study.5
+	title = magic_study.5.t
+	desc = magic_study.5.d
+	picture = MUSLIM_SCHOLAR_WRITING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = magic_study.5.a
+		ai_chance = { factor = 1 }
+
+		hidden_effect = {
+			change_variable = { num_times_studied_magic_country = 1 }
+			change_variable = { num_times_studied_magic_total = 1 }
+		}
+
+		trigger_switch = {
+			on_trigger = has_country_flag
+		
+			abjuration_advancement		= { magic_school_level_up = { type = country school = abjuration } }
+			conjuration_advancement		= { magic_school_level_up = { type = country school = conjuration } }
+			divination_advancement		= { magic_school_level_up = { type = country school = divination } }
+			enchantment_advancement		= { magic_school_level_up = { type = country school = enchantment } }
+			evocation_advancement		= { magic_school_level_up = { type = country school = evocation } }
+			illusion_advancement		= { magic_school_level_up = { type = country school = illusion } }
+			necromancy_advancement		= { magic_school_level_up = { type = country school = necromancy } }
+			transmutation_advancement	= { magic_school_level_up = { type = country school = transmutation } }
+		}
+	}
+}
+
+############################
+### RADIANT STUDY EVENTS ###
+############################
+
+country_event = { #Help from Mages Estate
+	id = magic_study.100
+	title = magic_study.100.t
+	desc = {
+		trigger = { has_ruler_flag = magic_advancement }
+		desc = magic_study.100.descruler
+	}
+	desc = {
+		trigger = { has_heir_flag = magic_advancement }
+		desc = magic_study.100.descheir
+	}
+	picture = MAGES_ESTATE_eventPicture
+	
+	is_triggered_only = yes
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	#Accept Help
+	option = {	
+		name = magic_study.100.a
+		ai_chance = { factor = 10 }
+		
+		add_estate_influence_modifier = {
+			estate = estate_mages
+			desc = EST_VAL_HELPING_RULER_STUDY
+			influence = 10
+			duration = 1825
+		}
+
+		set_flag_based_on_advancement = { flag = magic_study_help_from_estate }
+		
+		increase_magic_experience = { amount = 50 }
+	}
+	
+	#Nah
+	option = {
+		name = magic_study.100.b
+		ai_chance = { factor = 1 }
+		
+		reduce_estate_mages_loyalty_effect = yes
+	}
+}
+
+country_event = { # Help from Advisor (Court Mage)
+	id = magic_study.101
+	title = magic_study.101.t	
+	desc = magic_study.101.d
+	picture = ADVISOR_eventPicture
+	
+	is_triggered_only = yes
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	#Accept Help
+	option = {	
+		name = magic_study.101.a
+		ai_chance = { factor = 10 }
+		
+		add_prestige = -20
+		
+		set_flag_based_on_advancement = { flag = magic_study_help_from_advisor }
+		increase_magic_experience = {
+			amount = 50
+		}
+	}
+	
+	#Nah
+	option = {
+		name = magic_study.101.b
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Library Research
+	id = magic_study.102
+	title = magic_study.102.t
+	desc = magic_study.102.desc
+	picture = MAGIC_STUDY_AND_RELAX_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = { hidden_effect = { set_flag_based_on_advancement = { flag = magic_study_help_from_library } } }
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	option = { #Too Expensive!
+		name = magic_study.102.a
+		ai_chance = { factor = 1 }
+	}
+
+	option = { #Anbenncost
+		name = magic_study.102.b
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 8 }
+		goto = 8
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 8 } }
+			add_treasury = -200
+			8 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_anbenncost duration = 1825 }
+	}
+
+	option = { #Konwell
+		name = magic_study.102.c
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 275 }
+		goto = 275
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 275 } }
+			add_treasury = -200
+			275 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_konwell duration = 1825 }
+	}
+
+	option = { #Lokemeion
+		name = magic_study.102.d
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 2745 }
+		goto = 2745
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 2745 } }
+			add_treasury = -200
+			2745 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_lokemion duration = 1825 }
+	}
+
+	option = { #Skaldol
+		name = magic_study.102.e
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 976 }
+		goto = 976
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 976 } }
+			add_treasury = -200
+			976 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_skaldol duration = 1825 }
+	}
+
+	option = { #Sarilavhan
+		name = magic_study.102.f
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 4630 }
+		goto = 4630
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 4630 } }
+			add_treasury = -200
+			4630 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_sarilavhan duration = 1825 }
+	}
+
+	option = { #Sarnihanpur
+		name = magic_study.102.g
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 4460 }
+		goto = 4460
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 4460 } }
+			add_treasury = -200
+			4460 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_sarnihanpur duration = 1825 }
+	}
+
+	option = { #Cangyuan
+		name = magic_study.102.h
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 5380 }
+		goto = 5380
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 5380 } }
+			add_treasury = -200
+			5380 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_cangyuan duration = 1825 }
+	}
+
+	option = { #Qasri Aqoon
+		name = magic_study.102.i
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 6679 }
+		goto = 6679
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 6679 } }
+			add_treasury = -200
+			6679 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_qasri_aqoon duration = 1825 }
+	}
+
+	option = { #Wezinmesig
+		name = magic_study.102.j
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 6729 }
+		goto = 6729
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 6729 } }
+			add_treasury = -200
+			6729 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_wezinmesig duration = 1825 }
+	}
+
+	option = { #Muhaqaar
+		name = magic_study.102.k
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 5483 }
+		goto = 5483
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 5483 } }
+			add_treasury = -200
+			5483 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_muhaqaar duration = 1825 }
+	}
+
+	option = { #Lawassar
+		name = magic_study.102.l
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 655 }
+		goto = 655
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 655 } }
+			add_treasury = -200
+			655 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_lawassar duration = 1825 }
+	}
+
+	option = { #Arakeprun
+		name = magic_study.102.m
+		ai_chance = { factor = 100 }
+		highlight = yes
+		trigger = { has_discovered = 2007 }
+		goto = 2007
+
+		if = {
+			limit = { NOT = { owns_or_subject_of = 2007 } }
+			add_treasury = -200
+			2007 = { owner = { add_treasury = 200 } }
+		}
+		increase_magic_experience = { amount = 50 }
+		add_country_modifier = { name = azka_evran_books_copies_from_arakeprun duration = 1825 }
+	}
+}
+
+country_event = { # Ancient Tome Uncovered!
+	id = magic_study.103
+	title = magic_study.103.t	
+	desc = magic_study.103.d
+	picture = OVEREXTENSION_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = { set_flag_based_on_advancement = { flag = magic_study_help_from_tome } }
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	option = { #Hire some grad students to translate it
+		name = magic_study.103.a
+		trigger = { has_estate = estate_mages }
+		ai_chance = { factor = 1 }
+		
+		if = {
+			limit = { monthly_income = 28 }
+			add_years_of_income = -0.15
+		}
+		else = {
+			add_treasury = -50
+		}
+		
+		add_estate_influence_modifier = {
+			estate = estate_mages
+			desc = EST_VAL_PROCURING_MAGICAL_ARTIFACTS_FOR_RULER_STUDY
+			influence = 10
+			duration = 1825
+		}
+		
+		increase_magic_experience = { amount = 50 }
+	}
+	
+	option = { #I'll translate it myself!
+		name = magic_study.103.b
+		ai_chance = { factor = 1 }
+		
+		add_adm_power = -50
+		
+		random_list = {
+			1 = { increase_magic_experience = { amount = 75 } }
+			1 = { increase_magic_experience = { amount = 25 } }
+		}
+	}
+}
+
+country_event = { # Magical Relic
+	id = magic_study.104
+	title = magic_study.104.t	
+	desc = magic_study.104.d
+	picture = ADVENTURERS_ESTATE_eventPicture
+	
+	is_triggered_only = yes
+	
+	immediate = { set_flag_based_on_advancement = { flag = magic_study_help_from_relic } }
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	option = { #Hire some adventurers to retrieve it
+		name = magic_study.104.a
+		trigger = { has_estate = estate_adventurers }
+		ai_chance = { factor = 1 }
+		
+		if = {
+			limit = { monthly_income = 28 }
+			add_years_of_income = -0.15
+		}
+		else = {
+			add_treasury = -50
+		}
+		
+		add_estate_influence_modifier = {
+			estate = estate_adventurers
+			desc = EST_VAL_PROCURING_MAGICAL_ARTIFACTS_FOR_RULER_STUDY
+			influence = 10
+			duration = 1825
+		}
+		
+		increase_magic_experience = { amount = 50 }
+	}
+	
+	option = { #Hire some thugs to "retrieve" it
+		name = magic_study.104.b
+		trigger = { has_estate = estate_monstrous_tribes }
+		ai_chance = { factor = 1 }
+		
+		if = {
+			limit = { max_manpower = 80 }
+			add_yearly_manpower = -0.25
+		}
+		else = {
+			add_manpower = -2
+		}
+		
+		add_estate_influence_modifier = {
+			estate = estate_monstrous_tribes
+			desc = EST_VAL_PROCURING_MAGICAL_ARTIFACTS_FOR_RULER_STUDY
+			influence = 10
+			duration = 1825
+		}
+		
+		increase_magic_experience = { amount = 50 }
+	}
+	
+	#I'll get it myself!
+	option = {	
+		name = magic_study.104.c
+		ai_chance = { factor = 1 }
+		
+		add_adm_power = -10
+		add_dip_power = -10
+		add_mil_power = -25
+		
+		increase_magic_experience = { amount = 50 }
+	}
+}
+
+country_event = { # Precursor Knowledge Extraction
+	id = magic_study.105
+	title = magic_study.105.t	
+	desc = magic_study.105.d
+	picture = AZTEC_PYRAMID_eventPicture
+	goto = precursor_relics_province
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = { precursor_relics = 1 }
+				random_owned_province = {
+					limit = { trade_goods = precursor_relics }
+					save_event_target_as = precursor_relics_province
+				}
+			}
+			else = {
+				random_subject_country = {
+					limit = { precursor_relics = 1 }
+					random_owned_province = {
+						limit = { trade_goods = precursor_relics }
+						save_event_target_as = precursor_relics_province
+					}
+				}
+			}
+		}
+	}
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	option = { #Hire some thugs to keep the locals in check
+		name = magic_study.105.a
+		ai_chance = { factor = 1 }
+		
+		if = {
+			limit = { monthly_income = 28 }
+			add_years_of_income = -0.15
+		}
+		else = { add_treasury = -50 }
+		add_mil_power = -50
+
+		event_target:precursor_relics_province = {
+			add_province_modifier = { name = magic_study_mod_relic_extraction duration = 3650 }
+			add_province_modifier = { name = magic_study_mod_big_explosion duration = 3650 }
+			random = {
+				chance = 10
+				add_devastation = 90
+			}
+		}
+		
+		set_flag_based_on_advancement = { flag = magic_study_help_from_precursor }
+		increase_witch_king_points_based_on_advancement = { size = small }
+		increase_magic_experience = { amount = 75 }
+	}
+
+	option = { #Hire a research team to keep the ecology intact
+		name = magic_study.105.b
+		ai_chance = { factor = 1 }
+		
+		if = {
+			limit = { monthly_income = 28 }
+			add_years_of_income = -0.15
+		}
+		else = { add_treasury = -50 }
+		add_adm_power = -50
+
+		event_target:precursor_relics_province = {
+			add_province_modifier = { name = magic_study_mod_relic_extraction duration = 3650 }
+			add_province_modifier = { name = magic_study_mod_locals_displeased duration = 3650 }
+			if = {
+				limit = { owner = { is_subject_of = ROOT } }
+				owner = { add_liberty_desire = 20 }
+			}
+		}
+		
+		set_flag_based_on_advancement = { flag = magic_study_help_from_precursor }
+		increase_witch_king_points_based_on_advancement = { size = small }
+		increase_magic_experience = { amount = 75 }
+	}
+	
+	option = { #Better not
+		name = magic_study.105.c
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Help from Magisterium
+	id = magic_study.106
+	title = magic_study.106.t	
+	desc = magic_study.106.d
+	picture = DHIMMI_ESTATE_eventPicture
+	
+	is_triggered_only = yes
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	option = { #Accept Help
+		name = magic_study.106.a
+		ai_chance = { factor = 5 }
+		
+		add_prestige = -10
+		A85 = { increase_magic_experience = { amount = 25 } }
+		
+		set_flag_based_on_advancement = { flag = magic_study_help_from_magisterium }
+		increase_magic_experience = { amount = 50 }
+	}
+
+	option = { #Accept Help - Good
+		name = magic_study.106.b
+		ai_chance = { factor = 10 }
+		trigger = {
+			reverse_has_opinion = {
+				who = A85
+				value = 100
+			}
+		}
+		highlight = yes
+		
+		set_flag_based_on_advancement = { flag = magic_study_help_from_magisterium }
+		increase_magic_experience = { amount = 50 }
+		decrease_witch_king_points_based_on_advancement = { size = small }
+	}
+	
+	option = { #Nah
+		name = magic_study.106.c
+		ai_chance = { factor = 1 }
+		
+		A85 = { 
+            add_opinion = {
+                who = ROOT
+                modifier = medasi_rejected_our_gift
+            }
+		}
+		reduce_estate_mages_loyalty_effect = yes
+	}
+}
+
+country_event = { #Magical Practice
+	id = magic_study.107
+	title = magic_study.107.t	
+	desc = magic_study.107.d
+	picture = FIREBALL_eventPicture
+	
+	is_triggered_only = yes
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+
+	option = { #Practice Magic
+		name = magic_study.107.a
+		ai_chance = { factor = 10 }
+		
+		if = {
+			limit = { has_mana = { amount = 50 } }
+			change_mana = { amount = -50 }
+			set_flag_based_on_advancement = { flag = magic_study_help_from_mana }
+			increase_magic_experience = { amount = 50 }
+		}
+		else = { country_event = { id = magic_study.108 } }
+	}
+	
+	#Nah
+	option = {
+		name = magic_study.107.b
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #You tried to cheat lol
+	id = magic_study.108
+	title = magic_study.108.t	
+	desc = magic_study.108.d
+	picture = OVEREXTENSION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = magic_study.108.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+country_event = { #Resource Cost
+	id = magic_study.109
+	title = magic_study.109.t	
+	desc = magic_study.109.d
+	picture = BANKRUPTCY_eventPicture
+	
+	is_triggered_only = yes
+
+	after = {
+		set_flag_based_on_advancement = { flag = magic_study } #reset timer
+		clr_flag_based_on_advancement = { flag = in_magic_progress_event }
+	}
+
+	option = { #Pay through the nose
+		name = magic_study.109.a
+		ai_chance = { factor = 10 }
+	
+		if = {
+			limit = { monthly_income = 28 }
+			add_years_of_income = -0.15
+		}
+		else = { add_treasury = -50 }
+		add_adm_power = -30
+		add_dip_power = -30
+		add_mil_power = -30
+	}
+	
+	option = { #Greedy
+		name = magic_study.109.b
+		trigger = {
+			OR = {
+				has_personality_based_on_advancement = { personality = greedy_personality }
+				has_personality_based_on_advancement = { personality = midas_touched_personality }
+			}
+			hidden_trigger = {
+				NOT = {
+					has_personality_based_on_advancement = { personality = free_thinker_personality }
+					has_personality_based_on_advancement = { personality = naive_personality }
+				}
+			}
+		}
+		highlight = yes
+		ai_chance = { factor = 1000 }
+		
+		if = {
+			limit = { monthly_income = 28 }
+			add_years_of_income = -0.075
+		}
+		else = { add_treasury = -25 }
+		add_adm_power = -30
+		add_dip_power = -30
+		add_mil_power = -30
+	}
+
+	option = { #Clever
+		name = magic_study.109.b
+		trigger = {
+			OR = {
+				has_personality_based_on_advancement = { personality = free_thinker_personality }
+				has_personality_based_on_advancement = { personality = naive_personality }
+			}
+			hidden_trigger = {
+				NOT = {
+					has_personality_based_on_advancement = { personality = greedy_personality }
+					has_personality_based_on_advancement = { personality = midas_touched_personality }
+				}
+			}
+		}
+		highlight = yes
+		ai_chance = { factor = 1000 }
+		
+		if = {
+			limit = { monthly_income = 28 }
+			add_years_of_income = -0.15
+		}
+		else = { add_treasury = -50 }
+		add_adm_power = -20
+		add_dip_power = -20
+		add_mil_power = -20
+	}
+
+	option = { #Both
+		name = magic_study.109.b
+		trigger = {
+			OR = {
+				has_personality_based_on_advancement = { personality = free_thinker_personality }
+				has_personality_based_on_advancement = { personality = naive_personality }
+			}
+			OR = {
+				has_personality_based_on_advancement = { personality = greedy_personality }
+				has_personality_based_on_advancement = { personality = midas_touched_personality }
+			}
+		}
+		highlight = yes
+		ai_chance = { factor = 1000 }
+		
+		if = {
+			limit = { monthly_income = 28 }
+			add_years_of_income = -0.075
+		}
+		else = { add_treasury = -25 }
+		add_adm_power = -20
+		add_dip_power = -20
+		add_mil_power = -20
+	}
+}
+
+country_event = { #Unregulated Research
+	id = magic_study.110
+	title = magic_study.110.t	
+	desc = magic_study.110.d
+	picture = CHURCH_ESTATE_eventPicture
+	
+	is_triggered_only = yes
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	option = { #Ye go on then pal
+		name = magic_study.110.a
+		ai_chance = { factor = 1 }
+		trigger = { has_estate_privilege = estate_mages_reduced_research_regulations }
+		highlight = yes
+		
+		add_prestige = -10
+		increase_witch_king_points_based_on_advancement = { size = small }
+		set_flag_based_on_advancement = { flag = magic_study_help_from_unregulated }
+		increase_magic_experience = { amount = 50 }
+	}
+	
+	option = { #Nah
+		name = magic_study.110.b
+		ai_chance = { factor = 1 }
+		
+		add_prestige = 5
+		add_manpower = -0.001
+		decrease_witch_king_points_based_on_advancement = { size = small }
+		if = {
+			limit = { NOT = { has_estate_privilege = estate_mages_reduced_research_regulations } }
+			custom_tooltip = unregulated_research_tt
+		}
+	}
+}
+
+country_event = { #Unsafe Experiments
+	id = magic_study.111
+	title = magic_study.111.t	
+	desc = magic_study.111.d
+	picture = CHURCH_ESTATE_UPSET_eventPicture
+	
+	is_triggered_only = yes
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	option = { #Ignore
+		name = magic_study.111.a
+		ai_chance = { factor = 1 }
+		trigger = { has_estate_privilege = estate_mages_reduced_research_regulations }
+		highlight = yes
+		
+		add_manpower = -0.1
+		add_splendor = -10
+		increase_witch_king_points_based_on_advancement = { size = small }
+		set_flag_based_on_advancement = { flag = magic_study_help_from_unsafe }
+		increase_magic_experience = { amount = 50 }
+	}
+	
+	option = { #Follow regulations
+		name = magic_study.111.b
+		ai_chance = { factor = 1 }
+		
+		add_prestige = 5
+		if = {
+			limit = { monthly_income = 28 }
+			add_treasury = -50
+		}
+		else = { add_years_of_income = -0.15 }
+		decrease_witch_king_points_based_on_advancement = { size = small }
+		if = {
+			limit = { NOT = { has_estate_privilege = estate_mages_reduced_research_regulations } }
+			custom_tooltip = unregulated_research_tt
+		}
+	}
+}
+
+country_event = { #Live Test Subjects
+	id = magic_study.112
+	title = magic_study.112.t	
+	desc = magic_study.112.d
+	picture = MAGIC_STUDY_AND_RELAX_eventPicture
+	
+	is_triggered_only = yes
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	option = { #Abjuct Some Guys
+		name = magic_study.112.a
+		ai_chance = { factor = 1 }
+		trigger = { has_estate_privilege = estate_mages_reduced_research_regulations }
+		highlight = yes
+		
+		add_manpower = -1
+		increase_witch_king_points_based_on_advancement = { size = medium }
+		set_flag_based_on_advancement = { flag = magic_study_help_from_live }
+		increase_magic_experience = { amount = 50 }
+		random = {
+			chance = 33
+			ROOT = { country_event = { id = magic_study.113 days = 15 random = 10 } }
+		}
+	}
+	
+	option = { #Enchant Some Guys
+		name = magic_study.112.b
+		ai_chance = { factor = 1 }
+		trigger = {
+			has_estate_privilege = estate_mages_reduced_research_regulations
+			is_overall_enchantment_level_2_minimum = yes
+		}
+		highlight = yes
+		
+		add_manpower = -1
+		increase_witch_king_points_based_on_advancement = { size = large }
+		set_flag_based_on_advancement = { flag = magic_study_help_from_live }
+		increase_magic_experience = { amount = 75 }
+	}
+	
+	option = { #Nah
+		name = magic_study.112.c
+		ai_chance = { factor = 1 }
+		
+		add_prestige = 1
+		decrease_witch_king_points_based_on_advancement = { size = small }
+		if = {
+			limit = { NOT = { has_estate_privilege = estate_mages_reduced_research_regulations } }
+			custom_tooltip = unregulated_research_tt
+		}
+	}
+}
+country_event = { # Live Test Subjects Exposed
+	id = magic_study.113
+	title = magic_study.113.t
+	desc = magic_study.113.d
+	picture = ANGRY_MOB_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = { #Assuage their concerns
+		name = magic_study.113.a
+		ai_chance = { factor = 1 }
+		
+		add_dip_power = -50
+		increase_witch_king_points_based_on_advancement = { size = small }
+		
+		add_country_modifier = {
+			name = magic_study_mod_live_experiments
+			duration = 730
+		}
+	}
+	
+	option = { #Send a force to teach them a lesson
+		name = magic_study.113.b
+		ai_chance = { factor = 1 }
+		
+		add_mil_power = -50
+		increase_witch_king_points_based_on_advancement = { size = large }
+		
+		add_country_modifier = {
+			name = magic_study_mod_live_experiments
+			duration = 730
+		}
+	}
+	
+	option = { #You are my subjects. Mine.
+		name = magic_study.113.c
+		trigger = { ruler_is_witch_king = yes }
+		ai_chance = { factor = 1000 }
+		highlight = yes
+
+		add_splendor = 2
+		increase_witch_king_points_based_on_advancement = { size = medium }
+		add_country_modifier = {
+			name = magic_study_mod_live_experiments
+			duration = 365
+		}
+	}
+}
+
+country_event = { # The Talent and the Tutor
+	id = magic_study.114
+	title = magic_study.114.t
+	desc = magic_study.114.d
+	picture = QUEEN_AND_MALE_HEIR_eventPicture
+	
+	is_triggered_only = yes
+	immediate = { set_flag_based_on_advancement = { flag = magic_study_help_from_tutor } }
+	after = { clr_flag_based_on_advancement = { flag = in_magic_progress_event } }
+	
+	option = { #Bribe the child
+		name = magic_study.114.a
+		ai_chance = { factor = 1 }
+		
+		if = {
+			limit = { monthly_income = 28 }
+			add_years_of_income = -0.15
+		}
+		else = { add_treasury = -50 }
+		increase_heir_witch_king_points = { size = small }
+		
+		increase_magic_experience = { amount = 25 }
+	}
+	
+	option = { #Teach them a lesson
+		name = magic_study.114.b
+		ai_chance = { factor = 1 }
+		
+		add_mil_power = -25
+		decrease_heir_witch_king_points = { size = small }
+	}
+}

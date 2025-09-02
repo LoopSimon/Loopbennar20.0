@@ -7,7 +7,7 @@ Y63_missions_1a = {
 	ai = yes 
 	potential = {
 		tag = Y63
-		has_global_flag = khom_civilwar_honsai_won_war
+		has_global_flag = tamran_civilwar_honsai_won_war
 	}
 	has_country_shield = yes
 	
@@ -181,7 +181,7 @@ Y63_missions_1b = {
 	ai = yes 
 	potential = {
 		tag = Y63
-		NOT = { has_global_flag =  khom_civilwar_honsai_won_war }
+		NOT = { has_global_flag =  tamran_civilwar_honsai_won_war }
 	}
 	has_country_shield = yes
 	
@@ -410,7 +410,10 @@ Y63_missions_1 = {
 					has_building = mage_tower
 				}
 			}
-			has_estate_privilege = estate_mages_patronage_of_the_magical_arts
+			OR = {
+				has_estate_privilege = estate_mages_magocratic_administration
+				has_estate_privilege = estate_mages_development_of_mage_towers
+			}
 		}
 		
 		effect = {
@@ -665,7 +668,7 @@ Y63_missions_2 = {
 			is_free_or_tributary_trigger = yes
 			army_size_percentage = 0.9
 			if = {
-				limit = { has_global_flag = khom_civilwar_honsai_won_war }
+				limit = { has_global_flag = tamran_civilwar_honsai_won_war }
 				trade_embargoing  = Y71
 			}
 			NOT = { truce_with = Y71 }
@@ -682,7 +685,7 @@ Y63_missions_2 = {
 				}
 				custom_tooltip = Y63_kudet_kai_tt
 				if = {
-					limit = { has_global_flag = khom_civilwar_honsai_won_war }
+					limit = { has_global_flag = tamran_civilwar_honsai_won_war }
 					4751 = { add_claim = ROOT }
 				}
 			}
@@ -772,10 +775,7 @@ Y63_missions_2 = {
 		}
 		
 		effect = {
-			if = {
-				limit = { government_rank = 1 }
-				set_government_rank = 2
-			}
+			increase_government_rank_scripted_effect = { rank = 2 }
 			custom_tooltip = Y63_unlock_patronate_estate_tt
 			random_subject_country = {
 				limit = {
@@ -918,9 +918,7 @@ Y63_missions_2 = {
 			country_event = { id = verkalozovar_events.14 days = 730 }
 			hidden_effect = {
 				if = {
-					limit = {
-						NOT = { ruler_has_personality = mage_personality }
-					}
+					limit = { NOT = { ruler_is_powerful_mage = yes } }
 					define_ruler = {
 						dynasty = "Krakovar"
 						adm = 4
@@ -932,7 +930,7 @@ Y63_missions_2 = {
 						age = 179
 					}
 					set_ruler_flag = long_lived_ruler
-					add_ruler_personality = mage_personality
+					define_powerful_mage = { type = ruler }
 					add_ruler_personality = pious_personality
 				}
 			}
@@ -987,12 +985,7 @@ Y63_missions_2 = {
 				development = 100
 				has_building = mage_tower
 			}
-			OR = {
-				has_country_modifier = magic_estate_aiding_construction_1
-				has_country_modifier = magic_estate_aiding_construction_2
-				has_country_modifier = magic_estate_aiding_construction_3
-				has_country_modifier = Y63_minor_rune_gulan_amekh
-			}
+			has_cast_aid_construction = yes
 			custom_trigger_tooltip = {
 				tooltip = Y63_runethought_dev_tt
 				4945 = {
@@ -1174,10 +1167,7 @@ Y63_missions_2 = {
 			all_subject_country = {
 				NOT = { liberty_desire = 50 }
 			}
-			OR = {
-				has_ruler_modifier = magic_realm_enchantment_charm_assuage_subjects_2
-				has_ruler_modifier = magic_realm_enchantment_charm_assuage_subjects_3
-			}
+			has_cast_mass_charm = yes
 			custom_trigger_tooltip = {
 				tooltip = Y63_check_decisions_you_fuckers_tt
 				4945 = {
@@ -1826,10 +1816,7 @@ Y63_missions_3 = {
 					has_manufactory_trigger = yes
 				}
 			}
-			custom_trigger_tooltip = {
-				tooltip = is_enchantment_1_tt
-				has_ruler_flag = enchantment_1
-			}
+			is_ruler_enchantment_level_1_minimum = yes
 		}
 		
 		effect = {
@@ -1885,7 +1872,7 @@ Y63_missions_3 = {
 			}
 			stability = 2
 			devotion = 95
-			is_enchantment_3 = yes
+			is_ruler_enchantment_level_3 = yes
 		}
 		
 		effect = {
@@ -2475,12 +2462,20 @@ Y63_missions_5 = {
 		}
 		
 		effect = {
-			5424 = {
-				add_building_construction = {
-					building = mage_tower
-					speed = 0.5
-					cost = 0.25
-				}
+			simple_dynamic_effect = {
+				first_custom_tooltip = Y63_repopulate_rune_workshops_tt
+				first_limit = "5424 = { has_building = mage_tower }"
+				first_effect = "change_estate_land_share = { estate = all share = -5 }"
+				second_limit = "5424 = { NOT = { has_building = mage_tower } }"
+				second_effect = "
+					5424 = {
+						add_building_construction = {
+							building = mage_tower
+							speed = 0.5
+							cost = 0.25
+						}
+					}
+				"
 			}
 		}
 	}
@@ -2495,18 +2490,10 @@ Y63_missions_5 = {
 		}
 		
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = Y63_underground_rainwater_trigger_tt
-				5424 = {
-					OR = {
-						has_province_modifier = magic_estate_ward_1
-						has_province_modifier = magic_estate_ward_2
-						has_province_modifier = magic_estate_ward_3
-						has_province_modifier = Y63_minor_rune_runic_ward_3
-						has_province_modifier = Y63_minor_rune_runic_ward_2
-						has_province_modifier = Y63_minor_rune_runic_ward_1
-					}
-				}
+			OR = {
+				has_cast_reshape_terrain = yes
+				has_cast_aid_construction = yes
+				5424 = { province_has_magical_ward = yes }
 			}
 			crown_land_share = 5
 		}
