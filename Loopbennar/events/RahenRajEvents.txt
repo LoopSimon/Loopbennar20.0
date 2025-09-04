@@ -637,7 +637,7 @@ province_event = {
 					else = {
 						add_country_modifier = { name = raj_manavas_legacy duration = 5475 }
 					}
-					# raj_cohesion_change_bonus = { value = -30 }	this is probably overkill now, but maybe a lil of this will be warranted, see after testing
+					# raj_permanent_cohesion_change_bonus = { value = -30 }	this is probably overkill now, but maybe a lil of this will be warranted, see after testing
 				}
 			}
 			remove_province_modifier = raj_manavas_influence
@@ -649,7 +649,7 @@ province_event = {
 		custom_tooltip = raj_corrupt_court_disaster_happening_tt
 		tooltip = {
 			remove_province_modifier = raj_manavas_influence
-			# raj_cohesion_change_bonus = { value = -30 }
+			# raj_permanent_cohesion_change_bonus = { value = -30 }
 		}
 		owner = {
 			if = { limit = { has_heir_flag = manava_as_regent }
@@ -1899,6 +1899,12 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
+
+			4411 = { 
+				# Pause the vizier influence calculation while the event is open
+				set_province_flag = pause_vizier_influence_calc 
+			}
+
 			if = {
 				limit = {
 					any_subject_country = { is_subject_of_type = great_daimyo_vassal army_size = 1 ai = yes }	#pick best tag is silly, army_size is a safety net.
@@ -1985,6 +1991,10 @@ country_event = {
 		goto = senapti1_capital
 		ai_chance = { factor = 1 }
 		trigger = { has_saved_event_target = strongest_senapti_1 event_target:raj_vizier_global_target = { OR = { ai = yes tag = ROOT } } }
+		custom_tooltip = raj_var_vizier_malus_tt
+		# Trigger the appropriate vizier malus for picking a different vizier
+		raj_vizier_influence_malus = yes
+
 		event_target:strongest_senapti_1 = { raj_become_vizier = yes }
 	}
 
@@ -1992,6 +2002,10 @@ country_event = {
 		name = rahenraj.2100.d
 		goto = senapti2_capital
 		trigger = { has_saved_event_target = strongest_senapti_2 ai = no event_target:strongest_senapti_2 = { is_subject_of = ROOT } }
+		custom_tooltip = raj_var_vizier_malus_tt
+		# Trigger the appropriate vizier malus for picking a different vizier
+		raj_vizier_influence_malus = yes
+		
 		event_target:strongest_senapti_2 = { raj_become_vizier = yes }
 	}
 
@@ -1999,6 +2013,10 @@ country_event = {
 		name = rahenraj.2100.e
 		goto = senapti3_capital
 		trigger = { has_saved_event_target = strongest_senapti_3 ai = no event_target:strongest_senapti_3 = { is_subject_of = ROOT } }
+		custom_tooltip = raj_var_vizier_malus_tt
+		# Trigger the appropriate vizier malus for picking a different vizier
+		raj_vizier_influence_malus = yes
+
 		event_target:strongest_senapti_3 = { raj_become_vizier = yes }
 	}
 
@@ -2006,6 +2024,10 @@ country_event = {
 		name = rahenraj.2100.f
 		goto = senapti4_capital
 		trigger = { has_saved_event_target = strongest_senapti_4 ai = no event_target:strongest_senapti_4 = { is_subject_of = ROOT } }
+		custom_tooltip = raj_var_vizier_malus_tt
+		# Trigger the appropriate vizier malus for picking a different vizier
+		raj_vizier_influence_malus = yes
+
 		event_target:strongest_senapti_4 = { raj_become_vizier = yes }
 	}
 	
@@ -2013,6 +2035,10 @@ country_event = {
 		name = rahenraj.2100.g
 		goto = senapti5_capital
 		trigger = { has_saved_event_target = strongest_senapti_5 ai = no event_target:strongest_senapti_5 = { is_subject_of = ROOT } }
+		custom_tooltip = raj_var_vizier_malus_tt
+		# Trigger the appropriate vizier malus for picking a different vizier
+		raj_vizier_influence_malus = yes
+
 		event_target:strongest_senapti_5 = { raj_become_vizier = yes }
 	}
 
@@ -2020,6 +2046,10 @@ country_event = {
 		name = rahenraj.2100.h
 		goto = prabhi1_capital
 		trigger = { has_saved_event_target = prabhi1 }
+		custom_tooltip = raj_var_vizier_malus_tt
+		# Trigger the appropriate vizier malus for picking a different vizier
+		raj_vizier_influence_malus = yes
+
 		event_target:prabhi1 = { raj_become_vizier = yes }
 	}
 
@@ -2033,6 +2063,10 @@ country_event = {
 				}
 			}
 		}
+		custom_tooltip = VizierMalusTT
+		# Trigger the appropriate vizier malus for picking a different vizier
+		raj_vizier_influence_malus = yes
+
 		random_subject_country = {
 			limit = { has_government_attribute = is_raja_subject }
 			raj_become_vizier = yes
@@ -2043,6 +2077,11 @@ country_event = {
 		clr_country_flag = vizier_nomination_on_new_raja
 		clr_country_flag = raj_vizier_just_died
 		clr_country_flag = vizier_became_raja
+
+		# Resume the vizier influence calculation once event is closed
+		4411 = { clr_province_flag = pause_vizier_influence_calc }
+		event_target:raj_raja_global_target = { rahen_raj_calc_cohesion = yes }
+
 		country_event = { id = rahenraj.2101 }
 	}
 }
@@ -2079,6 +2118,10 @@ country_event = {
 
 	option = {
 		name = rahenraj.2102.a
+		if = { 
+			limit = { NOT = { has_reform = senapti_reform } }
+			add_government_reform = senapti_reform
+		}
 		add_prestige = 10
 		add_legitimacy = 5
 	}
@@ -2095,6 +2138,10 @@ country_event = {
 
 	option = {
 		name = rahenraj.2103.a
+		if = { 
+			limit = { NOT = { has_reform = senapti_reform } }
+			add_government_reform = senapti_reform
+		}
 		add_prestige = -10
 		add_legitimacy = -5
 	}

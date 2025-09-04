@@ -1,0 +1,111 @@
+namespace = ljh_jiangdu_war_event
+# startup event for LJH and Jiangdu
+country_event = {
+	id = ljh_jiangdu_war_event.1
+	title = ljh_jiangdu_war_event.1.t
+	desc = ljh_jiangdu_war_event.1.d
+	picture = GENERALS_DISCUSSING_eventPicture
+
+	is_triggered_only = yes
+		trigger = {
+		NOT = {
+			is_year = 1445
+		}
+		OR = {
+			tag = Y05
+			tag = Y13
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = ljh_jiangdu_war_event.2
+				days = 228
+			}
+		}
+	}
+
+	option = {
+		name = ljh_jiangdu_war_event.1.a
+		trigger = { # Lanjinhui
+			tag = Y05
+		}
+		add_manpower = 5
+		capital_scope = {
+			infantry = Y05
+		}
+		custom_tooltip = ljh_jiangdu_war_event.1_y05
+	}
+
+	option = {
+		name = ljh_jiangdu_war_event.1.b
+		trigger = { # Jiangdu
+			tag = Y13
+		}
+		add_manpower = 6
+		add_treasury = 150 #so ai doesnt delete starting regiments
+		capital_scope = {
+			infantry = Y13
+			infantry = Y13
+		}
+		custom_tooltip = ljh_jiangdu_war_event.1_y13
+	}
+}
+
+country_event = { 
+    id = ljh_jiangdu_war_event.2
+	title = ljh_jiangdu_war_event.2.t
+	desc = ljh_jiangdu_war_event.2.d
+	picture = CIVIL_WAR_eventPicture
+	is_triggered_only = yes
+	major = yes
+	option = {
+		name = ljh_jiangdu_war_event.2.a
+		trigger = { tag = Y05 } #lanjinhui
+		declare_war_with_cb = {
+            casus_belli = cb_conquest
+            who = Y13
+			war_goal_province = 4868
+        }
+		hidden_effect = {
+			country_event = {
+				id = ljh_jiangdu_war_event.3
+				days = 1
+			}
+		}
+		# custom_tooltip = ljh_jiangdu_war_event.2_y05
+	}
+	option = {
+		name = ljh_jiangdu_war_event.2.b
+		trigger = { tag = Y13 } #jiangdu
+		# custom_tooltip = ljh_jiangdu_war_event.2_y13
+	}
+}
+country_event = { 
+    id = ljh_jiangdu_war_event.3
+	title = ljh_jiangdu_war_event.3.t
+	desc = ljh_jiangdu_war_event.3.d
+	picture = CIVIL_WAR_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	option = {
+		every_known_country = {
+            limit = {
+                is_in_war = {
+                    attacker_leader = Y05
+                    defender_leader = Y13
+                }
+                NOT = {
+                    tag = Y05
+                    tag = Y13
+                }
+            }
+            if = {
+                limit = { war_with = Y05 }
+                white_peace = Y05
+            }
+            else = { white_peace = Y13 }
+        }
+	}
+}

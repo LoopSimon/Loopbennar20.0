@@ -51,6 +51,13 @@ country_event = { #After Arskitse
 	
 	option = { #Agree
 		name = empire_333.3.a
+		trigger = {
+			NOT = {
+				any_owned_province = {
+					has_province_modifier = L68_merfolk_slaves
+				}
+			}
+		}
 		merfolk_add_opinion_effect_large = yes
 		turtleback_isle_region = {
 			add_permanent_claim = ROOT
@@ -79,6 +86,11 @@ country_event = { #After Arskitse
 					continent = north_america
 				}
 			}
+			NOT = {
+				any_owned_province = {
+					has_province_modifier = L68_merfolk_slaves
+				}
+			}
 		}
 		6032 = {
 			add_province_modifier = {
@@ -87,6 +99,52 @@ country_event = { #After Arskitse
 			}
 		}
 		merfolk_add_opinion_effect_largest = yes
+		turtleback_isle_region = {
+			add_permanent_claim = ROOT
+		}
+		set_country_flag = arskitse_second_event_flag
+		country_event = {
+			id = empire_333.4
+		}
+	}
+
+	option = { #karassk work around
+		name = empire_333.3.e
+		trigger = {
+			any_owned_province = {
+				has_province_modifier = L68_merfolk_slaves
+			}
+		}
+		turtleback_isle_region = {
+			add_permanent_claim = ROOT
+		}
+		custom_tooltip = empire_333.3.tt
+		hidden_effect = {
+			set_country_flag = after_arskitse_second_event_flag
+		}
+	}
+
+	option = { #karassk work around already owned
+		name = empire_333.3.f
+		highlight = yes
+		trigger = {
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 3
+				OR = {
+					continent = south_america
+					continent = north_america
+				}
+			}
+			any_owned_province = {
+				has_province_modifier = L68_merfolk_slaves
+			}
+		}
+		6032 = {
+			add_province_modifier = {
+				name = khatalashya_province_great_project_discount
+				duration = 3650
+			}
+		}
 		turtleback_isle_region = {
 			add_permanent_claim = ROOT
 		}
@@ -126,40 +184,90 @@ country_event = { #Aelentir Merfolk
 		hidden_effect = {
 			if = {
 				limit = {
-					num_of_owned_provinces_with = {
-						value = 3
-						OR = {
-							continent = south_america
-							continent = north_america
+					NOT = {
+						any_owned_province = {
+							has_province_modifier = L68_merfolk_slaves
 						}
-						has_port = yes
-						NOT = { has_terrain = glacier }
 					}
 				}
-				for = {
-					amount = 3
-					effect = "
-						random_owned_province = {
-							limit = {
-								NOT = { has_province_flag =  merfolk_settlement }
-								OR = {
-									continent = south_america
-									continent = north_america
-								}
-								has_port = yes
-								NOT = { has_terrain = glacier }
+				if = {
+					limit = {
+						num_of_owned_provinces_with = {
+							value = 3
+							OR = {
+								continent = south_america
+								continent = north_america
 							}
-							merfolk_spawn_modifier = yes
+							has_port = yes
+							NOT = { has_terrain = glacier }
 						}
-					"
+					}
+					for = {
+						amount = 3
+						effect = "
+							random_owned_province = {
+								limit = {
+									NOT = { has_province_flag =  merfolk_settlement }
+									OR = {
+										continent = south_america
+										continent = north_america
+									}
+									has_port = yes
+									NOT = { has_terrain = glacier }
+								}
+								merfolk_spawn_modifier = yes
+							}
+						"
+					}
+				}
+				else = {
+					for = {
+						amount = 3
+						effect = "
+							merfolk_spawn_in_random_aelentir_vassal = yes
+						"
+					}
 				}
 			}
 			else = {
-				for = {
-					amount = 3
-					effect = "
-						merfolk_spawn_in_random_aelentir_vassal = yes
-					"
+				if = {
+					limit = {
+						num_of_owned_provinces_with = {
+							value = 3
+							OR = {
+								continent = south_america
+								continent = north_america
+							}
+							has_port = yes
+							NOT = {
+								trade_goods = gold
+								trade_goods = coal
+								trade_goods = damestear
+							}
+							NOT = { has_terrain = glacier }
+						}
+					}
+					for = {
+						amount = 3
+						effect = " karassk_333rd_merslave_spawn = yes "
+					}
+				}
+				else = {
+					for = {
+						amount = 3
+						effect = "
+							random_subject_country = {
+								limit = {
+									capital_scope = { OR = { continent = south_america continent = north_america } }
+									any_owned_province = {
+										OR = { continent = south_america continent = north_america } has_port = yes
+										NOT = { has_province_modifier = L68_merfolk_slaves trade_goods = gold trade_goods = coal trade_goods = damestear has_terrain = glacier }
+									}
+								}
+								karassk_333rd_merslave_spawn = yes
+							}
+						"
+					}
 				}
 			}
 			random_province = {
@@ -168,7 +276,10 @@ country_event = { #Aelentir Merfolk
 						continent = south_america
 						continent = north_america
 					}
-					has_province_flag = merfolk_settlement
+					OR = {
+						has_province_flag = merfolk_settlement
+						has_province_modifier = L68_merfolk_slaves
+					}
 				}
 				save_event_target_as = khat_merfolk_settlement_aelentir
 			}
@@ -1735,11 +1846,27 @@ country_event = { #this one needs an option so Karassk can go "well turns out we
 	
 	option = {
 		name = empire_333.116.a
+		trigger = {
+			NOT = { was_tag = L68 }
+		}
 		remove_faith_in_the_prophecy = yes
 		ai_chance = {
 			factor = 1
 		}
 	}
+
+	option = {
+		name = empire_333.116.c
+		trigger = {
+			was_tag = L68
+		}
+		add_prestige = 5
+		remove_faith_in_the_prophecy = yes
+		ai_chance = {
+			factor = 1
+		}
+	}
+
 	option = {
 		name = empire_333.100.b
 		trigger = {
