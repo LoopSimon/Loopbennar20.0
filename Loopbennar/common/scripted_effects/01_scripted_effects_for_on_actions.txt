@@ -4294,6 +4294,24 @@ on_battle_won_country_effect = {
 		}
 		change_variable = { num_battles_won_against_command = 1 }
 	}
+
+	#salla drennen
+	if = {
+		limit = {
+			tag = I28
+		}
+		if = {
+			limit = {
+				FROM = { 
+					culture_group = orcish
+				}
+			}
+			change_variable = {
+				which = I28_orc_battles
+				value = 1
+			}
+		}
+	}
 }
 
 on_battle_lost_country_effect = {
@@ -5229,7 +5247,28 @@ on_religion_change_effect = {
 		}
 	}
 
-	
+	if = {
+		limit = {
+			ai = yes
+			OR = { #Chi religions
+				religion = accretive_path
+				religion = transmutative_path
+				religion = devouring_path
+			}
+		}
+		add_country_modifier = { name = ai_church_power_bypass duration = -1 }
+	}
+	else_if = {
+		limit = {
+			has_country_modifier = ai_church_power_bypass
+			NOT = {
+				religion = accretive_path
+				religion = transmutative_path
+				religion = devouring_path
+			}
+		}
+		remove_country_modifier = ai_church_power_bypass
+	}
 
 	if = {
 		limit = {
@@ -13537,13 +13576,6 @@ on_province_owner_change_effect = {
 		add_province_modifier = { name = xiaken_temple_grounds_mod duration = -1 }
 	}
 
-	#Magic Rework
-	if = {
-		limit = { has_province_modifier = transmutation_2_transmute_to_gold_local_mod }
-		remove_province_modifier = transmutation_2_transmute_to_gold_local_mod
-		set_from_saved_trade_goods = yes
-	}
-
 	#Fangaulan Pantheon Holy Site Activation
 	if = {
 		limit = {
@@ -13657,23 +13689,23 @@ on_primary_culture_changed_effect = {
 
 #1.37 Diff new stuff
 #Looks useful, but needs to be implemented elsewhere since we didn't properly carry this over before it seems? And so so so many edgecases.
-on_native_government_change_effect = {
-	hidden_effect = {
-		every_owned_province = {
-			if = { limit = { has_building = native_palisade } set_province_flag = native_palisade_flag }
-			if = { limit = { has_building = native_fortified_house } set_province_flag = native_fortified_house_flag }
-			if = { limit = { has_building = native_ceremonial_fire_pit } set_province_flag = native_ceremonial_fire_pit_flag }
-			if = { limit = { has_building = native_storehouse } set_province_flag = native_storehouse_flag }
-			if = { limit = { has_building = native_longhouse } set_province_flag = native_longhouse_flag }
-			if = { limit = { has_building = native_sweat_lodge } set_province_flag = native_sweat_lodge_flag }
-			if = { limit = { has_building = native_great_trail } set_province_flag = native_great_trail_flag }
-		}
-		country_event = {
-			id = native_americans.999
-			days = 35
-		}
-	}
-}
+#on_native_government_change_effect = {
+#	hidden_effect = {
+#		every_owned_province = {
+#			if = { limit = { has_building = native_palisade } set_province_flag = native_palisade_flag }
+#			if = { limit = { has_building = native_fortified_house } set_province_flag = native_fortified_house_flag }
+#			if = { limit = { has_building = native_ceremonial_fire_pit } set_province_flag = native_ceremonial_fire_pit_flag }
+#			if = { limit = { has_building = native_storehouse } set_province_flag = native_storehouse_flag }
+#			if = { limit = { has_building = native_longhouse } set_province_flag = native_longhouse_flag }
+#			if = { limit = { has_building = native_sweat_lodge } set_province_flag = native_sweat_lodge_flag }
+#			if = { limit = { has_building = native_great_trail } set_province_flag = native_great_trail_flag }
+#		}
+#		country_event = {
+#			id = native_americans.999
+#			days = 35
+#		}
+#	}
+#}
 
 on_convert_by_trade_policy_effect = {
 	FROM = { change_variable = { which = propogation_counter value = 1 } }

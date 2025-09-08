@@ -565,6 +565,7 @@ goblinic_shamanism_event = {
 	if = {
 		limit = {
 			religion_group = cannorian
+			NOT = { religion = ravelian }
 			ROOT = {  NOT = { has_unlocked_cult = cannorian_cult } }
 		}
 		ROOT = {
@@ -583,6 +584,8 @@ goblinic_shamanism_event = {
 	if = {
 		limit = {
 			religion_group = dwarven
+			NOT = { religion = dwarven_pantheon }
+			NOT = { religion = runefather_worship }
 			ROOT = {  NOT = { has_unlocked_cult = ancestor_worship_cult } }
 		}
 		ROOT = {
@@ -646,6 +649,7 @@ goblinic_shamanism_event = {
 	if = {
 		limit = {
 			religion_group = orcish
+			NOT = { religion = bulgu_orazan }
 			ROOT = {  NOT = { has_unlocked_cult = orcish_cult } }
 		}
 		ROOT = {
@@ -891,6 +895,42 @@ goblinic_shamanism_event = {
 		}
 		ROOT = {
 			country_event = { id = goblinic_shamanism_flavor.31 }
+		}
+	}
+	if = {
+		limit = {
+			religion = ravelian
+			ROOT = {  NOT = { has_unlocked_cult = cube_cult } }
+		}
+		ROOT = {
+			country_event = { id = goblinic_shamanism_flavor.414 }
+		}
+	}
+	if = {
+		limit = {
+			religion = bulgu_orazan
+			ROOT = { NOT = { has_unlocked_cult = bulgu_cult } }
+		}
+		ROOT = {
+			country_event = { id = goblinic_shamanism_flavor.415 }
+		}
+	}
+	if = {
+		limit = {
+			religion = dwarven_pantheon
+			ROOT = { NOT = { has_unlocked_cult = grobilazk_cult } }
+		}
+		ROOT = {
+			country_event = { id = goblinic_shamanism_flavor.416 }
+		}
+	}
+	if = {
+		limit = {
+			religion = runefather_worship
+			ROOT = { NOT = { has_unlocked_cult = scribble_cult } }
+		}
+		ROOT = {
+			country_event = { id = goblinic_shamanism_flavor.417 }
 		}
 	}
 }
@@ -5011,6 +5051,19 @@ anb_on_development_effect = {
 			change_variable = { accretive_path_mil_chi = 10 }
 		}
 	}
+
+	#The Red Citadel
+	if = {
+		limit = {
+			owner = { 
+				has_country_flag = the_red_citadel_extra_dev
+			}
+			province_group = beikling_homeland_provinces
+			NOT = { has_province_flag = the_red_citadel_extra_dev_already }
+		}
+		add_base_$development$ = 1
+		set_province_flag = the_red_citadel_extra_dev_already
+	}
 }
 
 create_vassal_with_religion_and_culture = {
@@ -9111,7 +9164,6 @@ jadd_holy_order_reformed = {
 		holy_order = militant_jadd_order_upgraded
 	}
 }
-
 every_country_in_hre = {
 	custom_tooltip = every_country_in_hre
 	tooltip = { emperor = { $effect$ } }
@@ -9125,7 +9177,7 @@ every_country_in_hre = {
 
 every_free_city = {
 	custom_tooltip = every_free_city
-	tooltip = { emperor = { $effect$ } }
+	tooltip = { emperor = { $effect$ } } 
 	hidden_effect = {
 		every_country = {
 			limit = { has_reform = free_city }
@@ -9133,6 +9185,7 @@ every_free_city = {
 		}
 	}
 }
+
 #Refuge of the glasslords monument
 add_glasslord_network = {
 	if = {
@@ -9601,4 +9654,416 @@ add_2_stability_or_adm_power = {
 	else = {
 		add_stability = 2
 	}
+}
+
+red_citadel_give_50_chi = { #DVP +50 Chi Return effect from Dark Temple
+	if = { #The Red Citadel - Dark Temple Discount
+		limit = {
+			4952 = {
+				owned_by = ROOT
+				has_province_modifier = the_dark_temple_upgrade
+			}
+		}
+		country_event = { id = flavor_beiklings.999 }
+	}
+}
+
+beikling_update_better_forging_effect = { #The better forging modifier
+	if = {
+		limit = {
+			4974 = { has_province_modifier = the_masterforge_upgrade }
+			owner = { owns = 4974 }
+			culture = beikling
+			has_building = weapons
+		}
+		add_province_modifier = {
+			name = beikling_better_forging
+			duration = -1
+		}
+	}
+}
+
+beikling_red_citadel_province_change_effect = {
+	if = { #Remove Effects
+		limit = { province_id = 4844 }
+		if = {
+			limit = {
+				4844 = {
+					has_great_project = {
+						type = the_red_citadel
+						tier = 1
+					}
+					can_use_red_citadel_trigger = yes
+				}
+			}
+			if = {
+				limit = {
+					4844 = {
+						has_great_project = {
+							type = the_red_citadel
+							tier = 3
+						}
+					}
+				}
+				every_owned_province = {
+					add_province_modifier = {
+						name = beikling_homeland_extra_dev_3
+						duration = -1
+					}
+				}
+				set_country_flag = the_red_citadel_extra_dev 
+			}
+			else_if = {
+				limit = {
+					4844 = {
+						has_great_project = {
+							type = the_red_citadel
+							tier = 2
+						}
+					}
+				}
+				every_owned_province = {
+					add_province_modifier = {
+						name = beikling_homeland_extra_dev_2
+						duration = -1
+					}
+				}
+			}
+			else = {
+				every_owned_province = {
+					add_province_modifier = {
+						name = beikling_homeland_extra_dev_1
+						duration = -1
+					}
+				}
+			}
+		}
+		FROM = { #Remove Extrad Dev and Dev Cost
+			every_owned_province  = {
+				remove_province_modifier = beikling_homeland_extra_dev_1
+				remove_province_modifier = beikling_homeland_extra_dev_2
+				remove_province_modifier = beikling_homeland_extra_dev_3
+			}
+			if = {
+				limit = { has_country_flag = the_red_citadel_extra_dev }
+				clr_country_flag = the_red_citadel_extra_dev
+			}
+		}
+	}
+	else_if = { # Add Effects
+		limit = {
+			owner = { owns = 4844 }
+			4844 = {
+				has_great_project = {
+					type = the_red_citadel
+					tier = 1
+				}
+				can_use_red_citadel_trigger = yes
+			}
+		}
+		beikling_update_better_forging_effect = yes #Better forging modifier
+		if = {
+			limit = {
+				province_group = beikling_homeland_provinces
+			}
+			#Extra dev from the monument
+			if =  {
+				limit = {
+					4844 = {
+						has_great_project = {
+							type = the_red_citadel
+							tier = 3
+						}
+					}
+				}
+				add_province_modifier = {
+					name = beikling_homeland_extra_dev_3
+					duration = -1
+				}
+			}
+			else_if =  {
+				limit = {
+					4844 = {
+						has_great_project = {
+							type = the_red_citadel
+							tier = 2
+						}
+					}
+				}
+				add_province_modifier = {
+					name = beikling_homeland_extra_dev_2
+					duration = -1
+				}
+			}
+			else = {
+				add_province_modifier = {
+					name = beikling_homeland_extra_dev_1
+					duration = -1
+				}
+			}
+			
+			# Iron - Copper Bonus
+			if = {
+				limit = {
+					4974 = { NOT = { has_province_modifier = the_masterforge_unlit } }
+					owner = { owns = 4974 }
+					NOT = { province_id = 4974 }
+					OR = {
+						trade_goods = iron
+						trade_goods = copper
+					}
+				}
+				if = { # Metalurgic Revival
+					limit = { 4974 = { has_province_modifier = the_masterforge } }
+					add_province_modifier = {
+						name = metalurgic_revival
+						duration = -1
+					}
+				}
+				else_if = { # Pinacle of Metalurgy
+					limit = { 4974 = { has_province_modifier = the_masterforge_upgrade } }
+					add_province_modifier = {
+						name = pinnacle_of_metallurgy
+						duration = -1
+					}
+				}
+			}
+		}
+		if = { #The Northern Bastion
+			limit = {
+				5415 = { NOT = { has_province_modifier = legends_of_the_northern_vanguard } }
+				owner = { owns = 5415 }
+				OR = {
+					area = yunghuun_area
+					area = choogiaza_area
+					area = kheizavho_area
+				}
+				NOT = { province_id = 5415 }
+			}
+			if = { #Under the Bastions Watch
+				limit = { 5415 = { has_province_modifier = the_northern_bastion } }
+				add_province_modifier = {
+					name = under_the_bastions_watch
+					duration = -1
+				}
+			}
+			else_if = { #Under the Bastions Shadow
+				limit = { 5415 = { has_province_modifier = the_northern_bastion_upgrade } }
+				add_province_modifier = {
+					name = under_the_bastions_shadow
+					duration = -1
+				}
+			}
+		}
+	}
+	# Restore Ruins
+	if = { #The Masterforge
+		limit = {
+			province_id = 4974
+			NOT = { has_province_modifier = the_masterforge_unlit }
+		}
+		add_permanent_province_modifier = {
+			name = the_masterforge_unlit
+			duration = -1
+		}
+		FROM = {
+			every_owned_province  = {
+				remove_province_modifier = beikling_better_forging
+				remove_province_modifier = metalurgic_revival
+				remove_province_modifier = pinnacle_of_metallurgy
+			}
+		}
+	}
+	else_if = { #The Dark Temple
+		limit = {
+			province_id = 4952
+			NOT = { has_province_modifier = the_empty_visage }
+		}
+		add_permanent_province_modifier = {
+			name = the_empty_visage
+			duration = -1
+		}
+	}
+	else_if = { #The Yan Toll
+		limit = { 
+			province_id = 4842 
+			NOT = { has_province_modifier = an_abandoned_toll }
+		}
+		add_permanent_province_modifier = {
+			name = an_abandoned_toll
+			duration = -1
+		}
+		4844 = { #Bianfang Node
+			remove_trade_modifier = {
+				who = FROM
+				key = STRANGLING_HALESS
+			}
+		}
+		4925 = { #Tianlou Node
+			remove_trade_modifier = {
+				who = FROM
+				key = STRANGLING_HALESS
+			}
+		}
+		4879 = { #Feiten Node
+			remove_trade_modifier = {
+				who = FROM
+				key = STRANGLING_HALESS
+			}
+		}
+		4859 = { #Yanzhong Node
+			remove_trade_modifier = {
+				who = FROM
+				key = STRANGLING_HALESS
+			}		
+		}
+		4559 = { #Xianjie Node
+			remove_trade_modifier = {
+				who = FROM
+				key = STRANGLING_HALESS
+			}		
+		}
+		4633 = { #Shamakhad Node
+			remove_trade_modifier = {
+				who = FROM
+				key = STRANGLING_HALESS
+			}		
+		}
+		4500 = { #Kharunyana Node
+			remove_trade_modifier = {
+				who = FROM
+				key = STRANGLING_HALESS	
+			}
+		}
+	}
+	else_if = { #The Northern Bastion
+		limit = { 
+			province_id = 5415
+			NOT = { has_province_modifier = legends_of_the_northern_vanguard }
+		}
+		add_permanent_province_modifier = {
+			name = legends_of_the_northern_vanguard
+			duration = -1
+		}
+		yunghuun_area = { 
+			remove_province_modifier = under_the_bastions_watch
+			remove_province_modifier = under_the_bastions_shadow 
+		}
+		choogiaza_area = { 
+			remove_province_modifier = under_the_bastions_watch 
+			remove_province_modifier = under_the_bastions_shadow 
+		}
+		kheizavho_area = { 
+			remove_province_modifier = under_the_bastions_watch 
+			remove_province_modifier = under_the_bastions_shadow 
+		}
+	}
+}
+
+#type = army/navy
+#leader = general/conquistador/admiral/explorer
+create_leader_scaling_with_tradition_vic_league_1 = {
+	if = {
+		limit = {
+			$type$_tradition = 90
+		}
+		create_$leader$ = {
+			tradition = 100
+		}
+	}
+	else_if = {
+		limit = {
+			$type$_tradition = 80
+		}
+		create_$leader$ = {
+			tradition = 90
+		}
+	}
+	else_if = {
+		limit = {
+			$type$_tradition = 70
+		}
+		create_$leader$ = {
+			tradition = 80
+		}
+	}
+	else_if = {
+		limit = {
+			$type$_tradition = 60
+		}
+		create_$leader$ = {
+			tradition = 70
+		}
+	}
+	else_if = {
+		limit = {
+			$type$_tradition = 50
+		}
+		create_$leader$ = {
+			tradition = 60
+		}
+	}
+	else_if = {
+		limit = {
+			$type$_tradition = 40
+		}
+		create_$leader$ = {
+			tradition = 50
+		}
+	}
+	else = {
+		create_$leader$ = {
+			tradition = 40
+		}
+	}
+	custom_tooltip = create_leader_scaling_with_tradition_tt
+}
+
+create_leader_scaling_with_tradition_vic_league_2 = {
+	if = {
+		limit = {
+			$type$_tradition = 90
+		}
+		create_$leader$ = {
+			tradition = 100
+		}
+	}
+	else_if = {
+		limit = {
+			$type$_tradition = 80
+		}
+		create_$leader$ = {
+			tradition = 90
+		}
+	}
+	else_if = {
+		limit = {
+			$type$_tradition = 70
+		}
+		create_$leader$ = {
+			tradition = 80
+		}
+	}
+	else_if = {
+		limit = {
+			$type$_tradition = 60
+		}
+		create_$leader$ = {
+			tradition = 70
+		}
+	}
+	else_if = {
+		limit = {
+			$type$_tradition = 50
+		}
+		create_$leader$ = {
+			tradition = 60
+		}
+	}
+	else = {
+		create_$leader$ = {
+			tradition = 50
+		}
+	}
+	custom_tooltip = create_leader_scaling_with_tradition_tt
 }

@@ -1,0 +1,346 @@
+#karassks stuff, based on sri_baginda
+special_tribs_to_vassals_dev_order = {
+	every_subject_country = {
+		limit = {
+			is_subject_of_type = karassk_idzarshin_trib_subject
+			NOT = { liberty_desire = 50 }
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = { has_saved_event_target = idzarshin_trib_$tributary$ }
+					NOT = { event_target:idzarshin_trib_$tributary$ = { total_development = PREV } }
+				}
+				if = {
+					limit = { has_saved_event_target = idzarshin_trib_1 } 
+					NOT = { tag = event_target:idzarshin_trib_1 }
+				} 
+				if = {
+					limit = { has_saved_event_target = idzarshin_trib_2 } 
+					NOT = { tag = event_target:idzarshin_trib_2 }
+				}
+				if = {
+					limit = { has_saved_event_target = idzarshin_trib_3 } 
+					NOT = { tag = event_target:idzarshin_trib_3 }
+				}
+			}
+			save_event_target_as = idzarshin_trib_$tributary$
+		}
+	}
+}
+
+#karassks change province 
+L68_province_change = {
+
+	if = {
+		limit = { fast_has_pop_of_race = { race = human } }
+
+		if = {
+			limit = {
+				owner = {
+					has_estate_privilege = estate_burghers_khair_families_our_land
+				}
+			}
+
+			if = {
+				limit = {
+					has_port = yes
+					has_human_minority_trigger = yes
+				}
+				if = {
+					limit = {
+						owner = {
+							NOT = {
+								medium_tolerance_human_race_trigger = yes
+							}
+						}
+					}
+					add_province_modifier = { name = L68_khair_families_our_land_goods_notco duration = -1 }
+				}
+				else = {
+					add_province_modifier = { name = L68_khair_families_our_land_goods_co duration = -1 }
+				}
+			}
+
+			else_if = {
+				limit = {
+					owner = {
+						has_country_flag = L68_our_land_cult_upg
+					}
+					has_human_majority_trigger = yes
+				}
+				if = {
+					limit = {
+						owner = {
+							NOT = {
+								medium_tolerance_human_race_trigger = yes
+							}
+						}
+			
+					}
+					add_province_modifier = { name = L68_khair_families_our_land_cult_notco duration = -1 }
+				}
+				else = {
+					add_province_modifier = { name = L68_khair_families_our_land_cult_co duration = -1 }
+				}
+		
+			}
+		}
+
+		if = {
+			limit = {
+				owner = {
+					has_estate_privilege = estate_burghers_khair_families_the_right_to_teach
+				}
+			}
+			if = {
+				limit = {
+					owner = {
+						NOT = {
+							medium_tolerance_human_race_trigger = yes
+						}
+					}
+				
+				}
+				add_province_modifier = { name = L68_khair_families_right_to_teach_notco duration = -1 }
+			}
+			else = {
+				add_province_modifier = { name = L68_khair_families_right_to_teach_co duration = -1 }
+			}
+		}
+	
+		if = {
+			limit = {
+				owner = {
+					has_estate_privilege = estate_burghers_khair_families_iysashlagila_management
+				}
+			}
+			if = {
+				limit = {
+					owner = {
+						NOT = {
+							medium_tolerance_human_race_trigger = yes
+						}
+					}
+				
+				}
+				add_province_modifier = { name = L68_khair_families_iysashlagila_management_lanforce_notco duration = -1 }
+			}
+			else = {
+				add_province_modifier = { name = L68_khair_families_iysashlagila_management_lanforce_co duration = -1 }
+			}
+	
+			if = {
+				limit = {
+					has_human_majority_trigger = yes	
+				}
+				add_province_modifier = { name = L68_khair_families_iysashlagila_management_maj_man_debuff duration = -1 }
+			}
+
+		}
+
+		if = {
+			limit = {
+				owner = {
+					has_estate_privilege = estate_burghers_khair_families_human_ships_halfling_sailors
+				}
+			}
+
+			if = {
+				limit = {
+					has_port = yes
+					has_human_minority_trigger = yes
+				}
+				if = {
+					limit = {
+						owner = {
+							medium_tolerance_human_race_trigger = yes
+						}
+					}
+					add_province_modifier = { name = L68_human_ships_halfling_sailors_ships_co duration = -1 }
+				}
+				else = {
+					add_province_modifier = { name = L68_human_ships_halfling_sailors_ships_notco duration = -1 }
+				}
+			}
+			else_if = {
+				limit = { has_human_majority_trigger = yes }
+				add_province_modifier = { name = L68_human_ships_halfling_sailors_maj_trade_debuff duration = -1 }
+			}
+		}
+	}
+}
+
+#karassk culture change 
+L68_province_culture_change = {
+
+	# majority modifiers and minority modifiers turning into majority modifiers
+	# note majorities modifiers aren't added here - on_granted_province for the privs is doing that...
+
+	if = {
+		limit = {
+			owner = {
+				has_estate_privilege = estate_burghers_khair_families_our_land
+			}
+		}
+
+		# majority mod
+		if = {
+			limit = {
+				owner = {
+					has_country_flag = L68_our_land_cult_upg
+				}
+				OR = {
+					has_province_modifier = L68_khair_families_our_land_cult_co
+					has_province_modifier = L68_khair_families_our_land_cult_notco 
+				}
+				NOT = {
+					culture_is_human = yes
+				}
+			}
+			owner = {
+				random_owned_province = {
+					limit = {
+						NOT = {
+							fast_has_pop_of_race = { race = human }
+						}
+					}
+					add_human_minority_size_effect = yes
+					add_human_minority_size_effect = yes
+				}
+			}
+			remove_province_modifier = L68_khair_families_our_land_cult_co 
+			remove_province_modifier = L68_khair_families_our_land_cult_notco
+		}
+
+		# covers human minority->majority
+		if = {
+			limit = {
+				OR = {
+					has_province_modifier = L68_khair_families_our_land_goods_co
+					has_province_modifier = L68_khair_families_our_land_goods_notco
+				}
+				NOT = {
+					has_human_minority_trigger = yes
+				}
+			}
+			remove_province_modifier = L68_khair_families_our_land_goods_co
+			remove_province_modifier = L68_khair_families_our_land_goods_notco
+		}
+	}
+
+	if = {
+		limit = {
+			owner = {
+				has_estate_privilege = estate_burghers_khair_families_iysashlagila_management
+			}
+			has_province_modifier = L68_khair_families_iysashlagila_management_maj_man_debuff
+			NOT = {
+				culture_is_human = yes
+			}	
+		}
+		remove_province_modifier = L68_khair_families_iysashlagila_management_maj_man_debuff
+	}
+
+	if = {
+		limit = {
+			owner = {
+				has_estate_privilege = estate_burghers_khair_families_human_ships_halfling_sailors
+			}
+		}
+
+		# majority mod
+		if = {
+			limit = {
+				has_province_modifier = L68_human_ships_halfling_sailors_maj_trade_debuff
+				NOT = {
+					culture_is_human = yes
+				}
+			}
+			remove_province_modifier =  L68_human_ships_halfling_sailors_maj_trade_debuff
+		}
+
+		# covers human minority->majority
+		if = {
+			limit = {
+				OR = {
+					has_province_modifier = L68_human_ships_halfling_sailors_ships_co
+					has_province_modifier = L68_human_ships_halfling_sailors_ships_notco
+				}
+				NOT = {
+					has_human_minority_trigger = yes
+				}
+			}
+			remove_province_modifier = L68_human_ships_halfling_sailors_ships_co
+			remove_province_modifier = L68_human_ships_halfling_sailors_ships_notco
+		}
+	}
+
+
+	# karassk for halflings 
+	if = {
+		limit = {
+			owner = { has_country_modifier = L68_best_of_servents }
+		}
+		random = {
+			chance = 20 
+			add_halfling_minority_size_effect = yes
+			add_halfling_minority_size_effect = yes
+		}
+	}
+}
+
+special_tribs_to_vassals_random_order = {
+	random_subject_country = {
+		limit = {
+			is_subject_of_type = karassk_idzarshin_trib_subject
+			NOT = { liberty_desire = 50 }
+			if = {
+				limit = { has_saved_event_target = idzarshin_trib_1 } 
+				NOT = { tag = event_target:idzarshin_trib_1 }
+			} 
+			if = {
+				limit = { has_saved_event_target = idzarshin_trib_2 } 
+				NOT = { tag = event_target:idzarshin_trib_2 }
+			}
+			if = {
+				limit = { has_saved_event_target = idzarshin_trib_3 } 
+				NOT = { tag = event_target:idzarshin_trib_3 }
+			}
+			if = {
+				limit = { has_saved_event_target = idzarshin_trib_4 } 
+				NOT = { tag = event_target:idzarshin_trib_4 }
+			}
+			if = {
+				limit = { has_saved_event_target = idzarshin_trib_5 } 
+				NOT = { tag = event_target:idzarshin_trib_5 }
+			}
+		}
+		save_event_target_as = idzarshin_trib_$tributary$
+	}
+}
+
+karassk_333rd_merslave_spawn = {
+	random_owned_province = {
+		limit = {
+			NOT = { 
+				has_province_modifier = L68_merfolk_slaves
+				trade_goods = gold
+				trade_goods = damestear
+				trade_goods = coal
+			}
+			OR = {
+				continent = south_america
+				continent = north_america
+			}
+			has_port = yes
+			NOT = { has_terrain = glacier }
+		}
+		change_trade_goods = slaves
+		add_province_modifier = {
+			name = L68_merfolk_slaves
+			duration = -1
+		}
+	}
+}
+

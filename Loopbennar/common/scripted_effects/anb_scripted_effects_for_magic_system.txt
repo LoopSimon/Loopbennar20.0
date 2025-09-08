@@ -198,10 +198,14 @@ update_spell_tooltips = {
 	else = { export_to_variable = { which = feral_animals_reg value = total_development } }
 	set_variable = { which = leashed_elementals_reg which = feral_animals_reg }
 
-	multiply_variable = { feral_animals_reg = 0.06 } #Reg per dev
+	multiply_variable = { feral_animals_reg = 0.05 } #Reg per dev
 	if = {
 		limit = { NOT = { check_variable = { feral_animals_reg = 4 } } }
 		set_variable = { feral_animals_reg = 4 } #Minimum of 4 regiments
+	}
+	else_if = {
+		limit = { check_variable = { feral_animals_reg = 20 } }
+		set_variable = { feral_animals_reg = 20 } #Maximum of 20 regiments
 	}
 	else = { round_variable = { which = feral_animals_reg value = -1 } }
 	set_variable = { which = feral_animals_cav which = feral_animals_reg }
@@ -214,6 +218,10 @@ update_spell_tooltips = {
 	if = {
 		limit = { NOT = { check_variable = { leashed_elementals_reg = 4 } } }
 		set_variable = { leashed_elementals_reg = 4 } #Minimum of 4 regiments
+	}
+	else_if = {
+		limit = { check_variable = { leashed_elementals_reg = 10 } }
+		set_variable = { leashed_elementals_reg = 10 } #Maximum of 10 regiments
 	}
 	else = { round_variable = { which = leashed_elementals_reg value = -1 } }
 	set_variable = { which = leashed_elementals_cav which = leashed_elementals_reg }
@@ -334,7 +342,7 @@ ai_magic_mana_pulse = {
 		change_variable = { which = currentMana which = ai_magic_value }
 
 		random = { #AI reduces infamy passively
-			chance = 20
+			chance = 15
 			if = {
 				limit = { ruler_is_powerful_mage = yes }
 				decrease_ruler_witch_king_points = { size = small }
@@ -449,6 +457,9 @@ magic_advancement_abort_all_effect = { #Indiscriminate. Assumes nothing about yo
 
 		### Study Flags only one type can get
 		clr_heir_flag = magic_study_help_from_tutor
+		
+		### rizvambrethar
+		rizvambrethar_remove_experience_boost = yes
 	}
 }
 magic_advancement_clr_type_flags = {
@@ -1117,16 +1128,16 @@ ai_pay_for_xp = { #AI advancements -- formatted to miminize size when compiled (
 	[[school] calc_ai_school_xp_modifier = { school = $school$ } ] #for project
 	[[infrastructure]
 		if = { limit = { has_country_modifier = magical_infrastructure_3 }
-			set_variable = { ai_magic_value = 1600 } # Lvl 3 to 4
+			set_variable = { ai_magic_value = 1350 } # Lvl 3 to 4
 		}
 		else_if = { limit = { has_country_modifier = magical_infrastructure_2 }
-			set_variable = { ai_magic_value = 1200 } # Lvl 2 to 3
+			set_variable = { ai_magic_value = 1100 } # Lvl 2 to 3
 		}
 		else_if = { limit = { has_country_modifier = magical_infrastructure_1 }
-			set_variable = { ai_magic_value = 800 } # Lvl 1 to 2
+			set_variable = { ai_magic_value = 850 } # Lvl 1 to 2
 		}
 		else = {
-			set_variable = { ai_magic_value = 400 } # Lvl 0 to 1
+			set_variable = { ai_magic_value = 600 } # Lvl 0 to 1
 		}
 		calc_ai_country_xp_modifier = yes
 	]
@@ -2079,61 +2090,33 @@ become_a_witch_king_effect = {
 	set_country_flag = ruled_by_witch_king
 
 	if = { #If this is a revival, we'll have kept the flag
+		limit = { has_country_flag = witch_king_hoard }
+		add_ruler_modifier = { name = witch_king_hoard_modifier duration = -1 }
+		make_spell_half_off = { school = abjuration level = 3 id = field_of_forbiddance ruler = yes }
+	}
+	else_if = {
 		limit = { has_country_flag = witch_king_thorns }
 		add_ruler_modifier = { name = witch_king_thorns_modifier duration = -1 }
-		add_ruler_modifier = { name = illusion_0_invisibility_mod duration = -1 }
+		make_spell_half_off = { school = enchantment level = 2 id = enchanting_embassy_2 ruler = yes }
 	}
-	if = {
+	else_if = {
 		limit = { has_country_flag = witch_king_armies }
 		add_ruler_modifier = { name = witch_king_armies_modifier duration = -1 }
-		add_ruler_modifier = { name = necromancy_1_steal_vitality_mod duration = -1 }
-	}
-	if = {
-		limit = { has_country_flag = witch_king_will }
-		add_ruler_modifier = { name = witch_king_will_modifier duration = -1 }
-		add_ruler_modifier = { name = enchantment_2_mass_charm_2_mod duration = -1 }
-		set_ruler_flag = witch_king_war_magic
-		make_spell_half_off = { school = enchantment level = 3 id = dominate_to_surrender ruler = yes }
-	}
-	if = {
-		limit = { has_country_flag = witch_king_skill }
-		add_ruler_modifier = { name = witch_king_skill_modifier duration = -1 }
-		add_ruler_modifier = { name = divination_2_manipulated_fortune_mod_buffed duration = -1 }
-		set_ruler_flag = witch_king_war_magic
-	}
-	if = {
-		limit = { has_country_flag = witch_king_build }
-		add_ruler_modifier = { name = witch_king_build_modifier duration = -1 }
-		add_ruler_modifier = { name = transmutation_2_reshape_terrain_mod duration = -1 }
 		make_spell_half_off = { school = evocation level = 2 id = meteor_swarm ruler = yes }
 	}
-	if = {
-		limit = { has_country_flag = witch_king_rise }
-		add_ruler_modifier = { name = witch_king_rise_modifier duration = -1 }
-		add_ruler_modifier = { name = abjuration_2_mage_armor_mod duration = -1 }
-		set_ruler_flag = witch_king_war_magic
+	else_if = {
+		limit = { has_country_flag = witch_king_skill }
+		add_ruler_modifier = { name = witch_king_skill_modifier duration = -1 }
+		make_spell_half_off = { school = conjuration level = 3 id = extraplanar_contact ruler = yes }
 	}
-	if = {
-		limit = { has_country_flag = witch_king_annihilate }
-		add_ruler_modifier = { name = witch_king_annihilate_modifier duration = -1 }
-		add_ruler_modifier = { name = evocation_1_shock_and_awe_mod duration = -1 }
-	}
-	if = {
-		limit = { has_country_flag = witch_king_command }
-		add_ruler_modifier = { name = witch_king_command_modifier duration = -1 }
-		add_ruler_modifier = { name = conjuration_2_aid_construction_mod duration = -1 }
-	}
+	
 	if = {
 		limit = {
 			NOT = { #we haven't chosen a type of witch-king yet
+				has_country_flag = witch_king_hoard
 				has_country_flag = witch_king_thorns
 				has_country_flag = witch_king_armies
-				has_country_flag = witch_king_will
 				has_country_flag = witch_king_skill
-				has_country_flag = witch_king_build
-				has_country_flag = witch_king_rise
-				has_country_flag = witch_king_annihilate
-				has_country_flag = witch_king_command
 			}
 		}
 		country_event = { id = magic_ruler.66 } #Choose what kind of witch-king you are
@@ -2146,12 +2129,10 @@ clr_witch_king_country_flags = {
 	clr_country_flag = ruled_by_witch_king
 	trigger_switch = {
 		on_trigger = has_country_flag
+		witch_king_hoard = { clr_country_flag = witch_king_hoard }
 		witch_king_thorns = { clr_country_flag = witch_king_thorns }
 		witch_king_armies = { clr_country_flag = witch_king_armies }
-		witch_king_will = { clr_country_flag = witch_king_will }
 		witch_king_skill = { clr_country_flag = witch_king_skill }
-		witch_king_build = { clr_country_flag = witch_king_build }
-		witch_king_rise = { clr_country_flag = witch_king_rise }
 	}
 }
 
@@ -2164,12 +2145,10 @@ calculate_magical_infamy_modifier = {
 	if = {
 		limit = { #to account for ascending/reviving witch-kings
 			NOT = {
+				has_ruler_modifier = witch_king_hoard_modifier
 				has_ruler_modifier = witch_king_thorns_modifier
 				has_ruler_modifier = witch_king_armies_modifier
-				has_ruler_modifier = witch_king_will_modifier
 				has_ruler_modifier = witch_king_skill_modifier
-				has_ruler_modifier = witch_king_build_modifier
-				has_ruler_modifier = witch_king_rise_modifier
 			}
 		}
 		if = {
@@ -2197,12 +2176,10 @@ calculate_magical_infamy_modifier = {
 	if = {
 		limit = { #To account for ascending/reviving witch-kings
 			OR = {
+				has_ruler_modifier = witch_king_hoard_modifier
 				has_ruler_modifier = witch_king_thorns_modifier
 				has_ruler_modifier = witch_king_armies_modifier
-				has_ruler_modifier = witch_king_will_modifier
 				has_ruler_modifier = witch_king_skill_modifier
-				has_ruler_modifier = witch_king_build_modifier
-				has_ruler_modifier = witch_king_rise_modifier
 			}
 			NOT = { type_has_infamy_witch_king = { type = ruler } }
 		}
