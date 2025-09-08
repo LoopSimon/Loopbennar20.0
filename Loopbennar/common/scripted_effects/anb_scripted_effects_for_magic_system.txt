@@ -1,0 +1,2329 @@
+####### The following is the basis for the entire design of the magic system.
+# Country flags and ruler flags are ENTIRELY separate things.
+# You can set a country flag named "A" and a ruler flag named "A" and they will be tracked separately.
+# A ruler flag named "A" will NOT fulfill the requirements for has_country_flag = A,
+# and the clr_country_flag effect will NOT clear ruler flags.
+
+# The same, however, is NOT true of modifiers.
+# A ruler modifier "A" WILL fulfill the requirements for has_country_modifier = A.
+# It can be removed with the remove_country_modifier effect (there is no remove_ruler_modfier effect).
+# A country modifier will NOT count as a ruler modifier for the purposes of has_ruler_modifier trigger,
+# but you ALSO cannot use the add_ruler_modifier effect in any meaningful way while you have a country modifier of the same name.
+
+# This is because behind the scenes, this game has the Crusader Kings character system
+# Flags are tracked per-character: an heir who becomes a ruler will keep their flags. A ruler who is exiled and un-exiled will also keep their flags. Neither of them are the country.
+# Modifiers, however, are only tracked for country and province.
+# A ruler modifier is just a special kind of country modifier cleared on ruler death.
+
+#################################
+### NAVIGATING THE MAGIC MENU ###
+#################################
+
+update_magic_menu_effect = {
+	#We put this in an immediate to reduce file size usage
+	hidden_effect = { country_event = { id = magic_system.1 } }
+}
+
+close_all_magic_menus = {
+	clr_country_flag = magic_menu_main_flag
+	clr_country_flag = magic_menu_advancement_flag
+	clr_country_flag = magic_menu_spellbook_flag
+	clr_country_flag = magic_menu_study_flag
+	clr_country_flag = magic_menu_patron_flag
+}
+
+clear_spellbook_flags = {
+	clr_country_flag = magic_menu_spellbook_abjuration_flag
+	clr_country_flag = magic_menu_spellbook_conjuration_flag
+	clr_country_flag = magic_menu_spellbook_divination_flag
+	clr_country_flag = magic_menu_spellbook_enchantment_flag
+	clr_country_flag = magic_menu_spellbook_evocation_flag
+	clr_country_flag = magic_menu_spellbook_illusion_flag
+	clr_country_flag = magic_menu_spellbook_necromancy_flag
+	clr_country_flag = magic_menu_spellbook_transmutation_flag
+}
+
+magic_advancement_selection_clear_advancement_flags = {
+	clr_country_flag = magic_advancement_setup_study_advancement_flag
+}
+magic_study_selection_clear_school_flags = {
+	clr_country_flag = magic_study_setup_abjuration_flag
+	clr_country_flag = magic_study_setup_conjuration_flag
+	clr_country_flag = magic_study_setup_divination_flag
+	clr_country_flag = magic_study_setup_enchantment_flag
+	clr_country_flag = magic_study_setup_evocation_flag
+	clr_country_flag = magic_study_setup_illusion_flag
+	clr_country_flag = magic_study_setup_necromancy_flag
+	clr_country_flag = magic_study_setup_transmutation_flag
+}
+magic_study_selection_clear_type_flags = {
+	clr_country_flag = magic_study_setup_ruler_flag
+	clr_country_flag = magic_study_setup_heir_flag
+	clr_country_flag = magic_study_setup_estate_flag
+}
+magic_advancement_selection_set_project_flags_effect = {
+	set_country_flag = magic_advancement_setup_$school$_flag
+	set_country_flag = magic_advancement_setup_$project$_flag
+}
+
+generic_calc_spell_levels = { #Calc the levels ruler/heir/country has, for a tt
+	set_variable = { $type$_spell_schools = 0 }
+	generic_calc_spell_levels_sub = { school = abjuration type = $type$ }
+	generic_calc_spell_levels_sub = { school = conjuration type = $type$ }
+	generic_calc_spell_levels_sub = { school = divination type = $type$ }
+	generic_calc_spell_levels_sub = { school = enchantment type = $type$ }
+	generic_calc_spell_levels_sub = { school = evocation type = $type$ }
+	generic_calc_spell_levels_sub = { school = illusion type = $type$ }
+	generic_calc_spell_levels_sub = { school = necromancy type = $type$ }
+	generic_calc_spell_levels_sub = { school = transmutation type = $type$ }
+
+	export_to_variable = {
+		which = max_estate_spell_levels_val
+		value = modifier:max_estate_spell_levels
+	}
+}
+generic_calc_spell_levels_sub = {
+	trigger_switch = {
+		on_trigger = has_$type$_flag
+		$school$_1 = { change_variable = { $type$_spell_schools = 1 } }
+		$school$_2 = { change_variable = { $type$_spell_schools = 2 } }
+		$school$_3 = { change_variable = { $type$_spell_schools = 3 } }
+	}
+}
+
+calc_schools_total_level = {
+	set_variable = { which = effective_magic_level value = 0 }
+	calc_schools_total_level_sub = { school = abjuration }
+	calc_schools_total_level_sub = { school = conjuration }
+	calc_schools_total_level_sub = { school = divination }
+	calc_schools_total_level_sub = { school = enchantment }
+	calc_schools_total_level_sub = { school = evocation }
+	calc_schools_total_level_sub = { school = illusion }
+	calc_schools_total_level_sub = { school = necromancy }
+	calc_schools_total_level_sub = { school = transmutation }
+}
+
+calc_schools_total_level_sub = {
+	if = {
+		limit = {
+			OR = {
+				has_ruler_flag = $school$_3
+				# has_heir_flag = $school$_3
+				has_country_flag = $school$_3
+			}
+		}
+		change_variable = { which = effective_magic_level value = 3 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_ruler_flag = $school$_2
+				# has_heir_flag = $school$_2
+				has_country_flag = $school$_2
+			}
+		}
+		change_variable = { which = effective_magic_level value = 2 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_ruler_flag = $school$_1
+				# has_heir_flag = $school$_1
+				has_country_flag = $school$_1
+			}
+		}
+		change_variable = { which = effective_magic_level value = 1 }
+	}
+}
+
+
+### SHOULD NEVER BE CALLED ALONE. USE change_mana = yes INSTEAD
+update_mana_bar = { #This prevents the framevar going negative and then showing 100% mana
+	if = { limit = { check_variable = { currentMana = 0 } }
+		set_variable = { which = current_mana_percent which = currentMana }
+		divide_variable = { which = current_mana_percent which = mages_mana_capacity_val }
+		multiply_variable = { current_mana_percent = 100 }
+	}
+	else = { set_variable = { current_mana_percent = 0 } }
+}
+
+update_advancement_progress_bar = {
+	set_variable = { which = expFoo which = $type$_magic_experience }
+	if = {
+		limit = { check_variable = { expFoo = 0 } }
+		divide_variable = { which = expFoo which = magic_experience_target }
+		multiply_variable = { expFoo = 100 }
+		set_variable = { which = current_experience_percent which = expFoo }
+	}
+	else = {
+		set_variable = { which = current_experience_percent value = 0 }
+	}
+}
+
+update_magic_ui_experience_modifiers = { #Generates variables with all of the xp modifiers. Their names are their values but in green or red. They are broken up between a whole number and decimal portion.
+	country_event = { id = magic_system.2 }
+}
+update_magic_xp_val_deci = {
+	multiply_variable = { $category$_experience_mod_val = 100 }
+	set_variable = { which = expFoo which = $category$_experience_mod_val }
+	modulo_variable = { expFoo = 1 } #Get the decimal portion
+	if = {
+		limit = { is_variable_equal = { which = expFoo value = 0 } }
+		set_country_flag = $category$_xp_whole_number
+	}
+	else = { clr_country_flag = $category$_xp_whole_number }
+}
+
+study_experience_preview_effect = { #study needs a separate set of variables
+	set_variable = { study_xp_preview = 0 }
+	if = { limit = { has_country_flag = magic_study_setup_ruler_flag } change_variable = { which = study_xp_preview which = mages_ruler_experience_mod_val } }
+	else_if = { limit = { has_country_flag = magic_study_setup_heir_flag } change_variable = { which = study_xp_preview which = mages_ruler_experience_mod_val } }
+	else_if = { limit = { has_country_flag = magic_study_setup_estate_flag } change_variable = { which = study_xp_preview which = mages_estate_experience_mod_val } }
+	
+	if = { limit = { has_country_flag = magic_study_setup_abjuration_flag } change_variable = { which = study_xp_preview which = abjuration_experience_mod_val } }
+	else_if = { limit = { has_country_flag = magic_study_setup_conjuration_flag } change_variable = { which = study_xp_preview which = conjuration_experience_mod_val } }
+	else_if = { limit = { has_country_flag = magic_study_setup_divination_flag } change_variable = { which = study_xp_preview which = divination_experience_mod_val } }
+	else_if = { limit = { has_country_flag = magic_study_setup_enchantment_flag } change_variable = { which = study_xp_preview which = enchantment_experience_mod_val } }
+	else_if = { limit = { has_country_flag = magic_study_setup_evocation_flag } change_variable = { which = study_xp_preview which = evocation_experience_mod_val } }
+	else_if = { limit = { has_country_flag = magic_study_setup_illusion_flag } change_variable = { which = study_xp_preview which = illusion_experience_mod_val } }
+	else_if = { limit = { has_country_flag = magic_study_setup_necromancy_flag } change_variable = { which = study_xp_preview which = necromancy_experience_mod_val } }
+	else_if = { limit = { has_country_flag = magic_study_setup_transmutation_flag } change_variable = { which = study_xp_preview which = transmutation_experience_mod_val } }
+}
+
+update_spell_tooltips = {
+	if = { #development
+		limit = { total_development = 600 }
+		set_variable = { feral_animals_reg = 600 }
+	}
+	else = { export_to_variable = { which = feral_animals_reg value = total_development } }
+	set_variable = { which = leashed_elementals_reg which = feral_animals_reg }
+
+	multiply_variable = { feral_animals_reg = 0.05 } #Reg per dev
+	if = {
+		limit = { NOT = { check_variable = { feral_animals_reg = 4 } } }
+		set_variable = { feral_animals_reg = 4 } #Minimum of 4 regiments
+	}
+	else_if = {
+		limit = { check_variable = { feral_animals_reg = 20 } }
+		set_variable = { feral_animals_reg = 20 } #Maximum of 20 regiments
+	}
+	else = { round_variable = { which = feral_animals_reg value = -1 } }
+	set_variable = { which = feral_animals_cav which = feral_animals_reg }
+	multiply_variable = { feral_animals_cav = 0.2 }
+	round_variable = { which = feral_animals_cav value = -1 } #cavalry
+	set_variable = { which = feral_animals_inf which = feral_animals_reg }
+	subtract_variable = { which = feral_animals_inf which = feral_animals_cav } #infantry
+
+	multiply_variable = { leashed_elementals_reg = 0.04 } #Reg per dev
+	if = {
+		limit = { NOT = { check_variable = { leashed_elementals_reg = 4 } } }
+		set_variable = { leashed_elementals_reg = 4 } #Minimum of 4 regiments
+	}
+	else_if = {
+		limit = { check_variable = { leashed_elementals_reg = 10 } }
+		set_variable = { leashed_elementals_reg = 10 } #Maximum of 10 regiments
+	}
+	else = { round_variable = { which = leashed_elementals_reg value = -1 } }
+	set_variable = { which = leashed_elementals_cav which = leashed_elementals_reg }
+	multiply_variable = { leashed_elementals_cav = 0.33 }
+	round_variable = { which = leashed_elementals_cav value = -1 } #cavalry
+	set_variable = { which = leashed_elementals_inf which = leashed_elementals_reg }
+	subtract_variable = { which = leashed_elementals_inf which = leashed_elementals_cav } #infantry
+}
+
+############
+### MANA ###
+############
+
+### SHOULD NEVER BE CALLED ALONE. USE change_mana = yes INSTEAD
+cap_mana = { #when mana goes above your limit, or drops into negatives
+	export_to_variable = {
+		which = mages_mana_capacity_val
+		value = modifier:mages_mana_capacity
+	}
+	if = {
+		limit = { NOT = { check_variable = { currentMana = 0 } } }
+		set_variable = { currentMana = 0 }
+	}
+	else_if = {
+		limit = { check_variable = { which = currentMana which = mages_mana_capacity_val } }
+		set_variable = { which = currentMana which = mages_mana_capacity_val }
+	}
+}
+
+## THERE SHOULD BE NO CHANGING OF MANA VALUES DIRECTLY. ALL CHANGES TO MANA GO THROUGH THIS SCRIPTED EFFECT.
+change_mana = { #for spells, MT effects, etc. use this. e.g. change_mana = { amount = 10 } to increase it by 10.
+	[[amount] change_variable = { currentMana = $amount$ } ]
+	[[var_amount] change_variable = { which = currentMana which = $var_amount$ } ]
+
+	hidden_effect = {
+		if = {
+			limit = { ai = no }
+			cap_mana = yes
+			update_mana_bar = yes
+		}
+	}
+}
+
+update_mana_regen_vars = { #use whenever you change the mana-per-month amount
+	hidden_effect = {
+		if = {
+			limit = { ai = no } #AI has its own thing and doesn't want to clog the save file
+			export_to_variable = {
+				variable_name = mages_mana_regen_val
+				value = modifier:mages_mana_regen
+			}
+
+			set_variable = { which = mana_regen_other which = mages_mana_regen_val } #Tooltips
+
+			export_to_variable = {
+				variable_name = mages_mana_regen_mult_val
+				value = modifier:mages_mana_regen_mult
+			}
+			change_variable = { mages_mana_regen_mult_val = 1 }
+			multiply_variable = {
+				which = mages_mana_regen_val
+				which = mages_mana_regen_mult_val
+			}
+
+			if = { #believe it or not, we do in fact have to hardcode this...
+				limit = { is_subject = yes }
+				divide_variable = { mages_mana_regen_val = 2 }
+			}
+
+			set_variable = { which = manaFoo which = mages_mana_regen_mult_val }
+			modulo_variable = { manaFoo = 1 }
+			if = {
+				limit = { is_variable_equal = { which = manaFoo value = 0 } }
+				clr_country_flag = mana_regen_mult_one_decimal
+				set_country_flag = mana_regen_mult_whole_number
+			}
+			else = {
+				modulo_variable = { manaFoo = 0.1 }
+				if = {
+					limit = { is_variable_equal = { which = manaFoo value = 0 } }
+					clr_country_flag = mana_regen_mult_whole_number
+					set_country_flag = mana_regen_mult_one_decimal
+				}
+				else = {
+					clr_country_flag = mana_regen_mult_whole_number
+					clr_country_flag = mana_regen_mult_one_decimal
+				}
+			}
+
+			subtract_variable = { mana_regen_other = 1.0 } #Base
+			subtract_variable = { which = mana_regen_other which = mana_regen_ruler } #Ruler
+			subtract_variable = { which = mana_regen_other which = mana_regen_infra } #Infra
+		}
+	}
+}
+
+ai_magic_mana_pulse = {
+	if = {
+		limit = {
+			ai = yes
+			has_country_flag = magic_system_initialized
+			can_use_magic = yes #For AI, there is no daylight between gaining mana + casting
+		}
+		export_to_variable = { #Calculates 24 months of mana regen at once
+			variable_name = ai_magic_value
+			value = modifier:mages_mana_regen
+		}
+		export_to_variable = {
+			variable_name = ai_magic_modifier
+			value = modifier:mages_mana_regen_mult
+		}
+		change_variable = { ai_magic_modifier = 1 }
+		multiply_variable = {
+			which = ai_magic_value
+			which = ai_magic_modifier
+		}
+		multiply_variable = { ai_magic_value = 24 }
+		change_variable = { which = currentMana which = ai_magic_value }
+
+		random = { #AI reduces infamy passively
+			chance = 15
+			if = {
+				limit = { ruler_is_powerful_mage = yes }
+				decrease_ruler_witch_king_points = { size = small }
+			}
+			decrease_estate_witch_king_points = { size = small }
+		}
+
+		if = { #Okman dislikes the overhead of firing an event without doing something
+			limit = { check_variable = { currentMana = 1 } }
+			country_event = { id = magic_system.300 } #have enough mana for spells
+		}
+	}
+}
+
+############################
+### MAGICAL ADVANCEMENTS ###
+############################
+
+historical_magic_advancements = {
+	[[abjuration] set_country_flag = abjuration_$abjuration$]
+	[[conjuration] set_country_flag = conjuration_$conjuration$]
+	[[divination] set_country_flag = divination_$divination$]
+	[[enchantment] set_country_flag = enchantment_$enchantment$]
+	[[evocation] set_country_flag = evocation_$evocation$]
+	[[illusion] set_country_flag = illusion_$illusion$]
+	[[necromancy] set_country_flag = necromancy_$necromancy$]
+	[[transmutation] set_country_flag = transmutation_$transmutation$]
+
+	[[infrastructure]
+		add_country_modifier = { name = magical_infrastructure_$infrastructure$ duration = -1 }
+		set_variable = { mana_regen_infra = 0.25 }
+		multiply_variable = { mana_regen_infra = $infrastructure$ }
+	]
+
+	[[overall_level] set_variable = { effective_magic_level = $overall_level$ }]
+}
+
+magic_advancement_abort_all_effect = { #Indiscriminate. Assumes nothing about your situation.
+	custom_tooltip = magic_advancement_abort_all_effect_tt
+	hidden_effect = {
+		magic_advancement_clr_type_flags = { type = ruler }
+		magic_advancement_clr_type_flags = { type = heir }
+		magic_advancement_clr_type_flags = { type = country }
+
+		### Advancement Activity
+		clr_country_flag = magic_project
+		clr_country_flag = magical_infrastructure
+
+		### Project
+		clr_country_flag = magical_fortress_project
+		clr_country_flag = summon_extraplanars_project
+		clr_country_flag = orb_of_omniscience_project
+		clr_country_flag = artifact_of_enthrallment_project
+		clr_country_flag = battlemage_academy_project
+		clr_country_flag = theatre_of_simulacra_project
+		clr_country_flag = lichdom_project
+		clr_country_flag = homunculus_project
+
+		### Magic XP Target
+		set_variable = { magic_experience_target = 0 }
+		set_variable = { current_experience_percent = 0 }
+
+		### Infrastructure Modifiers and Flags
+		remove_country_modifier = advancing_magical_infrastructure_mod
+		remove_country_modifier = magical_infrastructure_institution_penalty
+		remove_country_modifier = magical_infrastructure_2_institution_penalty
+		clr_country_flag = magical_infrastructure_hurt_tower
+		clr_country_flag = magical_infrastructure_help_tower
+		clr_country_flag = magical_infrastructure_help_ward
+		clr_country_flag = magical_infrastructure_help_school
+		clr_country_flag = magical_infrastructure_help_court_mage
+		clr_country_flag = magical_infrastructure_help_trade
+		clr_country_flag = magical_infrastructure_help_relics
+		clr_country_flag = magical_infrastructure_help_outlaw
+		clr_country_flag = magical_infrastructure_help_damestear
+		clr_country_flag = magical_infrastructure_help_clergy
+		clr_country_flag = magical_infrastructure_help_roads
+		clr_country_flag = magical_infrastructure_help_corruption
+		clr_country_flag = magical_infrastructure_hurt_outcry
+		clr_country_flag = magical_infrastructure_hurt_negligence
+		clr_country_flag = magical_infrastructure_hurt_administrative
+
+		### Other Project Modifiers and Flags
+		remove_country_modifier = ruler_studying_lichdom
+		remove_country_modifier = studying_homunculus_core_animal
+		remove_country_modifier = studying_homunculus_core_clockwork
+		remove_country_modifier = studying_homunculus_core_damestear
+		remove_country_modifier = studying_homunculus_body_mud
+		remove_country_modifier = studying_homunculus_body_stone
+		remove_country_modifier = studying_homunculus_body_blood
+		remove_country_modifier = studying_homunculus_loyalty_law
+		remove_country_modifier = studying_homunculus_loyalty_child
+		remove_country_modifier = studying_homunculus_loyalty_magic
+		clr_country_flag = theatre_picked_small_room
+		clr_country_flag = theatre_picked_group_of_mages
+		clr_country_flag = magic_project_first_event_happened
+		clr_country_flag = magic_project_second_event_happened
+		remove_country_modifier = studying_battlemage_academy_mod_1
+		remove_country_modifier = studying_battlemage_academy_mod_2
+		remove_country_modifier = studying_artifact_of_enthrallment_1
+		remove_country_modifier = studying_artifact_of_enthrallment_2
+		remove_country_modifier = studying_artifact_of_enthrallment_3
+		remove_country_modifier = studying_artifact_of_enthrallment_mod_1
+		remove_country_modifier = studying_artifact_of_enthrallment_mod_2
+		remove_country_modifier = studying_magical_fortress_mod
+		remove_country_modifier = orb_of_omniscience_dev_tracker
+		remove_country_modifier = orb_of_omniscience_core_tracker
+		remove_country_modifier = orb_of_omniscience_tech_tracker
+		remove_country_modifier = orb_of_omniscience_leader_tracker
+		remove_country_modifier = orb_of_omniscience_kill_tracker
+		remove_country_modifier = orb_of_omniscience_div_tracker
+
+		### Study Flags only one type can get
+		clr_heir_flag = magic_study_help_from_tutor
+		
+		### rizvambrethar
+		rizvambrethar_remove_experience_boost = yes
+	}
+}
+magic_advancement_clr_type_flags = {
+
+	#advancement type
+	clr_$type$_flag = magic_study
+	clr_$type$_flag = magic_advancement
+	clr_$type$_flag = in_magic_progress_event
+
+	#School
+	clr_$type$_flag = abjuration_advancement
+	clr_$type$_flag = conjuration_advancement
+	clr_$type$_flag = divination_advancement
+	clr_$type$_flag = enchantment_advancement
+	clr_$type$_flag = evocation_advancement
+	clr_$type$_flag = illusion_advancement
+	clr_$type$_flag = necromancy_advancement
+	clr_$type$_flag = transmutation_advancement
+
+	#Experience
+	set_variable = { $type$_magic_experience = 0 }
+
+	#Things picked up along the way
+	clr_$type$_flag = magic_study_help_from_advisor
+	clr_$type$_flag = magic_study_help_from_estate
+	clr_$type$_flag = magic_study_help_from_library
+	clr_$type$_flag = magic_study_help_from_tome
+	clr_$type$_flag = magic_study_help_from_relic
+	clr_$type$_flag = magic_study_help_from_precursor
+	clr_$type$_flag = magic_study_help_from_magisterium
+	clr_$type$_flag = magic_study_help_from_mana
+	clr_$type$_flag = magic_study_help_from_unregulated
+	clr_$type$_flag = magic_study_help_from_unsafe
+	clr_$type$_flag = magic_study_help_from_live
+}
+
+start_magic_study_school_sort = {
+	trigger_switch = {
+		on_trigger = has_country_flag
+		magic_study_setup_abjuration_flag = { start_magic_study_type_sort = { school = abjuration } }
+		magic_study_setup_conjuration_flag = { start_magic_study_type_sort = { school = conjuration } }
+		magic_study_setup_divination_flag = { start_magic_study_type_sort = { school = divination } }
+		magic_study_setup_enchantment_flag = { start_magic_study_type_sort = { school = enchantment } }
+		magic_study_setup_evocation_flag = { start_magic_study_type_sort = { school = evocation } }
+		magic_study_setup_illusion_flag = { start_magic_study_type_sort = { school = illusion } }
+		magic_study_setup_necromancy_flag = { start_magic_study_type_sort = { school = necromancy } }
+		magic_study_setup_transmutation_flag = { start_magic_study_type_sort = { school = transmutation } }
+	}
+
+	if = {
+		limit = { has_reform = krakazol_olzonog has_country_flag = magic_study_setup_necromancy_flag }
+		custom_tooltip = krakazol_no_necromancy_tooltip
+		hidden_effect = { country_event = { id = flavor_krakazol.210 days = 30 random = 30 } }
+	}
+}
+start_magic_study_type_sort = {
+	trigger_switch = {
+		on_trigger = has_country_flag
+		magic_study_setup_ruler_flag = { start_magic_study = { type = ruler school = $school$ } }
+		magic_study_setup_heir_flag = { start_magic_study = { type = heir school = $school$ } }
+		magic_study_setup_estate_flag = { start_magic_study = { type = country school = $school$ } }
+	}
+}
+
+start_magic_study = { #type = [ruler,heir,country]
+
+	custom_tooltip = start_$type$_magic_advancement_tt
+	custom_tooltip = $school$_advancement
+
+	set_$type$_flag = magic_advancement
+	set_$type$_flag = $school$_advancement
+	set_$type$_flag = magic_study
+
+	hidden_effect = {
+		set_magic_experience_target = { type = $type$ study = $school$ }
+		set_variable = { which = $type$_magic_experience value = 0 }
+		update_magic_ui_experience_modifiers = yes
+	}
+}
+start_magic_project = { #Country only
+
+	custom_tooltip = start_country_magic_advancement_tt
+
+	set_country_flag = magic_advancement
+	set_country_flag = magic_project
+	set_country_flag = $project$_project
+	
+	[[school]
+		set_country_flag = $school$_advancement
+		custom_tooltip = $school$_advancement
+	]
+
+	[[event_1]
+		if = {
+			limit = { exactly_magic_project_level = { project = $project$ level = 0 } }
+			country_event = { id = $event_1$ }
+		}
+	]
+	[[event_2]
+		if = {
+			limit = { exactly_magic_project_level = { project = $project$ level = 1 } }
+			country_event = { id = $event_2$ }
+		}
+	]
+	[[event_3]
+		if = {
+			limit = { exactly_magic_project_level = { project = $project$ level = 2 } }
+			country_event = { id = $event_3$ }
+		}
+	]
+	[[event_all] country_event = { id = $event_all$ } ]
+	
+	custom_tooltip = tooltip_magic_project_lookahead
+	custom_tooltip = $project$_lookahead
+
+	hidden_effect = {
+		set_magic_experience_target = { type = country project = $project$ }
+		set_variable = { which = country_magic_experience value = 0 }
+		update_magic_ui_experience_modifiers = yes
+	}
+}
+
+magic_school_level_up = { #CANNOT BE FIRED INSIDE AN ELSE IN A SCRIPTED EFFECT
+	if = {
+		limit = { NOT = { has_$type$_flag = $school$_3 } }
+		custom_tooltip = magic_school_$type$_level_up_tt
+
+		if = {
+			limit = { has_$type$_flag = $school$_2 }
+			set_$type$_flag = $school$_3
+			clr_$type$_flag = $school$_2
+			custom_tooltip = $school$_3
+		}
+		else_if = {
+			limit = { has_$type$_flag = $school$_1 }
+			set_$type$_flag = $school$_2
+			clr_$type$_flag = $school$_1
+			custom_tooltip = $school$_2
+		}
+		else = {
+			set_$type$_flag = $school$_1
+			custom_tooltip = $school$_1
+		}
+
+		hidden_effect = { change_variable = { $type$_spell_schools = 1 } }
+
+		recalculate_$type$_mana_regen = yes
+
+		if = {
+			limit = { has_$type$_flag = saving_spell_levels }
+			update_saved_spell_levels_for_type_and_school = { type = $type$ school = $school$ }
+		}
+		
+		hidden_effect = {
+			if = { #firing notification event
+				limit = { has_$type$_flag = magic_study has_$type$_flag = $school$_advancement }
+				country_event = { id = magic_system.99 } #hidden abort event
+			}
+			calc_schools_total_level = yes
+		}
+	}
+	else = { custom_tooltip = is_$type$_$school$_level_3 }
+}
+magic_project_level_up = { #Inefficient in order to accommodate independent usage of this effect
+	change_variable = { $project$_level = 1 }
+	hidden_effect = {
+		set_country_flag = magic_project_completed_flag
+		country_event = { id = magic_project_$project$.0 } #The handler event.
+		country_event = { id = magic_project.1 } #clears the completion flag
+		calc_completed_magic_projects = yes
+		if = {
+			limit = { has_country_flag = $project$_project }
+			country_event = { id = magic_system.99 } #hidden abort event
+		}
+	}
+}
+magical_infrastructure_level_up = {
+	if = { limit = { has_country_modifier = magical_infrastructure_3 }
+		remove_country_modifier = magical_infrastructure_3 add_country_modifier = { name = magical_infrastructure_4 duration = -1 }
+	}
+	else_if = { limit = { has_country_modifier = magical_infrastructure_2 }
+		remove_country_modifier = magical_infrastructure_2 add_country_modifier = { name = magical_infrastructure_3 duration = -1 }
+	}
+	else_if = { limit = { has_country_modifier = magical_infrastructure_1 }
+		remove_country_modifier = magical_infrastructure_1 add_country_modifier = { name = magical_infrastructure_2 duration = -1 }
+	}
+	else = {
+		add_country_modifier = { name = magical_infrastructure_1 duration = -1 }
+	}
+	hidden_effect = {
+		change_variable = { mana_regen_infra = 0.25 }
+		clr_country_flag = MI_temporary_bypass_flag
+
+		if = {
+			limit = { has_country_flag = magical_infrastructure }
+			country_event = { id = magic_system.99 } #hidden abort event
+		}
+		
+		if = {
+			limit = { ai = no } #these ai-checks can be taken out gradually as we decide it's okay for AI to have extraneous flags and variables
+			change_mana = yes # (max) mana was changed
+			update_mana_regen_vars = yes
+		}
+	}
+}
+
+calc_completed_magic_projects = { #Non-unique
+	set_variable = { magic_projects_completed = 0 }
+	if = { limit = { at_least_magical_infrastructure_level_4 = yes }
+		change_variable = { magic_projects_completed = 1 }
+	}
+
+	if = { limit = { at_least_magic_project_level = { project = magical_fortress level = 3 } }
+		change_variable = { magic_projects_completed = 1 }
+	}
+	if = { limit = { at_least_magic_project_level = { project = summon_extraplanars level = 3 } }
+		change_variable = { magic_projects_completed = 1 }
+	}
+	if = { limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 3 } }
+		change_variable = { magic_projects_completed = 1 }
+	}
+	if = { limit = { at_least_magic_project_level = { project = artifact_of_enthrallment level = 3 } }
+		change_variable = { magic_projects_completed = 1 }
+	}
+	if = { limit = { at_least_magic_project_level = { project = battlemage_academy level = 3 } }
+		change_variable = { magic_projects_completed = 1 }
+	}
+	if = { limit = { at_least_magic_project_level = { project = theatre_of_simulacra level = 3 } }
+		change_variable = { magic_projects_completed = 1 }
+	}
+	if = { limit = { ruler_is_lich = yes }
+		change_variable = { magic_projects_completed = 1 }
+	}
+	if = { limit = { at_least_magic_project_level = { project = homunculus level = 3 } }
+		change_variable = { magic_projects_completed = 1 }
+	}
+}
+
+ai_random_study = {
+	random_list = {
+		3 = {
+			trigger = { NOT = { has_$type$_flag = abjuration_3 } }
+			modifier = { factor = 2 has_$type$_flag = abjuration_1 }
+			modifier = { factor = 4 has_$type$_flag = abjuration_2 }
+			ai_pay_for_xp = { study = abjuration type = $type$ }
+			magic_school_level_up = { type = $type$ school = abjuration }
+		}
+		3 = {
+			trigger = { NOT = { has_$type$_flag = conjuration_3 } }
+			modifier = { factor = 2 has_$type$_flag = conjuration_1 }
+			modifier = { factor = 4 has_$type$_flag = conjuration_2 }
+			ai_pay_for_xp = { study = conjuration type = $type$ }
+			magic_school_level_up = { type = $type$ school = conjuration }
+		}
+		3 = {
+			trigger = { NOT = { has_$type$_flag = divination_3 } }
+			modifier = { factor = 2 has_$type$_flag = divination_1 }
+			modifier = { factor = 4 has_$type$_flag = divination_2 }
+			ai_pay_for_xp = { study = divination type = $type$ }
+			magic_school_level_up = { type = $type$ school = divination }
+		}
+		3 = {
+			trigger = { NOT = { has_$type$_flag = enchantment_3 } }
+			modifier = { factor = 2 has_$type$_flag = enchantment_1 }
+			modifier = { factor = 4 has_$type$_flag = enchantment_2 }
+			ai_pay_for_xp = { study = enchantment type = $type$ }
+			magic_school_level_up = { type = $type$ school = enchantment }
+		}
+		3 = {
+			trigger = { NOT = { has_$type$_flag = evocation_3 } }
+			modifier = { factor = 2 has_$type$_flag = evocation_1 }
+			modifier = { factor = 4 has_$type$_flag = evocation_2 }
+			ai_pay_for_xp = { study = evocation type = $type$ }
+			magic_school_level_up = { type = $type$ school = evocation }
+		}
+		3 = {
+			trigger = { NOT = { has_$type$_flag = illusion_3 } }
+			modifier = { factor = 2 has_$type$_flag = illusion_1 }
+			modifier = { factor = 4 has_$type$_flag = illusion_2 }
+			ai_pay_for_xp = { study = illusion type = $type$ }
+			magic_school_level_up = { type = $type$ school = illusion }
+		}
+		1 = { #Necromancy is a high-impact school and we'd prefer it appear less often
+			trigger = { NOT = { has_$type$_flag = necromancy_3 } }
+			modifier = { factor = 6 has_$type$_flag = necromancy_1 }
+			modifier = { factor = 4 has_$type$_flag = necromancy_2 }
+			ai_pay_for_xp = { study = necromancy type = $type$ }
+			magic_school_level_up = { type = $type$ school = necromancy }
+		}
+		3 = {
+			trigger = { NOT = { has_$type$_flag = transmutation_3 } }
+			modifier = { factor = 2 has_$type$_flag = transmutation_1 }
+			modifier = { factor = 4 has_$type$_flag = transmutation_2 }
+			ai_pay_for_xp = { study = transmutation type = $type$ }
+			magic_school_level_up = { type = $type$ school = transmutation }
+		}
+	}
+}
+
+set_flag_based_on_advancement = {
+	if = {
+		limit = { has_ruler_flag = magic_advancement }
+		set_ruler_flag = $flag$
+	}
+	else_if = {
+		limit = { has_heir_flag = magic_advancement }
+		set_heir_flag = $flag$
+	}
+	else_if = {
+		limit = { has_country_flag = magic_advancement }
+		set_country_flag = $flag$
+	}
+}
+
+clr_flag_based_on_advancement = {
+	if = {
+		limit = { has_ruler_flag = magic_advancement }
+		clr_ruler_flag = $flag$
+	}
+	else_if = {
+		limit = { has_heir_flag = magic_advancement }
+		clr_heir_flag = $flag$
+	}
+	else_if = {
+		limit = { has_country_flag = magic_advancement }
+		clr_country_flag = $flag$
+	}
+}
+
+##################
+### EXPERIENCE ###
+##################
+
+set_magic_experience_target = {
+	[[xptarget] set_country_flag = xptarget_temp_flag ]
+	
+	# [[!xptarget]]
+	if = {
+		limit = { NOT = { has_country_flag = xptarget_temp_flag } }
+
+		set_variable = { magic_experience_target = 100 } #Base experience
+		set_variable = { expFoo = 250 } 				#Increase per level
+		## Maybe target level will be set elsewhere as a variable
+		#For now:
+		[[study]
+			trigger_switch = {
+				on_trigger = has_$type$_flag
+				$study$_1 = { multiply_variable = { expFoo = 2 } } # Lvl 1 to 2
+				$study$_2 = { multiply_variable = { expFoo = 3 } } # Lvl 2 to 3
+			}
+		]
+		[[project]
+			if = {
+				limit = { check_variable = { which = $project$_level value = 2 } }
+				multiply_variable = { expFoo = 3 }
+			}
+			else_if = {
+				limit = { check_variable = { which = $project$_level value = 1 } }
+				multiply_variable = { expFoo = 2 }
+			}
+		]
+		[[infrastructure]
+			if = {
+				limit = { exactly_magical_infrastructure_level = { level = 3 } }
+				multiply_variable = { expFoo = 5 } #Max 1350 xp
+			}
+			else_if = {
+				limit = { exactly_magical_infrastructure_level = { level = 2 } }
+				multiply_variable = { expFoo = 4 } #1100 xp
+			}
+			else_if = {
+				limit = { exactly_magical_infrastructure_level = { level = 1 } }
+				multiply_variable = { expFoo = 3 } #850 xp
+			}
+			else = { multiply_variable = { expFoo = 2 } } #Base 600 xp
+		]
+		change_variable = { which = magic_experience_target which = expFoo }
+	}
+	#[[xptarget]]
+	else_if = {
+		limit = { has_country_flag = xptarget_temp_flag }
+		set_variable = { which = magic_experience_target value = $xptarget$ }
+	}
+	clr_country_flag = infra_temp_flag
+	clr_country_flag = xptarget_temp_flag
+	update_advancement_progress_bar = { type = $type$ }
+}
+
+increase_magic_experience = { #CANNOT BE FIRED INSIDE AN ELSE IN A SCRIPTED EFFECT
+	hidden_effect = {
+		if = {
+			limit = { ai = no }
+			set_variable = { experienceGain = 0 }
+			set_variable = { unmodifiedExperience = 0 }
+		}
+	}
+	[[amount]
+		if = {
+			limit = { ai = yes }
+			change_variable = { which = ai_magic_experience value = $amount$ }
+		}
+		else = {
+			hidden_effect = { change_variable = { experienceGain = $amount$ } }
+
+			if = { limit = { has_ruler_flag = magic_advancement }
+				tooltip = { change_variable = { ruler_magic_experience = $amount$ } }
+				custom_tooltip = magic_experience_gain_modifier_tt
+			}
+			else_if = { limit = { has_heir_flag = magic_advancement }
+				tooltip = { change_variable = { heir_magic_experience = $amount$ } }
+				custom_tooltip = magic_experience_gain_modifier_tt
+			}
+			else = {
+				tooltip = { change_variable = { country_magic_experience = $amount$ } }
+				custom_tooltip = magic_experience_gain_modifier_tt
+			}
+		}
+	]
+	[[var_amount]
+		if = {
+			limit = { ai = yes }
+			change_variable = { which = ai_magic_experience which = $var_amount$ }
+		}
+		else = {
+			hidden_effect = { change_variable = { which = experienceGain which = $var_amount$ } }
+
+			if = { limit = { has_ruler_flag = magic_advancement }
+				tooltip = { change_variable = { which = ruler_magic_experience which = $var_amount$ } }
+				custom_tooltip = magic_experience_gain_modifier_tt
+			}
+			else_if = { limit = { has_heir_flag = magic_advancement }
+				tooltip = { change_variable = { which = heir_magic_experience which = $var_amount$ } }
+				custom_tooltip = magic_experience_gain_modifier_tt
+			}
+			else = {
+				tooltip = { change_variable = { which = country_magic_experience which = $var_amount$ } }
+				custom_tooltip = magic_experience_gain_modifier_tt
+			}
+		}
+	]
+
+	[[unmodified_amount] #used when you want to bypass the exp modifiers
+		if = {
+			limit = { ai = yes }
+			change_variable = { which = ai_magic_experience value = $unmodified_amount$ }
+		}
+		else = {
+			hidden_effect = { change_variable = { unmodifiedExperience = $unmodified_amount$ } }
+
+			if = { limit = { has_ruler_flag = magic_advancement }
+				tooltip = { change_variable = { ruler_magic_experience = $unmodified_amount$ } }
+				custom_tooltip = magic_experience_gain_no_modifier_tt
+			}
+			else_if = { limit = { has_heir_flag = magic_advancement }
+				tooltip = { change_variable = { heir_magic_experience = $unmodified_amount$ } }
+				custom_tooltip = magic_experience_gain_no_modifier_tt
+			}
+			else = { 
+				tooltip = { change_variable = { country_magic_experience = $unmodified_amount$ } }
+				custom_tooltip = magic_experience_gain_no_modifier_tt
+			}
+		}
+	]
+	[[unmodified_var_amount] #used when you want to bypass the exp modifiers
+		if = {
+			limit = { ai = yes }
+			change_variable = { which = ai_magic_experience which = $unmodified_var_amount$ }
+		}
+		else = {
+			hidden_effect = { change_variable = { which = unmodifiedExperience which = $unmodified_var_amount$ } }
+
+			if = { limit = { has_ruler_flag = magic_advancement }
+				tooltip = { change_variable = { which = ruler_magic_experience which = $unmodified_var_amount$ } }
+				custom_tooltip = magic_experience_gain_no_modifier_tt
+			}
+			else_if = { limit = { has_heir_flag = magic_advancement }
+				tooltip = { change_variable = { which = heir_magic_experience which = $unmodified_var_amount$ } }
+				custom_tooltip = magic_experience_gain_no_modifier_tt
+			}
+			else = {
+				tooltip = { change_variable = { which = country_magic_experience which = $unmodified_var_amount$ } }
+				custom_tooltip = magic_experience_gain_no_modifier_tt
+			}
+		}
+	]
+
+	hidden_effect = {
+		if = { limit = { ai = no } #AI has their own thing
+
+			# The below are calculated both here and in update_magic_ui_experience_modifiers
+			# It needs to be here so that players who don't open the menu still have updated estimates
+			export_to_variable = { which = last_months_xp_gain value = modifier:mages_monthly_experience } #estimate monthly xp
+			set_variable = { which = months_till_advancement_done which = magic_experience_target } #estimate time to completion
+
+			if = { limit = { has_ruler_flag = magic_advancement }
+				export_to_variable = {
+					variable_name = ruler_experience_modifier
+					value = modifier:mages_ruler_experience_mod
+				}
+				calc_school_experience_modifiers = { type = ruler }
+				change_variable = { which = ruler_experience_modifier which = school_experience_modifier }
+				change_variable = { ruler_experience_modifier = 1 }
+				multiply_variable = { which = experienceGain which = ruler_experience_modifier }
+
+				multiply_variable = { which = last_months_xp_gain which = ruler_experience_modifier }
+				if = {
+					limit = { is_long_lived_ruler = yes }
+					divide_variable = { last_months_xp_gain = 2 }
+				}
+				truncate_variable_3 = { which = last_months_xp_gain } #Tooltip bits for monthly xp estimate
+
+				change_variable = { which = experienceGain which = unmodifiedExperience }
+				truncate_variable_3 = { which = experienceGain }
+
+				change_variable = {
+					which = ruler_magic_experience
+					which = experienceGain
+				}
+				subtract_variable = { which = months_till_advancement_done which = ruler_magic_experience }
+				update_advancement_progress_bar = { type = ruler }
+			}
+			
+			else_if = { limit = { has_heir_flag = magic_advancement }
+				export_to_variable = {
+					variable_name = ruler_experience_modifier
+					value = modifier:mages_ruler_experience_mod
+				}
+				calc_school_experience_modifiers = { type = heir }
+				change_variable = { which = ruler_experience_modifier which = school_experience_modifier }
+				change_variable = { ruler_experience_modifier = 1 }
+				multiply_variable = { which = experienceGain which = ruler_experience_modifier }
+
+				multiply_variable = { which = last_months_xp_gain which = ruler_experience_modifier }
+				if = {
+					limit = { is_long_lived_heir = yes }
+					divide_variable = { last_months_xp_gain = 2 }
+				}
+				truncate_variable_3 = { which = last_months_xp_gain } #Tooltip bits for monthly xp estimate
+
+				change_variable = { which = experienceGain which = unmodifiedExperience }
+				truncate_variable_3 = { which = experienceGain }
+
+				change_variable = {
+					which = heir_magic_experience
+					which = experienceGain
+				}
+				subtract_variable = { which = months_till_advancement_done which = heir_magic_experience }
+				update_advancement_progress_bar = { type = heir }
+			}
+			else_if = { limit = { has_country_flag = magic_advancement }
+				export_to_variable = {
+					variable_name = country_experience_modifier
+					value = modifier:mages_estate_experience_mod
+				}
+				calc_school_experience_modifiers = { type = country }
+				change_variable = { which = country_experience_modifier which = school_experience_modifier }
+				change_variable = { country_experience_modifier = 1 }
+				multiply_variable = { which = experienceGain which = country_experience_modifier }
+
+				multiply_variable = { which = last_months_xp_gain which = country_experience_modifier }
+				divide_variable = { last_months_xp_gain = 3 }
+				truncate_variable_3 = { which = last_months_xp_gain } #Estimate of monthly xp
+
+				change_variable = { which = experienceGain which = unmodifiedExperience }
+				truncate_variable_3 = { which = experienceGain }
+
+				change_variable = {
+					which = country_magic_experience
+					which = experienceGain
+				}
+
+				subtract_variable = { which = months_till_advancement_done which = country_magic_experience } #country xp estimate
+				update_advancement_progress_bar = { type = country }
+			}
+
+			divide_variable = { which = months_till_advancement_done which = last_months_xp_gain } #Tooltip bits
+			round_variable = { which = months_till_advancement_done value = 1 } #round up
+		}
+
+		country_event = { id = magic_system.100 } #XP Advancement pulse
+	}
+}
+
+calc_school_experience_modifiers = {
+	set_variable = { school_experience_modifier = 0 }
+	trigger_switch = {
+		on_trigger = has_$type$_flag
+
+		abjuration_advancement = { calc_school_experience_modifier_effect = { school = abjuration } }
+		conjuration_advancement = { calc_school_experience_modifier_effect = { school = conjuration } }
+		divination_advancement = { calc_school_experience_modifier_effect = { school = divination } }
+		enchantment_advancement = { calc_school_experience_modifier_effect = { school = enchantment } }
+		evocation_advancement = { calc_school_experience_modifier_effect = { school = evocation } }
+		illusion_advancement = { calc_school_experience_modifier_effect = { school = illusion } }
+		necromancy_advancement = { calc_school_experience_modifier_effect = { school = necromancy } }
+		transmutation_advancement = { calc_school_experience_modifier_effect = { school = necromancy } }
+	}
+}
+calc_school_experience_modifier_effect = {
+	export_to_variable = {
+		variable_name = school_experience_modifier
+		value = modifier:$school$_experience_mod
+	}
+}
+
+reduce_infrastructure_institution_penalty = {
+	if = {
+		limit = { has_country_modifier = magical_infrastructure_2_institution_penalty }
+		remove_country_modifier = magical_infrastructure_2_institution_penalty
+		add_country_modifier = { name = magical_infrastructure_institution_penalty duration = -1 desc = until_advancement_concludes }
+	}
+	else = { remove_country_modifier = magical_infrastructure_institution_penalty }
+}
+
+ai_magic_xp_pulse = {
+	if = {
+		limit = {
+			ai = yes
+			has_country_flag = magic_system_initialized
+			can_use_magic = yes
+		}
+		export_to_variable = { #give 60 months of xp
+			which = ai_magic_value
+			value = modifier:mages_monthly_experience
+		}
+		multiply_variable = { ai_magic_value = 60 }
+		change_variable = { which = ai_magic_experience which = ai_magic_value }
+
+		if = {
+			limit = { check_variable = { ai_magic_experience = 1 } }
+			country_event = { id = magic_system.350 } #AI advancement handler
+		}
+	}
+}
+
+ai_pay_for_xp = { #AI advancements -- formatted to miminize size when compiled (expanded)
+	[[study]
+		if = { #we operate on ai_magic_value to calculate the xp cost for this advancement
+			limit = { has_$type$_flag = $study$_2 }
+			set_variable = { ai_magic_value = 850 } #level 2 to 3
+		}
+		else_if = {
+			limit = { has_$type$_flag = $study$_1 }
+			set_variable = { ai_magic_value = 600 } #level 1 to 2
+		}
+		else = {
+			set_variable = { ai_magic_value = 350 } #level 0 to 1
+		}
+		calc_ai_$type$_xp_modifier = yes
+		calc_ai_school_xp_modifier = { school = $study$ }
+	]
+	[[project]
+		if = {
+			limit = { exactly_magic_project_level = { project = $project$ level = 2 } }
+			set_variable = { ai_magic_value = 850 } #level 2 to 3
+		}
+		else_if = {
+			limit = { exactly_magic_project_level = { project = $project$ level = 1 } }
+			set_variable = { ai_magic_value = 600 } #level 1 to 2
+		}
+		else = {
+			set_variable = { ai_magic_value = 350 } #level 0 to 1
+		}
+		calc_ai_country_xp_modifier = yes
+	]
+	[[school] calc_ai_school_xp_modifier = { school = $school$ } ] #for project
+	[[infrastructure]
+		if = { limit = { has_country_modifier = magical_infrastructure_3 }
+			set_variable = { ai_magic_value = 1350 } # Lvl 3 to 4
+		}
+		else_if = { limit = { has_country_modifier = magical_infrastructure_2 }
+			set_variable = { ai_magic_value = 1100 } # Lvl 2 to 3
+		}
+		else_if = { limit = { has_country_modifier = magical_infrastructure_1 }
+			set_variable = { ai_magic_value = 850 } # Lvl 1 to 2
+		}
+		else = {
+			set_variable = { ai_magic_value = 600 } # Lvl 0 to 1
+		}
+		calc_ai_country_xp_modifier = yes
+	]
+
+	change_variable = { ai_magic_modifier = 1 } #ai_magic_modifier is the xp modifier
+	if = { #sanity check
+		limit = { NOT = { check_variable = { ai_magic_modifier = 0 } } }
+		set_variable = { ai_magic_modifier = 0.1 }
+	}
+	divide_variable = { which = ai_magic_value which = ai_magic_modifier } #modified xp cost
+
+	subtract_variable = { which = ai_magic_experience which = ai_magic_value }
+}
+calc_ai_ruler_xp_modifier = {
+	export_to_variable = {
+		variable_name = ai_magic_modifier
+		value = modifier:mages_ruler_experience_mod
+	}
+	if = {
+		limit = { is_long_lived_ruler = yes }
+		multiply_variable = { ai_magic_value = 2 }
+	}
+}
+calc_ai_heir_xp_modifier = {
+	export_to_variable = {
+		variable_name = ai_magic_modifier
+		value = modifier:mages_ruler_experience_mod
+	}
+	if = {
+		limit = { is_long_lived_heir = yes }
+		multiply_variable = { ai_magic_value = 2 }
+	}
+}
+calc_ai_country_xp_modifier = {
+	multiply_variable = { ai_magic_value = 3 }
+	export_to_variable = {
+		variable_name = ai_magic_modifier
+		value = modifier:mages_estate_experience_mod
+	}
+}
+calc_ai_school_xp_modifier = {
+	export_to_variable = {
+		variable_name = school_experience_modifier
+		value = modifier:$school$_experience_mod
+	}
+	change_variable = { which = ai_magic_modifier which = school_experience_modifier }
+}
+
+monthly_magic_upkeep_pulse = {
+	if = {
+		limit = {
+			ai = no #AI has their own thing
+			has_country_flag = magic_system_initialized
+		}
+
+		update_mana_regen_vars = yes #Monthly mana regen
+		change_mana = { var_amount = mages_mana_regen_val }
+
+		export_to_variable = {
+			which = monthly_xp_tick
+			value = modifier:mages_monthly_experience
+		}
+
+		if = { limit = { has_ruler_flag = magic_advancement }
+			if = { limit = { is_long_lived_ruler = yes }
+				divide_variable = { monthly_xp_tick = 2 }
+			}
+		}
+		else_if = { limit = { has_heir_flag = magic_advancement }
+			if = { limit = { is_long_lived_heir = yes }
+				divide_variable = { monthly_xp_tick = 2 }
+			}
+		}
+		else_if = { limit = { has_country_flag = magic_advancement }
+			divide_variable = { which = monthly_xp_tick value = 3 }
+		}
+
+		increase_magic_experience = { var_amount = monthly_xp_tick }
+
+		if = {
+			limit = {
+				OR = { #The magic menu is being held open
+					has_country_flag = magic_menu_main_flag
+					has_country_flag = magic_menu_advancement_flag
+					has_country_flag = magic_menu_spellbook_flag
+					has_country_flag = magic_menu_patron_flag
+				}
+			}
+			update_magic_ui_experience_modifiers = yes
+		}
+	}
+}
+
+#####################
+### POWERFUL MAGE ###
+#####################
+
+clear_spell_levels_for_type_and_school = {
+	trigger_switch = {
+		on_trigger = has_$type$_flag
+		$school$_1 = { clr_$type$_flag = $school$_1 }
+		$school$_2 = { clr_$type$_flag = $school$_2 }
+		$school$_3 = { clr_$type$_flag = $school$_3 }
+	}
+}
+
+clear_all_spell_levels_for_type = {
+	hidden_effect = { set_variable = { $type$_spell_schools = 0 } }
+	clear_spell_levels_for_type_and_school = { type = $type$ school = abjuration }
+	clear_spell_levels_for_type_and_school = { type = $type$ school = conjuration }
+	clear_spell_levels_for_type_and_school = { type = $type$ school = divination }
+	clear_spell_levels_for_type_and_school = { type = $type$ school = enchantment }
+	clear_spell_levels_for_type_and_school = { type = $type$ school = evocation }
+	clear_spell_levels_for_type_and_school = { type = $type$ school = illusion }
+	clear_spell_levels_for_type_and_school = { type = $type$ school = necromancy }
+	clear_spell_levels_for_type_and_school = { type = $type$ school = transmutation }
+}
+
+save_spell_levels_for_type_and_school_to_name = {
+	clear_saved_spell_levels_for_school_and_name = { name = $name$ school = $school$ }
+	trigger_switch = {
+		on_trigger = has_$type$_flag
+		$school$_1 = { set_country_flag = saved_$name$_$school$_1 }
+		$school$_2 = { set_country_flag = saved_$name$_$school$_2 }
+		$school$_3 = { set_country_flag = saved_$name$_$school$_3 }
+	}
+}
+
+save_spell_levels_for_type_to_name = {
+	set_$type$_flag = saving_spell_levels #helps to fire the event
+	set_$type$_flag = is_$name$ #used primarily for sorting
+
+	save_spell_levels_for_type_and_school_to_name = { type = $type$ name = $name$ school = abjuration }
+	save_spell_levels_for_type_and_school_to_name = { type = $type$ name = $name$ school = conjuration }
+	save_spell_levels_for_type_and_school_to_name = { type = $type$ name = $name$ school = divination }
+	save_spell_levels_for_type_and_school_to_name = { type = $type$ name = $name$ school = enchantment }
+	save_spell_levels_for_type_and_school_to_name = { type = $type$ name = $name$ school = evocation }
+	save_spell_levels_for_type_and_school_to_name = { type = $type$ name = $name$ school = illusion }
+	save_spell_levels_for_type_and_school_to_name = { type = $type$ name = $name$ school = necromancy }
+	save_spell_levels_for_type_and_school_to_name = { type = $type$ name = $name$ school = transmutation }
+}
+
+update_saved_spell_levels_for_type_and_school_to_name = { #doesn't override higher-level schools
+	trigger_switch = {
+		on_trigger = has_$type$_flag
+		$school$_1 = {
+			if = { 
+				limit = { NOT = { has_country_flag = saved_$name$_$school$_2 has_country_flag = saved_$name$_$school$_3 } }
+				set_country_flag = saved_$name$_$school$_1
+			}
+		}
+		$school$_2 = {
+			if = { 
+				limit = { NOT = { has_country_flag = saved_$name$_$school$_3 } }
+				set_country_flag = saved_$name$_$school$_2
+				clr_country_flag = saved_$name$_$school$_1
+			}
+		}
+		$school$_3 = {
+			set_country_flag = saved_$name$_$school$_3
+			clr_country_flag = saved_$name$_$school$_2
+			clr_country_flag = saved_$name$_$school$_1
+		}
+	}
+}
+
+update_saved_spell_levels_for_type_and_school = { #update this scripted effect if you come up with new saved spell level names
+	if = {
+		limit = { has_$type$_flag = is_immortal } #vampire, lich, etc. use this
+		update_saved_spell_levels_for_type_and_school_to_name = { type = $type$ school = $school$ name = immortal }
+	}
+	if = {
+		limit = { has_$type$_flag = is_inherits } #gov attribute inherits_magic = yes use this
+		update_saved_spell_levels_for_type_and_school_to_name = { type = $type$ school = $school$ name = inherits }
+	}
+
+	#MT names -- extremely unlikely to overlap (consider turning into an index?)
+	if = {
+		limit = { has_$type$_flag = is_mitrenya } #Vels Fadhecai
+		update_saved_spell_levels_for_type_and_school_to_name = { type = $type$ school = $school$ name = mitrenya }
+	}
+	if = {
+		limit = { has_$type$_flag = is_oxh } #Brrtekuh
+		update_saved_spell_levels_for_type_and_school_to_name = { type = $type$ school = $school$ name = oxh }
+	}
+	if = {
+		limit = { has_$type$_flag = is_zakr } #Brrtekuh
+		update_saved_spell_levels_for_type_and_school_to_name = { type = $type$ school = $school$ name = zakr }
+	}
+	if = {
+		limit = { has_$type$_flag = is_yzhil } #Brrtekuh
+		update_saved_spell_levels_for_type_and_school_to_name = { type = $type$ school = $school$ name = yzhil }
+	}
+}
+
+clear_saved_spell_levels_for_school_and_name = {
+	trigger_switch = {
+		on_trigger = has_country_flag
+		saved_$name$_$school$_1 = { clr_country_flag = saved_$name$_$school$_1 }
+		saved_$name$_$school$_2 = { clr_country_flag = saved_$name$_$school$_2 }
+		saved_$name$_$school$_3 = { clr_country_flag = saved_$name$_$school$_3 }
+	}
+}
+
+clear_saved_spell_levels_for_name = {
+	clear_saved_spell_levels_for_school_and_name = { name = $name$ school = abjuration }
+	clear_saved_spell_levels_for_school_and_name = { name = $name$ school = conjuration }
+	clear_saved_spell_levels_for_school_and_name = { name = $name$ school = divination }
+	clear_saved_spell_levels_for_school_and_name = { name = $name$ school = enchantment }
+	clear_saved_spell_levels_for_school_and_name = { name = $name$ school = evocation }
+	clear_saved_spell_levels_for_school_and_name = { name = $name$ school = illusion }
+	clear_saved_spell_levels_for_school_and_name = { name = $name$ school = necromancy }
+	clear_saved_spell_levels_for_school_and_name = { name = $name$ school = transmutation }
+}
+
+give_type_saved_spell_levels_for_school_from_name = {
+	trigger_switch = {
+		on_trigger = has_country_flag
+		saved_$name$_$school$_1 = {
+			if = { limit = { NOT = { has_$type$_flag = $school$_3 has_$type$_flag = $school$_2 } }
+			custom_tooltip = $school$_1 set_$type$_flag = $school$_1 }
+		}
+		saved_$name$_$school$_2 = {
+			if = { limit = { NOT = { has_$type$_flag = $school$_3 } }
+			custom_tooltip = $school$_2 set_$type$_flag = $school$_2 clr_$type$_flag = $school$_1 }
+		}
+		saved_$name$_$school$_3 = { custom_tooltip = $school$_3 set_$type$_flag = $school$_3 clr_$type$_flag = $school$_2 clr_$type$_flag = $school$_1 }
+	}
+}
+
+give_type_saved_spell_levels_from_name = { #for use alongside the define_powerful_mage effect
+	give_type_saved_spell_levels_for_school_from_name = { type = $type$ name = $name$ school = abjuration }
+	give_type_saved_spell_levels_for_school_from_name = { type = $type$ name = $name$ school = conjuration }
+	give_type_saved_spell_levels_for_school_from_name = { type = $type$ name = $name$ school = divination }
+	give_type_saved_spell_levels_for_school_from_name = { type = $type$ name = $name$ school = enchantment }
+	give_type_saved_spell_levels_for_school_from_name = { type = $type$ name = $name$ school = evocation }
+	give_type_saved_spell_levels_for_school_from_name = { type = $type$ name = $name$ school = illusion }
+	give_type_saved_spell_levels_for_school_from_name = { type = $type$ name = $name$ school = necromancy }
+	give_type_saved_spell_levels_for_school_from_name = { type = $type$ name = $name$ school = transmutation }
+
+	set_$type$_flag = initialized_magic_flags
+
+	[[save] set_$type$_flag = saving_spell_levels set_$type$_flag = is_$name$ ]
+}
+
+recalculate_ruler_mana_regen = { #Redirection to preserve lines of text
+	hidden_effect = { country_event = { id = magic_system.30 } }
+}
+recalculate_consort_mana_regen = {} #useless effects
+recalculate_country_mana_regen = {}
+recalculate_heir_mana_regen = {}
+
+give_random_spell_school = {
+	random_list = {
+		1 = { trigger = { NOT = { has_$type$_flag = abjuration_3 } } magic_school_level_up = { type = $type$ school = abjuration } }
+		1 = { trigger = { NOT = { has_$type$_flag = conjuration_3 } } magic_school_level_up = { type = $type$ school = conjuration } }
+		1 = { trigger = { NOT = { has_$type$_flag = divination_3 } } magic_school_level_up = { type = $type$ school = divination } }
+		1 = { trigger = { NOT = { has_$type$_flag = enchantment_3 } } magic_school_level_up = { type = $type$ school = enchantment } }
+		1 = { trigger = { NOT = { has_$type$_flag = evocation_3 } } magic_school_level_up = { type = $type$ school = evocation } }
+		1 = { trigger = { NOT = { has_$type$_flag = illusion_3 } } magic_school_level_up = { type = $type$ school = illusion } }
+		1 = { trigger = { NOT = { has_$type$_flag = necromancy_3 } } magic_school_level_up = { type = $type$ school = necromancy } }
+		1 = { trigger = { NOT = { has_$type$_flag = transmutation_3 } } magic_school_level_up = { type = $type$ school = transmutation } }
+	}
+}
+give_ruler_random_spell_school = { give_random_spell_school = { type = ruler } } #Alias
+give_heir_random_spell_school = { give_random_spell_school = { type = heir } }
+give_consort_random_spell_school = { give_random_spell_school = { type = consort } }
+give_estate_random_spell_school = { give_random_spell_school = { type = country } }
+
+magic_setup_level_up = { #lacks most of the functionality of magic_school_level_up but more performant
+	if = {
+		limit = { has_$type$_flag = $school$_1 }
+		clr_$type$_flag = $school$_1
+		set_$type$_flag = $school$_2
+	}
+	else_if = {
+		limit = { has_$type$_flag = $school$_2 }
+		clr_$type$_flag = $school$_2
+		set_$type$_flag = $school$_3
+	}
+	else_if = {
+		limit = { NOT = { has_$type$_flag = $school$_3 } }
+		set_$type$_flag = $school$_1
+	}
+}
+magic_setup_give_random_level = { #lacks most of the functionality of give_random_spell_school but more performant
+	random_list = {
+		1 = { trigger = { NOT = { has_$type$_flag = abjuration_3 } } magic_setup_level_up = { type = $type$ school = abjuration } }
+		1 = { trigger = { NOT = { has_$type$_flag = conjuration_3 } } magic_setup_level_up = { type = $type$ school = conjuration } }
+		1 = { trigger = { NOT = { has_$type$_flag = divination_3 } } magic_setup_level_up = { type = $type$ school = divination } }
+		1 = { trigger = { NOT = { has_$type$_flag = enchantment_3 } } magic_setup_level_up = { type = $type$ school = enchantment } }
+		1 = { trigger = { NOT = { has_$type$_flag = evocation_3 } } magic_setup_level_up = { type = $type$ school = evocation } }
+		1 = { trigger = { NOT = { has_$type$_flag = illusion_3 } } magic_setup_level_up = { type = $type$ school = illusion } }
+		1 = { trigger = { NOT = { has_$type$_flag = necromancy_3 } } magic_setup_level_up = { type = $type$ school = necromancy } }
+		1 = { trigger = { NOT = { has_$type$_flag = transmutation_3 } } magic_setup_level_up = { type = $type$ school = transmutation } }
+	}
+}
+
+give_magic_starting_schools = { #Types are ruler, heir, and consort in this context. Country doesn't make sense
+	if = {
+		limit = { NOT = { has_$type$_flag = initialized_magic_flags } }
+
+		clear_all_spell_levels_for_type = { type = $type$ } #just in case
+
+		# Ovdal-az-An guaranteed legendary (non-necromancy) school
+		# Put here at the front as to not "waste" the upgrade on a spell that's already legendary.
+		if = {
+			limit = { mission_completed = az_an_veneration }
+			random_list =  {
+				1 = { set_$type$_flag = abjuration_3 }
+				1 = { set_$type$_flag = conjuration_3 }
+				1 = { set_$type$_flag = divination_3 }
+				1 = { set_$type$_flag = enchantment_3 }
+				1 = { set_$type$_flag = evocation_3 }
+				1 = { set_$type$_flag = illusion_3 }
+				1 = { set_$type$_flag = transmutation_3 }
+			}
+		}
+		
+		random_list = { #The vagaries of talent
+			1 = {}
+			1 = { magic_setup_give_random_level = { type = $type$ } }
+			1 = { magic_setup_give_random_level = { type = $type$ } magic_setup_give_random_level = { type = $type$ } }
+		}
+
+		if = {
+			limit = { is_long_lived_$type$ = yes }
+			if = { limit = { $type$_age = 30 } #Long-lived gets another one per 30 years of age
+				magic_setup_give_random_level = { type = $type$ }
+			}
+			if = { limit = { $type$_age = 60 }
+				magic_setup_give_random_level = { type = $type$ }
+			}
+			if = { limit = { $type$_age = 90 }
+				magic_setup_give_random_level = { type = $type$ }
+			}
+			if = { limit = { $type$_age = 120 }
+				magic_setup_give_random_level = { type = $type$ }
+			}
+		}
+		else = {
+			if = { limit = { $type$_age = 15 } #Short-lived gets another one per 15 years of age
+				magic_setup_give_random_level = { type = $type$ }
+			}
+			if = { limit = { $type$_age = 30 }
+				magic_setup_give_random_level = { type = $type$ }
+			}
+			if = { limit = { $type$_age = 45 }
+				magic_setup_give_random_level = { type = $type$ }
+			}
+			if = { limit = { $type$_age = 60 }
+				magic_setup_give_random_level = { type = $type$ }
+			}
+		}
+
+		if = { #Magical species get +1 spell level
+			limit = {
+				OR = {
+					fast_$type$_is_elven = yes
+					fast_$type$_is_half_elven = yes
+					fast_$type$_is_gnomish = yes
+					$type$_culture = horned_ogre
+					$type$_culture = emerald_orc
+				}
+			}
+			magic_setup_give_random_level = { type = $type$ }
+		}
+
+		if = { #Magocracies get +1 spell level
+			limit = { has_government_attribute = is_magocracy }
+			magic_setup_give_random_level = { type = $type$ }
+		}
+
+		export_to_variable = { #mission modifier + age rewards
+			which = monarch_spell_levels_val
+			value = modifier:monarch_spell_levels
+		}
+		while = {
+			limit = { check_variable = { monarch_spell_levels_val = 1 } }
+			magic_setup_give_random_level = { type = $type$ }
+			subtract_variable = { monarch_spell_levels_val = 1 }
+		}
+
+		while = { #from define_powerful_mage
+			limit = { check_variable = { random_starting_schools = 1 } }
+			magic_setup_give_random_level = { type = $type$ }
+			subtract_variable = { random_starting_schools = 1 }
+		}
+
+		########## MT REWARDS #############
+
+		if = {
+			limit = { has_reform = oracular_order_reform }
+			magic_setup_level_up = { type = $type$ school = divination }
+		}
+
+		#Parura Divination
+		if = {
+			limit = {
+				has_reform = effelai_alianaiarat_reform
+				$type$_culture = parura
+			}
+			magic_setup_level_up = { type = $type$ school = divination }
+			if = {
+				limit = {
+					OR = {
+						has_country_modifier = effelai_attunement_tier_4
+						has_country_modifier = effelai_attunement_tier_5
+					}
+				}
+				magic_setup_level_up = { type = $type$ school = divination }
+			}
+		}
+
+		set_$type$_flag = initialized_magic_flags
+
+		generic_calc_spell_levels = { type = $type$ }
+		recalculate_$type$_mana_regen = yes
+	}
+}
+
+magic_on_ruler_death = {
+	set_variable = { mana_regen_ruler = 0 }
+	set_variable = { ruler_spell_schools = 0 }
+	calc_schools_total_level = yes
+
+	if = { #For those who see the road suddenly end
+		limit = { has_country_flag = lichdom_project }
+		country_event = { id = magic_system.99 }
+	}
+
+	if = { #For liches who die badly
+		limit = {
+			ruler_is_not_lich = yes
+			at_least_magic_project_level = { project = lichdom level = 1 }
+		}
+		set_variable = { lichdom_level = 0 }
+		if = {
+			limit = { has_country_flag = b38_entef_ruler }
+			country_event = { id = flavor_elikhand.10 }
+		}
+		if = {
+			limit = { has_country_flag = gemradcurt_immariel_lich }
+			country_event = { id = flavor_gemradcurt.12 }
+		}
+	}
+
+	if = { #Undead Army
+		limit = { has_cast_undead_army = yes }
+		country_event = { id = magic_spell.702 days = 60 } 
+	}
+}
+magic_on_heir_death = {
+	if = {
+		limit = {
+			ai = no
+			has_heir_flag = magic_advancement
+		}
+		set_variable = { which = heir_magic_experience value = 0 }
+		set_variable = { which = current_experience_percent value = 0 }
+	}
+	if = {
+		limit = { heir_is_not_powerful_mage = yes }
+		remove_country_modifier = heir_mage_personality_mod
+	}
+	clr_type_witch_king_points = { type = heir }
+}
+magic_on_consort_death = {
+	if = {
+		limit = { consort_is_not_powerful_mage = yes }
+		remove_country_modifier = consort_mage_personality_mod
+	}
+	clr_type_witch_king_points = { type = consort }
+}
+
+set_heir_mage_effect = {
+	if = {
+		limit = { has_heir_flag = is_a_homunculus }
+		custom_tooltip = homunculi_no_mage_hint_tt
+		tooltip = { add_ruler_modifier = { name = heir_mage_personality_mod duration = -1 } }
+	}
+	else_if = {
+		limit = { religion = neokttareum }
+		clear_ancestor_heir_personalities = yes
+		add_heir_personality = ancestor_mage_personality
+	}
+	else = {
+		set_heir_flag = is_powerful_mage
+		add_ruler_modifier = {
+			name = heir_mage_personality_mod
+			duration = -1
+		}
+	}
+}
+
+set_consort_mage_effect = {
+	if = {
+		limit = { has_consort_flag = is_a_homunculus }
+		custom_tooltip = homunculi_no_mage_hint_tt
+		tooltip = { add_queen_personality = mage_personality }
+	}
+	else_if = {
+		limit = { religion = neokttareum }
+		clear_ancestor_consort_personalities = yes
+		add_queen_personality = ancestor_mage_personality
+	}
+	else_if = {
+		limit = { has_consort_regency = yes }
+		add_queen_personality = mage_personality
+		hidden_effect = {
+			if = {
+				limit = { consort_is_not_powerful_mage = yes }
+				remove_random_vanilla_consort_personality = yes
+				add_queen_personality = mage_personality
+			}
+		}
+	}
+	else = {
+		set_consort_flag = is_powerful_mage
+		add_ruler_modifier = {
+			name = consort_mage_personality_mod
+			duration = -1
+		}
+	}
+}
+
+set_ruler_mage_effect = {
+	if = {
+		limit = { has_ruler_flag = is_a_homunculus }
+		custom_tooltip = homunculi_no_mage_hint_tt
+		tooltip = { add_ruler_personality = mage_personality }
+	}
+	else_if = {
+		limit = { religion = neokttareum }
+		clear_ancestor_ruler_personalities = yes
+		add_ruler_personality = ancestor_mage_personality
+	}
+	else = {
+		add_ruler_personality = mage_personality
+		hidden_effect = {
+			if = {
+				limit = { ruler_is_not_powerful_mage = yes }
+				remove_random_vanilla_ruler_personality = yes
+				add_ruler_personality = mage_personality
+			}
+		}
+	}
+}
+
+# To use this effect:
+# Define TYPE: Types are ruler, heir, and consort. Make that character a powerful mage
+	# This is the only required argument. everything else is optional.
+# Define spell schools:
+	# Any spell school can be defined i.e. abjuration = 3 enchantment = 2
+	# You can hand out any number of additional random spell schools with random = 3
+	# You can also hand out saved spell schools with saved_levels = <name>
+	# The above will happen IN PLACE of normal spell school generation
+	# If you want to save this person's spell schools, you can do so with save_levels = <name>
+# Define special properties:
+	# war_wizard = yes makes the ruler or heir into a war wizard
+		# If you want to make the consort a war-wizard you can, but it won't work super right
+		# You can put in consort_name = xyz to give a set consort name
+	# witch_king = yes makes them a witch-king
+	# lich = yes makes ruler a lich (liches are not automatically witch-kings)
+
+define_powerful_mage = { #types are ruler, heir, and consort
+	if = {
+		limit = { $type$_is_not_powerful_mage = yes }
+		set_$type$_mage_effect = yes
+	}
+	if = {
+		limit = {
+			NOT = { has_$type$_flag = is_a_homunculus }
+			NOT = { has_$type$_flag = initialized_magic_flags }
+		}
+		clear_all_spell_levels_for_type = { type = $type$ } #Just in case
+		hidden_effect = { set_variable = { random_starting_schools = 0 } }
+
+		[[abjuration]		custom_tooltip = abjuration_$abjuration$ set_$type$_flag = abjuration_$abjuration$ set_$type$_flag = initialized_magic_flags ]
+		[[conjuration]		custom_tooltip = conjuration_$conjuration$ set_$type$_flag = conjuration_$conjuration$ set_$type$_flag = initialized_magic_flags ]
+		[[divination]		custom_tooltip = divination_$divination$ set_$type$_flag = divination_$divination$ set_$type$_flag = initialized_magic_flags ]
+		[[enchantment]		custom_tooltip = enchantment_$enchantment$ set_$type$_flag = enchantment_$enchantment$ set_$type$_flag = initialized_magic_flags ]
+		[[evocation]		custom_tooltip = evocation_$evocation$ set_$type$_flag = evocation_$evocation$ set_$type$_flag = initialized_magic_flags ]
+		[[illusion]			custom_tooltip = illusion_$illusion$ set_$type$_flag = illusion_$illusion$ set_$type$_flag = initialized_magic_flags ]
+		[[necromancy]		custom_tooltip = necromancy_$necromancy$ set_$type$_flag = necromancy_$necromancy$ set_$type$_flag = initialized_magic_flags ]
+		[[transmutation]	custom_tooltip = transmutation_$transmutation$ set_$type$_flag = transmutation_$transmutation$ set_$type$_flag = initialized_magic_flags ]
+		[[random]			set_variable = { random_starting_schools = $random$ }
+							while = {
+								limit = { check_variable = { random_starting_schools = 1 } }
+								subtract_variable = { random_starting_schools = 1 }
+								magic_setup_give_random_level = { type = $type$ }
+							}
+							set_$type$_flag = initialized_magic_flags ]
+		[[saved_levels]		give_type_saved_spell_levels_from_name = { type = $type$ name = $saved_levels$ } ]
+		[[save_levels]		save_spell_levels_for_type_to_name = { type = $type$ name = $save_levels$ } ]
+		[[bonus]			custom_tooltip = additional_starting_schools_tt set_variable = { random_starting_schools = $bonus$ } ]
+
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_$type$_flag = initialized_magic_flags } }
+				country_event = { id = magic_system.21 } #This won't trigger if you've set the schools yourself
+			}
+			if = {
+				limit = { has_$type$_flag = initialized_magic_flags }
+				generic_calc_spell_levels = { type = $type$ }
+				recalculate_$type$_mana_regen = yes #basically just for rulers - fires an event
+				calc_schools_total_level = yes
+			}
+		}
+
+		[[consort_name]		set_saved_name = { key = consort_name type = simple name = "$consort_name$" } set_country_flag = has_consort_name ]
+		[[war_wizard]		define_type_to_war_wizard_effect = { type = $type$ } ]
+		[[witch_king]		become_a_witch_king_effect = yes ]
+		[[lich]				become_a_lich_effect = yes ]
+
+		if = {
+			limit = { type_is_studying_magic = { type = $type$ } }
+			hidden_effect = { country_event = { id = magic_system.99 } }
+		}
+	}
+}
+
+define_type_to_war_wizard_effect = { #works on heir and ruler, else statements in scripted effects break general traits
+	if = {
+		limit = { has_estate_privilege = estate_wyvernheart_floodborn_council }
+		define_type_to_war_wizard_wyvernheart_effect = { type = $type$ }
+	}
+	else = {
+		if = { limit = { $type$_has_stat = { mil = 6 } }
+			define_$type$_to_general = { fire = 4 shock = 8 manuever = 7 siege = 4 }
+		}
+		else_if = { limit = { $type$_has_stat = { mil = 5 } }
+			define_$type$_to_general = { fire = 3 shock = 8 manuever = 6 siege = 4 }
+		}
+		else_if = { limit = { $type$_has_stat = { mil = 4 } }
+			define_$type$_to_general = { fire = 3 shock = 7 manuever = 5 siege = 3 }
+		}
+		else_if = { limit = { $type$_has_stat = { mil = 3 } }
+			define_$type$_to_general = { fire = 3 shock = 7 manuever = 4 siege = 2 }
+		}
+		else_if = { limit = { $type$_has_stat = { mil = 2 } }
+			define_$type$_to_general = { fire = 2 shock = 7 manuever = 3 siege = 2 }
+		}
+		else_if = { limit = { $type$_has_stat = { mil = 1 } }
+			define_$type$_to_general = { fire = 1 shock = 6 manuever = 3 siege = 1 }
+		}
+		else = { define_$type$_to_general = { fire = 0 shock = 5 manuever = 2 siege = 0 } }
+	}
+}
+define_type_to_war_wizard_wyvernheart_effect = {
+	if = {
+		limit = {
+			OR = {
+				$type$_has_stat = { mil = 6 }
+				AND = { has_country_flag = wyvernheart_bioimproved_mages_results $type$_has_stat = { mil = 5 } }
+			}
+		}
+		define_$type$_to_general = { fire = 4 shock = 8 manuever = 8 siege = 4 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				$type$_has_stat = { mil = 5 }
+				AND = { has_country_flag = wyvernheart_bioimproved_mages_results $type$_has_stat = { mil = 4 } }
+			}
+		}
+		define_$type$_to_general = { fire = 3 shock = 8 manuever = 7 siege = 4 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				$type$_has_stat = { mil = 4 }
+				AND = { has_country_flag = wyvernheart_bioimproved_mages_results $type$_has_stat = { mil = 3 } }
+			}
+		}
+		define_$type$_to_general = { fire = 3 shock = 7 manuever = 6 siege = 3 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				$type$_has_stat = { mil = 3 }
+				AND = { has_country_flag = wyvernheart_bioimproved_mages_results $type$_has_stat = { mil = 2 } }
+			}
+		}
+		define_$type$_to_general = { fire = 3 shock = 6 manuever = 5 siege = 2 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				$type$_has_stat = { mil = 2 }
+				AND = { has_country_flag = wyvernheart_bioimproved_mages_results $type$_has_stat = { mil = 1 } }
+			}
+		}
+		define_$type$_to_general = { fire = 2 shock = 6 manuever = 4 siege = 2 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				$type$_has_stat = { mil = 1 }
+				has_country_flag = wyvernheart_bioimproved_mages_results
+			}
+		}
+		define_$type$_to_general = { fire = 1 shock = 5 manuever = 4 siege = 1 }
+	}
+	else = { define_$type$_to_general = { fire = 0 shock = 5 manuever = 3 siege = 0 } }
+}
+
+define_ruler_to_war_wizard = { define_type_to_war_wizard_effect = { type = ruler } }
+define_heir_to_war_wizard = { define_type_to_war_wizard_effect = { type = heir } }
+
+magic_level_up_all_ruler_schools = {
+	custom_tooltip = magic_level_up_all_ruler_schools_tt
+	hidden_effect = {
+		magic_school_level_up = { type = ruler school = abjuration }
+		magic_school_level_up = { type = ruler school = divination }
+		magic_school_level_up = { type = ruler school = conjuration }
+		magic_school_level_up = { type = ruler school = enchantment }
+		magic_school_level_up = { type = ruler school = evocation }
+		magic_school_level_up = { type = ruler school = illusion }
+		magic_school_level_up = { type = ruler school = necromancy }
+		magic_school_level_up = { type = ruler school = transmutation }
+	}
+}
+
+###################
+### MAGE ESTATE ###
+###################
+
+estate_action_RECRUIT_WAR_WIZARD = {
+	if = {
+		limit = { exactly_magic_project_level = { project = battlemage_academy level = 3 } }
+		add_mil_power = -60
+	}
+	else_if = {
+		limit = { exactly_magic_project_level = { project = battlemage_academy level = 2 } }
+		add_mil_power = -80
+	}
+	else_if = {
+		limit = { exactly_magic_project_level = { project = battlemage_academy level = 1 } }
+		add_mil_power = -90
+	}
+	else = {
+		add_mil_power = -120
+	}
+	create_war_wizard = yes
+}
+
+estate_action_RECRUIT_COURT_MAGE = {
+	generate_estate_advisor = {
+		estate = estate_mages
+		type = court_mage
+	}
+	add_estate_loyalty = {
+		estate = estate_mages
+		loyalty = -10
+	}
+}
+
+define_war_wizard = {
+	define_war_wizard_sub_effect = {
+		[[name] name = "$name$" ]
+		$level$ = yes
+		[[female] female = $female$ ]
+	}
+}
+
+define_war_wizard_sub_effect = {
+	define_general = {
+		[[name] name = "$name$" ]
+		[[3] fire = 3 shock = 8 manuever = 7 siege = 4 ]
+		[[2] fire = 2 shock = 8 manuever = 5 siege = 3 ]
+		[[1] fire = 1 shock = 7 manuever = 4 siege = 2 ]
+		[[0] fire = 0 shock = 7 manuever = 2 siege = 1 ]
+
+		[[female] female = $female$ ]
+	}
+	custom_tooltip = this_is_war_wizard_[[female]fe]male
+}
+
+# Unfortunately, we have to use if statements here due to how define_general appends traits to characters
+# (it breaks inside else statements in scripted effects )
+# Also, RNG for names is broken unless we set saved name
+
+create_war_wizard = {
+	hidden_effect = {
+		set_saved_name = { key = male_name type = leader }
+		set_saved_name = { key = female_name type = leader female = yes }
+	}
+	if = {
+		limit = { has_estate_privilege = estate_wyvernheart_floodborn_council }
+		create_war_wizard_wyvernheart_effect = yes
+	}
+	else = {
+		if = {
+			limit = { exactly_magic_project_level = { project = battlemage_academy level = 3 } }
+			tooltip = { define_war_wizard = { level = 3 } }
+			hidden_effect = { #We need the PRNG for situations like the evocation project
+				if = {
+					limit = { culture_is_harpy = yes }
+					define_war_wizard = { name = female_name level = 3 female = yes }
+				}
+				else = {
+					randnum_effect = {
+						max = 2
+						case1 = "define_war_wizard = { name = male_name level = 3 }"
+						case2 = "define_war_wizard = { name = female_name level = 3 female = yes }"
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { exactly_magic_project_level = { project = battlemage_academy level = 2 } }
+			tooltip = { define_war_wizard = { level = 2 } }
+			hidden_effect = {
+				if = {
+					limit = { culture_is_harpy = yes }
+					define_war_wizard = { name = female_name level = 2 female = yes }
+				}
+				else = {
+					randnum_effect = {
+						max = 2
+						case1 = "define_war_wizard = { name = male_name level = 2 }"
+						case2 = "define_war_wizard = { name = female_name level = 2 female = yes }"
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { exactly_magic_project_level = { project = battlemage_academy level = 1 } }
+			tooltip = { define_war_wizard = { level = 1 } }
+			hidden_effect = {
+				if = {
+					limit = { culture_is_harpy = yes }
+					define_war_wizard = { name = female_name level = 1 female = yes }
+				}
+				else = {
+					randnum_effect = {
+						max = 2
+						case1 = "define_war_wizard = { name = male_name level = 1 }"
+						case2 = "define_war_wizard = { name = female_name level = 1 female = yes }"
+					}
+				}
+			}
+		}
+		else = {
+			tooltip = { define_war_wizard = { level = 0 } }
+			hidden_effect = {
+				if = {
+					limit = { culture_is_harpy = yes }
+					define_war_wizard = { name = female_name level = 0 female = yes }
+				}
+				else = {
+					randnum_effect = {
+						max = 2
+						case1 = "define_war_wizard = { name = male_name level = 0 }"
+						case2 = "define_war_wizard = { name = female_name level = 0 female = yes }"
+					}
+				}
+			}
+		}
+	}
+	hidden_effect = {
+		clear_saved_name = male_name
+		clear_saved_name = female_name
+	}
+}
+
+create_war_wizard_wyvernheart_effect = { #Wyvernheart almost never needs PRNG
+	if = {
+		limit = { exactly_magic_project_level = { project = battlemage_academy level = 3 } }
+		tooltip = { define_general = { fire = 3 shock = 8 manuever = 8 siege = 4 } }
+		hidden_effect = {
+			random_list = {
+				50 = { define_general = { name = male_name fire = 3 shock = 8 manuever = 8 siege = 4 } }
+				50 = { define_general = { name = female_name fire = 3 shock = 8 manuever = 8 siege = 4 female = yes } }
+			}
+		}
+	}
+	else_if = {
+		limit = { exactly_magic_project_level = { project = battlemage_academy level = 2 } }
+		tooltip = { define_general = { fire = 2 shock = 8 manuever = 6 siege = 3 } }
+		hidden_effect = {
+			random_list = {
+				50 = { define_general = { name = male_name fire = 2 shock = 8 manuever = 6 siege = 3 } }
+				50 = { define_general = { name = female_name fire = 2 shock = 8 manuever = 6 siege = 3 female = yes } }
+			}
+		}
+	}
+	else_if = {
+		limit = { exactly_magic_project_level = { project = battlemage_academy level = 1 } }
+		tooltip = { define_general = { fire = 1 shock = 7 manuever = 5 siege = 2 } }
+		hidden_effect = {
+			random_list = {
+				50 = { define_general = { name = male_name fire = 1 shock = 7 manuever = 5 siege = 2 } }
+				50 = { define_general = { name = female_name fire = 1 shock = 7 manuever = 5 siege = 2 female = yes } }
+			}
+		}
+	}
+	else = {
+		tooltip = { define_general = { fire = 0 shock = 7 manuever = 3 siege = 1 } }
+		hidden_effect = {
+			random_list = {
+				50 = { define_general = { name = male_name fire = 0 shock = 7 manuever = 3 siege = 1 } }
+				50 = { define_general = { name = female_name fire = 0 shock = 7 manuever = 3 siege = 1 female = yes } }
+			}
+		}
+	}
+}
+
+######################
+### MAGICAL INFAMY ###
+######################
+
+### Quick explanation of how the witch-king system works:
+# Everyone can get witch-king points. Rulers. Heirs. Consorts. Estate.
+### Characters with witch-king points get a flag to tell us that they have it. The actual value is stored in a variable.
+### This lets us transfer between different infamy variables when characters change out
+
+# There are five brackets of witch-kinginess:
+### 0-3 (Paragon), 4-7 (Respected), 8-11 (Suspicious), 12-15 (Denounced), 16+ (Witch-King)
+### You always become a witch-king at 16 ruler witch-king points
+### Technically this can result in non-powerful mages becoming witch-kings
+### But in practice that only happens if someone is misusing the mechanics.
+### Similar to how you can have non-powerful mage liches, in theory.
+
+# The impacts of witch-kinginess are:
+### Ruler: scaling diplo reputation malus (-1 dip rep, +5% AE impact per bracket increase)
+### Estate: scaling estate influence (-5% loyalty equilibrium, +5% influence per bracket increase)
+### Consort/Heir: nothing, but will become ruler witch-kinginess if they take the throne
+
+# The scale of increases are:
+### Small: +1 point
+### Medium: +2 points
+### Large: +4 points (goes up a level, basically)
+
+# The default effect to use is increase_witch_king_points
+### This will give witch-king points to the ruler if you have a powerful mage, or to the estate otherwise.
+### It also accepts a level requirement, for spellcasting purposes.
+### Since this is so used, I aliased it into versions that have the size in the name, so that predictive text works right
+### You can use a more specific effect if you want a consistent tooltip/effect
+
+become_a_witch_king_effect = {
+	hidden_effect = {
+		remove_country_modifier = infamy_denounced_modifier
+		remove_country_modifier = infamy_suspicious_modifier
+		remove_country_modifier = infamy_respected_modifier
+		change_variable = { ruler_witch_king_points = 16 } #in case they weren't there already
+		change_variable = { mana_regen_ruler = 0.28 } #All witch-king modifiers give 0.28
+	}
+	set_country_flag = ruled_by_witch_king
+
+	if = { #If this is a revival, we'll have kept the flag
+		limit = { has_country_flag = witch_king_hoard }
+		add_ruler_modifier = { name = witch_king_hoard_modifier duration = -1 }
+		make_spell_half_off = { school = abjuration level = 3 id = field_of_forbiddance ruler = yes }
+	}
+	else_if = {
+		limit = { has_country_flag = witch_king_thorns }
+		add_ruler_modifier = { name = witch_king_thorns_modifier duration = -1 }
+		make_spell_half_off = { school = enchantment level = 2 id = enchanting_embassy_2 ruler = yes }
+	}
+	else_if = {
+		limit = { has_country_flag = witch_king_armies }
+		add_ruler_modifier = { name = witch_king_armies_modifier duration = -1 }
+		make_spell_half_off = { school = evocation level = 2 id = meteor_swarm ruler = yes }
+	}
+	else_if = {
+		limit = { has_country_flag = witch_king_skill }
+		add_ruler_modifier = { name = witch_king_skill_modifier duration = -1 }
+		make_spell_half_off = { school = conjuration level = 3 id = extraplanar_contact ruler = yes }
+	}
+	
+	if = {
+		limit = {
+			NOT = { #we haven't chosen a type of witch-king yet
+				has_country_flag = witch_king_hoard
+				has_country_flag = witch_king_thorns
+				has_country_flag = witch_king_armies
+				has_country_flag = witch_king_skill
+			}
+		}
+		country_event = { id = magic_ruler.66 } #Choose what kind of witch-king you are
+	}
+	
+	hidden_effect = { country_event = { id = magic_ruler.77 } } #if the conditions are right, flip BD
+}
+
+clr_witch_king_country_flags = {
+	clr_country_flag = ruled_by_witch_king
+	trigger_switch = {
+		on_trigger = has_country_flag
+		witch_king_hoard = { clr_country_flag = witch_king_hoard }
+		witch_king_thorns = { clr_country_flag = witch_king_thorns }
+		witch_king_armies = { clr_country_flag = witch_king_armies }
+		witch_king_skill = { clr_country_flag = witch_king_skill }
+	}
+}
+
+calculate_magical_infamy_modifier = {
+	hidden_effect = {
+		remove_country_modifier = infamy_denounced_modifier
+		remove_country_modifier = infamy_suspicious_modifier
+		remove_country_modifier = infamy_respected_modifier
+	}
+	if = {
+		limit = { #to account for ascending/reviving witch-kings
+			NOT = {
+				has_ruler_modifier = witch_king_hoard_modifier
+				has_ruler_modifier = witch_king_thorns_modifier
+				has_ruler_modifier = witch_king_armies_modifier
+				has_ruler_modifier = witch_king_skill_modifier
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					type_has_infamy_witch_king = { type = ruler }
+					has_government_attribute = always_witch_king
+				}
+			}
+			become_a_witch_king_effect = yes
+		}
+		else_if = {
+			limit = { type_has_infamy_denounced = { type = ruler } }
+			add_ruler_modifier = { name = infamy_denounced_modifier duration = -1 }
+		}
+		else_if = {
+			limit = { type_has_infamy_suspicious = { type = ruler } }
+			add_ruler_modifier = { name = infamy_suspicious_modifier duration = -1 }
+		}
+		else_if = {
+			limit = { type_has_infamy_respected = { type = ruler } }
+			add_ruler_modifier = { name = infamy_respected_modifier duration = -1 }
+		}
+	}
+	if = {
+		limit = { #To account for ascending/reviving witch-kings
+			OR = {
+				has_ruler_modifier = witch_king_hoard_modifier
+				has_ruler_modifier = witch_king_thorns_modifier
+				has_ruler_modifier = witch_king_armies_modifier
+				has_ruler_modifier = witch_king_skill_modifier
+			}
+			NOT = { type_has_infamy_witch_king = { type = ruler } }
+		}
+		country_event = { id = magic_ruler.68 days = 1825 random = 365 }
+	}
+}
+increase_type_witch_king_points_small = { #1 point
+	custom_tooltip = increase_$type$_witch_king_points_small
+	hidden_effect = {
+		set_$type$_flag = is_infamous_$type$ #We check for this when transferring points
+		change_variable = { $type$_witch_king_points = 1 }
+	}
+}
+increase_type_witch_king_points_medium = { #2 points
+	custom_tooltip = increase_$type$_witch_king_points_medium
+	hidden_effect = {
+		set_$type$_flag = is_infamous_$type$ #We check for this when transferring points
+		change_variable = { $type$_witch_king_points = 2 }
+	}
+}
+increase_type_witch_king_points_large = { #4 points
+	custom_tooltip = increase_$type$_witch_king_points_large
+	hidden_effect = {
+		set_$type$_flag = is_infamous_$type$ #We check for this when transferring points
+		change_variable = { $type$_witch_king_points = 4 }
+	}
+}
+decrease_type_witch_king_points_small = { #1 point
+	custom_tooltip = decrease_$type$_witch_king_points_small
+	hidden_effect = {
+		set_$type$_flag = is_infamous_$type$ #We check for this when transferring points
+		subtract_variable = { $type$_witch_king_points = 1 }
+	}
+}
+decrease_type_witch_king_points_medium = { #2 points
+	custom_tooltip = decrease_$type$_witch_king_points_medium
+	hidden_effect = {
+		set_$type$_flag = is_infamous_$type$ #We check for this when transferring points
+		subtract_variable = { $type$_witch_king_points = 2 }
+	}
+}
+decrease_type_witch_king_points_large = { #4 points
+	custom_tooltip = decrease_$type$_witch_king_points_large
+	hidden_effect = {
+		set_$type$_flag = is_infamous_$type$ #We check for this when transferring points
+		subtract_variable = { $type$_witch_king_points = 4 }
+	}
+}
+clr_type_witch_king_points = {
+	hidden_effect = {
+		clr_$type$_flag = is_infamous_$type$ #We check for this when transferring points
+		set_variable = { $type$_witch_king_points = 0 }
+	}
+}
+transfer_witch_king_points = {
+	hidden_effect = {
+		set_$to$_flag = is_infamous_$to$
+		set_variable = { which = $to$_witch_king_points which = $from$_witch_king_points }
+		clr_$to$_flag = is_infamous_$from$ #Because it's usually a ruler who was a consort/heir
+		clr_$from$_flag = is_infamous_$from$
+		set_variable = { which = $from$_witch_king_points = 0 }
+	}
+}
+
+increase_ruler_witch_king_points = {
+	increase_type_witch_king_points_$size$ = { type = ruler }
+	calculate_magical_infamy_modifier = yes
+}
+increase_consort_witch_king_points = {
+	increase_type_witch_king_points_$size$ = { type = consort }
+}
+increase_heir_witch_king_points = {
+	increase_type_witch_king_points_$size$ = { type = heir }
+}
+increase_estate_witch_king_points = {
+	increase_type_witch_king_points_$size$ = { type = country }
+}
+decrease_ruler_witch_king_points = {
+	decrease_type_witch_king_points_$size$ = { type = ruler }
+	calculate_magical_infamy_modifier = yes
+}
+decrease_consort_witch_king_points = {
+	decrease_type_witch_king_points_$size$ = { type = consort }
+}
+decrease_heir_witch_king_points = {
+	decrease_type_witch_king_points_$size$ = { type = heir }
+}
+decrease_estate_witch_king_points = {
+	decrease_type_witch_king_points_$size$ = { type = country }
+}
+
+increase_witch_king_points_based_on_advancement = {
+	if = {
+		limit = { has_ruler_flag = magic_advancement }
+		increase_ruler_witch_king_points = { size = $size$ }
+	}
+	else_if = {
+		limit = { has_heir_flag = magic_advancement }
+		increase_heir_witch_king_points = { size = $size$ }
+	}
+	else_if = {
+		limit = { has_country_flag = magic_advancement }
+		increase_estate_witch_king_points = { size = $size$ }
+	}
+}
+decrease_witch_king_points_based_on_advancement = {
+	if = {
+		limit = { has_ruler_flag = magic_advancement }
+		decrease_ruler_witch_king_points = { size = $size$ }
+	}
+	else_if = {
+		limit = { has_heir_flag = magic_advancement }
+		decrease_heir_witch_king_points = { size = $size$ }
+	}
+	else_if = {
+		limit = { has_country_flag = magic_advancement }
+		decrease_estate_witch_king_points = { size = $size$ }
+	}
+}
+
+increase_witch_king_points = { #default effect, sorts between ruler and estate
+	if = {
+		limit = {
+			ruler_is_powerful_mage = yes
+			[[level] is_ruler_$level$ = yes ]
+		}
+		increase_ruler_witch_king_points = { size = $size$ }
+	}
+	else = { increase_estate_witch_king_points = { size = $size$ } }
+}
+increase_witch_king_points_small = { increase_witch_king_points = { size = small [[level] level = $level$ ] } }
+increase_witch_king_points_medium = { increase_witch_king_points = { size = medium [[level] level = $level$ ] } }
+increase_witch_king_points_large = { increase_witch_king_points = { size = large [[level] level = $level$ ] } }
+
+decrease_witch_king_points = {
+	if = {
+		limit = {
+			ruler_is_powerful_mage = yes
+			[[level] is_ruler_$level$ = yes ]
+		}
+		decrease_ruler_witch_king_points = { size = $size$ }
+	}
+	else = { decrease_estate_witch_king_points = { size = $size$ } }
+}
+decrease_witch_king_points_small = { decrease_witch_king_points = { size = small [[level] level = $level$ ] } }
+decrease_witch_king_points_medium = { decrease_witch_king_points = { size = medium [[level] level = $level$ ] } }
+decrease_witch_king_points_large = { decrease_witch_king_points = { size = large [[level] level = $level$ ] } }
