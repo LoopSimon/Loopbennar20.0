@@ -2645,6 +2645,166 @@ estate_monstrous_tribes_gozlamoir_system = {
 	}
 }
 
+#Fetishist/Goblinic Shamanism privs, copied from Church estate privs
+#If you change one version of the 3 following privs, please change it for the church estate as well
+#Privilege to enable cults for heirs
+estate_monstrous_tribes_heir_shrine = {
+	icon = privilege_heir_cult
+	max_absolutism = -10
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	influence = 0.1
+	loyalty = 0
+	is_valid = {
+		religion = goblinic_shamanism
+		has_dlc = "Rights of Man"
+		NOT = { has_country_flag = heir_cult_through_missions }
+		has_government_attribute = heir
+		NOT = { has_estate = estate_church } #failsafe to avoid duplicate privs
+	}
+	can_select = {
+		NOT = { has_estate_privilege = estate_monstrous_tribes_embrace_singluar_cult }
+	}
+	on_granted = {
+		enable_cult_for_heirs = yes
+	}
+	on_revoked = {
+		disable_cult_for_heirs = yes
+	}
+	on_invalid = {
+		disable_cult_for_heirs = yes
+	}
+	penalties = {
+	}
+	benefits = {
+	}
+	#conditional_modifier = {
+	#	trigger = { has_government_attribute = no_influence_from_fetishist_privileges }
+	#	modifier = {
+	#		monstrous_tribes_influence_modifier = -0.2
+	#	}
+	#}
+	ai_will_do = {
+		factor = 100
+		modifier = {
+			factor = 0.1
+			is_absolutism_active = yes
+		}
+		# modifier = {
+			# factor = 0
+			# has_mission = kon_collect_cults
+		# }
+		# modifier = {
+			# factor = 0
+			# has_mission = zim_cults
+		# }
+	}
+}
+
+#Privilege to enable primary cults
+estate_monstrous_tribes_embrace_singluar_cult = {
+	icon = privilege_singular_cult
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	influence = 0.1
+	loyalty = 0
+	is_valid = {
+		religion = goblinic_shamanism
+		has_dlc = "Rights of Man"
+		NOT = { has_estate = estate_church } #failsafe to avoid duplicate privs
+	}
+	can_select = {
+		custom_trigger_tooltip = {
+			tooltip = take_primary_cult_decision_tt1
+			months_of_ruling = 60
+		}
+		custom_trigger_tooltip = {
+			tooltip = take_primary_cult_decision_tt2
+			NOT = {
+				has_country_flag = has_selected_a_primary_cult
+			}
+		}
+		NOT = { has_estate_privilege = estate_monstrous_tribes_flexible_cults }
+		NOT = { has_estate_privilege = estate_monstrous_tribes_heir_shrine }
+	}
+	can_revoke = {
+		custom_trigger_tooltip = {
+			tooltip = remove_primary_cult_decision_tt
+			had_country_flag = {
+				flag = has_selected_a_primary_cult
+				days = 3600
+			}
+		}
+	}
+	on_granted = {
+		enable_primary_cult = yes
+	}
+	on_revoked = {
+		disable_primary_cult = yes
+		add_stability = -2
+	}
+	on_invalid = {
+		disable_primary_cult = yes
+	}
+	penalties = {
+	}
+	benefits = {
+		no_stability_loss_on_monarch_death = yes
+	}
+#	conditional_modifier = {
+#		trigger = { has_government_attribute = no_influence_from_fetishist_privileges }
+#		modifier = {
+#			monstrous_tribes_influence_modifier = -0.25
+#		}
+#	}
+	ai_will_do = {
+		factor = 1000
+#		modifier = {
+#			factor = 0
+#			NOT = { has_mission = zim_cults }
+#		}
+	}
+}
+
+#Privilge to enable cult switching
+estate_monstrous_tribes_flexible_cults = {
+	icon = privilege_switch_hindu_deity
+	max_absolutism = -10
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	influence = 0.05
+	is_valid = {
+		religion = goblinic_shamanism
+		has_dlc = "Rights of Man"
+		NOT = { has_country_flag = enabled_cult_switching_mission }
+		NOT = { is_long_lived_ruler = yes } #long lived rulers already have access to it
+		NOT = { has_estate = estate_church } #failsafe to avoid duplicate privs
+	}
+	can_select = {
+		NOT = { has_estate_privilege = estate_monstrous_tribes_embrace_singluar_cult }
+	}
+	on_granted = {
+		enable_cult_switching = yes
+	}
+	on_revoked = {
+		disable_cult_switching = yes
+	}
+	on_invalid = {
+		disable_cult_switching = yes
+	}
+	penalties = {
+	}
+	benefits = {
+	}
+	#conditional_modifier = {
+	#	trigger = { has_government_attribute = no_influence_from_fetishist_privileges }
+	#	modifier = {
+	#		monstrous_tribes_influence_modifier = -0.05
+	#	}
+	#}
+	ai_will_do = {
+		factor = 0	#Not really needed, the AI should choose the right Cult from the get-go
+	}
+}
+
 #Church
 
 estate_church_guaranteed_autonomy = {
@@ -11184,6 +11344,12 @@ estate_nobility_overreliance_on_mercenaries = {
 	}
 	can_revoke = {
 		army_professionalism = 0.2
+		custom_trigger_tooltip = {
+			tooltip = L68_dont_revoke_mercs_till
+			NOT = {
+				has_country_flag = L68_dont_revoke_mercs
+			}
+		}
 	}
 	on_revoked = {
 	}
@@ -11195,6 +11361,17 @@ estate_nobility_overreliance_on_mercenaries = {
 	benefits = {
 		mercenary_manpower = 0.25
 		merc_maintenance_modifier = -0.25
+	}
+	conditional_modifier = {
+		trigger = {
+			has_country_flag = L68_dont_revoke_mercs
+		}
+		modifier = {
+			global_manpower_modifier = 0.10 
+			mercenary_cost = -0.05
+			mercenary_manpower = -0.05
+			merc_maintenance_modifier = 0.05
+		}
 	}
 	ai_will_do = {
 		factor = -300
@@ -11538,16 +11715,27 @@ estate_burghers_merchants_of_narasad = {
 		has_estate_privilege = estate_burghers_merchants_of_narasad
 	}
 	can_revoke = {
-		treasury = 1000
+		if = {
+			limit = {
+				has_country_flag = L68_choose_sack
+			}
+			treasury = 800
+		}
+		else = {
+			treasury = 1000
+		}	
 	}
 	on_revoked = {
 		if = {
-			limit = { NOT = { has_country_flag = karassk_narasad_purge } }
+			limit = {  
+				NOT = { has_country_flag = L68_choose_sack }
+			}
 			add_treasury = -1000
 		}
 		else = {
-			reduce_estate_burghers_loyalty_effect = yes
-		}
+			add_treasury = -800
+		} 
+		reduce_estate_burghers_loyalty_effect = yes
 	}
 	penalties = {
 		interest = 1
@@ -11900,6 +12088,14 @@ estate_church_naga_mutation = {
 		}
 		modifier = {
 			technology_cost = -0.05
+		}
+	}
+	conditional_modifier = {
+		trigger = {
+			has_country_flag = L68_no_naga 
+		}
+		modifier = {
+			church_loyalty_modifier = -0.05
 		}
 	}
 	ai_will_do = {
@@ -12419,6 +12615,14 @@ estate_church_khateshala_mutation = {
 		}
 		modifier = {
 			governing_capacity = 25
+		}
+	}
+	conditional_modifier = {
+		trigger = {
+			has_country_flag = L68_no_naga 
+		}
+		modifier = {
+			morale_damage_received = -0.05
 		}
 	}
 	ai_will_do = {
@@ -20579,6 +20783,469 @@ z22_league_dividends = {
 
 	}
 
+	ai_will_do = {
+		factor = 10
+	}
+}
+
+estate_monstrous_tribes_supplement_levies = {
+	icon = privilege_one_faith_one_culture
+	influence = -0.05
+	loyalty = 0.05
+	is_valid = {
+		religion = shadow_pact
+	}
+	can_select = {
+		has_country_flag = shadow_warriors_levies_1
+	}
+	on_granted = {
+		add_corruption = 1
+	}
+	on_granted_province = {
+	}
+	on_revoked = {
+	}
+	on_revoked_province = {
+	}
+	on_invalid = {
+	}
+	on_invalid_province = {
+	}
+	penalties = {
+		yearly_corruption = 0.1
+	}
+	benefits = {
+		morale_damage = 0.1
+		is_mamluks_modifier = yes
+	}
+	conditional_modifier = {
+		trigger = {
+			NOT = { has_country_flag = shadow_warriors_levies_2_1 }
+			NOT = { has_country_flag = shadow_warriors_levies_2_2 }
+		}
+		modifier = {
+			morale_damage = 0.1
+			is_mamluks_modifier = yes
+		}
+	}
+	conditional_modifier = {
+		trigger = { has_country_flag = shadow_warriors_levies_2_1 }
+		modifier = {
+			morale_damage = 0.05
+			stability_cost_modifier = -0.15
+			is_mamluks_modifier = yes
+		}
+	}
+	conditional_modifier = {
+		trigger = { has_country_flag = shadow_warriors_levies_2_2 }
+		modifier = {
+			global_unrest = 2
+			morale_damage = 0.15
+			is_mamluks_modifier = yes
+		}
+	}
+	cooldown_years = 10
+	ai_will_do = {
+		factor = 10
+#		modifier = {
+#			factor = 0
+#			
+#		}
+	}
+}
+
+
+#karassk stuff
+estate_burghers_khair_families_our_land = {
+	icon = privilege_recruit_minister
+	influence = 0.05
+	loyalty = 0.05
+	is_valid = { 
+		has_country_flag = L68_our_land_unlock
+	}
+	can_select = {
+		has_country_flag = L68_our_land_unlock
+	}
+	can_revoke = {
+		always = no
+	}
+	on_granted = {
+		custom_tooltip = estate_burghers_khair_families_our_land_non_cult_tt
+		if = {
+			limit = {
+				has_country_flag = L68_our_land_cult_upg
+			}
+			custom_tooltip = estate_burghers_khair_families_our_land_cult_tt
+		}
+	}
+	on_granted_province = {
+		if = {
+			limit = { fast_has_pop_of_race = { race = human } }
+
+			if = {
+				limit = {
+					has_port = yes
+					has_human_minority_trigger = yes
+				}
+				if = {
+					limit = {
+						owner = {
+							medium_tolerance_human_race_trigger = yes
+						}
+					}
+					add_province_modifier = { name = L68_khair_families_our_land_goods_co duration = -1 }
+					remove_province_modifier = L68_khair_families_our_land_goods_notco
+				}
+				else = {
+					add_province_modifier = { name = L68_khair_families_our_land_goods_notco duration = -1 }
+					remove_province_modifier = L68_khair_families_our_land_goods_co
+				}
+			}
+			else_if = {
+				limit = {
+					owner = { has_country_flag = L68_our_land_cult_upg }
+					has_human_majority_trigger = yes
+				}
+				
+				if = {
+					limit = {
+						owner = {
+							medium_tolerance_human_race_trigger = yes
+						}
+					}
+					add_province_modifier = { name = L68_khair_families_our_land_cult_co duration = -1 }
+					remove_province_modifier = L68_khair_families_our_land_cult_notco
+				}
+				else = {
+					add_province_modifier = { name = L68_khair_families_our_land_cult_notco duration = -1 }
+					remove_province_modifier = L68_khair_families_our_land_cult_co
+				}
+					
+			}
+		}
+	}
+	
+	on_revoked = {
+		custom_tooltip = estate_burghers_khair_families_our_land_non_cult_tt
+		if = {
+			limit = {
+				has_country_flag = L68_our_land_cult_upg
+			}
+			custom_tooltip = estate_burghers_khair_families_our_land_cult_tt
+		}
+	}
+
+	on_revoked_province = {
+		remove_province_modifier = L68_khair_families_our_land_goods_co
+		remove_province_modifier = L68_khair_families_our_land_goods_notco
+		remove_province_modifier = L68_khair_families_our_land_cult_co
+		remove_province_modifier = L68_khair_families_our_land_cult_notco
+	}
+	on_invalid = {
+	}
+	on_invalid_province = {
+		if = {
+			limit = {
+				OR = {
+					has_province_modifier = L68_khair_families_our_land_goods_co
+					has_province_modifier = L68_khair_families_our_land_goods_notco
+					has_province_modifier = L68_khair_families_our_land_cult_co
+					has_province_modifier = L68_khair_families_our_land_cult_notco
+				}
+			}
+			remove_province_modifier = L68_khair_families_our_land_goods_co
+			remove_province_modifier = L68_khair_families_our_land_goods_notco
+			remove_province_modifier = L68_khair_families_our_land_cult_co
+			remove_province_modifier = L68_khair_families_our_land_cult_notco
+		}
+	}
+	penalties = {
+		yearly_corruption = 0.05
+	}
+	benefits = {
+		burghers_privilege_slots = 1
+	}
+	
+	ai_will_do = {
+		factor = 10
+	}
+}
+
+estate_burghers_khair_families_the_right_to_teach = {
+	icon = privilege_recruit_minister
+	influence = 0.05
+	loyalty = 0.05
+	is_valid = { 
+		has_country_flag = L68_right_to_teach_unlock
+	}
+	can_select = {
+		has_country_flag = L68_right_to_teach_unlock
+	}
+	can_revoke = {
+		always = no
+	}
+
+	on_granted = {
+		set_country_flag = disabled_expelling_human_flag
+		set_country_flag = disabled_purging_human_flag
+		custom_tooltip = estate_burghers_khair_families_the_right_to_teach_tt
+	}
+
+	on_granted_province = {
+		if = {
+			limit = { fast_has_pop_of_race = { race = human } }
+
+			if = {
+				limit = {
+					owner = {
+						medium_tolerance_human_race_trigger = yes
+					}
+				}
+				add_province_modifier = { name = L68_khair_families_right_to_teach_co duration = -1 }
+				remove_province_modifier = L68_khair_families_right_to_teach_notco
+			}
+			else = {
+				add_province_modifier = { name = L68_khair_families_right_to_teach_notco duration = -1 }
+				remove_province_modifier = L68_khair_families_right_to_teach_co
+			}
+		}
+		
+	}
+	
+	on_revoked = {
+		clr_country_flag = disabled_expelling_human_flag
+		clr_country_flag = disabled_purging_human_flag
+		custom_tooltip = estate_burghers_khair_families_the_right_to_teach_tt
+	}
+
+	on_revoked_province = {
+		remove_province_modifier = L68_khair_families_right_to_teach_co
+		remove_province_modifier = L68_khair_families_right_to_teach_notco
+	}
+	on_invalid = {
+	}
+	on_invalid_province = {
+		if = {
+			limit = {
+				OR = {
+					has_province_modifier = L68_khair_families_right_to_teach_co
+					has_province_modifier = L68_khair_families_right_to_teach_notco
+				}
+			}
+			remove_province_modifier = L68_khair_families_right_to_teach_co
+			remove_province_modifier = L68_khair_families_right_to_teach_notco
+		}
+	}
+	penalties = {
+		yearly_corruption = 0.05
+	}
+	benefits = {
+		promote_culture_cost = -0.25
+		burghers_privilege_slots = 1
+	}
+	
+	ai_will_do = {
+		factor = 10
+	}
+}
+
+estate_burghers_khair_families_iysashlagila_management = {
+	icon = privilege_recruit_minister
+	influence = 0.05
+	loyalty = 0.05
+	is_valid = { 
+		has_country_flag = L68_iysashlagila_management_un
+	}
+	can_select = {
+		has_country_flag = L68_iysashlagila_management_un
+	}
+
+	on_granted = {
+		custom_tooltip = estate_burghers_khair_families_iysashlagila_management_tt
+		simple_dynamic_effect = {
+            first_custom_tooltip  = estate_burghers_khair_families_iysashlagila_management_merccoexp_tt
+            first_limit = "medium_tolerance_human_race_trigger = yes"
+            first_effect = "custom_tooltip = estate_burghers_khair_families_iysashlagila_management_mercco_tt"
+            second_custom_tooltip = estate_burghers_khair_families_iysashlagila_management_mercnotcoexp_tt
+            second_limit = "NOT = { medium_tolerance_human_race_trigger = yes }"
+            second_effect = "custom_tooltip = estate_burghers_khair_families_iysashlagila_management_mercnotco_tt"
+        }
+	}
+	can_revoke = {
+		always = no
+	}
+
+	on_granted_province = {
+		if = {
+			limit = { fast_has_pop_of_race = { race = human } }
+
+			if = {
+				limit = {
+					owner = {
+						medium_tolerance_human_race_trigger = yes
+					}
+				}
+				add_province_modifier = { name = L68_khair_families_iysashlagila_management_lanforce_co duration = -1 }
+				remove_province_modifier = L68_khair_families_iysashlagila_management_lanforce_notco
+			}
+			else = {
+				add_province_modifier = { name = L68_khair_families_iysashlagila_management_lanforce_notco duration = -1 }
+				remove_province_modifier = L68_khair_families_iysashlagila_management_lanforce_co
+			}
+
+			if = {
+				limit = { has_human_majority_trigger = yes }
+				add_province_modifier = { name = L68_khair_families_iysashlagila_management_maj_man_debuff duration = -1 }
+			}
+		}
+	}
+	
+	on_revoked = {
+		custom_tooltip = estate_burghers_khair_families_iysashlagila_management_tt
+	}
+
+	on_revoked_province = {
+		remove_province_modifier = L68_khair_families_iysashlagila_management_lanforce_co
+		remove_province_modifier = L68_khair_families_iysashlagila_management_lanforce_notco
+		remove_province_modifier = L68_khair_families_iysashlagila_management_maj_man_debuff
+	}
+	on_invalid = {
+	}
+	on_invalid_province = {
+		if = {
+			limit = {
+				OR = {
+					has_province_modifier = L68_khair_families_iysashlagila_management_lanforce_co
+					has_province_modifier = L68_khair_families_iysashlagila_management_lanforce_notco
+					has_province_modifier = L68_khair_families_iysashlagila_management_maj_man_debuff
+				}
+			}
+			remove_province_modifier = L68_khair_families_iysashlagila_management_lanforce_co
+			remove_province_modifier = L68_khair_families_iysashlagila_management_lanforce_notco
+			remove_province_modifier = L68_khair_families_iysashlagila_management_maj_man_debuff
+		}
+	}
+	penalties = {
+		yearly_corruption = 0.05
+	}
+	benefits = {
+		mercenary_manpower = 0.20
+		mercenary_discipline = 0.025 
+		mercenary_cost = -0.1
+		burghers_privilege_slots = 1
+	}
+	
+	conditional_modifier = {
+		trigger = {
+			medium_tolerance_human_race_trigger = yes
+		}
+		modifier = {
+			mercenary_manpower = 0.20
+			mercenary_discipline = 0.025 
+			mercenary_cost = -0.1 
+		}
+	}
+	ai_will_do = {
+		factor = 10
+	}
+}
+
+estate_burghers_khair_families_human_ships_halfling_sailors = {
+	icon = privilege_recruit_minister
+	influence = 0.05
+	loyalty = 0.05
+	is_valid = { 
+		has_country_flag = L68_human_ships_halfling_sailors_un
+	}
+	can_select = {
+		has_country_flag = L68_human_ships_halfling_sailors_un
+	}
+	can_revoke = {
+		always = no
+	}
+
+	on_granted = {
+		custom_tooltip = estate_burghers_khair_families_human_ships_halfling_sailors_tt
+	}
+
+	on_granted_province = {
+		if = {
+			limit = { fast_has_pop_of_race = { race = human } }
+
+			
+			if = {
+				limit = {
+					has_port = yes
+					has_human_minority_trigger = yes
+				}
+
+				if = {
+					limit = {
+						owner = {
+							medium_tolerance_human_race_trigger = yes
+						}
+					}
+					add_province_modifier = { name = L68_human_ships_halfling_sailors_ships_co duration = -1 }
+					remove_province_modifier = L68_human_ships_halfling_sailors_ships_notco
+				}
+				else = {
+					add_province_modifier = { name = L68_human_ships_halfling_sailors_ships_notco duration = -1 }
+					remove_province_modifier = L68_human_ships_halfling_sailors_ships_co
+				}
+			}
+			else_if = {
+				limit = {
+					has_human_majority_trigger = yes
+				}
+				add_province_modifier = { name = L68_human_ships_halfling_sailors_maj_trade_debuff duration = -1 }
+			}
+		}
+	}
+	
+	on_revoked = {
+		custom_tooltip = estate_burghers_khair_families_human_ships_halfling_sailors_tt
+	}
+
+	on_revoked_province = {
+		remove_province_modifier = L68_human_ships_halfling_sailors_ships_notco
+		remove_province_modifier = L68_human_ships_halfling_sailors_ships_co
+		remove_province_modifier =  L68_human_ships_halfling_sailors_maj_trade_debuff
+	}
+	on_invalid = {
+	}
+	on_invalid_province = {
+		if = {
+			limit = {
+				OR = {
+					has_province_modifier = L68_human_ships_halfling_sailors_ships_notco
+					has_province_modifier = L68_human_ships_halfling_sailors_ships_co
+					has_province_modifier = L68_human_ships_halfling_sailors_maj_trade_debuff
+				}
+			}
+			remove_province_modifier = L68_human_ships_halfling_sailors_ships_notco
+			remove_province_modifier = L68_human_ships_halfling_sailors_ships_co
+			remove_province_modifier =  L68_human_ships_halfling_sailors_maj_trade_debuff
+		}
+	}
+	penalties = {
+		yearly_corruption = 0.05
+	}
+	benefits = {
+		burghers_privilege_slots = 1
+		global_ship_trade_power = 0.33
+		max_flagships = 1
+	}
+	
+	conditional_modifier = {
+		trigger = {
+			medium_tolerance_human_race_trigger = yes
+		}
+		modifier = {
+			global_ship_trade_power = 0.33
+			max_flagships = 1
+		}
+		
+	}
 	ai_will_do = {
 		factor = 10
 	}
