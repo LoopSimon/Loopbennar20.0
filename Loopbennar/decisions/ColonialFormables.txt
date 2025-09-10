@@ -25,9 +25,6 @@ country_decisions = {
 					}
 				}
 			}
-			colonial_endralliande = {
-				owned_by = ROOT
-			}
 		}
 		allow = {
 			hidden_trigger = {
@@ -115,9 +112,6 @@ country_decisions = {
 						is_core = ROOT
 					}
 				}
-			}
-			colonial_noruin = {
-				owned_by = ROOT
 			}
 		}
 		allow = {
@@ -208,9 +202,6 @@ country_decisions = {
 					}
 				}
 			}
-			colonial_noruin = {
-				owned_by = ROOT
-			}
 		}
 		allow = {
 			hidden_trigger = {
@@ -298,9 +289,6 @@ country_decisions = {
 						is_core = ROOT
 					}
 				}
-			}		
-			colonial_noruin = {
-				owned_by = ROOT
 			}
 		}
 		allow = {
@@ -389,9 +377,6 @@ country_decisions = {
 						is_core = ROOT
 					}
 				}
-			}			
-			colonial_soruin = {
-				owned_by = ROOT
 			}
 		}
 		allow = {
@@ -528,12 +513,8 @@ country_decisions = {
 				culture = steadsman
 				culture = chippengarder_half_orc
 				culture = horizon_elf
-				AND = {
-					OR = {
-						is_former_colonial_nation = yes
-						is_colonial_nation = yes
-					}
-				}
+				is_former_colonial_nation = yes
+				is_colonial_nation = yes
 			}
 			was_never_end_game_tag_trigger = yes
 			NOT = {
@@ -637,4 +618,105 @@ country_decisions = {
 		}
 	}
 	
+	leidhancost_nation = {
+		major = yes
+		potential = {
+			capital_scope = {
+				colonial_region = colonial_broken_sea
+			}
+			NOT = { has_country_flag = changed_from_colonial_nation }
+			was_never_end_game_tag_trigger = yes
+			OR = {
+				is_former_colonial_nation = yes
+				is_colonial_nation = yes
+				AND = {
+					NOT = {
+						has_country_modifier = ruinborn_administration
+						is_aelantiri_spawnable = yes
+						tag = A21 #Venail
+						tag = Z43 #Aelnar
+					}
+					capital_scope = {
+						colonial_region = colonial_broken_sea
+						is_core = ROOT
+					}
+				}
+				tag = H37
+			}
+		}
+		allow = {
+			hidden_trigger = {
+				capital_scope = {
+					colonial_region = colonial_broken_sea
+				}
+			}
+			if = {
+				limit = { tag = H37 }
+				adm_tech = 20
+			}
+			else = {
+				adm_tech = 10
+			}
+			is_free_or_tributary_trigger = yes
+			is_at_war = no
+			capital_scope = {
+				colonial_region = colonial_broken_sea
+				is_core = ROOT
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				colonial_region = colonial_broken_sea
+				is_city = yes
+			}
+			NOT = { exists = U50 }
+		}
+		effect = {
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = { is_former_colonial_nation = yes }
+					}
+					ROOT = { save_event_target_as = old_tag_target }
+					set_country_flag = was_not_former_colonial_nation
+				}
+			}
+			change_tag = U50
+			hidden_effect = {
+				restore_country_name = yes
+				on_change_tag_effect = yes
+			}
+			if = {
+				limit = {
+					NOT = { is_former_colonial_nation = yes }
+				}
+				restore_old_nation_on_formation_effect = yes
+				remove_non_electors_emperors_from_empire_effect = yes
+			}
+			if = {
+				limit = {
+					NOT = { government_rank = 2 }
+				}
+				set_government_rank = 2
+			}
+			colonial_broken_sea = {
+				limit = {
+					NOT = { owned_by = ROOT }
+				}
+				add_permanent_claim = U50
+			}
+			add_country_modifier = {
+				name = "centralization_modifier"
+				duration = 7300
+			}
+			add_prestige = 25
+			if = {
+				limit = { has_custom_ideas = no }
+				country_event = { id = ideagroups.1 } #Swap Ideas
+			}
+			set_country_flag = changed_from_colonial_nation
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
 }
