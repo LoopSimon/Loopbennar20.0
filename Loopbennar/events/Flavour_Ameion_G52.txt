@@ -4189,6 +4189,13 @@ country_event = {
 				set_country_flag = effelai_attuned_path
 				clr_country_flag = effelai_burned_path
 				clr_country_flag = effelai_dormancy_path
+				hidden_effect = {
+					clr_country_flag = banned_magic
+					set_country_flag = supernaturally_bound_faith
+					change_government = theocracy
+					add_government_reform = effelai_alianaiarat_reform
+					change_government_reform_progress = 200
+				}
 			}
 		}
 		else_if = {
@@ -4196,6 +4203,7 @@ country_event = {
 			random_subject_country = {
 				limit = { culture_group = effelai_ruinborn_elf }
 				custom_tooltip = ameion_effelai_subject_tt
+				clr_country_flag = banned_magic
 				set_country_flag = effelai_attuned_path
 				clr_country_flag = effelai_burned_path
 				clr_country_flag = effelai_dormancy_path
@@ -4240,6 +4248,7 @@ country_event = {
 								owned_by_subject_of = ROOT
 							}
 						}
+						remove_core = owner
 						cede_province = G20
 					}
 				}
@@ -4259,6 +4268,7 @@ country_event = {
 			release_with_religion_and_culture = { tag = G20 religion = tswohvwohii culture = thamvoii }
 			G20 = {
 				change_government = theocracy
+				clr_country_flag = banned_magic
 				add_government_reform = effelai_alianaiarat_reform
 				set_country_flag = effelai_attuned_path
 				clr_country_flag = effelai_burned_path
@@ -4823,8 +4833,10 @@ country_event = {
 		trigger = {
 			has_country_flag = ameion_search_possible
 			has_country_modifier = G52_mage_10
+			at_least_magical_infrastructure_level_3 = yes
 		}
 		custom_tooltip = ameion_yes_tacenie
+		custom_tooltip = ameion_yes_iii
 		ameion_site_cost = yes
 		add_country_modifier = {
 			name = G52_search_tacenie
@@ -4837,9 +4849,22 @@ country_event = {
 		ai_chance = { factor = 0 }
 		trigger = {
 			has_country_flag = ameion_search_possible
-			NOT = { has_country_modifier = G52_mage_10 }
+			OR = {
+				NOT = { has_country_modifier = G52_mage_10 }
+				NOT = { at_least_magical_infrastructure_level_3 = yes }
+			}
 		}
-		custom_tooltip = ameion_no_tacenie
+		if = {
+			limit = { has_country_modifier = G52_mage_10 }
+			custom_tooltip = ameion_yes_tacenie
+		}
+		else = { custom_tooltip = ameion_no_tacenie }
+		if = {
+			limit = { at_least_magical_infrastructure_level_3 = yes }
+			custom_tooltip = ameion_yes_mi_III
+		}
+		else = { custom_tooltip = ameion_no_mi_III }
+		
 		tooltip = {
 			ameion_site_cost = yes
 			add_country_modifier = {
@@ -5192,6 +5217,10 @@ country_event = {
 	option = {
 		name = flavor_ameion.113.a
 		ameion_site_mage_buff = yes
+		add_country_modifier = {
+			name = G52_ancestral_experience
+			duration = -1
+		}
 		tooltip = {
 			2586 = {
 				add_permanent_province_modifier = {
@@ -5266,6 +5295,7 @@ country_event = {
 		ameion_site_mage_buff = yes
 		custom_tooltip = ameion_battlemages
 		set_country_flag = remove_decay_from_battlemages
+		set_country_flag = remove_absolutism_from_battlemages
 		add_army_tradition = 15
 		tooltip = {
 			2736 = {
@@ -6346,6 +6376,14 @@ country_event = {
 	option = {
 		name = flavor_ameion.139.a
 		add_prestige = 50
+		if = {
+			limit = { has_country_modifier = magical_infrastructure_3 }
+			magical_infrastructure_level_up = yes
+		}
+		add_country_modifier = {
+			name = G52_tacenie_country
+			duration = -1
+		}
 		if = {
 			limit = { has_country_flag = ameion_searching_veyii }
 			clr_country_flag = ameion_searching_veyii

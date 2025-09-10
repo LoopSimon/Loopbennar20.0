@@ -359,6 +359,1144 @@ country_event = {
 	after = { remove_country_modifier = conversion_zeal }
 }
 
+# More than they can chew?
+country_event = {
+	id = xhazobkult_events.102
+	title = xhazobkult_events.102.title
+
+	desc = {
+		trigger = {
+			religious_school = {
+				group = gnollish
+				school = kult_of_the_packmother_tradition
+			}
+		}
+
+		desc = xhazobkult_events.102.desc_kult_of_the_packmother
+	}
+	desc = {
+		trigger = {
+			religious_school = {
+				group = gnollish
+				school = children_of_goxma_tradition
+			}
+		}
+
+		desc = xhazobkult_events.102.desc_children_of_goxma
+	}
+	desc = {
+		trigger = {
+			religious_school = {
+				group = gnollish
+				school = monstrous_pedigrees_tradition
+			}
+		}
+
+		desc = xhazobkult_events.102.desc_monstrous_pedigrees
+	}
+	desc = {
+		trigger = {
+			NOT = { 
+				religious_school = {
+					group = gnollish
+					school = kult_of_the_packmother_tradition
+				}
+			}
+			NOT = {
+				religious_school = {
+					group = gnollish
+					school = children_of_goxma_tradition
+				}
+			}
+			NOT = { 
+				religious_school = {
+					group = gnollish
+					school = monstrous_pedigrees_tradition
+				}
+			}
+		}
+
+		desc = xhazobkult_events.102.desc_other
+	}
+	
+	picture = THE_COVENANT_eventPicture # Others might be better
+	
+	is_triggered_only = yes
+
+	trigger = {
+		religion = xhazobkult
+		has_estate = estate_mages
+		NOT = { has_country_modifier = xhazobkult_warlock_event_chain_cooldown }
+		any_owned_province = {
+			religion = xhazobkult
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			add_country_modifier = {
+				name = xhazobkult_warlock_event_chain_cooldown
+				duration = 18250 # 50 years
+				hidden = yes
+			}
+
+			if = {
+				limit = {
+					any_owned_province = {
+						has_building = mage_tower
+						religion = xhazobkult
+					}
+				}
+				random_owned_province = {
+					limit = {
+						has_building = mage_tower
+						religion = xhazobkult
+					}
+					save_event_target_as = xhazobkult_flavor_102_province
+				}
+			}
+			else = {
+				random_owned_province = {
+					limit = {
+						religion = xhazobkult
+					}
+					save_event_target_as = xhazobkult_flavor_102_province
+				}
+			}
+		}
+	}
+
+	goto = xhazobkult_flavor_102_province
+
+	# Send in a force to stop the ritual.
+	option = {
+		name = xhazobkult_events.102.a
+
+		ai_chance = { 
+			factor = 100
+
+			modifier = {
+				factor = 0.5
+
+				is_at_war = yes
+			}
+		}
+		
+		trigger = {
+			not_has_granted_ritualized_cleansing_privilege = yes
+		}
+
+		add_patriarch_authority = -0.05
+		event_target:xhazobkult_flavor_102_province = {
+			xhazobkult_rebels = 1
+			area = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_local_autonomy = -10
+			}
+		}
+	}
+
+	# We don't summon demons in [nation name]!
+	option = {
+		name = xhazobkult_events.102.b
+
+		ai_chance = { 
+			factor = 200
+
+			modifier = {
+				factor = 0.5
+
+				is_at_war = yes
+			}
+		}
+	
+		trigger = {
+			has_granted_ritualized_cleansing_privilege = yes
+		}
+
+		add_patriarch_authority = -0.05
+		event_target:xhazobkult_flavor_102_province = {
+			xhazobkult_rebels = 1
+			area = {
+				add_local_autonomy = -10
+			}
+		}
+		change_government_reform_progress = 25
+	}
+
+	# Allow it to continue.
+	option = {
+		name = xhazobkult_events.102.c
+
+		ai_chance = { 
+			factor = 200
+
+			# If we can use better options, we probably should
+			modifier = {
+				factor = 0
+				patriarch_authority = 0.3
+				is_not_summoning_xhazob_trigger = yes
+			}
+			modifier = {
+				factor = 0
+				ruler_is_powerful_mage = yes 
+			}
+			modifier = {
+				factor = 0
+				ruler_has_personality = scholar_personality
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					ruler_has_personality = cruel_personality
+					ruler_has_personality = malevolent_personality
+				}
+				manpower_percentage = 0.5
+			}
+		}
+
+		add_estate_influence_modifier = {
+			estate = estate_mages
+			desc = xhazobkult_permitted_demon_summoning
+			influence = 5
+			duration = 3650 # 10 years
+		}
+
+		custom_tooltip = xhazobkult_events.102.c.tooltip # Who knows what will happen?
+
+		hidden_effect = {
+			random_list = {
+				30 = {
+					country_event = {
+						id = xhazobkult_events.103 # Failed ritual
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+				40 = {
+					country_event = {
+						id = xhazobkult_events.104 # Angered demon
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+				30 = {
+					country_event = {
+						id = xhazobkult_events.105 # Appeased demon
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+			}
+		}
+	}
+
+	# Use our existing favor with the demons
+	option = {
+		name = xhazobkult_events.102.d
+
+		ai_chance = { 
+			factor = 300
+
+			# They need all the demonic power they can get
+			modifier = {
+				factor = 0
+
+				is_summoning_xhazob_trigger = yes
+			}
+		}
+
+		highlight = yes
+
+		trigger = {
+			patriarch_authority = 0.3
+		}
+
+		add_patriarch_authority = -0.1
+
+		custom_tooltip = xhazobkult_events.102.d.tooltip
+
+		hidden_effect = {
+			random_list = {
+				40 = {
+					country_event = {
+						id = xhazobkult_events.103 # Failed ritual
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+				60 = {
+					country_event = {
+						id = xhazobkult_events.105 # Appeased demon
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+			}
+		}
+	}
+
+	# Aid the ritual ourselves
+	option = {
+		name = xhazobkult_events.102.e
+		
+		ai_chance = { 
+			factor = 300
+		}
+
+		highlight = yes
+
+		trigger = {
+			ruler_is_powerful_mage = yes
+		}
+
+		add_adm_power = -50
+
+		custom_tooltip = xhazobkult_events.102.e.tooltip
+
+		hidden_effect = {
+			random_list = {
+				20 = {
+					country_event = {
+						id = xhazobkult_events.103 # Failed ritual
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+				10 = {
+					country_event = {
+						id = xhazobkult_events.104 # Angered demon
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+				70 = {
+					country_event = {
+						id = xhazobkult_events.105 # Appeased demon
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+			}
+		}
+	}
+
+	# Learn the demon's true name
+	option = {
+		name = xhazobkult_events.102.f
+		ai_chance = { factor = 300 }
+
+		highlight = yes
+
+		trigger = {
+			ruler_has_personality = scholar_personality
+		}
+
+		add_dip_power = -50
+
+		custom_tooltip = xhazobkult_events.102.f.tooltip # Who knows what will happen?
+
+		hidden_effect = {
+			random_list = {
+				25 = {
+					country_event = {
+						id = xhazobkult_events.104 # Angered demon
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+				75 = {
+					country_event = {
+						id = xhazobkult_events.105 # Appeased demon
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+			}
+		}
+	}
+
+	# Hold a great sacrifice to appease the demon
+	option = {
+		name = xhazobkult_events.102.g
+		ai_chance = { 
+			factor = 300
+			
+			modifier = {
+				factor = 0.25
+				NOT = { manpower_percentage = 0.5 }
+			}
+		}
+
+		highlight = yes
+
+		trigger = {
+			OR = {
+				ruler_has_personality = cruel_personality
+				ruler_has_personality = malevolent_personality
+			}
+		}
+
+		add_yearly_manpower = -1
+
+
+		custom_tooltip = xhazobkult_events.102.g.tooltip # Who knows what will happen?
+
+		hidden_effect = {
+			random_list = {
+				30 = {
+					country_event = {
+						id = xhazobkult_events.103 # Failed ritual
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+				10 = {
+					country_event = {
+						id = xhazobkult_events.104 # Angered demon
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+				60 = {
+					country_event = {
+						id = xhazobkult_events.105 # Appeased demon
+						days = 90 # Between 3...
+						random = 90 # ...and 6 months
+					}
+				}
+			}
+		}
+	}
+}
+
+# Failed ritual
+country_event = {
+	id = xhazobkult_events.103
+	title = xhazobkult_events.103.title
+	desc = xhazobkult_events.103.desc
+	picture = BAD_WITH_MONARCH_eventPicture
+
+	is_triggered_only = yes
+
+	goto = xhazobkult_flavor_102_province
+
+	# That's probably the best way this could have gone.
+	option = {
+		name = xhazobkult_events.103.a
+
+		ai_chance = { factor = 1 }
+		
+		event_target:xhazobkult_flavor_102_province = {
+			add_devastation = 5
+		}
+	}
+}
+
+# Angered demon
+country_event = {
+	id = xhazobkult_events.104
+	title = xhazobkult_events.104.title
+	desc = xhazobkult_events.104.desc
+	picture = BORDER_TENSION_eventPicture
+
+	is_triggered_only = yes
+
+	goto = xhazobkult_flavor_102_province
+
+	# I knew this was a bad idea!
+	option = {
+		name = xhazobkult_events.104.a
+		
+		ai_chance = { factor = 1 }
+
+		add_patriarch_authority = -0.1
+		event_target:xhazobkult_flavor_102_province = {
+			spawn_rebels = {
+				type = demons_rebels
+				size = 1
+				win = yes
+			}
+		}
+	}
+}
+
+# Appeased demon
+country_event = {
+	id = xhazobkult_events.105 
+	title = xhazobkult_events.105.title
+	desc = xhazobkult_events.105.desc
+	picture = EMPTY_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	# Randomly pick one of the two benefits
+	option = {
+		name = xhazobkult_events.105.a
+		ai_chance = { factor = 1 }
+
+		random_list = {
+			50 = {
+				country_event = {
+					id = xhazobkult_events.106 # Whispers from the Abyss
+				}
+			}
+			50 = {
+				country_event = {
+					id = xhazobkult_events.107 # A New Warlock
+				}
+			}
+		}
+	}
+}
+
+# Whispers from the Abyss
+country_event = {
+	id = xhazobkult_events.106
+	title = xhazobkult_events.106.title
+	desc = xhazobkult_events.106.desc
+	picture = THE_COVENANT_eventPicture # I think I'm overusing this
+
+	is_triggered_only = yes
+
+	# Administrative advice
+	option = {
+		name = xhazobkult_events.106.a
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0.33
+				monthly_adm = 10
+			}
+			modifier = {
+				factor = 3
+				NOT = { monthly_adm = 6 }
+			}
+		}
+
+		add_country_modifier = {
+			name = xhazobkult_demonic_advice_adm
+			duration = 3650 # 10 years
+		}
+	}
+
+	# Diplomatic advice
+	option = {
+		name = xhazobkult_events.106.b
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0.33
+				monthly_dip = 10
+			}
+			modifier = {
+				factor = 3
+				NOT = { monthly_dip = 6 }
+			}
+		}
+
+		add_country_modifier = {
+			name = xhazobkult_demonic_advice_dip
+			duration = 3650 # 10 years
+		}
+	}
+
+	# Military advice
+	option = {
+		name = xhazobkult_events.106.c
+
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 0.33
+				monthly_mil = 10
+			}
+			modifier = {
+				factor = 3
+				NOT = { monthly_mil = 6 }
+			}
+		}
+
+		add_country_modifier = {
+			name = xhazobkult_demonic_advice_mil
+			duration = 3650 # 10 years
+		}
+	}
+
+	# Request its blessing
+	option = {
+		name = xhazobkult_events.106.d
+
+		ai_chance = {
+			factor = 75
+		}
+
+		add_country_modifier = {
+			name = xhazobkult_demonic_blessing
+			duration = 3650 # 10 years
+		}
+	}
+}
+
+# A New Warlock
+country_event = {
+	id = xhazobkult_events.107
+	title = xhazobkult_events.107.title
+	desc = xhazobkult_events.107.desc
+	picture = MAGES_ESTATE_eventPicture
+
+	is_triggered_only = yes
+
+	# Perfect!
+	option = {
+		name = xhazobkult_events.107.a
+
+		ai_chance = {
+			factor = 1
+		}
+
+		define_war_wizard = { level = 1 }
+	}
+}
+
+# Brutal Sacrifices
+country_event = {
+	id = xhazobkult_events.108
+	title = xhazobkult_events.108.title
+	desc = {
+		trigger = {
+			is_demonic_school = yes
+		}
+		
+		desc = xhazobkult_events.108.desc_demonic
+	}
+	desc = {
+		trigger = {
+			is_non_demonic_school = yes
+		}
+		
+		desc = xhazobkult_events.108.desc_non_demonic
+	}
+	picture = BORDER_TENSION_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		ai = no 
+		is_at_war = yes
+		religion = xhazobkult
+		NOT = { has_country_modifier = xhazobkult_forbade_sacrifices }
+		NOT = { has_country_modifier = xhazobkult_military_sacrifices }
+		NOT = { has_country_modifier = xhazobkult_enshrined_military_sacrifices }
+		any_army = {
+			location = {
+				owner = {
+					NOT = { tag = ROOT }
+					war_with = ROOT
+				}
+				development = 4 # Can't sacrifice anyone from a 1/1/1 province
+				NOT = { religion = xhazobkult }
+				NOT = { has_gnollish_majority_trigger = yes }
+			}
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			# 1st event target
+			random_province = {
+				limit = {
+					units_in_province = ROOT
+					NOT = { religion = xhazobkult } # Won't sacrifice other kultists
+					NOT = { has_gnollish_majority_trigger = yes } # Won't sacrifice gnolls
+					development = 4 # Can't sacrifice anyone from a 1/1/1 province
+					owner = {
+						war_with = ROOT
+						NOT = { tag = ROOT }
+					}
+				}
+
+				save_event_target_as = event_province_1
+				set_province_flag = is_an_event_province
+			}
+
+			# 2nd event target
+			random_province = {
+				limit = {
+					NOT = { has_province_flag = is_an_event_province } # Don't sacrifice in the same province twice
+					units_in_province = ROOT
+					NOT = { religion = xhazobkult } # Won't sacrifice other kultists
+					NOT = { has_gnollish_majority_trigger = yes } # Won't sacrifice gnolls
+					development = 4 # Can't sacrifice anyone from a 1/1/1 province
+					owner = {
+						war_with = ROOT
+						NOT = { tag = ROOT }
+					}
+				}
+
+				save_event_target_as = event_province_2
+				set_province_flag = is_an_event_province
+			}
+
+			# 3rd event target
+			random_province = {
+				limit = {
+					NOT = { has_province_flag = is_an_event_province } # Don't sacrifice in the same province twice
+					units_in_province = ROOT
+					NOT = { religion = xhazobkult } # Won't sacrifice other kultists
+					NOT = { has_gnollish_majority_trigger = yes } # Won't sacrifice gnolls
+					development = 4 # Can't sacrifice anyone from a 1/1/1 province
+					owner = {
+						war_with = ROOT
+						NOT = { tag = ROOT }
+					}
+				}
+
+				save_event_target_as = event_province_3
+				set_province_flag = is_an_event_province
+			}
+
+			# 4th event target
+			random_province = {
+				limit = {
+					NOT = { has_province_flag = is_an_event_province } # Don't sacrifice in the same province twice
+					units_in_province = ROOT
+					NOT = { religion = xhazobkult } # Won't sacrifice other kultists
+					NOT = { has_gnollish_majority_trigger = yes } # Won't sacrifice gnolls
+					development = 4 # Can't sacrifice anyone from a 1/1/1 province
+					owner = {
+						war_with = ROOT
+						NOT = { tag = ROOT }
+					}
+				}
+
+				save_event_target_as = event_province_4
+				set_province_flag = is_an_event_province
+			}
+
+			# 5th event target
+			random_province = {
+				limit = {
+					NOT = { has_province_flag = is_an_event_province } # Don't sacrifice in the same province twice
+					units_in_province = ROOT
+					NOT = { religion = xhazobkult } # Won't sacrifice other kultists
+					NOT = { has_gnollish_majority_trigger = yes } # Won't sacrifice gnolls
+					development = 4 # Can't sacrifice anyone from a 1/1/1 province
+					owner = {
+						war_with = ROOT
+						NOT = { tag = ROOT }
+					}
+				}
+
+				save_event_target_as = event_province_5
+				set_province_flag = is_an_event_province
+			}
+		}
+	}
+
+	# Forbid the sacrifices.
+	option = {
+		name = xhazobkult_events.108.a
+		ai_chance = { 
+			factor = 100
+
+			modifier = {
+				factor = 1.5
+
+				# Any known country has at least -30 AE against us
+				any_known_country = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = aggressive_expansion
+					}
+					NOT = {
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = aggressive_expansion
+							value = -29
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			not_has_granted_ritualized_cleansing_privilege = yes
+		}
+
+		add_patriarch_authority = -0.05
+
+		add_country_modifier = {
+			name = xhazobkult_forbade_sacrifices
+			duration = 3650 # 10 years
+		}
+
+		decrease_monstrous_1 = yes
+	}
+
+	# Perhaps we would have done this in years past, but those times are over.
+	option = {
+		name = xhazobkult_events.108.b
+		ai_chance = { 
+			factor = 150
+
+			modifier = {
+				factor = 1.5
+
+				# Any known country has at least -30 AE against us
+				any_known_country = {
+					has_opinion_modifier = {
+						who = ROOT
+						modifier = aggressive_expansion
+					}
+					NOT = {
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = aggressive_expansion
+							value = -29
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			has_granted_ritualized_cleansing_privilege = yes
+		}
+
+		add_patriarch_authority = -0.10
+
+		add_country_modifier = {
+			name = xhazobkult_forbade_sacrifices
+			duration = 7300 # 20 years
+		}
+
+		decrease_monstrous_2 = yes
+	}
+
+	# Permit the sacrifices.
+	option = {
+		name = xhazobkult_events.108.c
+		ai_chance = { 
+			factor = 200
+
+			# Don't sacrifice in provinces we want
+			modifier = {
+				factor = 0.5
+				event_target:event_province_1 = {
+					OR = { 
+						claim = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+
+			# We aren't monsters any more
+			modifier = {
+				factor = 0.5
+				NOT = { has_country_modifier = monstrous_nation }
+			}
+		}
+
+		event_target:event_province_1 = {
+			add_devastation = 25
+			remove_random_development = yes
+			hidden_effect = { province_event = { id = xhazobkult_events.109 } }
+		}
+
+		add_country_modifier = {
+			name = xhazobkult_military_sacrifices
+			duration = 3650 # 10 years
+		}
+
+		increase_monstrous_2 = yes
+	}
+
+	# We should make this practice standard for the whole army!
+	option = {
+		name = xhazobkult_events.108.d
+		ai_chance = { 
+			factor = 200
+
+			# Don't sacrifice in provinces we want
+			modifier = {
+				factor = 0.75
+				event_target:event_province_1 = {
+					OR = { 
+						claim = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+			modifier = {
+				factor = 0.75
+				event_target:event_province_2 = {
+					OR = { 
+						claim = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+			modifier = {
+				factor = 0.75
+				event_target:event_province_3 = {
+					OR = { 
+						claim = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+			modifier = {
+				factor = 0.75
+				event_target:event_province_4 = {
+					OR = { 
+						claim = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+			modifier = {
+				factor = 0.75
+				event_target:event_province_5 = {
+					OR = { 
+						claim = ROOT
+						is_core = ROOT
+					}
+				}
+			}
+
+			# We're monsters - we do what we want!
+			modifier = {
+				factor = 3
+				has_country_modifier = monstrous_nation
+			}
+
+			# But if we're demonsterizing, maybe we shouldn't
+			modifier = {
+				factor = 0.15
+				has_country_flag = removing_monstrous
+			}
+		}
+
+		add_mil_power = -50
+
+		event_target:event_province_1 = {
+			add_devastation = 25
+			remove_random_development = yes
+			hidden_effect = { province_event = { id = xhazobkult_events.109 } }
+		}
+
+		if = {
+			limit = {
+				has_saved_event_target = event_province_2
+			}
+			event_target:event_province_2 = {
+				add_devastation = 25
+				remove_random_development = yes
+				hidden_effect = { province_event = { id = xhazobkult_events.109 } }
+			}
+		}
+
+		if = {
+			limit = {
+				has_saved_event_target = event_province_3
+			}
+			event_target:event_province_3 = {
+				add_devastation = 25
+				remove_random_development = yes
+				hidden_effect = { province_event = { id = xhazobkult_events.109 } }
+			}
+		}
+
+		if = {
+			limit = {
+				has_saved_event_target = event_province_4
+			}
+			event_target:event_province_4 = {
+				add_devastation = 25
+				remove_random_development = yes
+				hidden_effect = { province_event = { id = xhazobkult_events.109 } }
+			}
+		}
+
+		if = {
+			limit = {
+				has_saved_event_target = event_province_5
+			}
+			event_target:event_province_5 = {
+				add_devastation = 25
+				remove_random_development = yes
+				hidden_effect = { province_event = { id = xhazobkult_events.109 } }
+			}
+		}
+
+		add_country_modifier = {
+			name = xhazobkult_enshrined_military_sacrifices
+			duration = 3650 # 10 years
+		}
+
+		increase_monstrous_3 = yes
+	}
+
+	after = {
+		hidden_effect = {
+			event_target:event_province_1 = {
+				clr_province_flag = is_an_event_province
+			}
+
+			event_target:event_province_2 = {
+				clr_province_flag = is_an_event_province
+			}
+
+			event_target:event_province_3 = {
+				clr_province_flag = is_an_event_province
+			}
+
+			event_target:event_province_4 = {
+				clr_province_flag = is_an_event_province
+			}
+
+			event_target:event_province_5 = {
+				clr_province_flag = is_an_event_province
+			}
+		}
+	}
+}
+
+# Province was sacked! (Fired by 108 on the provinces where sacrifices took place)
+province_event = {
+	id = xhazobkult_events.109
+	title = xhazobkult_events.109.title
+	desc = xhazobkult_events.109.desc
+	picture = BORDER_TENSION_eventPicture
+
+	is_triggered_only = yes
+
+	# How dare they!
+	option = {
+		name = xhazobkult_events.109.a
+
+		trigger = {
+			FROM = { has_country_modifier = monstrous_nation }
+		}
+
+		custom_tooltip = xhazobkult_events.109.has_already_happened
+
+		tooltip = {
+			remove_random_development = yes
+			add_devastation = 25
+		}
+	}
+
+	option = {
+		name = xhazobkult_events.109.b
+
+		trigger = {
+			FROM = { NOT = { has_country_modifier = monstrous_nation } }
+		}
+
+		custom_tooltip = xhazobkult_events.109.has_already_happened
+
+		tooltip = {
+			remove_random_development = yes
+			add_devastation = 25
+		}
+	}
+}
+
+# Sacrificing Rebels
+province_event = {
+	id = xhazobkult_events.110
+	title = xhazobkult_events.110.title
+	desc = xhazobkult_events.110.desc
+	picture = IMPALED_SOLDIERS_eventPicture
+
+	is_triggered_only = yes
+
+	trigger = {
+		owner = {
+			religion = xhazobkult
+			NOT = {
+				num_of_rebel_armies = 1
+			}
+			NOT = {
+				has_country_modifier = xhazobkult_sacrificed_rebels
+			}
+			NOT = {
+				has_country_modifier = xhazobkult_showed_lenience
+			}
+		}
+	}
+
+	# Light the pyres!
+	option = {
+		name = xhazobkult_events.110.a
+
+		ai_chance = { 
+			factor = 100
+		}
+
+		add_devastation = 25
+
+		if = {
+			limit = {
+				development = 4
+			}
+			remove_random_development = yes
+		}
+
+		owner = {
+			add_patriarch_authority = 0.05
+
+			add_country_modifier = {
+				name = xhazobkult_sacrificed_rebels
+				duration = 3650 # 10 years
+			}
+		}
+
+		increase_monstrous_2 = yes
+	}
+
+	# Show lenience
+	option = {
+		name = xhazobkult_events.110.b
+
+		ai_chance = { 
+			factor = 100
+
+			modifier = {
+				factor = 0.5
+
+				NOT = {
+					owner = { average_unrest = -10 } # If our average unrest is below -10, we don't need to reduce it further 
+				}
+			}
+
+			modifier = {
+				factor = 5
+
+				owner = { average_unrest = -1 } # If our average unrest is this high, we should reduce it
+			}
+		}
+
+		owner = {
+			add_patriarch_authority = -0.05
+
+			add_country_modifier = {
+				name = xhazobkult_showed_lenience
+				duration = 3650 # 10 years
+			}
+		}
+
+		decrease_monstrous_1 = yes
+	}
+}
+
 ###########################
 ###   Ger-Bexamurr    ###
 ###########################
