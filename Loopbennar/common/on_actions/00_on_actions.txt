@@ -152,9 +152,11 @@ on_startup = {
 		parahechend_events.1 #Parahechend Starting Event
 		parahechend_events.2 #Varamraya Starting Event
 		flavour_celmaldor.998 #Celmaldor setup check stuff
+		flavour_karassk.1 #karassk starting event 
 		flavour_tiboktsamo.0 #Starting event for Tiboktsamo
 		ljh_jiangdu_war_event.1 #LJH-Jiangdu war setup event
 		flavour_mulen.0 #Mulen compensation for magic rework
+		salla_drennen.1 #salla drennen opening event
 
 		#Silver Families
 		silver_families.1		#Silmuna
@@ -2283,7 +2285,14 @@ on_war_won = {
 			}
 		}
 	}
+	if = {
+		limit = { has_country_flag = shadow_warriors_bargain_flag }
+		country_event = {
+			id = sarhalevents.37
+		}
+	}
 	#####
+	
 	
 	#Artificery
 	update_artifice_points = yes #needs to be last
@@ -2539,6 +2548,7 @@ on_war_lost = {
 		}
 	}
 	
+
 	update_artifice_points = yes #needs to be last
 }
 
@@ -2627,9 +2637,49 @@ on_battle_lost_country = {
 on_battle_won_province = {
 	on_battle_won_province_effect = yes
 	
+	# Sacrificing Rebels
+	if = {
+		limit = {
+			FROM = {
+				tag = REB
+			}
+			owner = {
+				religion = xhazobkult
+				NOT = {
+					has_country_modifier = xhazobkult_sacrificed_rebels
+				}
+				NOT = {
+					has_country_modifier = xhazobkult_showed_lenience
+				}
+			}
+			units_in_province = owner # This is a bit of a hack
+		}
+
+		random_list = {
+			10 = {
+				modifier = {
+					factor = 1.5 # Make it 15% chance for more demonic schools
+
+					owner = { is_demonic_school = yes }
+				}
+
+				province_event = {
+					id = xhazobkult_events.110
+					days = 1
+				}
+			}
+			90 = {
+				modifier = {
+					factor = 0.94 # Make it 15% chance for more demonic schools
+
+					owner = { is_demonic_school = yes }
+				}
+			}
+		}
+	}
+
 	random_events = {
 		900 = 0
-
 
 		33 = aw_ghouls.110
 		67 = aw_ghouls.111	#more common one for spookier places
@@ -2896,6 +2946,40 @@ on_battle_lost_province = {
 	# using a country event or similar in an else_if              #
 	# or using a trigger switch                                   #
 	###############################################################
+	
+	#karassk merc company wins
+	if = {
+		limit = {
+			FROM = {
+				has_country_flag = L68_track_merc_wins
+				any_hired_mercenary_company = {
+					location = { province_id = ROOT } 
+				}
+			}
+		}
+		FROM = {
+			change_variable = {
+				which = L68_battles_with_merc_won
+				value = 1
+			}
+		}
+	}
+
+	#karassk naval wins 
+	if = {
+		limit = {
+			FROM = {
+				has_country_flag = L68_track_naval_wins
+			}
+			is_sea = yes
+		}
+		FROM = {
+			change_variable = {
+				which = L68_battles_with_naval_won
+				value = 1
+			}
+		}
+	}
 	
 	if = {
 		limit = {
@@ -3711,7 +3795,6 @@ on_siege_lost_province =  {
 		allclan.9999 #cede provinces in kinstrife - in province event option to avoid crashing the game
 		flavour_zokka.9999 #see above, but for zokka!
 		xhazobkult_events.201
-		magic_spell.805 #Event to remove transmutation gold
 	}
 
 	# Must happen after all checks for dominate to surrender (enchantment_3_dominate_to_surrender_siege_mod)
@@ -4735,6 +4818,8 @@ on_bankruptcy = {
 	}
 	#hoardcurse modifier
 	remove_country_modifier = the_reformist
+	# Anbennar - bankruptcy doesn't trigger on_loan_repaid, so "indebted to..." privileges aren't revoked unless checked here
+    on_loan_repaid_estate_privileges_effect = yes
 }
 
 # country (country annexing, root = target)
@@ -4952,6 +5037,13 @@ on_heir_death = {
 		}
 		country_event = { id = flavor_frozenmaw.15 }
 	}
+	if = {
+		limit = {
+			religion = goblinic_shamanism
+			has_any_heir_cult_active = yes
+		}
+		remove_heir_cult = yes
+	}
 }
 
 # country
@@ -5068,14 +5160,21 @@ on_queen_death = {
 
 # country
 on_new_heir = {
-	# if = {
-	# 	limit = {
-	# 		has_country_flag = enabled_cult_for_heirs
-	# 	}
-	# 	country_event = {
-	# 		id = fetishist_flavor.600
-	# 	}
-	# }
+	if = {
+		limit = { religion = goblinic_shamanism }
+		if = {
+			limit = { has_any_heir_cult_active = yes }
+			remove_heir_cult = yes
+		}
+		if = {
+			limit = {
+				has_country_flag = enabled_cult_for_heirs
+			}
+			country_event = {
+				id = goblinic_shamanism_flavor.600
+			}
+		}
+	}
 
 	#apply correct racial flags
 	update_heir_racial_flag = yes
@@ -9385,7 +9484,18 @@ on_bi_yearly_pulse_5 = {
 
 		2000 = 0
 	}
+	#karassk stuff
+	if = {
+		limit = {
+			has_country_flag = L68_racism_system
+		}
+		country_event = {
+			id = flavour_karassk.1001
+		}
+	}
+	
 }
+
 
 # country random events
 on_thri_yearly_pulse = {
@@ -11061,6 +11171,10 @@ on_four_year_pulse_3 = {
 		200 = planetouched.602
 		300 = planetouched.701
 		200 = planetouched.703
+		100 = xhazobkult_events.102
+		300 = xhazobkult_events.108 # High chance because the event's trigger is fairly rare (armies in enemy land)
+		100 = gnoll_flavor.1
+		100 = gnoll_flavor.3
 	}
 	
 	#taychend flavour events. Moved from five year pulse to make room for future kheionai events + to increase frequency
@@ -11732,7 +11846,6 @@ on_five_year_pulse = {
 		favoured_IC.13
 		favoured_IC.16
 		favoured_IC.19
-		infernal_events.0 #IC Flavor events
 		bulwar_flavour.30 #Surani Refugees Settling
 		anb_miscevents.15
 		flavor_rogieria.20 #Emulant of Rogier
@@ -13754,6 +13867,18 @@ on_province_culture_changed = {
 		}
 		add_random_development = 1
 	}
+
+	#The Red Citadel - Better Forging
+	beikling_update_better_forging_effect = yes
+
+	#karassk 
+	#for province culture changing
+	if = {
+		limit = {
+			owner = { has_country_flag = L68_mechanic_check_flag }
+		}
+		L68_province_culture_change = yes
+	}
 }
 
 
@@ -13908,6 +14033,47 @@ on_province_owner_change = {
 			duration = -1
 		}
 	}
+
+	#karassk stuff
+	if = {
+		limit = {
+			owner = { has_country_flag = L68_mechanic_check_flag }
+		}
+		L68_province_change = yes 
+	}
+
+	#karassk give negative speratism on mission
+	if = {
+		limit = {
+			owner = { 
+				has_country_flag = L68_give_true_ruler_return_on_take
+			}
+			OR = {
+				area = zuvaziva_area
+				area = zenavuma_area
+				area = kumashet_area
+				area = gomuvuri_area 
+			}
+		}
+		add_province_modifier = {
+			name = L68_true_rulers_return 
+			duration = 10950
+		}
+	}	
+
+	#karassk merfolk clear 
+	if = {
+		limit = {
+			owner = {
+				has_country_flag = L68_clear_merfolks
+			}
+		}
+		remove_province_modifier = offcoast_merfolk_isolated
+		remove_province_modifier = offcoast_merfolk_neutral
+		remove_province_modifier = offcoast_merfolk_allied
+		clr_province_flag = merfolk_settlement
+	}
+	
 	
 	if = {
 		limit = { province_group = infernal_court_temples }
@@ -15151,7 +15317,9 @@ on_province_owner_change = {
 		owner = { country_event = { id = rinta_seeker_events.262 } }
 	}
 
-}	
+	#The Red Citadel
+	beikling_red_citadel_province_change_effect = yes
+}
 
 # country 1.35
 on_parliament_debate_reset = {
@@ -16151,6 +16319,8 @@ on_qizilbash_raised = {
 }
 
 on_mamluks_raised = {
+	add_corruption = 0.1
+	custom_tooltip = shadow_warrior_manpower_tt
 }
 
 on_geobukseon_raised = {
@@ -18062,6 +18232,31 @@ on_dependency_gained = {
 			FROM = { clr_country_flag = banned_magic }
 		}
 	}
+	
+	#Release Vic League Members + check League leader status
+	if = {
+		limit = {
+			FROM = { is_subject_of_type = vic_league_member }
+		}
+		if = {
+			limit = {
+				ROOT = {
+					NOT = {
+						has_government_attribute = expand_the_league_1_attribute
+						has_government_attribute = expand_the_league_2_attribute
+						has_government_attribute = expand_the_league_3_attribute
+					}
+				}
+			}
+			ROOT = { country_event = { id = flavour_vic_league.5 } } #release the league members
+		}
+		else = {
+			add_country_modifier = {
+				name = vic_league_leader_modifier
+				duration = -1
+			}
+		}
+	}
 }
 # ROOT = Overlord, FROM = Minor
 on_dependency_lost = {
@@ -18406,6 +18601,26 @@ on_dependency_lost = {
 	}
 
 	z22_whaling_guild_check_effect = yes	#check so subjects lose the modifier if they rebel
+	
+	#Check League leader status
+	if = {
+		limit = {
+			FROM = { is_subject_of_type = vic_league_member }
+		}
+		capital_scope = {
+			remove_trade_modifier = {
+				who = ROOT
+				key = vic_commonwealth_trade_bonus
+			}
+		}
+		if = {
+			limit = {
+				has_country_modifier = vic_league_leader_modifier
+				NOT = { has_subject_of_type = vic_league_member }
+			}
+			remove_country_modifier = vic_league_leader_modifier
+		}
+	}
 }
 
 # ROOT = New vassal, FROM = Overlord
@@ -19778,9 +19993,43 @@ on_trade_good_changed = {
 		else = { remove_province_modifier = Y98_improved_silk_mod }
 	}
 
-	if = { #this does leave the saved trade goods flag... is that an issue?
-		limit = { has_province_modifier = transmutation_2_transmute_to_gold_local_mod NOT = { trade_goods = gold } }
-		remove_province_modifier = transmutation_2_transmute_to_gold_local_mod
+	#The Red Citadel
+	if = {
+		limit = {
+			province_group = beikling_homeland_provinces
+			4974 = { owned_by = FROM }
+			NOT = { province_id = 4974 }
+		}
+		if = {
+			limit = {
+				OR = {
+					trade_goods = iron
+					trade_goods = copper
+				}
+			}
+			if = {
+				limit = {
+					4974 = { has_province_modifier = the_masterforge }
+				}
+				add_province_modifier = {
+					name = metalurgic_revival
+					duration = -1
+				}
+			}
+			else_if = {
+				limit = {
+					4974 = { has_province_modifier = the_masterforge_upgrade }
+				}
+				add_province_modifier = {
+					name = pinnacle_of_metallurgy
+					duration = -1
+				}
+			}
+		}
+		else = {
+			remove_province_modifier = metalurgic_revival
+			remove_province_modifier = pinnacle_of_metallurgy
+		}
 	}
 }
 
@@ -21340,6 +21589,84 @@ on_capital_moved = {
 		transmutative_path_destroy_chi_wellspring_to_size_effect = yes
 	}
 
+	#karassk itinerant capital
+	if = {
+		limit = { 
+			owner = {
+				has_reform = karassk_laushan_city
+			}
+			has_port = yes 
+		}
+		owner = {
+			add_country_modifier = {
+				name = L68_capital_sail_cooldown 
+				duration = 1825 
+			}
+			capital_scope = {
+				every_province_in_state = {
+					add_province_modifier = {
+						name = L68_the_black_and_red_sails_of_blood_duty
+						duration = 1825
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				province_id = 5898
+			}
+			remove_province_modifier = L68_the_first_seat
+		}
+		else = {
+			5898 = {
+				add_province_modifier = {
+					name = L68_the_first_seat
+					duration = -1 
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+					has_country_flag = L68_move_with_cap
+				}
+			}
+			owner = {
+				capital_scope = {
+					every_province_in_state = {
+						limit = {
+							NOT = {
+								has_province_modifier = L68_merfolk_slaves
+							}
+						}
+						add_province_modifier = {
+							name = L68_merfolk_slaves
+							duration = 1825
+						}
+						hidden_effect = {
+							if = {
+								limit = {
+									ROOT = {
+										any_owned_province = {
+											has_great_project = {
+												type = arskitse
+												tier = 2
+											}
+										}
+									}
+								}
+								add_province_modifier = {
+									name = L68_emperors_of_arskite
+									duration = 1825
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	# On occasion, released nations will attempt to move capital to a province they don't own
 	# This causes issues because now ROOT can get additional copies of magical fortress
 	# However, we also need to account for cases where capitals get annexed (FROM owned by conquerer)
@@ -21381,6 +21708,7 @@ on_capital_moved = {
 			add_province_modifier = { name = abjuration_1_ward_mod_1 duration = -1 }
 		}
 	}
+
 }
 
 #ROOT = province that was expanded in, FROM = country that did it
@@ -22584,6 +22912,42 @@ on_colony_finished = { #ROOT - Province
 			}
 		}
 	}
+	#karassk halflings 
+	if = {
+		limit = {
+			owner = { has_country_flag = L68_mechanic_check_flag }
+		}
+		if = {
+			limit = {
+				owner = { has_country_modifier = L68_best_of_servents}
+			}
+			random = { 
+				chance = 20 
+				add_halfling_minority_size_effect = yes
+				add_halfling_minority_size_effect = yes
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_province_modifier = L68_human_ships_halfling_sailors_maj_trade_debuff
+					has_province_modifier = L68_human_ships_halfling_sailors_ships_co
+					has_province_modifier = L68_human_ships_halfling_sailors_ships_notco
+					has_province_modifier = L68_khair_families_iysashlagila_management_maj_man_debuff
+					has_province_modifier = L68_khair_families_our_land_cult_co
+					has_province_modifier = L68_khair_families_our_land_cult_notco
+				}
+				NOT = { has_human_majority_trigger = yes }
+			}
+			remove_province_modifier = L68_human_ships_halfling_sailors_maj_trade_debuff
+			remove_province_modifier = L68_human_ships_halfling_sailors_ships_co
+			remove_province_modifier = L68_human_ships_halfling_sailors_ships_notco
+			remove_province_modifier = L68_khair_families_iysashlagila_management_maj_man_debuff
+			remove_province_modifier = L68_khair_families_our_land_cult_co
+			remove_province_modifier = L68_khair_families_our_land_cult_notco
+		}
+	}
+	
 }
 
 on_advisor_hired = { #ROOT - Country
@@ -22925,10 +23289,6 @@ on_barrage = { #ROOT - barraging country, FROM - barraged province
 		}
 	}
 	if = {
-		limit = { has_naval_doctrine = bulwar_kamelyan_tactics }
-		FROM = { change_siege = 3 }
-	}
-	if = {
 		limit = {
 			ROOT = {
 				tag = S81 #Khatalashya
@@ -22978,6 +23338,10 @@ on_naval_barrage = { #ROOT - barraging country, FROM - barraged province
 			}
 		}
 		FROM = { ROOT = { evocation_0_fireball_effect = yes } }
+	}
+	if = {
+		limit = { has_naval_doctrine = bulwar_kamelyan_tactics }
+		FROM = { change_siege = 3 }
 	}
 }
 
