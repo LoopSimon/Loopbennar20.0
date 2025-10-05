@@ -640,6 +640,7 @@ declarewar = {
 			FROM = {
 				overlord = { overlord_of = ROOT } # if their overlord is your overlord you have the same overlord
 				is_right_subject_type_xhazobkult = yes
+				ai = yes
 			}
 			ai = yes
 		}
@@ -755,22 +756,6 @@ declarewar = {
 				id = diggy.121
 			}
 		}
-		if = {
- 			limit = {
- 				has_country_modifier = loop_remnant_spiner
- 				FROM = {
- 					NOT = {
- 						any_owned_province = {
- 							continent = serpentspine
- 						}
- 					}
- 					NOT = { coalition_target = FROM }
- 				}
- 			}
- 			country_event = {
- 				id = flavor_loopgeneric.7
- 			}
- 		}
 		if = {
 			limit = {
 				has_country_modifier = spiderwretch_lightland_claimer
@@ -1514,6 +1499,22 @@ declarewar = {
 			}
 		}
 		
+		if = { #Vic League
+			limit = {
+				OR = {
+					has_government_attribute = expand_the_league_1_attribute
+					has_government_attribute = expand_the_league_2_attribute
+					has_government_attribute = expand_the_league_3_attribute
+				}
+				is_subject = no
+				is_in_war = {
+					attacker_leader = THIS
+					defender_leader = FROM
+					casus_belli = cb_humiliate_rotw
+				}
+			}
+			set_country_flag = vic_league_humiliate_cb_@FROM
+		}
 	}
 }
 
@@ -1981,7 +1982,6 @@ allianceaction = {
 							is_right_subject_type_xhazobkult = yes
 						}
 					}
-					ai = yes
 				}
 				FROM = { 
 					is_right_subject_type_xhazobkult = yes
@@ -1997,6 +1997,8 @@ allianceaction = {
 					}
 				}
 			}
+			FROM = { ai = yes }
+			ai = yes
 		}
 		allow = {
 			always = no
@@ -2062,6 +2064,13 @@ enforce_peace = {
 				}
 			}
 			add_imperial_influence = 2
+		}
+		if = {
+			limit = {
+				has_estate_privilege = estate_church_vir_forbearance 
+				is_at_war = no
+			}
+			set_country_flag = vir_forb_peace_enforced
 		}
 	}
 }
@@ -3037,10 +3046,7 @@ annexationaction = {
 		}
 		allow = {
 			FROM = {
-				years_in_vassalage_under = {
-					who = ROOT
-					years = 25
-				}
+				had_country_flag = { flag = vic_league_duration_tracker days = 9125 }
 				NOT = { liberty_desire = 10 }
 				has_opinion = {
 					who = ROOT
@@ -4117,6 +4123,15 @@ improve_relation = {
 		tooltip = escann_restricted_diplo_trigger_tt
 		potential = { escann_restricted_greentide_diplo_trigger = yes }
 		allow = { always = no }
+	}
+}
+
+knowledge_sharing = {
+	effect = {
+		if = {
+			limit = { has_estate_privilege = estate_church_vir_honesty }
+			set_country_flag = vir_honest_sharing
+		}
 	}
 }
 

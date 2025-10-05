@@ -2564,7 +2564,7 @@ estate_monstrous_tribes_free_clans = {
 	is_valid = {
 		culture_group = centaur
 		NOT = { has_country_flag = centaur_caehns_valor_2 }
-		NOT = { tag = I91 }
+		NOT = { tag = I91 }  #KU Splinters
 		NOT = { tag = I92 }
 		NOT = { tag = I93 }
 		NOT = { tag = I94 }
@@ -2580,6 +2580,14 @@ estate_monstrous_tribes_free_clans = {
 		administrative_efficiency = -0.1
 	}
 	on_granted = {
+	}
+	conditional_modifier = { #Golden Tremor
+		trigger = { has_country_flag = I57_buff_free_clans_flag }
+		modifier = {
+			global_unrest = 5
+			years_of_nationalism = 5
+			monstrous_tribes_loyalty_modifier = -0.1
+		}
 	}
 	ai_will_do = {
 		factor = 0
@@ -12623,6 +12631,7 @@ estate_church_khateshala_mutation = {
 		}
 		modifier = {
 			morale_damage_received = -0.05
+			missionaries = 1
 		}
 	}
 	ai_will_do = {
@@ -19878,12 +19887,12 @@ estate_church_J81_outsider_guilds = {
 	}
 }
 
-estate_mages_hydromancers_guild = {
+estate_mages_organization_hydromancers_guild = {
 	icon = privilege_cast_spell
 	loyalty = 0.1
 	influence = 0.1
 	can_select = {
-		always = no
+		can_pay_for_organization_swap = { estate = mages }
 	}
 	is_valid = {
 		is_or_was_tag = { tag = S15 }
@@ -19891,6 +19900,9 @@ estate_mages_hydromancers_guild = {
 	}
 	can_revoke = {
 		always = no
+	}
+	on_granted = {
+		pay_for_organization_swap = { organization = hydromancers_guild }
 	}
 	benefits = {
 		production_efficiency = 0.1
@@ -20800,10 +20812,33 @@ estate_monstrous_tribes_supplement_levies = {
 	}
 	on_granted = {
 		add_corruption = 1
+		if = {
+			limit = { has_country_flag = shadow_warriors_levies_2_2 }
+			add_country_modifier = {
+				name = shadow_warriors_levies_2_2
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = shadow_warriors_levies_2_1 }
+			add_country_modifier = {
+				name = shadow_warriors_levies_2_1
+				duration = -1
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = shadow_warriors_levies_1
+				duration = -1
+			}
+		}
 	}
 	on_granted_province = {
 	}
 	on_revoked = {
+		remove_country_modifier = shadow_warriors_levies_1
+		remove_country_modifier = shadow_warriors_levies_2_1
+		remove_country_modifier = shadow_warriors_levies_2_2
 	}
 	on_revoked_province = {
 	}
@@ -20815,33 +20850,17 @@ estate_monstrous_tribes_supplement_levies = {
 		yearly_corruption = 0.1
 	}
 	benefits = {
-		morale_damage = 0.1
-		is_mamluks_modifier = yes
-	}
-	conditional_modifier = {
-		trigger = {
-			NOT = { has_country_flag = shadow_warriors_levies_2_1 }
-			NOT = { has_country_flag = shadow_warriors_levies_2_2 }
-		}
-		modifier = {
-			morale_damage = 0.1
-			is_mamluks_modifier = yes
-		}
 	}
 	conditional_modifier = {
 		trigger = { has_country_flag = shadow_warriors_levies_2_1 }
 		modifier = {
-			morale_damage = 0.05
 			stability_cost_modifier = -0.15
-			is_mamluks_modifier = yes
 		}
 	}
 	conditional_modifier = {
 		trigger = { has_country_flag = shadow_warriors_levies_2_2 }
 		modifier = {
 			global_unrest = 2
-			morale_damage = 0.15
-			is_mamluks_modifier = yes
 		}
 	}
 	cooldown_years = 10

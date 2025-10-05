@@ -610,6 +610,13 @@ estate_mages_reduced_research_regulations = {
 		}
 		modifier = { max_absolutism = 10 }
 	}
+	conditional_modifier = {
+		trigger = { has_country_flag = L68_sharknado }
+		modifier = {
+			global_naval_barrage_cost = -0.50
+			reduced_liberty_desire = 25
+		}
+	}
 	benefits = {
 	}
 	ai_will_do = {
@@ -1105,13 +1112,23 @@ estate_mages_mages_ascendant = {
 	loyalty = -0.05
 	influence = 0.05
 	max_absolutism = -10
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	conditional_modifier = {
+		trigger = {
+			has_absolutism_reduction_for_estate_privileges = yes
+			NOT = { has_country_flag = remove_absolutism_from_ascendant }
+		}
+		modifier = { max_absolutism = 2 }
+	}
 	land_share = 10
 	is_valid = { NOT = { tag = I02 } is_in_mage_mode = yes }
 	can_select = { is_in_mage_mode = yes at_least_magical_infrastructure_level_3 = yes }
 	on_granted = {
 		custom_tooltip = tooltip_estate_mages_mages_ascendant
 		custom_tooltip = higher_chance_of_powerful_mage_tt
+	}
+	conditional_modifier = {
+		trigger = { has_country_flag = remove_absolutism_from_ascendant }
+		modifier = { max_absolutism = 10 }
 	}
 	
 	benefits = {
@@ -1130,7 +1147,13 @@ estate_mages_nexus_network = {
 	loyalty = -0.05
 	influence = 0.05
 	max_absolutism = -10
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	conditional_modifier = {
+		trigger = {
+			has_absolutism_reduction_for_estate_privileges = yes
+			NOT = { has_country_flag = remove_absolutism_from_nexus }
+		}
+		modifier = { max_absolutism = 2 }
+	}
 	land_share = 10
 	is_valid = { NOT = { tag = I02 } is_in_mage_mode = yes }
 	can_select = { is_in_mage_mode = yes at_least_magical_infrastructure_level_4 = yes }
@@ -1138,6 +1161,10 @@ estate_mages_nexus_network = {
 	benefits = {
 		mages_mana_regen = 0.2
 		mages_mana_capacity = 40
+	}
+	conditional_modifier = {
+		trigger = { has_country_flag = remove_absolutism_from_nexus }
+		modifier = { max_absolutism = 5 }
 	}
 
 	penalties = { mages_monthly_experience = -2 }
@@ -1375,5 +1402,78 @@ estate_mages_monstrous_explorers = { #Monstrous
 	}
 	ai_will_do = {
 		factor = 0
+	}
+}
+
+estate_mages_soul_bound_weaponry = { #Shadow Pact
+	icon = privilege_one_faith_one_culture
+	influence = 0.1
+	loyalty = 0.05
+	is_valid = {
+		religion = shadow_pact
+		has_country_flag = shadow_warriors_soulforged_1
+	}
+	can_select = {
+	}
+	on_granted = {
+		add_corruption = 1
+		if = {
+			limit = { has_country_flag = shadow_warriors_soulforged_2_2 }
+			add_country_modifier = {
+				name = shadow_warriors_soulforged_2_2
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = { has_country_flag = shadow_warriors_soulforged_2_1 }
+			add_country_modifier = {
+				name = shadow_warriors_soulforged_2_1
+				duration = -1
+			}
+		}
+		else = {
+			add_country_modifier = {
+				name = shadow_warriors_soulforged_1
+				duration = -1
+			}
+		}
+	}
+	on_granted_province = {
+	}
+	on_revoked = {
+		remove_country_modifier = shadow_warriors_soulforged_1
+		remove_country_modifier = shadow_warriors_soulforged_2_1
+		remove_country_modifier = shadow_warriors_soulforged_2_2
+	}
+	on_revoked_province = {
+	}
+	on_invalid = {
+	}
+	on_invalid_province = {
+	}
+	penalties = {
+		yearly_corruption = 0.1
+	}
+	benefits = {
+	}
+	conditional_modifier = {
+		trigger = { has_country_flag = shadow_warriors_soulforged_2_1 }
+		modifier = {
+			army_tradition = 1
+		}
+	}
+	conditional_modifier = {
+		trigger = { has_country_flag = shadow_warriors_soulforged_2_2 }
+		modifier = {
+			church_power_modifier = -0.15
+		}
+	}
+	cooldown_years = 10
+	ai_will_do = {
+		factor = 10
+#		modifier = {
+#			factor = 0
+#			
+#		}
 	}
 }

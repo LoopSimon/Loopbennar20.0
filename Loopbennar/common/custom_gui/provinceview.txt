@@ -1500,6 +1500,91 @@ custom_button = {	#celmaldor trade league investment
 		}
 	}
 }
+
+custom_button = { #Golden Tremor Negeal Button
+	name = I57_challenge_to_negeal_button
+	tooltip = I57_challenge_to_negeal_button_tt
+	potential = { 
+		FROM = { has_country_flag = I57_enable_negeal_button_flag }
+		NOT = { has_province_flag = I57_won_negeal_flag }
+	}
+	trigger = {
+		has_ruler_leader_from = FROM
+		custom_trigger_tooltip = {
+			tooltip = I57_unrest_value_tt
+			unrest = 0.1
+		}
+		area_for_scope_province = {
+			type = all
+			owned_by = FROM
+			is_state_core = FROM
+			religion = irdaeos_worship
+			culture_is_centaur = yes
+		}
+		if = {
+			limit = { 
+				has_province_flag = I57_failed_negeal_flag
+				FROM = { has_country_flag = I57_challenging_to_negeal_lvl_2_flag }
+			}
+			area_for_scope_province = {
+				type = all
+				NOT = { local_autonomy = 25 }
+			}
+		}
+		else_if = {
+			limit = { has_province_flag = I57_failed_negeal_flag }
+			area_for_scope_province = {
+				type = all
+				NOT = { local_autonomy = 50 }
+			}
+		}
+		custom_trigger_tooltip = {
+			tooltip = I57_challenging_to_negeal_tt
+			FROM = {
+				NOT = { 
+					has_country_flag = I57_challenging_to_negeal_lvl_1_flag 
+					has_country_flag = I57_challenging_to_negeal_lvl_2_flag 
+					has_country_flag = I57_enchained_rebels_flag
+				}
+			}
+		}
+	}
+	effect = {
+		if = {
+			limit = { FROM = { has_country_flag = I57_enabled_stronger_negeal_flag } }
+			area = {
+				spawn_rebels = {
+					size = 4
+					type = pretender_rebels
+				}
+				set_local_autonomy = 100
+				add_nationalism = 30
+			}
+			FROM = { set_country_flag = I57_challenging_to_negeal_lvl_2_flag }
+			custom_tooltip = I57_challenging_to_negeal_win_lvl_2_tt
+		}
+		else = {
+			area = {
+				spawn_rebels = {
+					size = 1
+					type = pretender_rebels
+				}
+				add_local_autonomy = 25
+				add_nationalism = 5
+			}
+			FROM = { set_country_flag = I57_challenging_to_negeal_lvl_1_flag }
+			custom_tooltip = I57_challenging_to_negeal_win_lvl_1_tt
+		}
+		hidden_effect = {
+			save_global_event_target_as = I57_negeal_target
+		}
+		if = {
+			limit = { has_province_flag = I57_ordsiwyn_leave_prov_flag }
+			custom_tooltip = I57_dev_prov_tt
+		}
+	}
+}
+
 #################################
 # Anbennar Province UI Expanded #
 #################################
@@ -1566,7 +1651,8 @@ custom_window = {
 custom_button = { #Close button
 	name = aPUI_close_button
 	effect = {
-		clr_province_flag = aPUI_parent_container_flag
+		#clr_province_flag = aPUI_parent_container_flag
+		clear_all_aPUI_flags = yes
 	}
 }
 ##Template begins
@@ -1584,9 +1670,9 @@ custom_text_box = {
 custom_button = {
 	name = aPUI_goto_province
 	# tooltip = x
-	effect = {
-		FROM = { country_event = { id = aPUI_goto.001 } }
-	}
+	# effect = {
+	# 	FROM = { country_event = { id = aPUI_goto.001 } }
+	# }
 }
 custom_button = {
 	name = aPUI_template_button_1
