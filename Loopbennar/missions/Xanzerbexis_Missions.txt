@@ -240,13 +240,19 @@ A49_1_post_1 = {
 		required_missions = { A49_factional_cooperation } 
 		provinces_to_highlight = {
 			owned_by = ROOT
-			trade_goods = livestock
 			OR = {
-				has_production_building_trigger = no
-				NOT = { development = 15 }
+				A49_valid_wyvern_farm_province = yes
+				has_province_modifier = A49_makeshift_hatchery
 				AND = {
-					has_dlc = "Mandate of Heaven"
-					NOT = { has_state_edict = edict_protect_trade }
+					has_province_modifier = A49_wyvern_farm
+					OR = {
+						has_production_building_trigger = no
+						NOT = { development = 15 }
+						AND = {
+							has_dlc = "Mandate of Heaven"
+							NOT = { has_state_edict = edict_protect_trade }
+						}
+					}
 				}
 			}
 		}
@@ -254,8 +260,8 @@ A49_1_post_1 = {
 		trigger = {
 			production_leader = { trade_goods = livestock }
 			num_of_owned_provinces_with = {
-				value = 10
-				trade_goods = livestock
+				value = 6
+				has_province_modifier = A49_wyvern_farm
 				has_production_building_trigger = yes
 				development = 15
 				if = { 
@@ -286,7 +292,7 @@ A49_1_post_1 = {
 			hidden_effect = {
 				every_owned_province = {
 					limit = {
-						trade_goods = livestock
+						has_province_modifier = A49_wyvern_farm
 						has_production_building_trigger = yes
 						if = {
 							limit = { has_dlc = "Mandate of Heaven" }
@@ -435,11 +441,11 @@ A49_1_post_1 = {
 			region = the_borders_region
 			OR = {
 				AND = {
-					NOT = { owned_by = ROOT }
+					NOT = { country_or_subject_holds = ROOT }
 					NOT = {
 						ROOT = {
-							num_of_owned_provinces_with = {
-								value = 20
+							num_of_provinces_owned_or_owned_by_subjects_with = {
+								value = 15
 								region = the_borders_region
 							}
 						}
@@ -448,28 +454,30 @@ A49_1_post_1 = {
 				AND = {
 					province_id = 306 #Wexkeep
 					OR = {
-						NOT = { owned_by = ROOT }
-						NOT = { is_core = ROOT }
+						NOT = { country_or_subject_holds = ROOT }
 						NOT = { base_production = 15 }
+						has_production_building_trigger = no
 					}
 				}
 			}
 		} 
 
 		trigger = {
-			num_of_owned_provinces_with = {
-				value = 20
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 15
 				region = the_borders_region
 			}
 			306 = { #Wexkeep
-				owned_by = ROOT
-				is_core = ROOT
+				country_or_subject_holds = ROOT
 				base_production = 15
+				has_production_building_trigger = yes
 			}
 		} 
 
 		effect = {
 			306 = { #Wexkeep
+				add_gnollish_minority_size_effect = yes
+				add_gnollish_minority_size_effect = yes
 				change_province_name = "Invyaik"
 				add_province_modifier = {
 					name = A49_chain_factory
@@ -500,15 +508,13 @@ A49_1_post_2 = {
 				AND = {
 					owned_by = ROOT
 					trade_goods = iron
-					is_in_capital_area = yes
-					NOT = { development = 20 }
+					NOT = { development = 15 }
 					NOT = {
 						ROOT = {
 							num_of_owned_provinces_with = {
-								value = 8
+								value = 6
 								trade_goods = iron
-								is_in_capital_area = yes
-								development = 20
+								development = 15
 							}
 						}
 					}
@@ -526,10 +532,9 @@ A49_1_post_2 = {
 				trading_bonus = { trade_goods = iron value = yes }
 			}
 			num_of_owned_provinces_with = {
-				value = 8
-				is_in_capital_area = yes
+				value = 6
 				trade_goods = iron
-				development = 20
+				development = 15
 			}
 			6513 = { #Hogzhaad
 				development = 40
@@ -692,6 +697,7 @@ A49_2_pre = {
 				add_province_triggered_modifier = A49_brainmarrow_pact_tm
 			}
 			custom_tooltip = A49_brainmarrow_pact_tm_tt
+			custom_tooltip = A49_brainmarrow_pact_tellum_tt
 		}
 	}
 
@@ -1113,8 +1119,8 @@ A49_2_post_1 = {
 					custom_trigger_tooltip = {
 						tooltip = A49_secure_the_khenak_tt
 						NOT = {
-							num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
-								value = 1
+							development_in_provinces = {
+								value = 100
 								superregion = western_cannor_superregion
 							}
 						}
@@ -1271,6 +1277,9 @@ A49_2_post_1 = {
 						speed = 2
 						cost = 0
 					}
+				}
+				else = {
+					owner = { add_innovativeness_or_monarch_power_anb = { amount = 5 } }
 				}
 				change_province_name = "Xalgazelag-inva"
 			}
@@ -1456,7 +1465,7 @@ A49_3_pre = {
 			OR = {
 				AND = {
 					province_id = 365 #Port Jaher
-					NOT = { development = 30 }
+					NOT = { num_of_buildings_in_province = 4 }
 				}
 				AND = {
 					region = businor_region
@@ -1482,7 +1491,7 @@ A49_3_pre = {
 		trigger = {
 			government_reform_progress = 200
 			365 = { #Port Jaher
-				development = 30
+				num_of_buildings_in_province = 4
 			}
 			num_of_owned_provinces_with = {
 				value = 20
@@ -1579,23 +1588,18 @@ A49_3_post_1 = {
 		}
 
 		trigger = {
-			custom_trigger_tooltip = {
-				tooltip = A49_when_money_comes_marching_home_tt
-				any_known_country = {
-					OR = {
-						has_country_modifier = human_administration
-						has_country_modifier = half_elven_administration
-					}
-					capital_scope = { superregion = western_cannor_superregion }
-					is_at_war = yes
-					ROOT = { is_renting_condottieri_to = PREV }
-					war_score = 50
-				}
+			any_known_country = {
+				capital_scope = { superregion = western_cannor_superregion }
+				ROOT = { is_renting_condottieri_to = PREV }
+			}
+			num_of_hired_mercenary_companies = 4
+			num_of_estate_privileges = {
+				estate = estate_nobles
+				value = 5
 			}
 		} 
 
 		effect = {
-			add_treasury = 500
 			decrease_monstrous_2 = yes
 			add_country_modifier = {
 				name = A49_marching_dogs
@@ -2700,13 +2704,8 @@ A49_5_post = {
 					}
 				}
 				AND = {
-					province_id = 1303 #Dostanesck trade node
-					NOT = {
-						trade_share = {
-							country = ROOT
-							share = 35
-						}
-					}
+					province_id = 451 #Nathalaire
+					has_trade_building_trigger = no
 				}
 			}
 		}
@@ -2718,15 +2717,10 @@ A49_5_post = {
 				is_core = ROOT
 				has_manpower_building_trigger = yes
 			}
-			custom_trigger_tooltip = {
-				tooltip = A49_brothers_from_the_past_tt
-				1303 = { #Dostanesck trade node
-					trade_share = {
-						country = ROOT
-						share = 35
-					}
-				}
+			451 = { #Nathalaire
+				has_trade_building_trigger = yes
 			}
+			num_of_light_ship = 30
 		}
 
 		effect = {

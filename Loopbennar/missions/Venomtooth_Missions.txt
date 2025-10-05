@@ -1,0 +1,1232 @@
+#Dev: TheLoneTexan
+#Writers: TheLoneTexan
+
+venomtooth_1_missions = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B22
+	}
+
+	vt_loot_the_bodies = {
+		icon = mission_skull
+		position = 1
+
+		provinces_to_highlight = {
+			province_id = 230
+		}
+
+		trigger = {
+			230 = {
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 10
+				}
+			}
+		}
+
+		effect = {
+			add_treasury = 50
+			230 = {
+				spawn_rebels = {
+					type = anti_tax_rebels
+					size = 1
+				}
+				add_devastation = 25
+			}
+			add_mil_power = 50
+		}
+	}
+
+	vt_slave_pits = {
+		icon = mission_murder
+		position = 4
+
+		required_missions = {
+			vt_goblin_purpose
+		}
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			fast_has_pop_of_race = { race = human }
+		}
+
+		trigger = {
+			num_of_wars = { amount = 5 }
+			num_of_owned_provinces_with = {
+				value = 2
+				OR = {
+					has_building = native_three_sisters_field
+					has_production_building_trigger = yes
+				}
+				fast_has_pop_of_race = { race = human }
+			}
+		}
+
+		effect = {
+			random_owned_province = {
+				limit = { fast_has_pop_of_race = { race = human } }
+				change_trade_goods = slaves
+				add_province_modifier = {
+					name = vt_slave_pits_modifier
+					duration = -1
+				}
+				add_base_production = 2
+			}
+			random_owned_province = {
+				limit = { fast_has_pop_of_race = { race = human } }
+				change_trade_goods = slaves
+				add_province_modifier = {
+					name = vt_slave_pits_modifier
+					duration = -1
+				}
+				add_base_production = 2
+			}
+			add_treasury = 50
+		}
+	}
+
+	vt_knowledge_is_power = {
+		icon = mission_writing_book
+		position = 6
+
+		required_missions = {
+			vt_slave_pits
+		}
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			NOT = { has_building = native_longhouse }
+		}
+
+		trigger = {
+			has_institution = feudalism
+			any_neighbor_country = {
+				#Checking to see if player is less than three techs behind
+				NOT = { culture_group = orcish culture_group = goblin}
+				NOT = { tech_difference = 3 }
+			}
+			num_of_owned_provinces_with = {
+				value = 5
+				OR = {
+					has_building = native_longhouse
+					has_courthouse_building_trigger = yes
+				}
+			}
+		}
+
+		effect = {
+			every_owned_province = {
+				limit = { 
+					OR = {
+						has_building = native_longhouse
+						has_courthouse_building_trigger = yes
+					}
+				}
+				ROOT = {
+					change_government_reform_progress = 10
+					add_innovativeness_or_monarch_power_anb = { amount = 0.5 }
+				}
+			}
+		}
+	}
+}
+
+venomtooth_2_missions = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B22
+	}
+
+	vt_worm_hunt = {
+		icon = mission_hydra
+		position = 2
+
+		required_missions = {
+			vt_loot_the_bodies
+			vt_honor_korgus
+		}
+
+		provinces_to_highlight = {
+			province_id = 232
+		}
+
+		trigger = {
+			232 = {
+				num_of_units_in_province = {
+					amount = 10
+					who = ROOT
+				}
+				OR = {
+					has_building = native_great_trail
+					has_manpower_building_trigger = yes
+				}
+			}
+			num_of_generals = 1
+		}
+
+		effect = {
+			232 = {
+				kill_units = {
+					who = ROOT
+					amount = 5
+				}
+				add_province_modifier = {
+					name = vt_venom_worms
+					duration = -1
+				}
+				if = {
+					limit = { NOT = { trade_goods = iron } }
+					change_trade_goods = iron
+				}
+				else = {
+					add_base_production = 2
+				}
+			}
+		}
+	}
+
+	vt_goblin_purpose = {
+		icon = mission_captured
+		position = 3
+
+		required_missions = {
+			vt_worm_hunt
+			vt_new_path
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				owned_by = B45
+				AND = {
+					area = middle_alen_area
+					NOT = {
+						owned_by = ROOT
+						tribal_land_of = ROOT
+						is_empty = yes
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				overlord_of = B45
+				AND = {
+					NOT = { exists = B45 }
+					middle_alen_area = {
+						type = all
+						OR = {
+							owned_by = ROOT
+							tribal_land_of = ROOT
+							is_empty = yes
+						}
+					}
+				}
+			}
+			726 = {
+				num_of_units_in_province = {
+					amount = 10
+					who = ROOT
+				}
+			}
+			any_owned_province = {
+				is_capital = no
+				OR = {
+					has_building = native_storehouse
+					has_production_building_trigger = yes
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_venomtooth.4 }
+		}
+	}
+	
+	vt_den_of_vipers = {
+		icon = mission_beheading
+		position = 5
+
+		required_missions = {
+			vt_slave_pits
+			vt_outnumbered
+		}
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				AND = {
+					has_province_modifier = vt_slave_pits_modifier
+					NOT = {
+						num_of_units_in_province = {
+							amount = 5
+							who = ROOT
+						}
+					}
+				}
+				AND = {
+					province_id = 232
+					NOT = {
+						num_of_units_in_province = {
+							amount = 5
+							who = ROOT
+						}
+					}
+				}
+			}
+			
+		}
+
+		trigger = {
+			num_of_cities = 5
+			num_of_owned_provinces_with = {
+				value = 2
+				OR = {
+					has_building = native_longhouse
+					has_courthouse_building_trigger = yes
+				}
+			}
+			has_mil_advisor = yes
+			any_owned_province = {
+				has_province_modifier = vt_slave_pits_modifier
+				num_of_units_in_province = {
+					amount = 5
+					who = ROOT
+				}
+			}
+			232 = {
+				num_of_units_in_province = {
+					amount = 5
+					who = ROOT
+				}
+			}
+		}
+
+		effect = {
+			232 = {
+				remove_province_modifier = vt_venom_worms
+				add_province_modifier = {
+					name = vt_viper_pits
+					duration = -1
+				}
+				add_base_production = 3
+			}
+			random_owned_province = {
+				limit = {
+					fast_has_pop_of_race = { race = goblin }
+				}
+				if = {
+					limit = { culture_group = goblin }
+					change_culture = green_orc
+					change_religion = great_dookan
+				}
+				else = {
+					remove_racial_minority_any_size = { race = goblin }
+				}
+			}
+			random_owned_province = {
+				limit = {
+					fast_has_pop_of_race = { race = goblin }
+				}
+				if = {
+					limit = { culture_group = goblin }
+					change_culture = green_orc
+					change_religion = great_dookan
+				}
+				else = {
+					remove_racial_minority_any_size = { race = goblin }
+				}
+			}
+			random_owned_province = {
+				limit = {
+					fast_has_pop_of_race = { race = goblin }
+				}
+				if = {
+					limit = { culture_group = goblin }
+					change_culture = green_orc
+					change_religion = great_dookan
+				}
+				else = {
+					remove_racial_minority_any_size = { race = goblin }
+				}
+			}
+		}
+	}
+
+	vt_imperial_raid = {
+		icon = mission_burning_castle
+		position = 7
+
+		required_missions = {
+			vt_knowledge_is_power
+			vt_hand_reins
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = A46
+					NOT = {
+						ROOT = {
+							army_size = A46
+						}
+					}
+				}
+				AND = {
+					province_id = 231
+					NOT = { num_of_units_in_province = { amount = 10 who = ROOT } }
+				}
+				AND = {
+					province_id = 248
+					NOT = { num_of_units_in_province = { amount = 10 who = ROOT } }
+				}
+				AND = {
+					OR = {
+						area = balmire_area
+						area = cursewood_area
+					}
+					NOT = {
+						owned_by = ROOT
+						tribal_land_of = ROOT
+					}
+				}
+			}
+		}
+
+		trigger = {
+			army_size = A46
+			231 = {
+				num_of_units_in_province = { amount = 10 who = ROOT }
+			}
+			248 = {
+				num_of_units_in_province = { amount = 10 who = ROOT }
+			}
+			balmire_area = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					tribal_land_of = ROOT
+				}
+			}
+			cursewood_area = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					tribal_land_of = ROOT
+				}
+			}
+		}
+
+		effect = {
+			add_treasury = 200
+			custom_tooltip = vt_imperial_raid_descrip
+			hidden_effect = {
+				cestir_area = {
+                	limit = {
+                    	NOT = { owned_by = ROOT }
+                    	any_neighbor_province = { owned_by = ROOT }
+                	}
+                	owner = {
+                    	country_event = {
+                        	id = flavor_venomtooth.7
+                    	}
+                	}
+           		}
+			}
+		}
+	}
+}
+
+venomtooth_3_missions = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B22
+	}
+
+	vt_honor_korgus = {
+		icon = mission_orc_chillin
+		position = 1
+
+		trigger = {
+			stability = 1
+			num_of_allies = 1
+			manpower = 10
+		}
+
+		effect = {
+			country_event = { id = flavor_venomtooth.2 }
+		}
+	}
+
+	vt_new_path = {
+		icon = mission_star_comet
+		position = 2
+
+		required_missions = {
+			vt_honor_korgus
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				owned_by = B45
+				owned_by = B46
+				owner = { is_enemy = ROOT }
+			}
+			owner = {
+				NOT = { has_been_insulted_by_root = yes }
+			}
+		}
+
+		trigger = {
+			army_size_percentage = 0.9
+			all_rival_country = {
+				has_been_insulted_by_root = yes
+			}
+			B45 = {
+				OR = {
+					has_been_insulted_by_root = yes
+					exists = no
+				}
+			}
+			B46 = {
+				OR = {
+					has_been_insulted_by_root = yes
+					exists = no
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_venomtooth.3 }
+		}
+	}
+
+	vt_outnumbered = {
+		icon = mission_face_off
+		position = 4
+
+		required_missions = {
+			vt_goblin_purpose
+			vt_goblin_backs
+		}
+
+		trigger = {
+			war_score = 50
+			calc_true_if = {
+				all_known_country = {
+					war_with = ROOT
+					NOT = { has_country_modifier = monstrous_nation }
+				}
+				amount = 3
+			}
+			check_variable = { #Checks to see if at least 15k units were killed over the course of the game
+				which = vt_units_killed
+				value = 15000
+			}
+		}
+
+		effect = {
+			custom_tooltip = vt_outnumbered_explain
+			every_war_enemy_country = {
+				ROOT = {
+					add_manpower = 5
+					add_army_tradition = 5
+				}
+				add_country_modifier = { #Make sure it's removed on peace
+					name = vt_outmatched
+					duration = -1
+				}
+			}
+		}
+	}
+
+	vt_clash_of_clans = {
+		icon = mission_assassination
+		position = 5
+
+		required_missions = {
+			vt_outnumbered
+			vt_take_from_weak
+		}
+
+		trigger = {
+			OR = {
+				AND = {
+					war_with = B23
+					war_score = 90
+				}
+				NOT = { exists = B23 }
+			}
+			prestige = 50
+		}
+
+		effect = {
+			custom_tooltip = vt_clash_of_clans_effect
+			hidden_effect = {
+				if = {
+					limit = { exists = B23 }
+					white_peace = B23
+					B23 = {
+						every_tribal_land_province = {
+							limit = {
+								region = west_castanor_region
+								NOT = { owned_by = B23 }
+							}
+							change_tribal_land = ROOT
+							ROOT = {
+								every_known_country = {
+									if = {
+										limit = { culture_group = orcish }
+										add_aggressive_expansion = {
+											who = ROOT
+											value = 3
+											apply_calc = no
+										}
+									}
+									else = {
+										add_aggressive_expansion = {
+											who = ROOT
+											value = 1
+											apply_calc = no
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				else = {
+					add_treasury = 200
+				}
+			}
+			
+		}
+	}
+
+	vt_hand_reins = {
+		icon = mission_thinking_king
+		position = 6
+
+		required_missions = {
+			vt_den_of_vipers
+			vt_clash_of_clans
+		}
+
+		trigger = {
+			is_at_war = no
+			num_of_cities = 8
+			OR = {
+				NOT = {
+					has_ruler_flag = venom_queen
+				}
+				heir_age = 15
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { has_heir_flag = vt_azukor }
+					country_event = { id = flavor_venomtooth.6 }
+			}
+			else = {
+				change_adm = 1
+				change_dip = 1
+				change_mil = 1
+			}
+		}
+	}
+
+	vt_kneel = {
+		icon = mission_head_on_spike
+		position = 7
+
+		required_missions = {
+			vt_hand_reins
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				owned_by = B03
+				owned_by = B06
+				owned_by = B07
+				owned_by = B09
+				owned_by = B10
+				owned_by = B11
+				owned_by = B12
+				owned_by = B15
+				owned_by = B16
+			}
+		}
+
+		trigger = {
+			calc_true_if = { #The OR conditions are necessary or each trigger under the NOT counts for 1 each
+				OR = { NOT = { exists = B03 exists = B40 } }
+				OR = { NOT = { exists = B06 exists = B35 } }
+				OR = { NOT = { exists = B07 exists = B37 } }
+				OR = { NOT = { exists = B09 exists = B49 } }
+				OR = { NOT = { exists = B10 exists = B50 } }
+				OR = { NOT = { exists = B11 exists = B34 } }
+				OR = { NOT = { exists = B12 exists = B39 } }
+				OR = { NOT = { exists = B15 exists = B38 } }
+				OR = { NOT = { exists = B16 exists = B52 } }
+				amount = 4
+				desc = vt_kneel_explain
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = vt_skull_throne
+				duration = 18250
+			}
+		}
+	}
+
+	vt_grand_ascent = {
+		icon = mission_grain_throne_nuzrandu
+		position = 8
+
+		required_missions = {
+			vt_imperial_raid
+			vt_kneel
+			vt_where_whip
+			vt_green_slave_trade
+		}
+
+		trigger = {
+			num_of_cities = 25
+			army_size = 40
+			OR = {
+				AND = {
+					has_reform = greentide_horde
+					reform_level = 5
+					government_reform_progress = 50
+				}
+				NOT = { has_reform = greentide_horde }
+			}
+		}
+
+		effect = {
+			custom_tooltip = vt_rebel_warning
+			country_event = { id = flavor_venomtooth.10 }
+		}
+	}
+}
+
+venomtooth_3_2_missions = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B22
+		has_country_flag = vt_revolt_triggered
+	}
+
+	vt_natural_order = {
+		icon = mission_hanged_tree
+		position = 9
+
+		provinces_to_highlight = {
+			area = silvervord_area
+		}
+
+		required_missions = {
+			vt_grand_ascent
+		}
+
+		trigger = {
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { num_of_rebel_controlled_provinces = 1 }
+			silvervord_area = {
+				num_of_units_in_province = {
+					amount = 30
+					who = ROOT
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_venomtooth.12 }
+		}
+	}
+}
+
+
+venomtooth_4_missions = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B22
+	}
+
+	vt_goblin_backs = {
+		icon = mission_globlin
+		position = 3
+
+		required_missions = {
+			vt_new_path
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				owned_by = B46
+				AND = {
+					NOT = {
+						owned_by = ROOT
+						is_empty = yes
+						tribal_land_of = ROOT
+					}
+					area = taran_plains_area
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				overlord_of = B46
+				AND = {
+					NOT = { exists = B46 }
+					taran_plains_area = {
+						type = all
+						OR = {
+							owned_by = ROOT
+							tribal_land_of = ROOT
+							is_empty = yes
+						}
+					}
+				}
+			}
+			any_owned_province = {
+				OR = {
+					has_building = native_storehouse
+					has_production_building_trigger = yes
+				}
+			}
+			774 = {
+				num_of_units_in_province = {
+					amount = 10
+					who = ROOT
+				}
+			}
+		}
+
+		effect = {
+			B46 = {
+				every_tribal_land_province = {
+					change_tribal_land = ROOT
+					if = {
+						limit = {
+							OR = {
+								owned_by = B46
+								is_empty = yes
+							}
+						}
+						decolonize = yes
+						change_culture = green_orc
+						change_religion = great_dookan
+					}
+				}
+			}
+			add_country_modifier = {
+				name = vt_goblin_workforce
+				duration = 10950
+			}
+		}
+	}
+
+	vt_orcish_roar = {
+		icon = mission_viking
+		position = 6
+
+		required_missions = {
+			vt_clash_of_clans
+			vt_end_treachery
+		}
+
+		trigger = {
+			religious_unity = 0.75
+			OR = {
+				theologian = 1
+				inquisitor = 1
+				AND = {
+					has_adm_advisor = yes
+					adm_power = 50
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { theologian = 1 inquisitor = 1 } }
+				add_adm_power = -50
+			}
+			country_event = { id = flavor_venomtooth.13 }
+		}
+	}
+
+	vt_where_whip = {
+		icon = mission_landsknecht_soldier
+		position = 7
+
+		required_missions = {
+			vt_hand_reins
+		}
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			culture_group = orcish
+			OR = {
+				has_building = native_great_trail
+				has_manpower_building_trigger = yes
+			}
+			NOT = {
+				num_of_units_in_province = {
+					amount = 20
+					who = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				OR = {
+					has_building = native_great_trail
+					has_manpower_building_trigger = yes
+				}
+				culture_group = orcish
+				value = 5
+			}
+			any_owned_province = {
+				OR = {
+					has_building = native_great_trail
+					has_manpower_building_trigger = yes
+				}
+				culture_group = orcish
+				num_of_units_in_province = {
+					amount = 20
+					who = ROOT
+				}
+			}
+			OR = {
+				army_tradition = 60
+				army_professionalism = 0.1
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_venomtooth.8 }
+		}
+	}
+}
+
+venomtooth_5_missions = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = {
+		tag = B22
+	}
+
+	vt_set_challenge = {
+		icon = mission_diplomacy_missive
+		position = 1
+
+		provinces_to_highlight = {
+			owned_by = B27
+		}
+
+		trigger = {
+			OR = {
+                AND = {
+                    OR = {
+                        is_rival = B27
+                        has_eclipsed = B27
+                    }
+                    B27 = {
+                        has_been_insulted_by_root = yes
+                    }
+                    army_size = B27
+                }
+                NOT = { exists = B27 }
+            }
+			
+		}
+
+		effect = {
+			add_prestige = 10
+			westwall_approach_area = {
+				add_permanent_claim = ROOT
+			}
+			cannwood_area = {
+				add_permanent_claim = ROOT
+			}
+			middle_alen_area = {
+				add_permanent_claim = ROOT
+			}
+			add_manpower = 5
+		}
+	}
+
+	vt_first_humiliation = {
+		icon = mission_steppe_warriors
+		position = 3
+
+		required_missions = {
+			vt_set_challenge
+		}
+
+		trigger = {
+			OR = {
+				B27 = {
+					humiliated_by = ROOT
+				}
+				NOT = { exists = B27 }
+				has_eclipsed = B27
+			}
+		}
+
+		effect = {
+			add_prestige = 20
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							has_won_war_against = {
+								who = B27
+							}
+							has_eclipsed = B27
+						}
+						B27 = {
+							humiliated_by = ROOT
+						}
+					}
+				}
+				athfork_area = {
+					limit = { owned_by = B27 }
+					add_devastation = 50
+				}
+				add_treasury = 200
+			}
+			custom_tooltip = vt_first_humiliation_tip
+		}
+	}
+
+	vt_take_from_weak = {
+		icon = mission_warrior_gold
+		position = 4
+
+		required_missions = {
+			vt_goblin_backs
+			vt_first_humiliation
+		}
+
+		provinces_to_highlight = {
+			province_id = 758
+			native_size = 1
+		}
+
+		trigger = {
+			any_tribal_land = {
+				region = west_castanor_region
+				is_empty = yes
+				culture_group = orcish
+				num_of_units_in_province = {
+					amount = 10
+					who = ROOT
+				}
+				NOT = {
+					trade_goods = glass
+					trade_goods = cloth
+					trade_goods = gold
+					trade_goods = paper
+				}
+			}
+			758 = {
+				OR = {
+					NOT = { native_size = 1 }
+					owned_by = ROOT
+				}
+			}
+		}
+
+		effect = {
+			758 = {
+				if = {
+					limit = {
+						NOT = {
+							trade_goods = glass
+							trade_goods = cloth
+							trade_goods = gold
+							trade_goods = paper
+						}
+					}
+					change_trade_goods = slaves
+				}
+			}
+			custom_tooltip = vt_take_from_weak_tip
+			every_tribal_land_province = {
+				limit = {
+					region = west_castanor_region
+					tribal_land_of = ROOT
+					is_empty = yes
+					culture_group = orcish
+					num_of_units_in_province = {
+						amount = 10
+						who = ROOT
+					}
+				}
+				change_trade_goods = slaves
+				spawn_rebels = {
+					type = leadered_peasant_rebels
+					size = 2
+				}
+				settle_province = ROOT
+				add_province_modifier = {
+					name = vt_slave_pits_modifier
+					duration = -1
+				}
+			}
+			if = {
+				limit = { exists = B27 }
+				add_casus_belli = {
+					type = cb_vassalize_mission
+					target = B27
+					months = 240
+				}
+			}
+			else_if = {
+				limit = {
+					OR = {
+						729 = { is_empty = no }
+						730 = { is_empty = no }
+					}
+				}
+				add_core = 729
+				add_core = 730
+			}
+			else = {
+				athfork_area = {
+					add_permanent_claim = B22
+				}
+			}
+		}
+	}
+
+	vt_end_treachery = {
+		icon = mission_impaled_soldies
+		position = 5
+
+		required_missions = {
+			vt_take_from_weak
+		}
+
+		provinces_to_highlight = {
+			owned_by = B27
+			NOT = {
+				has_province_modifier = scorched_earth
+			}
+		}
+
+		trigger = {
+			OR = {
+				overlord_of = B27
+				NOT = { exists = B27 }
+			}
+			OR = {
+				B27 = {
+					num_of_owned_provinces_with = {
+						has_province_modifier = scorched_earth
+						value = 2
+					}
+				}
+				any_owned_province = {
+					is_core = B27
+					has_province_modifier = scorched_earth
+				}
+				AND = {
+					729 = {
+						owned_by = ROOT
+						NOT = { is_core = B27 }
+						has_province_modifier = scorched_earth
+					}
+					730 = {
+						owned_by = ROOT
+						NOT = { is_core = B27 }
+						has_province_modifier = scorched_earth
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = flavor_venomtooth.5 }
+		}
+	}
+
+	vt_green_slave_trade = {
+		icon = mission_high_income
+		position = 7
+
+		required_missions = {
+			vt_orcish_roar
+			vt_end_treachery
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				tribal_land_of = ROOT
+				owned_by = ROOT
+			}
+			OR = {
+				is_core = B23
+				is_core = B27
+			}
+			culture_group = orcish
+		}
+
+		trigger = {
+			OR = {
+				any_tribal_land = {
+					OR = {
+						is_core = B23
+						is_core = B27
+					}
+					culture_group = orcish
+					num_of_units_in_province = {
+						amount = 15
+						who = ROOT
+					}
+				}
+				any_owned_province = {
+					OR = {
+						is_core = B23
+						is_core = B27
+					}
+					culture_group = orcish
+					num_of_units_in_province = {
+						amount = 15
+						who = ROOT
+					}
+				}
+			}
+			native_storehouse = 5
+		}
+
+		effect = {
+			country_event = { id = flavor_venomtooth.9 }
+		}
+	}
+}

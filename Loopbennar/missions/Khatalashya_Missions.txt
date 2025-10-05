@@ -92,9 +92,23 @@ khatalashya_1_missions = {
 			6000 = {
 				owned_by = ROOT
 			}
-			OR = {
-				has_country_flag = merfolk_opinion_allied
-				has_country_flag = merfolk_opinion_neutral
+			if = {
+				limit = {
+					was_tag = L68 
+				}
+				OR = {
+					has_country_flag = merfolk_opinion_allied
+					has_country_flag = merfolk_opinion_neutral
+					any_owned_province = {
+						has_province_modifier = L68_merfolk_slaves
+					}
+				}
+			}
+			else = {
+				OR = {
+					has_country_flag = merfolk_opinion_allied
+					has_country_flag = merfolk_opinion_neutral
+				}
 			}
 		}
 
@@ -476,24 +490,28 @@ khatalashya_2_missions = {
 					value = 20
 					culture = arraskay_lizardfolk
 				}
-				taneyas_superregion = {
-					type = all
-					OR = {
-						NOT = { culture = arraskay_lizardfolk }
-						AND = {
-							culture = arraskay_lizardfolk
+				custom_trigger_tooltip = {
+					tooltip = khatalashya_tribal_naga_own_all_arraskay_tt
+					taneyas_superregion = {
+						type = all
+						OR = {
+							NOT = { culture = arraskay_lizardfolk }
 							owned_by = ROOT
 						}
 					}
 				}
 			}
-			all_known_country = {
-				OR = {
+			custom_trigger_tooltip = {
+				tooltip = khatalashya_tribal_naga_subject_all_arraskay_tt
+				all_known_country = {
 					OR = {
-						truce_with = ROOT
-						is_subject = yes
+						OR = {
+							truce_with = ROOT
+							is_subject = yes
+						}
+						NOT = { primary_culture = arraskay_lizardfolk }
+						tag = S81
 					}
-					NOT = { primary_culture = arraskay_lizardfolk }
 				}
 			}
 			OR = {
@@ -505,7 +523,7 @@ khatalashya_2_missions = {
 				}
 				all_owned_province = {
 					OR = {
-						culture = arraskay_lizardfolk
+						NOT = { culture = arraskay_lizardfolk }
 						AND = {
 							has_tax_building_trigger = yes
 							NOT = { local_autonomy = 10 }
@@ -571,16 +589,18 @@ khatalashya_2_missions = {
 						space_colony = 1
 					}
 				}
-				taneyas_superregion = {
+				custom_trigger_tooltip = {
+					tooltip = khatalashya_the_great_cities_tt
+					taneyas_superregion = {
 					type = all
-					OR = {
-						NOT = {
-							has_terrain = city_terrain
-						}
-						AND = {
-							is_core = ROOT
-							owned_by = ROOT
-							province_has_current_tech_fort_trigger = yes
+						OR = {
+							NOT = {
+								has_terrain = city_terrain
+							}
+							AND = {
+								is_core = ROOT
+								province_has_current_tech_fort_trigger = yes
+							}
 						}
 					}
 				}
@@ -594,7 +614,7 @@ khatalashya_2_missions = {
 						}
 						AND = {
 							OR = {
-								owned_by = ROOT
+								is_core = ROOT
 								owner = {
 									is_subject_of_type = space_colony
 								}
@@ -944,11 +964,13 @@ khatalashya_2_missions = {
 					change_primary_culture = draktaya_lizardfolk
 					set_ruler_culture = draktaya_lizardfolk
 				}
-				every_owned_province = {
-					limit = {
-						culture_group = lizardfolk
+				hidden_effect = {
+					every_owned_province = {
+						limit = {
+							culture_group = lizardfolk
+						}
+						change_culture = draktaya_lizardfolk
 					}
-					change_culture = draktaya_lizardfolk
 				}
 			}
 		}
@@ -1260,14 +1282,13 @@ khatalashya_3_missions = {
 				value = 25
 				has_courthouse_building_trigger = yes 
 			}
-			crown_land_share = 33
+			estate_territory = {
+				estate = estate_church
+				territory = 33
+			}
 		}
 
 		effect = {
-			change_estate_land_share = {
-				estate = estate_church
-				share = 5
-			}
 			custom_tooltip = 333_no_absol_penalty_church
 			hidden_effect = {
 				set_country_flag = estate_church_no_absolutism_cost
@@ -1346,7 +1367,7 @@ khatalashya_3_missions = {
 			dao_nako_region = {
 				add_permanent_claim = ROOT
 			}
-			custom_tooltip = lizardfolk_reclamation_how_it_works_but_haflings_tt
+			custom_tooltip = lizardfolk_reclamation_how_it_works_but_halflings_tt
 			hidden_effect = {
 				fahvanosy_region = {
 					limit = {
@@ -1715,15 +1736,19 @@ khatalashya_3_missions = {
 		}
 
 		effect = {
-			every_subject_country = {
-				limit = {
-					is_subject_of_type = space_colony
-				}
-				add_country_modifier = {
-					name = 333_colonial_nagas
-					duration = -1
+			tooltip = {
+				every_subject_country = {
+					limit = {
+						is_subject_of_type = space_colony
+					}
+					add_country_modifier = {
+						name = 333_colonial_nagas
+						duration = -1
+					}
 				}
 			}
+			custom_tooltip = space_tchokens_for_everyone_tt
+			set_global_flag = space_colony_333_colonial_nagas
 		}
 	}
 	
@@ -2379,18 +2404,24 @@ khatalashya_5_missions = {
 		}
 
 		trigger = {
-			taneyas_superregion = {
-				type = all
-				OR = {
-					owned_by = ROOT
-					NOT = { culture = ashhana_lizardfolk }
+			custom_trigger_tooltip = {
+				tooltip = khatalashya_end_the_bloodcurse_all_ashhana_tt
+				taneyas_superregion = {
+					type = all
+					OR = {
+						owned_by = ROOT
+						NOT = { culture = ashhana_lizardfolk }
+					}
 				}
 			}
-			all_owned_province = {
-				OR = {
-					has_state_edict = edict_centralization_effort
-					NOT = { local_autonomy = 0.1 }
-					NOT = { culture = ashhana_lizardfolk }
+			custom_trigger_tooltip = {
+				tooltip = khatalashya_end_the_bloodcurse_centralization_tt
+				all_owned_province = {
+					OR = {
+						has_state_edict = edict_centralization_effort
+						NOT = { local_autonomy = 0.1 }
+						NOT = { culture = ashhana_lizardfolk }
+					}
 				}
 			}
 		}

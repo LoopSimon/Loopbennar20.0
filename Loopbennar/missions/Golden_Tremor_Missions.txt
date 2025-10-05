@@ -1,0 +1,1638 @@
+
+I57_1_missions = { 
+	slot = 1
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = I57 }
+
+	I57_1_1_feed_the_fire = {
+		icon = mission_horde_trade
+		position = 1
+		required_missions = { }
+
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					owned_by = ROOT
+					trade_goods = livestock
+					NOT = { development = 5 }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 6
+								trade_goods = livestock
+								development = 5
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						if = {
+							limit = { ROOT = { any_known_country = { is_subject_of = I90 } } } #Maghargma
+							is_subject_of = I90 #Maghargma
+						}
+						else = { culture_is_ogre = yes }
+						NOT = {
+							has_opinion = {
+								who = ROOT
+								value = 75
+							}
+							AND = {
+								has_75_opinion_improved_relation = { target = ROOT }
+								has_10_opinion_sent_gift = { target = ROOT }
+							}
+						}
+					}
+					ROOT = {
+						NOT = {
+							any_known_country = {
+								is_subject_of = I90 #Maghargma
+								OR = {
+									has_opinion = {
+										who = ROOT
+										value = 75
+									}
+									AND = {
+										has_75_opinion_improved_relation = { target = ROOT }
+										has_10_opinion_sent_gift = { target = ROOT }
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 6
+				trade_goods = livestock
+				development = 5
+			}
+			if = {
+				limit = { any_known_country = { is_subject_of = I90 } } #Maghargma
+				any_known_country = {
+					is_subject_of = I90 #Maghargma
+					OR = {
+						has_opinion = {
+							who = ROOT
+							value = 75
+						}
+						AND = {
+							has_75_opinion_improved_relation = { target = ROOT }
+							has_10_opinion_sent_gift = { target = ROOT }
+						}
+					}
+				}
+			}
+			else = {
+				any_known_country = {
+					culture_is_ogre = yes
+					OR = {
+						has_opinion = {
+							who = ROOT
+							value = 75
+						}
+						AND = {
+							has_75_opinion_improved_relation = { target = ROOT }
+							has_10_opinion_sent_gift = { target = ROOT }
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = I57_livestock_dev_tt
+			tooltip = {
+				add_base_production = 1
+				add_ogre_minority_size_effect = yes
+				add_province_modifier = {
+					name = I57_freed_ogre_miners
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						trade_goods = livestock
+						development = 5
+					}
+					add_base_production = 1
+					add_ogre_minority_size_effect = yes
+					add_province_modifier = {
+						name = I57_freed_ogre_miners
+						duration = -1
+					}
+				}
+			}
+
+			if = {
+				limit = { any_known_country = { is_subject_of = I90 } } #Maghargma
+				random_known_country = {
+					limit = {
+						is_subject_of = I90 #Maghargma
+						OR = {
+							has_opinion = {
+								who = ROOT
+								value = 75
+							}
+							AND = {
+								has_75_opinion_improved_relation = { target = ROOT }
+								has_10_opinion_sent_gift = { target = ROOT }
+							}
+						}
+					}
+					create_alliance = ROOT
+					add_opinion = {
+						who = ROOT
+						modifier = I57_lucrative_trade
+					}
+				}
+			}
+			else = {
+				random_known_country = {
+					limit = {
+						culture_is_ogre = yes
+						OR = {
+							has_opinion = {
+								who = ROOT
+								value = 75
+							}
+							AND = {
+								has_75_opinion_improved_relation = { target = ROOT }
+								has_10_opinion_sent_gift = { target = ROOT }
+							}
+						}
+					}
+					create_alliance = ROOT
+					add_opinion = {
+						who = ROOT
+						modifier = I57_lucrative_trade
+					}
+				}
+			}
+
+			if = {
+				limit = {
+					J39 = { #Achtejardon
+						OR = {
+							has_opinion = {
+								who = ROOT
+								value = 75
+							}
+							AND = {
+								has_75_opinion_improved_relation = { target = ROOT }
+								has_10_opinion_sent_gift = { target = ROOT }
+							}
+						}
+					}
+				}
+				custom_tooltip = I57_achtejardon_yes_tt
+				hidden_effect = {
+					J39 = { #Achtejardon
+						add_historical_friend_mutual = { tag = ROOT }
+						add_opinion = {
+							who = ROOT
+							modifier = I57_lucrative_trade
+						}
+					}
+				}
+			}
+			else = { custom_tooltip = I57_achtejardon_no_tt }
+		}
+	}
+	
+	I57_1_3_sweet_riverspeak = {
+		icon = mission_reign_of_women
+		position = 3
+		required_missions = {
+			I57_2_2_a_soft_grip
+		}
+
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				I57_is_ogre_friend = yes
+				NOT = {
+					AND = {
+						has_opinion = {
+							who = ROOT
+							value = 200
+						}
+						num_of_owned_provinces_with = {
+							value = 3
+							has_tax_building_trigger = yes
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			has_institution = feudalism
+			OR = {
+				high_tolerance_ogre_race_trigger = yes
+				medium_tolerance_ogre_race_trigger = yes
+			}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = I57_is_minrineth_tt
+					has_consort_flag = I57_is_minrineth_flag
+				}
+				has_adm_advisor_2 = yes
+			}
+			any_known_country = {
+				I57_is_ogre_friend = yes
+				has_opinion = {
+					who = ROOT
+					value = 200
+				}
+				num_of_owned_provinces_with = {
+					value = 3
+					has_tax_building_trigger = yes
+				}
+			}
+		}
+
+		effect = {
+			random_known_country = {
+				limit = { I57_is_ogre_friend = yes }
+				change_religion = irdaeos_worship
+				set_religious_school = {
+					group = centaur_religion
+					school = maslekhuga_school
+				}
+				capital_scope = {
+					add_institution_embracement = {
+						which = feudalism
+						value = 100
+					}
+				}
+			}
+			anb_add_accepted_culture_or_dip_power = { culture = fathide_ogre free = yes }
+			custom_tooltip = I57_change_ogre_mod_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = { has_province_modifier = I57_freed_ogre_miners }
+					remove_province_modifier = I57_freed_ogre_miners
+					add_province_modifier = {
+						name = I57_ogre_miners
+						duration = -1
+					}
+				}
+			}
+
+			if = {
+				limit = { has_consort_flag = I57_is_minrineth_flag }
+				custom_tooltip = I57_minrineth_consort_yes_tt
+				hidden_effect = {
+					add_country_modifier = {
+						name = I57_sweet_riverspeak_mod
+						duration = -1
+					}
+				}
+			}
+			else = { custom_tooltip = I57_minrineth_consort_no_tt }
+			custom_tooltip = I57_sweet_riverspeak_tt
+		}
+	}
+
+	I57_1_4_breaking_new_ground = {
+		icon = mission_che_the_cave_country
+		position = 4
+		required_missions = {
+			I57_1_3_sweet_riverspeak
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5030 #Rk'narbch
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					trade_goods = iron
+				}
+			}
+			NOT = {
+				AND = {
+					base_production = 5
+					base_manpower = 3
+					num_of_units_in_province = {
+						amount = 3
+						who = ROOT
+					}
+				}
+			}
+			OR = {
+				province_id = 5030 #Rk'narbch
+				ROOT = {
+					NOT = {
+						num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+							value = 3
+							trade_goods = iron
+							base_production = 5
+							base_manpower = 3
+							num_of_units_in_province = {
+								amount = 3
+								who = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				has_cast_deposit_divination = yes
+				has_cast_guidance_amount = { amount = 5 }
+			}
+			5030 = { #Rk'narbch
+				base_production = 5
+				base_manpower = 3
+				num_of_units_in_province = {
+					amount = 3
+					who = ROOT
+				}
+			}
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 3
+				trade_goods = iron
+				base_production = 5
+				base_manpower = 3
+				num_of_units_in_province = {
+					amount = 3
+					who = ROOT
+				}
+			}
+		}
+
+		effect = {
+			5030 = { #Rk'narbch
+				change_trade_goods = iron 
+				kill_units = { who = ROOT amount = 3 }
+			}
+			custom_tooltip = I57_gain_iron_tt
+			custom_tooltip = I57_change_iron_tt
+			custom_tooltip = I57_is_centaur_culture_tt
+			tooltip = {
+				add_ogre_minority_size_effect = yes
+				add_province_modifier = {
+					name = I57_ogre_miners
+					duration = -1
+				}
+			}
+			custom_tooltip = I57_is_ogre_culture_tt
+			tooltip = {
+				add_centaur_minority_size_effect = yes
+				add_province_modifier = {
+					name = I57_centaur_support
+					duration = -1
+				}
+			}
+
+			hidden_effect = {
+				for = {
+					amount = 6
+					effect = "
+						random_province = {
+							limit = {
+								country_or_non_sovereign_subject_holds = ROOT
+								NOT = { trade_goods = iron }
+								OR = {
+									has_terrain = highlands
+									has_terrain = hills
+									has_terrain = steppe
+									has_terrain = mountain
+								}
+								base_production = 5
+								base_manpower = 3
+								num_of_units_in_province = {
+									amount = 3
+									who = ROOT
+								}
+							}
+							change_trade_goods = iron
+						}
+					"
+				}
+
+				every_owned_province = {
+					limit = { trade_goods = iron }
+					kill_units = { who = ROOT amount = 3 }
+					if = {
+						limit = { culture_is_centaur = yes }
+						add_province_modifier = { name = I57_ogre_miners duration = -1 }
+						add_ogre_minority_size_effect = yes
+					}
+					else = {
+						add_province_modifier = { name = I57_centaur_support duration = -1 }
+						add_centaur_minority_size_effect = yes
+					}
+				}
+				every_subject_country = {
+					every_owned_province = {
+						limit = { trade_goods = iron }
+						kill_units = { who = ROOT amount = 3 }
+						if = {
+							limit = { culture_is_centaur = yes }
+							add_province_modifier = { name = I57_ogre_miners duration = -1 }
+							add_ogre_minority_size_effect = yes
+						}
+						else = {
+							add_province_modifier = { name = I57_centaur_support duration = -1 }
+							add_centaur_minority_size_effect = yes
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+I57_2_missions = { 
+	slot = 2
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = I57 }
+	
+	I57_2_2_a_soft_grip = {
+		icon = friends_in_high_places
+		position = 2
+		required_missions = { 
+			I57_1_1_feed_the_fire
+			I57_3_1_arise
+		}
+
+		provinces_to_highlight = {
+			is_capital = yes
+			OR = {
+				owner = {
+					alliance_with = ROOT
+					culture_is_ogre = yes
+					NOT = {
+						AND = {
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+							has_20_opinion_sent_gift = { target = ROOT }
+							OR = {
+								NOT = { liberty_desire = 50 }
+								ROOT = { is_supporting_independence_of = PREV }
+							}
+						}
+					}
+				}
+				owner = {
+					is_subject_of = ROOT
+					culture_is_ogre = yes
+					NOT = {
+						AND = {
+							NOT = { liberty_desire = 50 }
+							any_neighbor_province = { is_capital_of = ROOT }
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			ogre_valley_region = { country_or_non_sovereign_subject_holds = ROOT }
+			has_country_modifier = racial_focus_ogre
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = I57_ogre_ally_trigger_tt
+					any_ally = {
+						culture_is_ogre = yes
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+						has_20_opinion_sent_gift = { target = ROOT }
+						OR = {
+							NOT = { liberty_desire = 50 }
+							ROOT = { is_supporting_independence_of = PREV }
+						}
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = I57_ogre_subject_trigger_tt
+					any_subject_country = {
+						culture_is_ogre = yes
+						NOT = { liberty_desire = 50 }
+						any_neighbor_province = { is_capital_of = ROOT }
+					}
+				}
+			}
+		}
+
+		effect = {
+			large_increase_of_ogre_tolerance_effect = yes
+			if = {
+				limit = {
+					any_ally = {
+						culture_is_ogre = yes
+						has_opinion = {
+							who = ROOT
+							value = 150
+						}
+						has_20_opinion_sent_gift = { target = ROOT }
+						OR = {
+							NOT = { liberty_desire = 50 }
+							ROOT = { is_supporting_independence_of = PREV }
+						}
+					}
+				}
+				custom_tooltip = I57_ogre_ally_effect_yes_tt
+			}
+			else = { custom_tooltip = I57_ogre_ally_effect_no_tt }
+			if = {
+				limit = {
+					any_subject_country = {
+						culture_is_ogre = yes
+						NOT = { liberty_desire = 50 }
+						any_neighbor_province = { is_capital_of = ROOT }
+					}
+				}
+				custom_tooltip = I57_ogre_subject_effect_yes_tt
+			}
+			else = { custom_tooltip = I57_ogre_subject_effect_no_tt }
+			custom_tooltip = I57_ogre_both_effect_tt
+			hidden_effect = {
+				set_country_flag = I57_enable_valley_transfer_flag
+				if = {
+					limit = {
+						any_ally = {
+							is_subject = yes
+							NOT = { is_subject_of = ROOT }
+							culture_is_ogre = yes
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+							has_20_opinion_sent_gift = { target = ROOT }
+							OR = {
+								NOT = { liberty_desire = 50 }
+								ROOT = { is_supporting_independence_of = PREV }
+							}
+						}
+					}
+					random_ally = {
+						limit = {
+							is_subject = yes
+							NOT = { is_subject_of = ROOT }
+							culture_is_ogre = yes
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+							has_20_opinion_sent_gift = { target = ROOT }
+							OR = {
+								NOT = { liberty_desire = 50 }
+								ROOT = { is_supporting_independence_of = PREV }
+							}
+						}
+						declare_war_with_cb = {
+							casus_belli = cb_independence_war
+							who = overlord
+						}
+						set_country_flag = I57_ogre_friend_flag
+						ROOT = { join_all_offensive_wars_of = PREV }
+						set_country_flag = I57_in_ogre_independence_war_flag
+					}
+				}
+				else_if = {
+					limit = {
+						any_ally = {
+							culture_is_ogre = yes
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+							has_20_opinion_sent_gift = { target = ROOT }
+							OR = {
+								NOT = { liberty_desire = 50 }
+								ROOT = { is_supporting_independence_of = PREV }
+							}
+						}
+					}
+					random_ally = {
+						limit = {
+							culture_is_ogre = yes
+							has_opinion = {
+								who = ROOT
+								value = 150
+							}
+							has_20_opinion_sent_gift = { target = ROOT }
+							OR = {
+								NOT = { liberty_desire = 50 }
+								ROOT = { is_supporting_independence_of = PREV }
+							}
+						}
+						set_country_flag = I57_ogre_friend_flag
+						ROOT = { 
+							create_subject = {
+								subject_type = march
+								who = PREV
+							}
+							every_owned_province = {
+								limit = { region = ogre_valley_region }
+								cede_province = PREV
+							}
+						}
+						capital_scope = { add_centaur_minority_size_effect = yes }
+					}
+				}
+				else = {
+					random_subject_country = {
+						limit = {
+							culture_is_ogre = yes
+							NOT = { liberty_desire = 50 }
+							any_neighbor_province = { is_capital_of = ROOT }
+						}
+						set_country_flag = I57_ogre_friend_flag
+						ROOT = {
+							create_subject = {
+								subject_type = march
+								who = PREV
+							}
+							every_owned_province = {
+								limit = { region = ogre_valley_region }
+								cede_province = PREV
+							}
+						}
+						capital_scope = { add_centaur_minority_size_effect = yes }
+					}
+				}
+			}
+		}
+	}
+	
+	I57_2_4_lead_by_strength = {
+		icon = mam_recruit_the_mamluks
+		position = 4
+		required_missions = { 
+			I57_3_3_rise_of_the_golden_caehn
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = ogre_valley_region
+					owner = { I57_is_ogre_friend = no }
+				}
+				AND = {
+					is_capital = yes
+					superregion = forbidden_lands_superregion
+					owner = { 
+						primary_culture = fathide_ogre 
+						I57_is_ogre_friend = no
+					}
+				}
+			}
+		}
+
+		trigger = {
+			ogre_valley_region = {
+				type = all
+				owner = { I57_is_ogre_friend = yes }
+			}
+			custom_trigger_tooltip = {
+				tooltip = I57_only_fathide_tt
+				all_known_country = {
+					OR = {
+						NOT = { primary_culture = fathide_ogre }
+						I57_is_ogre_friend = yes
+						capital_scope = { NOT = { superregion = forbidden_lands_superregion } }
+					}
+				}
+			}
+			army_tradition = 40
+		}
+
+		effect = {
+			custom_tooltip = I57_vassalize_friend_tt
+			add_power_projection_mission = { amount = 25 }
+			add_country_modifier = {
+				name = I57_caehn_of_the_mountains
+				duration = 7300 #20 years
+			}
+			hidden_effect = { 
+				random_known_country = {
+					limit = { I57_is_ogre_friend = yes }
+					ROOT = { vassalize = PREV }
+				}
+				clr_country_flag = I57_enable_valley_transfer_flag
+			}
+		}
+	}
+	
+	I57_2_5_two_as_one = {
+		icon = king_of_kings
+		position = 5
+		required_missions = {
+			I57_1_4_breaking_new_ground
+			I57_2_4_lead_by_strength
+		}
+
+		provinces_to_highlight = {  
+			OR = {
+				owner = { I57_is_ogre_friend = yes }
+				AND = {
+					owned_by = ROOT
+					trade_goods = iron
+					NOT = {
+						base_production = 10
+						has_production_building_trigger = yes
+					}
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = I57_ogre_friend_dead_tt
+				NOT = {
+					any_subject_country = {
+						I57_is_ogre_friend = yes
+					}
+				}
+			}
+			high_tolerance_ogre_race_trigger = yes
+			custom_trigger_tooltip = {
+				tooltip = I57_iron_provs_tt
+				all_owned_province = {
+					OR = {
+						NOT = { trade_goods = iron }
+						base_production = 10
+						has_production_building_trigger = yes
+					}
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = I57_ogre_auxilieries
+				duration = -1
+			}
+			custom_tooltip = I57_valley_dev_tt
+			hidden_effect = {
+				set_variable = {
+					which = I57_valley_dev_var
+					value = 0
+				}
+				ogre_valley_region = {
+					ROOT = {
+						export_to_variable = {
+							which = I57_valley_dev_var_temp
+							value = development
+							who = PREV
+						}
+						change_variable = {
+							which = I57_valley_dev_var
+							which = I57_valley_dev_var_temp
+						}
+					}
+				}
+				divide_variable = {
+					which = I57_valley_dev_var
+					value = 10
+				}
+				var_effect = {
+					var = I57_valley_dev_var
+					effect = add_manpower
+					sign = +
+				}
+			}
+		}
+	}
+}
+
+
+I57_3_missions = { 
+	slot = 3
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = I57 }
+
+	I57_3_1_arise = {
+		icon = mission_centaur_shooting
+		position = 1
+		required_missions = { }
+
+		provinces_to_highlight = { }
+
+		trigger = {
+			army_size_percentage = 0.95
+			num_of_cities = 18
+		}
+
+		effect = {
+			custom_tooltip = I57_drums_of_reformation_tt
+
+			hidden_effect = { 
+				add_country_modifier = {
+					name = I57_the_drums_of_reformation
+					duration = 3650 #10 years
+				}
+			}
+		}
+	}
+
+	I57_3_2_gathering_the_wilds = {
+		icon = mission_fire_judgement
+		position = 2
+		required_missions = { 
+			I57_3_1_arise
+			I57_5_1_weigh_their_hearts
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital_of = I78 #Wild Hunt
+					ROOT = {
+						NOT = {
+							is_in_war = {
+								attacker_leader = ROOT
+								defender_leader = I78 #Wild Hunt
+								war_score = 95
+							}
+						}
+					}
+				}
+				AND = {
+					OR = {
+						is_capital_of = I67 #Endless Arrows
+						is_capital_of = I74 #Bloodbringer
+						is_capital_of = I74 #CIty Razer
+					}
+					owner = {
+						NOT = { 
+							has_20_opinion_sent_gift = { target = ROOT }
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				is_in_war = {
+					attacker_leader = ROOT
+					defender_leader = I78 #Wild Hunt
+					war_score = 95
+				}
+				num_of_owned_provinces_with = {
+					value = 15
+					is_core = I78 #WIld Hunt
+				}
+				custom_trigger_tooltip = {
+					tooltip = I57_long_gilded_hooves_reqs_tt
+					always = no
+				}
+			}
+		}
+
+		effect = {
+			country_event = { #The Meek Breeze
+				id = golden_tremor_events.3
+			}
+			custom_tooltip = I57_event_insight_tt
+
+			if = {
+				limit = { I67 = { has_20_opinion_sent_gift = { target = ROOT } } } #Endless Arrows
+				custom_tooltip = I57_endless_arrows_insight_yes_tt
+			}
+			else = { custom_tooltip = I57_endless_arrows_insight_no_tt }
+
+			if = {
+				limit = { I74 = { has_20_opinion_sent_gift = { target = ROOT } } } #Bloodbringer
+				custom_tooltip = I57_bloodbringer_insight_yes_tt
+			}
+			else = { custom_tooltip = I57_bloodbringer_insight_no_tt }
+
+			if = {
+				limit = { I72 = { has_20_opinion_sent_gift = { target = ROOT } } } #City Razer
+				custom_tooltip = I57_city_razer_insight_yes_tt
+			}
+			else = { custom_tooltip = I57_city_razer_insight_no_tt }
+		}
+	}
+
+	I57_3_3_rise_of_the_golden_caehn = {
+		icon = mission_sun_temple
+		position = 3
+		required_missions = { 
+			I57_2_2_a_soft_grip
+			I57_3_2_gathering_the_wilds
+			I57_4_2_gilded_hooves
+		}
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			I57_won_negeal = no
+		}
+
+		trigger = {
+			num_of_cities = 42
+			government_reform_progress = 75
+			I57_total_won_negeal = { amount = 6 }
+		}
+
+		effect = {
+			country_event = { #The Gleaming Caehn/Horde
+				id = golden_tremor_events.4
+			}
+			hidden_effect = {
+				if = {
+					limit = { has_ruler_flag = I57_is_rhidrin_flag }
+					set_country_flag = I57_rhidrin_name_change_flag
+				}
+			}
+		}
+	}
+
+	I57_3_5_potential_aureate = {
+		icon = mission_entrepot_of_india
+		position = 5
+		required_missions = {
+			I57_4_4_the_tremoring_call
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = serpent_gift_region
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 18
+								region = serpent_gift_region
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					OR = {
+						region = west_forbidden_plains_region
+						region = east_forbidden_plains_region
+					}
+					I57_won_negeal = yes
+					NOT = {
+						AND = {
+							development = 6
+							num_of_buildings_in_province = 3
+							has_state_edict = edict_encourage_development
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 18
+				region = serpent_gift_region
+			}
+			# has_institution = renaissance
+			num_of_owned_provinces_with = {
+				value = 3
+				I57_potential_aureate_reqs = yes
+			}
+		}
+
+		effect = {
+			custom_tooltip = I57_deving_gold_tt
+			hidden_effect = {
+				for = {
+					amount = 6
+					effect = "
+						random_owned_province = {
+							limit = { I57_potential_aureate_reqs = yes }
+							I57_potential_aureate_effects = yes
+						}
+					"
+				}
+			}
+		}
+	}
+
+	I57_3_6_the_golden_codex = {
+		icon = mission_new_dawn
+		position = 6
+		required_missions = {
+			I57_2_5_two_as_one
+			I57_3_5_potential_aureate
+			I57_4_5_the_enchained_clans
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = ogre_valley_region
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					region = west_forbidden_plains_region
+					NOT = { owned_by = ROOT }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 40
+								region = west_forbidden_plains_region
+							}
+						}
+					}
+				}
+				AND = {
+					region = east_forbidden_plains_region
+					NOT = { owned_by = ROOT }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 37
+								region = east_forbidden_plains_region
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					trade_goods = gold
+					NOT = {
+						AND = {
+							development = 10
+							has_tax_building_trigger = yes
+							has_trade_building_trigger = yes
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			NOT = { num_of_rebel_armies = 1 }
+			NOT = { num_of_rebel_controlled_provinces = 1 }
+			ogre_valley_region = {
+				type = all
+				owned_by = ROOT
+			}
+			num_of_owned_provinces_with = {
+				value = 40
+				region = west_forbidden_plains_region
+			}
+			num_of_owned_provinces_with = {
+				value = 37
+				region = east_forbidden_plains_region
+			}
+			custom_trigger_tooltip = { #The trigger seems to check for 1 level higher then it shows?
+				tooltip = I57_reform_level_2_tt
+				has_reform_on_level = 4
+			}
+			I57_total_won_negeal = { amount = 18 }
+			custom_trigger_tooltip = {
+				tooltip = I57_gold_provs_tt
+				all_owned_province = {
+					OR = {
+						NOT = { trade_goods = gold }
+						AND = {
+							development = 10
+							has_tax_building_trigger = yes
+							has_trade_building_trigger = yes
+						}
+					}
+				}
+			}
+			has_institution = renaissance
+			custom_trigger_tooltip = {
+				tooltip = I57_codex_idea_tt
+				has_idea = I57_the_golden_codex
+			}
+		}
+
+		effect = {
+			country_event = { #The Golden Codex
+				id = golden_tremor_events.7
+			}
+		}
+	}
+}
+
+
+I57_4_missions = { 
+	slot = 4
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = I57 }
+	
+	I57_4_2_gilded_hooves = {
+		icon = mission_war_chest
+		position = 2
+		required_missions = { 
+			I57_5_1_weigh_their_hearts
+		}
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			any_core_country = { NOT = { tag = ROOT } }
+			NOT = {
+				AND = {
+					I57_won_negeal = yes
+					num_of_units_in_province = {
+						amount = 5
+						who = ROOT
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 6
+				custom_trigger_tooltip = {
+					tooltip = I57_foreign_core_tt
+					any_core_country = { NOT = { tag = ROOT } }
+				}
+				I57_won_negeal = yes
+				num_of_units_in_province = {
+					amount = 5
+					who = ROOT
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = I57_gilded_hooves_tt
+
+			hidden_effect = {
+				set_country_flag = I57_gilded_hooves_flag
+				every_owned_province = {
+					limit = {
+						any_core_country = { NOT = { tag = ROOT } }
+						I57_won_negeal = yes
+						num_of_units_in_province = {
+							amount = 5
+							who = ROOT
+						}
+					}
+					ROOT = { add_treasury = 3 }
+				}
+			}
+		}
+	}
+
+	I57_4_4_the_tremoring_call = {
+		icon = mission_growth_of_golcond
+		position = 4
+		required_missions = {
+			I57_3_3_rise_of_the_golden_caehn
+			I57_5_3_ordsiwyn_reforms
+		}
+
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+			NOT = {
+				AND = {
+					grown_by_development = 6
+					num_of_buildings_in_province = 3
+					has_fort_building_trigger = yes
+					NOT = { devastation = 1 }
+					has_state_edict = edict_centralization_effort
+					provincial_institution_progress = {
+						which = feudalism
+						value = 100
+					}
+					I57_won_negeal = yes
+				}
+			}
+		}
+
+		trigger = {
+			capital_scope = {
+				grown_by_development = 6
+				num_of_buildings_in_province = 3
+				has_fort_building_trigger = yes
+				NOT = { devastation = 1 }
+				has_state_edict = edict_centralization_effort
+				provincial_institution_progress = {
+					which = feudalism
+					value = 100
+				}
+				I57_won_negeal = yes
+			}
+		}
+
+		effect = {
+			capital_scope = {
+				custom_tooltip = I57_permanent_nzoc_prov_tt
+				remove_province_modifier = sed_entrenched_centaur_nomadism
+				add_province_modifier = {
+					name = sed_nomadic_governance
+					duration = -1
+				}
+				set_province_flag = I57_permanent_nzoc_prov_flag
+				save_global_event_target_as = I57_permanent_capital_target
+				province_event = { #Baildelk's Call
+					id = golden_tremor_events.5
+				}
+			}
+		}
+	}
+
+	I57_4_5_the_enchained_clans = {
+		icon = mission_swear_fealty_knight
+		position = 5
+		required_missions = {
+			I57_4_4_the_tremoring_call
+			I57_5_4_sundering_schisms
+		}
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			I57_won_negeal = no
+		}
+
+		trigger = {
+			NOT = {
+				num_of_estate_privileges = {
+					estate = estate_monstrous_tribes
+					value = 2
+				}
+				estate_influence = {
+					estate = estate_monstrous_tribes
+					influence = 50
+				}
+			}
+			horde_unity = 95
+			army_size = 50
+			I57_total_won_negeal = { amount = 10 }
+			any_army = { is_ruler_commanding_unit = yes }
+			custom_trigger_tooltip = {
+				tooltip = I57_assimilation_progress_trigger_tt
+				NOT = { 
+					has_country_flag = I57_challenging_to_negeal_lvl_1_flag 
+					has_country_flag = I57_challenging_to_negeal_lvl_2_flag 
+					has_country_flag = I57_enchained_rebels_flag
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = I57_remove_free_clans_tt
+			custom_tooltip = I57_ordsiwyn_leave_stop_tt
+			custom_tooltip = I57_enchained_rebels_1_tt
+			tooltip = {
+				capital_scope = {
+					spawn_rebels = {
+						size = 2
+						type = pretender_rebels
+					}
+				}
+			}
+			custom_tooltip = I57_enchained_rebels_2_tt
+			tooltip = {
+				capital_scope = {
+					spawn_rebels = {
+						size = 1
+						type = pretender_rebels
+					}
+				}
+			}
+			custom_tooltip = I57_enchained_rebels_3_tt
+
+			if = {
+				limit = { has_cast_assimilation_program = yes }
+				custom_tooltip = I57_assimilation_program_yes_tt
+			}
+			else = { custom_tooltip = I57_assimilation_program_no_tt }
+
+			hidden_effect = {
+				remove_estate_privilege = estate_monstrous_tribes_free_clans
+				set_country_flag = I57_enchained_rebels_flag
+				every_owned_province = {
+					limit = { 
+						I57_won_negeal = yes
+						NOT = {
+							area_for_scope_province = { 
+								has_province_flag = I57_enchained_rebels_fired_here_flag 
+							}
+						}
+					}
+					random_area_province = {
+						spawn_rebels = {
+							size = 1
+							type = pretender_rebels
+						}
+						set_province_flag = I57_enchained_rebels_fired_here_flag
+					}
+				}
+				if = {
+					limit = { has_cast_assimilation_program = yes }
+					every_owned_province = {
+						limit = { I57_won_negeal = no }
+						spawn_rebels = {
+							size = 1
+							type = pretender_rebels
+						}
+					}
+				}
+				else = {
+					every_owned_province = {
+						limit = { I57_won_negeal = no }
+						spawn_rebels = {
+							size = 2
+							type = pretender_rebels
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+I57_5_missions = { 
+	slot = 5
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = I57 }
+
+	I57_5_1_weigh_their_hearts = {
+		icon = league_of_the_public_weal
+		position = 1
+		required_missions = { }
+
+		provinces_to_highlight = {
+			area_for_scope_province = {
+				type = all
+				owned_by = ROOT
+				is_state_core = ROOT
+				religion = irdaeos_worship
+				culture_is_centaur = yes
+			}
+			unrest = 0.1
+		}
+
+		trigger = {
+			any_owned_province = {
+				has_ruler_leader_from = ROOT
+				num_of_units_in_province = {
+					amount = 6
+					type = cavalry
+					who = ROOT
+				}
+				custom_trigger_tooltip = {
+					tooltip = I57_unrest_value_tt
+					unrest = 0.1
+				}
+				area_for_scope_province = {
+					type = all
+					owned_by = ROOT
+					is_state_core = ROOT
+					religion = irdaeos_worship
+					culture_is_centaur = yes
+				}
+			}
+		}
+
+		effect = {
+			country_event = { #And They Drown In Sin
+				id = golden_tremor_events.1
+			}
+			set_country_flag = I57_ordsiwyn_leave_timer_flag
+		}
+	}
+
+	I57_5_3_ordsiwyn_reforms = {
+		icon = mission_subjugate_the_merchants
+		position = 3
+		required_missions = {
+			I57_5_1_weigh_their_hearts
+		}
+
+		provinces_to_highlight = { }
+
+		trigger = {
+			custom_trigger_tooltip = { #The trigger seems to check for 1 level higher then it shows?
+				tooltip = I57_reform_level_tt
+				has_reform_on_level = 2
+			}
+			estate_loyalty = {
+				estate = estate_monstrous_tribes
+				loyalty = 50
+			}
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 50
+			}
+			horde_unity = 90
+			prestige = 25
+		}
+
+		effect = {
+			custom_tooltip = I57_ordsiwyn_leave_2_tt
+			if = {
+				limit = { has_reform = centaur_negeal_reform }
+				custom_tooltip = I57_negeal_reform_yes_tt
+			}
+			else = { custom_tooltip = I57_negeal_reform_no_tt }
+			if = {
+				limit = { has_reform = centaur_ensure_ordsiwyn_loyalties_reform }
+				custom_tooltip = I57_ordsiwyn_reform_yes_tt
+			}
+			else = { custom_tooltip = I57_ordsiwyn_reform_no_tt }
+		}
+	}
+	
+	I57_5_4_sundering_schisms = {
+		icon = mission_sword_of_the_reformation
+		position = 4
+		required_missions = {
+			I57_5_3_ordsiwyn_reforms
+		}
+
+		provinces_to_highlight = { }
+
+		trigger = {
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = I57_mage_estate_privilege_tt
+					has_estate_privilege = estate_mages_monstrous_regiment
+				}
+				is_estate_any_school_level_2_minimum = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = I57_has_irdaeos_rite_judicial_tt
+				has_country_flag = irdaeos_rite_judicial
+			}
+			employed_advisor = {
+				category = ADM
+				religion = ROOT
+			}
+			employed_advisor = {
+				category = DIP
+				religion = ROOT
+			}
+			employed_advisor = {
+				category = MIL
+				religion = ROOT
+			}
+			OR = {
+				irdaeos_religious_actions_completed = { 
+					type = ReligiousAction
+					amount = 6
+				}
+				irdaeos_religious_actions_completed = { 
+					type = Rite
+					amount = 3
+				}
+				custom_trigger_tooltip = {
+					tooltip = I57_rites_trigger_tt
+					always = no
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = I57_rites_adm_advisor_tt
+			custom_tooltip = I57_rites_dip_advisor_tt
+			custom_tooltip = I57_rites_mil_advisor_tt
+			custom_tooltip = I57_rites_effect_tt
+			hidden_effect = {
+				set_variable = {
+					which = I57_religiousactions_var
+					which = nbReligiousActions
+				}
+				divide_variable = {
+					which = I57_religiousactions_var
+					value = 2
+				}
+				if = { #Has 2x the religious actions compared to rites
+					limit = {
+						check_variable = {
+							which = I57_religiousactions_var
+							which = nbRites
+						}
+					}
+					for_variable_amount = {
+						variable = I57_religiousactions_var
+						effect = "
+							add_estate_loyalty = {
+								estate = estate_monstrous_tribes
+								loyalty = 2
+							}
+							add_church_power = 10
+						"
+					}
+					if = {
+						limit = { check_variable = { which = I57_religiousactions_var value = 4 } }
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.1 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.1 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.1 }
+					}
+					else_if = {
+						limit = { check_variable = { which = I57_religiousactions_var value = 3 } }
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.2 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.2 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.2 }
+					}
+					else_if = {
+						limit = { check_variable = { which = I57_religiousactions_var value = 2 } }
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.3 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.3 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.3 }
+					}
+					else_if = {
+						limit = { check_variable = { which = I57_religiousactions_var value = 1 } }
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.4 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.4 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.4 }
+					}
+					else = {
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.5 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.5 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.5 }
+					}
+				}
+				else = {
+					for_variable_amount = {
+						variable = nbRites
+						effect = "
+							add_estate_loyalty = {
+								estate = estate_monstrous_tribes
+								loyalty = 2
+							}
+							add_church_power = 10
+						"
+					}
+					if = {
+						limit = { check_variable = { which = nbRites value = 4 } }
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.1 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.1 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.1 }
+					}
+					else_if = {
+						limit = { check_variable = { which = nbRites value = 3 } }
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.2 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.2 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.2 }
+					}
+					else_if = {
+						limit = { check_variable = { which = nbRites value = 2 } }
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.3 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.3 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.3 }
+					}
+					else_if = {
+						limit = { check_variable = { which = nbRites value = 1 } }
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.4 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.4 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.4 }
+					}
+					else = {
+						define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.5 }
+						define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.5 }
+						define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.5 }
+					}
+				}
+
+				every_known_country = {
+					limit = {
+						OR = {
+							is_subject_of = ROOT
+							has_opinion = {
+								who = ROOT
+								value = 50
+							}
+							ai_attitude = {
+								who = ROOT
+								attitude = attitude_threatened
+							}
+						}
+					}
+					set_religious_school = {
+						group = centaur_religion
+						school = maslekhuga_school
+					}
+					ROOT = {
+						add_adm_power = 5
+						add_dip_power = 5
+						add_mil_power = 5
+					}
+				}
+
+			}
+		}
+	}
+}
