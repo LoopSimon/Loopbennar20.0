@@ -39,6 +39,7 @@ has_banned_magic = { #Shared restrictions between mage personality and mage esta
 				has_country_flag = nsc_human_country_magic_prohibition
 			}
 			has_country_flag = h35_debarment_moment #Temporary magic ban from Corinsfield
+			culture_is_mechanim = yes
 		}
 	}
 }
@@ -64,6 +65,7 @@ has_not_banned_magic = { #Can I have the mage estate and roll powerful mage rule
 				has_country_flag = nsc_human_country_magic_prohibition
 			}
 			has_country_flag = h35_debarment_moment #Temporary magic ban from Corinsfield
+			culture_is_mechanim = yes
 		}
 	}
 }
@@ -1616,6 +1618,82 @@ is_estate_transmutation_level_3 = {
 	}
 }
 
+is_estate_any_school_level_1_minimum = {
+	custom_trigger_tooltip = {
+		tooltip = is_estate_any_school_level_1_minimum
+		OR = {
+			is_estate_abjuration_level_1_minimum = yes
+			is_estate_conjuration_level_1_minimum = yes
+			is_estate_divination_level_1_minimum = yes
+			is_estate_enchantment_level_1_minimum = yes
+			is_estate_evocation_level_1_minimum = yes
+			is_estate_illusion_level_1_minimum = yes
+			is_estate_necromancy_level_1_minimum = yes
+			is_estate_transmutation_level_1_minimum = yes
+		}
+	}
+}
+is_estate_any_school_level_1 = {
+	custom_trigger_tooltip = {
+		tooltip = is_estate_any_school_level_1
+		OR = {
+			is_estate_abjuration_level_1 = yes
+			is_estate_conjuration_level_1 = yes
+			is_estate_divination_level_1 = yes
+			is_estate_enchantment_level_1 = yes
+			is_estate_evocation_level_1 = yes
+			is_estate_illusion_level_1 = yes
+			is_estate_necromancy_level_1 = yes
+			is_estate_transmutation_level_1 = yes
+		}
+	}
+}
+is_estate_any_school_level_2_minimum = {
+	custom_trigger_tooltip = {
+		tooltip = is_estate_any_school_level_2_minimum
+		OR = {
+			is_estate_abjuration_level_2_minimum = yes
+			is_estate_conjuration_level_2_minimum = yes
+			is_estate_divination_level_2_minimum = yes
+			is_estate_enchantment_level_2_minimum = yes
+			is_estate_evocation_level_2_minimum = yes
+			is_estate_illusion_level_2_minimum = yes
+			is_estate_necromancy_level_2_minimum = yes
+			is_estate_transmutation_level_2_minimum = yes
+		}
+	}
+}
+is_estate_any_school_level_2 = {
+	custom_trigger_tooltip = {
+		tooltip = is_estate_any_school_level_2
+		OR = {
+			is_estate_abjuration_level_2 = yes
+			is_estate_conjuration_level_2 = yes
+			is_estate_divination_level_2 = yes
+			is_estate_enchantment_level_2 = yes
+			is_estate_evocation_level_2 = yes
+			is_estate_illusion_level_2 = yes
+			is_estate_necromancy_level_2 = yes
+			is_estate_transmutation_level_2 = yes
+		}
+	}
+}
+is_estate_any_school_level_3 = {
+	custom_trigger_tooltip = {
+		tooltip = is_estate_any_school_level_3
+		OR = {
+			is_estate_abjuration_level_3 = yes
+			is_estate_conjuration_level_3 = yes
+			is_estate_divination_level_3 = yes
+			is_estate_enchantment_level_3 = yes
+			is_estate_evocation_level_3 = yes
+			is_estate_illusion_level_3 = yes
+			is_estate_necromancy_level_3 = yes
+			is_estate_transmutation_level_3 = yes
+		}
+	}
+}
+
 #####################
 ### POWERFUL MAGE ###
 #####################
@@ -1679,6 +1757,32 @@ consort_is_not_powerful_mage = {
 		}
 	}
 }
+
+slow_study_type = { #type = ruler/heir/consort/country (in case it somehow gets passed into the same scripted trigger
+	OR = {
+		is_long_lived_$type$ = yes
+		$type$_is_immortal = yes
+	}
+}
+slow_study_ruler = {
+	OR = {
+		is_long_lived_ruler = yes
+		ruler_is_immortal = yes
+	}
+}
+slow_study_heir = {
+	OR = {
+		is_long_lived_heir = yes
+		heir_is_immortal = yes
+	}
+}
+slow_study_consort = {
+	OR = {
+		is_long_lived_consort = yes
+		consort_is_immortal = yes
+	}
+}
+slow_study_country = { }
 
 is_ruler_any_school_level_3 = { #Made for Elikhand but generally usable. The tooltip is with Elikhand's loc if somebody wants to move it.
 	custom_trigger_tooltip = {
@@ -2317,6 +2421,16 @@ divination_3_foresight_trigger = { # Foresight
 	}
 }
 
+has_cast_guidance_amount = { #Currently has tooltips for 1, 3, 5, 10, & 20
+	custom_trigger_tooltip = {
+		tooltip = has_cast_guidance_$amount$_times
+		check_variable = {
+			which = magic_guidance_cast_count
+			value = $amount$
+		}
+	}
+}
+
 has_cast_deposit_divination = {
 	custom_trigger_tooltip = {
 		tooltip = has_cast_deposit_divination
@@ -2641,13 +2755,17 @@ illusion_1_bread_and_circuses_trigger = { # Bread and Circuses
 	}
 	else = { is_overall_illusion_level_1_minimum = yes }
 	[[player] has_mana_to_cast_spell = { school = illusion level = 1 id = bread_and_circuses } ]
-	has_any_estates = yes
 	if = {
-		limit = { has_anzalkatsa_naga = yes }
-		custom_trigger_tooltip = {
-			tooltip = has_not_azalkatsa_naga
-			always = no
-		}
+		limit = { has_any_estates = no }
+		has_any_estates = yes
+	}
+	if = {
+		limit = { has_government_attribute = blocked_call_diet }
+		NOT = { has_government_attribute = blocked_call_diet }
+	}
+	OR = {
+		NOT = { has_any_active_estate_agenda = yes } #Needs a NOT or it won't work as a NOT
+		[[player] can_auto_complete_active_agenda = yes ]
 	}
 }
 illusion_2_assimilation_program_trigger = { # Assimilation Program
@@ -2763,8 +2881,17 @@ necromancy_2_speak_with_dead_trigger = { # Speak With Dead
 		NOT = { adm = 5 }
 		NOT = { dip = 5 }
 		NOT = { mil = 5 }
+		ruler_is_lich = yes
 	}
-	
+	hidden_trigger = {
+		NOT = {
+			AND = {
+				adm = 6
+				dip = 6
+				mil = 6
+			}
+		}
+	}
 }
 necromancy_2_steal_vitality_trigger = { # Steal Vitality
 	has_not_banned_necromancy = yes
@@ -3248,10 +3375,10 @@ is_overall_not_studying_magic = {
 }
 
 type_amount_studied_magic = { check_variable = { num_times_studied_magic_$type$ = $amount$ } }
-amount_ruler_studied_magic = { type_times_studied_magic = { type = ruler amount = $amount$ } }
-amount_heir_studied_magic = { type_times_studied_magic = { type = heir amount = $amount$ } }
-amount_estate_studied_magic = { type_times_studied_magic = { type = country amount = $amount$ } }
-amount_overall_studied_magic = { type_times_studied_magic = { type = total amount = $amount$ } }
+amount_ruler_studied_magic = { type_amount_studied_magic = { type = ruler amount = $amount$ } }
+amount_heir_studied_magic = { type_amount_studied_magic = { type = heir amount = $amount$ } }
+amount_estate_studied_magic = { type_amount_studied_magic = { type = country amount = $amount$ } }
+amount_overall_studied_magic = { type_amount_studied_magic = { type = total amount = $amount$ } }
 
 ########################
 ### MAGICAL PROJECTS ###

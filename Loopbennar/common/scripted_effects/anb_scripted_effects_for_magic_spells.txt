@@ -609,6 +609,13 @@ divination_0_guidance_effect = {  # Guidance
 			limit = { has_country_modifier = orb_of_omniscience_div_tracker }
 			change_variable = { orb_of_omniscience_progress_tracker = 25 }
 		}
+		if = {
+			limit = { has_country_flag = track_guidance_count }
+			change_variable = {
+				which = magic_guidance_cast_count
+				value = 1
+			}
+		}
 	}
 }
 divination_1_eye_for_talent_effect = {  # Eye for Talent
@@ -733,35 +740,66 @@ divination_1_deposit_divination_sub_effect = { #Deposit Divination sub-effect
 	}
 }
 divination_2_scry_effect = {  # Scry #VERY FINICKY ABOUT ROOT SCOPE DUE TO FOW EFFECT
-	if = {
-		limit = {
-			has_ruler_flag = ancestor_spirit_patron
-			receiving_mindarayan_buff = yes
-		}
-		if = { #80%
-			limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-			divination_2_scry_sub_effect = { days = 3285 months = 108 }
-		}
-		else = { divination_2_scry_sub_effect = { days = 2920 months = 96 } }
-		custom_tooltip = magic_booster_by_patron_tt
-		custom_tooltip = tughayasa_divination_booster_tt
-	}
-	else_if = {
-		limit = { has_ruler_flag = ancestor_spirit_patron }
-		divination_2_scry_sub_effect = { days = 2555 months = 84 }
-		custom_tooltip = magic_booster_by_patron_tt
-	}
-	else_if = { #getting a mindarayan buff
+	#Lets go with additive. Base duration = { days = 1825 months = 60 }
+	# +100% : orb of omniscience level 2 - also provides institution progress
+	# +40% oracle_mountain tier 3: 40% longer, see tughayasa_better_divination_2_tt
+	# +20% oracle_mountain tier 1: 20% longer, see tughayasa_better_divination_1_tt
+	#
+	# Please do not add any MT specific, or limited scope duration increasing effects to Scry, unless they are mutually exclusive with mindarayan
+	# This effect is already quite unwieldy
+	# Possibly *ONE* more stackable bonus would be permitted, for something impactful
+	# (The if/else chain for a third duration buff can be found in the git history)
+
+
+	if = { #getting a mindarayan buff
 		limit = { receiving_mindarayan_buff = yes }
-		if = { #40%
+		if = { #Tier 3 oracle_mountain
 			limit = { 4527 = { has_great_project = { type = oracle_mountain tier = 3 } } }
-			divination_2_scry_sub_effect = { days = 2555 months = 84 }
+			if = {
+				limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 2 } }
+				#Buff, 100+40%
+				divination_2_scry_sub_effect = { days = 4380 months = 144 buffed = yes }
+			}
+			else = { #40%
+				divination_2_scry_sub_effect = { days = 2555 months = 84 }
+			}
 		}
-		else = { divination_2_scry_sub_effect = { days = 2190 months = 72 } }
+		else = { #Tier 2 oracle_mountain
+			if = {
+				limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 2 } }
+				#Buff, 100+20%
+				divination_2_scry_sub_effect = { days = 4015 months = 132 buffed = yes }
+			}
+			else = { #20%
+				divination_2_scry_sub_effect = { days = 2190 months = 72 }
+			}
+		}
+	}
+
+	else = { #No mindarayan buff
+		if = {
+			limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 2 } }
+			#Buff, 100%
+			divination_2_scry_sub_effect = { days = 3650 months = 120 buffed = yes }
+		}
+		else = { #0%
+			divination_2_scry_sub_effect = { days = 1825 months = 60 }
+		}
+	}
+
+
+	#The custom tooltips are here because the code is difficult to read when they're mixed in
+	if = {
+		limit = { receiving_mindarayan_buff = yes }
 		custom_tooltip = tughayasa_divination_booster_tt
 	}
-	else = { divination_2_scry_sub_effect = { days = 1825 months = 60 } }
-	custom_tooltip = divination_2_scry_upgrade_no
+	if = {
+		limit = { at_least_magic_project_level = { project = orb_of_omniscience level = 2 } }
+		custom_tooltip = divination_2_scry_upgrade_yes
+	}
+	else = {
+		custom_tooltip = divination_2_scry_upgrade_no
+	}
 
 	hidden_effect = {
 		if = {
@@ -1311,14 +1349,113 @@ illusion_1_bread_and_circuses_effect = { # Bread and Circuses
 	}
 	else = { custom_tooltip = illusion_1_bread_and_circuses_no_active_agenda }
 
-	hidden_effect = {
-		if = {
-			limit = { NOT = { has_any_active_estate_agenda = yes } }
-			country_event = { id = estate_privileges_and_agendas_events.3 }
-			add_estate_loyalty = { estate = all loyalty = 5 }
+	#This is the `summon_the_diet` effect block. Any changes should be made to both
+	if = { #Trigger means AI can only cast the spell when they would pass this limit
+		limit = { NOT = { has_any_active_estate_agenda = yes } }
+		# custom_tooltip = ESTATES_SUMMON_THE_DIET_DESC
+		hidden_effect = {
+			if = {
+				limit = { NOT = { has_anzalkatsa_naga = yes } }
+				country_event = { id = estate_privileges_and_agendas_events.3 }
+			}
+			if = { #MUST be an `if` or event won't fire
+				limit = { has_anzalkatsa_naga = yes }
+				clr_country_flag = Invalidate_NagaAgenda
+				country_event = { id = estate_privileges_and_agendas_events.14 }
+			}
+			if = {
+				limit = {
+					ai = yes
+				}
+				random_list = {
+					1 = {}
+					9 = { set_country_flag = auto_complete_estate_agenda_all }
+				}
+			}
 		}
-		else = { auto_complete_estate_agenda = { estate = all } }
+		custom_tooltip = SEPERATOR_TOOLTIP
+		
+		if = {
+			limit = {
+				has_country_flag = recent_estate_agenda
+			}
+			clr_country_flag = recent_estate_agenda
+		}
+		set_country_flag = recent_estate_agenda
+
+		if = {
+			limit = {
+				# AI are excluded from this component of the spell so their influence doesn't get too high
+				ai = no
+				NOT = {
+					has_government_attribute = diet_increases_not_influence
+					has_estate_privilege = estate_burghers_to_outsmart_and_outwit
+				}
+			}
+			add_estate_influence_modifier = {
+				estate = all
+				desc = EST_VAL_DIET_SUMMONED
+				duration = 7300
+				influence = 5
+				short = yes
+			}
+		}
+		add_estate_loyalty = {
+			estate = all
+			loyalty = 5
+			short = yes
+		}
+		if = {
+			limit = {
+				has_government_attribute = republican_tradition_from_diets
+			}
+			add_scaled_republican_tradition = 2
+		}
+		if = {
+			limit = { 
+				owns = 394
+				394 = { #can use modifier trigger
+					baths_of_verinus_are_active = yes #scripted so bypasses can be added
+				}
+			}
+			if = {
+				limit = { 394 = { has_great_project = { type = baths_of_verinus tier = 3 } } }
+				hidden_effect = {
+					random_list = {
+						1 = { define_random_adm_advisor_effect = { skill = 3 cost_multiplier = 0.5 culture = ROOT } }
+						1 = { define_random_dip_advisor_effect = { skill = 3 cost_multiplier = 0.5 culture = ROOT } }
+						1 = { define_random_mil_advisor_effect = { skill = 3 cost_multiplier = 0.5 culture = ROOT } }
+					}
+				}
+			}
+			else_if = {
+				limit = { 394 = { has_great_project = { type = baths_of_verinus tier = 2 } } }
+				hidden_effect = {
+					random_list = {
+						1 = { define_random_adm_advisor_effect = { skill = 2 cost_multiplier = 0.5 culture = ROOT } }
+						1 = { define_random_dip_advisor_effect = { skill = 2 cost_multiplier = 0.5 culture = ROOT } }
+						1 = { define_random_mil_advisor_effect = { skill = 2 cost_multiplier = 0.5 culture = ROOT } }
+					}
+				}
+			}
+			else_if = {
+				limit = { 394 = { has_great_project = { type = baths_of_verinus tier = 1 } } }
+				hidden_effect = {
+					random_list = {
+						1 = { define_random_adm_advisor_effect = { skill = 1 cost_multiplier = 0.5 culture = ROOT } }
+						1 = { define_random_dip_advisor_effect = { skill = 1 cost_multiplier = 0.5 culture = ROOT } }
+						1 = { define_random_mil_advisor_effect = { skill = 1 cost_multiplier = 0.5 culture = ROOT } }
+					}
+				}
+			}
+		}
+
+		#Pashaine
+		pashaine_add_clue = yes
+
+		accretive_path_gain_chi = { aspect = meditation_through_labour category = dip amount = 15 }
 	}
+	else = { hidden_effect = { auto_complete_estate_agenda = { estate = all } } }
 }
 illusion_2_assimilation_program_effect = { # Assimilation Program
 	add_country_modifier = { name = illusion_2_assimilation_program_mod duration = 7300 }
@@ -1385,7 +1522,9 @@ necromancy_1_contagion_effect = { # Contagion
 		add_province_modifier = { name = necromancy_1_contagion_local_mod duration = 1825 }
 	}
 	hidden_effect = {
-		save_event_target_as = contagion_province
+		PREV = {
+			save_event_target_as = contagion_province
+		}
 		every_war_enemy_country = {
 			limit = { event_target:contagion_province = { sieged_by = PREV } }
 			country_event = { id = magic_spell.710 } #Nofication
@@ -1680,10 +1819,15 @@ transmutation_1_plant_growth_sub_effect = { #Plant Growth - sub-effect
 	tooltip = { 4160 = { add_province_modifier = { name = transmutation_1_plant_growth_local_mod duration = $days$ } } }
 	hidden_effect = {
 		if = {
-			limit = { 
 				has_great_project = {
 					type = grave_forest_of_ilvandet
-					tier = 2
+				31 = { #Ilvandet
+					owned_by = PREV
+					has_great_project = {
+						type = grave_forest_of_ilvandet
+						tier = 2
+					}
+					grave_forest_of_ilvandet_is_active = yes
 				}
 			}
 			every_owned_province = {

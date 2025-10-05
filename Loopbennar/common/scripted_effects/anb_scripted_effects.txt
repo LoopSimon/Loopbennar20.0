@@ -5064,6 +5064,19 @@ anb_on_development_effect = {
 		add_base_$development$ = 1
 		set_province_flag = the_red_citadel_extra_dev_already
 	}
+
+	if = { #Golden Tremor
+		limit = {
+			owner = { has_country_flag = I57_deving_capital_flag }
+			NOT = {
+				provincial_institution_progress = {
+					which = renaissance
+					value = 100
+				}
+			}
+		}
+		add_next_institution_embracement_scaled = 5
+	}
 }
 
 create_vassal_with_religion_and_culture = {
@@ -5122,168 +5135,188 @@ cleanup_empty_province = {
 	}
 }
 
-
+# Centaur Nomadic Zone of Control Effects
 
 apply_owned_NZOC_country = {
-	save_event_target_as = the_centaur_who_moved
+	save_event_target_as = the_centaur_who_moved #Needed because ROOT is different in the 2 places this is fired
 	every_owned_province = {
-		clr_province_flag = current_owned_NZOC
 		remove_province_modifier = base_nomadic_zone_of_control
+		remove_province_modifier = base_nomadic_zone_of_control_double
 		remove_province_modifier = base_noncentaur_nomadic_zone_of_control
+		remove_province_modifier = base_noncentaur_nomadic_zone_of_control_double
 	}
+
 	capital_scope = {
-		set_province_flag = is_nomadic_capital
 		if = {
-			limit = {
-				NOT = {
-					OR = {
-						has_centaur_minority_trigger = yes
-						has_centaur_majority_trigger = yes
-					}
-				}
-			}
+			limit = { NOT = { fast_has_pop_of_race = { race = centaur } } }
 			add_centaur_minority_size_effect = yes
 		}
-		hidden_effect = {add_local_autonomy = -100}
+		
+		hidden_effect = { add_local_autonomy = -100 }
+
 		#GIVE MODIFIERS TO CAPITAL
-		if = {
-			limit = {
-				NOT = { has_province_modifier = base_nomadic_zone_of_control}
-			}
-			hidden_effect = {
-				add_province_modifier = {
-					name = base_nomadic_zone_of_control
-					duration = -1
-				}
-			}
-		}
-		set_province_flag = current_owned_NZOC
-		if = {
-				limit = {
-				culture_group = centaur
-			}
-			apply_owned_centaur_NZOC_province = yes
-		}
-		if = {
-			limit = {
-				owner = {has_estate_privilege = estate_monstrous_tribes_gozlamoir_system}
-				NOT = {culture_group = centaur}
-			}
-			apply_owned_noncentaur_NZOC_province = yes
-		}
+		apply_all_owned_NZOC_province = yes
 
 		#GIVE MODIFIERS TO OWNED NEIGHBORING PROVINCES
 		every_neighbor_province = {
 			limit = {
-				country_or_non_sovereign_subject_holds = event_target:the_centaur_who_moved
-				NOT = { has_province_modifier = base_nomadic_zone_of_control}
+				owned_by = event_target:the_centaur_who_moved
+				has_base_nomadic_zone_of_control_modifier = no
 			}
-			hidden_effect = {
-				add_province_modifier = {
-					name = base_nomadic_zone_of_control
-					duration = -1
-				}
-			}
-			set_province_flag = current_owned_NZOC
-
-			if = {
-				limit = {
-					culture_group = centaur
-				}
-				apply_owned_centaur_NZOC_province = yes
-			}
-			if = {
-				limit = {
-					owner = {has_estate_privilege = estate_monstrous_tribes_gozlamoir_system}
-					NOT = {culture_group = centaur}
-				}
-				apply_owned_noncentaur_NZOC_province = yes
-			}
-			#GOV REFORMS that apply to ALL NZOC go here
+			apply_all_owned_NZOC_province = yes
 		}
 	}
-	country_event = { id = centaur_nomad.200 days = 2}
+
+	#Golden Tremor - Permanent NZoC Province
+	if = {
+		limit = { has_saved_global_event_target = I57_permanent_capital_target }
+		event_target:I57_permanent_capital_target = {
+			if = {
+				limit = { has_base_nomadic_zone_of_control_modifier = no }
+				apply_all_owned_NZOC_province = yes
+			}
+		}
+	}
+	
+	apply_debuff_NZOC_country_scope = yes
+
+	country_event = { id = centaur_nomad.200 }
 }
 
 apply_owned_centaur_NZOC_province = {
-
 	hidden_effect = {
-	#	add_province_modifier = {
-	#		name = base_centaur_nomadic_zone_of_control
-	#		duration = 3650
-	#	}
 		owner = {
-			add_horde_unity = 0.5
-			change_government_reform_progress = 1
-			change_variable = {
-       			which = NZOC_horde_unity
-        		value = 0.5
-    		}
-			change_variable = {
-       			which = NZOC_reform_progress
-        		value = 1
-    		}
-			change_variable = {
-       			which = NZOC_provinces_effected_positive
-        		value = 1
-    		}
+			if = {
+				limit = { PREV = { has_province_flag = cen_double_nzoc_effects_flag } }
+				add_horde_unity = 1
+				change_government_reform_progress = 2
+				change_variable = {
+					which = NZOC_horde_unity
+					value = 1
+				}
+				change_variable = {
+					which = NZOC_reform_progress
+					value = 2
+				}
+			}
+			else = {
+				add_horde_unity = 0.5
+				change_government_reform_progress = 1
+				change_variable = {
+					which = NZOC_horde_unity
+					value = 0.5
+				}
+				change_variable = {
+					which = NZOC_reform_progress
+					value = 1
+				}
+			}
 		}
 	}
 }
 
 apply_owned_noncentaur_NZOC_province = {
 	hidden_effect = {
-		add_province_modifier = {
-			name = base_noncentaur_nomadic_zone_of_control
-			duration = -1
+		if = {
+			limit = { has_province_flag = cen_double_nzoc_effects_flag }
+			add_province_modifier = {
+				name = base_noncentaur_nomadic_zone_of_control
+				duration = -1
+			}
+			owner = { 
+				change_government_reform_progress = 4 
+				change_variable = {
+					which = NZOC_reform_progress
+					value = 4
+				}
+			}
 		}
-		owner = {
-			change_government_reform_progress = 2
+		else = {
+			add_province_modifier = {
+				name = base_noncentaur_nomadic_zone_of_control_double
+				duration = -1
+			}
+			owner = { 
+				change_government_reform_progress = 2 
+				change_variable = {
+					which = NZOC_reform_progress
+					value = 2
+				}
+			}
+		}
+	}
+}
+
+apply_all_owned_NZOC_province = {
+
+	#Add basic NZoC Modifier
+	hidden_effect = { add_base_nomadic_zone_of_control_modifier = yes }
+
+	#Apply effects if a centaur province
+	if = {
+		limit = { culture_group = centaur }
+		apply_owned_centaur_NZOC_province = yes
+	}
+
+	#Otherwise apply non-centaur effects
+	if = {
+		limit = {
+			owner = { has_estate_privilege = estate_monstrous_tribes_gozlamoir_system }
+			NOT = { culture_group = centaur }
+		}
+		apply_owned_noncentaur_NZOC_province = yes
+	}
+	
+	owner = {
+		#Increment variable for tooltip
+		change_variable = {
+			which = nzoc_provinces_effected_positive
+			value = 1
+		}
+
+		if = { #Golden Tremor
+			limit = { has_country_flag = I57_nzoc_effects_flag }
+			add_manpower = 1 
 			change_variable = {
-       			which = NZOC_reform_progress
-        		value = 2
-    		}
-			change_variable = {
-       			which = NZOC_provinces_effected_positive
-        		value = 1
-    		}
+				which = NZOC_manpower
+				value = 1000
+			}
+			if = {
+				limit = { PREV = { I57_won_negeal = yes } }
+				change_government_reform_progress = 5 
+				change_variable = {
+					which = NZOC_reform_progress
+					value = 5
+				}
+			}
 		}
 	}
 }
 
 apply_debuff_NZOC_country_scope = {	
-	save_event_target_as = the_centaur_who_moved
-	#every_province = {
-     #   limit = {
-	#		NOT = {
-	#			province_distance = {
-    #                who = ROOT
-    #                distance = 200
-    #            }
-	#		}
-    #    }
-    #    add_permanent_claim = event_target:the_centaur_who_moved
-    #}
 	capital_scope = {
 		every_neighbor_province = { #add modifiers and claims to all unowned neighbor provinces
-			limit = {
-				NOT = {
-					country_or_non_sovereign_subject_holds = event_target:the_centaur_who_moved
-				}
-			}
+			limit = { NOT = { owned_by = event_target:the_centaur_who_moved } }
+
 			#add normal claims
 			add_claim = event_target:the_centaur_who_moved
+
 			#add extra claims for rule from the storm
 			if = {
-				limit = {owner = {has_government_attribute = rule_from_the_storm_effect}}
+				limit = { 
+					event_target:the_centaur_who_moved = { 
+						has_government_attribute = rule_from_the_storm_effect 
+					} 
+				}
 				every_neighbor_province = {
 					add_claim = event_target:the_centaur_who_moved
 				}
 			}
+
 			#increment debuffed province count
 			event_target:the_centaur_who_moved = {
 				change_variable = {
-    				which = NZOC_provinces_effected_negative
+    				which = nzoc_provinces_effected_negative
     				value = 1
    				}
 			}			
@@ -5296,40 +5329,31 @@ apply_pre_modifiers_NZOC_country = {
 	if = {
 		limit = {
 			has_government_attribute = centaur_patronage_migrate_effect
-		}
-		if = {
-			limit = {
-				num_of_owned_provinces_with = {
-					value = 4
-					culture_is_centaur = no
-					has_province_flag = current_owned_NZOC
-				}
+			num_of_owned_provinces_with = {
+				value = 4
+				has_base_nomadic_zone_of_control_modifier = yes
+				culture_is_centaur = no
 			}
-			#effects
-			add_country_modifier = {
-				name = centaur_patrons_of_the_arts_pre
-				duration = 7300
-			}	
+		}
+		add_country_modifier = {
+			name = centaur_patrons_of_the_arts_pre
+			duration = 7300
 		}
 	}
+
 	#TIER 5 CHOICE 3. GOZLAMOIR SYSTEM EXPANSION
 	if = {
 		limit = {
 			has_government_attribute = gozlamoir_expansion_migrate_effect
+			num_of_owned_provinces_with = {
+				value = 3
+				has_base_nomadic_zone_of_control_modifier = yes
+				culture_is_human = yes
+			}
 		}
-		if = {
-			limit = {
-				num_of_owned_provinces_with = {
-					value = 3
-					has_province_flag = current_owned_NZOC
-					culture_is_human = yes
-				}
-			}
-			#effects
-			add_country_modifier = {
-				name = gozlamoir_expansion_pre
-				duration = -1
-			}
+		add_country_modifier = {
+			name = gozlamoir_expansion_pre
+			duration = -1
 		}
 	}
 
@@ -5337,86 +5361,78 @@ apply_pre_modifiers_NZOC_country = {
 	if = {
 		limit = {
 			has_government_attribute = ogrish_production_migrate_effect
-		}
-		if = {
-			limit = {
-				num_of_owned_provinces_with = {
-					value = 2
-					has_province_flag = current_owned_NZOC
-					OR = {
-						trade_goods = iron
-						trade_goods = copper
-						trade_goods = gold
-						trade_goods = coal
-					}
+			num_of_owned_provinces_with = {
+				value = 2
+				has_base_nomadic_zone_of_control_modifier = yes
+				OR = {
+					trade_goods = iron
+					trade_goods = copper
+					trade_goods = gold
+					trade_goods = coal
 				}
 			}
-			#effects
-			add_country_modifier = {
-				name = fires_of_industry_pre
-				duration = -1
-			}
+		}
+		add_country_modifier = {
+			name = fires_of_industry_pre
+			duration = -1
 		}
 	}
+
 	#TIER 5 CHOICE 4 MODERNIZE ORDSIWYN
 	if = {
 		limit = {
 			has_government_attribute = reformed_ordsiwyn_migrate_effect
+			num_of_owned_provinces_with = {
+				value = 4
+				has_base_nomadic_zone_of_control_modifier = yes
+				culture_is_centaur = yes
+			}
 		}
-		if = {
-			limit = {
-				num_of_owned_provinces_with = {
-					value = 4
-					has_province_flag = current_owned_NZOC
-					culture_is_centaur = yes
-				}
-			}
-			#effects
-			add_country_modifier = {
-				name = modernize_the_ordsiwyn_pre
-				duration = -1
-			}
+		add_country_modifier = {
+			name = modernize_the_ordsiwyn_pre
+			duration = -1
 		}
 	}
-
 }
 
 centaur_consume_pre_modifiers_country = {
 	#GOZLAMOIR
 	if = {
-		limit = {has_country_modifier = gozlamoir_expansion_pre}
+		limit = { has_country_modifier = gozlamoir_expansion_pre }
 		remove_country_modifier = gozlamoir_expansion_pre
 		capital_scope = {	
-				every_neighbor_province = { #add modifier to OWNED neighbor provinces
-					limit = {
-						country_or_non_sovereign_subject_holds = event_target:the_centaur_who_moved
-					}
-					add_province_modifier = {
-						name = gozlamoir_expansion_post_province
-						duration = 1825
-					}
+			add_province_modifier = {
+				name = gozlamoir_expansion_post_province
+				duration = 1825
+			}
+			every_neighbor_province = { #add modifier to OWNED neighbor provinces
+				limit = { owned_by = ROOT }
+				add_province_modifier = {
+					name = gozlamoir_expansion_post_province
+					duration = 1825
 				}
 			}
+		}
 	}
+
 	#OGRE
 	if = {
-		limit = {has_country_modifier = fires_of_industry_pre}
+		limit = { has_country_modifier = fires_of_industry_pre }
 		remove_country_modifier = fires_of_industry_pre
 		capital_scope = {
-			artillery = event_target:the_centaur_who_moved
+			artillery = ROOT
 			owner = {
 				add_country_modifier = {
 					name = fires_of_industry_post_country
 					duration = 1825
 				}
 			}
-		}
-
-		
+		}		
 	}
+
 	#TIER 5 CHOICE 1 CENTAUR PATRONAGE
 	if = {
-		limit = {has_country_modifier = centaur_patrons_of_the_arts_pre}
+		limit = { has_country_modifier = centaur_patrons_of_the_arts_pre }
 		remove_country_modifier = centaur_patrons_of_the_arts_pre
 		add_country_modifier = {
 			name = centaur_patrons_of_the_arts_post
@@ -5425,11 +5441,11 @@ centaur_consume_pre_modifiers_country = {
 		capital_scope = {
 			add_next_institution_embracement = 15
 		}
-		
 	}
+
 	#TIER 5 CHOICE 4
 	if = {
-		limit = {has_country_modifier = modernize_the_ordsiwyn_pre}
+		limit = { has_country_modifier = modernize_the_ordsiwyn_pre }
 		remove_country_modifier = modernize_the_ordsiwyn_pre
 		add_country_modifier = {
 			name = modernize_the_ordsiwyn_post
@@ -5438,77 +5454,188 @@ centaur_consume_pre_modifiers_country = {
 	}
 }
 
-
-
-
 apply_reform_modifiers_NZOC_country = {
 	#TIER 2 CHOICE 1. NEGEAL
 	if = {
 		limit = {
 			has_government_attribute = centaur_negeal_reform_migrate_effect
-		}
-		if = {
-			limit = {
-				num_of_owned_provinces_with = {
-					value = 4
-					culture_is_centaur = yes
-					has_province_flag = current_owned_NZOC
-				}
+			num_of_owned_provinces_with = {
+				value = 4
+				has_base_nomadic_zone_of_control_modifier = yes
+				culture_is_centaur = yes
 			}
-			#effects
+		}
+		if = { #Golden Tremor
+			limit = { mission_completed = I57_5_3_ordsiwyn_reforms }
+			add_yearly_manpower = 1.5
+			capital_scope = {
+				cavalry = ROOT
+				cavalry = ROOT
+				cavalry = ROOT
+				cavalry = ROOT
+			}
+		}
+		else = {
 			add_yearly_manpower = 0.75
-				capital_scope = {
-   				cavalry = event_target:the_centaur_who_moved
-				cavalry = event_target:the_centaur_who_moved
+			capital_scope = {
+				cavalry = ROOT
+				cavalry = ROOT
 			}
 		}
 	}
+
 	#TIER 2 CHOICE 2. ENSURE ORDSIWYN LOYALTIES
 	if = {
 		limit = {
 			has_government_attribute = centaur_ensure_ordsiwyn_loyalties_reform_migrate_effect
-		}
-		if = {
-			limit = {
+			OR = {
+				AND = { #Golden Tremor
+					mission_completed = I57_5_3_ordsiwyn_reforms
+					any_owned_province = {
+						has_base_nomadic_zone_of_control_modifier = yes
+						OR = {
+							trade_goods = wool
+							trade_goods = ivory
+							trade_goods = livestock
+							trade_goods = fur
+						}
+					}
+				}
 				num_of_owned_provinces_with = {
 					value = 3
-					has_province_flag = current_owned_NZOC
+					has_base_nomadic_zone_of_control_modifier = yes
 					OR = {
 						trade_goods = wool
-						trade_goods = livestock
 						trade_goods = ivory
+						trade_goods = livestock
 						trade_goods = fur
 					}
 				}
 			}
-			#effects
-			add_country_modifier = {
-				name = centaur_loyal_population
-				duration = -1
+		}
+		add_country_modifier = {
+			name = centaur_loyal_population
+			duration = -1
+		}
+		capital_scope = {
+			add_province_modifier = {
+				name = centaur_ensured_loyalties_prov
+				duration = 1825
 			}
-			capital_scope = {
-				every_neighbor_province = { #add modifier to OWNED neighbor provinces
-					limit = {
-						country_or_non_sovereign_subject_holds = event_target:the_centaur_who_moved
-					}
-					add_province_modifier = {
-						name = centaur_ensured_loyalties_prov
-						duration = 1825
-					}
+			every_neighbor_province = { #add modifier to OWNED neighbor provinces
+				limit = { owned_by = ROOT }
+				add_province_modifier = {
+					name = centaur_ensured_loyalties_prov
+					duration = 1825
 				}
 			}
-			#add modifier to every nzoc province
 		}
 	}
 
-	#TIER 2 CHOICE 3. WASTE NOT
-	#REMOVED
+	#Middlemen of the Plains
+	if = {
+		limit = {
+			has_government_attribute = centaur_COT_free_development
+		}
+		every_owned_province = {
+			limit = {
+				has_province_modifier = centaur_COT_capital	
+			}
+			remove_province_modifier = centaur_COT_capital
+		}
+		if = {
+			limit = {
+				capital_scope = {
+					province_has_center_of_trade_of_level = 1
+				}
+			}
+			capital_scope = {
+				add_province_modifier = {
+					name = centaur_COT_capital
+					duration = -1
+				}
+				add_base_production = 1
+			}
+		}
+	}
+	
+	#Generic Centaur MT
+	if = {
+		limit = {
+			has_country_flag = centaur_free_temple
+			capital_scope = { has_tax_building_trigger = no }
+		}
+		capital_scope = {
+			add_building_construction = {
+				building = temple
+				cost = 0
+			}
+		}
+	}
+}
 
-	#TIER 5 CHOICE 1. PATRONS OF THE ARTS
-	#MOVED
+add_base_nomadic_zone_of_control_modifier = {
+	if = {
+		limit = { has_province_flag = cen_double_nzoc_effects_flag }
+		add_province_modifier = {
+			name = base_nomadic_zone_of_control_double
+			duration = -1
+		}
+	}
+	else = {
+		add_province_modifier = {
+			name = base_nomadic_zone_of_control
+			duration = -1
+		}
+	}
+}
 
-	#PROTECTION RACKETEERING
-	#REMOVED
+add_noncentaur_nomadic_zone_of_control_modifier = {
+	if = {
+		limit = { has_province_flag = cen_double_nzoc_effects_flag }
+		add_province_modifier = {
+			name = base_noncentaur_nomadic_zone_of_control
+			duration = -1
+		}
+	}
+	else = {
+		add_province_modifier = {
+			name = base_noncentaur_nomadic_zone_of_control_double
+			duration = -1
+		}
+	}
+}
+
+remove_centaur_nomadism = {
+	hidden_effect = {
+		every_owned_province = {
+			limit = { has_province_modifier = base_nomadic_zone_of_control }
+			remove_province_modifier = base_nomadic_zone_of_control
+		}
+		every_owned_province = {
+			limit = { has_province_modifier = base_nomadic_zone_of_control_double }
+			remove_province_modifier = base_nomadic_zone_of_control_double
+		}
+		every_owned_province = {
+			limit = { has_province_modifier = base_noncentaur_nomadic_zone_of_control }
+			remove_province_modifier = base_noncentaur_nomadic_zone_of_control
+		}
+		every_owned_province = {
+			limit = { has_province_modifier = base_noncentaur_nomadic_zone_of_control_double }
+			remove_province_modifier = base_noncentaur_nomadic_zone_of_control_double
+		}
+		if = {
+			limit = { has_country_modifier = nomadic_capital_just_moved }
+			remove_country_modifier = nomadic_capital_just_moved
+		}
+		clr_country_flag = has_centaur_nomadism_attribute
+
+		if = { #Golden Tremor
+			limit = { has_saved_global_event_target = I57_permanent_capital_target }
+			set_capital = event_target:I57_permanent_capital_target
+			clear_global_event_target = I57_permanent_capital_target
+		}
+	}
 }
 
 golden_highway_start_construction = {
@@ -6691,7 +6818,7 @@ anb_add_accepted_culture_or_dip_power = { #The in-engine version is bugged, won'
 		}
 	}
 	[[dip_reward]
-		custom_tooltip = ADD_ACCEPTED_CULTURE_SLOT_LIMITATION_TT #If the ï¿½YCultureï¿½! is already an ï¿½YAccepted Cultureï¿½!, or if there are not enough ï¿½YSlotsï¿½!, gain ï¿½G100ï¿½! Diplomatic Power instead.
+		custom_tooltip = ADD_ACCEPTED_CULTURE_SLOT_LIMITATION_TT #If the §YCulture§! is already an §YAccepted Culture§!, or if there are not enough §YSlots§!, gain §G100§! Diplomatic Power instead.
 	]
 }
 
@@ -6733,6 +6860,8 @@ anb_spawn_own_religion_rebels = {
 		kheionism =				{ spawn_rebels = { type = kheionism_rebels size = $size$ } }
 		gods_of_the_taychend =	{ spawn_rebels = { type = gods_of_the_taychend_rebels size = $size$ } }
 		oren_nayiru =			{ spawn_rebels = { type = oren_nayiru_rebels size = $size$ } }
+		gods_of_the_taychend_reformed =	{ spawn_rebels = { type = gods_of_the_taychend_reformed_rebels size = $size$ } }
+		oren_nayiru_reformed =			{ spawn_rebels = { type = oren_nayiru_reformed_rebels size = $size$ } }
 		ynn_river_worship =		{ spawn_rebels = { type = ynn_river_worship_rebels size = $size$ } }
 		ynn_river_reformed =	{ spawn_rebels = { type = ynn_river_reformed_rebels size = $size$ } }
 		rune_scribes =			{ spawn_rebels = { type = rune_scribes_rebels size = $size$ } }
@@ -8000,14 +8129,28 @@ prepare_months_of_trade_income = {
 
 add_prepared_months_of_tax_income = {
 	hidden_effect = {
-		var_effect = { effect = add_treasury var = current_tax_income sign = $sign$ }
+		var_effect = { effect = add_treasury var = current_tax_income sign = + }
 	}
 	custom_tooltip = add_months_of_tax_income_tt
 }
 
+remove_prepared_months_of_tax_income = {
+	hidden_effect = {
+		var_effect = { effect = add_treasury var = current_tax_income sign = - }
+	}
+	custom_tooltip = remove_months_of_tax_income_tt
+}
+
 add_prepared_months_of_trade_income = {
 	hidden_effect = {
-		var_effect = { effect = add_treasury var = current_trade_income sign = $sign$ }
+		var_effect = { effect = add_treasury var = current_trade_income sign = + }
+	}
+	custom_tooltip = add_months_of_trade_income_tt
+}
+
+remove_prepared_months_of_trade_income = {
+	hidden_effect = {
+		var_effect = { effect = add_treasury var = current_trade_income sign = - }
 	}
 	custom_tooltip = remove_months_of_trade_income_tt
 }
@@ -8257,29 +8400,145 @@ anb_aelantir_cultural_union = { #Might need an update if there's new cultures in
 anb_imperial_cultural_union = { #Accept all EoA imperial cultures for free without taking a slot
 	custom_tooltip = anb_imperial_cultural_union_tt
 	hidden_effect = {
-		anb_add_accepted_culture_or_dip_power = { culture = anbenncoster free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = half_elf free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = west_damerian free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = east_damerian free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = pearlsedger free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = crownsman free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = vernman free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = exwesser free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = arbarani free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = esmari free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = arannese free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = uelairey free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = aldresian free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = telgeiran free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = pashainey free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = havoric free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = imperial_halfling free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = imperial_gnome free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = dovesworn_gnoll free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = moon_elf free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = silver_dwarf free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = wexonard free = yes }
-		anb_add_accepted_culture_or_dip_power = { culture = vertesker free = yes }
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						culture_group = anbennarian
+						government_rank = 3
+					}
+				}
+			}
+			# don't do this if they have a cultural union over these cultures anyway
+			# since you otherwise gift any empire a couple hundred dip
+
+			# So that they become free
+			anb_remove_accepted_culture = { culture = anbenncoster }
+			anb_remove_accepted_culture = { culture = half_elf }
+			anb_remove_accepted_culture = { culture = west_damerian }
+			anb_remove_accepted_culture = { culture = east_damerian }
+			anb_remove_accepted_culture = { culture = pearlsedger }
+			anb_remove_accepted_culture = { culture = crownsman }
+			anb_remove_accepted_culture = { culture = vernman }
+			anb_remove_accepted_culture = { culture = exwesser }
+			anb_remove_accepted_culture = { culture = arbarani }
+			anb_remove_accepted_culture = { culture = esmari }
+			anb_remove_accepted_culture = { culture = arannese }
+			anb_remove_accepted_culture = { culture = uelairey }
+			anb_remove_accepted_culture = { culture = aldresian }
+			anb_remove_accepted_culture = { culture = telgeiran }
+			anb_remove_accepted_culture = { culture = pashainey }
+			anb_remove_accepted_culture = { culture = havoric }
+
+			anb_add_accepted_culture_or_dip_power = { culture = anbenncoster free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = half_elf free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = west_damerian free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = east_damerian free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = pearlsedger free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = crownsman free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = vernman free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = exwesser free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = arbarani free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = esmari free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = arannese free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = uelairey free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = aldresian free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = telgeiran free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = pashainey free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = havoric free = yes }
+		}
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						culture_group = halfling
+						government_rank = 3
+					}
+				}
+			}
+
+			# So that they become free
+			anb_remove_accepted_culture = { culture = imperial_halfling }
+
+			anb_add_accepted_culture_or_dip_power = { culture = imperial_halfling free = yes }
+		}
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						culture_group = gnomish
+						government_rank = 3
+					}
+				}
+			}
+
+			# So that they become free
+			anb_remove_accepted_culture = { culture = imperial_gnome }
+			
+			anb_add_accepted_culture_or_dip_power = { culture = imperial_gnome free = yes }
+		}
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						culture_group = gnollish
+						government_rank = 3
+					}
+				}
+			}
+
+			# So that they become free
+			anb_remove_accepted_culture = { culture = dovesworn_gnoll }
+			
+			anb_add_accepted_culture_or_dip_power = { culture = dovesworn_gnoll free = yes }
+		}
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						culture_group = elven
+						government_rank = 3
+					}
+				}
+			}
+
+			# So that they become free
+			anb_remove_accepted_culture = { culture = moon_elf }
+			
+			anb_add_accepted_culture_or_dip_power = { culture = moon_elf free = yes }
+		}
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						culture_group = dwarven
+						government_rank = 3
+					}
+				}
+			}
+
+			# So that they become free
+			anb_remove_accepted_culture = { culture = silver_dwarf }
+			
+			anb_add_accepted_culture_or_dip_power = { culture = silver_dwarf free = yes }
+		}
+		if = {
+			limit = {
+				NOT = {
+					AND = {
+						culture_group = alenic
+						government_rank = 3
+					}
+				}
+			}
+
+			# So that they become free
+			anb_remove_accepted_culture = { culture = wexonard }
+			anb_remove_accepted_culture = { culture = vertesker }
+			
+			anb_add_accepted_culture_or_dip_power = { culture = wexonard free = yes }
+			anb_add_accepted_culture_or_dip_power = { culture = vertesker free = yes }
+		}
 	}
 }
 
@@ -8809,6 +9068,12 @@ anb_lizardfolk_clash_change_variable_plus = {
 						school = being_sculptors_school_humiliated
 					}
 				}
+				if = {
+					limit = {
+						NOT = { has_global_flag = fate_ascended_once}
+					}
+					country_event = { id = AnzalkatsaSchoolFightEvents.19 }	
+				}
 			}
 		}
 		if = {
@@ -8859,7 +9124,7 @@ anb_lizardfolk_clash_change_variable_plus = {
 			}
 		}
 	}
-} 
+}
 
 #School Variable Change Anzalkatsa subtraction
 anb_lizardfolk_clash_change_variable_minus = {
@@ -8920,7 +9185,12 @@ anb_lizardfolk_clash_change_variable_minus = {
 						school = being_sculptors_school_ascended
 					}
 				}
-				
+			if = {
+				limit = {
+					NOT = { has_global_flag = being_ascended_once}
+				}
+				country_event = { id = AnzalkatsaSchoolFightEvents.18 }	
+			}
 			}
 		}
 		if = {
