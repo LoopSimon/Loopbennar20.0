@@ -9,6 +9,7 @@ country_event = {
 	picture = none
 	hidden = yes
 	is_triggered_only = yes
+
 	immediate = {
 		set_variable = {
    			which = NZOC_horde_unity
@@ -19,128 +20,36 @@ country_event = {
     		value = 0
 		}
 		set_variable = {
-   			which = NZOC_provinces_effected_positive
+   			which = NZOC_manpower
     		value = 0
 		}
 		set_variable = {
-   			which = NZOC_provinces_effected_negative
+   			which = nzoc_provinces_effected_positive
+    		value = 0
+		}
+		set_variable = {
+   			which = nzoc_provinces_effected_negative
     		value = 0
 		}
 	}
+
 	trigger = {
 		has_government_attribute = centaur_nomadism_attribute
-		NOT = {
-			has_country_flag = nomad_setup
-		}
+		NOT = { has_country_flag = nomad_setup }
 	}
-
 
 	option = {
 		hidden_effect = {
-			#save_event_target_as = the_centaur_who_moved
 			add_country_modifier = {
 				name = nomadic_capital_just_moved
 				duration = 1825
 			}
-			every_owned_province = {
-				limit = {
-					has_province_flag = is_nomadic_capital
-				}
-				clr_province_flag = is_nomadic_capital
-			}
 			set_country_flag = nomad_setup
-			country_event = {id = centaur_nomad.50 days = 1}
-		}
-
-		ai_chance = {
-			factor = 1
-		}
-	}
-}
-
-country_event = {
-	id = centaur_nomad.50
-	title = none
-	desc = none
-	picture = none
-	hidden = yes
-	is_triggered_only = yes
-
-	trigger = {
-		has_government_attribute = centaur_nomadism_attribute
-	}
-
-
-	option = {
-		hidden_effect = {
-			#save_event_target_as = the_centaur_who_moved
-			apply_debuff_NZOC_country_scope = yes
+			set_country_flag = has_centaur_nomadism_attribute
 			apply_owned_NZOC_country = yes
 		}
-
-		ai_chance = {
-			factor = 1
-		}
 	}
 }
-
-#Itinerant Capital Mechanic - Remove flag
-country_event = {
-	id = centaur_nomad.101
-	title = none
-	desc = none
-	picture = none
-	hidden = yes
-	
-	trigger = {
-		any_owned_province = {
-			has_province_flag = is_nomadic_capital
-		}
-		NOT = { has_government_attribute = centaur_nomadism_attribute}
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
-	option = {
-		every_owned_province = {
-			limit = {
-				has_province_flag = is_nomadic_capital
-			}
-			clr_province_flag = is_nomadic_capital
-		}
-		every_owned_province = {
-			limit = {
-				has_province_modifier = base_nomadic_zone_of_control
-			}
-			remove_province_modifier = base_nomadic_zone_of_control
-		}
-		# every_owned_province = {
-		# 	limit = {
-		# 		has_province_modifier = base_centaur_nomadic_zone_of_control
-		# 	}
-		# 	remove_province_modifier = base_centaur_nomadic_zone_of_control
-		# }
-		every_owned_province = {
-			limit = {
-				has_province_modifier = base_noncentaur_nomadic_zone_of_control
-			}
-			remove_province_modifier = base_noncentaur_nomadic_zone_of_control
-		}
-		if = {
-			limit = {
-				has_country_modifier = itinerant_capital_just_moved
-			}
-			remove_country_modifier = itinerant_capital_just_moved
-		}
-		ai_chance = {
-			factor = 1
-		}
-	}
-}
-
-
 
 #Itinerant Capital - AI event because I don't trust the AI to handle this and I want them to survive until 1820
 country_event = {
@@ -149,6 +58,7 @@ country_event = {
 	desc = none
 	picture = none
 	hidden = yes
+	is_triggered_only = yes
 
 	trigger = {
 		has_government_attribute = centaur_nomadism_attribute
@@ -157,8 +67,8 @@ country_event = {
 			continent = ROOT
 			controlled_by = ROOT
 			is_state = yes
-			NOT = { has_province_modifier = base_nomadic_zone_of_control }
-			NOT = { has_province_flag = is_nomadic_capital }
+			has_base_nomadic_zone_of_control_modifier = no
+			is_capital = no
 			is_city = yes
 		}
 		ai = yes
@@ -171,18 +81,14 @@ country_event = {
 		}
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
 	immediate = {
 		random_owned_province = {
 			limit = {
 				continent = ROOT
 				controlled_by = ROOT
 				is_state = yes 
-				NOT = { has_province_modifier = base_nomadic_zone_of_control }
-				NOT = { has_province_flag = is_nomadic_capital }
+				has_base_nomadic_zone_of_control_modifier = no
+				is_capital = no
 				is_city = yes
 			}
 			save_event_target_as = cent_new_capital
@@ -192,8 +98,8 @@ country_event = {
 				continent = ROOT
 				controlled_by = ROOT
 				is_state = yes 
-				NOT = { has_province_modifier = base_nomadic_zone_of_control }
-				NOT = { has_province_flag = is_nomadic_capital }
+				has_base_nomadic_zone_of_control_modifier = no
+				is_capital = no
 				is_city = yes
 				OR = {
 					local_autonomy = 20
@@ -207,8 +113,8 @@ country_event = {
 				continent = ROOT
 				controlled_by = ROOT
 				is_state = yes 
-				NOT = { has_province_modifier = base_nomadic_zone_of_control }
-				NOT = { has_province_flag = is_nomadic_capital }
+				has_base_nomadic_zone_of_control_modifier = no
+				is_capital = no
 				is_city = yes
 				OR = {
 					local_autonomy = 40
@@ -222,8 +128,8 @@ country_event = {
 				continent = ROOT
 				controlled_by = ROOT
 				is_state = yes 
-				NOT = { has_province_modifier = base_nomadic_zone_of_control }
-				NOT = { has_province_flag = is_nomadic_capital }
+				has_base_nomadic_zone_of_control_modifier = no
+				is_capital = no
 				is_city = yes
 				OR = {
 					local_autonomy = 60
@@ -237,8 +143,8 @@ country_event = {
 				continent = ROOT
 				controlled_by = ROOT
 				is_state = yes 
-				NOT = { has_province_modifier = base_nomadic_zone_of_control }
-				NOT = { has_province_flag = is_nomadic_capital }
+				has_base_nomadic_zone_of_control_modifier = no
+				is_capital = no
 				is_city = yes
 				OR = {
 					local_autonomy = 80
@@ -252,8 +158,8 @@ country_event = {
 				continent = ROOT
 				controlled_by = ROOT
 				is_state = yes 
-				NOT = { has_province_modifier = base_nomadic_zone_of_control }
-				NOT = { has_province_flag = is_nomadic_capital }
+				has_base_nomadic_zone_of_control_modifier = no
+				is_capital = no
 				is_city = yes
 				OR = {
 					local_autonomy = 20
@@ -268,8 +174,8 @@ country_event = {
 				continent = ROOT
 				controlled_by = ROOT
 				is_state = yes 
-				NOT = { has_province_modifier = base_nomadic_zone_of_control }
-				NOT = { has_province_flag = is_nomadic_capital }
+				has_base_nomadic_zone_of_control_modifier = no
+				is_capital = no
 				is_city = yes
 				OR = {
 					local_autonomy = 40
@@ -284,8 +190,8 @@ country_event = {
 				continent = ROOT
 				controlled_by = ROOT
 				is_state = yes 
-				NOT = { has_province_modifier = base_nomadic_zone_of_control }
-				NOT = { has_province_flag = is_nomadic_capital }
+				has_base_nomadic_zone_of_control_modifier = no
+				is_capital = no
 				is_city = yes
 				OR = {
 					local_autonomy = 60
@@ -300,8 +206,8 @@ country_event = {
 				continent = ROOT
 				controlled_by = ROOT
 				is_state = yes 
-				NOT = { has_province_modifier = base_nomadic_zone_of_control }
-				NOT = { has_province_flag = is_nomadic_capital }
+				has_base_nomadic_zone_of_control_modifier = no
+				is_capital = no
 				is_city = yes
 				OR = {
 					local_autonomy = 80
@@ -314,13 +220,7 @@ country_event = {
 	}
 
 	option = {
-		every_owned_province = {
-			limit = {
-				has_province_flag = is_nomadic_capital
-			}
-			add_local_autonomy = 10
-			clr_province_flag = is_nomadic_capital
-		}
+		capital_scope = { add_local_autonomy = 10 }
 		set_capital = event_target:cent_new_capital
 		add_country_modifier = {
 			name = nomadic_capital_just_moved
@@ -332,95 +232,45 @@ country_event = {
 	}
 }
 
-
-
-
-#################################################TESTING##############################
-
+#Notification Event when moving capital
 country_event = {
 	id = centaur_nomad.200
 	title = centaur_nomad.200.t
 	desc = centaur_nomad.200.d
-	picture = none
-	is_triggered_only = yes #temporary so that this event doesnt fire
-
-	#this one ends up as 1 too many every time for some reason. bandaid fix.
-	immediate = {
-		hidden_effect = {
-			#subtract_variable = {
-    		#	which = NZOC_provinces_effected_negative
-    		#	value = 1
-			#}
-		}
-	}
-
-	trigger = {
-
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
+	picture = CENTAUR_CAMPFIRE_eventPicture
+	is_triggered_only = yes
 
 	option = {
 		name = centaur_nomad.200.a
-		ai_chance = {
-			factor = 1
-		}
 		centaur_consume_pre_modifiers_country = yes
 		apply_pre_modifiers_NZOC_country = yes
 		apply_reform_modifiers_NZOC_country = yes
 		custom_tooltip = NZOC_horde_unity_gain_tt
 		custom_tooltip = NZOC_reform_progress_gain_tt
+		if = { #Golden Tremor
+			limit = { has_country_flag = I57_nzoc_effects_flag }
+			custom_tooltip = NZOC_manpower_gain_tt
+		}
 		custom_tooltip = NZOC_positive_province_count_tt
 		custom_tooltip = NZOC_negative_province_count_tt
-		hidden_effect = {
-			country_event = { id = centaur_nomad.201}
-		}
-	}
-}
-
-
-
-
-country_event = {
-	id = centaur_nomad.201
-	title = centaur_nomad.201.t
-	desc = centaur_nomad.201.d
-	picture = none
-	is_triggered_only = yes #temporary so that this event doesnt fire
-	hidden = yes
-
-	trigger = {
-
 	}
 
-	mean_time_to_happen = {
-		days = 1
-	}
-
-	option = {
-		name = centaur_nomad.201.a
-		ai_chance = {
-			factor = 1
-		}
-		multiply_variable = {
+	after = {
+		set_variable = {
     		which = NZOC_horde_unity
     		value = 0
 		}
-		multiply_variable = {
+		set_variable = {
     		which = NZOC_reform_progress
     		value = 0
 		}
-		multiply_variable = {
-    		which = NZOC_provinces_effected_positive
+		set_variable = {
+    		which = nzoc_provinces_effected_positive
     		value = 0
 		}
-		multiply_variable = {
-    		which = NZOC_provinces_effected_negative
+		set_variable = {
+    		which = nzoc_provinces_effected_negative
     		value = 0
 		}
-
-
 	}
 }

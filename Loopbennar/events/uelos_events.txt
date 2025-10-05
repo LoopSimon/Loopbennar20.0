@@ -1,75 +1,109 @@
 namespace = uelos_events
 
 #The First Step
-province_event = {
+country_event = {
 	id = uelos_events.1
 	title = uelos_events.1.t
 	desc = uelos_events.1.d
 	picture = HARBOUR_eventPicture
+	goto = uelos_province
 	
 	is_triggered_only = yes
 
-	immediate = {
-		hidden_effect = {
-			change_religion = uelos_cult
+	trigger = {
+		capital_scope = { continent = europe }
+		religion_group = cannorian
+		NOT = { has_country_flag = stopped_uelos_cult }
+		NOT = { religion = uelos_cult }
+		NOT = { religion = infernal_court }
+		NOT = { has_country_flag = supernaturally_bound_faith }
+		any_owned_province = { 
+			is_overseas = yes 
+			NOT = { religion = uelos_cult } 
+			is_city = yes 
+			NOT = { continent = serpentspine } 
 		}
 	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { 
+					is_overseas = yes
+					NOT = { religion = uelos_cult }
+					is_city = yes
+					NOT = { continent = serpentspine }
+				}
+				save_event_target_as = uelos_province
+			}
+			event_target:uelos_province = {
+				change_religion = uelos_cult
+			}
+		}
+	}
+	
 
 	option = {
 		name = uelos_events.1.a
 		ai_chance = { factor = 2 }
-		owner = {
-			add_treasury = -100
-			set_country_flag = stopped_uelos_cult
-		}
-		spawn_rebels = {
-			size = 2
-			type = uelos_cult_rebels
+		event_target:uelos_province = {
+			owner = {
+				add_treasury = -100
+				set_country_flag = stopped_uelos_cult
+			}
+			spawn_rebels = {
+				size = 2
+				type = uelos_cult_rebels
+			}
 		}
 	}
 	option = {
 		name = uelos_events.1.b
 		ai_chance = { factor = 2 }
-		add_unrest = 3
-		owner = {
-			add_treasury = -50
+		custom_tooltip = uelos_cult_growth_slow_tt
+		event_target:uelos_province = {
+			add_unrest = 3
+			owner = {
+				add_treasury = -50
+				hidden_effect = {
+					if = {
+						limit = { has_country_flag = uelos_cult_growth2 }
+						if = {
+							limit = { NOT = { has_country_flag = dealing_with_uelos_cult } }
+							country_event = {
+								id = uelos_events.2
+								days = 150
+							}
+							set_country_flag = dealing_with_uelos_cult
+						}
+					}
+					else_if = {
+						limit = { has_country_flag = uelos_cult_growth1 }
+						set_country_flag = uelos_cult_growth2
+						clr_country_flag = uelos_cult_growth1
+					}
+					else = {
+						set_country_flag = uelos_cult_growth1
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = uelos_events.1.c
+		ai_chance = { factor = 1 }
+		custom_tooltip = uelos_cult_growth_tt
+		event_target:uelos_province = {
 			hidden_effect = {
 				if = {
-					limit = { has_country_flag = uelos_cult_growth2 }
-					if = {
-						limit = { NOT = { has_country_flag = dealing_with_uelos_cult } }
+					limit = { owner = { NOT = { has_country_flag = dealing_with_uelos_cult } } }
+					owner = {
 						country_event = {
 							id = uelos_events.2
 							days = 150
 						}
 						set_country_flag = dealing_with_uelos_cult
 					}
-				}
-				else_if = {
-					limit = { has_country_flag = uelos_cult_growth1 }
-					set_country_flag = uelos_cult_growth2
-					clr_country_flag = uelos_cult_growth1
-				}
-				else = {
-					set_country_flag = uelos_cult_growth1
-				}
-			}
-		}
-		custom_tooltip = uelos_cult_growth_slow_tt
-	}
-	option = {
-		name = uelos_events.1.c
-		ai_chance = { factor = 1 }
-		custom_tooltip = uelos_cult_growth_tt
-		hidden_effect = {
-			if = {
-				limit = { owner = { NOT = { has_country_flag = dealing_with_uelos_cult } } }
-				owner = {
-					country_event = {
-						id = uelos_events.2
-						days = 150
-					}
-					set_country_flag = dealing_with_uelos_cult
 				}
 			}
 		}

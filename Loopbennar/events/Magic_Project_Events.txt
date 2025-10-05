@@ -50,6 +50,8 @@ namespace = magic_project
 ### Furthermore, each project should have a handler event magic_project_<project_key>.0 which sorts players into the right event
 ### There are also a number of conventions you should follow:
 ###### Since the variable is ticked up before an event is completed, and you cannot count on most flags to stay around, use the presence of magic_project_completed_flag in the handler to tell you when a project has been completed
+###### magic_completed_flag (and all other progress flags/modifiers) is cleared after magic_project_<project_key>.0 selects the completion event
+###### If your final event depends on the state of the project at completion you must check and clear it in your completion event instead
 ###### Add and clear in_magic_progress_event flag with your events (this prevents cheesing via abort button)
 ###### All your event titles should be prefaced with the name of the project, so that players know why they're receiving the event
 ### Remember to modify magic_system.100 so that players actually receive advancement events
@@ -828,7 +830,7 @@ country_event = { #Mages and the Clergy
 	option = { #Empower the Mages
 		name = magic_project_infrastructure.110.b
 
-		add_estate_loyalty = { estate = estate_clergy loyalty = -20 }
+		add_estate_loyalty = { estate = estate_church loyalty = -20 }
 		increase_magic_experience = { amount = 25 }
 	}
 }
@@ -4875,7 +4877,7 @@ country_event = { #Lichdom 1 - Finding out how to do it
 		ai_chance = { factor = 1 }
 		add_treasury = -100
 		increase_estate_witch_king_points = { size = small }
-		start_magic_project = { project = lichdom school = necromancy }
+		start_magic_project = { project = lichdom school = necromancy warning = yes }
 	}
 
 	option = { #I'll find it myself!
@@ -4884,6 +4886,7 @@ country_event = { #Lichdom 1 - Finding out how to do it
 		add_adm_power = -50
 		add_dip_power = -50
 
+		show_magic_project_lichdom_warning = yes
 		increase_ruler_witch_king_points = { size = small }
 		set_ruler_flag = magic_advancement
 		set_ruler_flag = necromancy_advancement
@@ -6304,6 +6307,7 @@ country_event = { #Homunculus, Vivum
 			NOT = { has_government_attribute = is_magocracy }
 			NOT = { has_ruler_flag = xhazob_patron }
 			NOT = { has_global_modifier_value = { which = female_advisor_chance value = 1 } }
+			is_lesser_in_union = no
 		}
 		custom_tooltip = homunculi_no_mage_hint_tt
 		remove_heir = {  }
@@ -6357,6 +6361,7 @@ country_event = { #Homunculus, Vivum
 			NOT = { has_government_attribute = is_magocracy }
 			NOT = { has_ruler_flag = xhazob_patron }
 			has_global_modifier_value = { which = female_advisor_chance value = 0.01 }
+			is_lesser_in_union = no
 		}
 		custom_tooltip = homunculi_no_mage_hint_tt
 		remove_heir = {  }
@@ -6409,11 +6414,16 @@ country_event = { #Homunculus, Vivum
 		add_country_modifier = { name = homunculus_eminence_grise duration = -1 }
 		add_power_projection = { type = homonculus_eminence_grise_pp amount = 15 }
 		custom_tooltip = tooltip_magic_project_advance
+
+		show_magic_project_homunculus_warning = yes
 	}
 	option = {
 		name = magic_project_homunculus.6.c
 		ai_chance = { factor = 1 }
-		trigger = { has_government_attribute = queen }
+		trigger = {
+			has_government_attribute = queen
+			is_lesser_in_union = no
+		}
 
 		if = { 
 			limit = { has_consort = yes }
@@ -7131,6 +7141,46 @@ country_event = {
 				id = magic_project_drennen_project_1.1
 			}
 		}
+		else_if = {
+			limit = {
+				check_variable = { current_experience_percent = 20 }
+				NOT = { has_country_flag = magic_project_first_event_happened }
+			}
+			set_country_flag = magic_project_first_event_happened
+			country_event = {
+				id = salla_drennen.24
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { current_experience_percent = 40 }
+				NOT = { has_country_flag = magic_project_second_event_happened }
+			}
+			set_country_flag = magic_project_second_event_happened
+			country_event = {
+				id = salla_drennen.25
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { current_experience_percent = 60 }
+				NOT = { has_country_flag = magic_project_third_event_happened }
+			}
+			set_country_flag = magic_project_third_event_happened
+			country_event = {
+				id = salla_drennen.26
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { current_experience_percent = 80 }
+				NOT = { has_country_flag = magic_project_fourth_event_happened }
+			}
+			set_country_flag = magic_project_fourth_event_happened
+			country_event = {
+				id = salla_drennen.27
+			}
+		}
 	}
 }
 
@@ -7140,6 +7190,7 @@ country_event = {
 	desc = magic_project_drennen_project_1.1.d
 	picture = SPY_eventPicture
 	is_triggered_only = yes
+	hidden = yes
 	
 	option = {
 		name = magic_project_drennen_project_1.1.a

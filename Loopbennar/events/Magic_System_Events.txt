@@ -62,22 +62,22 @@ country_event = { #Generates variables with all of the xp modifiers for localisa
 		if = { limit = { has_country_flag = magic_advancement }
 			set_variable = { which = total_experience_mod_val which = mages_estate_experience_mod_val }
 			subtract_variable = { which = months_till_advancement_done which = country_magic_experience }
-			divide_variable = { last_months_xp_gain = 3 }
+			divide_variable = { last_months_xp_gain = 3 } #MAGIC_ESTATE_SLOW_STUDY_RATIO
 		}
 		else_if = { limit = { has_ruler_flag = magic_advancement }
 			set_variable = { which = total_experience_mod_val which = mages_ruler_experience_mod_val }
 			subtract_variable = { which = months_till_advancement_done which = ruler_magic_experience }
 			if = {
-				limit = { is_long_lived_ruler = yes }
-				divide_variable = { last_months_xp_gain = 2 }
+				limit = { slow_study_ruler = yes }
+				multiply_variable = { last_months_xp_gain = 0.75 } #MAGIC_RULER_SLOW_STUDY_RATIO
 			}
 		}
 		else_if = { limit = { has_heir_flag = magic_advancement }
 			set_variable = { which = total_experience_mod_val which = mages_ruler_experience_mod_val }
 			subtract_variable = { which = months_till_advancement_done which = heir_magic_experience }
 			if = {
-				limit = { is_long_lived_heir = yes }
-				divide_variable = { last_months_xp_gain = 2 }
+				limit = { slow_study_heir = yes }
+				multiply_variable = { last_months_xp_gain = 0.75 } #MAGIC_RULER_SLOW_STUDY_RATIO
 			}
 		}
 		
@@ -669,106 +669,106 @@ country_event = { #Magic Advancement Events Handler (Scripted effects are borked
 	
 	hidden = yes
 	is_triggered_only = yes
-	trigger = { NOT = { has_country_flag = magic_project_completed_flag } } #Prevents multiple ticks of XP at once from borking projects
+	#trigger = { NOT = { has_country_flag = magic_project_completed_flag } } #This does not work in the trigger due to how events are queued. Moved to option limit.
 
-	option = { #Catch-all, in case.
-		name = magic_study_radiant_event
-		ai_chance = { factor = 1 }
-		trigger = {
-			is_advancing_infrastructure = no
-			is_advancing_project = no
-			is_overall_studying_magic = no
+	trigger = {
+		OR = {
+			is_advancing_infrastructure = yes
+			is_advancing_project = yes
+			is_overall_studying_magic = yes
 		}
 	}
-	option = { #Study events
-		name = magic_study_sorter
-		trigger = { is_overall_studying_magic = yes }
+
+	option = { #Sort Advancement type
+		name = magic_advancement_sorter
 		ai_chance = { factor = 1 }
 
-		if = { limit = { has_ruler_flag = magic_study type_advancement_done = { type = ruler } }
-			set_ruler_flag = in_magic_progress_event
-			country_event = { id = magic_study.2 } #Ruler Finishing Event
+		if = { #Study events
+			limit = { is_overall_studying_magic = yes }
+			if = { limit = { has_ruler_flag = magic_study type_advancement_done = { type = ruler } }
+				set_ruler_flag = in_magic_progress_event
+				country_event = { id = magic_study.2 } #Ruler Finishing Event
+			}
+			else_if = { limit = { has_heir_flag = magic_study type_advancement_done = { type = heir } }
+				set_heir_flag = in_magic_progress_event
+				country_event = { id = magic_study.3 } #Heir Finishing Event
+			}
+			else_if = { limit = { has_country_flag = magic_study type_advancement_done = { type = country } }
+				set_country_flag = in_magic_progress_event
+				country_event = { id = magic_study.5 } #Estate Finishing Event
+			}
+			else = { country_event = { id = magic_study.0 } } #study radiant event handler
 		}
-		else_if = { limit = { has_heir_flag = magic_study type_advancement_done = { type = heir } }
-			set_heir_flag = in_magic_progress_event
-			country_event = { id = magic_study.3 } #Heir Finishing Event
-		}
-		else_if = { limit = { has_country_flag = magic_study type_advancement_done = { type = country } }
-			set_country_flag = in_magic_progress_event
-			country_event = { id = magic_study.5 } #Estate Finishing Event
-		}
-		else = { country_event = { id = magic_study.0 } } #study radiant event handler
-	}
-	option = { #For events that happen while you're doing a project
-		name = magic_project_sorter
-		ai_chance = { factor = 1 }
-		trigger = { is_advancing_project = yes }
 
-		if = { #Ending events -- separate effect to accommodate usage outside of the regular gameplay loop
-			limit = { magic_advancement_done = yes } #lichdom so not just country
-			trigger_switch = {
-				on_trigger = has_country_flag
-				magical_fortress_project			= { magic_project_level_up = { project = magical_fortress } }
-				summon_extraplanars_project			= { magic_project_level_up = { project = summon_extraplanars } }
-				orb_of_omniscience_project			= { magic_project_level_up = { project = orb_of_omniscience } }
-				artifact_of_enthrallment_project	= { magic_project_level_up = { project = artifact_of_enthrallment } }
-				battlemage_academy_project			= { magic_project_level_up = { project = battlemage_academy } }
-				theatre_of_simulacra_project		= { magic_project_level_up = { project = theatre_of_simulacra } }
-				lichdom_project						= { magic_project_level_up = { project = lichdom } }
-				homunculus_project					= { magic_project_level_up = { project = homunculus } }
-				
-				#unique projects
-				drennen_project_1_project			= { magic_project_level_up = { project = drennen_project_1 } }	
+		
+		else_if = { #For events that happen while you're doing a project
+			limit = { is_advancing_project = yes }
 
-				#debug - this has to be at the bottom!
-				magic_project						= { country_event = { id = magic_project.404 } } #Missing entry!
+			# during magic_advancement_done = yes, magic_project_level_up will also call each projects event handler (magic_project_<project_key>.0)
+			# 	meaning that both the normal progress and ending events likely end up in the same handler event
+			# When the project is complete, the magic_project_completed_flag will be set -
+			# 	use it to distinguish between normal progress ticks and the completed magical project
+	
+			# Note that after your handler event has fired, magic_project_completed_flag and the other in-progress values and flags
+			#	of the project will be cleared, so these can't be checked in further events
+			
+			if = { #Ending events -- separate effect to accommodate usage outside of the regular gameplay loop
+				limit = { magic_advancement_done = yes NOT = { has_country_flag = magic_project_completed_flag } } #lichdom so not just country + prevents multiple ticks of XP at once from borking projects
+				trigger_switch = {
+					on_trigger = has_country_flag
+					magical_fortress_project			= { magic_project_level_up = { project = magical_fortress } }
+					summon_extraplanars_project			= { magic_project_level_up = { project = summon_extraplanars } }
+					orb_of_omniscience_project			= { magic_project_level_up = { project = orb_of_omniscience } }
+					artifact_of_enthrallment_project	= { magic_project_level_up = { project = artifact_of_enthrallment } }
+					battlemage_academy_project			= { magic_project_level_up = { project = battlemage_academy } }
+					theatre_of_simulacra_project		= { magic_project_level_up = { project = theatre_of_simulacra } }
+					lichdom_project						= { magic_project_level_up = { project = lichdom } }
+					homunculus_project					= { magic_project_level_up = { project = homunculus } }
+					
+					#unique projects
+					drennen_project_1_project			= { magic_project_level_up = { project = drennen_project_1 } }	
+	
+					#debug - this has to be at the bottom!
+					magic_project						= { country_event = { id = magic_project.404 } } #Missing entry!
+				}
+			}
+			else = { #In-progress events will get sorted naturally
+				trigger_switch = {
+					on_trigger = has_country_flag
+					magical_fortress_project			= { country_event = { id = magic_project_magical_fortress.0 } }
+					summon_extraplanars_project			= { country_event = { id = magic_project_summon_extraplanars.0 } }
+					orb_of_omniscience_project			= { country_event = { id = magic_project_orb_of_omniscience.0 } }
+					artifact_of_enthrallment_project	= { country_event = { id = magic_project_artifact_of_enthrallment.0 } }
+					battlemage_academy_project			= { country_event = { id = magic_project_battlemage_academy.0 } }
+					theatre_of_simulacra_project		= { country_event = { id = magic_project_theatre_of_simulacra.0 } }
+					lichdom_project						= { country_event = { id = magic_project_lichdom.0 } }
+					homunculus_project					= { country_event = { id = magic_project_homunculus.0 } }
+	
+					#unique projects
+					drennen_project_1_project			= { country_event = { id = magic_project_drennen_project_1.0 } }
+	
+					#debug - this has to be at the bottom!
+					magic_project						= { country_event = { id = magic_project.404 } } #Missing entry!
+	
+				}
+			}
+			#rizvambrethar magical project research speed effect
+			if = {
+				limit = { rizvambrethar_magical_project_can_get_boost_and_doesnt_have_it = yes	}
+				rizvambrethar_add_appropiate_experience_boost = yes
 			}
 		}
-		else = { #In-progress events will get sorted naturally
-			trigger_switch = {
-				on_trigger = has_country_flag
-				magical_fortress_project			= { country_event = { id = magic_project_magical_fortress.0 } }
-				summon_extraplanars_project			= { country_event = { id = magic_project_summon_extraplanars.0 } }
-				orb_of_omniscience_project			= { country_event = { id = magic_project_orb_of_omniscience.0 } }
-				artifact_of_enthrallment_project	= { country_event = { id = magic_project_artifact_of_enthrallment.0 } }
-				battlemage_academy_project			= { country_event = { id = magic_project_battlemage_academy.0 } }
-				theatre_of_simulacra_project		= { country_event = { id = magic_project_theatre_of_simulacra.0 } }
-				lichdom_project						= { country_event = { id = magic_project_lichdom.0 } }
-				homunculus_project					= { country_event = { id = magic_project_homunculus.0 } }
 
-				#unique projects
-				drennen_project_1_project			= { country_event = { id = magic_project_drennen_project_1.0 } }
 
-				#debug - this has to be at the bottom!
-				magic_project						= { country_event = { id = magic_project.404 } } #Missing entry!
-
+		else_if = { #For events that happen while you're improving infrastructure..?
+			limit = { is_advancing_infrastructure = yes }
+	
+			if = { #Finishing event
+				limit = { type_advancement_done = { type = country } }
+				set_country_flag = in_magic_progress_event
+				country_event = { id = magic_project_infrastructure.1 }
 			}
-		}
-		#rizvambrethar magical project research speed effect
-		if = {
-			limit = { rizvambrethar_magical_project_can_get_boost_and_doesnt_have_it = yes	}
-			rizvambrethar_add_appropiate_experience_boost = yes
-		}
-	} 
-	option = { #For events that happen while you're improving infrastructure..?
-		name = magical_infrastructure_sorter
-		ai_chance = { factor = 1 }
-		trigger = { is_advancing_infrastructure = yes }
-
-		if = { #Finishing event
-			limit = { type_advancement_done = { type = country } }
-			set_country_flag = in_magic_progress_event
-			country_event = { id = magic_project_infrastructure.1 }
-		}
-		else = { country_event = { id = magic_project_infrastructure.0 } } #Radiant events
-	}
-	option = { #Catch-all, in case.
-		name = magic_study_radiant_event
-		ai_chance = { factor = 1 }
-		trigger = {
-			is_advancing_infrastructure = no
-			is_advancing_project = no
-			is_overall_studying_magic = no
+			else = { country_event = { id = magic_project_infrastructure.0 } } #Radiant events
 		}
 	}
 }

@@ -7769,6 +7769,11 @@ country_event = {
 			50 = { country_event = { id = new_sun_cult.203 days = 90 } }
 			50 = { country_event = { id = new_sun_cult.204 days = 90 } }
 		}
+		#Flag the AI bypass (it skips province stuff)
+		#Checked in new_sun_cult.203/204
+		hidden_effect = {
+			set_country_flag = nsc_mage_provoke_artificers_ai_bypass
+		}
 	}
 	
 	#It's time to du-du-du-du- du-du-du-du-du- DUEL !
@@ -7861,7 +7866,13 @@ country_event = {
 		}
 		disband_rebels = mage_duelists_rebels
 		hidden_effect = {
-			FROM = { clr_province_flag = nsc_duel }
+			if = { #Check for AI bypass (it skips province stuff)
+				limit = { has_country_flag = nsc_mage_provoke_artificers_ai_bypass }
+				clr_country_flag = nsc_mage_provoke_artificers_ai_bypass
+			}
+			else = {
+				FROM = { clr_province_flag = nsc_duel }
+			}
 			if = {
 				limit = {
 					OR = {
@@ -7900,7 +7911,13 @@ country_event = {
 		}
 		disband_rebels = artificer_duelists_rebels
 		hidden_effect = {
-			FROM = { clr_province_flag = nsc_duel }
+			if = { #Check for AI bypass (it skips province stuff)
+				limit = { has_country_flag = nsc_mage_provoke_artificers_ai_bypass }
+				clr_country_flag = nsc_mage_provoke_artificers_ai_bypass
+			}
+			else = {
+				FROM = { clr_province_flag = nsc_duel }
+			}
 			if = {
 				limit = {
 					OR = {
@@ -7967,7 +7984,12 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			FROM = { FROM = { clr_province_flag = nsc_duel_null } }
+			# FROM = { FROM = { clr_province_flag = nsc_duel_null } } #This can't work. FROM is always the same scope (and is the country here)
+			#Try this instead
+			random_owned_province = {
+				limit = { has_province_flag = nsc_duel_null }
+				clr_province_flag = nsc_duel_null
+			}
 			if = { limit = { num_of_owned_provinces_with = { superregion = bulwar_superregion value = 5 } }		#Get fucked if you're too small
 				if = { limit = { has_country_modifier = nsc_excavation_underway }								#50% chance with the normal excavation modifier
 					random_list = {

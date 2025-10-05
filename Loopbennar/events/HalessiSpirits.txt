@@ -604,7 +604,7 @@ province_event = {	#Hidden event to determine if temple is damaged by siege
 						mil_tech = 32
 					}
 				}
-				ROOT = { province_event = { id = spirits.003 } }
+				ROOT = { owner = { country_event = { id = spirits.003 } } }
 			}
 		}
 	}
@@ -655,52 +655,68 @@ province_event = {	#Hidden event to determine if temple is damaged by siege
 						mil_tech = 32
 					}
 				}
-				ROOT = { province_event = { id = spirits.003 } }
+				ROOT = { owner = { country_event = { id = spirits.003 } } }
 			}
 		}
 	}
 }
 
-province_event = {	#Temple damaged by siege
+country_event = {	#Temple damaged by siege
 	id = spirits.003
 	title = spirits.003.t
 	desc = spirits.003.d
 	picture = SIEGE_eventPicture
-	goto = ROOT
+	goto = FROM
 	
 	is_triggered_only = yes
 	
 	option = {
 		name = spirits.003.a
-		goto = ROOT
-		add_devastation = 15
-		if = {
-			limit = { has_province_modifier = temple_complex }
-			remove_province_modifier = temple_complex
-			add_permanent_province_modifier = {
-				name = damaged_temple_complex
-				duration = -1
+		goto = FROM
+		FROM = {
+			add_devastation = 15
+			if = {
+				limit = { has_province_modifier = temple_complex }
+				remove_province_modifier = temple_complex
+				add_permanent_province_modifier = {
+					name = damaged_temple_complex
+					duration = -1
+				}
+				downgrade_temple_wards = yes
 			}
-			downgrade_temple_wards = yes
-		}
-		else_if = {
-			limit = { has_province_modifier = damaged_temple_complex }
-			remove_province_modifier = damaged_temple_complex
-			add_permanent_province_modifier = {
-				name = derelict_temple_complex
-				duration = -1
+			else_if = {
+				limit = { has_province_modifier = damaged_temple_complex }
+				remove_province_modifier = damaged_temple_complex
+				add_permanent_province_modifier = {
+					name = derelict_temple_complex
+					duration = -1
+				}
+				downgrade_temple_wards = yes
 			}
-			downgrade_temple_wards = yes
-		}
-		if = {
-			limit = {
-				province_id = 4925
-			}
-			add_great_project_tier = {
-			    type = temple_of_undying_flame
-			    tier = -1
+			if = { # this must be a country event and call a country event to do add_great_project_tier, as the effect expects FROM to be the country
+				limit = { FROM  = { province_id = 4925 } }
+				tooltip = { add_great_project_tier = { type = temple_of_undying_flame tier = -1 } }
+				hidden_effect = { owner = { country_event = { id = spirits.0031 } } }
 			}
 		}
+	}
+}
+
+country_event = {	#Temple damaged by siege Undying Flame
+	id = spirits.0031
+	title = spirits.003.t
+	desc = spirits.003.d
+	picture = SIEGE_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	immediate = {
+		4925 = { add_great_project_tier = { type = temple_of_undying_flame tier = -1 } }
+	}
+
+	option = {
+		name = spirits.003.a
 	}
 }
 
@@ -11227,7 +11243,10 @@ country_event = { #Temple Corruption menu
 	after = {
 		hidden_effect = {
 			every_owned_province = {
-				limit = { has_province_flag = corrupt_@ROOT }
+				limit = {
+					province_group = temple_province_group
+					has_province_flag = corrupt_@ROOT
+				}
 				clr_province_flag = corrupt_@ROOT
 				clr_province_flag = option_corrupt_1_@ROOT
 				clr_province_flag = option_corrupt_2_@ROOT
@@ -11265,7 +11284,7 @@ country_event = { #Temple Corruption menu
 		trigger = { 
 			AND = { 
 				has_saved_event_target = corrupt2
-				event_target:corrupt1 = { has_province_flag = option_corrupt_2_@ROOT }
+				event_target:corrupt2 = { has_province_flag = option_corrupt_2_@ROOT }
 				adm_power = 50
 				dip_power = 50
 				mil_power = 50
@@ -11284,7 +11303,7 @@ country_event = { #Temple Corruption menu
 		trigger = { 
 			AND = { 
 				has_saved_event_target = corrupt3
-				event_target:corrupt1 = { has_province_flag = option_corrupt_3_@ROOT }
+				event_target:corrupt3 = { has_province_flag = option_corrupt_3_@ROOT }
 				adm_power = 50
 				dip_power = 50
 				mil_power = 50
@@ -11303,7 +11322,7 @@ country_event = { #Temple Corruption menu
 		trigger = { 
 			AND = { 
 				has_saved_event_target = corrupt4
-				event_target:corrupt1 = { has_province_flag = option_corrupt_4_@ROOT }
+				event_target:corrupt4 = { has_province_flag = option_corrupt_4_@ROOT }
 				adm_power = 50
 				dip_power = 50
 				mil_power = 50
@@ -11322,7 +11341,7 @@ country_event = { #Temple Corruption menu
 		trigger = { 
 			AND = { 
 				has_saved_event_target = corrupt5
-				event_target:corrupt1 = { has_province_flag = option_corrupt_5_@ROOT }
+				event_target:corrupt5 = { has_province_flag = option_corrupt_5_@ROOT }
 				adm_power = 50
 				dip_power = 50
 				mil_power = 50
@@ -11341,7 +11360,7 @@ country_event = { #Temple Corruption menu
 		trigger = { 
 			AND = { 
 				has_saved_event_target = corrupt6
-				event_target:corrupt1 = { has_province_flag = option_corrupt_6_@ROOT }
+				event_target:corrupt6 = { has_province_flag = option_corrupt_6_@ROOT }
 				adm_power = 50
 				dip_power = 50
 				mil_power = 50
@@ -11945,7 +11964,7 @@ country_event = {
 	}
 
 	mean_time_to_happen = {
-		years = 1
+		years = 50
 		modifier = {
 			factor = 0.95
 			NOT = {
@@ -12013,8 +12032,8 @@ country_event = {
 			}
 		}
 		modifier = {
-			factor = 5
-			is_year = 1605
+			factor = 0.1
+			is_year = 1655
 		}
 	}
 

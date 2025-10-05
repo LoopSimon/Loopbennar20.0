@@ -1,0 +1,598 @@
+namespace = flavor_venomtooth
+
+country_event = { #Scourge On Escann (Starting Event)
+    id = flavor_venomtooth.1
+    title = flavor_venomtooth.1.t
+    desc = flavor_venomtooth.1.d
+    picture = MILITARISTICALLY_TALENTED_RULER_eventPicture
+
+    is_triggered_only = yes
+	fire_only_once = yes
+
+    trigger = {
+		tag = B22
+		NOT = {
+			is_year = 1445
+		}
+	}
+
+    option = { #Only available option
+    	name = flavor_venomtooth.1.a
+
+		add_country_modifier = {
+			name = vt_army_of_the_strong
+			duration = 3650
+		}
+
+		add_opinion = {
+			who = B27
+			modifier = green_orc_failed_to_show_up
+		}
+
+		reverse_add_opinion = {
+			who = B27
+			modifier = green_orc_sociopathic
+		}
+		
+		hidden_effect = {
+			set_country_flag = count_battles_won
+	   		set_country_flag = count_wars_won
+			set_variable = { vt_units_killed = 0 }
+			set_ruler_flag = venom_queen
+			anb_block_heir_death = { ruler = yes duration = -1 }
+	  	}
+    }
+}
+
+country_event = { #Korgus Funeral
+	id = flavor_venomtooth.2
+	title = flavor_venomtooth.2.t
+	desc = flavor_venomtooth.2.d
+	picture = DEATH_OF_HEIR_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.2.a
+
+		add_country_modifier = {
+			name = vt_rallied_warriors
+			duration = -1
+		}
+
+		define_heir = {
+			name = "Azukor"
+			dynasty = ROOT
+			male = yes
+			age = 7
+			adm = 3
+			dip = 3
+			mil = 3
+			claim = 100
+		}
+
+		set_heir_flag = vt_azukor
+
+		add_country_modifier = {
+			name = vt_azukor_explain
+			duration = -1
+		}
+	}
+}
+
+country_event = { #New Path
+	id = flavor_venomtooth.3
+	title = flavor_venomtooth.3.t
+	desc = flavor_venomtooth.3.d
+	picture = LAND_MILITARY_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.3.a
+
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			target = B45
+			months = 180
+		}
+		add_casus_belli = {
+			type = cb_vassalize_mission
+			target = B46
+			months = 180
+		}
+	}
+}
+
+country_event = { #Kill Headwearer
+	id = flavor_venomtooth.4
+	title = flavor_venomtooth.4.t
+	desc = flavor_venomtooth.4.d
+	picture = SMUGGLERS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.4.a
+
+		B45 = {
+			every_tribal_land_province = {
+				change_tribal_land = ROOT
+				if = {
+					limit = {
+						OR = {
+							owned_by = B45
+							is_empty = yes
+						}
+					}
+					decolonize = yes
+					change_culture = green_orc
+					change_religion = great_dookan
+				}
+			}
+		}
+
+		set_country_flag = vt_destroy_adventurers
+		custom_tooltip = vt_we_can_destroy
+	}
+}
+
+country_event = { #Honor Avenged
+	id = flavor_venomtooth.5
+	title = flavor_venomtooth.5.t
+	desc = flavor_venomtooth.5.d
+	picture = VILLAGE_BURNING_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Forgive Bonecarver
+		name = flavor_venomtooth.5.a
+
+		B27 = {
+			kill_ruler = yes
+			add_country_modifier = {
+				name = vt_worthy_master
+				duration = 18250
+			}
+		}
+	}
+
+	option = {
+		name = flavor_venomtooth.5.b
+
+		B27 = {
+			every_owned_province = {
+				add_devastation = 25
+				change_trade_goods = slaves
+			}
+		}
+
+		inherit = B27
+
+		729 = {
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 2
+			}
+		}
+		730 = {
+			spawn_rebels = {
+				type = nationalist_rebels
+				size = 2
+			}
+		}
+	}
+}
+
+country_event = { #Azukor Rises
+	id = flavor_venomtooth.6
+	title = flavor_venomtooth.6.t
+	desc = flavor_venomtooth.6.d
+	picture = GENERALS_DISCUSSING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = flavor_venomtooth.6.a
+
+		if = {
+            limit = { NOT = { has_ruler_flag = vt_azukor } }
+            
+            if = {
+                limit = { has_heir_flag = vt_azukor }
+                kill_ruler = yes
+                add_stability = 1
+            }
+            else = {
+				define_heir = {
+                    age = 15
+                    name = "Azukor"
+                    male = yes
+                    adm = 3
+                    dip = 3
+                    mil = 3
+                }
+                kill_ruler = yes
+                add_stability = 1
+            }
+        }
+
+		remove_country_modifier = vt_rallied_warriors
+		remove_country_modifier = vt_azukor_explain
+
+		#If Khozrugan is redone, Artug will not spawn until Azukor is dead
+
+		if = {
+			limit = { total_development = 200 }
+			increase_ruler_adm_effect = yes
+			increase_ruler_adm_effect = yes
+			increase_ruler_adm_effect = yes
+		}
+		else_if = {
+			limit = { total_development = 100 }
+			increase_ruler_adm_effect = yes
+			increase_ruler_adm_effect = yes
+		}
+		else_if = {
+			limit = { total_development = 50 }
+			increase_ruler_adm_effect = yes
+		}
+
+		if = {
+			limit = { prestige = 90 }
+			increase_ruler_dip_effect = yes
+			increase_ruler_dip_effect = yes
+			increase_ruler_dip_effect = yes
+		}
+		else_if = { 
+			limit = { prestige = 70 }
+			increase_ruler_dip_effect = yes
+			increase_ruler_dip_effect = yes
+		}
+		else_if = {
+			limit = { prestige = 50 }
+			increase_ruler_dip_effect = yes
+		}
+
+		if = {
+			limit = { 
+				calc_true_if = { #OR = {...} is necessary as without it the NOTs will always be fulfilled
+					OR = { NOT = { exists = B03 exists = B40 } }
+					OR = { NOT = { exists = B06 exists = B35 } }
+					OR = { NOT = { exists = B07 exists = B37 } }
+					OR = { NOT = { exists = B09 exists = B49 } }
+					OR = { NOT = { exists = B10 exists = B50 } }
+					OR = { NOT = { exists = B11 exists = B34 } }
+					OR = { NOT = { exists = B12 exists = B39 } }
+					OR = { NOT = { exists = B15 exists = B38 } }
+					OR = { NOT = { exists = B16 exists = B52 } }
+					amount = 6
+				}
+			}
+			increase_ruler_mil_effect = yes
+			increase_ruler_mil_effect = yes
+			increase_ruler_mil_effect = yes
+		}
+		else_if = {
+			limit = { 
+				calc_true_if = {
+					OR = { NOT = { exists = B03 exists = B40 } }
+					OR = { NOT = { exists = B06 exists = B35 } }
+					OR = { NOT = { exists = B07 exists = B37 } }
+					OR = { NOT = { exists = B09 exists = B49 } }
+					OR = { NOT = { exists = B10 exists = B50 } }
+					OR = { NOT = { exists = B11 exists = B34 } }
+					OR = { NOT = { exists = B12 exists = B39 } }
+					OR = { NOT = { exists = B15 exists = B38 } }
+					OR = { NOT = { exists = B16 exists = B52 } }
+					amount = 4
+				}
+			}
+			increase_ruler_mil_effect = yes
+			increase_ruler_mil_effect = yes
+		}
+		else_if = {
+			limit = { 
+				calc_true_if = {
+					OR = { NOT = { exists = B03 exists = B40 } }
+					OR = { NOT = { exists = B06 exists = B35 } }
+					OR = { NOT = { exists = B07 exists = B37 } }
+					OR = { NOT = { exists = B09 exists = B49 } }
+					OR = { NOT = { exists = B10 exists = B50 } }
+					OR = { NOT = { exists = B11 exists = B34 } }
+					OR = { NOT = { exists = B12 exists = B39 } }
+					OR = { NOT = { exists = B15 exists = B38 } }
+					OR = { NOT = { exists = B16 exists = B52 } }
+					amount = 2
+				}
+			}
+			increase_ruler_mil_effect = yes
+		}
+	}
+}
+
+country_event = { #Imperial Raid (Imperial gets this)
+	id = flavor_venomtooth.7
+	title = flavor_venomtooth.7.t
+	desc = flavor_venomtooth.7.d
+	picture = VILLAGE_RAIDED_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.7.a
+
+		cestir_area = {
+            limit = {
+                owned_by = ROOT
+                any_neighbor_province = {
+                    owned_by = FROM
+                }
+                NOT = {
+                    any_neighbor_province = {
+                        owned_by = ROOT
+                        has_fort_building_trigger = yes
+                    }
+                    has_fort_building_trigger = yes
+                }
+            }
+            add_devastation = 25
+        }
+
+		add_casus_belli = {
+			type = cb_insult
+			target = B22
+		}
+	}
+}
+
+country_event = { #There's a Way
+	id = flavor_venomtooth.8
+	title = flavor_venomtooth.8.t
+	desc = flavor_venomtooth.8.d
+	picture = IMPALED_SOLDIERS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.8.a
+
+		232 = {
+			remove_province_modifier = vt_viper_pits
+		}
+
+		add_country_modifier = {
+			name = vt_venom_army
+			duration = -1
+		}
+	}
+}
+
+country_event = { #Green Slave trade
+	id = flavor_venomtooth.9
+	title = flavor_venomtooth.9.t
+	desc = flavor_venomtooth.9.d
+	picture = PORTUGUESE_MERCHANTS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.9.a
+
+		every_owned_province = {
+			limit = {
+				OR = {
+					is_core = B23
+					is_core = B27
+				}
+			}
+			add_base_tax = -1
+			ROOT = {
+				add_treasury = 20
+			}
+		}
+	}
+}
+
+country_event = { #Kingdom of Venom and Chains
+	id = flavor_venomtooth.10
+	title = flavor_venomtooth.10.t
+	desc = flavor_venomtooth.10.d
+	picture = CONQUEST_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.10.a
+
+		every_tribal_land_province = {
+			settle_province = ROOT
+		}
+
+		change_government_to_monarchy = yes
+		add_government_reform = orcish_kingdom_reform
+		change_government_reform_progress = -500
+
+		country_event = {
+			id = flavor_venomtooth.11
+			days = 10
+		}
+	}
+}
+
+country_event = { #Lovers Revolt
+	id = flavor_venomtooth.11
+	title = flavor_venomtooth.11.t
+	desc = flavor_venomtooth.11.d
+	picture = REVOLT_HUNGARIAN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.11.a
+
+		for = {
+			amount = 7
+			effect = "random_owned_province = { spawn_rebels = { type = particularist_rebels size = 2 } }"
+		}
+
+		set_country_flag = vt_revolt_triggered
+		custom_tooltip = vt_lovers_revolt
+		swap_non_generic_missions = yes
+	}
+}
+
+country_event = { #Natural Order
+	id = flavor_venomtooth.12
+	title = flavor_venomtooth.12.t
+	desc = flavor_venomtooth.12.d
+	picture = IMPALED_SOLDIERS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.12.a
+
+		add_stability_or_adm_power = yes
+		add_treasury = 300
+
+		remove_country_modifier = vt_skull_throne
+
+		add_country_modifier = {
+			name = vt_skull_throne
+			duration = -1
+		}
+
+		hidden_effect = { set_country_flag = orc_path_to_civil }
+	}
+}
+
+country_event = { #Harness Their Zeal
+	id = flavor_venomtooth.13
+	title = flavor_venomtooth.13.t
+	desc = flavor_venomtooth.13.d
+	picture = ORC_WITH_AXE_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.13.a
+
+		add_country_modifier = {
+			name = vt_orcish_zeal
+			duration = -1
+		}
+	}
+}
+
+#Destroy Adventurer Events
+country_event = { #Cobalt Company
+	id = flavor_venomtooth.100
+	title = flavor_venomtooth.100.t
+	desc = flavor_venomtooth.100.d
+	picture = VILLAGE_BURNING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.100.a
+
+		add_treasury = 100
+
+		cannwood_area = {
+			limit = { NOT = { trade_goods = gold } }
+			change_trade_goods = slaves
+		}
+	}
+}
+
+country_event = { #Small Fellows
+	id = flavor_venomtooth.101
+	title = flavor_venomtooth.101.t
+	desc = flavor_venomtooth.101.d
+	picture = VILLAGE_BURNING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.101.a
+
+		add_treasury = 100
+
+		every_owned_province = {
+			limit = { culture_group = halfling }
+			change_culture = green_orc
+			change_religion = great_dookan
+			add_devastation = 50
+			if = {
+				limit = { NOT = { trade_goods = gold } }
+				change_trade_goods = slaves
+			}
+		}
+		every_tribal_land_province = {
+			limit = { culture_group = halfling }
+			change_culture = green_orc
+			change_religion = great_dookan
+			add_devastation = 50
+			if = {
+				limit = { NOT = { trade_goods = gold } }
+				change_trade_goods = slaves
+			}
+		}
+	}
+}
+
+country_event = { #Sons of Dameria
+	id = flavor_venomtooth.102
+	title = flavor_venomtooth.102.t
+	desc = flavor_venomtooth.102.d
+	picture = VILLAGE_BURNING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.102.a
+
+		adenica_area = {
+			limit = { NOT = { trade_goods = gold } }
+			change_trade_goods = slaves
+		}
+
+		random_owned_province = {
+			add_base_tax = 1
+		}
+		random_owned_province = {
+			add_base_tax = 1
+		}
+		random_owned_province = {
+			add_base_tax = 1
+		}
+	}
+}
+
+country_event = { #Thorn Company
+	id = flavor_venomtooth.103
+	title = flavor_venomtooth.103.t
+	desc = flavor_venomtooth.103.d
+	picture = VILLAGE_BURNING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_venomtooth.103.a
+
+		every_tribal_land_province = {
+			limit = { region = forlorn_vale_region }
+			change_culture = green_orc
+			change_religion = great_dookan
+		}
+
+		257 = {
+			spawn_rebels = {
+				type = vampires_nobles
+				size = 2
+			}
+		}
+	}
+}

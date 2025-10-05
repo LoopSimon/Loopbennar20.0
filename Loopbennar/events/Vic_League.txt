@@ -1,6 +1,35 @@
 
 namespace = flavour_vic_league
 
+country_event = {
+	id = flavour_vic_league.0
+	title = flavour_vic_league.0.t
+	desc = flavour_vic_league.0.d
+	picture = REFUGEES_ESCAPING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_vic_league.0.a
+		if = {
+			limit = { is_subject = yes }
+			custom_tooltip = vic_league_system_explanation_member_tt
+		}
+		else = {
+			custom_tooltip = vic_league_system_explanation_leader_tt
+		}
+		if = {
+			limit = { #Tags that have a MT and have custom gov reforms
+				tag = Z22
+			}
+			custom_tooltip = vic_league_system_explanation_mission_upgrade_tt
+		}
+		else = {
+			custom_tooltip = vic_league_system_explanation_generic_upgrade_tt
+		}
+	}
+}
+
 country_event = { #Calculation for Expand the League
 	id = flavour_vic_league.1
 	title = flavour_vic_league.1.t
@@ -35,7 +64,7 @@ country_event = { #Calculation for Expand the League
 							NOT = { total_development = 150 }
 						}
 						AND = {
-							ROOT = { has_government_attribute = expand_the_league_3_attribute }
+							ROOT = { has_government_attribute = expand_the_league_1_attribute }
 							nation_considered_blue_reachman = yes
 							NOT = { total_development = 100 }
 						}
@@ -68,7 +97,7 @@ country_event = { #Calculation for Expand the League
 			set_variable = { VicDipRep = 0 }
 			export_to_variable = {
 				which = VicDipRep
-				value = diplomatic_reputation
+				value = modifier:diplomatic_reputation
 				who = ROOT
 			}
 			multiply_variable = {
@@ -334,45 +363,43 @@ country_event = { #Resolve war
 	
 	option = {
 		name = flavour_vic_league.7.a
-		FROM = {
-			every_owned_province = {
-				limit = { NOT = { is_capital = yes } region = alenic_reach_region }
-				cede_province = ROOT
-			}
-			every_subject_country = {
-				limit = { is_subject_of_type = vic_league_member }
-				grant_independence = yes
-				ROOT = {
-					create_subject = {
-						subject_type = vic_league_member
-						subject = PREV
-					}
+		every_owned_province = {
+			limit = { NOT = { is_capital = yes } region = alenic_reach_region }
+			cede_province = FROM
+		}
+		every_subject_country = {
+			limit = { is_subject_of_type = vic_league_member }
+			grant_independence = yes
+			FROM = {
+				create_subject = {
+					subject_type = vic_league_member
+					subject = PREV
 				}
 			}
-			if = {
-				limit = {
-					any_known_country = {
-						has_subject_of_type = vic_league_member
-						NOT = { tag = ROOT }
-					}
-				}
-				random_known_country = {
-					limit = { 
-						has_subject_of_type = vic_league_member
-						NOT = { tag = ROOT }
-					}
-					create_subject = {
-						subject_type = vic_league_member
-						subject = FROM
-					}
+		}
+		if = {
+			limit = {
+				any_known_country = {
+					has_subject_of_type = vic_league_member
+					NOT = { tag = FROM }
 				}
 			}
-			else = {
-				ROOT = {
-					create_subject = {
-						subject_type = vic_league_member
-						subject = FROM
-					}
+			random_known_country = {
+				limit = { 
+					has_subject_of_type = vic_league_member
+					NOT = { tag = FROM }
+				}
+				create_subject = {
+					subject_type = vic_league_member
+					subject = ROOT
+				}
+			}
+		}
+		else = {
+			FROM = {
+				create_subject = {
+					subject_type = vic_league_member
+					subject = ROOT
 				}
 			}
 		}
@@ -443,7 +470,7 @@ country_event = { #The Ordal Compromise
 	option = {
 		name = flavour_vic_league.100.a
 		if = {
-			limit = { NOT = { tag = Z22 } } #Celmaldor has other gov reforms
+			limit = { NOT = { was_tag = Z22 } } #Celmaldor has other gov reforms
 			if = {
 				limit = { NOT = { government = republic } }
 				change_government = republic

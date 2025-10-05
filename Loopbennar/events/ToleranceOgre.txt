@@ -2,7 +2,7 @@ namespace = ogre_tolerance_events
 # 0: event manager for non-ogre nations
 # 1-8: Tolerance events
 # 9-13: Ogre tolerance events by GoshGollyDarnit
-#
+# 30 - 31: Insyaan ogre tolerance events by hanscyka
 # Event organizer for the ogre tolerance events - should be a huge improvement to performance - having 1 overall check for having the minority instead of one for EACH new event that gets added
 country_event = {
 	id = ogre_tolerance_events.0
@@ -295,6 +295,21 @@ country_event = {
 				}
 				country_event = {
 					id = ogre_tolerance_events.14
+				}
+			}
+			#Bloom of the Plateau
+			10 = {
+				trigger = {
+					capital_scope = {
+						region = cotlkae_region
+					}
+					NOT = {
+						has_country_modifier = racial_pop_ogre_purge
+						has_country_modifier = racial_pop_ogre_expulsion
+					}
+				}
+				country_event = {
+					id = ogre_tolerance_events.30
 				}
 			}
 		}
@@ -1257,6 +1272,7 @@ country_event = {
 				wants_to_decrease_tolerance_ogre = yes
 			}
 		}
+		add_prestige = 10
 		small_decrease_of_ogre_tolerance_effect = yes
 	}
 	after = {
@@ -2307,9 +2323,7 @@ country_event = {
 		ai_chance = {
 			factor = 100
 		}
-		add_prepared_months_of_tax_income = {
-			sign = +
-		}
+		add_prepared_months_of_tax_income = yes
 	}
 	option = {
 		name = ogre_tolerance_events.14.f
@@ -2326,5 +2340,328 @@ country_event = {
 		ai_chance = {
 			factor = 100
 		}
+	}
+}
+
+#Bloom of the Plateau
+country_event = {
+	id = ogre_tolerance_events.30
+	title = ogre_tolerance_events.30.t
+	desc = ogre_tolerance_events.30.d
+	picture = FUNGRUM_eventPicture
+	is_triggered_only = yes
+	immediate = { #Selects the farm province in the Great Plateau region
+    	hidden_effect = {
+        	random_province = {
+            	limit = { region = great_plateau_region }
+            	save_event_target_as = great_plateau_farm_target
+        	}
+    	}
+	}
+	
+	# Option A: Investigative Approach (Tolerant)
+	option = {
+		name = ogre_tolerance_events.30.a
+		ai_chance = { factor = 10 }
+		add_treasury = -50
+		add_estate_influence_modifier = {
+			desc = "Investigating the Plateau"
+			estate = estate_adventurers 
+			influence = 5
+			duration = 1825 # 5 years
+		}
+		country_event = { # Triggers "A Meticulous Garden"
+			id = ogre_tolerance_events.31
+			days = 90
+		}
+	}
+	
+	# Option B: What use are a bunch of plants? (Indifferent Approach)
+	option = {
+		name = ogre_tolerance_events.30.b
+		small_decrease_of_ogre_tolerance_effect = yes
+		event_target:great_plateau_farm_target = {
+			add_province_modifier = {
+				name = insyaan_autonomous_ogre_farms #leaves the ogres alone, so random province in the great plateau region gets positive modifier
+				duration = 1825 # 5 years
+			}	
+		}
+	}		
+	
+	# Option C: Greenthumb (Extra Tolerant Approach)
+	option = {
+		name = ogre_tolerance_events.30.c
+		ai_chance = { factor = 10 }
+		highlight = yes
+		trigger = {
+			OR = {
+				ruler_has_personality = architectural_visionary_personality 
+				full_idea_group = humanist_ideas
+			}
+		}
+		add_treasury = -100
+		add_estate_influence_modifier = {
+			desc = "Investigating the Plateau"
+			estate = estate_adventurers 
+			influence = 5
+			duration = 1825 # 5 years
+		}
+		event_target:great_plateau_farm_target = {
+			add_province_modifier = {
+				name = harvest_of_the_hunger_surpressing_root #trading more money for more tolerance
+				duration = 5475 # 15 years
+			}
+		}
+		medium_increase_of_ogre_tolerance_effect = yes 	
+		country_event = { # Triggers "A Meticulous Garden"
+			id = ogre_tolerance_events.31
+			days = 90
+		}
+	}
+	
+	# Option D: Ogre Farms Used as Mulch (The "Malevolent/Cruel" route)
+	option = {
+		name = ogre_tolerance_events.30.e
+		ai_chance = { factor = 5 }
+		highlight = yes
+		trigger = {
+			OR = {
+				ruler_has_personality = malevolent_personality
+				ruler_has_personality = cruel_personality
+			}
+		}
+		every_owned_province = {
+			limit = {
+				OR = {
+				trade_goods = grain
+				trade_goods = wine
+				}
+			}
+			add_province_modifier = {
+				name = insyaan_ogre_farms_used_as_mulch
+				duration = 3650 # 10 years
+			}
+		}
+	}
+
+	# Option E: Sending the Tax Man (Greedy Approach) - this option doesn't make sense considering you don't own it & therefore not entitled to taxing it
+	#option = {
+	#	name = insyaan_ogre_flavour_events.1.f
+	#	ai_chance = { factor = 25}
+	#	highlight = yes
+	#	trigger = {
+	#		OR = {
+	#			ruler_has_personality = embezzler_personality
+	#			ruler_has_personality = greedy_personality
+	#		}
+	#	}
+	#	random_owned_province = {
+	#		limit = {
+	#			region = coltkae_region
+	#		}
+	#		add_province_modifier = {
+	#			name = ogre_tax_farms
+	#			duration = 3650 # 10 years
+	#		}
+	#	}	
+	#	small_decrease_of_ogre_tolerance_effect = yes
+	#	add_treasury = 50
+	#}
+}
+
+#A Meticulous Garden
+country_event = {
+	id = ogre_tolerance_events.31
+	title = ogre_tolerance_events.31.t
+	desc = ogre_tolerance_events.31.d
+	picture = FEAST_eventPicture
+	is_triggered_only = yes
+	immediate = {
+    	hidden_effect = {
+        	random_owned_province = {
+            	save_event_target_as = skyfall_cornucopia_1
+        	}
+        	random_owned_province = {
+            	limit = {
+                	NOT = { province_id = event_target:skyfall_cornucopia_1 }
+            	}
+            	save_event_target_as = skyfall_cornucopia_2
+        	}
+        	random_owned_province = {
+            	limit = {
+                	NOT = { province_id = event_target:skyfall_cornucopia_1 }
+                	NOT = { province_id = event_target:skyfall_cornucopia_2 }
+            	}
+            	save_event_target_as = skyfall_cornucopia_3
+        	}
+			random_owned_province = {
+				limit = {
+					province_has_current_tech_fort_trigger = yes
+				}
+				save_event_target_as = well_fed_guards_1
+    		}
+			random_owned_province = {
+				limit = {
+					province_has_current_tech_fort_trigger = yes
+					NOT = { province_id = event_target:well_fed_guards_1 }
+				}
+				save_event_target_as = well_fed_guards_2	
+			}
+			random_owned_province = {
+				limit = {
+					province_has_current_tech_fort_trigger = yes
+					NOT = { province_id = event_target:well_fed_guards_1 }
+					NOT = { province_id = event_target:well_fed_guards_2 }
+				}
+				save_event_target_as = well_fed_guards_3	
+			}
+		}
+	}
+	#Option A: Distribute the crops	
+	option = {
+		name = ogre_tolerance_events.31.a
+		ai_chance = { factor = 10 }
+		event_target:skyfall_cornucopia_1 = {
+			add_province_modifier = {
+				name = skyfall_cornucopia
+				duration = 3650 # 10 years
+			}
+		}
+		event_target:skyfall_cornucopia_2 = {
+			add_province_modifier = {
+				name = skyfall_cornucopia
+				duration = 3650 # 10 years
+			}
+		}		
+		event_target:skyfall_cornucopia_3 = {
+			add_province_modifier = {
+				name = skyfall_cornucopia
+				duration = 3650 # 10 years
+			}
+		}
+		small_increase_of_ogre_tolerance_effect = yes
+	}
+
+	#Option B: The Royal Banquet
+	option = {
+		name = ogre_tolerance_events.31.b
+		ai_chance = { factor = 15 }
+		add_country_modifier = {
+			name = insyaan_ogre_great_feast
+			duration = 1825 # 5 years
+		}
+		add_treasury = -100
+		add_estate_loyalty_modifier = {
+			desc = "The Royal Banquet"
+			estate = estate_adventurers 
+			loyalty = 5
+			duration = 1825 # 5 years
+		}
+	}
+
+	#Option C: Feed The Guards
+	option = {
+		name = ogre_tolerance_events.31.c
+		highlight = yes
+		ai_chance = { factor = 20 }
+		trigger = {
+			OR = {
+				ruler_has_personality = strict_personality
+				ruler_has_personality = inspiring_leader_personality
+			}
+			any_owned_province = {
+				province_has_current_tech_fort_trigger = yes
+			}
+		}
+		event_target:well_fed_guards_1 = {
+			add_province_modifier = {
+				name = insyaan_ogre_well_fed_guards
+				duration = 3650 # 10 years
+			}
+		add_ogre_minority_size_effect = yes
+		}	
+		if = {
+			limit = {
+				has_saved_event_target = well_fed_guards_2
+			}
+			event_target:well_fed_guards_2 = {	
+				add_province_modifier = {
+					name = insyaan_ogre_well_fed_guards
+					duration = 3650 # 10 years
+				}
+			add_ogre_minority_size_effect = yes	
+			}
+		}
+		if = {
+			limit = {
+				has_saved_event_target = well_fed_guards_3
+			}
+			event_target:well_fed_guards_3 = {	
+				add_province_modifier = {
+					name = insyaan_ogre_well_fed_guards
+					duration = 3650 # 10 years
+				}
+			add_ogre_minority_size_effect = yes	
+			}
+		}
+	}
+	#Option D: Why Shouldn't I Keep it?
+	option = {
+		name = ogre_tolerance_events.31.e
+		ai_chance = { factor = 20 }
+		highlight = yes
+		trigger = {
+			OR = {
+				ruler_has_personality = greedy_personality
+				ruler_has_personality = embezzler_personality
+			}
+		}
+		add_years_of_owned_provinces_production_income = {
+			years = 3
+			trigger = {
+				OR = {
+					trade_goods = grain
+					trade_goods = wine
+				}
+			}
+		}
+		add_country_modifier = {
+			name = insyaan_ogre_confiscated_crops
+			duration = 1825 # 5 years
+		}
+		add_estate_loyalty_modifier = {
+			desc = "Hoarded the Crops"
+			estate = estate_adventurers 
+			loyalty = -10
+			duration = 1825 # 5 years
+		}
+	}
+	#Option E: Misunderstood the Ogres 
+	option = {
+		name = ogre_tolerance_events.31.f
+		ai_chance = { factor = 25 }
+		trigger = {
+			OR = {
+				ruler_has_personality = kind_hearted_personality
+				ruler_has_personality = naive_personality
+				ruler_has_personality = well_connected_personality
+				full_idea_group = humanist_ideas
+			}
+		}
+		highlight = yes
+		add_country_modifier = {
+			name = encouraged_skyfall_ogre_emigration
+			duration = 3650 # 10 years
+		}
+		random_owned_province = {
+			limit = {
+				fast_has_pop_of_race = {
+					race = ogre
+				}
+				region = cotlkae_region
+			}
+			add_ogre_minority_size_effect = yes				
+		}
+		medium_increase_of_ogre_tolerance_effect = yes
 	}
 }

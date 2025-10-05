@@ -134,6 +134,85 @@ country_event = {
 					id = troll_tolerance_events.6
 				}
 			}
+			#angry mob of Mengi - only for Sarhal Swamp Trolls
+			10 = {
+				trigger = {
+					culture_group = mengi
+					any_owned_province = { # To make sure it's about Swamp trolls, check if you have a Shadow Swamp region province with trolls
+						region = shadow_swamp_region
+						fast_has_pop_of_race = { race = troll }
+					}
+				}
+				modifier = {
+					factor = 1.5
+					low_tolerance_troll_race_trigger = yes
+				}
+				modifier = {
+					factor = 1.5
+					average_unrest = 5
+				}
+				country_event = {
+					id = troll_tolerance_events.7
+				}
+			}
+			#travelling troll sculptor - only for Sarhal Swamp Trolls
+			10 = {
+				trigger = {
+					any_owned_province = { # To make sure it's about Swamp trolls, check if you have a Shadow Swamp region province with trolls
+						region = shadow_swamp_region
+						fast_has_pop_of_race = { race = troll }
+					}
+					low_tolerance_troll_race_trigger = no
+				}
+				modifier = {
+					factor = 1.5
+					stability = 1
+				}
+				country_event = {
+					id = troll_tolerance_events.8
+				}
+			}
+			#Swamp Troll Merchant Harassed - only for Sarhal Swamp Trolls
+			10 = {
+				trigger = {
+					any_owned_province = { # To make sure it's about Swamp trolls, check if you have a Shadow Swamp region province with trolls
+						region = shadow_swamp_region
+						fast_has_pop_of_race = { race = troll }
+						NOT = { has_province_modifier = troll_merchant_removed }
+					}
+					low_tolerance_troll_race_trigger = no
+				}
+				modifier = {
+					factor = 1.5
+					NOT = { stability = 1 }
+				}
+				country_event = {
+					id = troll_tolerance_events.9
+				}
+			}
+			#Dreams from the Shadow Plane - only for Sarhal Swamp Trolls
+			10 = {
+				trigger = {
+					any_owned_province = { # To make sure it's about Swamp trolls, check if you have a Shadow Swamp region province with trolls
+						region = shadow_swamp_region
+						fast_has_pop_of_race = { race = troll }
+					}
+					low_tolerance_troll_race_trigger = no
+					has_advisor = yes
+				}
+				modifier = {
+					factor = 2
+					NOT = {
+						estate_loyalty = {
+							estate = estate_nobles
+							loyalty = 50
+						}
+					}
+				}
+				country_event = {
+					id = troll_tolerance_events.10
+				}
+			}
 			30 = {
 				trigger = {
 					ai = no
@@ -730,10 +809,444 @@ country_event = {
 				wants_to_decrease_tolerance_troll = yes
 			}
 		}
+		add_prestige = 10
 		small_decrease_of_troll_tolerance_effect = yes
 	}
 
 	after = {
 		clr_country_flag = troll_advisor_culture_set
+	}
+}
+
+# angry mob of Mengi
+country_event = {
+	id = troll_tolerance_events.7
+	title = troll_tolerance_events.7.t
+	desc = troll_tolerance_events.7.d
+	picture = VILLAGE_BURNING_eventPicture
+	goto = troll_mengi_mob_province
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			# Prioritise a province with a troll minority before a troll majority
+			random_owned_province = {
+				limit = {
+					region = shadow_swamp_region
+					has_troll_majority_trigger = yes
+				}
+				save_event_target_as = troll_mengi_mob_province
+			}
+			random_owned_province = {
+				limit = {
+					region = shadow_swamp_region
+					has_troll_minority_trigger = yes
+				}
+				save_event_target_as = troll_mengi_mob_province
+			}
+		}
+	}
+	
+	# mob justice is still justice
+	option = {
+		name = troll_tolerance_events.7.a
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 2
+				wants_to_decrease_tolerance_troll = yes
+			}
+		}
+		large_decrease_of_troll_tolerance_effect = yes
+		event_target:troll_mengi_mob_province = {
+			spawn_rebels = {
+				type = anti_tax_rebels
+				size = 3
+			}
+		}
+	}
+	# send in sheriffs
+	option = {
+		name = troll_tolerance_events.7.b
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 1.5
+				wants_to_decrease_tolerance_troll = yes
+			}	
+		}
+		medium_decrease_of_troll_tolerance_effect = yes
+		event_target:troll_mengi_mob_province = {
+			add_devastation = 20
+		}
+		add_adm_power = -50
+		
+	}
+	# order the governer to intervene
+	option = {
+		name = troll_tolerance_events.7.c
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 1.5
+				wants_to_increase_tolerance_troll = yes
+			}
+		}
+		small_increase_of_troll_tolerance_effect = yes
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -10
+		}
+		event_target:troll_mengi_mob_province = {
+			add_province_modifier = {
+				name = add_unrest_10_modifier
+				duration = 3650
+			}
+			every_neighbor_province = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = add_unrest_10_modifier
+					duration = 3650
+				}
+			}
+		}
+	}
+	# restore order
+	option = {
+		trigger = {
+			OR = {
+				ruler_has_personality = righteous_personality
+				ruler_has_personality = lawgiver_personality
+				ruler_has_personality = just_personality
+			}
+		}
+		highlight = yes
+		name = troll_tolerance_events.7.e
+		ai_chance = {
+			factor = 200
+			modifier = {
+				factor = 2
+				wants_to_increase_tolerance_troll = yes
+			}
+		}
+		small_increase_of_troll_tolerance_effect = yes
+		event_target:troll_mengi_mob_province = {
+			add_province_modifier = {
+				name = add_unrest_10_modifier
+				duration = 1825
+			}
+			every_neighbor_province = {
+				limit = {
+					owned_by = ROOT
+				}
+				add_province_modifier = {
+					name = add_unrest_10_modifier
+					duration = 1825
+				}
+			}
+		}
+
+	}
+}
+
+# travelling swamp troll sculptor
+country_event = {
+	id = troll_tolerance_events.8
+	title = troll_tolerance_events.8.t
+	desc = troll_tolerance_events.8.d
+	picture = PAINTER_ARTIST_eventPicture
+
+	is_triggered_only = yes
+	
+	# Bring him to court. Ignore the snickering.
+	option = {
+		name = troll_tolerance_events.8.a
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 2
+				wants_to_increase_tolerance_troll = yes
+			}
+		}
+		small_increase_of_troll_tolerance_effect = yes
+		define_advisor = {
+			type = artist
+			skill = 3
+			cost_multiplier = 0.5
+			culture = swamp_troll
+			religion = shadow_pact
+		}
+		add_prestige = -20
+		add_legitimacy = -10
+	}
+	# These designs are just the inspiration we need
+	option = {
+		trigger = {
+			OR = {
+				ruler_has_personality = scholar_personality
+				ruler_has_personality = patron_of_arts_personality
+			}
+		}
+		highlight = yes
+		name = troll_tolerance_events.8.b
+		ai_chance = {
+			factor = 200
+			modifier = {
+				factor = 1.5
+				wants_to_increase_tolerance_troll = yes
+			}	
+		}
+		small_increase_of_troll_tolerance_effect = yes
+		define_advisor = {
+			type = artist
+			skill = 3
+			cost_multiplier = 0.5
+			culture = swamp_troll
+			religion = shadow_pact
+		}
+		add_prestige = -10
+		
+	}
+	# Nothing from the hands of a troll can be worthwhile
+	option = {
+		name = troll_tolerance_events.8.c
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 1.5
+				wants_to_decrease_tolerance_troll = yes
+			}
+		}
+		medium_decrease_of_troll_tolerance_effect = yes
+		add_prestige = 15
+		add_legitimacy_equivalent = { amount = 5 republican_tradition = 3 }
+	}
+	# not really my style
+	option = {
+		name = troll_tolerance_events.8.e
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 1.5
+				wants_to_decrease_tolerance_troll = yes
+			}
+		}
+		small_decrease_of_troll_tolerance_effect = yes
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 5
+		}
+
+	}
+}
+
+# Swamp Troll Merchant Harassed
+country_event = {
+	id = troll_tolerance_events.9
+	title = troll_tolerance_events.9.t
+	desc = troll_tolerance_events.9.d
+	picture = SAD_MERCHANT_eventPicture
+	goto = troll_merchant_province
+
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			# Prioritise a province with a troll minority before a troll majority
+			random_owned_province = {
+				limit = {
+					region = shadow_swamp_region
+					has_troll_majority_trigger = yes
+					NOT = { has_province_modifier = troll_merchant_removed }
+				}
+				save_event_target_as = troll_merchant_province
+			}
+			random_owned_province = {
+				limit = {
+					region = shadow_swamp_region
+					has_troll_minority_trigger = yes
+					NOT = { has_province_modifier = troll_merchant_removed }
+				}
+				save_event_target_as = troll_merchant_province
+			}
+		}
+	}
+	
+	# The trolls are valuable members of our community - punish the criminals
+	option = {
+		name = troll_tolerance_events.9.a
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 2
+				wants_to_increase_tolerance_troll = yes
+			}
+		}
+		small_increase_of_troll_tolerance_effect = yes
+		add_adm_power = -50
+		if = {
+			limit = {
+				monthly_income = 33
+			}
+			add_treasury = -200
+		}
+		else = {
+			add_years_of_income = -1
+		}
+		add_country_modifier = {
+			name = troll_protection_of_merchants
+			duration = 3650
+		}
+	}
+	# The people of <province> can solve their own problems
+	option = {
+		name = troll_tolerance_events.9.b
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 1.5
+				wants_to_decrease_tolerance_troll = yes
+			}	
+		}
+		small_decrease_of_troll_tolerance_effect = yes
+		event_target:troll_merchant_province = {
+			add_province_modifier = {
+				name = add_unrest_10_modifier
+				duration = 1825
+			}
+		}
+	}
+	# If she's causing unrest, move her out
+	option = {
+		name = troll_tolerance_events.9.c
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 1.5
+				wants_to_decrease_tolerance_troll = yes
+			}
+		}
+		medium_decrease_of_troll_tolerance_effect = yes
+		event_target:troll_merchant_province = {
+			add_province_modifier = {
+				name = troll_merchant_removed
+				duration = 1825
+			}
+		}
+	}
+	# We would be glad to help - for a small increase in taxes
+	option = {
+		trigger = {
+			OR = {
+				ruler_has_personality = cruel_personality
+				ruler_has_personality = greedy_personality
+				ruler_has_personality = embezzler_personality
+			}
+		}
+		highlight = yes
+		name = troll_tolerance_events.9.e
+		ai_chance = {
+			factor = 200
+			modifier = {
+				factor = 1.5
+				wants_to_increase_tolerance_troll = yes
+			}
+		}
+		small_increase_of_troll_tolerance_effect = yes
+		add_adm_power = -10
+		if = {
+			limit = {
+				monthly_income = 33
+			}
+			add_treasury = 200
+		}
+		else = {
+			add_years_of_income = 0.5
+		}
+	}
+}
+
+# Dreams from the Shadow Plane
+country_event = {
+	id = troll_tolerance_events.10
+	title = troll_tolerance_events.10.t
+	desc = troll_tolerance_events.10.d
+	picture = MAGES_ESTATE_MAD_eventPicture
+
+	is_triggered_only = yes
+	
+	# Nonsense. The Shadow Plane has no power here.
+	option = {
+		name = troll_tolerance_events.10.a
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 2
+				wants_to_decrease_tolerance_troll = yes
+			}
+		}
+		small_decrease_of_troll_tolerance_effect = yes
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		random_list = {
+			50 = {
+				kill_advisor = random
+			}
+			50 = {}
+		}
+	}
+	# Get this witch out of my sight!
+	option = {
+		trigger = {
+			OR = {
+				ruler_has_personality = zealot_personality
+				ruler_has_personality = pious_personality
+			}
+		}
+		highlight = yes
+		name = troll_tolerance_events.10.b
+		ai_chance = {
+			factor = 200
+			modifier = {
+				factor = 1.5
+				wants_to_decrease_tolerance_troll = yes
+			}
+		}
+		medium_decrease_of_troll_tolerance_effect = yes
+		add_estate_loyalty_modifier = {
+			estate = estate_church
+			desc = troll_seer_expelled
+			loyalty = 10
+			duration = 3650
+		}
+		add_prestige = 10
+		random_list = {
+			50 = {
+				kill_advisor = random
+			}
+			50 = {}
+		}
+	}
+	# Perhaps she really does see things - double the guard!
+	option = {
+		name = troll_tolerance_events.10.c
+		ai_chance = {
+			factor = 100
+			modifier = {
+				factor = 1.5
+				wants_to_increase_tolerance_troll = yes
+			}
+		}
+		small_increase_of_troll_tolerance_effect = yes
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -10
+		}
+		add_prestige = -10
 	}
 }
