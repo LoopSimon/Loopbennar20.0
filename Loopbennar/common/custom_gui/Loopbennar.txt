@@ -1,4 +1,139 @@
 custom_button = {
+    name = sb_button
+	tooltip = sb_button_title
+
+	potential = {
+		OR = {
+			owner = { tag = V16 }
+			owner = { tag = Y95 }
+		}
+		FROM = {
+			has_country_flag = sb_human_governance_flag
+		}
+		ROOT = {
+			NOT = { is_capital_of = V16 }
+			NOT = { is_capital_of = Y95 }
+			NOT = { 
+				any_neighbor_province = {
+					has_province_modifier = sb_human_city
+				}
+			}
+		}
+    }
+
+    trigger = { 
+		if = {
+			limit = {
+				owner = { tag = V16 }
+			}
+			root = {
+				is_core = V16
+			}
+			FROM = {
+				adm_power = 25
+				is_at_war = no
+			}
+		}
+		else_if = {
+			limit = { 
+				owner = { tag = Y95 }
+			}
+			FROM = {
+				adm_power = 25
+				dip_power = 25
+				mil_power = 25
+				is_at_war = no
+			}
+		}
+		
+	}
+
+	effect = { 
+		#This will apply to the country
+		if = {
+			limit = {
+				owner = { tag = V16 }
+			}
+			FROM = {
+				add_adm_power = -25
+			}
+		}
+		else_if = {
+			limit = { 
+				owner = { tag = Y95 }
+			}
+			FROM = {
+				add_adm_power = -25
+				add_dip_power = -25
+				add_mil_power = -25
+			}
+		}
+
+		#These will apply on the province
+		if = {
+			limit = { owned_by = V16 }
+			custom_tooltip = sb_human_governance_city_tt
+			hidden_effect = {
+				ROOT = {
+					add_core = Y95
+					remove_core = V16
+					cede_province = Y95
+					change_culture = wonju
+					add_troll_minority_size_effect = yes
+					add_province_modifier = {
+						name = sb_human_city
+						duration = -1
+					}
+					every_neighbor_province = {
+						limit = {
+							NOT = { has_province_modifier = sb_human_city }
+							owned_by = V16
+						}
+						province_event = {
+							id = sb.8
+							days = 1825
+							random = 7300
+						}
+						every_neighbor_province = {
+							limit = {
+								NOT = { has_province_modifier = sb_human_city }
+								owned_by = V16
+							}
+							province_event = {
+								id = sb.8
+								days = 1825
+								random = 7300
+							}
+						}
+					}
+				}
+				
+			}
+		}
+
+		else_if = {
+			limit = { owned_by = Y95 }
+			custom_tooltip = sb_human_governance_city_tt
+			hidden_effect = {
+				add_core = V16
+				remove_core = Y95
+				cede_province = V16
+				change_culture = hill_troll
+				remove_province_modifier = sb_human_city
+			}
+		}
+
+		hidden_effect = {
+			V16 = {
+				country_event = {
+					id = sb.4
+				}
+			}
+		}
+	}	
+}
+
+custom_button = {
     name = logging_camp_button_1
 	tooltip = logging_camp_button_1_title
 
