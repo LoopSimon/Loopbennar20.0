@@ -1,0 +1,687 @@
+mangrove_republic_setup = {
+	# check for end of reclamation
+	if = {
+		limit = { NOT = { has_global_flag = mangrove_reclamation_done } }
+		add_country_modifier = {
+			name = mangrove_peace
+			duration = -1
+		}
+		hidden_effect = {
+			mangrove_gain_cb = yes
+			set_variable = { mangrove_punia_logi = 0 }
+		}
+	}
+
+	if = {
+		limit = { ai = no }
+		every_owned_province = {
+			limit = {
+				region = tagaala_mangroves_region
+			}
+			add_province_modifier = {
+				name = mangrove_bio_infra_decay
+				duration = -1
+			}
+		}
+	}
+
+	custom_tooltip = mangrove_capstone_province_tt
+	
+	hidden_effect = {
+		every_known_country = {
+			limit = { has_government_attribute = mangrove_republic }
+			add_opinion = {
+				who = ROOT
+				modifier = mangrove_republic_relations
+			}
+			reverse_add_opinion = {
+				who = ROOT
+				modifier = mangrove_republic_relations
+			}
+
+		}
+		set_variable = { mangrove_bio_infra_finished_count = 0 }
+	}
+}
+
+mangrove_end_reclamation = {
+	clr_global_flag = mangrove_voting
+	clr_global_flag = mangrove_reclaiming
+	clr_global_flag = mangrove_vying_for_dominance
+	set_global_flag = mangrove_reclamation_done
+
+	clear_global_event_target = mangrove_leader
+	clear_global_event_target = mangrove_side_1
+	clear_global_event_target = mangrove_side_2
+}
+
+mangrove_remove_modifiers = {
+	remove_country_modifier = mangrove_peace
+}
+
+mangrove_consolidate = {
+	mangrove_end_reclamation = yes
+	mangrove_remove_modifiers = yes
+	add_country_modifier = {
+		name = mangrove_colonizing
+		duration = 18250 # 50 years
+	}
+	override_country_name = uma_laaow
+	tagaala_mangroves_region = {
+		add_core = ROOT
+	}
+}
+
+# send event to every republic
+mangrove_event = {
+	every_country = {
+		limit = { has_government_attribute = mangrove_republic }
+		country_event = { id = $COUNTRY_EVENT$ }
+	}
+}
+
+mangrove_on_province_owner_change_effect = {
+	if = {
+		limit = { region = tagaala_mangroves_region }
+		clr_province_flag = mangrove_bio_infra_finished
+		clr_province_flag = mangrove_bio_infra_stage_4
+		clr_province_flag = mangrove_bio_infra_stage_3
+		clr_province_flag = mangrove_bio_infra_stage_2
+		clr_province_flag = mangrove_bio_infra_stage_1
+		clr_province_flag = mangrove_bio_infra_path_chosen
+		if = { # AI doesn't get dev cost malus
+			limit = {
+				owner = {
+					ai = no
+					has_government_attribute = mangrove_republic
+				}
+			}
+			add_province_modifier = {
+				name = mangrove_bio_infra_decay
+				duration = -1
+			}
+		}
+		if = {
+			limit = { has_saved_global_event_target = mangrove_target_province }
+			if = { # non mangrove republic has conquered/colonized a mangrove province
+				limit = {
+					province_id = event_target:mangrove_target_province
+					owner = { NOT = { has_government_attribute = mangrove_republic } }
+				}
+				remove_province_modifier = mangrove_reclamation_site
+				clear_global_event_target = mangrove_target_province
+				clr_global_flag = mangrove_reclaiming
+				set_global_flag = mangrove_restart_voting
+				mangrove_event = { COUNTRY_EVENT = "mangrove.122" }
+			}
+		}
+	}
+}
+
+mangrove_clear_votes = {
+	mangrove_reclamation_provinces = {
+		limit = { is_empty = yes }
+		set_variable = { mangrove_votes = 0 }
+	}
+}
+
+mangrove_gain_cb = {
+	every_known_country = {
+		limit = { has_government_attribute = mangrove_republic }
+		reverse_add_casus_belli = {
+			target = PREV
+			type = cb_mangrove_conflict
+			months = 4800
+		}
+	}
+}
+
+# places value in mangrove_true_influence
+mangrove_calc_true_influence = {
+	export_to_variable = {
+		which = mangrove_true_influence
+		value = modifier:diplomatic_reputation
+	}
+	multiply_variable = { mangrove_true_influence = 4 }
+	# true mangrove influence = mangrove influence + 4 * diplo rep
+	change_variable = {
+		which = mangrove_true_influence
+		which = mangrove_influence
+	}
+}
+
+mangrove_new_leader_on_annexed = {
+	random_known_country = {
+		limit = { has_government_attribute = mangrove_republic }
+		save_global_event_target_as = mangrove_leader
+	}
+	every_known_country = {
+		limit = { has_government_attribute = mangrove_republic }
+		if = {
+			limit = {
+				event_target:mangrove_leader = {
+					NOT = {
+						check_variable = {
+							which = mangrove_influence
+							which = PREV
+						}
+					}
+				}
+			}
+			save_global_event_target_as = mangrove_leader
+		}
+	}
+	mangrove_change_ownership = yes
+	mangrove_event = { COUNTRY_EVENT = "mangrove.123" }
+}
+
+mangrove_change_ownership = {
+	if = {
+		limit = {
+			has_saved_global_event_target = mangrove_target_province
+			event_target:mangrove_target_province = {
+				owner = {
+					NOT = { tag = event_target:mangrove_leader } # don't change anything if leader hasn't changed
+				}
+			}
+		}
+		hidden_effect = {
+			event_target:mangrove_leader = {
+				event_target:mangrove_target_province = {
+					remove_core = owner
+					add_core = PREV
+					cede_province = PREV
+				}
+			}
+		}
+	}
+}
+
+mangrove_gain_influence = {
+	change_variable = { mangrove_influence = $INFLUENCE$ }
+	if = {
+		limit = { check_variable = { mangrove_influence = 100 } }
+		set_variable = { mangrove_influence = 100 }
+	}
+	if = {
+		limit = { has_saved_global_event_target = mangrove_leader }
+		if = {
+			limit = {
+				NOT = { tag = event_target:mangrove_leader }
+				event_target:mangrove_leader = {
+					NOT = {
+						check_variable = {
+							which = mangrove_influence
+							which = PREV
+						}
+					}
+				}
+			}
+			save_global_event_target_as = mangrove_leader
+			mangrove_change_ownership = yes
+			mangrove_event = { COUNTRY_EVENT = "mangrove.123" }
+		}
+	}
+	else = {
+		save_global_event_target_as = mangrove_leader
+	}
+}
+
+mangrove_lose_influence = {
+	subtract_variable = { mangrove_influence = $INFLUENCE$ }
+	if = {
+		limit = { NOT = { check_variable = { mangrove_influence = 0 } } }
+		set_variable = { mangrove_influence = 0 }
+	}
+	if = {
+		limit = { has_saved_global_event_target = mangrove_leader }
+		if = {
+			limit = { tag = event_target:mangrove_leader }
+			every_known_country = {
+				limit = { has_government_attribute = mangrove_republic }
+				if = {
+					limit = {
+						event_target:mangrove_leader = {
+							NOT = {
+								check_variable = {
+									which = mangrove_influence
+									which = PREV
+								}
+							}
+						}
+					}
+					save_global_event_target_as = mangrove_leader
+				}
+			}
+			if = {
+				limit = { NOT = { tag = event_target:mangrove_leader } }
+				mangrove_change_ownership = yes
+				mangrove_event = { COUNTRY_EVENT = "mangrove.123" }
+			}
+		}
+	}
+}
+
+mangrove_win_war = {
+	mangrove_gain_influence = { INFLUENCE = 5 }
+	mangrove_gain_cb = yes
+}
+
+mangrove_lose_war = {
+	mangrove_lose_influence = { INFLUENCE = 5 }
+	mangrove_gain_cb = yes
+}
+
+mangrove_new_target_province = {
+	mangrove_reclamation_provinces = {
+		limit = { is_empty = yes }
+		if = {
+			limit = { has_saved_global_event_target = mangrove_target_province }
+			if = {
+				limit = {
+					event_target:mangrove_target_province = {
+						NOT = {
+							check_variable = {
+								which = mangrove_votes
+								which = PREV
+							}
+						}
+					}
+				}
+				save_global_event_target_as = mangrove_target_province
+			}
+		}
+		else = {
+			save_global_event_target_as = mangrove_target_province
+		}
+	}
+}
+
+# need $TARGET$ province to change vote for
+mangrove_vote = {
+	$TARGET$ = {
+		set_variable = {
+			which = mangrove_true_influence
+			which = PREV
+		}
+		change_variable = {
+			which = mangrove_votes
+			which = mangrove_true_influence
+		}
+	}
+}
+
+mangrove_donate = {
+	event_target:mangrove_target_province = {
+		change_variable = { mangrove_donations = 1 }
+		set_variable = {
+			which = mangrove_donate_every_3
+			which = mangrove_donations
+		}
+		modulo_variable = {
+			which = mangrove_donate_every_3
+			value = 3
+		}
+
+		if = {
+			limit = {
+				is_variable_equal = {
+					which = mangrove_donate_every_3
+					value = 0
+				}
+			}
+			province_event = { id = mangrove.4 }
+		}
+	}
+}
+
+mangrove_on_adm_dev_effect = {
+	if = {
+		limit = { mangrove_check_capstone_effect_in_province = yes }
+		trigger_switch = {
+			on_trigger = has_province_flag
+			mangrove_bio_infra_dip_chosen = {
+				add_base_production = 1
+				add_base_tax = -1
+			}
+			mangrove_bio_infra_mil_chosen = {
+				add_base_manpower = 1
+				add_base_tax = -1
+			}
+		}
+	}
+}
+mangrove_on_dip_dev_effect = {
+	if = {
+		limit = { mangrove_check_capstone_effect_in_province = yes }
+		trigger_switch = {
+			on_trigger = has_province_flag
+			mangrove_bio_infra_adm_chosen = {
+				add_base_tax = 1
+				add_base_production = -1
+			}
+			mangrove_bio_infra_mil_chosen = {
+				add_base_manpower = 1
+				add_base_production = -1
+			}
+		}
+	}
+}
+mangrove_on_mil_dev_effect = {
+	if = {
+		limit = { mangrove_check_capstone_effect_in_province = yes }
+		trigger_switch = {
+			on_trigger = has_province_flag
+			mangrove_bio_infra_adm_chosen = {
+				add_base_tax = 1
+				add_base_manpower = -1
+			}
+			mangrove_bio_infra_dip_chosen = {
+				add_base_production = 1
+				add_base_manpower = -1
+			}
+		}
+	}
+}
+
+# aPUI bio infra button stuff
+
+mangrove_advance_bio_infra_stage = {
+	# after choosing 1st upgrade
+	if = {
+		limit = { has_province_flag = mangrove_bio_infra_stage_1 }
+		clr_province_flag = mangrove_bio_infra_stage_1
+		set_province_flag = mangrove_bio_infra_stage_2
+		add_province_modifier = { # fake modifier to show all upgrades
+			name = mangrove_bio_infra_dummy_mod
+			duration = -1
+		}
+	}
+	# after choosing 2nd upgrade
+	else_if = {
+		limit = { has_province_flag = mangrove_bio_infra_stage_2 }
+		clr_province_flag = mangrove_bio_infra_stage_2
+		set_province_flag = mangrove_bio_infra_stage_3
+	}
+	# after choosing 3rd upgrade
+	else_if = {
+		limit = { has_province_flag = mangrove_bio_infra_stage_3 }
+		clr_province_flag = mangrove_bio_infra_stage_3
+		set_province_flag = mangrove_bio_infra_stage_4
+		set_province_flag = mangrove_bio_infra_$PATH$_minor
+	}
+}
+
+mangrove_add_dev_adm = {
+	add_base_tax = 2
+}
+mangrove_add_dev_dip = {
+	add_base_production = 2
+}
+mangrove_add_dev_mil = {
+	add_base_manpower = 2
+}
+
+mangrove_bio_infra_cost = {
+	if = {
+		limit = { has_province_flag = mangrove_free_upgrade }
+		clr_province_flag = mangrove_free_upgrade
+	}
+	else_if = {
+		limit = { has_province_flag = mangrove_bio_infra_stage_1 }
+		FROM = {
+			add_$PATH$_power = -150
+		}
+	}
+	else_if = {
+		limit = { has_province_flag = mangrove_bio_infra_stage_2 }
+		FROM = {
+			add_$PATH$_power = -200
+		}
+	}
+	else_if = {
+		limit = { has_province_flag = mangrove_bio_infra_stage_3 }
+		FROM = {
+			add_$PATH$_power = -250
+		}
+	}
+}
+
+mangrove_bio_infra_choose_path = {
+	set_province_flag = mangrove_bio_infra_$PATH$_chosen
+	mangrove_add_dev_$PATH$ = yes
+	if = {
+		limit = { has_province_flag = mangrove_free_upgrade }
+		clr_province_flag = mangrove_free_upgrade
+	}
+	else = {
+		FROM = { add_$PATH$_power = -100 }
+	}
+	set_province_flag = mangrove_bio_infra_path_chosen
+	set_province_flag = mangrove_bio_infra_stage_1
+	custom_tooltip = mangrove_bio_infra_choose_path_tt
+	tooltip = {
+		add_province_modifier = {
+			name = mangrove_bio_infra_$PATH$_0
+			duration = -1
+		}
+		add_province_modifier = {
+			name = mangrove_bio_infra_$PATH$_1
+			duration = -1
+		}
+		add_province_modifier = {
+			name = mangrove_bio_infra_$PATH$_2
+			duration = -1
+		}
+	}
+}
+
+mangrove_bio_infra_choose_upgrade = {
+	if = {
+		limit = {
+			mangrove_bio_infra_upgrade_exists = { PATH = $PATH$ UPGRADE = $UPGRADE$ }
+		}
+		tooltip = {
+			add_province_modifier = {
+				name = mangrove_bio_infra_$PATH$_$UPGRADE$
+				duration = -1
+			}
+		}
+		add_province_modifier = {
+			name = mangrove_bio_infra_$PATH$_$UPGRADE$
+			duration = -1
+			hidden = yes
+		}
+		mangrove_bio_infra_button_effect = { PATH = $PATH$ }
+	}
+	else = {
+		tooltip = {
+			extend_province_modifier = {
+				name = mangrove_bio_infra_$PATH$_$UPGRADE$
+				duration = -1
+			}
+		}
+	}
+}
+
+mangrove_bio_infra_button_effect = {
+	mangrove_add_dev_$PATH$ = yes
+	mangrove_bio_infra_cost = { PATH = $PATH$ }
+	mangrove_advance_bio_infra_stage = { PATH = $PATH$ }
+}
+
+mangrove_bio_infra_final_cost = {
+	if = {
+		limit = { has_province_flag = mangrove_free_upgrade }
+		clr_province_flag = mangrove_free_upgrade
+	}
+	else = {
+		FROM = {
+			if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 0 }
+				}
+				anb_remove_all_power = { VAL = 50 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 1 }
+				}
+				anb_remove_all_power = { VAL = 100 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 2 }
+				}
+				anb_remove_all_power = { VAL = 150 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 3 }
+				}
+				anb_remove_all_power = { VAL = 200 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 4 }
+				}
+				anb_remove_all_power = { VAL = 250 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 5 }
+				}
+				anb_remove_all_power = { VAL = 300 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 6 }
+				}
+				anb_remove_all_power = { VAL = 350 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 7 }
+				}
+				anb_remove_all_power = { VAL = 400 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 8 }
+				}
+				anb_remove_all_power = { VAL = 450 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 9 }
+				}
+				anb_remove_all_power = { VAL = 500 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 10 }
+				}
+				anb_remove_all_power = { VAL = 550 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 11 }
+				}
+				anb_remove_all_power = { VAL = 600 }
+			}
+			else = {
+				anb_remove_all_power = { VAL = 650 }
+			}
+		}
+	}
+}
+
+mangrove_bio_infra_add_auxiliary_effect = {
+	trigger_switch = {
+		on_trigger = has_province_flag
+		mangrove_bio_infra_adm_chosen = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				mangrove_bio_infra_dip_minor = { mangrove_bio_infra_add_auxiliary_sub_effect = { name = mangrove_bio_infra_adm_dip } }
+				mangrove_bio_infra_mil_minor = { mangrove_bio_infra_add_auxiliary_sub_effect = { name = mangrove_bio_infra_adm_mil } }
+			}
+		}
+		mangrove_bio_infra_dip_chosen = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				mangrove_bio_infra_adm_minor = { mangrove_bio_infra_add_auxiliary_sub_effect = { name = mangrove_bio_infra_dip_adm } }
+				mangrove_bio_infra_mil_minor = { mangrove_bio_infra_add_auxiliary_sub_effect = { name = mangrove_bio_infra_dip_mil } }
+			}
+		}
+		mangrove_bio_infra_mil_chosen = {
+			trigger_switch = {
+				on_trigger = has_province_flag
+				mangrove_bio_infra_adm_minor = { mangrove_bio_infra_add_auxiliary_sub_effect = { name = mangrove_bio_infra_mil_adm } }
+				mangrove_bio_infra_dip_minor = { mangrove_bio_infra_add_auxiliary_sub_effect = { name = mangrove_bio_infra_mil_dip } }
+			}
+		}
+	}
+}
+
+mangrove_bio_infra_add_auxiliary_sub_effect = {
+	if = {
+		limit = { has_province_modifier = $name$ }
+		extend_province_modifier = {
+			name = $name$
+			duration = -1
+		}
+	}
+	else = {
+		tooltip = {
+			add_province_modifier = {
+				name = $name$
+				duration = -1
+			}
+		}
+		add_province_modifier = {
+			name = $name$
+			duration = -1
+			hidden = yes
+		}
+	}
+}
+
+mangrove_bio_infra_final_upgrade = {
+	if = {
+		limit = { NOT = { has_province_flag = mangrove_bio_infra_finished } }
+		mangrove_bio_infra_add_auxiliary_effect = yes
+		if = {
+			limit = { FROM = { has_country_flag = mangrove_capstone_unlocked } }
+			remove_province_modifier = mangrove_bio_infra_decay
+		}
+		clr_province_flag = mangrove_bio_infra_stage_4
+		set_province_flag = mangrove_bio_infra_finished
+		mangrove_bio_infra_final_cost = yes
+		FROM = {
+			hidden_effect = {
+				change_variable = { mangrove_bio_infra_finished_count = 1 }
+			}
+		}
+		if = {
+			limit = { is_capital = yes }
+			FROM = { mangrove_unlock_capstone = yes }
+		}
+	}
+	else = {
+		tooltip = {
+			mangrove_bio_infra_add_auxiliary_effect = yes
+		}
+	}
+}
+
+mangrove_unlock_capstone = {
+	set_country_flag = mangrove_capstone_unlocked
+	every_owned_province = {
+		limit = {
+			region = tagaala_mangroves_region
+			has_province_flag = mangrove_bio_infra_finished
+			has_province_modifier = mangrove_bio_infra_decay
+		}
+		remove_province_modifier = mangrove_bio_infra_decay
+	}
+}

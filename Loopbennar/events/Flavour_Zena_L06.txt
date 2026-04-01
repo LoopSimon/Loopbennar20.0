@@ -1,0 +1,4507 @@
+namespace = flavour_zena
+
+### Mission Events
+country_event = { #Toll of the War for Zena - sets up Nyanza Market Level 1
+    id = flavour_zena.1
+    title = flavour_zena.1.t
+    desc = flavour_zena.1.d
+    picture = CITY_DEVELOPMENT_eventPicture
+    goto = 5847 #Bivuzena
+
+    is_triggered_only = yes
+
+    option = {
+        name = "flavour_zena.1.a"
+        5847 = {
+            add_province_modifier = { #Monthly Devestation +0.9, Province Unrest +10, Governing Cost +20%
+                name = zena_nyanza_market_level_one
+                duration = -1
+            }
+        }
+		custom_tooltip = zena_rinta_tt
+    }
+}
+
+country_event = { #Event sent to Iqhekabi asking them to ally with Zena
+    id = flavour_zena.2
+    title = flavour_zena.2.t
+    desc = flavour_zena.2.d
+    picture = DIPLOMACY_eventPicture
+    goto = 5847 #Bivuzena
+
+    is_triggered_only = yes
+
+    option = { #We shall ally with Zena
+        name = "flavour_zena.2.a"
+        remove_rival = FROM #Zena
+        FROM = { #Zena
+            remove_rival = ROOT #Iqhekabi
+            add_historical_friend = ROOT #Iqhekabi
+        }
+        add_historical_friend = FROM #Zena
+        create_alliance = FROM #Zena
+        zuvaziva_area = {
+            add_claim = ROOT #Iqhekabi
+        }
+        add_country_modifier = { #+10% Cav Power, -15% Land Maintenance Modifier
+            name = zena_noble_elephants_shadow
+            duration = 18250
+        }
+    }
+
+    option = { #player-only option, vassalize Zena
+        name = "flavour_zena.2.b"
+        highlight = yes
+		trigger = {
+			hidden_trigger = {
+				ai = no
+			}
+		}
+        remove_rival = FROM #Zena
+        FROM = { #Zena
+            remove_rival = ROOT #Iqhekabi
+            add_historical_friend = ROOT #Iqhekabi
+        }
+        add_historical_friend = FROM #Zena
+        vassalize = FROM #Zena
+        zuvaziva_area = {
+            add_claim = ROOT #Iqhekabi
+        }
+        add_prestige = 10
+        add_power_projection = {
+            type = mission_rewards_power_projection
+            amount = 10
+        }
+    }
+}
+
+country_event = { #Iqhekabi dead, we can take Horashesh for ourselves, ig
+    id = flavour_zena.3
+    title = flavour_zena.3.t
+    desc = flavour_zena.3.d
+    picture = CONQUEST_eventPicture
+
+    is_triggered_only = yes
+
+    option = {
+        name = "flavour_zena.3.a"
+        horashesh_region = {
+            add_claim = ROOT
+        }
+        zuvaziva_area = {
+            add_permanent_claim = ROOT
+        }
+        unior_area = {
+            add_permanent_claim = ROOT
+        }
+        imivama_area = {
+            add_permanent_claim = ROOT
+        }
+        iqhekabi_area = {
+            add_permanent_claim = ROOT
+        }
+        zuvavim_area = {
+            add_permanent_claim = ROOT
+        }
+        add_prestige = 15
+        add_power_projection = {
+            type = mission_rewards_power_projection
+            amount = 10
+        }
+        add_country_modifier = { #-5% Province War Score Cost, +5% Discipline, +5% Ship Durability
+            name = zena_quest_for_united_horashesh
+            duration = 7300
+        }
+    }
+}
+
+country_event = { #Iqhekabi is another filthy human player, we gotta kill these guys
+    id = flavour_zena.4
+    title = flavour_zena.4.t
+    desc = flavour_zena.4.d
+    picture = CONQUEST_eventPicture
+
+    is_triggered_only = yes
+
+    option = {
+        name = "flavour_zena.4.a"
+        if = {
+            limit = {
+                alliance_with = L05 #Iqhekabi
+            }
+            break_alliance = L05
+        }
+        else_if = {
+            limit = {
+                vassal_of = L05
+            }
+            add_liberty_desire = 200
+        }
+        L05 = { #Iqhekabi
+            every_owned_province = {
+                add_permanent_claim = ROOT
+            }
+        }
+        country_event = {
+            id = flavour_zena.6
+            days = 90
+            tooltip = flavour_zena.4.war_tt
+        }
+    }
+}
+
+country_event = { #Zena is trying to kill us, wtf. We gotta kill these guys.
+    id = flavour_zena.5
+    title = flavour_zena.5.t
+    desc = flavour_zena.5.d
+    picture = CONQUEST_eventPicture
+
+    is_triggered_only = yes
+
+    option = {
+        name = "flavour_zena.5.a"
+         if = {
+            limit = {
+                alliance_with = FROM #Zena
+            }
+            break_alliance = FROM
+        }
+        else_if = {
+            limit = {
+                vassal_of = FROM
+            }
+            add_liberty_desire = 200
+        }
+        FROM = { #Zena
+             every_owned_province = {
+                add_permanent_claim = ROOT
+             }
+        }
+        custom_tooltip = zena_iqhekabi_war_soon_tt
+    }
+}
+
+country_event = { #War with Iqhekabi firing
+    id = flavour_zena.6
+    title = flavour_zena.6.t
+    desc = flavour_zena.6.d
+    picture = CONQUEST_eventPicture
+
+    is_triggered_only = yes
+    hidden = yes
+
+    option = {
+        name = "flavour_zena.6.a"
+        if = {
+            limit = {
+                vassal_of = L05 #Iqhekabi
+            }
+            declare_war_with_cb = {
+                casus_belli = cb_independence_war
+                who = L05
+            }
+        }
+        else = {
+			if = {
+				limit = {
+					L05 = { #Iqhekabi
+						vassal_of = ROOT
+					}
+				}
+				free_vassal = L05 #Iqhekabi
+				L05 = { #Iqhekabi
+					add_prestige = -25
+					add_power_projection = {
+						type = mission_rewards_power_projection
+						amount = -25
+					}
+				}
+			}
+            declare_war_with_cb = {
+                casus_belli = cb_anb_imperial
+                who = L05
+            }
+        }
+    }
+}
+
+country_event = { #Asking Sel'Parura to trade protectorate w/ us
+    id = flavour_zena.7
+    title = flavour_zena.7.t
+    desc = flavour_zena.7.d
+    picture = DIPLOMACY_eventPicture
+
+    is_triggered_only = yes
+
+    option = { #Sounds good
+        name = "flavour_zena.7.a"
+        FROM = { #Zena
+            create_subject = {
+                subject_type = trade_protectorate
+                subject = ROOT
+            }
+        }
+    }
+
+    option = { #We'll pass
+        name = "flavour_zena.7.b"
+		trigger = {
+			hidden_trigger = {
+				ai = no
+			}
+		}
+        highlight = yes
+		capital_scope = {
+			add_province_modifier = { #+25% Local Trade Power, Tax Modifier, Institution Spread
+				name = zena_medakas_favour
+				duration = -1
+			}
+		}
+    }
+}
+
+country_event = {
+	id = flavour_zena.9
+	title = flavour_zena.9.t
+	desc = flavour_zena.9.d
+	picture = GREAT_BUILDING_eventPicture
+	goto = 5847
+
+	is_triggered_only = yes
+
+	option = {
+		name = "flavour_zena.9.a"
+		zena_blueprints_enlarge_effect = yes
+		custom_tooltip = zena_bivuzena_add_known_races_tt
+		hidden_effect = { #All known province pops WITHOUT minorities in Bivuzena add minority size in Bivuzena.
+			5847 = {
+				zena_bivuzena_add_known_races_posteffect = yes
+			}
+		} 
+		custom_tooltip = zena_colonial_race_spreading_tt
+		hidden_effect = { #All pops with LARGE minorities in Bivuzena add minority size in ALL colonial nation capitals
+			5847 = { #Bivuzena
+				zena_colonial_race_spreading_effect = {
+					race = dwarven
+				}
+				zena_colonial_race_spreading_effect = {
+					race = gnomish
+				}
+				zena_colonial_race_spreading_effect = {
+					race = elven
+				}
+				zena_colonial_race_spreading_effect = {
+					race = halfling
+				}
+				zena_colonial_race_spreading_effect = {
+					race = half_orcish
+				}
+				zena_colonial_race_spreading_effect = {
+					race = kobold
+				}
+				zena_colonial_race_spreading_effect = {
+					race = orcish
+				}
+				zena_colonial_race_spreading_effect = {
+					race = gnollish
+				}
+				zena_colonial_race_spreading_effect = {
+					race = ruinborn
+				}
+				zena_colonial_race_spreading_effect = {
+					race = goblin
+				}
+				zena_colonial_race_spreading_effect = {
+					race = harpy
+				}
+				zena_colonial_race_spreading_effect = {
+					race = troll
+				}
+				zena_colonial_race_spreading_effect = {
+					race = half_elven
+				}
+				zena_colonial_race_spreading_effect = {
+					race = ogre
+				}
+				zena_colonial_race_spreading_effect = {
+					race = harimari
+				}
+				zena_colonial_race_spreading_effect = {
+					race = centaur
+				}
+				zena_colonial_race_spreading_effect = {
+					race = hobgoblin
+				}
+				zena_colonial_race_spreading_effect = {
+					race = lizardfolk
+				}
+				zena_colonial_race_spreading_effect = {
+					race = mechanim
+				}
+			}
+		}
+		increase_all_tolerances = { size = large }
+		add_country_modifier = { #+20% Treasure Fleet Income, +20% Trade Steering, +20% Trade power, +2 Accepted Cultures
+			name = zena_jewel_tanib_dajek
+			duration = -1
+		}
+	}
+}
+
+province_event = { #The auto-upgrade for the province modifiers for AI/non-Zena holders of the province
+	id = flavour_zena.10
+	title = flavour_zena.10.t
+	desc = flavour_zena.10.d
+	picture = GREAT_BUILDING_eventPicture
+
+	hidden = yes
+	is_triggered_only = yes
+
+	option = {
+		name = "flavour_zena.10.a"
+		if = {
+			limit = {
+				has_province_modifier = zena_medakas_exceptional_treasures_level_four
+			}
+			remove_province_modifier = zena_medakas_majestic_menagerie_level_three
+			add_permanent_province_modifier = {
+				name = zena_medakas_majestic_menagerie_level_four
+				duration = -1
+			}
+			set_province_flag = zena_auto_upgrades_complete
+			zena_bivuzena_add_known_races_posteffect = yes
+			owner = {
+				increase_all_tolerances = { size = largest }
+			}
+		}
+		else_if = {
+			limit = {
+				has_province_modifier = zena_nyanza_market_level_four
+			}
+			remove_province_modifier = zena_medakas_exceptional_treasures_level_three
+			add_permanent_province_modifier = {
+				name = zena_medakas_exceptional_treasures_level_four
+				duration = -1
+			}
+			remove_province_modifier = zena_medakas_majestic_menagerie_level_two
+			add_permanent_province_modifier = {
+				name = zena_medakas_majestic_menagerie_level_three
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				has_province_modifier = zena_nyanza_market_level_three
+			}
+			remove_province_modifier = zena_nyanza_market_level_three
+			add_permanent_province_modifier = {
+				name = zena_nyanza_market_level_four
+				duration = -1
+			}
+			remove_province_modifier = zena_medakas_exceptional_treasures_level_two
+			add_permanent_province_modifier = {
+				name = zena_medakas_exceptional_treasures_level_three
+				duration = -1
+			}
+			remove_province_modifier = zena_medakas_majestic_menagerie_level_one
+			add_permanent_province_modifier = {
+				name = zena_medakas_majestic_menagerie_level_two
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				has_province_modifier = zena_nyanza_market_level_two
+			}
+			remove_province_modifier = zena_nyanza_market_level_two
+			add_permanent_province_modifier = {
+				name = zena_nyanza_market_level_three
+				duration = -1
+			}
+			remove_province_modifier = zena_medakas_exceptional_treasures_level_one
+			add_permanent_province_modifier = {
+				name = zena_medakas_exceptional_treasures_level_two
+				duration = -1
+			}
+			add_permanent_province_modifier = {
+				name = zena_medakas_majestic_menagerie_level_one
+				duration = -1
+			}
+		}
+		else_if = {
+			limit = {
+				has_province_modifier = zena_nyanza_market_level_one
+			}
+			remove_province_modifier = zena_nyanza_market_level_one
+			add_permanent_province_modifier = {
+				name = zena_nyanza_market_level_two
+				duration = -1
+			}
+			add_permanent_province_modifier = {
+				name = zena_medakas_exceptional_treasures_level_one
+				duration = -1
+			}
+		}
+
+		if = {
+			limit = {
+				NOT = { has_province_modifier = zena_medakas_majestic_menagerie_level_four }
+			}
+			if = {
+				limit = {
+					owner = {
+						OR = {
+							NOT = {
+								is_subject = yes
+							}
+							is_subject_of = L40 #Maranakvi
+						}
+					}
+				}
+				add_province_modifier = {
+					name = zena_auto_upgrades_in_progress
+					duration = 7299
+					hidden = yes
+				}
+			}
+			else = {
+				add_province_modifier = {
+					name = zena_auto_upgrades_in_progress
+					duration = 9124
+					hidden = yes
+				}
+			}
+		}
+	}
+}
+
+country_event = { #The cede effect for the MP war
+	id = flavour_zena.66
+	title = flavour_zena.66.t
+	desc = flavour_zena.66.d
+	picture = ELEPHANTS_AND_PEASANTS_eventPicture
+	hidden = yes
+
+	is_triggered_only = yes
+
+	option = {
+		name = "flavour_zena.66.a"
+		event_target:zena_together_war_loser = {
+			every_owned_province = {
+				cede_province = ROOT
+			}
+		}
+	}
+}
+
+### Relic Events
+
+country_event = { #Relic/Fauna Handler
+	id = flavour_zena.70
+	title = flavour_zena.70.t
+	desc = flavour_zena.70.d
+	picture = IMPORTANT_STATUE_eventPicture
+
+	hidden = yes
+
+	is_triggered_only = yes
+	trigger = {
+		mission_completed = L06_curated_grandeur
+		owns = 5847
+	}
+
+	option = { 
+		random_list = {
+			1000 = { }
+			800 = { #Relics
+				modifier = {
+					factor = 1.1
+					5847 = {
+						has_province_modifier = zena_medakas_exceptional_treasures_level_two
+					}
+				}
+				modifier = {
+					factor = 1.25
+					5847 = {
+						has_province_modifier = zena_medakas_exceptional_treasures_level_three
+					}
+				}
+				modifier = {
+					factor = 1.5
+					5847 = {
+						has_province_modifier = zena_medakas_exceptional_treasures_level_four
+					}
+				}
+				random_list = {
+					10 = { #Sareyand Statues
+						trigger = {
+							NOT = {
+								has_country_flag = zena_sunshine_manor_statue_acquired
+							}
+							625 = { is_city = yes }
+						}
+						country_event = {
+							id = flavour_zena.11
+						}
+					}
+					10 = { #Prismatic Damestear
+						trigger = {
+							NOT = {
+								has_country_flag = zena_prismatic_damestear_acquired
+							}
+							torn_gates_superregion = {
+								has_discovered = ROOT
+							} 
+						}
+						country_event = {
+							id = flavour_zena.13
+						}
+					}
+					10 = { #Ynnic Glass
+						trigger = {
+							NOT = {
+								has_country_flag = zena_ynnic_glass_acquired
+							}
+							ynn_superregion = {
+								has_discovered = ROOT
+							}
+						}
+						country_event = {
+							id = flavour_zena.15
+						}
+					}
+					10 = { #Calascandar Archives
+						trigger = {
+							NOT = {
+								has_country_flag = zena_calasandur_excerpt_acquired
+							}
+							damescrown_region = {
+								has_discovered = ROOT
+							}
+							254 = { is_city = yes }
+						}
+						country_event = {
+							id = flavour_zena.17
+						}
+					}
+					10 = { #Ovdal Lodhum Stones
+						trigger = {
+							NOT = {
+								has_country_flag = zena_glowing_stone_acquired
+							}
+							has_discovered = 2973
+							2973 = { is_city = yes }
+						}
+						country_event = {
+							id = flavour_zena.19
+						}
+					}
+					10 = { #Centaur Music
+						trigger = {
+							NOT = {
+								has_country_flag = zena_fp_music_acquired
+							}
+							any_known_country = {
+								OR = {
+									religious_school = {
+										group = centaur_religion
+										school = irdukhuga_school
+									}
+									has_country_modifier = irdukhuga_scholar_modifier
+								}
+							}
+						}
+						country_event = {
+							id = flavour_zena.21
+						}
+					}
+					10 = { #Haless Tian Zhu
+						trigger = {
+							NOT = {
+								has_country_flag = zena_haless_tian_zhu_acquired
+							}
+							OR = {
+								AND = {
+									knows_country = V05 #Cangji
+									exists = V05 #Cangji
+								}
+								any_known_country = {
+									OR = {
+										culture = runsukhi
+										culture = plateau_runsukhi 
+									}
+								}
+							}
+						}
+						country_event = {
+							id = flavour_zena.23
+						}
+					}
+					10 = { #Insyaa Spiral Darts
+						trigger = {
+							has_global_flag = stormwall_open
+							NOT = {
+								has_country_flag = zena_insyaa_spiral_dart_acquired
+							}
+							OR = {
+								AND = {
+									knows_country = N91
+									exists = N91
+								}
+								any_known_country = {
+									capital_scope = {
+										region = great_plateau_region
+									} 
+								}
+							}
+						}
+						country_event = {
+							id = flavour_zena.25
+						}
+					}
+				}
+			}
+			600 = { #Fauna
+				trigger = {
+					mission_completed = L06_elephants_for_menagerie
+				}
+				modifier = {
+					factor = 1.1
+					5847 = {
+						has_province_modifier = zena_medakas_majestic_menagerie_level_two
+					}
+				}
+				modifier = {
+					factor = 1.25
+					5847 = {
+						has_province_modifier = zena_medakas_majestic_menagerie_level_three
+					}
+				}
+				modifier = {
+					factor = 1.5
+					5847 = {
+						has_province_modifier = zena_medakas_majestic_menagerie_level_four
+					}
+				}
+				random_list = {
+					10 = { #Cheetahs
+						trigger = {
+							NOT = {
+								has_country_flag = zena_cheetahs_acquired
+								has_country_flag = zena_cheetahs_began
+							}
+						}
+						country_event = {
+							id = flavour_zena.52
+						}
+					}
+					10 = { #Landfish
+						trigger = {
+							NOT = {
+								has_country_flag = zena_landfish_acquired
+								has_country_flag = zena_landfish_began
+							}
+						}
+						country_event = {
+							id = flavour_zena.53
+						}
+					}
+					10 = { #Varghund
+						trigger = {
+							NOT = {
+								has_country_flag = zena_varghund_acquired
+								has_country_flag = zena_varghund_began
+							}
+						}
+						country_event = {
+							id = flavour_zena.54
+						}
+					}
+					10 = { #Drakon
+						trigger = {
+							NOT = {
+								has_country_flag = zena_drakon_acquired
+								has_country_flag = zena_drakon_began
+							}
+						}
+						country_event = {
+							id = flavour_zena.55
+						}
+					}
+					10 = { #Tlalusk
+						trigger = {
+							NOT = {
+								has_country_flag = zena_tlalusk_acquired
+								has_country_flag = zena_tlalusk_began
+							}
+						}
+						country_event = {
+							id = flavour_zena.56
+						}
+					}
+					10 = { #Terror-Bird
+						trigger = {
+							NOT = {
+								has_country_flag = zena_terror_bird_acquired
+								has_country_flag = zena_terror_bird_began
+							}
+						}
+						country_event = {
+							id = flavour_zena.57
+						}
+					}
+					10 = { #Ghost Coral
+						trigger = {
+							has_global_flag = stormwall_open
+							NOT = {
+								has_country_flag = zena_ghost_coral_acquired
+								has_country_flag = zena_ghost_coral_began
+							}
+						}
+						country_event = {
+							id = flavour_zena.58
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = { #Sarhal Sareyand Sunshine Manor Statue Start
+	id = flavour_zena.11
+	title = flavour_zena.11.t
+	desc = flavour_zena.11.d
+	picture = IMPORTANT_STATUE_eventPicture
+	goto = 625 #Sareyand
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			far_bulwar_region = {
+				discover_country = ROOT
+			}
+			bulwar_proper_region = {
+				discover_country = ROOT
+			}
+			625 = { #Sareyand
+				owner = {
+					save_event_target_as = zena_sunshine_manor_holder
+				}
+			}			
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_sunshine_manor_holder
+			}
+			set_country_flag = zena_sunshine_manor_statue_acquired
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.11.a"
+		custom_tooltip = zena_relic_purchase_preview_tt
+		tooltip = {
+			add_country_modifier = { #+10% National Tax Modifier 
+				name = zena_sunshine_manor_statue
+				duration = 18250
+			}
+			5847 = {
+				zena_bivuzena_generic_add_race_effect = { race = elven }
+			}
+		}
+		country_event = {
+			id = flavour_zena.12
+			days = 1095
+		}
+	}
+}
+
+country_event = { #Sarhal Sareyand Sunshine Manor Statue End
+	id = flavour_zena.12
+	title = flavour_zena.12.t
+	desc = flavour_zena.12.d
+	picture = IMPORTANT_STATUE_eventPicture
+	goto = 625 #Sareyand
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_sunshine_manor_holder
+			}
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.12.a"
+		trigger = {
+			event_target:zena_sunshine_manor_holder = {
+				exists = yes
+			}
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = righteous_personality
+					ruler_has_personality = just_personality
+					ruler_has_personality = kind_hearted_personality
+					ruler_has_personality = pious_personality
+					ruler_has_personality = lawgiver_personality
+					ruler_has_personality = incorruptible_personality
+				}
+			}
+		}
+		zena_relic_buy_effect = { zena_relic_event_target = zena_sunshine_manor_holder }
+		add_country_modifier = { #+10% National Tax Modifier 
+			name = zena_sunshine_manor_statue
+			duration = 18250
+		}
+		5847 = { #Bivuzena
+			zena_bivuzena_generic_add_race_effect = { race = elven }
+		}
+	}
+
+	option = { #Back out
+		name = "flavour_zena.12.c"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = embezzler_personality
+					ruler_has_personality = greedy_personality
+				}
+			}
+		}
+		custom_tooltip = zena_relics_backout_tt
+		hidden_effect = {
+			clr_country_flag = zena_sunshine_manor_statue_acquired
+		}
+	}
+}
+
+country_event = { #South Aelantir Prismatic Damestear Start
+	id = flavour_zena.13
+	title = flavour_zena.13.t
+	desc = flavour_zena.13.d
+	picture = MAGE_MOON_ALTER_eventPicture
+	goto = zena_prismatic_damestear_province 
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			amadia_region = {
+				discover_country = ROOT
+			}
+			random_known_country = {
+				limit = {
+					capital_scope = {
+						region = amadia_region
+					}
+				}
+				random_owned_province = {
+					limit = {
+						region = amadia_region
+					}
+					save_event_target_as = zena_prismatic_damestear_province
+				}
+				save_event_target_as = zena_prismatic_damestear_holder
+			}
+			if = {
+				limit = { NOT = { has_saved_event_target = zena_prismatic_damestear_holder } }
+				random_province = {
+					limit = {
+						region = amadia_region
+						NOT = { owned_by = ROOT }
+						is_city = yes
+					}
+					save_event_target_as = zena_prismatic_damestear_province
+					owner = { save_event_target_as = zena_prismatic_damestear_holder }
+				}
+			}
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_prismatic_damestear_holder
+			}
+			set_country_flag = zena_prismatic_damestear_acquired
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.13.a"
+		custom_tooltip = zena_relic_purchase_preview_tt
+		tooltip = {
+			add_country_modifier = { #+10% Magic Mana Regen
+				name = zena_prismatic_damestear
+				duration = 18250
+			}	
+			5847 = {
+				zena_bivuzena_generic_add_race_effect = { race = ruinborn }
+			}
+		}
+		country_event = {
+			id = flavour_zena.14
+			days = 1095
+		}
+	}
+}
+
+country_event = { #South Aelantir Prismatic Damestear End
+	id = flavour_zena.14
+	title = flavour_zena.14.t
+	desc = flavour_zena.14.d
+	picture = MAGE_MOON_ALTER_eventPicture
+	goto = zena_prismatic_damestear_province
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_prismatic_damestear_holder
+			}
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.14.a"
+		trigger = {
+			event_target:zena_prismatic_damestear_holder = {
+				exists = yes
+			}
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = righteous_personality
+					ruler_has_personality = just_personality
+					ruler_has_personality = kind_hearted_personality
+					ruler_has_personality = pious_personality
+					ruler_has_personality = lawgiver_personality
+					ruler_has_personality = incorruptible_personality
+				}
+			}
+		}
+		zena_relic_buy_effect = { zena_relic_event_target = zena_prismatic_damestear_holder }
+		add_country_modifier = { #+10% Magic Mana Regen
+			name = zena_prismatic_damestear
+			duration = 18250
+		}
+		5847 = {
+			zena_bivuzena_generic_add_race_effect = { race = ruinborn }
+		}
+	}
+
+	option = { #Back out
+		name = "flavour_zena.14.c"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = embezzler_personality
+					ruler_has_personality = greedy_personality
+				}
+			}
+		}
+		custom_tooltip = zena_relics_backout_tt
+		hidden_effect = {
+			clr_country_flag = zena_prismatic_damestear_acquired
+		}
+	}
+}
+
+country_event = { #North Aelentir Ynnic Stained Glass
+	id = flavour_zena.15
+	title = flavour_zena.15.t
+	desc = flavour_zena.15.d
+	picture = ARTWORK_eventPicture
+	goto = zena_ynnic_glass_province 
+
+	is_triggered_only = yes
+
+	immediate = {
+		rzenta_region = {
+			discover_country = ROOT
+		}
+		hidden_effect = {
+			random_known_country = {
+				limit = {
+					capital_scope = {
+						region = rzenta_region
+					}
+				}
+				random_owned_province = {
+					limit = {
+						region = rzenta_region
+					}
+					save_event_target_as = zena_ynnic_glass_province
+				}
+				save_event_target_as = zena_ynnic_glass_holder
+			}
+			if = {
+				limit = { NOT = { has_saved_event_target = zena_ynnic_glass_holder } }
+				random_province = {
+					limit = {
+						region = rzenta_region
+						NOT = { owned_by = ROOT }
+						is_city = yes
+					}
+					save_event_target_as = zena_ynnic_glass_province
+					owner = { save_event_target_as = zena_ynnic_glass_holder }
+				}
+			}			
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_ynnic_glass_holder
+			}
+			set_country_flag = zena_ynnic_glass_acquired
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.15.a"
+		custom_tooltip = zena_relic_purchase_preview_tt
+		tooltip = {
+			add_country_modifier = { #-1% Prestige Decay
+				name = zena_ynnic_glass
+				duration = 18250
+			}
+			5847 = {
+				zena_bivuzena_generic_add_race_effect = { race = ruinborn }
+			}
+		}
+		country_event = {
+			id = flavour_zena.16
+			days = 1095
+		}
+	}
+}
+
+country_event = { #North Aelentir Ynnic Stained Glass
+	id = flavour_zena.16
+	title = flavour_zena.16.t
+	desc = flavour_zena.16.d
+	picture = ARTWORK_eventPicture
+	goto = zena_ynnic_glass_province
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_ynnic_glass_holder
+			}
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.16.a"
+		trigger = {
+			event_target:zena_ynnic_glass_holder = {
+				exists = yes
+			}
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = righteous_personality
+					ruler_has_personality = just_personality
+					ruler_has_personality = kind_hearted_personality
+					ruler_has_personality = pious_personality
+					ruler_has_personality = lawgiver_personality
+					ruler_has_personality = incorruptible_personality
+				}
+			}
+		}
+		zena_relic_buy_effect = { zena_relic_event_target = zena_ynnic_glass_holder }
+		add_country_modifier = { #-1% Prestige Decay
+			name = zena_ynnic_glass
+			duration = 18250
+		}
+		5847 = {
+			zena_bivuzena_generic_add_race_effect = { race = ruinborn }
+		}
+	}
+
+	option = { #Back out
+		name = "flavour_zena.16.c"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = embezzler_personality
+					ruler_has_personality = greedy_personality
+				}
+			}
+		}
+		custom_tooltip = zena_relics_backout_tt
+		hidden_effect = {
+			clr_country_flag = zena_ynnic_glass_acquired
+		}
+	}
+}
+
+country_event = { #Cannor Excerpt from Calasandur's Archives
+	id = flavour_zena.17
+	title = flavour_zena.17.t
+	desc = flavour_zena.17.d
+	picture = CASTLE_eventPicture
+	goto = 254 #Calascandar 
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			damescrown_region = {
+				discover_country = ROOT
+			}
+			254 = {
+				owner = {
+					save_event_target_as = zena_calasandur_excerpt_holder
+				}
+			}
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_calasandur_excerpt_holder
+			}
+			set_country_flag = zena_calasandur_excerpt_acquired
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.17.a"
+		custom_tooltip = zena_relic_purchase_preview_tt
+		tooltip = {
+			add_country_modifier = { #-1% Prestige Decay
+				name = zena_calasandur_excerpt
+				duration = 18250
+			}
+			5847 = {
+				zena_bivuzena_generic_add_race_effect = { race = half_elven }
+			}
+		}
+		country_event = {
+			id = flavour_zena.18
+			days = 1095
+		}
+	}
+}
+
+country_event = { #Cannor Excerpt from Calasandur's Archives
+	id = flavour_zena.18
+	title = flavour_zena.18.t
+	desc = flavour_zena.18.d
+	picture = CASTLE_eventPicture
+	goto = 254 #Calascandar
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_calasandur_excerpt_holder
+			}
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.18.a"
+		trigger = {
+			event_target:zena_calasandur_excerpt_holder = {
+				exists = yes
+			}
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = righteous_personality
+					ruler_has_personality = just_personality
+					ruler_has_personality = kind_hearted_personality
+					ruler_has_personality = pious_personality
+					ruler_has_personality = lawgiver_personality
+					ruler_has_personality = incorruptible_personality
+				}
+			}
+		}
+		zena_relic_buy_effect = { zena_relic_event_target = zena_calasandur_excerpt_holder }
+		add_country_modifier = { #-1% Prestige Decay
+			name = zena_calasandur_excerpt
+			duration = 18250
+		}
+		5847 = {
+			zena_bivuzena_generic_add_race_effect = { race = half_elven }
+		}
+	}
+
+	option = { #Back out
+		name = "flavour_zena.18.c"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = embezzler_personality
+					ruler_has_personality = greedy_personality
+				}
+			}
+		}
+		custom_tooltip = zena_relics_backout_tt
+		hidden_effect = {
+			clr_country_flag = zena_calasandur_excerpt_acquired
+		}
+	}
+}
+
+country_event = { #Stones of Ovdal-Lodhum
+	id = flavour_zena.19
+	title = flavour_zena.19.t
+	desc = flavour_zena.19.d
+	picture = RUNESTONE_eventPicture
+	goto = 2973 #Ovdal Lodhum
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			serpentreach_region = {
+				discover_country = ROOT
+			}
+			2973 = {
+				owner = {
+					save_event_target_as = zena_glowing_stone_holder
+				}
+			}
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_glowing_stone_holder
+			}
+			set_country_flag = zena_glowing_stone_acquired
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.19.a"
+		custom_tooltip = zena_relic_purchase_preview_tt
+		tooltip = {
+			add_country_modifier = { #+25% Heir Chance, +1 Diplomatic Reputation
+				name = zena_glowing_stone
+				duration = 18250
+			}
+			5847 = {
+				if = {
+					limit = {
+						2973 = {
+							owner = {
+								has_country_modifier = dwarven_administration
+							}
+						}
+					}
+					zena_bivuzena_generic_add_race_effect = { race = dwarven }
+				}
+				else_if = {
+					limit = {
+						2973 = {
+							owner = {
+								has_country_modifier = kobold_administration
+							}
+						}
+					}
+					zena_bivuzena_generic_add_race_effect = { race = kobold }
+				}
+				else_if = {
+					limit = {
+						2973 = {
+							owner = {
+								has_country_modifier = goblin_administration
+							}
+						}
+					}
+					zena_bivuzena_generic_add_race_effect = { race = goblin }
+				}
+			}
+		}
+		country_event = {
+			id = flavour_zena.20
+			days = 1095
+		}
+	}
+}
+
+country_event = { #Stones of Ovdal-Lodhum
+	id = flavour_zena.20
+	title = flavour_zena.20.t
+	desc = flavour_zena.20.d
+	picture = RUNESTONE_eventPicture
+	goto = 2973 #Ovdal Lodhum
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_glowing_stone_holder
+			}
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.20.a"
+		trigger = {
+			event_target:zena_glowing_stone_holder = {
+				exists = yes
+			}
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = righteous_personality
+					ruler_has_personality = just_personality
+					ruler_has_personality = kind_hearted_personality
+					ruler_has_personality = pious_personality
+					ruler_has_personality = lawgiver_personality
+					ruler_has_personality = incorruptible_personality
+				}
+			}
+		}
+		zena_relic_buy_effect = { zena_relic_event_target = zena_glowing_stone_holder }
+		add_country_modifier = { #+25% Heir Chance, +1 Diplomatic Reputation
+			name = zena_glowing_stone
+			duration = 18250
+		}
+		5847 = {
+				if = {
+					limit = {
+						2973 = {
+							owner = {
+								has_country_modifier = dwarven_administration
+							}
+						}
+					}
+					zena_bivuzena_generic_add_race_effect = { race = dwarven }
+				}
+				else_if = {
+					limit = {
+						2973 = {
+							owner = {
+								has_country_modifier = kobold_administration
+							}
+						}
+					}
+					zena_bivuzena_generic_add_race_effect = { race = kobold }
+				}
+				else_if = {
+					limit = {
+						2973 = {
+							owner = {
+								has_country_modifier = goblin_administration
+							}
+						}
+					}
+					zena_bivuzena_generic_add_race_effect = { race = goblin }
+				}
+		}
+	}
+
+	option = { #Back out
+		name = "flavour_zena.20.c"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = embezzler_personality
+					ruler_has_personality = greedy_personality
+				}
+			}
+		}
+		custom_tooltip = zena_relics_backout_tt
+		hidden_effect = {
+			clr_country_flag = zena_glowing_stone_acquired
+		}
+	}
+}
+
+country_event = { #Irdukhugan Music
+	id = flavour_zena.21
+	title = flavour_zena.21.t
+	desc = flavour_zena.21.d
+	picture = CENTAUR_CAMPFIRE_eventPicture
+	goto = zena_fp_music_holder_goto
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_known_country = {
+				limit = {
+					OR = {
+						religious_school = {
+							group = centaur_religion
+							school = irdukhuga_school
+						}
+						has_country_modifier = irdukhuga_scholar_modifier
+					}
+				}
+				capital_scope = { save_event_target_as = zena_fp_music_holder_goto }
+				save_event_target_as = zena_fp_music_holder
+			}
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_fp_music_holder
+			}
+			set_country_flag = zena_fp_music_acquired
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.21.a"
+		custom_tooltip = zena_relic_purchase_preview_tt
+		tooltip = {
+			add_country_modifier = { # +10% Monthly Reform Progress
+				name = zena_fp_music
+				duration = 18250
+			}
+			5847 = {
+				zena_bivuzena_generic_add_race_effect = { race = centaur }
+			}
+		}
+		country_event = {
+			id = flavour_zena.22
+			days = 1095
+		}
+	}
+}
+
+country_event = { #Irdukhugan Music
+	id = flavour_zena.22
+	title = flavour_zena.22.t
+	desc = flavour_zena.22.d
+	picture = CENTAUR_CAMPFIRE_eventPicture
+	goto = zena_fp_music_holder_goto
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_fp_music_holder
+			}
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.22.a"
+		trigger = {
+			event_target:zena_fp_music_holder = {
+				exists = yes
+			}
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = righteous_personality
+					ruler_has_personality = just_personality
+					ruler_has_personality = kind_hearted_personality
+					ruler_has_personality = pious_personality
+					ruler_has_personality = lawgiver_personality
+					ruler_has_personality = incorruptible_personality
+				}
+			}
+		}
+		zena_relic_buy_effect = { zena_relic_event_target = zena_fp_music_holder }
+		add_country_modifier = { #+10% Monthly Reform Progress
+			name = zena_fp_music
+			duration = 18250
+		}
+		5847 = {
+			zena_bivuzena_generic_add_race_effect = { race = centaur }
+		}
+	}
+
+	option = { #Back out
+		name = "flavour_zena.22.c"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = embezzler_personality
+					ruler_has_personality = greedy_personality
+				}
+			}
+		}
+		custom_tooltip = zena_relics_backout_tt
+		hidden_effect = {
+			clr_country_flag = zena_fp_music_acquired
+		}
+	}
+}
+
+country_event = { #Haless Tian Zhu
+	id = flavour_zena.23
+	title = flavour_zena.23.t
+	desc = flavour_zena.23.d
+	picture = TIGER_THRONE_eventPicture
+	goto = zena_haless_tian_zhu_holder_goto
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					knows_country = V05
+					exists = V05
+				}
+				V05 = {
+					save_event_target_as = zena_haless_tian_zhu_holder
+				}
+			}
+			else = {
+				random_known_country = {
+					limit = {
+						OR = {
+							culture = runsukhi
+							culture = plateau_runsukhi
+						}
+					}
+					save_event_target_as = zena_haless_tian_zhu_holder
+					capital_scope = { save_event_target_as = zena_haless_tian_zhu_holder_goto }
+				}
+			}
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_haless_tian_zhu_holder
+			}
+			set_country_flag = zena_haless_tian_zhu_acquired
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.23.a"
+		custom_tooltip = zena_relic_purchase_preview_tt
+		tooltip = {
+			add_country_modifier = { # +10% Monthly Reform Progress
+				name = zena_haless_tian_zhu
+				duration = 18250
+			}
+			5847 = {
+				zena_bivuzena_generic_add_race_effect = { race = harimari }
+			}
+		}
+		country_event = {
+			id = flavour_zena.24
+			days = 1095
+		}
+	}
+}
+
+country_event = { #Haless Tian Zhu
+	id = flavour_zena.24
+	title = flavour_zena.24.t
+	desc = flavour_zena.24.d
+	picture = TIGER_THRONE_eventPicture
+	goto = zena_haless_tian_zhu_holder_goto
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_haless_tian_zhu_holder
+			}
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.24.a"
+		trigger = {
+			event_target:zena_haless_tian_zhu_holder = {
+				exists = yes
+			}
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = righteous_personality
+					ruler_has_personality = just_personality
+					ruler_has_personality = kind_hearted_personality
+					ruler_has_personality = pious_personality
+					ruler_has_personality = lawgiver_personality
+					ruler_has_personality = incorruptible_personality
+				}
+			}
+		}
+		zena_relic_buy_effect = { zena_relic_event_target = zena_haless_tian_zhu_holder }
+		add_country_modifier = { #+10% Monthly Reform Progress
+			name = zena_haless_tian_zhu
+			duration = 18250
+		}
+		5847 = {
+			zena_bivuzena_generic_add_race_effect = { race = harimari }
+		}
+	}
+
+	option = { #Back out
+		name = "flavour_zena.24.c"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = embezzler_personality
+					ruler_has_personality = greedy_personality
+				}
+			}
+		}
+		custom_tooltip = zena_relics_backout_tt
+		hidden_effect = {
+			clr_country_flag = zena_haless_tian_zhu_acquired
+		}
+	}
+}
+
+country_event = { #Sirimad Spiral-Darts
+	id = flavour_zena.25
+	title = flavour_zena.25.t
+	desc = flavour_zena.25.d
+	picture = FORGE_eventPicture
+	goto = zena_insyaa_spiral_dart_holder_goto
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					knows_country = N91
+					exists = N91
+				}
+				N91 = {
+					save_event_target_as = zena_insyaa_spiral_dart_holder
+					capital_scope = { save_event_target_as = zena_insyaa_spiral_dart_holder_goto }
+				}
+			}
+			else = {
+				random_known_country = {
+					limit = {
+						capital_scope = {
+							region = great_plateau_region
+						} 
+					}
+					save_event_target_as = zena_insyaa_spiral_dart_holder
+					capital_scope = { save_event_target_as = zena_insyaa_spiral_dart_holder_goto }
+				}
+			}
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_insyaa_spiral_dart_holder
+			}
+			set_country_flag = zena_insyaa_spiral_dart_acquired
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.25.a"
+		custom_tooltip = zena_relic_purchase_preview_tt
+		tooltip = {
+			add_country_modifier = { #+10% Fire Damage
+				name = zena_insyaa_spiral_dart
+				duration = 18250
+			}
+			5847 = {
+				zena_bivuzena_generic_add_race_effect = { race = kobold }
+			}
+		}
+		country_event = {
+			id = flavour_zena.26
+			days = 1095
+		}
+		custom_tooltip = zena_kiamoa_check_tt
+	}
+}
+
+country_event = { #Sirimad Spiral-Darts
+	id = flavour_zena.26
+	title = flavour_zena.26.t
+	desc = flavour_zena.26.d
+	picture = FORGE_eventPicture
+	goto = zena_insyaa_spiral_dart_holder_goto
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			zena_relic_purchase_effect = {
+				zena_relic_event_target = zena_insyaa_spiral_dart_holder
+			}
+		}
+	}
+
+	option = { #Buy
+		name = "flavour_zena.26.a"
+		trigger = {
+			event_target:zena_insyaa_spiral_dart_holder = {
+				exists = yes
+			}
+		}
+		ai_chance = {
+			factor = 40
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = righteous_personality
+					ruler_has_personality = just_personality
+					ruler_has_personality = kind_hearted_personality
+					ruler_has_personality = pious_personality
+					ruler_has_personality = lawgiver_personality
+					ruler_has_personality = incorruptible_personality
+				}
+			}
+		}
+		zena_relic_buy_effect = { zena_relic_event_target = zena_insyaa_spiral_dart_holder }
+		add_country_modifier = { #+10% Fire Damage
+			name = zena_insyaa_spiral_dart
+			duration = 18250
+		}
+		5847 = {
+			zena_bivuzena_generic_add_race_effect = { race = kobold }
+		}
+		
+	}
+
+	option = { #Back out
+		name = "flavour_zena.26.c"
+		ai_chance = {
+			factor = 20
+			modifier = {
+				factor = 2
+				OR = {
+					ruler_has_personality = embezzler_personality
+					ruler_has_personality = greedy_personality
+				}
+			}
+			modifier = {
+				factor = 2
+			}
+		}
+		custom_tooltip = zena_relics_backout_tt
+		hidden_effect = {
+			clr_country_flag = zena_insyaa_spiral_dart_acquired
+		}
+	}
+}
+
+### Menagerie Events
+
+country_event = { #South Aelentir Cheetahs Start
+	id = flavour_zena.52
+	title = flavour_zena.52.t
+	desc = flavour_zena.52.d
+	picture = PEASANTS_ON_STEPPES_eventPicture
+	goto = zena_cheetahs_province_goto
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			random_province = {
+				limit = {
+					region = chendhya_region
+				}
+				save_global_event_target_as = zena_cheetahs_province_target
+				save_event_target_as = zena_cheetahs_province_goto
+				add_permanent_province_modifier = {
+					name = zena_cheetahs_province
+					duration = -1
+				}
+			}
+			set_country_flag = zena_cheetahs_began
+		}
+	}
+
+	option = {
+		name = "flavour_zena.52.a"
+		event_target:zena_cheetahs_province_target = {
+			discover_country = ROOT
+		}
+		add_country_modifier = {
+			name = zena_hunt_the_beast
+			duration = 3650
+		}
+		custom_tooltip = zena_tame_decision_unlock_tt
+		random_province = {
+			limit = {
+				region = chendhya_region
+				has_port = yes
+				NOT = {
+					has_province_modifier = zena_cheetahs_province
+				}
+			}
+			add_claim = ROOT
+		}
+	}
+}
+
+country_event = { #North Aelentir Landfish Start
+	id = flavour_zena.53
+	title = flavour_zena.53.t
+	desc = flavour_zena.53.d
+	picture = FEYFOREST_eventPicture
+	goto = zena_landfish_province_goto
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			random_province = {
+				limit = {
+					region = randrunnse_region
+				}
+				save_global_event_target_as = zena_landfish_province_target
+				save_event_target_as = zena_landfish_province_goto
+				add_permanent_province_modifier = {
+					name = zena_landfish_province
+					duration = -1
+				}
+			}
+			set_country_flag = zena_landfish_began
+		}
+	}
+
+	option = {
+		name = "flavour_zena.53.a"
+		event_target:zena_landfish_province_target = {
+			discover_country = ROOT
+		}
+		add_country_modifier = {
+			name = zena_hunt_the_beast
+			duration = 3650
+		}
+		custom_tooltip = zena_tame_decision_unlock_tt
+		random_province = {
+			limit = {
+				region = randrunnse_region
+				has_port = yes
+				NOT = {
+					has_province_modifier = zena_landfish_province
+				}
+			}
+			add_claim = ROOT
+		}
+	}
+}
+
+country_event = { #Cannor Varghund Start
+	id = flavour_zena.54
+	title = flavour_zena.54.t
+	desc = flavour_zena.54.d
+	picture = CONQUISTADORS_eventPicture
+	goto = 982
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			982 = { #Naugsvol
+				add_permanent_province_modifier = {
+					name = zena_varghund_province
+					duration = -1
+				}
+			}
+			set_country_flag = zena_varghund_began
+		}
+	}
+
+	option = {
+		name = "flavour_zena.54.a"
+		982 = {
+			discover_country = ROOT
+		}
+		add_country_modifier = {
+			name = zena_hunt_the_beast
+			duration = 3650
+		}
+		custom_tooltip = zena_tame_decision_unlock_tt
+		random_province = {
+			limit = {
+				region = olavlund_region
+				has_port = yes
+				NOT = {
+					has_province_modifier = zena_varghund_province
+				}
+			}
+			add_claim = ROOT
+		}
+	}
+}
+
+country_event = { #Dwarovar Drakon Start
+	id = flavour_zena.55
+	title = flavour_zena.55.t
+	desc = flavour_zena.55.d
+	picture = DARK_EXPEDITION_eventPicture
+	goto = 4217
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			4217 = { #Gor Vazumbrog
+				add_permanent_province_modifier = {
+					name = zena_drakon_province
+					duration = -1
+				}
+			}
+			set_country_flag = zena_drakon_began
+		}
+	}
+
+	option = {
+		name = "flavour_zena.55.a"
+		4217 = {
+			discover_country = ROOT
+		}
+		add_country_modifier = {
+			name = zena_hunt_the_beast
+			duration = 3650
+		}
+		custom_tooltip = zena_tame_decision_unlock_tt
+		random_province = {
+			limit = {
+				region = bulwar_proper_region
+				has_port = yes
+				NOT = {
+					has_province_modifier = zena_drakon_province
+				}
+			}
+			add_claim = ROOT
+		}
+	}
+}
+
+country_event = { #Forbidden Plains Tlalusk Start
+	id = flavour_zena.56
+	title = flavour_zena.56.t
+	desc = flavour_zena.56.d
+	picture = WAR_ELEPHANT_eventPicture
+	goto = zena_tlalusk_province_goto
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			random_province = {
+				limit = {
+					region = yyl_moista_region
+				}
+				save_global_event_target_as = zena_tlalusk_province_target
+				save_event_target_as = zena_tlalusk_province_goto
+				add_permanent_province_modifier = {
+					name = zena_tlalusk_province
+					duration = -1
+				}
+			}
+			set_country_flag = zena_tlalusk_began
+		}
+	}
+
+	option = {
+		name = "flavour_zena.56.a"
+		event_target:zena_tlalusk_province_target = {
+			discover_country = ROOT
+		}
+		add_country_modifier = {
+			name = zena_hunt_the_beast
+			duration = 3650
+		}
+		custom_tooltip = zena_tame_decision_unlock_tt
+		random_province = {
+			limit = {
+				region = yyl_moista_region
+				has_port = yes
+				NOT = {
+					has_province_modifier = zena_tlalusk_province
+				}
+			}
+			add_claim = ROOT
+		}
+	}
+}
+
+country_event = { #Haless Terror Birds Start
+	id = flavour_zena.57
+	title = flavour_zena.57.t
+	desc = flavour_zena.57.d
+	picture = TREASURE_FLEET_SHIP_eventPicture
+	goto = zena_terror_bird_province_goto
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			random_province = {
+				limit = {
+					region = shuvuushudi_region
+				}
+				save_global_event_target_as = zena_terror_bird_province_target
+				save_event_target_as = zena_terror_bird_province_goto
+				add_permanent_province_modifier = {
+					name = zena_terror_bird_province
+					duration = -1
+				}
+			}
+			set_country_flag = zena_terror_bird_began
+		}
+	}
+
+	option = {
+		name = "flavour_zena.57.a"
+		event_target:zena_terror_bird_province_target = {
+			discover_country = ROOT
+		}
+		add_country_modifier = {
+			name = zena_hunt_the_beast
+			duration = 3650
+		}
+		custom_tooltip = zena_tame_decision_unlock_tt
+		random_province = {
+			limit = {
+				region = shuvuushudi_region
+				has_port = yes
+				NOT = {
+					has_province_modifier = zena_terror_bird_province
+				}
+			}
+			add_claim = ROOT
+		}
+	}
+}
+
+country_event = { #Insyaa Ghost Corals Start
+	id = flavour_zena.58
+	title = flavour_zena.58.t
+	desc = flavour_zena.58.d
+	picture = EP_ISLAND_eventPicture
+	goto = 6184
+
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			6184 = { #Hukitloki
+				add_permanent_province_modifier = {
+					name = zena_ghost_coral_province
+					duration = -1
+				}
+			}
+			set_country_flag = zena_ghost_coral_began
+		}
+	}
+
+	option = {
+		name = "flavour_zena.58.a"
+		6184 = { #Hukitloki
+			discover_country = ROOT
+		}
+		add_country_modifier = {
+			name = zena_hunt_the_beast
+			duration = 3650
+		}
+		custom_tooltip = zena_tame_decision_unlock_tt
+		random_province = {
+			limit = {
+				region = yanacotlele_region
+				has_port = yes
+				NOT = {
+					has_province_modifier = zena_ghost_coral_province
+				}
+			}
+			add_claim = ROOT
+		}
+		custom_tooltip = zena_kiamoa_check_tt
+	}
+}
+
+country_event = { #Cheetahs Acquired
+	id = flavour_zena.59
+	title = flavour_zena.59.t
+	desc = flavour_zena.59.d
+	picture = PEASANTS_ON_STEPPES_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = zena_cheetahs_began
+			set_country_flag = zena_cheetahs_acquired
+			event_target:zena_cheetahs_province_target = {
+				remove_province_modifier = zena_cheetahs_province
+			}
+			clear_global_event_target = zena_cheetahs_province_target
+		}
+	}
+
+	option = {
+		name = "flavour_zena.59.a"
+		zena_menagerie_acquisition_effect = {
+			zena_animal = cheetahs
+		}
+	}
+}
+
+country_event = { #Landfish Acquired
+	id = flavour_zena.60
+	title = flavour_zena.60.t
+	desc = flavour_zena.60.d
+	picture = FEYFOREST_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = zena_landfish_began
+			set_country_flag = zena_landfish_acquired
+			event_target:zena_landfish_province_target = {
+				remove_province_modifier = zena_landfish_province
+			}
+			clear_global_event_target = zena_landfish_province_target
+		}
+	}
+
+	option = {
+		name = "flavour_zena.60.a"
+		zena_menagerie_acquisition_effect = {
+			zena_animal = landfish
+		}
+	}
+}
+
+country_event = { #Varghund Acquired
+	id = flavour_zena.61
+	title = flavour_zena.61.t
+	desc = flavour_zena.61.d
+	picture = CONQUISTADORS_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = zena_varghund_began
+			set_country_flag = zena_varghund_acquired
+			982 = {
+				remove_province_modifier = zena_varghund_province
+			}
+		}
+	}
+
+	option = {
+		name = "flavour_zena.61.a"
+		zena_menagerie_acquisition_effect = {
+			zena_animal = varghund
+		}
+	}
+}
+
+country_event = { #Drakon Acquired
+	id = flavour_zena.62
+	title = flavour_zena.62.t
+	desc = flavour_zena.62.d
+	picture = DARK_EXPEDITION_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = zena_drakon_began
+			set_country_flag = zena_drakon_acquired
+			4217 = {
+				remove_province_modifier = zena_drakon_province
+			}
+		}
+	}
+
+	option = {
+		name = "flavour_zena.62.a"
+		zena_menagerie_acquisition_effect = {
+			zena_animal = drakon
+		}
+	}
+}
+
+country_event = { #Tlalusk Acquired
+	id = flavour_zena.63
+	title = flavour_zena.63.t
+	desc = flavour_zena.63.d
+	picture = WAR_ELEPHANT_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = zena_tlalusk_began
+			set_country_flag = zena_tlalusk_acquired
+			event_target:zena_tlalusk_province_target = {
+				remove_province_modifier = zena_tlalusk_province
+			}
+			clear_global_event_target = zena_tlalusk_province_target
+		}
+	}
+
+	option = {
+		name = "flavour_zena.63.a"
+		zena_menagerie_acquisition_effect = {
+			zena_animal = tlalusk
+		}
+	}
+}
+
+country_event = { #Terror Birds Acquired
+	id = flavour_zena.64
+	title = flavour_zena.64.t
+	desc = flavour_zena.64.d
+	picture = TREASURE_FLEET_SHIP_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = zena_terror_bird_began
+			set_country_flag = zena_terror_bird_acquired
+			event_target:zena_terror_bird_province_target = {
+				remove_province_modifier = zena_terror_bird_province
+			}			
+			clear_global_event_target = zena_terror_bird_province_target
+		}
+	}
+
+	option = {
+		name = "flavour_zena.64.a"
+		zena_menagerie_acquisition_effect = {
+			zena_animal = terror_bird
+		}
+	}
+}
+
+country_event = { #Ghost Corals Acquired
+	id = flavour_zena.65
+	title = flavour_zena.65.t
+	desc = flavour_zena.65.d
+	picture = EP_ISLAND_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = zena_ghost_coral_began
+			set_country_flag = zena_ghost_coral_acquired
+			6184 = {
+				remove_province_modifier = zena_ghost_coral_province
+			}
+		}
+	}
+
+	option = {
+		name = "flavour_zena.65.a"
+		zena_menagerie_acquisition_effect = {
+			zena_animal = ghost_coral
+		}
+	}
+}
+
+country_event = { #Fauna Kill Check
+	id = flavour_zena.69
+	title = flavour_zena.69.t
+	desc = flavour_zena.69.d
+	picture = CONQUISTADORS_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Success!
+		name = "flavour_zena.69.a"
+		trigger = {
+			zena_fauna_check_posttrigger = yes
+		}
+		zena_fauna_clear_posteffect = yes
+	}
+
+	option = { #Not Success... :(
+		name = "flavour_zena.69.b"
+		trigger = {
+			NOT = {
+				zena_fauna_check_posttrigger = yes
+			}
+		}
+		zena_fauna_clear_posteffect = yes
+	}
+}
+
+### Blueprints of Tomorrow Events
+
+country_event = { #Handler Event, look at salla_drennen.12 for example on how to do. It's kind of a doozy. 
+	id = flavour_zena.27
+	title = flavour_zena.27.t
+	desc = flavour_zena.27.d
+	picture = GREAT_BUILDING_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+				if = { #Toxasag-Akaz
+					limit = {
+						NOT = {
+							has_country_flag = zena_toxasag_akaz_happened
+						}
+					}
+					random_known_country = {
+						limit = {
+							fast_owns_num_pops_of_race = { race = gnollish amount = 1 }
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_toxasag_akaz_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_toxasag_akaz_capital_true } }
+						set_country_flag = zena_toxasag_akaz_capital
+					}
+				}
+				if = { #Dragonnel Woodworking
+					limit = {
+						NOT = {
+							has_country_flag = zena_dragonnel_woodworking_happened
+						}
+						any_owned_or_subject_province = {
+							OR ={
+								has_terrain = ancient_forest
+								trade_goods = tropical_wood
+							}
+						} 
+					}
+					random_known_country = {
+						limit = {
+							zena_blueprints_culture_trigger = {
+								culture = eagle_command
+							}
+							any_owned_province = {
+								has_terrain = ancient_forest
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_dragonnel_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_dragonnel_capital_true } }
+						set_country_flag = zena_dragonnel_capital
+					}
+				}
+				if = { #Kol Doukang
+					limit = {
+						NOT = {
+							has_country_flag = zena_kol_doukang_happened
+						}
+						num_of_wars = { amount =  10 }
+					}
+					random_known_country = {
+						limit = {
+							capital_scope = {
+								has_blorc_trophy_pile = yes
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_kol_doukang_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_kol_doukang_capital_true } }
+						set_country_flag = zena_kol_doukang_capital
+					}
+				}
+				if = { #Nuzurbokhian Crofters
+					limit = {
+						NOT = {
+							has_country_flag = zena_crofters_happened
+						}
+						any_owned_or_subject_province = {
+							has_river_estuary_trigger = yes
+						} 
+					}
+					random_known_country = {
+						limit = {
+							OR = {
+								zena_blueprints_culture_trigger = {
+									culture = irdu_centaur
+								}
+								zena_blueprints_culture_trigger = {
+									culture = ghanzamh_centaur
+								}
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_crofters_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_crofters_capital_true } }
+						set_country_flag = zena_crofters_capital
+					}
+				}
+				if = { #Grombari Glassworks
+					limit = {
+						NOT = {
+							has_country_flag = zena_glass_happened
+						}
+						any_owned_or_subject_province = {
+							trade_goods = glass
+						}
+					}
+					random_known_country = {
+						limit = {
+							OR = {
+								zena_blueprints_culture_trigger = {
+									culture = gray_orc
+								}
+								zena_blueprints_culture_trigger = {
+									culture = grombar_orc
+								}
+								zena_blueprints_culture_trigger = {
+									culture = grombar_half_orc
+								}
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_glass_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_glass_capital_true } }
+						set_country_flag = zena_glass_capital
+					}
+				}
+				if = { #Dwarven Hold
+					limit = {
+						NOT = {
+							has_country_flag = zena_hold_happened
+						}
+						num_of_provinces_owned_or_owned_by_subjects_with = {
+							value = 3
+							OR = {
+								trade_goods = mithril
+								trade_goods = coal
+								trade_goods = gems
+								trade_goods = iron
+							}
+						}
+					}
+					random_known_country = {
+						limit = {
+							any_owned_province = {
+								OR = {
+									has_terrain = dwarven_hold
+									has_terrain = dwarven_hold_surface
+								}
+								has_dwarven_hold_3 = yes
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						random_owned_province = {
+							limit = {
+								OR = {
+									has_terrain = dwarven_hold
+									has_terrain = dwarven_hold_surface
+								}
+								has_dwarven_hold_3 = yes
+							}
+							save_event_target_as = zena_hold_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_hold_true } }
+						set_country_flag = zena_hold
+					}
+				}
+				if = { #Harpy Roosts
+					limit = {
+						NOT = {
+							has_country_flag = zena_harpy_happened
+						}
+						any_owned_or_subject_province = {
+							OR = {
+								has_terrain = mountain
+								has_terrain = hills
+								has_terrain = highlands
+							}
+						}
+					}
+					random_known_country = {
+						limit = {
+							OR = {
+								AND = {
+									has_country_modifier = harpy_administration
+									any_owned_province = {
+										harpy_roost_st_has_any_roost = yes									
+									}
+								}
+								tag = F62 #Duwarkani
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_harpy_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_harpy_capital_true } }
+						random_known_country = {
+							limit = {
+								OR = {
+									AND = {
+										has_country_modifier = harpy_administration
+										any_owned_province = {
+											harpy_roost_st_has_any_roost = yes									
+										}
+									}
+									tag = F62 #Duwarkani
+								}
+							}
+							capital_scope = {
+								save_event_target_as = zena_harpy_capital
+							}
+						}
+					}
+				}
+				if = { #Kobold Ceiling Camps
+					limit = {
+						NOT = { has_country_flag = zena_ceiling_happened }
+						5847 = {
+							OR = {
+								has_building = fort_16th
+								has_building = fort_17th
+								has_building = fort_18th
+							}
+						}
+					}
+					random_known_country = {
+						limit = {
+							zena_blueprints_culture_trigger = {
+								culture = darkscale_kobold
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_ceiling_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_ceiling_capital_true } }
+						set_country_flag = zena_ceiling_capital
+					}
+				}
+				if = { #Charkuchin Cits
+				###THIS WILL NEED UPDATING ONCE CHARKUCHIN CITADEL SYSTEM IS IMPLEMENTED
+					limit = {
+						NOT = {
+							has_country_flag = zena_citadel_happened
+						}
+						has_global_flag = stormwall_open
+						any_owned_or_subject_province = {
+							trade_goods = precursor_relics 
+						}
+					}
+					random_known_country = {
+						limit = {
+								OR = { #Charkuchin Citadel Provs, Ostensibly
+									owns = 6474
+									owns = 6443
+									owns = 6455
+									owns = 6394
+									owns = 6425
+									owns = 6380
+									owns = 6345
+								}		
+							zena_blueprints_true_trigger = yes
+						}
+						random_owned_province = {
+							limit = {
+								OR = { #Charkuchin Citadel Provs, Ostensibly
+									province_id = 6474
+									province_id = 6443
+									province_id = 6455
+									province_id = 6394
+									province_id = 6425
+									province_id = 6380
+									province_id = 6345
+								}
+							}
+							save_event_target_as = zena_citadel_province_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_citadel_province_true } }
+						set_country_flag = zena_citadel_province
+					}
+				}
+				if = { #Gene Pillar Studies
+					limit = {
+						NOT = {
+							has_country_flag = zena_gene_pillar_happened
+						}
+						has_global_flag = stormwall_open
+						any_owned_or_subject_province = {
+							has_building = mage_tower
+						}
+					}
+					random_known_country = {
+						limit = {
+							any_owned_province = {
+								province_group = gene_pillars
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						random_owned_province = {
+							limit = {
+								province_group = gene_pillars
+							}
+							save_event_target_as = zena_gene_pillar_province_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_gene_pillar_province_true } }
+						set_country_flag = zena_gene_pillar_province
+					}
+				}
+				if = { #Merfolk Oshikogo 
+					limit = {
+						NOT = {
+							has_country_flag = zena_merfolk_happened
+							any_owned_or_subject_province = {
+								has_province_flag = merfolk_settlement
+							}
+						}
+					}
+					random_known_country = {
+						limit = {
+							any_owned_province = {
+								OR = {
+									has_province_flag = merfolk_settlement
+								}
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						random_owned_province = {
+							limit = {
+								OR = {
+									has_province_flag = merfolk_settlement
+								}
+							}
+							save_event_target_as = zena_merfolk_province_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_merfolk_province_true } }
+						set_country_flag = zena_merfolk_province
+					}
+				}
+				if = { #Oni Shirgrii
+					limit = {
+						NOT = {
+							has_country_flag = zena_oni_happened
+						}
+						any_owned_or_subject_province = {
+							trade_goods = damestear
+						}
+					}
+					random_known_country = {
+						limit = {
+							zena_blueprints_culture_trigger = {
+								culture = horned_ogre
+							}
+							any_owned_province = {
+								province_group = four_starting_shirgrii
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						random_owned_province = {
+							limit = {
+								province_group = four_starting_shirgrii
+							}
+							save_event_target_as = zena_oni_province_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_oni_province_true } }
+						set_country_flag = zena_oni_province
+					}
+				}
+				if = { #Silkstone Construction
+					limit = {
+						NOT = {
+							has_country_flag = zena_silkstone_happened
+						}
+						any_owned_or_subject_province = {
+							trade_goods = silk
+						}
+					}
+					random_known_country = {
+						limit = {
+							zena_blueprints_culture_trigger = {
+								culture = crawler_goblin
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_silkstone_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_silkstone_capital_true } }
+						set_country_flag = zena_silkstone_capital
+					}
+				}
+				if = { #Kelektar Fortifications
+					limit = {
+						NOT = {
+							has_country_flag = zena_kelektar_happened
+						}
+						num_of_provinces_owned_or_owned_by_subjects_with = {
+							value = 3
+							trade_goods = livestock
+						}
+					}
+					random_known_country = {
+						limit = {
+							zena_blueprints_culture_trigger = {
+								culture = fathide_ogre
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_kelektar_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_kelektar_capital_true } }
+						set_country_flag = zena_kelektar_capital
+					}
+				}
+				if = { #Street Food Festivals
+					limit = {
+						NOT = {
+							has_country_flag = zena_street_food_happened
+						}
+						num_of_provinces_owned_or_owned_by_subjects_with = {
+							value = 3
+							OR = {
+								trade_goods = cloves
+								trade_goods = gold
+								trade_goods = serpentbloom
+								trade_goods = spices
+							}
+						}
+					}
+					random_known_country = {
+						limit = {
+							zena_blueprints_culture_trigger = {
+								culture = cave_troll
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_street_food_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_street_food_capital_true } }
+						set_country_flag = zena_street_food_capital
+					}
+				}
+				if = { #Ice Steel Orv Zana
+					limit = {
+						NOT = {
+							has_country_flag = zena_orvzana_happened
+						}
+						any_owned_or_subject_province = {
+							has_climate = arctic
+						}
+					}
+					random_known_country = {
+						limit = {
+							zena_blueprints_culture_trigger = {
+								culture = quartz_dwarf
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						capital_scope = {
+							save_event_target_as = zena_orvzana_capital_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_orvzana_capital_true } }
+						set_country_flag = zena_orvzana_capital
+					}
+				}
+				if = { #Gommo
+					limit = {
+						NOT = {
+							has_country_flag = zena_gommo_happened
+						}
+						has_country_flag = artificery_unlocked
+					}
+					random_known_country = {
+						limit = {
+							OR = {
+								high_tolerance_gnomish_race_trigger = yes
+								medium_tolerance_gnomish_race_trigger = yes
+							}
+							any_owned_province = {
+								has_province_modifier = gnomish_institute_gommo
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						random_owned_province = {
+							limit = {
+								has_province_modifier = gnomish_institute_gommo
+							}
+							save_event_target_as = zena_gommo_province_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_gommo_province_true } }
+						random_known_country = {
+							limit = {
+								OR = {
+									high_tolerance_gnomish_race_trigger = yes
+									medium_tolerance_gnomish_race_trigger = yes
+								}
+								any_owned_province = {
+									has_province_modifier = gnomish_institute_gommo
+								}
+							}
+							random_owned_province = {
+								limit = {
+									has_province_modifier = gnomish_institute_gommo
+								}
+								save_event_target_as = zena_gommo_province
+							}
+						}						
+					}
+				}
+				if = { #Temple Complex
+					limit = {
+						NOT = {
+							has_country_flag = zena_temple_happened
+						}
+						5847 = {
+							has_building = cathedral
+						}
+					}
+					random_known_country = {
+						limit = {
+							any_owned_province = {
+								has_temple_complex = yes
+							}
+							zena_blueprints_true_trigger = yes
+						}
+						random_owned_province = {
+							limit = {
+								has_temple_complex = yes
+							}
+							save_event_target_as = zena_temple_province_true
+						}
+					}
+					if = {
+						limit = { NOT = { has_saved_event_target = zena_orvzana_capital_true } }
+						set_country_flag = zena_temple_province
+					}
+				}
+		}
+	}
+
+	option = { #Toxasag-Akaz
+		name = "flavour_zena.27.a"
+		trigger = {
+			has_country_flag = zena_toxasag_akaz_capital
+		}
+		custom_tooltip = zena_toxasag_akaz_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Toxasag-Akaz Real
+		name = "flavour_zena.27.a2"
+		highlight = yes
+		goto = zena_toxasag_akaz_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_toxasag_akaz_capital_true			
+			}
+		}
+		country_event = {
+			id = flavour_zena.28
+		}
+	}
+
+	option = { #Dragonnel Woodworking
+		name = "flavour_zena.27.b"
+		trigger = {
+			has_country_flag = zena_dragonnel_capital
+		}
+		custom_tooltip = zena_dragonnel_woodworking_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Dragonnel Woodworking Real
+		name = "flavour_zena.27.b2"
+		highlight = yes
+		goto = zena_dragonnel_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_dragonnel_capital_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.29
+		}
+	}
+
+	option = { #Kol Doukang
+		name = "flavour_zena.27.c"
+		trigger = {
+			has_country_flag = zena_kol_doukang_capital
+		}
+		custom_tooltip = zena_kol_doukang_trigger_tt2
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Kol Doukang Real
+		name = "flavour_zena.27.c2"
+		highlight = yes
+		goto = zena_kol_doukang_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_kol_doukang_capital_true			
+			}
+		}
+		country_event = {
+			id = flavour_zena.30
+		}
+	}
+
+	option = { #Nuzurbokhian Crofters
+		name = "flavour_zena.27.e"
+		trigger = {
+			has_country_flag = zena_crofters_capital
+		}
+		custom_tooltip = zena_crofters_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Nuzurbokhian Crofters Real
+		name = "flavour_zena.27.e2"
+		highlight = yes
+		goto = zena_crofters_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_crofters_capital_true				
+			}
+		}
+		country_event = {
+			id = flavour_zena.31
+		}
+	}
+
+	option = { #Aksa Sanuyego
+		name = "flavour_zena.27.f"
+		goto = 4716 #Aksa Sanuyego
+		trigger = {
+			NOT = {
+				has_country_flag = zena_aksa_happened
+			}				
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 3
+				AND = {
+					has_terrain = jungle
+					has_port = yes
+				}
+			}
+			has_discovered = 4716
+			4716 = {
+				has_great_project = {
+					type = aksa_sanuyego
+					tier = 1
+				}
+				owner = {
+					OR = {
+						any_owned_province = {
+							culture_group = kelino
+						}
+						culture_group = kelino
+						accepted_culture = kelino
+						accepted_culture = yan_kelino
+						accepted_culture = jahe_kelino
+						accepted_culture = kano_kelino
+						accepted_culture = gataw
+						accepted_culture = jahe_half_elf
+						accepted_culture = jahe_half_elf_cannorianise
+					}
+					NOT = {
+						zena_blueprints_true_trigger = yes
+					}
+				}
+			}
+		}
+		custom_tooltip = zena_aksa_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Aksa Sanuyego Real
+		name = "flavour_zena.27.f2"
+		highlight = yes
+		trigger = {
+			hidden_trigger = {
+				NOT = {
+					has_country_flag = zena_aksa_happened
+				}				
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 3
+				AND = {
+					has_terrain = jungle
+					has_port = yes
+				}
+			}
+			has_discovered = 4716
+			4716 = {
+				has_great_project = {
+					type = aksa_sanuyego
+					tier = 1
+				}
+				owner = {
+					OR = {
+						any_owned_province = {
+							culture_group = kelino
+						}
+						culture_group = kelino
+						accepted_culture = kelino
+						accepted_culture = yan_kelino
+						accepted_culture = jahe_kelino
+						accepted_culture = kano_kelino
+						accepted_culture = gataw
+						accepted_culture = jahe_half_elf
+						accepted_culture = jahe_half_elf_cannorianise
+					}
+					zena_blueprints_true_trigger = yes
+				}
+			}
+		}
+		country_event = {
+			id = flavour_zena.32
+		}
+	}
+
+	option = { #Grombari Glassworks
+		name = "flavour_zena.27.g"
+		trigger = {
+			has_country_flag = zena_glass_capital
+		}
+		custom_tooltip = zena_glass_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Grombari Glassworks Real
+		name = "flavour_zena.27.g2"
+		highlight = yes
+		goto = zena_glass_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_glass_capital_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.33
+		}
+	}
+
+	option = { #Dwarven Holds
+		name = "flavour_zena.27.h"
+		trigger = {
+			has_country_flag = zena_hold
+		}
+		custom_tooltip = zena_hold_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Dwarven Holds Real
+		name = "flavour_zena.27.h2"
+		highlight = yes
+		goto = zena_hold_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_hold_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.34
+		}
+	}
+
+	option = { #Harpy Roosts
+		name = "flavour_zena.27.i"
+		goto = zena_harpy_capital
+		trigger = {
+			has_saved_event_target = zena_harpy_capital
+		}
+		custom_tooltip = zena_harpy_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Harpy Roosts Real
+		name = "flavour_zena.27.i2"
+		highlight = yes
+		goto = zena_harpy_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_harpy_capital_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.35
+		}
+	}
+
+	option = { #Kobold Ceiling Camps
+		name = "flavour_zena.27.j"
+		trigger = {
+			has_country_flag = zena_ceiling_capital
+		}
+		custom_tooltip = zena_ceiling_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Kobold Ceiling Camps Real
+		name = "flavour_zena.27.j2"
+		highlight = yes
+		goto = zena_ceiling_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_ceiling_capital_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.36
+		}
+	}
+
+	option = { #Charkuchin Citadels
+		###THIS WILL NEED UPDATING ONCE THE CHARKUCHIN CITADEL SYSTEM IS MERGED!
+		name = "flavour_zena.27.k"
+		goto = 6474
+		trigger = {
+			has_country_flag = zena_citadel_province
+		}
+		custom_tooltip = zena_citadels_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Charkuchin Citadels Real
+		###THIS WILL NEED UPDATING ONCE THE CHARKUCHIN CITADEL SYSTEM IS MERGED!
+		name = "flavour_zena.27.k2"
+		highlight = yes
+		goto = zena_citadel_province_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_citadel_province_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.37
+		}
+	}
+
+	option = { #Gene Pillar Studies
+		name = "flavour_zena.27.l"
+		goto = 3415 
+		trigger = {
+			has_country_flag = zena_gene_pillar_province
+		}
+		custom_tooltip = zena_gene_pillar_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Gene Pillar Studies Real
+		name = "flavour_zena.27.l2"
+		highlight = yes
+		goto = zena_gene_pillar_province
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_gene_pillar_province_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.38
+		}
+	}
+
+	option = { #Merfolk Oshikogo 
+		name = "flavour_zena.27.m"
+		trigger = {
+			has_country_flag = zena_merfolk_province
+		}
+		custom_tooltip = zena_merfolk_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Merfolk Oshikogo Real
+		name = "flavour_zena.27.m2"
+		highlight = yes
+		trigger = {
+			hidden_trigger = {
+				OR = {
+					has_saved_event_target = zena_merfolk_province_true
+					AND = {
+						any_owned_or_subject_province = {
+							has_province_flag = merfolk_settlement
+						}
+						NOT = { has_country_flag = zena_merfolk_happened }
+					}
+				}
+			}
+		}
+		country_event = {
+			id = flavour_zena.39
+		}
+	}
+
+	option = { #Oni Shirgrii
+		name = "flavour_zena.27.n"
+		goto = 4831
+		trigger = {
+			has_country_flag = zena_oni_province
+		}
+		custom_tooltip = zena_oni_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Oni Shirgrii Real
+		name = "flavour_zena.27.n2"
+		highlight = yes
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_oni_province_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.40
+		}
+	}
+
+	option = { #Everglow Halls
+		name = "flavour_zena.27.o"
+		goto = 3004
+		trigger = {
+			NOT = {
+				has_country_flag = zena_everglow_happened
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 3
+				OR = {
+					trade_goods = paper
+					trade_goods = silk
+				}
+			}
+			has_discovered = 3004
+			3004 = {
+				owner = {
+					zena_blueprints_culture_trigger = {
+						culture = wood_elf
+					}
+					NOT = {
+						zena_blueprints_true_trigger = yes
+					}
+				}
+			}
+		}
+		custom_tooltip = zena_everglow_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Everglow Halls Real
+		name = "flavour_zena.27.o2"
+		highlight = yes
+		goto = 3004
+		trigger = {
+			hidden_trigger = {
+				NOT = {
+					has_country_flag = zena_everglow_happened
+				}
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 3
+				OR = {
+					trade_goods = paper
+					trade_goods = silk
+				}
+			}
+			has_discovered = 3004
+			3004 = {
+				owner = {
+					zena_blueprints_culture_trigger = {
+						culture = wood_elf
+					}
+					zena_blueprints_true_trigger = yes
+				}
+			}
+		}
+		country_event = {
+			id = flavour_zena.41
+		}
+	}
+
+	option = { #Silkstone Construction 
+		name = "flavour_zena.27.p"
+		trigger = {
+			has_country_flag = zena_silkstone_capital
+		}
+		custom_tooltip = zena_silkstone_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Silkstone Construction Real
+		name = "flavour_zena.27.p2"
+		highlight = yes
+		goto = zena_silkstone_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_silkstone_capital_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.42
+		}
+	}
+
+	option = { #Kelektar Fortifications
+		name = "flavour_zena.27.q"
+		trigger = {
+			has_country_flag = zena_kelektar_capital
+		}
+		custom_tooltip = zena_kelaktar_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Kelektar Fortifications Real
+		name = "flavour_zena.27.q2"
+		highlight = yes
+		goto = zena_kelektar_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_kelektar_capital_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.43
+		}
+	}
+
+	option = { #Street Food Festivals
+		name = "flavour_zena.27.r"
+		trigger = {
+			has_country_flag = zena_street_food_capital
+		}
+		custom_tooltip = zena_street_food_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Street Food Festivals Real
+		name = "flavour_zena.27.r2"
+		highlight = yes
+		goto = zena_street_food_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_street_food_capital_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.44
+		}
+	}
+
+	option = { #Ice-Steel Orv Zana
+		name = "flavour_zena.27.s"
+		trigger = {
+			has_country_flag = zena_orvzana_capital
+		}
+		custom_tooltip = zena_orvzana_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Ice-Steel Orv Zana Real
+		name = "flavour_zena.27.s2"
+		highlight = yes
+		goto = zena_orvzana_capital_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_orvzana_capital_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.45
+		}
+	}
+
+	option = { #Gommo
+		name = "flavour_zena.27.u"
+		goto = zena_gommo_province
+		trigger = {
+			has_saved_event_target = zena_gommo_province
+		}
+		custom_tooltip = zena_gommo_trigger_tt2
+		custom_tooltip = zena_blueprint_req_tt
+	}
+
+	option = { #Gommo Real
+		name = "flavour_zena.27.u2"
+		highlight = yes
+		goto = zena_gommo_province_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_gommo_province_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.46
+		}
+	}
+
+	option = { #Temple Complexes
+		name = "flavour_zena.27.v"
+		goto = zena_temple_province
+		trigger = {
+			has_country_flag = zena_temple_province
+		}
+		custom_tooltip = zena_temple_complex_trigger_tt
+		custom_tooltip = zena_blueprint_req_tt
+
+	}
+
+	option = { #Temple Complexes Real
+		name = "flavour_zena.27.v2"
+		highlight = yes
+		goto = zena_temple_province_true
+		trigger = {
+			hidden_trigger = {
+				has_saved_event_target = zena_temple_province_true
+			}
+		}
+		country_event = {
+			id = flavour_zena.47
+		}
+	}
+
+	option = { #Go back!
+		name = "flavour_zena.27.w"
+		custom_tooltip = zena_blueprints_back_tt
+	}
+
+	after = { hidden_effect = { clr_all_blueprint_flags_effect = yes } }
+}
+
+country_event = { #Toxasag-Akaz
+	id = flavour_zena.28
+	title = flavour_zena.28.t
+	desc = flavour_zena.28.d
+	picture = DESERT_CARAVAN_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_toxasag_akaz_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.28.a"
+		zena_blueprints_generic_race_effect = {
+			race = gnollish
+		}
+		custom_tooltip = zena_toxasag_akaz_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = gnollish }
+		}
+		hidden_effect = {
+			every_owned_or_subject_province = {
+				limit = {
+					has_climate = arid
+				}
+				generic_add_race_minority_size_effect = { race = gnollish }
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Dragonnel Woodworking
+	id = flavour_zena.29
+	title = flavour_zena.29.t
+	desc = flavour_zena.29.d
+	picture = FEYFOREST_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_dragonnel_woodworking_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.29.a"
+		zena_blueprints_generic_race_effect = {
+			race = hobgoblin
+		}
+		custom_tooltip = zena_dragonnel_woodworking_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = hobgoblin }
+		}
+		hidden_effect = {
+			every_owned_or_subject_province = {
+				limit = {
+					OR = {
+						has_terrain = ancient_forest
+						trade_goods = tropical_wood
+					}
+				}
+				generic_add_race_minority_size_effect = { race = hobgoblin }
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Kol Doukang
+	id = flavour_zena.30
+	title = flavour_zena.30.t
+	desc = flavour_zena.30.d
+	picture = FAT_WARRIORS_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_kol_doukang_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.30.a"
+		zena_blueprints_generic_race_effect = {
+			race = orcish
+		}
+		5847 = {
+			if = {
+				limit = {
+					development = 40
+				}
+				add_province_modifier = {
+					name = zena_blorc_trophy2
+					duration = -1
+				}
+			}
+			else = {
+				add_province_modifier = {
+					name = zena_blorc_trophy1
+					duration = -1
+				}
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Nuzurbokhian Crofters
+	id = flavour_zena.31
+	title = flavour_zena.31.t
+	desc = flavour_zena.31.d
+	picture = CENTAUR_CAMPFIRE_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_crofters_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.31.a"
+		zena_blueprints_generic_race_effect = {
+			race = centaur
+		}
+		custom_tooltip = zena_crofters_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = centaur }
+		}
+		hidden_effect = {
+			every_owned_or_subject_province = {
+				limit = {
+					has_river_estuary_trigger = yes
+				}
+				generic_add_race_minority_size_effect = { race = centaur }
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Aksa Sanuyego
+	id = flavour_zena.32
+	title = flavour_zena.32.t
+	desc = flavour_zena.32.d
+	picture = FORT_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_aksa_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.32.a"
+		zena_blueprints_generic_race_effect = {
+			race = half_elven
+		}
+		custom_tooltip = zena_aksa_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = half_elven }
+		}
+		hidden_effect = {
+			for = {
+				amount = 5
+				effect = "
+					random_owned_or_subject_province = {
+						limit = {
+							has_terrain = jungle
+							has_port = yes
+							NOT = {
+								province_id = 5847
+							}
+						}
+						generic_add_race_minority_size_effect = { race = half_elven }
+					}
+				"
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Grombari Glassworks
+	id = flavour_zena.33
+	title = flavour_zena.33.t
+	desc = flavour_zena.33.d
+	picture = ORC_WITH_AXE_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_glass_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.33.a"
+		zena_blueprints_generic_race_effect = {
+			race = half_orcish
+		}
+		custom_tooltip = zena_glass_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = half_orcish }
+		}
+		hidden_effect = {
+			every_owned_or_subject_province = {
+				limit = {
+					trade_goods = glass
+				}
+				generic_add_race_minority_size_effect = { race = half_orcish }
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Dwarven Holds
+	id = flavour_zena.34
+	title = flavour_zena.34.t
+	desc = flavour_zena.34.d
+	picture = DWARVEN_RAIL_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_hold_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.34.a"
+		if = { #If hold owner is goblin
+			limit = {
+				event_target:zena_hold_true = {
+					owner = {
+						has_country_modifier = goblin_administration
+					}
+				}
+			}
+			hidden_effect = {
+				5847 = {
+					set_province_flag = zena_hold_happened_goblin
+				}
+			}
+			zena_blueprints_generic_race_effect = {
+				race = goblin
+			}
+			custom_tooltip = zena_hold_tt
+			tooltip = {
+				generic_add_race_minority_size_effect = { race = goblin }
+			}
+			hidden_effect = {
+				for = {
+					amount = 5
+					effect = "
+						random_owned_or_subject_province = {
+							limit = {
+								OR = {
+									trade_goods = coal
+									trade_goods = mithril
+									trade_goods = iron
+									trade_goods = gems
+								}
+							}
+							generic_add_race_minority_size_effect = { race = goblin }
+						}
+					"
+				} 
+			}
+		}
+		else_if = { #If hold owner is kobold
+			limit = {
+				event_target:zena_hold_true = {
+					owner = {
+						has_country_modifier = kobold_administration
+					}
+				}
+			}
+			hidden_effect = {
+				5847 = {
+					set_province_flag = zena_hold_happened_kobold
+				}
+			}
+			zena_blueprints_generic_race_effect = {
+				race = kobold
+			}
+			custom_tooltip = zena_hold_tt
+			tooltip = {
+				generic_add_race_minority_size_effect = { race = kobold }
+			}
+			hidden_effect = {
+				for = {
+					amount = 5
+					effect = "
+						random_owned_or_subject_province = {
+							limit = {
+								OR = {
+									trade_goods = coal
+									trade_goods = mithril
+									trade_goods = iron
+									trade_goods = gems
+								}
+							}
+							generic_add_race_minority_size_effect = { race = kobold }
+						}
+					"
+				} 
+			}
+		}
+		else = { #Otherwise
+			hidden_effect = {
+				5847 = {
+					set_province_flag = zena_hold_happened_dwarf
+				}
+			}
+			zena_blueprints_generic_race_effect = {
+				race = dwarven
+			}
+			custom_tooltip = zena_hold_tt
+			tooltip = {
+				generic_add_race_minority_size_effect = { race = dwarven }
+			}
+			hidden_effect = {
+				for = {
+					amount = 5
+					effect = "
+						random_owned_or_subject_province = {
+							limit = {
+								OR = {
+									trade_goods = coal
+									trade_goods = mithril
+									trade_goods = iron
+									trade_goods = gems
+								}
+							}
+							generic_add_race_minority_size_effect = { race = dwarven }
+						}
+					"
+				} 
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Harpy Roosts
+	id = flavour_zena.35
+	title = flavour_zena.35.t
+	desc = flavour_zena.35.d
+	picture = HARPY_TOWN_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_harpy_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.35.a"
+		zena_blueprints_generic_race_effect = {
+			race = harpy
+		}
+		custom_tooltip = zena_harpy_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = harpy }
+		}
+		hidden_effect = {
+			for = {
+				amount = 3
+				effect = "
+					random_owned_or_subject_province = {
+						limit = {
+							OR = {
+								has_terrain = mountain
+								has_terrain = hills
+								has_terrain = highlands
+							}
+						}
+						generic_add_race_minority_size_effect = { race = harpy }
+					}
+				"
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Ceiling Camps
+	id = flavour_zena.36
+	title = flavour_zena.36.t
+	desc = flavour_zena.36.d
+	picture = KOBOLD_HOARD_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_ceiling_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.36.a"
+		zena_blueprints_generic_race_effect = {
+			race = kobold
+		}
+		5847 = {
+			if = {
+				limit = {
+					has_large_kobold_minority_trigger = yes
+				}
+				add_province_modifier = {
+					name = zena_kobold_traps_lvl_4
+					duration = -1
+				}
+			}
+			else = {
+				add_province_modifier = {
+					name = zena_kobold_traps_lvl_3
+					duration = -1
+				}
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Charkuchin Citadels
+	id = flavour_zena.37
+	title = flavour_zena.37.t
+	desc = flavour_zena.37.d
+	picture = KOBOLD_HOARD_eventPicture ###Once we get Insyaa event pictures, should swap those in
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_citadel_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.37.a"
+		zena_blueprints_generic_race_effect = {
+			race = kobold
+		}
+		custom_tooltip = zena_citadel_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = kobold }
+		}
+		hidden_effect = {
+			every_owned_or_subject_province = {
+				limit = {
+					trade_goods = precursor_relics
+				}
+				generic_add_race_minority_size_effect = { race = kobold }
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Gene Pillar
+	id = flavour_zena.38
+	title = flavour_zena.38.t
+	desc = flavour_zena.38.d
+	picture = MAGIC_STUDY_AND_RELAX_eventPicture ###Once we get Insyaa event pictures, should swap those in
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_gene_pillar_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.38.a"
+		zena_blueprints_generic_race_effect = {
+			race = mechanim
+		}
+		custom_tooltip = zena_gene_pillar_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = mechanim }
+		}
+		hidden_effect = {
+			every_owned_or_subject_province = {
+				limit = {
+					has_building = mage_tower
+					NOT = {
+						province_id = 5847
+					}
+				}
+				generic_add_race_minority_size_effect = { race = mechanim }
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Merfolk Oshikogo 
+	id = flavour_zena.39
+	title = flavour_zena.39.t
+	desc = flavour_zena.39.d
+	picture = LAKE_TREASURE_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_merfolk_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.39.a"
+		merfolk_add_opinion_effect_largest = yes
+		merfolk_add_opinion_effect_largest = yes
+		merfolk_add_opinion_effect_largest = yes
+		5847 = {
+			merfolk_spawn_modifier = yes
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+ 
+country_event = { #Oni Shirgrii
+	id = flavour_zena.40
+	title = flavour_zena.40.t
+	desc = flavour_zena.40.d
+	picture = ONI_FORTRESS_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_oni_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.40.a"
+		zena_blueprints_generic_race_effect = {
+			race = ogre
+		}
+		custom_tooltip = zena_oni_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = ogre }
+		}
+		hidden_effect = {
+			every_owned_or_subject_province = {
+				limit = {
+					trade_goods = damestear
+				}
+				generic_add_race_minority_size_effect = { race = ogre }
+			}
+		}		
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Everglow Halls
+	id = flavour_zena.41
+	title = flavour_zena.41.t
+	desc = flavour_zena.41.d
+	picture = WOOD_ELVEN_THRONE_ROOM_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_everglow_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.41.a"
+		zena_blueprints_generic_race_effect = {
+			race = elven
+		}
+		custom_tooltip = zena_everglow_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = elven }
+		}
+		hidden_effect = {
+			for = {
+				amount = 5
+				effect = "
+					random_owned_or_subject_province = {
+						limit = {
+							OR = {
+								trade_goods = silk
+								trade_goods = paper
+							}
+							NOT = {
+								province_id = 5847
+							}
+						}
+						generic_add_race_minority_size_effect = { race = elven }
+					}
+				"
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Silkstone Construction
+	id = flavour_zena.42
+	title = flavour_zena.42.t
+	desc = flavour_zena.42.d
+	picture = GOBLINS_AND_SPIDER_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_silkstone_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.42.a"
+		zena_blueprints_generic_race_effect = {
+			race = goblin
+		}
+		custom_tooltip = zena_silkstone_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = goblin }
+		}
+		hidden_effect = {
+			every_owned_or_subject_province = {
+				limit = {
+					trade_goods = silk
+				}
+				generic_add_race_minority_size_effect = { race = goblin }
+			}
+		}		
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Kelektar Fortifications
+	id = flavour_zena.43
+	title = flavour_zena.43.t
+	desc = flavour_zena.43.d
+	picture = OGRE_FEAST_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_kelektar_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.43.a"
+		zena_blueprints_generic_race_effect = {
+			race = ogre
+		}
+		custom_tooltip = zena_kelektar_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = ogre }
+		}
+		hidden_effect = {
+			for = {
+				amount = 5
+				effect = "
+					random_owned_or_subject_province = {
+						limit = {
+							trade_goods = livestock
+						}
+						generic_add_race_minority_size_effect = { race = ogre }
+					}
+				"
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Street Food Festivals
+	id = flavour_zena.44
+	title = flavour_zena.44.t
+	desc = flavour_zena.44.d
+	picture = FEAST_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_street_food_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.44.a"
+		zena_blueprints_generic_race_effect = {
+			race = troll
+		}
+		custom_tooltip = zena_street_food_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = troll }
+		}
+		hidden_effect = {
+			for = {
+				amount = 5
+				effect = "
+					random_owned_or_subject_province = {
+						limit = {
+							OR = {
+								trade_goods = cloves
+								trade_goods = spices
+								trade_goods = serpentbloom
+								trade_goods = gold
+							}
+						}
+						generic_add_race_minority_size_effect = { race = troll }
+					}
+				"
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Ice Steel Orv Zana
+	id = flavour_zena.45
+	title = flavour_zena.45.t
+	desc = flavour_zena.45.d
+	picture = DWARVEN_RAIL_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_orvzana_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.45.a"
+		zena_blueprints_generic_race_effect = {
+			race = dwarven
+		}
+		custom_tooltip = zena_orvzana_tt
+		tooltip = {
+			generic_add_race_minority_size_effect = { race = dwarven }
+		}
+		hidden_effect = {
+			every_owned_or_subject_province = {
+				limit = {
+					has_climate = arctic
+				}
+				generic_add_race_minority_size_effect = { race = dwarven }
+			}
+		}		
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Gommo
+	id = flavour_zena.46
+	title = flavour_zena.46.t
+	desc = flavour_zena.46.d
+	picture = ARTIFICE_GEAR_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_gommo_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.46.a"
+		zena_blueprints_generic_race_effect = {
+			race = gnomish
+		}
+		5847 = {
+			add_province_modifier = {
+				name = gnomish_institute_gommo
+				duration = -1
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+
+country_event = { #Temple Complex
+	id = flavour_zena.47
+	title = flavour_zena.47.t
+	desc = flavour_zena.47.d
+	picture = HIGH_TEMPLE_CITY_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_country_flag = zena_temple_happened
+		}
+	}
+
+	option = {
+		name = "flavour_zena.47.a"
+		zena_blueprints_generic_race_effect = {
+			race = harimari
+		}
+		5847 = {
+			add_province_modifier = {
+				name = zena_temple_complex
+				duration = -1
+			}
+		}
+	}
+
+	after = {
+		zena_blueprints_threshold_effect = yes
+	}
+}
+#Milestone Events
+country_event = { #5 Blueprint Threshold
+	id = flavour_zena.48
+	title = flavour_zena.48.t
+	desc = flavour_zena.48.d
+	picture = CITY_DEVELOPMENT_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = "flavour_zena.48.a"
+		increase_all_tolerances = { size = largest }
+		every_subject_country = {
+			increase_all_tolerances = { size = largest }
+		}
+		add_country_modifier = { #+5% Trade Steering, +10 Caravan Power, +20% Spy power, +20% Improve Relation Modifier
+			name = zena_griot_empowerment
+			duration = 18250
+		}
+	}
+}
+
+country_event = {
+	id = flavour_zena.49
+	title = flavour_zena.49.t
+	desc = flavour_zena.49.d
+	picture = GREAT_BUILDING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = "flavour_zena.49.a"
+		add_splendor = 250
+		add_or_extend_country_modifier_indefinitely = { #+5% Trade Steering, +10 Caravan Power, +20% Spy power, +20% Improve Relation Modifier
+			name = zena_griot_empowerment
+			duration = 7300
+		}
+	}
+}
+
+country_event = {
+	id = flavour_zena.50
+	title = flavour_zena.50.t
+	desc = flavour_zena.50.d
+	picture = GREAT_BUILDING_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = "flavour_zena.50.a"
+		custom_tooltip = zena_blueprints_fiften_tt
+		add_or_extend_country_modifier_indefinitely = { #+5% Trade Steering, +10 Caravan Power, +20% Spy power, +20% Improve Relation Modifier
+			name = zena_griot_empowerment
+			duration = 7300
+		}
+	}
+}
+
+country_event = {
+	id = flavour_zena.51
+	title = flavour_zena.51.t
+	desc = flavour_zena.51.d
+	picture = CITY_VIEW_eventPicture
+
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = "flavour_zena.51.a"
+		hidden_effect = {
+			set_country_flag = zena_blueprints_complete
+		}
+		custom_tooltip = zena_blueprints_complete_tt
+		add_or_extend_country_modifier_indefinitely = { #+5% Trade Steering, +10 Caravan Power, +20% Spy power, +20% Improve Relation Modifier
+			name = zena_griot_empowerment
+			duration = 7300
+		}
+	}
+}
+
+### Flavor Events

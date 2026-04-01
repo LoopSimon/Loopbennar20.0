@@ -523,3 +523,312 @@ J74_upgrade_saerasyar = { #Opinion, Mother (Fire), Daughter (Shock), Shock
 		}
 	}
 }
+
+#Orenvalyam
+define_silverspite_as_ruler = {
+	define_ruler = {
+		name = "Elrandar"
+		dynasty = "Silverspite"
+		age = 29
+		claim = 100
+		adm = 5
+		dip = 3
+		mil = 6
+		culture = bulwari_half_elf
+	}
+	if = {
+		limit = { religion = oren_nayiru }
+		set_ruler_religion = oren_nayiru
+	}
+	else = { set_ruler_religion = oren_nayiru_reformed }
+	set_country_flag = U39_started_silverspites_wild_ride_flag
+	add_ruler_personality = conqueror_personality
+	add_ruler_personality = bold_fighter_personality
+	set_ruler_flag = is_silverspite_flag
+	set_country_flag = respawn_silverspite_flag
+	define_ruler_to_general = {
+		fire = 2
+		shock = 12
+		manuever = 8
+		siege = 5
+	}
+	add_ruler_modifier = {
+		name = U39_ruler_kamrayakvalist
+		duration = -1
+	}
+	if = {
+		limit = { NOT = { has_country_flag = U39_increased_sickness_flag } }
+		set_country_flag = U39_yodhans_sickness_1_flag
+		add_country_modifier = {
+			name = U39_yodhans_sickness_1
+			duration = -1
+		}		
+	}
+	set_country_flag = U39_silverspite_died_flag
+	if = {
+		limit = { has_country_flag = U39_yodhans_sickness_6_flag }
+		become_a_witch_king_effect = yes
+	}
+}
+
+define_velara_as_heir = {
+	define_heir = {
+		name = "Velara"
+		dynasty = "Denazuir"
+		birth_date = 1461.1.1
+		culture = dawn_elf
+		adm = 2
+		dip = 5
+		mil = 4
+		female = yes
+	}
+	add_heir_personality = inspiring_leader_personality
+	set_heir_flag = is_velara_flag
+	add_country_modifier = {
+		name = U39_heir_kavalalist
+		duration = -1
+	}
+}
+
+remove_silverspite_modifiers = {
+	remove_country_modifier = U39_duskbringer_conspiracy_foiled
+	remove_yodhans_sickness_modifiers = yes
+}
+
+remove_yodhans_sickness_modifiers = {
+	remove_country_modifier = U39_yodhans_sickness_8
+	remove_country_modifier = U39_yodhans_sickness_7
+	remove_country_modifier = U39_yodhans_sickness_6
+	remove_country_modifier = U39_yodhans_sickness_5
+	remove_country_modifier = U39_yodhans_sickness_4
+	remove_country_modifier = U39_yodhans_sickness_3
+	remove_country_modifier = U39_yodhans_sickness_2
+	remove_country_modifier = U39_yodhans_sickness_1
+}
+
+U39_unshackle_production = {
+	custom_tooltip = U39_unshackle_production_$region$_tt
+	custom_tooltip = U39_unshackle_production_explaination_1_tt
+	custom_tooltip = U39_kill_infantry_tt #kill_units doesn't show up
+	[[additional_effects] custom_tooltip = U39_change_religion_tt ] #Neither does change_religion
+	tooltip = {
+		change_trade_goods = $trade_good$
+		add_devastation = 15
+		[[additional_effects] $additional_effects$ ]
+		add_permanent_province_modifier = {
+			name = U39_agrarian_ideal
+			duration = -1
+		}
+	}
+	custom_tooltip = U39_unshackle_production_explaination_2_tt
+	[[additional_effects] custom_tooltip = U39_change_religion_tt ]
+	tooltip = {
+		[[additional_effects] $additional_effects$ ]
+		add_permanent_province_modifier = {
+			name = U39_unshackled_labor
+			duration = -1
+		}
+	}
+	hidden_effect = {
+		$region$ = { #2 loops to fix error log spam 
+			limit = {
+				owned_by = ROOT
+				OR = {
+					trade_goods = sugar
+					trade_goods = coffee
+					trade_goods = tobacco
+					trade_goods = cotton
+				}
+				has_manpower_building_trigger = yes
+				num_of_units_in_province = {
+					amount = 2
+					who = ROOT
+					type = infantry
+				}
+			}
+			change_trade_goods = $trade_good$
+			add_devastation = 15
+			kill_units = {
+				who = ROOT
+				type = infantry
+				amount = 2
+			}
+			add_permanent_province_modifier = {
+				name = U39_agrarian_ideal
+				duration = -1
+			}
+			[[additional_effects] $additional_effects$ ]
+		}
+		$region$ = {
+			limit = {
+				owned_by = ROOT
+				OR = {
+					trade_goods = sugar
+					trade_goods = coffee
+					trade_goods = tobacco
+					trade_goods = cotton
+				}
+				NOT = {
+					AND = {
+						has_manpower_building_trigger = yes
+						num_of_units_in_province = {
+							amount = 2
+							who = ROOT
+							type = infantry
+						}
+					}
+				}
+			}
+			add_permanent_province_modifier = {
+				name = U39_unshackled_labor
+				duration = -1
+			}
+			[[additional_effects] $additional_effects$ ]
+		}
+	}
+}
+
+border_tribes_effect = {
+	border_tribes_sub_effect = {
+		border_priority = yes
+		[[protected_population] protected_population = yes ]
+		effect_event_target = oren_border_tribes_target_1
+		effect = "$effect$"
+	}
+	if = {
+		limit = { NOT = { has_saved_event_target = oren_border_tribes_target_1 } }
+		border_tribes_sub_effect = {
+			[[protected_population] protected_population = yes ]
+			effect_event_target = oren_border_tribes_target_1
+			effect = "$effect$"
+		}
+	}
+	
+	if = {
+		limit = { has_country_flag = U39_buff_border_tribes_flag }
+		border_tribes_sub_effect = {
+			[[protected_population] protected_population = yes ]
+			borders_other_target = yes
+			effect_event_target = oren_border_tribes_target_2
+			effect = "$effect$"
+		}
+		if = {
+			limit = { NOT = { has_saved_event_target = oren_border_tribes_target_2 } }
+			border_tribes_sub_effect = {
+				[[protected_population] protected_population = yes ]
+				effect_event_target = oren_border_tribes_target_2
+				effect = "$effect$"
+			}
+		}
+	}
+	
+	
+	if = {
+		limit = { has_country_flag = U39_buff_border_tribes_more_flag }
+		border_tribes_sub_effect = {
+			[[protected_population] protected_population = yes ]
+			borders_other_target = yes
+			effect_event_target = oren_border_tribes_target_3
+			effect = "$effect$"
+		}
+		if = {
+			limit = { NOT = { has_saved_event_target = oren_border_tribes_target_3 } }
+			border_tribes_sub_effect = {
+				[[protected_population] protected_population = yes ]
+				effect_event_target = oren_border_tribes_target_3
+				effect = "$effect$"
+			}
+		}
+	}
+
+	do_same_event_target_effect = {
+		3 = yes
+		event_target_name = oren_border_tribes_target
+		effect = "area = { clr_province_flag = border_tribes_sub_effect_flag }"
+	}
+}
+
+border_tribes_sub_effect = {
+	random_province = {
+		limit = {
+			is_empty = yes
+			[[border_priority] has_province_modifier = U39_border_priority ]
+			[[borders_other_target] any_empty_neighbor_province = { has_province_flag = border_tribes_sub_effect_flag } ]
+			OR = {
+				is_neighbor_of = ROOT
+				[[protected_population] any_empty_neighbor_province = { has_province_modifier = U39_protected_population } ]
+				sea_zone = { is_neighbor_of = ROOT }
+			}
+		}
+		save_event_target_as = $effect_event_target$
+		area = {
+			limit = { is_empty = yes }
+			set_province_flag = border_tribes_sub_effect_flag
+			$effect$
+		}
+	}
+}
+
+U39_danrachasamidha_effect = {
+	random_owned_province = {
+		limit = {
+			has_port = yes
+			province_has_center_of_trade_of_level = 1
+		}
+		add_base_production = 2
+		add_base_manpower = 2
+		if = {
+			limit = { has_saved_event_target = oren_target_$num$ }
+			add_matching_race_minority_size_from_scope = { scope = event_target:oren_target_$num$ }
+		}
+	}
+}
+
+U39_purification_effect = {
+	add_devastation = $devastation$
+	add_base_tax = $dev$
+	add_base_production = $dev$
+	add_base_manpower = $dev$
+	owner = { 
+		add_devotion = 1 
+		if = {
+			limit = { NOT = { has_country_flag = U39_disable_purification_event_flag } }
+			change_variable = {
+				which = orenvalyam_devotion_var
+				value = 1
+			}
+			country_event = {
+				id = orenvalyam_events.210 #Purification
+				days = 1
+			}
+		}
+	}
+}
+
+U39_ruinborn_revengeance_purge_effect = {
+	U39_purification_effect = { devastation = 75 dev = -3 }
+	if = {
+		limit = { NOT = { development = 9 } }
+		convert_aelantir_to_ruinborn_culture = yes
+		remove_human_minority_size_effect = yes
+		remove_human_minority_size_effect = yes
+	}
+}
+
+U39_messiah_rebels = {
+	for = {
+		amount = $amount$
+		effect = "
+			random_owned_province = {
+				limit = {
+					NOT = { units_in_province = REB }
+					OR = {
+						superregion = kheionai_superregion
+						superregion = taychend_superregion
+					}
+				}
+				spawn_rebels = { size = $size$ type = particularist_rebels }
+			}
+		"
+	}
+}

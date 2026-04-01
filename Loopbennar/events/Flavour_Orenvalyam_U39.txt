@@ -1,37 +1,50 @@
-namespace = flavor_orenvalyam
+################################################
+##           Creator: Takasaki        		  ##
+##			   Coder: Blaziy				  ##
+################################################
+
+namespace = orenvalyam_events
+
+#Events 0-9 : Disaster Events
+#Events 10-99 : Mission Tree Events
+#Events 100-199 : System Events
+#Events 200-299 : Yodhan's Sickness Events
+#Events 300-399 : Random Devotion Events
 
 #No Disaster Intro Event
 country_event = {
-	id = flavor_orenvalyam.0
-	title = flavor_orenvalyam.0.t #Rise of Silverspite
-	desc = flavor_orenvalyam.0.d
-	picture = SUN_CULT_PRIEST_eventPicture
+	id = orenvalyam_events.0
+	title = orenvalyam_events.0.t #Rise of Silverspite
+	desc = orenvalyam_events.0.d
+	picture = SUN_CULT_PRIEST_event_picture
 	
 	fire_only_once = yes
 	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				4 = yes
+				scope = random_owned_province
+				event_target_name = oren_target
+			}
+		}
+	}
 	
 	option = { #Crown Silverspite Kamrayakval
-		name = flavor_orenvalyam.0.a
-		define_ruler = {
-			name = "Elrandar"
-			dynasty = "Silverspite"
-			age = 29
-			claim = 100
-			adm = 5
-			dip = 3
-			mil = 6
-			culture = bulwari_half_elf
-			religion = oren_nayiru
+		name = orenvalyam_events.0.a
+		define_silverspite_as_ruler = yes
+		define_velara_as_heir = yes
+		
+		country_event = {
+			id = orenvalyam_events.2
+			days = 180 #6 months
 		}
-		add_ruler_personality = conqueror_personality
-		add_ruler_personality = bold_fighter_personality
-		set_ruler_flag = is_silverspite_flag
 	}
 	
 	option = { #Don't allow him
-		name = flavor_orenvalyam.0.b
-		random_owned_province = {
-			limit = { NOT = { has_province_flag = oren_nayiru_temp_flag } }
+		name = orenvalyam_events.0.b
+		event_target:oren_target_1 = {
 			spawn_rebels = {
 				size = 3
 				type = pretender_rebels
@@ -39,48 +52,28 @@ country_event = {
 				leader_dynasty = "Silverspite"
 			}
 			pretender_rebels = 3
-			set_province_flag = oren_nayiru_temp_flag
 		}
-		random_owned_province = {
-			limit = { NOT = { has_province_flag = oren_nayiru_temp_flag } }
-			pretender_rebels = 2
-			set_province_flag = oren_nayiru_temp_flag
-		}
-		random_owned_province = {
-			limit = { NOT = { has_province_flag = oren_nayiru_temp_flag } }
-			pretender_rebels = 2
-			set_province_flag = oren_nayiru_temp_flag
-		}
-		random_owned_province = {
-			limit = { NOT = { has_province_flag = oren_nayiru_temp_flag } }
-			pretender_rebels = 2
-			set_province_flag = oren_nayiru_temp_flag
-		}
-		every_owned_province = {
-			limit = { has_province_flag = oren_nayiru_temp_flag }
-			clr_province_flag = oren_nayiru_temp_flag
-		}
+		event_target:oren_target_2 = { pretender_rebels = 2 }
+		event_target:oren_target_3 = { pretender_rebels = 2 }
+		event_target:oren_target_4 = { pretender_rebels = 2 }
 	}
 }
 
 #Yes Disaster Intro Event
 country_event = {
-	id = flavor_orenvalyam.1
-	title = flavor_orenvalyam.1.t
-	desc = flavor_orenvalyam.1.d
+	id = orenvalyam_events.1
+	title = orenvalyam_events.1.t
+	desc = orenvalyam_events.1.d
 	picture = CAVE_eventPicture
 	
 	fire_only_once = yes
 	is_triggered_only = yes
 	hidden = yes
-	
-	trigger = {
-		NOT = { has_country_flag = orenvalyam_start_event_flag }
-	}
 
 	option = {
-		name = flavor_orenvalyam.1.a
+		name = orenvalyam_events.1.a
 		setup_vision_south_aelantir = yes
+		swap_non_generic_missions = yes
 		every_country = { #Vassalize all Oren Nayiru countries in Taychend 
 			limit = {
 				religion = oren_nayiru
@@ -137,6 +130,7 @@ country_event = {
 					}
 				}
 				set_country_flag = kamrayakvals_war_leader
+				save_global_event_target_as = kamrayakvals_war_leader_target
 				U39 = { #Orenvalyam
 					declare_war_with_cb = {
 						casus_belli = cb_kamrayakvals_war
@@ -192,6 +186,7 @@ country_event = {
 					}
 				}
 				set_country_flag = kamrayakvals_war_leader
+				save_global_event_target_as = kamrayakvals_war_leader_target
 				ROOT = {
 					declare_war_with_cb = {
 						casus_belli = cb_kamrayakvals_war
@@ -244,33 +239,12 @@ country_event = {
 				}
 				white_peace = PREV
 			}
-			random_country = {
-				limit = { has_country_flag = kamrayakvals_war_leader }
+			event_target:kamrayakvals_war_leader_target = {
 				PREV = { join_all_defensive_wars_of = PREV }
 			}
 			set_country_flag = kamrayakvals_war_joined
 		}
-		set_country_flag = orenvalyam_start_event_flag
-		define_ruler = {
-			name = "Elrandar"
-			dynasty = "Silverspite"
-			age = 29
-			claim = 100
-			adm = 5
-			dip = 3
-			mil = 6
-			culture = bulwari_half_elf
-			religion = oren_nayiru
-		}
-		add_ruler_personality = conqueror_personality
-		add_ruler_personality = bold_fighter_personality
-		set_ruler_flag = is_silverspite_flag
-		define_ruler_to_general = {
-			fire = 2
-			shock = 12
-			manuever = 8
-			siege = 5
-		}
+		define_silverspite_as_ruler = yes
 		define_general = {
 			name = "Andrellaran Dumruktam" # violetblood scion who joins silverspite
 			fire = 3
@@ -503,8 +477,24 @@ country_event = {
 				2502 = { change_variable = { which = onVariable value = 1 } }
 			}
 		}
+		event_target:kamrayakvals_war_leader_target = { #Give Orenvalyam tech equal to the war leader
+			while = {
+				limit = { mil_tech_is_inferior = { tag = U39 } }
+				U39 = { add_mil_tech = 1 }
+			}
+			
+			while = {
+				limit = { adm_tech_is_inferior = { tag = U39 } }
+				U39 = { add_adm_tech = 1 }
+			}
+			
+			while = {
+				limit = { dip_tech_is_inferior = { tag = U39 } }
+				U39 = { add_dip_tech = 1 }
+			}
+		}
 		country_event = {
-			id = flavor_orenvalyam.2
+			id = orenvalyam_events.2
 			days = 180 #6 months
 		}
 	}
@@ -512,16 +502,3841 @@ country_event = {
 
 #Unique Merc Company
 country_event = {
-	id = flavor_orenvalyam.2
-	title = flavor_orenvalyam.2.t #The Silverspite Company
-	desc = flavor_orenvalyam.2.d
+	id = orenvalyam_events.2
+	title = orenvalyam_events.2.t #The Silverspite Company
+	desc = orenvalyam_events.2.d
 	picture = MULTI_RACIAL_MERC_eventPicture
 	
 	fire_only_once = yes
 	is_triggered_only = yes
 	
 	option = {
-		name = flavor_orenvalyam.2.a
+		name = orenvalyam_events.2.a
 		unlock_merc_company = { merc_company = merc_the_silverspite_company }
+	}
+}
+
+#Start of the MT
+country_event = {
+	id = orenvalyam_events.10 #Starting Event
+	title = orenvalyam_events.10.t
+	desc = orenvalyam_events.10.desc
+	picture = muslimgfx_BIG_BOOK_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.10.a
+		change_government = theocracy
+		add_government_reform = U39_kavalali_theo_democracy
+		hidden_effect = {
+			set_estate_privilege = estate_church_U39_kavalalist_faction
+			set_estate_privilege = estate_nobles_U39_kamrayakvalist_faction
+			set_estate_privilege = estate_burghers_U39_monasticist_faction
+			country_event = { id = orenvalyam_events.405 days = 1 } #Set em again just in case
+		}
+		custom_tooltip = U39_gain_base_privlieges_tt
+		custom_tooltip = estate_burghers_U39_monasticist_faction_tt
+		if = {
+			limit = { NOT = { alliance_with = H67 } } #Rezankand
+			custom_tooltip = U39_rezankand_claims_tt
+			hidden_effect = { H67 = { every_owned_province = { add_claim = ROOT } } } #Rezankand
+		}
+		custom_tooltip = U39_bread_spell_change_tt
+		if = {
+			limit = {
+				ruler_is_silverspite = yes
+				heir_is_velara = no
+			}
+			define_velara_as_heir = yes
+		}
+		else_if = {
+			limit = {
+				NOT = {
+					is_or_was_tag = {
+						tag = G81
+					}
+				}
+			}
+			country_event = {
+				id = orenvalyam_events.100 #Election
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					is_or_was_tag = {
+						tag = G81
+					}
+				}
+			}
+			country_event = {
+				id = orenvalyam_events.11 #The Dumruktams
+				days = 3650 #10 years
+			}
+		}
+		else = {
+			country_event = {
+				id = orenvalyam_events.12 #The Mudaliars
+				days = 3650 #10 years
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.11 #The Dumruktams
+	title = orenvalyam_events.11.t
+	desc = orenvalyam_events.11.desc
+	picture = MILITARISTICALLY_TALENTED_RULER_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.11.a
+		2541 = { #Sthanan ith Vussam
+			add_province_modifier = {
+				name = U39_dynastic_kavalali
+				duration = -1
+			}
+		}
+		add_devotion = -10
+
+		country_event = {
+			id = orenvalyam_events.12 #The Mudaliars
+			days = 3650 #10 years
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.11.b
+		add_devotion = 5
+		define_advisor = {
+			type = artist
+			skill = 1
+			name = "Darastarion Dumruktam"
+			culture = thekvrystana
+			cost_multiplier = 0.75
+		}
+		
+		country_event = {
+			id = orenvalyam_events.12 #The Mudaliars
+			days = 3650 #10 years
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.11.c
+		add_devotion = 15
+		2541 = { #Sthanan ith Vussam
+			add_province_modifier = {
+				name = U39_liberated_city
+				duration = -1
+			}
+			spawn_rebels = {
+				size = 2
+				type = noble_rebels
+			}
+		}
+		
+		country_event = {
+			id = orenvalyam_events.12 #The Mudaliars
+			days = 3650 #10 years
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.12 #The Mudaliars
+	title = orenvalyam_events.12.t
+	desc = orenvalyam_events.12.desc
+	picture = ECONOMICALLY_TALLANTED_RULER_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.12.a
+		nanru_nakar_area = {
+			add_province_modifier = {
+				name = U39_dynastic_kavalali
+				duration = -1
+			}
+		}
+		add_devotion = -20
+	}
+	
+	option = {
+		name = orenvalyam_events.12.b
+		nanru_nakar_area = {
+			add_local_autonomy = 25
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.12.c
+		nanru_nakar_area = {
+			add_province_modifier = {
+				name = U39_liberated_city
+				duration = -1
+			}
+			add_devastation = 25
+			spawn_rebels = {
+				size = 3
+				type = gods_of_the_taychend_reformed_rebels
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.13 #Fate of the Heralds
+	title = orenvalyam_events.13.t
+	picture = SURAKES_SUN_GARDEN_eventPicture
+
+	desc = {
+		desc = orenvalyam_events.13.descSilverspite
+		trigger = { ruler_is_silverspite = yes }
+	}
+
+	desc = {
+		desc = orenvalyam_events.13.descElse
+		trigger = { ruler_is_not_silverspite = yes }
+	}
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = orenvalyam_events.13.a #Integrate
+		anb_add_accepted_culture_or_dip_power = { culture = dawn_elf free = yes }
+		custom_tooltip = U39_nsc_protected_religion_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { religion = bulwari_sun_cult }
+				add_province_modifier = {
+					name = U39_protected_religion
+					duration = -1
+				}
+			}
+			set_country_flag = U39_exemplars_integrate_flag
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.13.b #Tolerate
+		add_stability = 1
+		custom_tooltip = U39_nsc_convert_tt
+		if = {
+			limit = { H67 = { is_subject_of = ROOT } } #Rezankand
+			custom_tooltip = U39_vassal_rezankand_tolerate_yes_tt
+			hidden_effect = {
+				add_country_modifier = {
+					name = U39_rezankand_integration
+					duration = 9125 #25 years
+				}
+			}
+		}
+		else = { custom_tooltip = U39_vassal_rezankand_tolerate_no_tt }
+		hidden_effect = {
+			every_owned_province = {
+				limit = { 
+					religion = bulwari_sun_cult 
+					NOT = { culture = dawn_elf }
+				}
+				change_religion = oren_nayiru_reformed
+			}
+			set_country_flag = U39_exemplars_tolerate_flag
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.13.c #Purge
+		custom_tooltip = U39_nsc_convert_tt
+		add_mil_power = 300
+		add_devotion = 25
+		generic_start_purge = { race = elven }
+		if = {
+			limit = { H67 = { is_subject_of = ROOT } } #Rezankand
+			custom_tooltip = U39_vassal_rezankand_purge_yes_tt
+			hidden_effect = {
+				H67 = { grant_independence = yes } #Rezankand
+				south_america = {
+					if = {
+						limit = { culture = dawn_elf }
+						add_permanent_claim = ROOT
+					}
+					else_if = {
+						limit = { culture = vaikazelhi }
+						add_core = ROOT
+					}
+				}
+			}
+		}
+		else = { custom_tooltip = U39_vassal_rezankand_purge_no_tt }
+		hidden_effect = {
+			every_owned_province = {
+				limit = { 
+					religion = bulwari_sun_cult 
+					NOT = { culture = dawn_elf }
+				}
+				change_religion = oren_nayiru_reformed
+			}
+			set_country_flag = U39_exemplars_purge_flag
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.14 #Legacy
+	title = orenvalyam_events.14.t
+	picture = SUN_CULT_PRIEST_event_picture
+
+	desc = {
+		desc = orenvalyam_events.14.descIntegrate
+		trigger = { has_country_flag = U39_exemplars_integrate_flag }
+	}
+
+	desc = {
+		desc = orenvalyam_events.14.descTolerate
+		trigger = { has_country_flag = U39_exemplars_tolerate_flag }
+	}
+
+	desc = {
+		desc = orenvalyam_events.14.descPurgeSilverspite
+		trigger = { 
+			has_country_flag = U39_exemplars_purge_flag
+			ruler_is_silverspite = yes
+		}
+	}
+
+	desc = {
+		desc = orenvalyam_events.14.descPurgeElse
+		trigger = { 
+			has_country_flag = U39_exemplars_purge_flag
+			ruler_is_not_silverspite = yes
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.14.a #Integrate
+		trigger = { has_country_flag = U39_exemplars_integrate_flag }
+		custom_tooltip = U39_gain_holy_orders_tt
+		set_country_flag = U39_gain_holy_orders_flag
+		define_general = {
+			name = "Ecaris Ecarizuir"
+			fire = 3
+			shock = 10
+			manuever = 3
+			siege = 6
+		}
+		if = {
+			limit = { H67 = { march_of = ROOT } } #Rezankand
+			custom_tooltip = U39_rezankand_color_yes_tt
+			hidden_effect = { H67 = { change_country_color = { country = ROOT } } } #Rezankand
+		}
+		else = { custom_tooltip = U39_rezankand_color_no_tt }
+	}
+	
+	option = {
+		name = orenvalyam_events.14.b #Tolerate
+		trigger = { has_country_flag = U39_exemplars_tolerate_flag }
+		set_country_flag = U39_update_heroes_army_priv_flag
+		anb_add_accepted_culture_or_dip_power = { culture = sun_elf free = yes }
+		remove_estate_privilege = estate_adventurers_heroes_in_the_army
+		set_estate_privilege = estate_adventurers_U39_order_of_exemplars
+		define_advisor = {
+			type = court_mage
+			name = "Karodir Varamzuir"
+			culture = dawn_elf
+			cost_multiplier = 0.5
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.14.c #Purge Silverspite
+		trigger = { 
+			has_country_flag = U39_exemplars_purge_flag
+			ruler_is_silverspite = yes
+		}
+		add_country_modifier = {
+			name = U39_ecaris_eclipsed
+			duration = -1
+		}
+		add_army_tradition = 25
+	}
+	
+	option = {
+		name = orenvalyam_events.14.d #Purge Else 1
+		trigger = { 
+			has_country_flag = U39_exemplars_purge_flag
+			ruler_is_not_silverspite = yes
+		}
+		add_devotion = 25
+		add_country_modifier = {
+			name = U39_nayiru_not_surael
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.14.e #Purge Else 2
+		trigger = { 
+			has_country_flag = U39_exemplars_purge_flag
+			ruler_is_not_silverspite = yes
+		}
+		add_devotion = 25
+		add_country_modifier = {
+			name = U39_recognition_of_inheritance
+			duration = -1
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.15 #Relics of Servitude
+	title = orenvalyam_events.15.t
+	desc = orenvalyam_events.15.desc
+	picture = FEAST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.15.a
+		set_country_flag = U39_magic_only_locked_flag
+		2520 = { add_devastation = 25 } #Nagar Vyechei
+		if = {
+			limit = { is_not_in_mage_mode = yes }
+			artifice_magic_switch_to_magic_only_mode = yes
+		}
+		else = { custom_tooltip = U39_magic_only_locked_tt }
+		magical_infrastructure_level_up = yes
+		custom_tooltip = U39_relics_outlawed_tt
+		hidden_effect = {
+			set_country_flag = U39_relics_outlawed_flag
+			every_owned_province = {
+				limit = { trade_goods = precursor_relics }
+				add_province_modifier = {
+					name = U39_relic_trade_outlawed
+					duration = -1
+				}
+			}
+		}
+		set_estate_privilege = estate_mages_U39_the_dawn_paradigm
+
+		if = {
+			limit = { has_country_flag = U39_kamie_war_spawn_flag }
+			custom_tooltip = U39_kamie_spawn_yes_tt
+			hidden_effect = {
+				magic_school_level_up = { type = country school = evocation }
+				magic_school_level_up = { type = country school = illusion }
+				magic_school_level_up = { type = country school = abjuration }
+				for_variable_amount = { #I'm sorry, the 512 character limit really is that close and no scripted effect bc else_if
+					variable = oren_legendary_schools
+					effect = "if = { limit = { has_country_flag=U39_abjur_fg } set_country_flag=U39_illu_fg clr_country_flag=U39_abjur_fg magic_school_level_up = { type=country school=illusion } } else_if = { limit = { has_country_flag=U39_illu_fg } clr_country_flag=U39_abjur_fg clr_country_flag=U39_illu_fg magic_school_level_up = { type=country school=evocation } } else = { clr_country_flag=U39_illu_fg set_country_flag=U39_abjur_fg magic_school_level_up = { type=country school=abjuration } }"
+				}
+			}
+		}
+		else = { custom_tooltip = U39_kamie_spawn_no_tt }
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.16 #From Shadows
+	title = orenvalyam_events.16.t
+	desc = orenvalyam_events.16.desc
+	picture = KING_ASSASSINATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.16.a
+		add_country_modifier = {
+			name = U39_oren_neraghul
+			duration = -1
+		}
+		custom_tooltip = U39_enable_assassination_tt
+		set_country_flag = U39_enable_assassination_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.17 #The Technicolour Rays of Dawn
+	title = orenvalyam_events.17.t
+	desc = orenvalyam_events.17.desc
+	picture = AULIC_COUNCIL_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.17.a
+		change_government_reform_progress = 150
+		add_country_modifier = {
+			name = U39_kan_oren_dan_manhu_2
+			duration = -1
+		}
+		remove_country_modifier = U39_kan_oren_dan_manhu
+		custom_tooltip = U39_add_ray_of_dawn_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { has_province_modifier = U39_guiding_the_faith }
+				remove_province_modifier = U39_guiding_the_faith
+				add_province_modifier = {
+					name = U39_ray_of_dawn
+					duration = -1
+				}
+			}
+			every_owned_province = {
+				limit = { has_province_modifier = U39_guiding_the_faith_bad }
+				remove_province_modifier = U39_guiding_the_faith_bad
+				add_province_modifier = {
+					name = U39_ray_of_dawn_bad
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.18 #The Interloper's Sentence
+	title = orenvalyam_events.18.t
+	desc = orenvalyam_events.18.desc
+	picture = COURT_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				5 = yes
+				scope = random_owned_province
+				global_trigger = "
+					OR = {
+						has_terrain = hills
+						has_terrain = highlands
+						has_terrain = mountain
+					}
+				"
+				event_target_name = oren_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.18.a
+		add_country_modifier = {
+			name = the_abolish_slavery_act
+			duration = -1
+		}
+		custom_tooltip = abolished_slavery_act_tooltip
+		custom_tooltip = U39_slave_conquest_tt
+		hidden_effect = {
+			set_country_flag = U39_slave_conquest_flag
+			every_owned_province = {
+				limit = { trade_goods = slaves }
+				change_trade_goods = unknown
+				remove_building = tradecompany
+				ROOT = {
+					add_adm_power = 10
+					add_dip_power = 10
+					add_mil_power = 10
+				}
+				if = {
+					limit = { has_province_modifier = slave_entrepot }
+					remove_province_modifier = slave_entrepot
+				}
+				clear_rebels = yes
+			}
+		}
+		add_country_modifier = {
+			name = U39_war_for_dawn
+			duration = -1
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -10
+		}
+		custom_tooltip = U39_enable_bless_new_monasteries_tt
+		set_country_flag = U39_enable_bless_new_monasteries_flag
+		custom_tooltip = U39_hilltop_forts_tt
+		tooltip = {
+			add_province_modifier = {
+				name = U39_hill_top_monastery
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			do_same_event_target_effect = {
+				5 = yes
+				event_target_name = oren_target
+				effect = "
+					if = {
+						limit = { has_fort_building_trigger = no }
+						add_building_construction = {
+							building = fort_15th
+							cost = 0
+							speed = 1
+						}
+					}
+					add_province_modifier = {
+						name = U39_hill_top_monastery
+						duration = -1
+					}
+				"
+			}
+		}
+		if = {
+			limit = { has_global_flag = J84_4_2_suffer_no_interloper_done_flag }
+			custom_tooltip = U39_suffer_no_interloper_no_tt
+		}
+		else = {
+			custom_tooltip = U39_suffer_no_interloper_yes_tt
+			hidden_effect = {
+				2620 = { #Ameion
+					add_devastation = 50
+					add_base_tax = -3
+					add_base_production = -3
+					add_base_manpower = -3
+				}
+				2625 = { add_base_manpower = 4 } #Deyeion
+				2684 = { add_base_manpower = 4 } #Amgremos
+			}
+		}
+		tooltip = {
+			2620 = { #Ameion
+				add_devastation = 50
+				add_base_tax = -3
+				add_base_production = -3
+				add_base_manpower = -3
+			}
+			2625 = { add_base_manpower = 4 } #Deyeion
+			2684 = { add_base_manpower = 4 } #Amgremos
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.19 #Negotiating Liberty
+	title = orenvalyam_events.19.t
+	desc = orenvalyam_events.19.desc
+	picture = DIPLOMAT_INTERROGATION_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			set_variable = { oren_chendhyan_var = 0 }
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.19.a
+		custom_tooltip = U39_protected_chendhyans_tt
+		hidden_effect = {
+			change_variable = { oren_chendhyan_var = 1 }
+			every_owned_province = {
+				limit = { culture = chendhyan }
+				add_province_modifier = {
+					name = U39_protected_rights
+					duration = 18250 #50 years
+				}
+			}
+		}
+
+		country_event = {
+			id = orenvalyam_events.20 #Negotiating Vengeance
+			days = 30
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.19.b
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 25
+		}
+		
+		country_event = {
+			id = orenvalyam_events.20 #Negotiating Vengeance
+			days = 30
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.20 #Negotiating Vengeance
+	title = orenvalyam_events.20.t
+	desc = orenvalyam_events.20.desc
+	picture = MOSSI_CAVALRY_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				5 = yes
+				scope = random_owned_province
+				global_trigger = "culture = yodhanpir"
+				event_target_name = oren_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.20.a
+		custom_tooltip = U39_convert_guaraddhi_tt
+		hidden_effect = {
+			set_country_flag = U39_convert_guaraddhi_flag
+			change_variable = { oren_chendhyan_var = 1 }
+			gauraddhi_region = {
+				limit = { culture = yodhanpir }
+				change_culture = chendhyan
+				change_religion = askaeorg
+				add_devastation = 50
+				add_base_tax = -3
+				add_base_production = -3
+				add_base_manpower = -3
+			}
+		}
+		do_same_event_target_effect = {
+			5 = yes
+			event_target_name = oren_target
+			effect = "
+				spawn_rebels = {
+					size = 2
+					type = nationalist_rebels
+				}
+			"
+		}
+		2568 = { change_province_name = "Samidryzandmaera" } #Rakkabuttai
+		
+		country_event = {
+			id = orenvalyam_events.21 #Negotiating Zealotry
+			days = 30
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.20.b
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 25
+		}
+		
+		country_event = {
+			id = orenvalyam_events.21 #Negotiating Zealotry
+			days = 30
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.21 #Negotiating Zealotry
+	title = orenvalyam_events.21.t
+	desc = orenvalyam_events.21.desc
+	picture = CHURCH_ESTATE_1_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				12 = yes
+				scope = random_owned_province
+				global_trigger = "
+					superregion = taychend_superregion
+					religion = oren_nayiru_reformed
+				"
+				event_target_name = oren_other_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.21.a
+		custom_tooltip = U39_protected_religion_chendhyans_tt
+		add_stability = -1
+		add_devotion = -20
+		do_same_event_target_effect = {
+			12 = yes
+			event_target_name = oren_other_target
+			effect = "
+				spawn_rebels = {
+					size = 2
+					type = oren_nayiru_reformed_rebels
+				}
+			"
+		}
+		hidden_effect = {
+			change_variable = { oren_chendhyan_var = 1 }
+			set_country_flag = U39_devandi_protected_religion_flag
+			every_owned_province = {
+				limit = { religion_group = devandi }
+				add_province_modifier = {
+					name = U39_protected_religion
+					duration = -1
+				}
+			}
+		}
+		
+		country_event = {
+			id = orenvalyam_events.22 #From Words to Action
+			days = 30
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.21.b
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 25
+		}
+		
+		country_event = {
+			id = orenvalyam_events.22 #From Words to Action
+			days = 30
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.22 #From Words to Action
+	title = orenvalyam_events.22.t
+	desc = orenvalyam_events.22.desc
+	picture = DIPLOMACY_SIGNING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.22.a
+		custom_tooltip = U39_enable_border_tribes_issues_tt
+		set_country_flag = U39_enable_border_tribes_issues_flag
+
+		add_country_modifier = {
+			name = U39_kavalakuttam_agenda_expanded
+			duration = -1
+		}
+		if = {
+			limit = { is_variable_equal = { which = oren_chendhyan_var value = 3 } }
+			custom_tooltip = U39_3_chandhyan_demands_yes_tt
+			hidden_effect = { 
+				chendhya_region = {
+					limit = { OR = { owner = { culture = chendhyan } is_empty = yes } }
+					cede_province = ROOT add_core = ROOT
+				} 
+			}
+		}
+		else = { custom_tooltip = U39_3_chandhyan_demands_no_tt }
+		if = {
+			limit = { is_variable_equal = { which = oren_chendhyan_var value = 2 } }
+			custom_tooltip = U39_2_chandhyan_demands_yes_tt
+			hidden_effect = {
+				asdzaeg_area = {
+					limit = { OR = { owner = { culture = chendhyan } is_empty = yes } }
+					cede_province = ROOT add_core = ROOT
+				} 
+				haeunov_area = {
+					limit = { OR = { owner = { culture = chendhyan } is_empty = yes } }
+					cede_province = ROOT add_core = ROOT
+				} 
+				donkalyn_area = {
+					limit = { OR = { owner = { culture = chendhyan } is_empty = yes } }
+					cede_province = ROOT add_core = ROOT
+				} 
+				asov_area = {
+					limit = { OR = { owner = { culture = chendhyan } is_empty = yes } }
+					cede_province = ROOT add_core = ROOT
+				} 
+				gaenbyst_area = {
+					limit = { OR = { owner = { culture = chendhyan } is_empty = yes } }
+					cede_province = ROOT add_core = ROOT
+				} 
+			}
+		}
+		else = { custom_tooltip = U39_2_chandhyan_demands_no_tt }
+		if = {
+			limit = { is_variable_equal = { which = oren_chendhyan_var value = 1 } }
+			custom_tooltip = U39_1_chandhyan_demands_yes_tt
+			hidden_effect = {
+				asdzaeg_area = {
+					limit = { OR = { owner = { culture = chendhyan } is_empty = yes } }
+					cede_province = ROOT add_core = ROOT
+				} 
+				haeunov_area = {
+					limit = { OR = { owner = { culture = chendhyan } is_empty = yes } }
+					cede_province = ROOT add_core = ROOT
+				} 
+				donkalyn_area = {
+					limit = { OR = { owner = { culture = chendhyan } is_empty = yes } }
+					cede_province = ROOT add_core = ROOT
+				} 
+			}
+		}
+		else = { custom_tooltip = U39_1_chandhyan_demands_no_tt }
+		if = {
+			limit = { 
+				is_variable_equal = { which = oren_chendhyan_var value = 0 }
+				NOT = { num_of_colonists = 2 }
+			}
+			custom_tooltip = U39_0_chandhyan_demands_yes_tt
+			hidden_effect = {
+				add_country_modifier = {
+					name = U39_crossing_the_chendhya
+					duration = 18250 #50 years
+				}
+			}
+		}
+		else = { custom_tooltip = U39_0_chandhyan_demands_no_tt }
+		country_event = {
+			id = orenvalyam_events.23 #A Question of Priority
+			days = 30
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.23 #A Question of Priority
+	title = orenvalyam_events.23.t
+	desc = orenvalyam_events.23.desc
+	picture = SCOTTISH_MERCENARIES_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.23.a
+		custom_tooltip = U39_devandi_priority_tt
+		hidden_effect = {
+			kheionai_superregion = {
+				limit = {
+					is_empty = yes
+					culture_group = devandi_ruinborn_elf
+				}
+				add_province_modifier = {
+					name = U39_border_priority
+					duration = -1
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.23.b
+		every_country = {
+			limit = { primary_culture = mteibhar }
+			add_opinion = {
+				who = ROOT
+				modifier = U39_rejected_mteibhar
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.24 #Questions of Constitution
+	title = orenvalyam_events.24.t
+	desc = orenvalyam_events.24.desc
+	picture = DECLARATION_INDEPENDENCE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.24.a
+		trigger = { kamrayakvalists_are_loyal = yes }
+		custom_tooltip = U39_kamrayakval_parliament_revoke_tt
+		set_country_flag = U39_kamrayakval_parliament_revoke_flag
+	}
+	
+	option = {
+		name = orenvalyam_events.24.b
+		trigger = { monasticists_are_loyal = yes }
+		custom_tooltip = U39_monasticist_parliament_buff_tt
+		set_country_flag = U39_monasticist_parliament_buff_flag
+	}
+	
+	option = {
+		name = orenvalyam_events.24.c
+		trigger = { kavalalists_are_loyal = yes }
+		custom_tooltip = U39_kavalalist_parliament_buff_tt
+		set_country_flag = U39_kavalalist_parliament_buff_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.25 #Souls of the Singing Jungle
+	title = orenvalyam_events.25.t
+	picture = AFRICAN_EXPLORER_eventPicture
+
+	desc = {
+		desc = orenvalyam_events.25.descExemplars
+		trigger = {
+			OR = {
+				has_country_flag = U39_exemplars_integrate_flag
+				has_country_flag = U39_exemplars_tolerate_flag
+			}
+			has_not_yodhans_sickness_4 = yes
+			NOT = { has_country_flag = U39_tries_to_kill_silverspite_flag }
+		}
+	}
+
+	desc = {
+		desc = orenvalyam_events.25.descElse
+		trigger = {
+			NOT = {
+				AND = {
+					OR = {
+						has_country_flag = U39_exemplars_integrate_flag
+						has_country_flag = U39_exemplars_tolerate_flag
+					}
+					has_not_yodhans_sickness_4 = yes
+					NOT = { has_country_flag = U39_tries_to_kill_silverspite_flag }
+				}
+			}
+		}
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.25.a
+		trigger = {
+			OR = {
+				monasticists_are_loyal = yes
+				AND = {
+					kavalalists_are_loyal = yes
+					NOT = { has_country_flag = U39_exemplars_integrate_flag }
+				}
+			}
+		}
+		custom_tooltip = U39_bloom_dormancy_lock_tt
+		set_country_flag = U39_bloom_dormancy_lock_flag
+		swap_non_generic_missions = yes
+	}
+	
+	option = {
+		name = orenvalyam_events.25.b
+		trigger = {
+			OR = {
+				kamrayakvalists_are_loyal = yes
+				AND = {
+					kavalalists_are_loyal = yes
+					has_country_flag = U39_exemplars_integrate_flag
+				}
+			}
+		}
+		custom_tooltip = U39_bloom_burn_lock_tt
+		set_country_flag = U39_bloom_burn_lock_flag
+		swap_non_generic_missions = yes
+	}
+}
+
+province_event = {
+	id = orenvalyam_events.26
+	title = none
+	desc = none
+	picture = none
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = none
+		effelai_dormancy_to_land = yes
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.27 #Chasing Spectres
+	title = orenvalyam_events.27.t
+	desc = orenvalyam_events.27.desc
+	picture = ASSASSINATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.27.a
+		custom_tooltip = U39_improve_assassination_tt
+		set_country_flag = U39_improve_assassination_flag
+		hidden_effect = {
+			every_known_country = {
+				limit = { has_country_flag = U39_was_assassinated_flag }
+				add_country_modifier = {
+					name = U39_hunted_by_heroes
+					duration = 3650 #10 years
+				}
+			}
+		}
+		if = {
+			limit = { H39 = { march_of = ROOT } } #Ozgarom
+			custom_tooltip = U39_buff_ozgarom_yes_tt
+			custom_tooltip = U39_else_ozgarom_no_tt
+			hidden_effect = {
+				H39 = { #Ozgarom
+					change_country_color = { country = ROOT }
+					change_religion = oren_nayiru_reformed
+					add_country_modifier = {
+						name = U39_kindred_warriors
+						duration = -1
+					}
+				}
+			}
+		}
+		else = {
+			custom_tooltip = U39_buff_ozgarom_no_tt
+			custom_tooltip = U39_else_ozgarom_yes_tt
+			hidden_effect = {
+				anb_add_accepted_culture_or_dip_power = { culture = ozgar_orc free = yes }
+				add_country_modifier = {
+					name = U39_orcish_brotherhood
+					duration = -1
+				}
+			}
+		}
+		ruined_isles_region = {
+			add_permanent_claim = ROOT
+			discover_country = ROOT
+		}
+		endralliande_region = {
+			add_permanent_claim = ROOT
+			discover_country = ROOT
+		}
+		ravenous_isle_region = {
+			add_permanent_claim = ROOT
+			discover_country = ROOT
+		}
+		ruined_sea_region = {
+			discover_country = ROOT
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.28 #The Twilight Approach
+	title = orenvalyam_events.28.t
+	desc = orenvalyam_events.28.desc
+	picture = muslimgfx_RAMADAN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.28.a
+		add_prestige = 50
+		add_devotion = 50
+		custom_tooltip = U39_hegemon_tt
+		custom_tooltip = U39_discover_claim_na_tt
+		hidden_effect = {
+			north_america = {
+				discover_country = ROOT
+				if = {
+					limit = { is_sea = no is_wasteland = no }
+					add_permanent_claim = ROOT
+				}
+			}
+			set_country_flag = U39_hegemon_flag
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.29 #Vindicator
+	title = orenvalyam_events.29.t
+	desc = orenvalyam_events.29.desc
+	picture = muslimgfx_RAMADAN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.29.a
+		custom_tooltip = U39_hegemon_tt
+		custom_tooltip = U39_discover_claim_na_tt
+		hidden_effect = {
+			north_america = {
+				discover_country = ROOT
+				if = {
+					limit = { is_sea = no is_wasteland = no }
+					add_permanent_claim = ROOT
+				}
+			}
+			set_country_flag = U39_hegemon_flag
+			set_country_flag = U39_silverspite_ending_flag
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.30 #Fate of the Colonisers
+	title = orenvalyam_events.30.t
+	desc = orenvalyam_events.30.desc
+	picture = USA_COLONIZATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.30.a #Reclamation
+		trigger = {
+			OR = {
+				kamrayakvalists_are_loyal = yes
+				kavalalists_are_loyal = yes
+			}
+		}
+		set_country_flag = U39_ruinborn_reclamation_flag
+		add_country_modifier = {
+			name = U39_ruinborn_reclamation
+			duration = -1
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.30.b #Reshaping
+		trigger = {
+			OR = {
+				monasticists_are_loyal = yes
+				AND = {
+					kavalalists_are_loyal = yes
+					has_country_flag = U39_exemplars_integrate_flag
+				}
+			}
+		}
+		set_country_flag = U39_reshaping_not_remaking_flag
+		add_country_modifier = {
+			name = U39_reshaping_not_remaking
+			duration = -1
+		}
+		country_event = {
+			id = orenvalyam_events.31 #Offer From Valorpoint
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.30.c #Revengeance
+		trigger = {
+			kamrayakvalists_are_loyal = yes
+			ruler_is_silverspite = yes
+		}
+		set_country_flag = U39_ruinborn_revengeance_flag
+		add_country_modifier = {
+			name = U39_ruinborn_revengeance
+			duration = -1
+		}
+		custom_tooltip = U39_ruinborn_revengeance_tt
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.31 #Offer From Valorpoint
+	title = orenvalyam_events.31.t
+	desc = orenvalyam_events.31.desc
+	picture = CORINITE_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.31.a
+		set_country_flag = U39_accept_valorpoint_offer_flag
+		add_historical_friend_mutual = { tag = H36 } #Valorpoint
+		create_alliance = H36 #Valorpoint
+		H36 = { #Valorpoint
+			add_aggressive_expansion = {
+				who = ROOT
+				value = -1000
+				apply_calc = no
+			}
+			custom_tooltip = U39_valorpoint_cores_tt
+			hidden_effect = {
+				trollsbay_region = {
+					limit = { is_neighbor_of = PREV }
+					add_core = PREV
+				}
+			}
+		}
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 5
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -25
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.31.b
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -10
+		}
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -5
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 25
+		}
+		add_devotion = 25
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.32 #Moral and Meaning
+	title = orenvalyam_events.32.t
+	desc = orenvalyam_events.32.desc
+	picture = PROTESTANT_RELIGIOUS_TENSIONS_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.32.a
+		add_devotion = 15
+		add_army_tradition = 25
+		custom_tooltip = U39_danrachasamidha_tt
+		hidden_effect = {
+			pick_random_provinces = {
+				5 = yes
+				scope = random_province
+				global_trigger = "
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+					trade_goods = slaves
+				"
+				event_target_name = oren_target
+			}
+			U39_danrachasamidha_effect = { num = 1 }
+			U39_danrachasamidha_effect = { num = 2 }
+			U39_danrachasamidha_effect = { num = 3 }
+			U39_danrachasamidha_effect = { num = 4 }
+			U39_danrachasamidha_effect = { num = 5 }
+			do_same_event_target_effect = {
+				5 = yes
+				event_target_name = oren_target
+				effect = "
+					add_devastation = 25
+					owner = {
+						add_opinion = {
+							who = ROOT
+							modifier = U39_liberated_slaves
+						}
+					}
+				"
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.33 #Whims of the Wild
+	title = orenvalyam_events.33.t
+	desc = orenvalyam_events.33.desc
+	picture = asiangfx_ADVISOR_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.33.a #Surpress
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 10
+				OR = {
+					culture = quchamar
+					culture = faalte
+				}
+				anb_has_seat_in_parliament = yes
+			}
+		}
+		set_country_flag = U39_surpress_wild_magic_flag
+		custom_tooltip = U39_amadia_mage_build_tt
+		hidden_effect = {
+			set_country_flag = U39_amadia_mage_build_flag
+			amadia_region = {
+				limit = {
+					owned_by = ROOT
+					has_building = mage_tower
+				}
+				area = {
+					limit = { owned_by = U39 } #Orenvalyam
+					add_province_modifier = {
+						name = U39_wild_magic_tempered
+						duration = -1
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.33.b #Tolerate
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 10
+				OR = {
+					culture = chamullach
+					culture = banche
+				}
+				anb_has_seat_in_parliament = yes
+			}
+		}
+		set_country_flag = U39_tolerate_wild_magic_flag
+		unlock_merc_company = { merc_company = merc_wild_magic_casters free_merc = yes } 
+	}
+	
+	option = {
+		name = orenvalyam_events.33.c #Embrace
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 10
+				OR = {
+					culture = chaqanel
+					culture = quruwei
+				}
+				anb_has_seat_in_parliament = yes
+			}
+		}
+		set_country_flag = U39_embrace_wild_magic_flag
+		set_country_flag = U39_elemental_fury_change_flag
+		custom_tooltip = U39_elemental_fury_change_tt
+		tooltip = {
+			random_list = {
+				33 = {
+					add_country_modifier = {
+						name = U39_weak_wild_fury
+						duration = 3650 #10 years
+					}
+				}
+				33 = {
+					add_country_modifier = {
+						name = U39_targeted_wild_fury
+						duration = 3650 #10 years
+					}
+				}
+				33 = {
+					add_country_modifier = {
+						name = U39_uncontrollable_wild_fury
+						duration = 3650 #10 years
+					}
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.34 #The True Heirs of Corin
+	title = orenvalyam_events.34.t
+	desc = orenvalyam_events.34.desc
+	picture = CORINITE_WAR_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.34.a
+		unlock_merc_company = { merc_company = merc_campurana_corintar free_merc = yes }
+		define_general = {
+			fire = 2
+			shock = 6
+			manuever = 4
+			siege = 6
+			name = "Campurana Hotzaya"
+		}
+		if = {
+			limit = { H36 = { is_subject_of = ROOT } } #Valorpoint
+			custom_tooltip = U39_valorpoint_subject_event_yes_tt
+			hidden_effect = { unlock_merc_company = { merc_company = merc_campurana_hotzaya free_merc = yes } }
+		}
+		else = { custom_tooltip = U39_valorpoint_subject_event_no_tt }
+
+		if = {
+			limit = { H36 = { march_of = ROOT } } #Valorpoint
+			custom_tooltip = U39_valorpoint_march_yes_tt
+			custom_tooltip = U39_valorpoint_march_else_no_tt
+			hidden_effect = {
+				H36 = { #Valorpoint
+					change_country_color = { country = ROOT }
+					add_country_modifier = {
+						name = U39_sect_of_the_corintar
+						duration = -1
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { H36 = { is_subject_of = ROOT } } #Valorpoint
+			custom_tooltip = U39_valorpoint_march_no_tt
+			custom_tooltip = U39_valorpoint_march_else_yes_tt
+			hidden_effect = { inherit = H36 } #Valorpoint
+		}
+		else = {
+			custom_tooltip = U39_valorpoint_march_no_tt
+			custom_tooltip = U39_valorpoint_march_else_no_tt
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.34.b
+		custom_tooltip = U39_field_of_forbiddance_buff_tt
+		set_country_flag = U39_field_of_forbiddance_buff_flag
+		add_country_modifier = {
+			name = U39_sect_of_corin_shieldbreaker
+			duration = -1
+		}
+
+		if = {
+			limit = { H36 = { march_of = ROOT } } #Valorpoint
+			custom_tooltip = U39_valorpoint_march_yes_tt
+			custom_tooltip = U39_valorpoint_march_else_no_tt
+			hidden_effect = {
+				H36 = { #Valorpoint
+					change_country_color = { country = ROOT }
+					add_country_modifier = {
+						name = U39_sect_of_the_corintar
+						duration = -1
+					}
+				}
+			}
+		}
+		else_if = {
+			limit = { H36 = { is_subject_of = ROOT } } #Valorpoint
+			custom_tooltip = U39_valorpoint_march_no_tt
+			custom_tooltip = U39_valorpoint_march_else_yes_tt
+			hidden_effect = { inherit = H36 } #Valorpoint
+		}
+		else = {
+			custom_tooltip = U39_valorpoint_march_no_tt
+			custom_tooltip = U39_valorpoint_march_else_no_tt
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.35 #Day of the Dove
+	title = orenvalyam_events.35.t
+	desc = orenvalyam_events.35.desc
+	picture = KING_ASSASSINATION_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			pick_random_tags = {
+				10 = yes
+				scope = random_country
+				global_trigger = "is_part_of_hre = yes is_emperor = no"
+				event_target_name = oren_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.35.a
+		custom_tooltip = U39_fear_and_loathing_buff_tt
+		set_country_flag = U39_fear_and_loathing_buff_flag
+		add_prestige = 50
+		if = {
+			limit = { hre_size = 1 }
+			emperor = { kill_ruler = yes }
+			do_same_event_target_effect = {
+				10 = yes
+				event_target_name = oren_target
+				effect = "kill_ruler = yes"
+			}
+			every_country_in_hre = {
+				effect = "
+					add_opinion = {
+						who = ROOT
+						modifier = U39_doveday_massacre
+					}
+					add_aggressive_expansion = {
+						who = ROOT
+						value = 50
+						apply_calc = no
+					}
+					add_casus_belli = {
+						type = cb_insult
+						target = ROOT
+					}
+				"
+			}
+		}
+		else = {
+			Z01 = { #Empire of Anbennar
+				kill_ruler = yes
+				add_opinion = {
+					who = ROOT
+					modifier = U39_doveday_massacre
+				}
+				add_aggressive_expansion = {
+					who = ROOT
+					value = 50
+				}
+				add_casus_belli = {
+					type = cb_insult
+					target = ROOT
+				}
+			} 
+		}
+		hidden_effect = {
+			country_event = {
+				id = orenvalyam_events.36 #And the Days of Blood
+				days = 30
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.36 #And the Days of Blood
+	title = orenvalyam_events.36.t
+	desc = orenvalyam_events.36.desc
+	picture = WITCHBURNING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.36.a
+		if = {
+			limit = { hre_size = 1 }
+			emperor = { add_stability = 1 }
+			do_same_event_target_effect = {
+				10 = yes
+				event_target_name = oren_target
+				effect = "add_stability = 1"
+			}
+		}
+		else = { Z01 = { add_stability = 1 } } #Empire of Anbennar
+		custom_tooltip = U39_cannor_ruinborn_tt
+		hidden_effect = {
+			europe = {
+				limit = { has_ruinborn_minority_trigger = yes }
+				remove_ruinborn_minority_size_effect = yes
+				remove_ruinborn_minority_size_effect = yes
+				add_devastation = 25
+			}
+		}
+		add_country_modifier = {
+			name = U39_international_pariah
+			duration = 7300 #20 years
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.37 #Ideals Overstretched
+	title = orenvalyam_events.37.t
+	desc = orenvalyam_events.37.desc
+	picture = DESERT_CARAVAN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.37.a
+		eordand_superregion = { add_permanent_claim = ROOT }
+		anb_aelantir_cultural_union = { eordan = yes }
+		custom_tooltip = U39_enable_tunnels_renewal_tt
+		set_country_flag = U39_enable_tunnels_renewal_flag
+		2112 = { #Nani Kinn
+			add_province_modifier = {
+				name = U39_uneasy_experimentation
+				duration = -1
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.38 #The Ynnic Heresy
+	title = orenvalyam_events.38.t
+	desc = orenvalyam_events.38.desc
+	picture = RELIGIOUS_WARS_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				15 = yes
+				scope = random_owned_province
+				global_trigger = "superregion = ynn_superregion"
+				event_target_name = oren_kam_target
+			}
+			pick_random_provinces = {
+				20 = yes
+				scope = random_owned_province
+				global_trigger = "superregion = ynn_superregion"
+				event_target_name = oren_kam_target_three
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.38.a
+		trigger = { kamrayakvalists_are_loyal = yes }
+		add_stability = 2
+		custom_tooltip = U39_ynn_rebels_tt
+		custom_tooltip = U39_enable_purge_heretic_beliefs_tt
+		set_country_flag = U39_enable_purge_heretic_beliefs_flag
+		hidden_effect = {
+			do_same_event_target_effect = {
+				15 = yes
+				event_target_name = oren_kam_target
+				effect = "spawn_rebels = { size = 3 type = heretic_rebels }"
+			}
+			do_same_event_target_effect = {
+				20 = yes
+				event_target_name = oren_kam_target_three
+				effect = "spawn_rebels = { size = 2 type = heretic_rebels }"
+			}
+		}
+
+		if = {
+			limit = {
+				OR = { #Integrate or Tolerate the Examplars
+					has_country_flag = U39_exemplars_integrate_flag
+					has_country_flag = U39_exemplars_tolerate_flag
+				}
+				has_country_modifier = U39_reshaping_not_remaking #Reshaping in Fate of The Colonizers
+				has_country_flag = U39_kavalalist_parliament_buff_flag #Kavalalist in Questions of Constitution
+			}
+			custom_tooltip = U39_dragon_kavalal_tt
+			hidden_effect = {
+				country_event = {
+					id = orenvalyam_events.39 #The Dragon Kavalal?
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.38.b
+		trigger = { kavalalists_are_loyal = yes }
+		add_devotion = 30
+		custom_tooltip = U39_enable_debating_orthodaxy_tt
+		set_country_flag = U39_enable_debating_orthodaxy_flag
+
+		if = {
+			limit = {
+				OR = { #Integrate or Tolerate the Examplars
+					has_country_flag = U39_exemplars_integrate_flag
+					has_country_flag = U39_exemplars_tolerate_flag
+				}
+				has_country_modifier = U39_reshaping_not_remaking #Reshaping in Fate of The Colonizers
+				has_country_flag = U39_kavalalist_parliament_buff_flag #Kavalalist in Questions of Constitution
+			}
+			custom_tooltip = U39_dragon_kavalal_tt
+			hidden_effect = {
+				country_event = {
+					id = orenvalyam_events.39 #The Dragon Kavalal?
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.38.c
+		trigger = { monasticists_are_loyal = yes }
+		add_stability = -1
+		add_devotion = 30
+		custom_tooltip = U39_enable_encourage_divergent_thought_tt
+		set_country_flag = U39_enable_encourage_divergent_thought_flag
+
+		if = {
+			limit = {
+				OR = { #Integrate or Tolerate the Examplars
+					has_country_flag = U39_exemplars_integrate_flag
+					has_country_flag = U39_exemplars_tolerate_flag
+				}
+				has_country_modifier = U39_reshaping_not_remaking #Reshaping in Fate of The Colonizers
+				has_country_flag = U39_kavalalist_parliament_buff_flag #Kavalalist in Questions of Constitution
+			}
+			custom_tooltip = U39_dragon_kavalal_tt
+			hidden_effect = {
+				country_event = {
+					id = orenvalyam_events.39 #The Dragon Kavalal?
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.39 #The Dragon Kavalal?
+	title = orenvalyam_events.39.t
+	desc = orenvalyam_events.39.desc
+	picture = DRAGON_FLY_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				5 = yes
+				scope = random_owned_province
+				global_trigger = "region = rzenta_region"
+				event_target_name = oren_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.39.a
+		1191 = { #Svemel
+			add_province_modifier = {
+				name = U39_varlengeilts_wisdom
+				duration = -1
+			}
+		}
+		define_advisor = {
+			type = treasurer
+			name = "Varlengeilt"
+			skill = 5
+			religion = drozma_tur
+			culture = rzentur
+			cost_multiplier = 0.2
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.39.b
+		add_stability = 1
+		add_devotion = 20
+		1191 = { #Svemel
+			spawn_rebels = {
+				size = 3
+				type = particularist_rebels
+			}
+		}
+		do_same_event_target_effect = {
+			5 = yes
+			event_target_name = oren_target
+			effect = "spawn_rebels = { size = 3 type = particularist_rebels }"
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.40 #The Living Relics
+	title = orenvalyam_events.40.t
+	desc = orenvalyam_events.40.desc
+	picture = SPELL_LIST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.40.a
+		custom_tooltip = U39_living_relics_tt
+		anb_mechanim_cultural_union = yes
+		custom_tooltip = U39_enable_exceptional_reproduction_tt
+		set_country_flag = U39_enable_exceptional_reproduction_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.41 #Answer Me These Riddles Three
+	title = orenvalyam_events.41.t
+	desc = orenvalyam_events.41.desc
+	picture = FEYFOREST_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_country_flag = U39_extraplanar_contact_buff_flag
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.41.a
+		trigger = {
+			NOT = {
+				domandrod_region = {
+					type = all
+					country_or_subject_holds = ROOT
+				}
+			}
+		}
+		custom_tooltip = U39_riddles_three_tt
+		open_domandrod = yes
+		domandrod_region = {
+			add_province_modifier = {
+				name = U39_border_priority
+				duration = -1
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.41.b
+		trigger = {
+			domandrod_region = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+		}
+		highlight = yes
+		custom_tooltip = U39_riddles_three_tt
+		open_domandrod = yes
+		domandrod_region = {
+			change_culture = peitar
+			change_religion = oren_nayiru_reformed
+			add_base_tax = 2
+			add_base_production = 2
+			add_base_manpower = 2
+			add_prosperity = 100
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.42 #Terminus
+	title = orenvalyam_events.42.t
+	desc = orenvalyam_events.42.desc
+	picture = muslimgfx_RAMADAN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.42.a
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = U39_silverspite_ending_tt
+				has_country_flag = U39_silverspite_ending_flag
+			}
+		}
+		highlight = yes
+		country_event = {
+			id = orenvalyam_events.44 #The Last Step
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.42.b
+		trigger = {
+			NOT = { has_country_flag = U39_silverspite_ending_flag }
+		}
+		country_event = {
+			id = orenvalyam_events.43 #The Last Interloper
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.43 #The Last Interloper
+	title = orenvalyam_events.43.t
+	desc = orenvalyam_events.43.desc
+	picture = PROTESTANT_CATHOLIC_DEBATE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.43.a
+		custom_tooltip = U39_last_interlopers_tt
+		set_country_flag = U39_reveal_peace_missions_flag
+		swap_non_generic_missions = yes
+		remove_country_modifier = U39_kan_oren_dan_manhu_2
+		add_country_modifier = {
+			name = U39_kan_oren_dan_manhu_3
+			duration = -1
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.44 #The Last Step
+	title = orenvalyam_events.44.t
+	picture = PROTESTANT_CATHOLIC_DEBATE_eventPicture
+
+	desc = {
+		desc = orenvalyam_events.44.descSilverspite
+		trigger = { ruler_is_silverspite = yes }
+	}
+
+	desc = {
+		desc = orenvalyam_events.44.descElse
+		trigger = { ruler_is_not_silverspite = yes }
+	}
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.44.a
+		set_country_flag = U39_reveal_wc_missions_flag
+		swap_non_generic_missions = yes
+		remove_country_modifier = U39_kan_oren_dan_manhu_2
+		add_country_modifier = {
+			name = U39_kan_oren_dan_manhu_3
+			duration = -1
+		}
+
+		if = {
+			limit = { ruler_is_silverspite = yes }
+			custom_tooltip = U39_silverspite_alive_mod_yes_tt
+			hidden_effect = {
+				add_country_modifier = {
+					name = U39_legacy_of_the_messiah
+					duration = -1
+				}
+			}
+		}
+		else = { custom_tooltip = U39_silverspite_alive_mod_no_tt }
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.45 #The End of the World, Part I
+	title = orenvalyam_events.45.t
+	desc = orenvalyam_events.45.desc
+	picture = DIVERSE_COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.45.a
+		country_event = {
+			id = orenvalyam_events.46 #Ending Event 2
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.46 #Ending Event 2
+	title = orenvalyam_events.46.t
+	desc = orenvalyam_events.46.desc
+	picture = DIVERSE_COURT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.46.a
+		country_event = {
+			id = orenvalyam_events.47 #The End of the World
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.47 #The End of the World
+	title = orenvalyam_events.47.t
+	desc = orenvalyam_events.47.desc
+	picture = SURAKES_SUN_GARDEN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.47.a
+		if = {
+			limit = { in_golden_age = yes }
+			extend_golden_age = 9589935 #1 million months
+		}
+		else = { reset_golden_age = yes }
+		define_advisor = {
+			type = theologian
+			name = "The Reticent Kavalal"
+			skill = 5
+			female = no
+			culture = thekvrystana
+			religion = oren_nayiru_reformed
+			cost_multiplier = 0 #Free
+		}
+		define_advisor = {
+			type = fortification_expert
+			name = "The Stalwart Kavalal"
+			skill = 5
+			female = no
+			culture = yodhanpir
+			religion = oren_nayiru_reformed
+			cost_multiplier = 0 #Free
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.48 #The Rumbling
+	title = orenvalyam_events.48.t
+	desc = orenvalyam_events.48.desc
+	picture = MULTI_RACIAL_MERC_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.48.a
+		remove_yodhans_sickness_modifiers = yes
+		add_country_modifier = {
+			name = U39_yodhans_sickness_8
+			duration = -1
+		}
+		custom_tooltip = U39_purification_3_tt
+		change_mil = 6
+		custom_tooltip = U39_discover_world_tt
+		custom_tooltip = enabled_great_holy_war_tt
+		custom_tooltip = U39_apocalypse_tt
+		add_country_modifier = {
+			name = U39_solders_of_the_apocalypse
+			duration = -1
+		}
+		hidden_effect = {
+			every_province = {
+				discover_country = ROOT
+			}
+			set_country_flag = U39_apocalypse_flag
+			set_country_flag = enabled_great_holy_war_cb
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.49 #Dawn
+	title = orenvalyam_events.49.t
+	desc = orenvalyam_events.49.desc
+	picture = SURAKES_SUN_GARDEN_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.49.a
+		override_country_name = ORENMANHU
+		remove_country_modifier = U39_yodhans_sickness_8
+		custom_tooltip = U39_disable_purification_tt
+		remove_country_modifier = U39_solders_of_the_apocalypse
+		add_country_modifier = {
+			name = U39_oren_manhu_oren_nayiru
+			duration = -1
+		}
+		clr_country_flag = U39_apocalypse_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.50 # Elrandar
+	title = orenvalyam_events.50.t
+	desc = orenvalyam_events.50.desc
+	picture = DRAGON_ATTACK_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.50.a
+		# Im gonna put the "Thanks for playing" tooltip here, also it will kill Silverspite if he is SOMEHOW already alive (and maybe just give an extra tooltip congratulating the player on their truly batshit insane feat
+	}
+}
+
+###############################################
+#Election Events
+country_event = {
+	id = orenvalyam_events.100
+	title = orenvalyam_events.100.t
+	desc = orenvalyam_events.100.desc
+	picture = THREE_HEIRS_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		has_reform = U39_kavalali_theo_democracy
+		has_heir = no
+	}
+
+	immediate = {
+		hidden_effect = {
+			remove_country_modifier = U39_heir_monasticist
+			remove_country_modifier = U39_heir_kavalalist
+			remove_country_modifier = U39_heir_kamrayakvalist
+		}
+	}
+	
+	option = { #Monasticist
+		name = orenvalyam_events.100.a
+		if = {
+			limit = {
+				has_estate_privilege = estate_nobles_violetblooded_kamrayakval
+			}
+			define_heir = { 
+				dynasty = "Dumruktam"
+			}
+		}
+		else = {
+			define_heir = { }
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = U39_heir_monasticist
+			duration = -1
+		}
+	}
+	
+	option = { #Kavalalist
+		name = orenvalyam_events.100.b
+		if = {
+			limit = {
+				has_estate_privilege = estate_nobles_violetblooded_kamrayakval
+			}
+			define_heir = { 
+				dynasty = "Dumruktam"
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate_privilege = estate_church_high_kavalali_of_the_dumrusvarn
+			}
+			random_list = {
+				1 = {
+					define_heir = { 
+						dynasty = "Dumruktam"
+					}
+				}
+				1 = {
+					define_heir = { }
+				}
+			}
+		}
+		else = {
+			define_heir = { }
+		}
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = U39_heir_kavalalist
+			duration = -1
+		}
+	}
+	
+	option = { #Kamrayakvalist
+		name = orenvalyam_events.100.c
+		if = {
+			limit = {
+				has_estate_privilege = estate_nobles_violetblooded_kamrayakval
+			}
+			define_heir = { 
+				dynasty = "Dumruktam"
+			}
+		}
+		else_if = {
+			limit = {
+				has_estate_privilege = estate_church_high_kavalali_of_the_dumrusvarn
+			}
+			random_list = {
+				1 = {
+					define_heir = { 
+						dynasty = "Usvatti"
+					}
+				}
+				1 = {
+					define_heir = { }
+				}
+			}
+		}
+		else = {
+			define_heir = { }
+		}
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 10
+		}
+		add_country_modifier = {
+			name = U39_heir_kamrayakvalist
+			duration = -1
+		}
+	}
+}
+
+#New Ruler Event
+country_event = {
+	id = orenvalyam_events.101
+	title = orenvalyam_events.101.t
+	desc = orenvalyam_events.101.desc
+	picture = VIKING_KING_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		has_reform = U39_kavalali_theo_democracy
+		NOT = { has_country_flag = respawn_silverspite_flag }
+	}
+	
+	option = {
+		name = orenvalyam_events.101.a
+		if = {
+			limit = { has_country_modifier = U39_heir_monasticist }
+			add_estate_loyalty = {
+				estate = estate_burghers
+				loyalty = 20
+			}
+			add_ruler_modifier = {
+				name = U39_ruler_monasticist
+				duration = -1
+			}
+			remove_country_modifier = U39_heir_monasticist
+		}
+		else_if = {
+			limit = { has_country_modifier = U39_heir_kavalalist }
+			add_estate_loyalty = {
+				estate = estate_church
+				loyalty = 20
+			}
+			add_ruler_modifier = {
+				name = U39_ruler_kavalalist
+				duration = -1
+			}
+			remove_country_modifier = U39_heir_kavalalist
+		}
+		else_if = {
+			limit = { has_country_modifier = U39_heir_kamrayakvalist }
+			add_estate_loyalty = {
+				estate = estate_nobles
+				loyalty = 20
+			}
+			add_ruler_modifier = {
+				name = U39_ruler_kamrayakvalist
+				duration = -1
+			}
+			remove_country_modifier = U39_heir_kamrayakvalist
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			remove_silverspite_modifiers = yes
+		}
+	}
+}
+
+#Hidden Event to Determine with Sickness or Election Event to Fire
+country_event = {
+	id = orenvalyam_events.102
+	title = none
+	desc = none
+	picture = none
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		tag = U39 #Orenvalyam
+		has_country_flag = respawn_silverspite_flag
+		NOT = { has_country_flag = U39_in_election_event }
+	}
+
+	immediate = { set_country_flag = U39_in_election_event }
+	after = { clr_country_flag = U39_in_election_event }
+	
+	option = {
+		name = none
+		if = {
+			limit = { ruler_is_not_silverspite = yes }
+			define_silverspite_as_ruler = yes
+		}
+		if = {
+			limit = {
+				NOT = { has_country_flag = U39_velaras_fucking_dead_flag }
+				heir_is_velara = no
+			}
+			define_velara_as_heir = yes
+		}
+		if = {
+			limit = { ai = no }
+			set_country_flag = U39_silverspite_bypass_flag
+			country_event = { id = orenvalyam_events.103 }			
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.103
+	title = none
+	desc = none
+	picture = none
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		ruler_is_silverspite = yes
+		NOT = { has_country_flag = U39_enable_condemner_flag }
+		OR = {
+			has_country_flag = U39_silverspite_bypass_flag
+			had_country_flag = {
+				flag = U39_silverspite_died_flag
+				days = 3649 #10 years
+			}
+		}
+	}
+	
+	option = {
+		name = none
+		set_country_flag = U39_silverspite_died_flag
+		clr_country_flag = U39_silverspite_bypass_flag
+		trigger_switch = {
+			on_trigger = has_country_flag
+			U39_yodhans_sickness_7_flag = { country_event = { id = orenvalyam_events.207 } }
+			U39_yodhans_sickness_6_flag = { country_event = { id = orenvalyam_events.206 } }
+			U39_yodhans_sickness_5_flag = { country_event = { id = orenvalyam_events.205 } }
+			U39_yodhans_sickness_4_flag = { country_event = { id = orenvalyam_events.203 } }
+			U39_yodhans_sickness_3_flag = { country_event = { id = orenvalyam_events.202 } }
+			U39_yodhans_sickness_2_flag = { country_event = { id = orenvalyam_events.201 } }
+			U39_yodhans_sickness_1_flag = { country_event = { id = orenvalyam_events.200 } }
+		}
+	}
+}
+
+###############################################
+#Yodhan's Sickness Events
+
+country_event = {
+	id = orenvalyam_events.200 #Protector (1 > 2)
+	title = orenvalyam_events.200.t
+	desc = orenvalyam_events.200.desc
+	picture = THE_HEROINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.200.a
+		custom_tooltip = U39_sil_protector_flavour_tt
+		random_owned_province = {
+			limit = { unrest = 0.1 }
+			add_devastation = 10
+			add_unrest = -10
+		}
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 10
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -5
+		}
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -5
+		}
+		add_prestige = 10
+		set_country_flag = U39_increased_sickness_flag
+		remove_country_modifier = U39_yodhans_sickness_1 
+		add_country_modifier = { name = U39_yodhans_sickness_2 duration = -1 }
+		set_country_flag = U39_yodhans_sickness_2_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.201 #Emancipator (2 > 3)
+	title = orenvalyam_events.201.t
+	desc = orenvalyam_events.201.desc
+	picture = MONARCH_CHILD_WITH_REGENT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.201.a
+		custom_tooltip = U39_sil_inheritor_flavour_tt
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 5
+		}
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = 5
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -5
+		}
+		add_devotion = 10
+		remove_country_modifier = U39_yodhans_sickness_2
+		add_country_modifier = { name = U39_yodhans_sickness_3 duration = -1 }
+		set_country_flag = U39_yodhans_sickness_3_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.202 #Liberator (3 > 4)
+	title = orenvalyam_events.202.t
+	desc = orenvalyam_events.202.desc
+	picture = VIKING_KING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.202.a
+		custom_tooltip = U39_sil_commander_flavour_tt
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -10
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -10
+		}
+		add_yearly_manpower = 5
+		set_country_flag = U39_enable_purification_flag
+		custom_tooltip = U39_enable_purification_1_tt
+		remove_country_modifier = U39_yodhans_sickness_3
+		add_country_modifier = { name = U39_yodhans_sickness_4 duration = -1 }
+		set_country_flag = U39_yodhans_sickness_4_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.203 #Tragedy at the Fateweaver! (4 > 4.5)
+	title = orenvalyam_events.203.t
+	desc = orenvalyam_events.203.desc
+	picture = SPELL_LIST_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.203.a
+		if = {
+			limit = { heir_is_velara = yes }
+			kill_heir = { }
+			remove_country_modifier = U39_heir_kavalalist
+		}
+		set_country_flag = U39_velaras_fucking_dead_flag
+		2525 = { add_devastation = 15 } #Korrimutren
+		add_stability = -1
+		country_event = {
+			id = orenvalyam_events.204 #Traitor (4.5 > 5)
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.204 #Traitor (4.5 > 5)
+	title = orenvalyam_events.204.t
+	desc = orenvalyam_events.204.desc
+	picture = PARLIAMENT_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = { 
+					has_seat_in_parliament = yes 
+					superregion = taychend_superregion
+				}
+				save_event_target_as = oren_parliament_target
+			}
+			pick_random_provinces = {
+				5 = yes
+				scope = random_owned_province
+				global_trigger = "
+					NOT = { province_id = event_target:oren_parliament_target } 
+					superregion = taychend_superregion
+				"
+				event_target_name = oren_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.204.a
+		custom_tooltip = U39_sil_traitor_flavour_tt
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -10
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -10
+		}
+		event_target:oren_parliament_target = {
+			back_current_issue = no
+			spawn_rebels = {
+				size = 3
+				type = particularist_rebels
+			}
+		}
+		do_same_event_target_effect = {
+			5 = yes
+			event_target_name = oren_target
+			effect = "spawn_rebels = { size = 2 type = particularist_rebels }"
+		}
+		remove_country_modifier = U39_yodhans_sickness_4
+		add_country_modifier = { name = U39_yodhans_sickness_5 duration = -1 }
+		set_country_flag = U39_yodhans_sickness_5_flag
+		country_event = {
+			id = orenvalyam_events.211 #A Line in Scorching Sand
+			days = 180 #6 months
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.205 #Avatar (5 > 6)
+	title = orenvalyam_events.205.t
+	desc = orenvalyam_events.205.desc
+	picture = SUN_CULT_PRIEST_event_picture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.205.a
+		custom_tooltip = U39_sil_avatar_flavour_tt
+		custom_tooltip = U39_enable_purification_2_tt
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -10
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -10
+		}
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = 10
+		}
+		add_yearly_manpower = 10
+		remove_country_modifier = U39_yodhans_sickness_5
+		add_country_modifier = { name = U39_yodhans_sickness_6 duration = -1 }
+		become_a_witch_king_effect = yes
+		set_country_flag = U39_yodhans_sickness_6_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.206 #Murderer (6 > 7)
+	title = orenvalyam_events.206.t
+	desc = orenvalyam_events.206.desc
+	picture = east_slavic_ASSASSINATION_eventPicture
+	
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				10 = yes
+				scope = yodhanchend_region
+				global_trigger = "owned_by = ROOT"
+				event_target_name = oren_random_target
+			}
+			pick_random_provinces = {
+				5 = yes
+				scope = kalavend_region
+				global_trigger = "owned_by = ROOT NOT = { province_id = 2502 }" #Uesrennu
+				event_target_name = oren_other_random_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.206.a
+		custom_tooltip = U39_sil_murderer_flavour_tt
+		add_estate_loyalty = {
+			estate = estate_church
+			loyalty = -10
+		}
+		add_estate_loyalty = {
+			estate = estate_burghers
+			loyalty = -10
+		}
+		2502 = { #Uesrennu
+			spawn_rebels = {
+				size = 3
+				type = particularist_rebels
+			}
+		}
+		do_same_event_target_effect = {
+			10 = yes
+			event_target_name = oren_random_target
+			effect = "
+				spawn_rebels = {
+					size = 2
+					type = particularist_rebels
+				}
+			"
+		}
+		do_same_event_target_effect = {
+			5 = yes
+			event_target_name = oren_other_random_target
+			effect = "
+				spawn_rebels = {
+					size = 2
+					type = particularist_rebels
+				}
+			"
+		}
+		
+		add_country_modifier = {
+			name = U39_oren_neraghul_slaughtered
+			duration = 9125 #25 years
+		}
+		remove_country_modifier = U39_yodhans_sickness_6
+		add_country_modifier = { name = U39_yodhans_sickness_7 duration = -1 }
+		set_country_flag = U39_yodhans_sickness_7_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.207 #World-Ender (7 > 8)
+	title = orenvalyam_events.207.t
+	desc = orenvalyam_events.207.desc
+	picture = DRAGON_ATTACK_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = orenvalyam_events.207.a
+		custom_tooltip = U39_sil_world_ender_flavour_tt
+		custom_tooltip = U39_enable_purification_3_tt
+		remove_country_modifier = U39_yodhans_sickness_7
+		add_country_modifier = { name = U39_yodhans_sickness_8 duration = -1 }
+		set_country_flag = U39_yodhans_sickness_8_flag
+		clr_country_flag = respawn_silverspite_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.210 #Purification
+	title = orenvalyam_events.210.t
+	desc = orenvalyam_events.210.desc
+	picture = muslimgfx_Conquest_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = orenvalyam_events.210.b
+		custom_tooltip = U39_gain_devotion_tt
+		
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						owner = { has_country_modifier = U39_ruinborn_revengeance }
+						culture_is_human = yes
+					}
+					has_country_modifier = U39_yodhans_sickness_8
+				}
+			}
+			custom_tooltip = U39_purification_3_tt
+		}
+		else_if = {
+			limit = {
+				OR = {
+					has_country_modifier = U39_yodhans_sickness_7
+					has_country_modifier = U39_yodhans_sickness_6
+				}
+			}
+			custom_tooltip = U39_purification_2_tt
+		}
+		else = {
+			custom_tooltip = U39_purification_1_tt
+		}
+
+		hidden_effect = {
+			set_variable = {
+				which = orenvalyam_devotion_var
+				value = 0
+			}			
+		}
+
+		custom_tooltip = U39_disable_purification_event_tt
+		set_country_flag = U39_disable_purification_event_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.211 #A Line in Scorching Sand
+	title = orenvalyam_events.211.t
+	desc = orenvalyam_events.211.desc
+	picture = PARLIAMENT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.211.a
+		custom_tooltip = U39_enable_rite_of_removal_tt
+		set_country_flag = U39_enable_rite_of_removal_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.212 #The Duskbringer Conspiracy
+	title = orenvalyam_events.212.t
+	desc = orenvalyam_events.212.desc
+	picture = DIPLOMAT_INTERROGATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.212.a
+		set_country_flag = U39_the_duskbringer_conspiracy_active_flag
+		cancel_current_debate = yes
+		remove_enacted_issue = yes
+		start_debate = U39_the_duskbringer_conspiracy_issue
+
+		if = {
+			limit = { monasticists_are_disloyal = yes }
+			custom_tooltip = U39_monasticists_disloyal_yes_tt
+			hidden_effect = {
+				set_variable = {
+					which = oren_seat_var
+					value = 0
+				}
+				every_owned_province = {
+					limit = { has_seat_in_parliament = yes }
+					ROOT = {
+						change_variable = {
+							which = oren_seat_var
+							value = 1
+						}
+					}
+				}
+				multiply_variable = {
+					which = oren_seat_var
+					value = 0.15
+				}
+				for_variable_amount = {
+					variable = oren_seat_var
+					effect = "
+						random_owned_province = {
+							limit = { 
+								has_seat_in_parliament = yes
+								is_backing_current_issue = no 
+							}
+							back_current_issue = yes
+						}
+					"
+				}
+			}
+		}
+		else = { custom_tooltip = U39_monasticists_disloyal_no_tt }
+
+		if = {
+			limit = { kavalalists_are_disloyal = yes }
+			custom_tooltip = U39_kavalalists_disloyal_yes_tt
+			hidden_effect = {
+				set_variable = {
+					which = oren_seat_var
+					value = 0
+				}
+				every_owned_province = {
+					limit = { has_seat_in_parliament = yes }
+					ROOT = {
+						change_variable = {
+							which = oren_seat_var
+							value = 1
+						}
+					}
+				}
+				multiply_variable = {
+					which = oren_seat_var
+					value = 0.15
+				}
+				for_variable_amount = {
+					variable = oren_seat_var
+					effect = "
+						random_owned_province = {
+							limit = { 
+								has_seat_in_parliament = yes
+								is_backing_current_issue = no 
+							}
+							back_current_issue = yes
+						}
+					"
+				}
+			}
+		}
+		else = { custom_tooltip = U39_kavalalists_disloyal_no_tt }
+
+		if = {
+			limit = { kamrayakvalists_are_disloyal = yes }
+			custom_tooltip = U39_kamrayakvalists_disloyal_yes_tt
+			hidden_effect = {
+				set_variable = {
+					which = oren_seat_var
+					value = 0
+				}
+				every_owned_province = {
+					limit = { has_seat_in_parliament = yes }
+					ROOT = {
+						change_variable = {
+							which = oren_seat_var
+							value = 1
+						}
+					}
+				}
+				multiply_variable = {
+					which = oren_seat_var
+					value = 0.25
+				}
+				for_variable_amount = {
+					variable = oren_seat_var
+					effect = "
+						random_owned_province = {
+							limit = { 
+								has_seat_in_parliament = yes
+								is_backing_current_issue = no 
+							}
+							back_current_issue = yes
+						}
+					"
+				}
+			}
+		}
+		else = { custom_tooltip = U39_kamrayakvalists_disloyal_no_tt }
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.213 #Duskbringer Conspiracy Failed
+	title = orenvalyam_events.213.t
+	desc = orenvalyam_events.213.desc
+	picture = FAILED_REVOLUTION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.213.a
+		custom_tooltip = U39_disable_rite_of_removal_tt
+		clr_country_flag = U39_enable_rite_of_removal_flag
+		add_country_modifier = {
+			name = U39_duskbringer_conspiracy_foiled
+			duration = -1
+		}
+		remove_country_modifier = U39_careful_deliberation
+		custom_tooltip = U39_increase_yodhans_sickness_tt
+		hidden_effect = {
+			set_country_flag = U39_silverspite_bypass_flag
+			country_event = { id = orenvalyam_events.103 }	
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.214 #Grim Betrayal
+	title = orenvalyam_events.214.t
+	desc = orenvalyam_events.214.desc
+	picture = DIPLOMAT_INTERROGATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.214.a
+		country_event = {
+			id = orenvalyam_events.2140 #The Will of One
+		}
+		remove_country_modifier = U39_careful_deliberation
+		set_country_flag = U39_tries_to_kill_silverspite_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.2140 #The Will of One
+	title = orenvalyam_events.2140.t
+	desc = orenvalyam_events.2140.desc
+	picture = THE_HEROINE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.2140.a
+		custom_tooltip = U39_sil_will_of_one_flavour_tt
+		if = {
+			limit = { mission_completed = U39_3_5_the_twilight_approach }
+			country_event = {
+				id = orenvalyam_events.217 #Victor
+			}
+		}
+		else = {
+			country_event = {
+				id = orenvalyam_events.215 #Dour Failure
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.215 #Dour Failure
+	title = orenvalyam_events.215.t
+	desc = orenvalyam_events.215.desc
+	picture = WITCHBURNING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.215.a
+		set_country_flag = U39_ecaris_kills_silverspite_flag
+		clr_country_flag = respawn_silverspite_flag
+		custom_tooltip = U39_sil_the_stand_flavour_tt
+		kill_ruler = yes
+		add_estate_loyalty = {
+			estate = estate_nobles
+			loyalty = -100
+		}
+		if = {
+			limit = {
+				H67 = { #Rezankand
+					has_ruler_flag = ruler_is_ecaris
+					exists = yes
+				}
+			}
+			H67 = { kill_ruler = yes } #Rezankand
+		}
+		country_event = {
+			id = orenvalyam_events.216 #Foul Murder
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.216 #Foul Murder
+	title = orenvalyam_events.216.t
+	desc = orenvalyam_events.216.desc
+	picture = COUNCIL_TRENT_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.216.a
+		if = {
+			limit = { has_country_modifier = U39_yodhans_sickness_8 }
+			custom_tooltip = U39_sickness_8_rebels_tt
+			kill_leader = { type = general }
+			kill_leader = { type = general }
+			kill_leader = { type = general }
+			kill_leader = { type = general }
+			add_stability = -2
+			add_country_modifier = {
+				name = U39_severe_army_mutinies
+				duration = 9125 #25 years
+			}
+			hidden_effect = {
+				U39_messiah_rebels = { amount = 25 size = 1 }
+				U39_messiah_rebels = { amount = 20 size = 2 }
+				U39_messiah_rebels = { amount = 10 size = 3 }
+			}
+		}
+		else_if = {
+			limit = { has_country_modifier = U39_yodhans_sickness_7 }
+			custom_tooltip = U39_sickness_7_rebels_tt
+			kill_leader = { type = general }
+			kill_leader = { type = general }
+			kill_leader = { type = general }
+			add_stability = -1
+			add_country_modifier = {
+				name = U39_widespread_army_mutinies
+				duration = 9125 #25 years
+			}
+			hidden_effect = {
+				U39_messiah_rebels = { amount = 20 size = 1 }
+				U39_messiah_rebels = { amount = 15 size = 2 }
+				U39_messiah_rebels = { amount = 5 size = 3 }
+			}
+		}
+		else_if = {
+			limit = { has_country_modifier = U39_yodhans_sickness_6 }
+			custom_tooltip = U39_sickness_6_rebels_tt
+			kill_leader = { type = general }
+			kill_leader = { type = general }
+			add_country_modifier = {
+				name = U39_sporadic_army_mutinies
+				duration = 9125 #25 years
+			}
+			hidden_effect = {
+				U39_messiah_rebels = { amount = 15 size = 1 }
+				U39_messiah_rebels = { amount = 10 size = 2 }
+			}
+		}
+		else_if = {
+			limit = { has_country_modifier = U39_yodhans_sickness_5 }
+			custom_tooltip = U39_sickness_5_rebels_tt
+			kill_leader = { type = general }
+			add_stability = 1
+			add_country_modifier = {
+				name = U39_sporadic_army_mutinies
+				duration = 9125 #25 years
+			}
+			hidden_effect = {
+				U39_messiah_rebels = { amount = 10 size = 1 }
+				U39_messiah_rebels = { amount = 5 size = 2 }
+			}
+		}
+		add_country_modifier = {
+			name = U39_healing_the_faith
+			duration = 9125 #25 years
+		}
+	}
+
+	after = {
+		remove_silverspite_modifiers = yes
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.217 #Victor
+	title = orenvalyam_events.217.t
+	desc = orenvalyam_events.217.desc
+	picture = BYZ_BAD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.217.a
+		custom_tooltip = U39_sil_the_fall_flavour_tt
+		add_stability = -1
+		add_devotion = -25
+		custom_tooltip = U39_victor_rebels_tt
+		add_ruler_modifier = {
+			name = U39_total_control
+			duration = -1
+		}
+		if = {
+			limit = {
+				H67 = { #Rezankand
+					has_ruler_flag = ruler_is_ecaris
+					exists = yes
+				}
+			}
+			H67 = { kill_ruler = yes } #Rezankand
+		}
+		country_event = {
+			id = orenvalyam_events.218 #Messiah
+			days = 180 #6 months
+		}
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					development = 20
+					OR = {
+						superregion = kheionai_superregion
+						superregion = taychend_superregion
+					}
+				}
+				spawn_rebels = {
+					size = 2
+					type = particularist_rebels
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.218 #Messiah
+	title = orenvalyam_events.218.t
+	desc = orenvalyam_events.218.desc
+	picture = BYZ_GOOD_WITH_MONARCH_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.218.a
+		change_adm = 6
+		change_dip = 6
+		change_mil = 6
+		set_country_flag = U39_enable_condemner_flag
+		hidden_effect = {
+			clr_country_flag = respawn_silverspite_flag
+			country_event = {
+				id = orenvalyam_events.219 #Condemner
+				days = 7300 #20 years
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.219 #Condemner
+	title = orenvalyam_events.219.t
+	desc = orenvalyam_events.219.desc
+	picture = DEATH_OF_HEIR_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		has_country_flag = U39_enable_condemner_flag
+	}
+	
+	option = {
+		name = orenvalyam_events.219.a
+		custom_tooltip = U39_silverspite_dies_tt
+		hidden_effect = {
+			clr_country_flag = U39_enable_condemner_flag
+			if = {
+				limit = { ruler_is_silverspite = yes }
+				kill_ruler = yes
+			}
+		}
+	}
+}
+
+#Random Devotion Events
+country_event = {
+	id = orenvalyam_events.300 #Monasticists Refuse to Fight
+	title = orenvalyam_events.300.t
+	desc = orenvalyam_events.300.desc
+	picture = CHURCH_ESTATE_2_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		tag = U39 #Orenvalyam
+		has_reform = U39_kavalali_theo_democracy
+		NOT = { devotion = 50 }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+		modifier = {
+			factor = 2
+			NOT = { devotion = 25 }
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				10 = yes
+				scope = random_owned_province
+				global_trigger = "has_fort_building_trigger = yes"
+				event_target_name = oren_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.300.a
+		if = {
+			limit = { NOT = { devotion = 25 } }
+			do_same_event_target_effect = {
+				10 = yes
+				event_target_name = oren_target
+				effect = "add_local_autonomy = 25"
+			}
+			add_yearly_manpower = -4
+		}
+		else = {
+			do_same_event_target_effect = {
+				5 = yes
+				event_target_name = oren_target
+				effect = "add_local_autonomy = 25"
+			}
+			add_yearly_manpower = -2
+		}
+		add_devotion = 10
+	}
+	
+	option = {
+		name = orenvalyam_events.300.b
+		if = {
+			limit = { NOT = { devotion = 25 } }
+			do_same_event_target_effect = {
+				10 = yes
+				event_target_name = oren_target
+				effect = "
+					spawn_rebels = {
+						size = 3
+						type = particularist_rebels
+						win = yes
+					}
+				"
+			}
+		}
+		else = {
+			do_same_event_target_effect = {
+				5 = yes
+				event_target_name = oren_target
+				effect = "
+					spawn_rebels = {
+						size = 3
+						type = particularist_rebels
+						win = yes
+					}
+				"
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.301 #Soldiers turn to Loot and Plunder
+	title = orenvalyam_events.301.t
+	desc = orenvalyam_events.301.desc
+	picture = NOT_DISCIPLINED_SOLDIERS_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		tag = U39 #Orenvalyam
+		has_reform = U39_kavalali_theo_democracy
+		NOT = { devotion = 50 }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+		modifier = {
+			factor = 2
+			NOT = { devotion = 25 }
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				20 = yes
+				scope = random_owned_province
+				global_trigger = "NOT = { is_core = ROOT }"
+				event_target_name = oren_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.301.a
+		add_army_tradition = -15
+		if = {
+			limit = { NOT = { devotion = 25 } }
+			do_same_event_target_effect = {
+				20 = yes
+				event_target_name = oren_target
+				effect = "
+					add_devastation = 25
+					remove_loot = {
+						who = ROOT
+						amount = 100
+					}
+				"
+			}
+		}
+		else = {
+			do_same_event_target_effect = {
+				10 = yes
+				event_target_name = oren_target
+				effect = "
+					add_devastation = 25
+					remove_loot = {
+						who = ROOT
+						amount = 100
+					}
+				"
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.301.b
+		if = {
+			limit = { NOT = { devotion = 25 } }
+			add_yearly_manpower = -2
+			random = {
+				chance = 50
+				kill_leader = { type = general }
+			}
+		}
+		else = {
+			add_yearly_manpower = -25
+			random = {
+				chance = 25
+				kill_leader = { type = general }
+			}
+		}
+		add_devotion = 10
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.302 #Ideals Fracture
+	title = orenvalyam_events.302.t
+	desc = orenvalyam_events.302.desc
+	picture = RELIGIOUS_WARS_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		tag = U39 #Orenvalyam
+		has_reform = U39_kavalali_theo_democracy
+		NOT = { devotion = 50 }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+		modifier = {
+			factor = 2
+			NOT = { devotion = 25 }
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.302.a
+		if = {
+			limit = { NOT = { devotion = 25 } }
+			add_corruption = 2
+		}
+		else = {
+			add_corruption = 1
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.303 #Outrage Spreads
+	title = orenvalyam_events.303.t
+	desc = orenvalyam_events.303.desc
+	picture = muslimgfx_RELIGIOUS_TURMOIL_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		tag = U39 #Orenvalyam
+		has_reform = U39_kavalali_theo_democracy
+		NOT = { devotion = 50 }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+		modifier = {
+			factor = 2
+			NOT = { devotion = 25 }
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.303.a
+		add_stability = -1
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.304 #Opposition in the Kavalakuttam
+	title = orenvalyam_events.304.t
+	desc = orenvalyam_events.304.desc
+	picture = PARLIAMENT_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		tag = U39 #Orenvalyam
+		has_reform = U39_kavalali_theo_democracy
+		NOT = { devotion = 50 }
+	}
+
+	mean_time_to_happen = {
+		days = 1
+		modifier = {
+			factor = 2
+			NOT = { devotion = 25 }
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			pick_random_provinces = {
+				30 = yes
+				scope = random_owned_province
+				global_trigger = "anb_has_seat_in_parliament = yes"
+				event_target_name = oren_target
+			}
+		}
+	}
+	
+	option = {
+		name = orenvalyam_events.304.a
+		if = {
+			limit = { NOT = { devotion = 25 } }
+			if = {
+				limit = { current_size_of_parliament = 50 }
+				custom_tooltip = U39_opposition_rebels_3_tt
+				hidden_effect = {
+					do_same_event_target_effect = {
+						30 = yes
+						event_target_name = oren_target
+						effect = "
+							add_province_modifier = {
+								name = U39_opposed_to_government
+								duration = 3650 #10 years
+							}
+						"
+					}
+				}
+			}
+			else_if = {
+				limit = { current_size_of_parliament = 25 }
+				custom_tooltip = U39_opposition_rebels_2_tt
+				hidden_effect = {
+					do_same_event_target_effect = {
+						20 = yes
+						event_target_name = oren_target
+						effect = "
+							add_province_modifier = {
+								name = U39_opposed_to_government
+								duration = 3650 #10 years
+							}
+						"
+					}
+				}
+			}
+			else = {
+				custom_tooltip = U39_opposition_rebels_1_tt
+				hidden_effect = {
+					do_same_event_target_effect = {
+						10 = yes
+						event_target_name = oren_target
+						effect = "
+							add_province_modifier = {
+								name = U39_opposed_to_government
+								duration = 3650 #10 years
+							}
+						"
+					}
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = { current_size_of_parliament = 50 }
+				do_same_event_target_effect = {
+					15 = yes
+					event_target_name = oren_target
+					effect = "
+						add_province_modifier = {
+							name = U39_opposed_to_government
+							duration = 3650 #10 years
+						}
+					"
+				}
+			}
+			else_if = {
+				limit = { current_size_of_parliament = 25 }
+				do_same_event_target_effect = {
+					10 = yes
+					event_target_name = oren_target
+					effect = "
+						add_province_modifier = {
+							name = U39_opposed_to_government
+							duration = 3650 #10 years
+						}
+					"
+				}
+			}
+			else = {
+				do_same_event_target_effect = {
+					5 = yes
+					event_target_name = oren_target
+					effect = "
+						add_province_modifier = {
+							name = U39_opposed_to_government
+							duration = 3650 #10 years
+						}
+					"
+				}
+			}
+		}
+		add_devotion = 10
+	}
+	
+	option = {
+		name = orenvalyam_events.304.b
+		if = {
+			limit = { NOT = { devotion = 25 } }
+			if = {
+				limit = { current_size_of_parliament = 50 }
+				do_same_event_target_effect = {
+					30 = yes
+					event_target_name = oren_target
+					effect = "
+						spawn_rebels = {
+							size = 2
+							type = particularist_rebels
+						}
+					"
+				}
+			}
+			else_if = {
+				limit = { current_size_of_parliament = 25 }
+				do_same_event_target_effect = {
+					20 = yes
+					event_target_name = oren_target
+					effect = "
+						spawn_rebels = {
+							size = 2
+							type = particularist_rebels
+						}
+					"
+				}
+			}
+			else = {
+				do_same_event_target_effect = {
+					10 = yes
+					event_target_name = oren_target
+					effect = "
+						spawn_rebels = {
+							size = 2
+							type = particularist_rebels
+						}
+					"
+				}
+			}
+		}
+		else = {
+			if = {
+				limit = { current_size_of_parliament = 50 }
+				do_same_event_target_effect = {
+					15 = yes
+					event_target_name = oren_target
+					effect = "
+						spawn_rebels = {
+							size = 2
+							type = particularist_rebels
+						}
+					"
+				}
+			}
+			else_if = {
+				limit = { current_size_of_parliament = 25 }
+				do_same_event_target_effect = {
+					10 = yes
+					event_target_name = oren_target
+					effect = "
+						spawn_rebels = {
+							size = 2
+							type = particularist_rebels
+						}
+					"
+				}
+			}
+			else = {
+				do_same_event_target_effect = {
+					5 = yes
+					event_target_name = oren_target
+					effect = "
+						spawn_rebels = {
+							size = 2
+							type = particularist_rebels
+						}
+					"
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.400 #Assassination Ruler Background Event
+	title = none
+	desc = none
+	picture = none
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = none
+		random_known_country = {
+			limit = { has_country_flag = orenvalyam_assassination_target_flag }
+			save_event_target_as = orenvalyam_assassination_target
+			clr_country_flag = orenvalyam_assassination_target_flag
+		}
+		if = {
+			limit = {
+				OR = {
+					has_cast_invisibility = yes
+					has_spy_network_in = {
+						who = event_target:orenvalyam_assassination_target
+						value = 70
+					}
+				}
+			}
+			add_spy_network_in = {
+				who = event_target:orenvalyam_assassination_target
+				value = -70
+			}
+			random_list = {
+				90 = {
+					country_event = { id = orenvalyam_events.401 } #Success - Oren ver
+					event_target:orenvalyam_assassination_target = { country_event = { id = orenvalyam_events.402 } } #Success - Target ver
+				}
+				10 = {
+					country_event = { id = orenvalyam_events.403 } #Fail
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				has_spy_network_in = {
+					who = event_target:orenvalyam_assassination_target
+					value = 50
+				}
+			}
+			add_spy_network_in = {
+				who = event_target:orenvalyam_assassination_target
+				value = -50
+			}
+			random_list = {
+				66 = {
+					country_event = { id = orenvalyam_events.401 } #Success - Oren ver
+					event_target:orenvalyam_assassination_target= { country_event = { id = orenvalyam_events.402 } } #Success - Target ver
+				}
+				33 = {
+					country_event = { id = orenvalyam_events.403 } #Fail
+				}
+			}
+		}
+		else = {
+			add_spy_network_in = {
+				who = event_target:orenvalyam_assassination_target
+				value = -30
+			}
+			random_list = {
+				33 = {
+					country_event = { id = orenvalyam_events.401 } #Success - Oren ver
+					event_target:orenvalyam_assassination_target= { country_event = { id = orenvalyam_events.402 } } #Success - Target ver
+				}
+				66 = {
+					country_event = { id = orenvalyam_events.403 } #Fail
+				}
+			}
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.401 #Assassination Ruler Success - Oren Ver.
+	title = orenvalyam_events.401.t
+	desc = orenvalyam_events.401.desc
+	picture = KING_ASSASSINATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.401.a
+		tooltip = {
+			event_target:orenvalyam_assassination_target = {
+				kill_ruler = yes
+				if = {
+					limit = { ROOT = { has_country_flag = U39_improve_assassination_flag } }
+					add_country_modifier = {
+						name = U39_hunted_by_heroes
+						duration = 3650 #10 years
+					}
+				}
+			}
+		}
+		set_country_flag = U39_assassination_success_flag
+		hidden_effect = {
+			export_to_variable  = { which = OrenAssMonthVar value = trigger_value:is_month } 
+			export_to_variable  = { which = OrenAssYearVar value = trigger_value:is_year } 
+			change_variable = { OrenAssYearVar = 10 }
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.402 #Assassination Ruler Success - Target Ver.
+	title = orenvalyam_events.402.t
+	desc = orenvalyam_events.402.desc
+	picture = KING_ASSASSINATION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.402.a
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = {
+						ruler_has_personality = cruel_personality
+						ruler_has_personality = malevolent_personality
+						ruler_has_personality = embezzler_personality
+						ruler_has_personality = greedy_personality
+						is_colonial_nation = yes
+						is_adventurer = yes
+						is_aelantiri_spawnable = yes
+					}
+				}
+				FROM = { change_variable = { oren_assass_bad_people_var = 1 } }
+			}
+			if = {
+				limit = {
+					OR = {
+						government = monarchy
+						is_rival = FROM
+					}
+				}
+				FROM = { change_variable = { oren_assass_monarchs_var = 1 } }
+			}
+		}
+		kill_ruler = yes
+		if = {
+			limit = { FROM = { has_country_flag = U39_improve_assassination_flag } }
+			add_country_modifier = {
+				name = U39_hunted_by_heroes
+				duration = 3650 #10 years
+			}
+		}
+		set_country_flag = U39_was_assassinated_flag
+		hidden_effect = {
+			export_to_variable  = { which = OrenAssMonthVar value = trigger_value:is_month } 
+			export_to_variable  = { which = OrenAssYearVar value = trigger_value:is_year } 
+			change_variable = { OrenAssMonthVar = 6 }
+			if = {
+				limit = { check_variable = { OrenAssMonthVar = 12 } }
+				change_variable = { OrenAssYearVar = 1 }
+			}
+			modulo_variable = { OrenAssMonthVar = 11 }
+		}
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.403 #Assassination Ruler Fail
+	title = orenvalyam_events.403.t
+	desc = orenvalyam_events.403.desc
+	picture = FAILED_REVOLUTION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.403.a
+		set_country_flag = U39_assassination_fail_flag
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.404 #Vassalize Event
+	title = orenvalyam_events.404.t
+	desc = orenvalyam_events.404.desc
+	picture = FAILED_REVOLUTION_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = orenvalyam_events.404.a
+		ai_chance = { factor = 100 }
+		U39 = { vassalize = ROOT } #Orenvalyam
+	}
+	
+	option = {
+		name = orenvalyam_events.404.b
+		ai_chance = { factor = 0 }
+		add_prestige = -50
+	}
+
+	after = {
+		U39 = { country_event = { id = orenvalyam_events.13 } } #Fate of the Heralds
+	}
+}
+
+country_event = {
+	id = orenvalyam_events.405 #Delayed event to give the privileges in case you were missing an estate before
+	title = none
+	desc = none
+	picture = none
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = none
+		set_estate_privilege = estate_church_U39_kavalalist_faction
+		set_estate_privilege = estate_nobles_U39_kamrayakvalist_faction
+		set_estate_privilege = estate_burghers_U39_monasticist_faction
 	}
 }

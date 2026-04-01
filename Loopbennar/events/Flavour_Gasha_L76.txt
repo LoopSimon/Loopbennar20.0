@@ -1,0 +1,322 @@
+namespace = flavour_gasha
+
+country_event = {						#Give What Must Be Given
+	id = flavour_gasha.1
+	title = flavour_gasha.1.t
+	desc = flavour_gasha.1.d
+	picture = DIPLOMACY_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavour_gasha.1.a
+		trigger = { has_heir = no }
+		add_ruler_modifier = {
+			name = L76_take_what_must_be_taken
+			duration = -1
+		}
+		if = {
+			limit = { has_foreign_consort = yes }
+			random_known_country = { limit = { is_origin_of_consort = ROOT } add_historical_rival = ROOT }
+		}
+		else = {
+			add_estate_loyalty = { estate = estate_nobles loyalty = -40 }
+		}
+		kill_consort = yes
+	}
+
+	option = {
+		name = flavour_gasha.1.b
+		trigger = { has_heir = yes }
+		highlight = yes
+		add_ruler_modifier = {
+			name = L76_take_what_must_be_taken
+			duration = -1
+		}
+		if = {
+			limit = { has_foreign_consort = yes }
+			random_known_country = { limit = { is_origin_of_consort = ROOT } add_historical_rival = ROOT }
+		}
+		else = {
+			add_estate_loyalty = { estate = estate_nobles loyalty = -40 }
+		}
+		capital_scope = {
+			trigger_switch = {
+				on_trigger = province_has_center_of_trade_of_level
+				3 = { ROOT = { add_treasury = 500 } }
+				2 = { ROOT = { add_treasury = 100 } }
+				1 = { add_center_of_trade_level = 1 }
+			}
+		}
+		
+		kill_consort = yes
+		kill_heir = { allow_new_heir = yes }	
+	}
+}
+
+country_event = {						#From Pain - Weapons
+	id = flavour_gasha.2
+	title = flavour_gasha.2.t
+	desc = flavour_gasha.2.d
+	picture = DIPLOMACY_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavour_gasha.2.a
+		add_country_modifier = {
+			name = L76_pain_into_weapons_1
+			duration = -1
+		}
+		custom_tooltip = L76_flavour_gasha_2_tt
+		complex_dynamic_effect_without_alternative = {
+			first_custom_tooltip = L76_flavour_gasha_2_ctt
+			first_limit = "L80 = { has_ruler_flag = is_relork_i_stonecarver }"
+			first_effect = "L80 = { kill_ruler = yes }"
+		}
+		hidden_effect = {
+			trigger_switch = {
+				on_trigger = has_reform
+				war_as_art = { add_government_reform = war_as_art_gasha }
+				rally_to_the_roar = { add_government_reform = rally_to_the_roar_gasha }
+			}
+		}
+	}
+}
+
+country_event = {						#Idax the Formidable
+	id = flavour_gasha.3
+	title = flavour_gasha.3.t
+	desc = flavour_gasha.3.d
+	picture = DIPLOMACY_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavour_gasha.3.a
+		add_splendor = 400
+		capital_scope = { add_institution_embracement = { which = renaissance value = 50 } }
+		country_event = {
+			id = flavour_gasha.4
+			days = 1095
+		}
+	}
+}
+
+country_event = {						#Khagaarsa, the Shadow Spear
+	id = flavour_gasha.4
+	title = flavour_gasha.4.t
+	desc = flavour_gasha.4.d
+	picture = DIPLOMACY_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavour_gasha.4.a
+		add_country_modifier = {
+			name = L76_khagaarsa
+			duration = -1
+		}
+		custom_tooltip = flavour_gasha_4_a_tt
+	}
+}
+
+country_event = {						#The Rift Deepens
+	id = flavour_gasha.5
+	title = flavour_gasha.5.t
+	desc = flavour_gasha.5.d
+	picture = DIPLOMACY_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavour_gasha.5.a
+		custom_tooltip = flavour_gasha_5_a_tt
+		hidden_effect = { set_country_flag = L76_additional_agony_events }
+	}
+}
+
+country_event = {						#Salvation in Bloodshed
+	id = flavour_gasha.6
+	title = flavour_gasha.6.t
+	desc = flavour_gasha.6.d
+	picture = DIPLOMACY_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavour_gasha.6.a
+		custom_tooltip = flavour_gasha_6_tt
+		hidden_effect = {
+			taneyas_superregion = {
+				limit = { 
+					culture = ashhana_lizardfolk
+					OR = {
+						owned_by = ROOT
+						owner = { ai = yes }
+					}
+				}
+				add_devastation = 100
+				add_permanent_province_modifier_for_age = {
+					name = L76_salvation_in_bloodshed_mod
+					age = age_of_reformation
+				}
+			}
+			every_owned_province = { remove_province_modifier = religious_zeal_at_conv }
+			set_global_flag = L76_salvation_in_bloodshed_flag
+		}
+	}
+}
+
+country_event = {						#Fear Deepened the Schism
+	id = flavour_gasha.7
+	title = flavour_gasha.7.t
+	desc = flavour_gasha.7.d
+	picture = DIPLOMACY_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	option = {
+		name = flavour_gasha.7.a
+		L87 = {
+			add_country_modifier = {
+				name = L76_desperate_resolve
+				duration = -1
+				desc = until_the_end_of_agony_of_expression
+			}
+		}
+	}
+
+	after = {
+		hidden_effect = {
+			country_event = { id = flavour_gasha.8 days = 365 }
+		}
+	}
+}
+
+country_event = {						#Rending the Canvas Apart
+	id = flavour_gasha.8
+	title = flavour_gasha.8.t
+	desc = flavour_gasha.8.d
+	picture = DIPLOMACY_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		is_in_war = {
+			attacker_leader = ROOT
+			defenders = L87
+		}
+	}
+
+	option = {
+		name = flavour_gasha.8.a
+		hidden_effect = { clear_active_war_magic = yes }
+		add_country_modifier = {
+			name = L76_shock_and_awe
+			duration = -1
+			desc = until_its_done
+		}
+		custom_tooltip = flavour_gasha_8_a_tt
+	}
+}
+
+country_event = {						#Last Resort
+	id = flavour_gasha.9
+	title = flavour_gasha.9.t
+	desc = flavour_gasha.9.d
+	picture = DIPLOMACY_eventPicture
+
+	fire_only_once = yes
+	is_triggered_only = yes
+
+	trigger = {
+		tag = L76
+		has_country_flag = ashhana_revolt_events_enabled
+		has_country_flag = L76_additional_agony_events
+		is_in_war = {
+			attacker_leader = ROOT
+			defenders = L87
+			war_score = 20
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			L87 = {
+				random_owned_province = {
+					limit = {
+						controlled_by = L87
+						has_siege = no
+					}
+					save_event_target_as = flavourGasha9spawnprovince
+				}
+			}
+		}
+	}
+
+	option = {
+		name = flavour_gasha.9.a
+		L87 = {
+			define_general = {
+				shock = 4
+				fire = 4
+				manuever = 6
+				siege = 1
+				name = "Ilkhaty Sunlover"
+			}
+			add_manpower = 16
+			custom_tooltip = flavour_gasha_9_tt
+			hidden_effect = {
+				event_target:flavourGasha9spawnprovince = {
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					infantry = L87
+					cavalry = L87
+					cavalry = L87
+					cavalry = L87
+					cavalry = L87
+				}
+			}
+		}
+	}
+}
+
+country_event = {				#Khagaarsa Terrifies our Armies!
+	id = flavour_gasha.10
+	title = flavour_gasha.10.t
+	desc = flavour_gasha.10.d
+	picture = DIPLOMACY_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			add_country_modifier = { name = L76_terrified_by_khagaarsa duration = 365 } 
+		}
+	}
+
+	option = {
+		name = flavour_gasha.10.a
+		custom_tooltip = flavour_gasha_10_a_tt
+		tooltip = { add_country_modifier = { name = L76_terrified_by_khagaarsa duration = 365 } }
+		set_country_flag = khagaarsa_explained
+	}
+}

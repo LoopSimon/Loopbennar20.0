@@ -1,0 +1,3942 @@
+################################################
+##           Creator: Takasaki        		  ##
+##			   Coder: Blaziy				  ##
+################################################
+
+U39_1_missions_part_1 = { 
+	slot = 1
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = U39 }
+
+	U39_1_1_the_interloper_heroes = {
+		icon = mission_sunset_alternative
+		position = 1
+		required_missions = { }
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = dry_coast_region
+					country_or_subject_holds_or_uncolonized = no
+				}
+				AND = {
+					is_capital_of = H67 #Rezankand
+					ROOT = {
+						NOT = {
+							AND = {
+								alliance_with = H67 #Rezankand
+								trust = {
+									who = H67 #Rezankand
+									value = 75
+								}
+								army_balance = {
+									who = H67 #Rezankand
+									value = 1.5
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				dry_coast_region = {
+					type = all
+					country_or_subject_holds_or_uncolonized = yes
+				}
+				AND = {
+					ruler_is_silverspite = yes
+					has_not_yodhans_sickness_4 = yes
+					if = {
+						limit = { exists = H66 } #Jaherian Exemplars
+						alliance_with = H66 #Jaherian Exemplars
+						H66 = { #Jaherian Exemplars
+							trust = {
+								who = ROOT
+								value = 75
+							}
+						}
+						army_balance = {
+							who = H66 #Jaherian Exemplars
+							value = 1.5
+						}
+					}
+					else = {
+						alliance_with = H67 #Rezankand
+						H67 = { #Rezankand
+							trust = {
+								who = ROOT
+								value = 75
+							}
+						}
+						army_balance = {
+							who = H67 #Rezankand
+							value = 1.5
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { exists = H66 } #Jaherian Exemplars
+				H66 = { form_rezankand_effect = yes } #Jaherian Exemplars
+			}
+			if = {
+				limit = { OR = { alliance_with = H67 alliance_with = H66 } } #Rezankand, Exemplars
+				tooltip = { country_event = { id = orenvalyam_events.13 } } #Fate of the Heralds
+				custom_tooltip = U39_vassalize_rezankand_yes_tt
+				hidden_effect = { H67 = { country_event = { id = orenvalyam_events.404 } } } #Vassalization event
+			}
+			else = {
+				country_event = { id = orenvalyam_events.13 } #Fate of the Heralds
+				custom_tooltip = U39_vassalize_rezankand_no_tt
+			}
+		}
+	}
+
+	U39_1_2_legacy_of_the_heralds = {
+		icon = mission_sun_temple
+		position = 2
+		required_missions = { 
+			U39_1_1_the_interloper_heroes
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					ROOT = { has_country_flag = U39_exemplars_integrate_flag }
+					province_id = 2302 #Uumunkes
+					NOT = {
+						has_great_project = {
+							type = conclavedawn
+							tier = 2
+						}
+					}
+				}
+				AND = {
+					ROOT = { has_country_flag = U39_exemplars_tolerate_flag }
+					culture = dawn_elf
+					NOT = {
+						AND = {
+							has_forcelimit_building_trigger = yes
+							base_manpower = 6
+						}
+					}
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 5
+								culture = dawn_elf
+								has_forcelimit_building_trigger = yes
+								base_manpower = 6
+							}
+						}
+					}
+				}
+				AND = {
+					ROOT = { has_country_flag = U39_exemplars_purge_flag }
+					region = dry_coast_region
+					culture = dawn_elf
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { has_country_flag = U39_exemplars_integrate_flag }
+				custom_trigger_tooltip = { #So players can look back and remember which path they took
+					tooltip = U39_exemplars_integrate_tt
+					has_country_flag = U39_exemplars_integrate_flag
+				}
+				2302 = { #Uumunkes
+					has_great_project = {
+						type = conclavedawn
+						tier = 2
+					}
+				}
+				OR = {
+					ruler_is_not_silverspite = yes
+					has_not_yodhans_sickness_4 = yes
+					if = {
+						limit = { has_yodhans_sickness_level = { level = 4 } }
+						custom_trigger_tooltip = {
+							tooltip = U39_heralds_silverspite_tt
+							always = no
+						}
+					}
+				}
+				H67 = { #Rezankand
+					OR = {
+						march_of = ROOT
+						exists = no
+					}
+				}
+			}
+			else_if = {
+				limit = { has_country_flag = U39_exemplars_tolerate_flag }
+				custom_trigger_tooltip = {
+					tooltip = U39_exemplars_tolerate_tt
+					has_country_flag = U39_exemplars_tolerate_flag
+				}
+				num_of_owned_provinces_with = {
+					value = 5
+					culture = dawn_elf
+					has_forcelimit_building_trigger = yes
+					base_manpower = 6
+				}
+				has_estate_privilege = estate_adventurers_heroes_in_the_army
+				NOT = { exists = H67 } #Rezankand
+			}
+			else_if = {
+				limit = { has_country_flag = U39_exemplars_purge_flag }
+				custom_trigger_tooltip = {
+					tooltip = U39_exemplars_purge_tt
+					has_country_flag = U39_exemplars_purge_flag
+				}
+				dry_coast_region = {
+					type = all
+					NOT = { culture = dawn_elf }
+				}
+			}
+			else = {
+				OR = {
+					AND = {
+						custom_trigger_tooltip = {
+							tooltip = U39_exemplars_integrate_tt
+							has_country_flag = U39_exemplars_integrate_flag
+						}
+						2302 = { #Uumunkes
+							has_great_project = {
+								type = conclavedawn
+								tier = 2
+							}
+						}
+						OR = {
+							ruler_is_not_silverspite = yes
+							has_not_yodhans_sickness_4 = yes
+						}
+						if = {
+							limit = { has_yodhans_sickness_level = { level = 4 } }
+							custom_trigger_tooltip = {
+								tooltip = U39_heralds_silverspite_tt
+								always = no
+							}
+						}
+						H67 = { #Rezankand
+							OR = {
+								march_of = ROOT
+								exists = no
+							}
+						}
+					}
+					custom_trigger_tooltip = {
+						tooltip = U39_space_tt
+						always = no
+					}
+					AND = {
+						custom_trigger_tooltip = {
+							tooltip = U39_exemplars_tolerate_tt
+							has_country_flag = U39_exemplars_tolerate_flag
+						}
+						num_of_owned_provinces_with = {
+							value = 5
+							culture = dawn_elf
+							has_forcelimit_building_trigger = yes
+							base_manpower = 6
+						}
+						has_estate_privilege = estate_adventurers_heroes_in_the_army
+						NOT = { exists = H67 } #Rezankand
+					}
+					custom_trigger_tooltip = {
+						tooltip = U39_space_tt
+						always = no
+					}
+					AND = {
+						custom_trigger_tooltip = {
+							tooltip = U39_exemplars_purge_tt
+							has_country_flag = U39_exemplars_purge_flag
+						}
+						dry_coast_region = {
+							type = all
+							NOT = { culture = dawn_elf }
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.14 #Legacy
+			}
+		}
+	}
+	
+	U39_1_3_spears_of_nayiru = {
+		icon = mission_mage_general
+		position = 3
+		required_missions = {
+			U39_1_2_legacy_of_the_heralds
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2773 #Kherka
+				province_id = 2551 #Kattisangamar
+				province_id = 2302 #Rezankaz
+			}
+			NOT = {
+				AND = {
+					country_or_non_sovereign_subject_holds = ROOT
+					OR = {
+						AND = {
+							has_weapons_trade_goods = yes
+							has_building = weapons
+						}
+						AND = {
+							has_weapons_trade_goods = no
+							has_manufactory_trigger = yes
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			is_estate_evocation_level_1_minimum = yes
+			has_estate_privilege = estate_mages_battlemage_academies
+			num_of_infantry = 100
+			2773 = { #Kherka
+				country_or_non_sovereign_subject_holds = ROOT
+				if = {
+					limit = { has_weapons_trade_goods = yes }
+					has_building = weapons
+				}
+				else = { has_manufactory_trigger = yes }
+			}
+			2551 = { #Kattisangamar
+				country_or_non_sovereign_subject_holds = ROOT
+				if = {
+					limit = { has_weapons_trade_goods = yes }
+					has_building = weapons
+				}
+				else = { has_manufactory_trigger = yes }
+			}
+			2302 = { #Rezankaz
+				country_or_non_sovereign_subject_holds = ROOT
+				if = {
+					limit = { has_weapons_trade_goods = yes }
+					has_building = weapons
+				}
+				else = { has_manufactory_trigger = yes }
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { has_country_modifier = U39_flash_in_the_barrel }
+				add_country_modifier = {
+					name = U39_light_in_the_dark
+					duration = -1
+				}
+				remove_country_modifier = U39_flash_in_the_barrel
+			}
+			else = {
+				add_country_modifier = {
+					name = U39_flash_in_the_barrel
+					duration = -1
+				}
+			}
+			set_country_flag = U39_disable_fireball_infamy_flag
+			custom_tooltip = U39_disable_fireball_infamy_tt
+		}
+	}
+}
+
+U39_1_effelai_mission_1 = { 
+	slot = 1
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { 
+		tag = U39 
+		has_country_flag = U39_bloom_burn_lock_flag
+	}
+
+	U39_1_4_liberation_of_the_effelai = {
+		icon = mission_fire_judgement
+		position = 4
+		required_missions = {
+			U39_2_3_into_the_jungle
+		}
+
+		provinces_to_highlight = {
+			country_or_non_sovereign_subject_holds = ROOT
+			is_effelai_network_hub = yes
+			anb_not_has_seat_in_parliament = yes
+		}
+
+		trigger = {
+			effelai_blooming_ended_burn = yes
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 6
+				is_effelai_network_hub = yes
+				anb_has_seat_in_parliament = yes
+			}
+			OR = {
+				is_overall_transmutation_level_2_minimum = yes
+				court_mage = 1
+				num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+					value = 9
+					is_effelai_network_hub = yes
+					anb_has_seat_in_parliament = yes
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = U39_plant_growth_burn_tt
+			set_country_flag = U39_plant_growth_burn_flag
+			anb_aelantir_cultural_union = { effelai = yes }
+		}
+	}
+}
+
+U39_1_effelai_mission_2 = { 
+	slot = 1
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { 
+		tag = U39 
+		has_country_flag = U39_bloom_dormancy_lock_flag
+	}
+
+	U39_1_4_salvation_of_the_effelai = {
+		icon = mission_jungle_pilgrim
+		position = 4
+		required_missions = {
+			U39_2_3_into_the_jungle
+		}
+
+		provinces_to_highlight = {
+			country_or_non_sovereign_subject_holds = ROOT
+			is_effelai_network_hub = yes
+			NOT = { has_building = mage_tower }
+		}
+
+		trigger = {
+			has_mana = { amount = 200 }
+			num_of_owned_provinces_with = {
+				value = 6
+				is_effelai_network_hub = yes
+				has_building = mage_tower
+			}
+			OR = {
+				is_overall_transmutation_level_2_minimum = yes
+				court_mage = 1
+				num_of_owned_provinces_with = {
+					value = 9
+					is_effelai_network_hub = yes
+					has_building = mage_tower
+				}
+			}
+		}
+
+		effect = {
+			change_mana = { amount = -200 }
+			custom_tooltip = U39_plant_growth_dormant_tt
+			set_country_flag = U39_plant_growth_dormant_flag
+			anb_aelantir_cultural_union = { effelai = yes }
+		}
+	}
+}
+
+U39_1_missions_part_2 = { 
+	slot = 1
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = U39 }
+	
+	U39_1_5_sugar_vats_and_shacked_seas = {
+		icon = mission_corsairs_of_the_north_sea
+		position = 5
+		required_missions = {
+			U39_2_4_spectres_of_revolution
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = ruined_isles_region
+					NOT = { country_or_subject_holds_or_uncolonized = yes }
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						is_cannorian_primary_culture = yes
+						any_owned_province = { colonial_region = colonial_noruin }
+						has_country_modifier = orcish_slaves_in_colonies
+						NOT = {
+							AND = {
+								trade_embargo_by = ROOT
+								OR = {
+									has_spy_network_from = {
+										who = ROOT
+										value = 50
+									}
+									U39_has_assassinated_ruler = yes
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			ruined_isles_region = {
+				type = all
+				country_or_subject_holds_or_uncolonized = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_cannorian_noruin_trigger_tt
+				all_known_country = {
+					OR = {
+						is_cannorian_primary_culture = no
+						NOT = { any_owned_province = { colonial_region = colonial_noruin } }
+						NOT = { has_country_modifier = orcish_slaves_in_colonies }
+						AND = {
+							trade_embargo_by = ROOT
+							OR = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 50
+								}
+								U39_has_assassinated_ruler = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = U39_discover_claim_noruin_tt
+			hidden_effect = {
+				colonial_noruin = { 
+					discover_country = ROOT
+					add_permanent_claim = ROOT
+					if = {
+						limit = { culture_group = orcish }
+						add_core = ROOT
+					}
+				}
+			}
+			U39_unshackle_production = {
+				region = ruined_isles_region
+				trade_good = grain
+				additional_effects = "
+					change_culture = ozgar_orc
+					change_religion = oren_nayiru_reformed
+				"
+			}
+		}
+	}
+
+	U39_1_7_oathbreaker = {
+		icon = mission_ynnic_knights
+		position = 7
+		required_missions = {
+			U39_2_6_cut_the_throat_of_slavery
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = sarda_region
+					NOT = { country_or_subject_holds_or_uncolonized = yes }
+				}
+				AND = {
+					region = sarda_region
+					religion = oren_nayiru_reformed
+					NOT = { anb_has_seat_in_parliament = yes }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 5
+								region = sarda_region
+								anb_has_seat_in_parliament = yes
+								religion = oren_nayiru_reformed
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					superregion = ynn_superregion
+					owner = {
+						NOT = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 50
+							}
+						}
+					}
+					ROOT = {
+						NOT = {
+							calc_true_if = {
+								amount = 3
+								desc = U39_ynn_spynetwork_tt
+								all_known_country = {
+									capital_scope = { superregion = ynn_superregion }
+									has_spy_network_from = {
+										who = ROOT
+										value = 50
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			sarda_region = {
+				type = all
+				country_or_subject_holds_or_uncolonized = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 5
+				region = sarda_region
+				anb_has_seat_in_parliament = yes
+				religion = oren_nayiru_reformed
+			}
+			OR = {
+				calc_true_if = {
+					amount = 3
+					desc = U39_ynn_spynetwork_tt
+					all_known_country = {
+						capital_scope = { superregion = ynn_superregion }
+						has_spy_network_from = {
+							who = ROOT
+							value = 50
+						}
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = U39_ynn_spynetwork_all_tt
+					all_known_country = {
+						OR = {
+							NOT = { capital_scope = { superregion = ynn_superregion } }
+							has_spy_network_from = {
+								who = ROOT
+								value = 50
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = U39_ynn_convert_tt
+			every_country = {
+				limit = { culture_group = ynnic_ruinborn_elf }
+				add_opinion = {
+					who = ROOT
+					modifier = U39_enemy_of_serfdom
+				}
+			}
+			hidden_effect = {
+				set_country_flag = U39_rebels_convert_flag
+				set_variable = { orenTempVar = 0 }
+				ynn_superregion = {
+					limit = {
+						culture_group = ynnic_ruinborn_elf
+						NOT = { religion = oren_nayiru_reformed }
+					}
+					ROOT = { change_variable = { orenTempVar = 1 } }
+				}
+				divide_variable = {
+					which = orenTempVar
+					value = 4
+				}
+				for_variable_amount = {
+					variable = orenTempVar
+					effect = "
+						random_province = {
+							limit = {
+								superregion = ynn_superregion
+								culture_group = ynnic_ruinborn_elf
+								NOT = { religion = oren_nayiru_reformed }
+							}
+							change_religion = oren_nayiru_reformed
+							add_core = ROOT
+							spawn_rebels = {
+								size = 3
+								type = oren_nayiru_reformed_rebels
+							}
+						}
+					"
+				}
+			}
+		}
+	}
+
+	U39_1_8_sunrise_over_the_ynn = {
+		icon = mission_arise
+		position = 8
+		required_missions = {
+			U39_1_7_oathbreaker
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						region = dolindha_region
+						region = rzenta_region
+						region = sarda_region
+					}
+					NOT = {
+						AND = {
+							country_or_subject_holds_or_uncolonized = yes
+							OR = {
+								religion = oren_nayiru_reformed
+								has_province_modifier = U39_protected_religion
+								has_province_modifier = religious_zeal_at_conv
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					superregion = ynn_superregion
+					is_prosperous = yes
+					NOT = { anb_has_seat_in_parliament = yes }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 25
+								superregion = ynn_superregion
+								anb_has_seat_in_parliament = yes
+								is_prosperous = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			dolindha_region = {
+				type = all
+				country_or_subject_holds_or_uncolonized = yes
+				OR = {
+					religion = oren_nayiru_reformed
+					has_province_modifier = U39_protected_religion
+					has_province_modifier = religious_zeal_at_conv
+				}
+			}
+			rzenta_region = {
+				type = all
+				country_or_subject_holds_or_uncolonized = yes
+				OR = {
+					religion = oren_nayiru_reformed
+					has_province_modifier = U39_protected_religion
+					has_province_modifier = religious_zeal_at_conv
+				}
+			}
+			sarda_region = {
+				type = all
+				country_or_subject_holds_or_uncolonized = yes
+				OR = {
+					religion = oren_nayiru_reformed
+					has_province_modifier = U39_protected_religion
+					has_province_modifier = religious_zeal_at_conv
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 25
+				superregion = ynn_superregion
+				anb_has_seat_in_parliament = yes
+				is_prosperous = yes
+			}
+			OR = {
+				monasticists_are_loyal = yes
+				kavalalists_are_loyal = yes
+				kamrayakvalists_are_loyal = yes
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.38 #The Ynnic Heresy
+			}
+			anb_aelantir_cultural_union = { ynnic = yes }
+			U39_unshackle_production = { region = ynn_superregion trade_good = grain }
+		}
+	}
+}
+
+U39_2_missions = { 
+	slot = 2
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = U39 }
+
+	U39_2_1_relics_of_servitude = {
+		icon = mission_precursor_relics
+		position = 1
+		required_missions = { 
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					superregion = taychend_superregion
+					trade_goods = precursor_relics
+					NOT = {
+						num_of_times_expanded_infrastructure = 1
+						has_fort_building_trigger = yes
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 1545 #Vyech Node
+						province_id = 1544 #Kalavend Node
+					}
+					OR = {
+						NOT = {
+							trade_share = { 
+								country = ROOT 
+								share = 75
+							} 
+						}
+						trade_share = {
+							country = PIR
+							share = 1
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = U39_relic_taychend_tt
+				taychend_superregion = {
+					type = all
+					OR = {
+						NOT = { trade_goods = precursor_relics }
+						num_of_times_expanded_infrastructure = 1
+						has_fort_building_trigger = yes
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_vyech_trade_tt
+				1545 = { #Vyech Node
+					trade_share = { 
+						country = ROOT 
+						share = 75
+					} 
+				} 
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_kalavend_trade_tt
+				1544 = { #Kalavend Node
+					trade_share = {
+						country = ROOT 
+						share = 75
+					} 
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_vyech_pirate_trade_tt
+				1545 = { #Vyech Node
+					NOT = {
+						trade_share = {
+							country = PIR
+							share = 1
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_kalavend_pirate_trade_tt
+				1544 = { #Kalavend Node
+					NOT = {
+						trade_share = {
+							country = PIR
+							share = 1
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.15 #Relics of Servitude
+			}
+		}
+	}
+	
+	U39_2_2_cash_crops_no_longer = {
+		icon = mission_a_million_rice_fields
+		position = 2
+		required_missions = { 
+			U39_1_1_the_interloper_heroes
+			U39_2_1_relics_of_servitude
+			U39_3_1_kan_oren_dan_manhu
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				superregion = taychend_superregion
+				region = dry_coast_region
+			}
+			OR = {
+				trade_goods = sugar
+				trade_goods = coffee
+				trade_goods = tobacco
+				trade_goods = cotton
+			}
+			NOT = {
+				AND = {
+					has_manpower_building_trigger = yes
+					num_of_units_in_province = {
+						amount = 2
+						who = ROOT
+						type = infantry
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 10
+					OR = {
+						superregion = taychend_superregion
+						region = dry_coast_region
+					}
+					OR = {
+						trade_goods = sugar
+						trade_goods = coffee
+						trade_goods = tobacco
+						trade_goods = cotton
+					}
+					has_manpower_building_trigger = yes
+					num_of_units_in_province = {
+						amount = 2
+						who = ROOT
+						type = infantry
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = U39_cash_crops_all_tt
+					taychend_superregion = {
+						type = all
+						OR = {
+							NOT = {
+								trade_goods = sugar
+								trade_goods = coffee
+								trade_goods = tobacco
+								trade_goods = cotton
+							}
+							AND = {
+								has_manpower_building_trigger = yes
+								num_of_units_in_province = {
+									amount = 2
+									who = ROOT
+									type = infantry
+								}
+							}
+						}
+					}
+					dry_coast_region = {
+						type = all
+						OR = {
+							NOT = {
+								trade_goods = sugar
+								trade_goods = coffee
+								trade_goods = tobacco
+								trade_goods = cotton
+							}
+							AND = {
+								has_manpower_building_trigger = yes
+								num_of_units_in_province = {
+									amount = 2
+									who = ROOT
+									type = infantry
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			U39_unshackle_production = { region = taychend_superregion trade_good = grain }
+			custom_tooltip = U39_effelai_discover_tt
+			hidden_effect = {
+				U39_unshackle_production = { region = dry_coast_region trade_good = grain }
+				effelai_superregion = {
+					limit = {
+						OR = {
+							has_port = yes
+							is_cannorian_culture = yes
+						}
+					}
+					discover_country = ROOT
+					add_permanent_claim = ROOT
+					sea_zone = { discover_country = ROOT }
+				}
+			}
+		}
+	}
+	
+	U39_2_3_into_the_jungle = {
+		icon = mission_jungle
+		position = 3
+		required_missions = { 
+			U39_2_2_cash_crops_no_longer
+			U39_3_2_from_shadows
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					superregion = effelai_superregion
+					NOT = { country_or_subject_holds_or_uncolonized = yes }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 20
+								superregion = effelai_superregion
+							}
+							effelai_superregion = {
+								type = all
+								country_or_subject_holds_or_uncolonized = yes
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital_of = H39 #Ozgarom
+					ROOT = {
+						NOT = {
+							alliance_with = H39 #Ozgarom
+							H39 = { has_75_opinion_improved_relation = { target = ROOT } } #Ozgarom
+							has_spy_network_in = {
+								who = H39 #Ozgarom
+								value = 50
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 20
+					superregion = effelai_superregion
+				}
+				effelai_superregion = {
+					type = all
+					country_or_subject_holds_or_uncolonized = yes
+				}
+			}
+			OR = {
+				alliance_with = H39 #Ozgarom
+				H39 = { has_75_opinion_improved_relation = { target = ROOT } } #Ozgarom
+				has_spy_network_in = {
+					who = H39 #Ozgarom
+					value = 50
+				}
+				NOT = { exists = H39 } #Ozgarom
+			}
+			OR = {
+				monasticists_are_loyal = yes
+				kavalalists_are_loyal = yes
+				kamrayakvalists_are_loyal = yes
+			}
+		}
+
+		effect = {
+			custom_tooltip = U39_discover_effelai_tt
+			hidden_effect = {
+				effelai_superregion = { discover_country = ROOT }
+				ruined_isles_region = { discover_country = ROOT }
+			}
+			if = {
+				limit = { alliance_with = H39 } #Ozgarom
+				custom_tooltip = U39_vassalize_ozgarom_yes_tt
+				hidden_effect = { vassalize = H39 } #Ozgarom
+			}
+			else = { custom_tooltip = U39_vassalize_ozgarom_no_tt }
+			if = {
+				limit = { NOT = { alliance_with = H39 } } #Ozgarom
+				custom_tooltip = U39_otherwise_ozgarom_yes_tt
+				hidden_effect = {
+					H39 = { #Ozgarom
+						every_owned_province = {
+							add_permanent_claim = ROOT
+						}
+					}
+				}
+			}
+			else = { custom_tooltip = U39_otherwise_ozgarom_no_tt }
+			if = {
+				limit = {
+					effelai_blooming_ended = no
+					effelai_ongoing_blooming = no
+				}
+				custom_tooltip = U39_bloom_started_yes_tt
+				hidden_effect = {
+					country_event = {
+						id = orenvalyam_events.25 #Souls of the Singing Jungle
+					}
+				}
+			}
+			else = { custom_tooltip = U39_bloom_started_no_tt }
+		}
+	}
+	
+	U39_2_4_spectres_of_revolution = {
+		icon = mission_assassination
+		position = 4
+		required_missions = { 
+			U39_2_3_into_the_jungle
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = soruin_region
+					NOT = {
+						country_or_subject_holds_or_uncolonized = yes
+						religion = oren_nayiru_reformed
+					}
+				}
+				AND = {
+					owned_by = H39 #Ozgarom
+					has_forcelimit_building_trigger = no
+				}
+			}
+			NOT = {
+				soruin_region = {
+					type = all
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						religion = oren_nayiru_reformed
+					}
+				}
+				H39 = { #Ozgarom
+					march_of = ROOT
+					num_of_owned_provinces_with = {
+						value = 7
+						has_forcelimit_building_trigger = yes
+					}
+				}
+			}
+		}
+
+		trigger = {
+			check_variable = { oren_assass_bad_people_var = 3 }
+			OR = {
+				soruin_region = {
+					type = all
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						religion = oren_nayiru_reformed
+					}
+				}
+				H39 = { #Ozgarom
+					march_of = ROOT
+					num_of_owned_provinces_with = {
+						value = 7
+						has_forcelimit_building_trigger = yes
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.27 #Chasing Spectres
+			}
+		}
+	}
+	
+
+	U39_2_5_not_lost_but_stolen = {
+		icon = mission_colonise_brazil
+		position = 5
+		required_missions = {
+			U39_2_4_spectres_of_revolution
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						region = endralliande_region
+						region = ravenous_isle_region
+					}
+					NOT = { country_or_subject_holds_or_uncolonized = yes }
+				}
+				AND = {
+					is_capital = yes
+					OR = {
+						continent = north_america
+						continent = south_america
+					}
+					owner = { 
+						navy_size = ROOT 
+						NOT = { tag = ROOT }
+					}
+				}
+				AND = {
+					province_id = 1527 #Ruined Sea Node
+					NOT = {
+						1527 = { #Ruined Sea Node
+							trade_share = {
+								country = ROOT
+								share = 50
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 1504 #Banished Isles Node
+					NOT = {
+						1504 = { #Banished Isles Node
+							trade_share = {
+								country = ROOT
+								share = 50
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			endralliande_region = {
+				type = all
+				country_or_subject_holds_or_uncolonized = yes
+			}
+			ravenous_isle_region = {
+				type = all
+				country_or_subject_holds_or_uncolonized = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = J84_smaller_fleet_tt
+				all_country = {
+					OR = {
+						capital_scope = {
+							NOT = {
+								continent = north_america
+								continent = south_america
+							}
+						}
+						NOT = { navy_size = ROOT }
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_ruined_sea_trade_tt
+				1527 = { #Ruined Sea Node
+					trade_share = {
+						country = ROOT
+						share = 50
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_banished_isles_trade_tt
+				1504 = { #Banished Isles Node
+					trade_share = {
+						country = ROOT
+						share = 50
+					}
+				}
+			}
+			OR = {
+				monasticists_are_loyal = yes
+				kavalalists_are_loyal = yes
+				kamrayakvalists_are_loyal = yes
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.30 #Fate of the Colonisers
+			}
+			custom_tooltip = U39_enable_manhadevuvao_tt
+		}
+	}
+	
+	U39_2_6_cut_the_throat_of_slavery = {
+		icon = mission_aragonese_navy
+		position = 6
+		required_missions = { 
+			U39_1_5_sugar_vats_and_shacked_seas
+			U39_2_5_not_lost_but_stolen
+			U39_3_5_the_twilight_approach
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					colonial_region = colonial_noruin
+					NOT = {
+						country_or_subject_holds_or_uncolonized = yes
+						owner = { culture_group = north_ruinborn_elf }
+						AND = {
+							ROOT = { has_country_modifier = U39_reshaping_not_remaking }
+							owned_by = H36 #Valorpoint
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					OR = {
+						continent = north_america
+						continent = south_america
+					}
+					owner = {
+						has_country_modifier = orcish_slaves_in_colonies
+						tag = H36 #Valorpoint
+					}
+				}
+			}
+		}
+
+		trigger = {
+			colonial_noruin = {
+				type = all
+				OR = {
+					country_or_subject_holds_or_uncolonized = yes
+					owner = { culture_group = north_ruinborn_elf }
+					AND = {
+						owned_by = H36 #Valorpoint
+						ROOT = { has_country_modifier = U39_reshaping_not_remaking }
+					}
+				}
+			}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = U39_oren_slavery_wars_won_tt
+					check_variable = { oren_slavery_wars_won = 15 }
+				}
+				custom_trigger_tooltip = {
+					tooltip = U39_no_aelantir_orc_slaves_tt
+					NOT = {
+						any_country = {
+							capital_scope = {
+								OR = {
+									continent = north_america
+									continent = south_america
+								}
+							}
+							NOT = { tag = H36 } #Valorpoint
+							has_country_modifier = orcish_slaves_in_colonies
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			anb_aelantir_cultural_union = { north = yes }
+			U39_unshackle_production = { region = endralliande_region trade_good = grain }
+			hidden_effect = { U39_unshackle_production = { region = colonial_noruin trade_good = grain } }
+			if = {
+				limit = { alliance_with = H36 } #Valorpoint
+				custom_tooltip = U39_vassalize_valorpoint_yes_tt
+				hidden_effect = { H36 = { country_event = { id = orenvalyam_events.404 } } } #Vassalization event
+			}
+			else = { custom_tooltip = U39_vassalize_valorpoint_no_tt }
+			every_country = {
+				limit = {
+					capital_scope = { continent = europe }
+					any_core_province = {
+						OR = {
+							colonial_region = colonial_noruin
+							region = ruined_isles_region
+						}
+					}
+				}
+				add_years_of_income = -10
+				add_opinion = {
+					who = ROOT
+					modifier = U39_cut_off_aelantiri_tradae
+				}
+			}
+		}
+	}
+
+	U39_2_7_campurana_corintar = {
+		icon = mission_shield_of_corin
+		position = 7
+		required_missions = {
+			U39_2_6_cut_the_throat_of_slavery
+		}
+
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					owned_by = ROOT
+					is_cannorian_culture = yes
+					NOT = { religion = oren_nayiru_reformed }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 75
+								is_cannorian_culture = yes
+								religion = oren_nayiru_reformed
+							}
+							num_of_owned_provinces_with = {
+								value = 25
+								region = trollsbay_region
+								is_cannorian_culture = yes
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					region = trollsbay_region
+					is_cannorian_culture = no
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 75
+								is_cannorian_culture = yes
+								religion = oren_nayiru_reformed
+							}
+							num_of_owned_provinces_with = {
+								value = 25
+								region = trollsbay_region
+								is_cannorian_culture = yes
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital_of = H36 #Valorpoint
+					H36 = { #Valorpoint
+						is_subject_of = ROOT
+						NOT = {
+							AND = {
+								NOT = { liberty_desire = 50 }
+								has_opinion = {
+									who = ROOT
+									value = 190
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					H36 = { NOT = { is_subject_of = ROOT } } #Valorpoint
+					OR = {
+						province_id = 1048 #Valorpoint
+						province_id = 2504 #Vettakaramai
+					}
+					NOT = {
+						AND = {
+							has_building = cathedral
+							has_fort_17th_building_trigger = yes
+							anb_has_seat_in_parliament = yes
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 75
+					is_cannorian_culture = yes
+					religion = oren_nayiru_reformed
+				}
+				num_of_owned_provinces_with = {
+					value = 25
+					region = trollsbay_region
+					is_cannorian_culture = yes
+				}
+				custom_trigger_tooltip = {
+					tooltip = U39_cannorian_oren_tt
+					all_owned_province = {
+						OR = {
+							is_cannorian_culture = no
+							religion = oren_nayiru_reformed
+						}
+					}
+				}
+			}
+			OR = {
+				H36 = { #Valorpoint
+					is_subject_of = ROOT
+					NOT = { liberty_desire = 50 }
+					has_opinion = {
+						who = ROOT
+						value = 190
+					}
+				}
+				AND = {
+					H36 = { NOT = { is_subject_of = ROOT } } #Valorpoint
+					1048 = { #Valorpoint
+						has_building = cathedral
+						has_fort_17th_building_trigger = yes
+						anb_has_seat_in_parliament = yes
+					}
+					2504 = { #Vettakaramai
+						has_building = cathedral
+						has_fort_17th_building_trigger = yes
+						anb_has_seat_in_parliament = yes
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { has_country_modifier = U39_reshaping_not_remaking } #Valorpoint
+				custom_tooltip = U39_valorpoint_subject_yes_tt
+				hidden_effect = {
+					country_event = {
+						id = orenvalyam_events.34 #The True Heirs of Corin
+					}
+				}
+			}
+			else = { custom_tooltip = U39_valorpoint_subject_no_tt }
+			custom_tooltip = U39_valorpoint_subject_insight_tt
+			if = {
+				limit = { NOT = { has_country_modifier = U39_reshaping_not_remaking } } #Valorpoint
+				custom_tooltip = U39_valorpoint_else_yes_tt
+				hidden_effect = {
+					set_country_flag = U39_field_of_forbiddance_buff_flag
+					add_country_modifier = {
+						name = U39_sect_of_corin_shieldbreaker
+						duration = -1
+					}
+				}
+			}
+			else = { custom_tooltip = U39_valorpoint_else_no_tt }
+		}
+	}
+}
+
+U39_2_lost_missions = { 
+	slot = 2
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = {
+		tag = U39
+		has_country_flag = U39_reveal_peace_missions_flag
+	}
+
+	U39_2_9_in_heavens_image = {
+		icon = mission_aelantir
+		position = 9
+		required_missions = { 
+			U39_1_8_sunrise_over_the_ynn
+			U39_3_8_terminus
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				continent = north_america
+				continent = south_america
+			}
+			NOT = {
+				country_or_subject_holds_or_uncolonized = yes
+				is_wasteland = yes
+				is_sea = yes
+			}
+		}
+
+		trigger = {
+			north_america = {
+				type = all
+				custom_trigger_tooltip = {
+					tooltip = J84_own_colonized_provs_tt
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_wasteland = yes
+						is_sea = yes
+					}
+				}
+			}
+			south_america = {
+				type = all
+				custom_trigger_tooltip = {
+					tooltip = J84_own_colonized_provs_tt
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_wasteland = yes
+						is_sea = yes
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = U39_protect_aelantir_tt
+			custom_tooltip = U39_enable_campaign_issues_tt
+			hidden_effect = {
+				set_country_flag = U39_enable_campaign_issues_flag
+				north_america = {
+					limit = { is_empty = yes }
+					if = {
+						limit = { has_province_modifier = U39_protected_population }
+						ROOT = {
+							add_adm_power = 10
+							add_dip_power = 10
+							add_mil_power = 10
+						}
+					}
+					else = {
+						add_province_modifier = {
+							name = U39_protected_population
+							duration = -1
+						}
+					}
+				}
+				south_america = {
+					limit = { is_empty = yes }
+					if = {
+						limit = { has_province_modifier = U39_protected_population }
+						ROOT = {
+							add_adm_power = 10
+							add_dip_power = 10
+							add_mil_power = 10
+						}
+					}
+					else = {
+						add_province_modifier = {
+							name = U39_protected_population
+							duration = -1
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+U39_3_missions = { 
+	slot = 3
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = U39 }
+
+	U39_3_1_kan_oren_dan_manhu = {
+		icon = mission_arise_ashes
+		position = 1
+		required_missions = { 
+		}
+
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					superregion = taychend_superregion
+					is_empty = no
+					is_state = no
+				}
+				AND = {
+					owned_by = ROOT
+					anb_has_seat_in_parliament = no
+				}
+			} 
+		}
+
+		trigger = {
+			taychend_superregion = {
+				type = all
+				OR = {
+					is_state = yes
+					is_empty = yes
+				}
+			}
+			current_size_of_parliament = 50
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = U39_kan_oren_dan_manhu
+				duration = -1
+			}
+			custom_tooltip = U39_add_guiding_the_faith_tt
+			hidden_effect = {
+				every_owned_province = {
+					if = {
+						limit = { anb_has_seat_in_parliament = yes }
+						add_province_modifier = {
+							name = U39_guiding_the_faith
+							duration = -1
+						}
+					}
+					else = {
+						add_province_modifier = {
+							name = U39_guiding_the_faith_bad
+							duration = -1
+						}
+					}
+				}
+				for = {
+					amount = 20
+					effect = "
+						random_owned_province = {
+							limit = { superregion = taychend_superregion }
+							spawn_rebels = { size = 2 type = noble_rebels }
+						}
+					"
+				}
+			}
+		}
+	}
+
+	U39_3_2_from_shadows = {
+		icon = mission_shady_encounter
+		position = 2
+		required_missions = { 
+			U39_3_1_kan_oren_dan_manhu
+		}
+
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				ROOT = { knows_country = PREV }
+				NOT = {
+					has_opinion = {
+						who = ROOT
+						value = -24
+					}
+				}
+				NOT = {
+					has_spy_network_from = {
+						who = ROOT
+						value = 30
+					}
+				}
+			}
+		}
+
+		trigger = {
+			calc_true_if = {
+				amount = 3
+				desc = U39_spy_country_tt
+				all_known_country = {
+					has_spy_network_from = {
+						who = ROOT
+						value = 30
+					}
+					NOT = {
+						has_opinion = {
+							who = ROOT
+							value = -24
+						}
+					}
+				}
+			}
+			has_cast_invisibility = yes
+			OR = {
+				spymaster = 1
+				has_dip_advisor_3 = yes
+				was_tag = G75 #Sibisimra
+				was_tag = G82 #Nagar Vyechei
+				was_tag = J82 #Varamraya
+				hidden_trigger = { has_country_flag = orenvalyam_was_G75 } #Sibisimra
+				hidden_trigger = { has_country_flag = orenvalyam_was_G82 } #Nagar Vyechei
+				hidden_trigger = { has_country_flag = orenvalyam_was_J82 } #Varamraya
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.16 #From Shadows
+			}
+		}
+	}
+
+	U39_3_4_empire_as_archipelago = {
+		icon = ven_scales_of_power
+		position = 4
+		required_missions = {
+			U39_4_3_prisoners_no_longer
+		}
+
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				AND = {
+					NOT = {
+						NOT = { superregion = kheionai_superregion }
+						NOT = { superregion = taychend_superregion }
+						is_state = yes
+					}
+				}
+				AND = {
+					development = 25
+					OR = {
+						anb_has_seat_in_parliament = no
+						NOT = {
+							religion = oren_nayiru_reformed
+							has_province_modifier = religious_zeal_at_conv
+							has_province_modifier = U39_protected_religion
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = U39_state_andeios_tt
+				all_owned_province = {
+					OR = {
+						NOT = { superregion = kheionai_superregion }
+						NOT = { superregion = taychend_superregion }
+						is_state = yes
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_high_dev_provinces_tt
+				all_owned_province = {
+					OR = {
+						NOT = { development = 25 }
+						AND = {
+							anb_has_seat_in_parliament = yes
+							OR = {
+								religion = oren_nayiru_reformed
+								has_province_modifier = religious_zeal_at_conv
+								has_province_modifier = U39_protected_religion
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.17 #The Technicolour Rays of Dawn
+			}
+		}
+	}
+
+	U39_3_5_the_twilight_approach = {
+		icon = mission_united_knight_order
+		position = 5
+		required_missions = {
+			U39_2_4_spectres_of_revolution
+			U39_3_4_empire_as_archipelago
+			U39_5_4_in_their_own_way
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					continent = south_america
+					NOT = {
+						country_or_subject_holds_or_uncolonized = yes
+						region = ruined_isles_region
+						region = ravenous_isle_region
+						region = tor_nayyi_region
+						region = turtleback_isle_region
+						region = severed_coast_region
+						is_island = yes
+						is_wasteland = yes
+						is_sea = yes
+						owner = {
+							culture_is_ruinborn = yes
+							OR = {
+								is_tribal = yes
+								is_native_tribe = yes
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					NOT = { religion = oren_nayiru_reformed }
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = U39_twilight_conquest_tt
+				south_america = {
+					type = all
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						region = ruined_isles_region
+						region = ravenous_isle_region
+						region = tor_nayyi_region
+						region = turtleback_isle_region
+						region = severed_coast_region
+						is_island = yes
+						is_wasteland = yes
+						is_sea = yes
+						owner = {
+							culture_is_ruinborn = yes
+							OR = {
+								is_tribal = yes
+								is_native_tribe = yes
+							}
+						}
+					}
+				}
+			}
+			calc_true_if = {
+				amount = 450
+				desc = U39_converted_everything_tt
+				all_province = {
+					OR = {
+						religion = oren_nayiru_reformed
+						has_province_modifier = U39_protected_religion
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { ruler_is_silverspite = yes }
+				custom_tooltip = U39_silverspite_alive_yes_tt
+				hidden_effect = {
+					country_event = {
+						id = orenvalyam_events.29 #Vindicator
+					}
+				}
+			}
+			else = { custom_tooltip = U39_silverspite_alive_no_tt }
+			if = {
+				limit = { ruler_is_not_silverspite = yes }
+				custom_tooltip = U39_silverspite_dead_yes_tt
+				hidden_effect = {
+					country_event = {
+						id = orenvalyam_events.28 #The Twilight Approach
+					}
+				}
+			}
+			else = { custom_tooltip = U39_silverspite_dead_no_tt }
+		}
+	}
+
+	U39_3_7_against_all_tyrants = {
+		icon = mission_murder
+		position = 7
+		required_missions = {
+			U39_2_6_cut_the_throat_of_slavery
+			U39_4_6_the_solar_hexarchy
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						is_capital_of = A01 #Lorent
+						is_capital_of = A79 #Gnomish Hierarchy
+					}
+					owner = { U39_has_assassinated_ruler = no }
+				}
+				AND = {
+					OR = {
+						is_capital_of = Z01 #Empire of Anbennar
+						is_capital_of = emperor
+					}
+					ROOT = {
+						NOT = {
+							has_spy_network_in = {
+								who = Z01 #Empire of Anbennar
+								value = 90
+							}
+							has_spy_network_in = {
+								who = emperor
+								value = 90
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = { is_elector = yes }
+					ROOT = {
+						NOT = {
+							calc_true_if = {
+								amount = 3
+								all_elector = {
+									has_spy_network_from = {
+										who = ROOT
+										value = 90
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			is_estate_illusion_level_2_minimum = yes
+			A01 = { #Lorent
+				OR = {
+					U39_has_assassinated_ruler = yes
+					exists = no
+				}
+			}
+			A79 = { #Gnomish Hierarchy
+				OR = {
+					U39_has_assassinated_ruler = yes
+					exists = no
+				}
+			}
+			OR = {
+				has_spy_network_in = {
+					who = Z01 #Empire of Anbennar
+					value = 90
+				}
+				AND = {
+					has_spy_network_in = {
+						who = emperor
+						value = 90
+					}
+					calc_true_if = {
+						amount = 3
+						desc = U39_elector_spy_tt
+						all_elector = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 90
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.35 #Day of the Dove
+			}
+		}
+	}
+
+	U39_3_8_terminus = {
+		icon = mission_solaris
+		position = 8
+		required_missions = {
+			U39_2_7_campurana_corintar
+			U39_3_7_against_all_tyrants
+			U39_4_7_an_elemental_force
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = ROOT
+					NOT = {
+						religion = oren_nayiru_reformed
+						has_province_modifier = U39_protected_religion
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					continent = north_america
+					NOT = { anb_has_seat_in_parliament = yes }
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 100
+								continent = north_america
+								anb_has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 1000
+				OR = {
+					religion = oren_nayiru_reformed
+					has_province_modifier = U39_protected_religion
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 100
+				continent = north_america
+				anb_has_seat_in_parliament = yes
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { ruler_is_silverspite = yes }
+				custom_tooltip = U39_silverspite_alive_2_yes_tt
+				hidden_effect = {
+					country_event = {
+						id = orenvalyam_events.44 #The Last Step
+					}
+				}
+			}
+			else = { custom_tooltip = U39_silverspite_alive_2_no_tt }
+			if = {
+				limit = { ruler_is_not_silverspite = yes }
+				custom_tooltip = U39_silverspite_dead_2_yes_tt
+				hidden_effect = {
+					country_event = {
+						id = orenvalyam_events.42 #Terminus
+					}
+				}
+			}
+			else = { custom_tooltip = U39_silverspite_dead_2_no_tt }
+		}
+	}
+}
+
+U39_3_lost_missions = { 
+	slot = 3
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = {
+		tag = U39
+		has_country_flag = U39_reveal_peace_missions_flag
+	}
+
+	U39_3_9_the_sabre_of_dawn = {
+		icon = mission_the_dame_tears
+		position = 9
+		required_missions = { 
+			U39_3_8_terminus
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 1083 #North Verten
+					NOT = {
+						AND = {
+							has_building = mage_tower
+							development = 35
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 1987 #Egstrel
+						province_id = 2787 #Stalwart Outpost
+						province_id = 2302 #Rezankaz
+						province_id = 2728 #Arpedifer
+					}
+					NOT = { has_building = mage_tower }
+				}
+			}
+		}
+
+		trigger = {
+			1083 = { #North Verten
+				has_building = mage_tower
+				development = 35
+			}
+			1987 = { has_building = mage_tower } #Egstrel
+			2787 = { has_building = mage_tower } #Stalwart Outpost
+			2302 = { has_building = mage_tower } #Rezankaz
+			2728 = { has_building = mage_tower } #Arpedifer
+			is_estate_evocation_level_3 = yes
+			OR = {
+				is_estate_conjuration_level_3 = yes
+				is_estate_abjuration_level_3 = yes
+			}
+			at_least_magic_project_level = { project = battlemage_academy level = 3 }
+		}
+
+		effect = {
+			1083 = { #North Verten
+				change_province_name = "Vaikaranayiru II"
+				add_province_modifier = {
+					name = U39_vaikaranayiru_2_ritual_tower
+					duration = -1
+				}
+			}
+			custom_tooltip = U39_vaikaranayiru_tt
+			set_country_flag = U39_vaikaranayiru_flag
+		}
+	}
+
+	U39_3_10_apocalypse_nigh = {
+		icon = mission_new_dawn
+		position = 10
+		required_missions = { 
+			U39_2_9_in_heavens_image
+			U39_3_9_the_sabre_of_dawn
+			U39_4_9_justices_long_shadow
+		}
+
+		provinces_to_highlight = {  
+			OR = {
+				continent = north_america
+				continent = south_america
+			}
+			NOT = {
+				AND = {
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_wasteland = yes
+						is_sea = yes
+					}
+					OR = {
+						is_prosperous = yes
+						development = 10
+					}
+				}
+			}
+		}
+
+		trigger = {
+			is_at_war = no
+			north_america = {
+				type = all
+				custom_trigger_tooltip = {
+					tooltip = J84_own_colonized_provs_tt
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_wasteland = yes
+						is_sea = yes
+					}
+				}
+				OR = {
+					is_prosperous = yes
+					development = 10
+				}
+			}
+			south_america = {
+				type = all
+				custom_trigger_tooltip = {
+					tooltip = J84_own_colonized_provs_tt
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_wasteland = yes
+						is_sea = yes
+					}
+				}
+				OR = {
+					is_prosperous = yes
+					development = 10
+				}
+			}
+			OR = {
+				in_golden_age = yes
+				has_had_golden_age = yes
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.45 #Ending Event 1
+			}
+		}
+	}
+}
+
+U39_3_won_missions = { 
+	slot = 3
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = {
+		tag = U39
+		has_country_flag = U39_reveal_wc_missions_flag
+	}
+
+	U39_3_9_the_apocalypse = {
+		icon = mission_aelnar_corps
+		position = 9
+		required_missions = { 
+			U39_3_8_terminus
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				continent = north_america
+				continent = south_america
+			}
+			NOT = {
+				country_or_subject_holds_or_uncolonized = yes
+				is_wasteland = yes
+				is_sea = yes
+			}
+		}
+
+		trigger = {
+			army_size = 1000
+			navy_size = 500
+			north_america = {
+				type = all
+				custom_trigger_tooltip = {
+					tooltip = J84_own_colonized_provs_tt
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_wasteland = yes
+						is_sea = yes
+					}
+				}
+			}
+			south_america = {
+				type = all
+				custom_trigger_tooltip = {
+					tooltip = J84_own_colonized_provs_tt
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_wasteland = yes
+						is_sea = yes
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.48 #The Rumbling
+			}
+		}
+	}
+
+	U39_3_10_dawn = {
+		icon = mission_the_dame_tears
+		position = 10
+		required_missions = { 
+			U39_3_9_the_apocalypse
+		}
+
+		provinces_to_highlight = {  
+			NOT = {
+				country_or_subject_holds_or_uncolonized = yes
+				is_wasteland = yes
+				is_sea = yes
+			}
+		}
+
+		trigger = {
+			all_province = {
+				custom_trigger_tooltip = {
+					tooltip = J84_own_colonized_provs_tt
+					OR = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_wasteland = yes
+						is_sea = yes
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.49 #Dawn
+			}
+		}
+	}
+}
+
+
+U39_4_missions = { 
+	slot = 4
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = U39 }
+
+	U39_4_1_pray_for_day_war_for_dawn = {
+		icon = mission_sword_of_the_reformation
+		position = 1
+		required_missions = { 
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = andic_reach_region
+					NOT = {
+						country_or_subject_holds_or_uncolonized = yes
+						owner = { NOT = { culture_group = kheionai_ruinborn_elf } }
+					}
+				}
+				AND = {
+					province_id = 2620 #Ameion
+					NOT = {
+						num_of_units_in_province = {
+							amount = 20
+							who = ROOT
+						}
+						has_global_flag = J84_4_2_suffer_no_interloper_done_flag
+					}
+				}
+			}
+		}
+
+		trigger = {
+			andic_reach_region = {
+				type = all
+				OR = {
+					country_or_subject_holds_or_uncolonized = yes
+					owner = { NOT = { culture_group = kheionai_ruinborn_elf } }
+				}
+			}
+			OR = {
+				2620 = { #Ameion
+					num_of_units_in_province = {
+						amount = 20
+						who = ROOT
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = J84_4_2_suffer_no_interloper_done_tt
+					has_global_flag = J84_4_2_suffer_no_interloper_done_flag
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.18 #The Interloper's Sentence
+			}
+		}
+	}
+	
+	U39_4_2_kheion_litea_kavalal = {
+		icon = mission_european_church
+		position = 2
+		required_missions = { 
+			U39_3_1_kan_oren_dan_manhu
+			U39_4_1_pray_for_day_war_for_dawn
+			U39_5_1_the_cradle_of_freedom
+		}
+
+		provinces_to_highlight = {
+			region = devand_region
+			NOT = {
+				NOT = { culture_group = kheionai_ruinborn_elf }
+				country_or_subject_holds_or_uncolonized = yes
+				owner = { 
+					NOT = { culture_group = kheionai_ruinborn_elf }
+					has_opinion = {
+						who = ROOT
+						value = 180
+					}
+				}
+			}
+		}
+
+		trigger = {
+			devand_region = {
+				type = all
+				OR = {
+					NOT = { culture_group = kheionai_ruinborn_elf }
+					country_or_subject_holds_or_uncolonized = yes
+					owner = { 
+						NOT = { culture_group = kheionai_ruinborn_elf }
+						has_opinion = {
+							who = ROOT
+							value = 180
+						}
+					}
+				}
+			}
+			OR = {
+				monasticists_are_loyal = yes
+				kavalalists_are_loyal = yes
+				kamrayakvalists_are_loyal = yes
+			}
+		}
+
+		effect = {
+			custom_tooltip = U39_devandi_integrate_tt
+			hidden_effect = {
+				set_variable = { which = totalVassalDev value = 0 }
+				every_subject_country = {
+					limit = { culture_group = devandi_ruinborn_elf }
+					ROOT = {
+						export_to_variable = { which = tempVassalDev value = total_development who = PREV }
+						change_variable = { which = totalVassalDev which = tempVassalDev }
+						inherit = PREV
+					}
+				}
+				while = { 
+					limit = { check_variable = { which = totalVassalDev value = 1 } }
+					add_dip_power = -3
+					change_variable = { which = totalVassalDev value = -1 }
+				}
+			}
+			if = {
+				limit = { has_country_flag = U39_convert_guaraddhi_flag }
+				custom_tooltip = U39_empkeios_cede_yes_tt
+				hidden_effect = {
+					empkeios_area = {
+						change_culture = chendhyan
+						change_religion = askaeorg
+						add_devastation = 50
+						add_base_tax = -3
+						add_base_production = -3
+						add_base_manpower = -3
+					}
+					elokos_area = {
+						change_culture = chendhyan
+						change_religion = askaeorg
+						add_devastation = 50
+						add_base_tax = -3
+						add_base_production = -3
+						add_base_manpower = -3
+					}
+				}
+			}
+			else = { custom_tooltip = U39_empkeios_cede_no_tt }
+			country_event = {
+				id = orenvalyam_events.24 #Questions of Constitution
+			}
+		}
+	}
+
+	U39_4_3_prisoners_no_longer = {
+		icon = mission_fleet_arrival
+		position = 3
+		required_missions = {
+			U39_3_2_from_shadows
+			U39_4_2_kheion_litea_kavalal
+		}
+
+		provinces_to_highlight = { 
+			OR = {
+				AND = {
+					region = alecand_region
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+				AND = {
+					province_group = kheionai_capital_provinces
+					NOT = {
+						AND = {
+							anb_has_seat_in_parliament = yes
+							OR = {
+								religion = oren_nayiru_reformed
+								has_province_modifier = U39_protected_religion
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					has_plantation_trade_goods = yes
+					NOT = {
+						AND = {
+							has_manpower_building_trigger = yes
+							num_of_units_in_province = {
+								amount = 2
+								who = ROOT
+							}
+						}
+					}
+				}
+			} 
+		}
+
+		trigger = {
+			alecand_region = {
+				type = all
+				country_or_non_sovereign_subject_holds = ROOT
+			}
+			kheionai_capital_provinces = {
+				type = all
+				anb_has_seat_in_parliament = yes
+				OR = {
+					religion = oren_nayiru_reformed
+					has_province_modifier = U39_protected_religion
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 3
+				has_plantation_trade_goods = yes
+				has_manpower_building_trigger = yes
+				num_of_units_in_province = {
+					amount = 2
+					who = ROOT
+				}
+			}
+		}
+
+		effect = {
+			U39_unshackle_production = { region = alecand_region trade_good = wine }
+			hidden_effect = { U39_unshackle_production = { region = devand_region trade_good = wine } }
+			anb_aelantir_cultural_union = { kheionai = yes }
+			custom_tooltip = U39_discover_coastal_amadia_tt
+			hidden_effect = {
+				cymbeahn_area = { discover_country = ROOT }
+				cherimreit_area = { discover_country = ROOT }
+				nur_damenath_area = { discover_country = ROOT }
+				bronrin_area = { discover_country = ROOT }
+				lower_munasin_area = { discover_country = ROOT }
+				upper_munasin_area = { discover_country = ROOT }
+				discover_province = 1552 #Bay of Adenn
+				discover_province = 1553 #Baun Bight
+				discover_province = 1555 #Cape Bronrin
+				discover_province = 1556 #North Amadia Coast
+			}
+		}
+	}
+
+	U39_4_4_warded_against_ruin = {
+		icon = mission_seize_the_bengal_coast
+		position = 4
+		required_missions = {
+			U39_4_3_prisoners_no_longer
+		}
+
+		provinces_to_highlight = {  
+			province_group = alecandi_capital_provinces
+			NOT = {
+				AND = {
+					has_fort_16th_building_trigger = yes
+					has_tax_building_trigger = yes
+					OR = {
+						has_building = ramparts
+						has_building = mage_tower
+					}
+				}
+			}
+		}
+
+		trigger = {
+			is_estate_abjuration_level_2_minimum = yes
+			num_of_owned_provinces_with = {
+				value = 30
+				has_province_modifier = U39_hill_top_monastery
+			}
+			alecandi_capital_provinces = {
+				type = all
+				has_fort_16th_building_trigger = yes
+				has_tax_building_trigger = yes
+				OR = {
+					has_building = ramparts
+					has_building = mage_tower
+				}
+			}
+		}
+
+		effect = {
+			alecandi_capital_provinces = {
+				add_province_modifier = {
+					name = U39_philomonosophist_bastion
+					duration = -1
+				}
+				add_building_construction = {
+					building = cathedral
+					cost = 0
+					speed = 1
+				}
+			}
+			custom_tooltip = U39_ward_buff_tt
+			set_country_flag = U39_ward_buff_flag
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						OR = {
+							has_province_modifier = U39_hill_top_monastery
+							has_province_modifier = U39_philomonosophist_bastion
+						}
+					}
+					abjuration_1_ward_sub_effect = { duration = -1 }
+				}
+			}
+		}
+	}
+
+	U39_4_5_the_definition_of_necessity = {
+		icon = mission_magical_forest
+		position = 5
+		required_missions = {
+			U39_5_4_in_their_own_way
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					continent = south_america
+					trade_goods = precursor_relics
+					NOT = {
+						AND = {
+							country_or_non_sovereign_subject_holds = ROOT
+							OR = {
+								num_of_times_expanded_infrastructure = 1
+								has_fort_building_trigger = yes
+							}
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 1741 #Alecand node
+						province_id = 2595 #Devand node
+						province_id = 2665 #Mteibas node
+						province_id = 1731 #Ameion node
+						province_id = 2484 #Endioka node
+						province_id = 2556 #Vaona Samadiya node
+						province_id = 1545 #Vyech node
+						province_id = 1544 #Kalavend node
+						province_id = 2377 #South Effelai node
+						province_id = 1607 #Dry Coast node
+						province_id = 1539 #East Effelai node
+						province_id = 1511 #Leechdens node
+						province_id = 1553 #Amadia node
+						province_id = 1438 #Soruin node
+					}
+					NOT = { trade_share = { country = ROOT share = 40 } }
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = U39_sa_relics_tt
+				south_america = {
+					type = all
+					OR = {
+						NOT = { trade_goods = precursor_relics }
+						AND = {
+							country_or_subject_holds = ROOT
+							OR = {
+								num_of_times_expanded_infrastructure = 1
+								has_fort_building_trigger = yes
+							}
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_sa_trade_tt
+				1741 = { trade_share = { country = ROOT share = 40 } } #Alecand node
+				2595 = { trade_share = { country = ROOT share = 40 } } #Devand node
+				2665 = { trade_share = { country = ROOT share = 40 } } #Mteibas node
+				1731 = { trade_share = { country = ROOT share = 40 } } #Ameion node
+				2484 = { trade_share = { country = ROOT share = 40 } } #Endioka node
+				2556 = { trade_share = { country = ROOT share = 40 } } #Vaona Samadiya node
+				1545 = { trade_share = { country = ROOT share = 40 } } #Vyech node
+				1544 = { trade_share = { country = ROOT share = 40 } } #Kalavend node
+				2377 = { trade_share = { country = ROOT share = 40 } } #South Effelai node
+				1607 = { trade_share = { country = ROOT share = 40 } } #Dry Coast node
+				1539 = { trade_share = { country = ROOT share = 40 } } #East Effelai node
+				1511 = { trade_share = { country = ROOT share = 40 } } #Leechdens node
+				1553 = { trade_share = { country = ROOT share = 40 } } #Amadia node
+				1438 = { trade_share = { country = ROOT share = 40 } } #Soruin node
+			}
+		}
+
+		effect = {
+			custom_tooltip = U39_enable_relic_issues_tt
+			tor_nayyi_region = { add_permanent_claim = ROOT }
+			haraf_region = { add_permanent_claim = ROOT }
+			custom_tooltip = U39_vanbury_claims_tt
+			hidden_effect = {
+				G97 = { #Vanbury Guild
+					every_owned_province = {
+						add_permanent_claim = ROOT
+					}
+				}
+				set_country_flag = U39_enable_relic_issues_flag
+			}
+		}
+	}
+
+	U39_4_6_the_solar_hexarchy = {
+		icon = mission_artificier_experience
+		position = 6
+		required_missions = { 
+			U39_3_5_the_twilight_approach
+			U39_4_5_the_definition_of_necessity
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						region = tor_nayyi_region
+						region = haraf_region
+					}
+					NOT = { country_or_subject_holds_or_uncolonized = yes }
+				}
+				AND = {
+					OR = {
+						province_id = 2088 #Tolalkal/Gommoport
+						province_id = 2078 #Leembalkal/Zurzumexia
+						province_id = 2083 #K'il'uiolob/Mestikardu
+						province_id = 2112 #Nani Kinn
+						province_id = 2164 #Ricardsport
+						province_id = 2773 #Kherka
+					}
+					NOT = {
+						AND = {
+							anb_has_seat_in_parliament = yes
+							has_building = mage_tower
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			tor_nayyi_region = {
+				type = all
+				country_or_subject_holds_or_uncolonized = yes
+			}
+			haraf_region = {
+				type = all
+				country_or_subject_holds_or_uncolonized = yes
+			}
+			2088 = { #Tolalkal/Gommoport
+				anb_has_seat_in_parliament = yes
+				has_building = mage_tower
+			}
+			2078 = { #Leembalkal/Zurzumexia
+				anb_has_seat_in_parliament = yes
+				has_building = mage_tower
+			}
+			2083 = { #K'il'uiolob/Mestikardu
+				anb_has_seat_in_parliament = yes
+				has_building = mage_tower
+			}
+			2112 = { #Nani Kinn
+				anb_has_seat_in_parliament = yes
+				has_building = mage_tower
+			}
+			2164 = { #Ricardsport
+				anb_has_seat_in_parliament = yes
+				has_building = mage_tower
+			}
+			2773 = { #Kherka
+				anb_has_seat_in_parliament = yes
+				has_building = mage_tower
+			}
+			OR = {
+				has_country_modifier = U39_flash_in_the_barrel
+				at_least_magic_project_level = { project = battlemage_academy level = 1 }
+			}
+		}
+
+		effect = {
+			2164 = { #Ricardsport
+				change_culture = vaikazelhi
+				add_base_tax = 1
+				add_base_production = 3
+				add_base_manpower = 3
+				add_province_modifier = {
+					name = U39_solar_hexarch
+					duration = -1
+				}
+			}
+			custom_tooltip = U39_solar_hexarch_tt
+			hidden_effect = {
+				2088 = { #Tolalkal/Gommoport
+					add_province_modifier = {
+						name = U39_solar_hexarch
+						duration = -1
+					}
+				}
+				2078 = { #Leembalkal/Zurzumexia
+					add_province_modifier = {
+						name = U39_solar_hexarch
+						duration = -1
+					}
+				}
+				2083 = { #K'il'uiolob/Mestikardu
+					add_province_modifier = {
+						name = U39_solar_hexarch
+						duration = -1
+					}
+				}
+				2112 = { #Nani Kinn
+					add_province_modifier = {
+						name = U39_solar_hexarch
+						duration = -1
+					}
+				}
+				2773 = { #Kherka
+					add_province_modifier = {
+						name = U39_solar_hexarch
+						duration = -1
+					}
+				}
+			}
+			if = {
+				limit = { has_country_modifier = U39_flash_in_the_barrel }
+				remove_country_modifier = U39_flash_in_the_barrel
+				add_country_modifier = {
+					name = U39_light_in_the_dark
+					duration = -1
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = U39_flash_in_the_barrel
+					duration = -1
+				}
+			}
+			custom_tooltip = U39_meteor_swarm_infamy_tt
+		}
+	}
+
+	U39_4_7_an_elemental_force = {
+		icon = mission_delighted_mage
+		position = 7
+		required_missions = {
+			U39_4_6_the_solar_hexarchy
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = sarmadfar_region
+					NOT = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_island = yes
+					}
+				}
+				AND = {
+					culture = caamas
+					ROOT = {
+						NOT = {
+							any_owned_province = {
+								culture = caamas
+								religion = oren_nayiru_reformed
+								anb_has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+				AND = {
+					culture = peitar
+					ROOT = {
+						NOT = {
+							any_owned_province = {
+								culture = peitar
+								religion = oren_nayiru_reformed
+								anb_has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+				AND = {
+					culture = selphereg
+					ROOT = {
+						NOT = {
+							any_owned_province = {
+								culture = selphereg
+								religion = oren_nayiru_reformed
+								anb_has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+				AND = {
+					region = haraf_region
+					culture_group = harafic_ruinborn_elf
+					NOT = { religion = oren_nayiru_reformed }
+					ROOT = {
+						NOT = {
+							at_least_magical_infrastructure_level_3 = yes
+							at_least_magic_project_level = { project = theatre_of_simulacra level = 2 }
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			sarmadfar_region = {
+				type = all
+				OR = {
+					country_or_subject_holds_or_uncolonized = yes
+					is_island = yes
+				}
+			}
+			any_owned_province = {
+				culture = caamas
+				religion = oren_nayiru_reformed
+				anb_has_seat_in_parliament = yes
+			}
+			any_owned_province = {
+				culture = peitar
+				religion = oren_nayiru_reformed
+				anb_has_seat_in_parliament = yes
+			}
+			any_owned_province = {
+				culture = selphereg
+				religion = oren_nayiru_reformed
+				anb_has_seat_in_parliament = yes
+			}
+			OR = {
+				at_least_magical_infrastructure_level_3 = yes
+				at_least_magic_project_level = { project = theatre_of_simulacra level = 2 }
+				num_of_owned_provinces_with = {
+					value = 25
+					region = haraf_region
+					culture_group = harafic_ruinborn_elf
+					religion = oren_nayiru_reformed
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.37 #Ideals Overstretched
+			}
+		}
+	}
+
+	U39_4_8_metal_bodies_kindred_spirits = {
+		icon = mission_machine_of_war
+		position = 8
+		required_missions = {
+			U39_4_7_an_elemental_force
+		}
+
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = { culture_group = mechanim }
+			ROOT = {
+				NOT = {
+					any_known_country = {
+						culture_group = mechanim
+						has_opinion = {
+							who = ROOT
+							value = 50
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			stormwall_is_open = yes
+			OR = {
+				any_known_country = {
+					culture_group = mechanim
+					has_opinion = {
+						who = ROOT
+						value = 50
+					}
+				}
+				AND = {
+					all_known_country = { NOT = { culture_group = mechanim } }
+					any_known_country = {
+						fast_owns_num_pops_of_race = { race = mechanim amount = 1 }
+						has_spy_network_from = {
+							who = ROOT
+							value = 25
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.40 #The Living Relics
+			}
+		}
+	}
+}
+
+U39_4_lost_missions = { 
+	slot = 4
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = {
+		tag = U39
+		has_country_flag = U39_reveal_peace_missions_flag
+	}
+
+	U39_4_9_justices_long_shadow = {
+		icon = mission_the_ascension
+		position = 9
+		required_missions = { 
+			U39_3_8_terminus
+			U39_5_8_the_new_paradigm
+		}
+
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				NOT = { tag = ROOT }
+				slaves = 1
+				NOT = {
+					has_spy_network_from = {
+						who = ROOT
+						value = 75
+					}
+				}
+			}
+			ROOT = {
+				NOT = {
+					calc_true_if = {
+						amount = 3
+						desc = U39_slave_spying_tt
+						all_known_country = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 75
+							}
+							slaves = 1
+						}
+					}
+					check_variable = { oren_assass_monarchs_var = 9 }
+				}
+			}
+		}
+
+		trigger = {
+			is_estate_illusion_level_3 = yes
+			OR = {
+				calc_true_if = {
+					amount = 3
+					desc = U39_slave_spying_tt
+					all_known_country = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 75
+						}
+						slaves = 1
+					}
+				}
+				check_variable = { oren_assass_monarchs_var = 9 }
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					calc_true_if = {
+						amount = 3
+						desc = U39_slave_spying_tt
+						all_known_country = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 75
+							}
+							slaves = 1
+						}
+					}
+				}
+				custom_tooltip = U39_justice_shadow_1_yes_tt
+				hidden_effect = {
+					add_country_modifier = {
+						name = U39_heroes_of_hope
+						duration = -1
+					}
+				}
+			}
+			else = { custom_tooltip = U39_justice_shadow_1_no_tt }
+			if = {
+				limit = {
+					NOT = {
+						calc_true_if = {
+							amount = 3
+							desc = U39_slave_spying_tt
+							all_known_country = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 75
+								}
+								slaves = 1
+							}
+						}
+					}
+				}
+				custom_tooltip = U39_justice_shadow_2_yes_tt
+				hidden_effect = {
+					set_country_flag = U39_hunted_by_the_righteous_flag
+					every_war_enemy_country = {
+						add_country_modifier = {
+							name = U39_hunted_by_the_righteous
+							duration = -1
+						}
+					}
+				}
+			}
+			else = { custom_tooltip = U39_justice_shadow_2_no_tt }
+		}
+	}
+}
+
+U39_5_missions = { 
+	slot = 5
+	generic = no
+	ai = yes 
+	has_country_shield = yes
+	potential = { tag = U39 }
+
+	U39_5_1_the_cradle_of_freedom = {
+		icon = mission_desert_rider
+		position = 1
+		required_missions = { 
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital = yes
+					owner = { culture_group = devandi_ruinborn_elf }
+					NOT = { has_75_opinion_improved_relation = { target = ROOT } }
+					ROOT = {
+						NOT = {
+							calc_true_if = {
+								amount = 2
+								all_known_country = {
+									culture_group = devandi_ruinborn_elf
+									has_75_opinion_improved_relation = { target = ROOT }
+								}
+							}
+							accepted_culture = chendhyan
+							accepted_culture = bekauta
+						}
+					}
+				}
+				AND = {
+					NOT = { has_global_flag = searraeg_spawned_flag }
+					NOT = { region = chendhya_region }
+					is_sea = no
+					is_wasteland = no
+					any_neighbor_province = { region = chendhya_region }
+					NOT = {
+						chendhya_region = {
+							any_neighbor_province = {
+								NOT = { region = chendhya_region }
+								num_of_units_in_province = {
+									amount = 50
+									who = ROOT
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					has_global_flag = searraeg_spawned_flag
+					region = chendhya_region
+					NOT = { country_or_non_sovereign_subject_holds = ROOT }
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				calc_true_if = {
+					amount = 2
+					desc = U39_devandi_relations_tt
+					all_known_country = {
+						culture_group = devandi_ruinborn_elf
+						has_75_opinion_improved_relation = { target = ROOT }
+					}
+				}
+				accepted_culture = chendhyan
+				accepted_culture = bekauta
+				if = {
+					limit = { has_global_flag = searraeg_spawned_flag }
+					custom_trigger_tooltip = {
+						tooltip = U39_searraeg_spawned_yes_tt
+						always = no
+					}
+				}
+				else = {
+					custom_trigger_tooltip = {
+						tooltip = U39_searraeg_spawned_no_tt
+						always = no
+					}
+				}
+			}
+			if = {
+				limit = { has_global_flag = searraeg_spawned_flag }
+				custom_trigger_tooltip = {
+					tooltip = U39_chendhya_conquest_tt
+					chendhya_region = {
+						type = all
+						country_or_non_sovereign_subject_holds = ROOT
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = U39_chendhya_neighbor_tt
+					chendhya_region = {
+						any_neighbor_province = {
+							NOT = { region = chendhya_region }
+							num_of_units_in_province = {
+								amount = 50
+								who = ROOT
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = orenvalyam_events.19 #Negotiating Liberty
+			}
+		}
+	}
+
+	U39_5_3_liberators_not_interlopers = {
+		icon = mission_crusade_for_varna
+		position = 3
+		required_missions = {
+			U39_5_1_the_cradle_of_freedom
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				region = chendhya_region
+				region = mteibas_valley_region
+			}
+			NOT = {
+				AND = {
+					OR = {
+						is_empty = yes
+						AND = {
+							country_or_subject_holds = ROOT
+							OR = {
+								has_province_modifier = U39_protected_religion
+								AND = {
+									culture_group = devandi_ruinborn_elf
+									religion = oren_nayiru_reformed
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = U39_devandi_owned_tt
+				chendhya_region = {
+					type = all
+					OR = {
+						is_empty = yes
+						AND = {
+							country_or_subject_holds = ROOT
+							OR = {
+								has_province_modifier = U39_protected_religion
+								religion = oren_nayiru_reformed
+							}
+						}
+					}
+				}
+				mteibas_valley_region = {
+					type = all
+					OR = {
+						is_empty = yes
+						AND = {
+							country_or_subject_holds = ROOT
+							OR = {
+								has_province_modifier = U39_protected_religion
+								religion = oren_nayiru_reformed
+							}
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_chendhyan_convert_tt
+				south_america = {
+					type = all
+					OR = {
+						NOT = { culture = chendhyan }
+						region = mteibas_valley_region
+						region = chendhya_region
+						religion = oren_nayiru_reformed
+						has_province_modifier = U39_protected_religion
+					}
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = U39_buff_border_tribes_tt
+			custom_tooltip = U39_buff_kamaraka_tt
+			custom_tooltip = U39_discover_kamaraka_tt
+			custom_tooltip = U39_discover_inland_amadia_tt
+			hidden_effect = {
+				set_country_flag = U39_buff_border_tribes_flag
+				amadia_region = {
+					limit = {
+						NOT = {
+							area = cymbeahn_area
+							area = cherimreit_area
+							area = nur_damenath_area
+							area = bronrin_area
+							area = lower_munasin_area
+							area = upper_munasin_area
+						}
+					}
+					discover_country = ROOT
+				}
+				2376 = { #Keoker
+					if = {
+						limit = { is_empty = yes }
+						cede_province = G18 #Kamaraka
+						add_core = G18 #Kamaraka
+					}
+				}
+				2375 = { #Tskeowoh
+					if = {
+						limit = { is_empty = yes }
+						cede_province = G18 #Kamaraka
+						add_core = G18 #Kamaraka
+					}
+				}
+				2460 = { #Laskesthi
+					if = {
+						limit = { is_empty = yes }
+						cede_province = G18 #Kamaraka
+						add_core = G18 #Kamaraka
+					}
+				}
+				2461 = { #Muudpiatt
+					if = {
+						limit = { is_empty = yes }
+						cede_province = G18 #Kamaraka
+						add_core = G18 #Kamaraka
+					}
+				}
+				mushroom_forest_region = {
+					limit = { is_empty = yes }
+					cede_province = G18 #Kamaraka
+					add_core = G18 #Kamaraka
+				}
+			}
+			G18 = { #Kamaraka
+				add_country_modifier = {
+					name = U39_threatened_by_dawn
+					duration = 18250 #50 years
+				}
+				hidden_effect = {
+					every_owned_province = {
+						discover_country = ROOT
+					}
+				}
+			}
+		}
+	}
+
+	U39_5_4_in_their_own_way = {
+		icon = trade_with_the_natives
+		position = 4
+		required_missions = {
+			U39_4_3_prisoners_no_longer
+			U39_5_3_liberators_not_interlopers
+		}
+
+		provinces_to_highlight = {
+			region = amadia_region
+			NOT = {
+				country_or_subject_holds_or_uncolonized = yes
+				owner = {
+					culture_is_ruinborn = yes
+					NOT = {
+						any_owned_province = {
+							is_neighbor_of = ROOT
+							is_empty = no
+						}
+					}
+					OR = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 33
+						}
+						has_75_opinion_improved_relation = { target = ROOT }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			amadia_region = {
+				type = all
+				OR = {
+					country_or_subject_holds_or_uncolonized = yes
+					owner = {
+						culture_is_ruinborn = yes
+						NOT = { #is_neighbor_of counts tribal land apparently
+							any_owned_province = {
+								is_neighbor_of = ROOT
+								is_empty = no
+							}
+						}
+						OR = {
+							has_spy_network_from = {
+								who = ROOT
+								value = 33
+							}
+							has_75_opinion_improved_relation = { target = ROOT }
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			tor_nayyi_region = { add_permanent_claim = ROOT }
+			if = {
+				limit = {
+					any_known_country = {
+						culture_is_ruinborn = yes
+						NOT = { is_neighbor_of = ROOT }
+						has_150_opinion_improved_relation = { target = ROOT }
+						any_owned_province = { region = amadia_region }
+					}
+				}
+				custom_tooltip = U39_settle_amadia_friend_yes_tt
+				hidden_effect = {
+					every_known_country = {
+						limit = {
+							culture_is_ruinborn = yes
+							NOT = { is_neighbor_of = ROOT }
+							has_150_opinion_improved_relation = { target = ROOT }
+							any_owned_province = { region = amadia_region }
+						}
+						ROOT = { vassalize = PREV }
+					}
+				}
+			}
+			else = { custom_tooltip = U39_settle_amadia_friend_no_tt }
+			if = {
+				limit = {
+					any_known_country = {
+						culture_is_ruinborn = yes
+						NOT = { is_neighbor_of = ROOT }
+						has_spy_network_from = {
+							who = ROOT
+							value = 33
+						}
+						any_owned_province = { region = amadia_region }
+					}
+				}
+				custom_tooltip = U39_settle_amadia_enemy_yes_tt
+				hidden_effect = {
+					every_known_country = {
+						limit = {
+							culture_is_ruinborn = yes
+							NOT = { is_neighbor_of = ROOT }
+							has_spy_network_from = {
+								who = ROOT
+								value = 33
+							}
+							any_owned_province = { region = amadia_region }
+						}
+						if = {
+							limit = { government = native }
+							add_government_reform = native_settle_down_reform
+						}
+						every_tribal_land_province = {
+							limit = { NOT = { owner = { exists = yes } } }
+							settle_province = PREV
+						}
+						every_owned_province = { add_core = ROOT }
+					}
+				}
+			}
+			else = { custom_tooltip = U39_settle_amadia_enemy_no_tt }
+			if = {
+				limit = {
+					NOT = {
+						any_known_country = {
+							culture_is_ruinborn = yes
+							NOT = { is_neighbor_of = ROOT }
+							OR = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 33
+								}
+								has_150_opinion_improved_relation = { target = ROOT }
+							}
+							any_owned_province = { region = amadia_region }
+						}
+					}
+				}
+				custom_tooltip = U39_settle_amadia_else_yes_tt
+				hidden_effect = {
+					if = {
+						limit = { has_country_modifier = U39_ruler_kamrayakvalist }
+						border_tribes_effect = {
+							effect = "
+								cede_province = ROOT
+								add_devastation = 15
+								if = {
+									limit = { ROOT = { NOT = { has_country_flag = U39_temp_flag } } }
+									ROOT = { set_country_flag = U39_temp_flag }
+									change_religion = oren_nayiru_reformed
+									spawn_rebels = {
+										size = 2
+										type = nationalist_rebels
+									}
+								}
+							"
+						}
+						clr_country_flag = U39_temp_flag
+					}
+					else_if = {
+						limit = { has_country_modifier = U39_ruler_kavalalist }
+						border_tribes_effect = {
+							effect = "
+								add_siberian_construction = 1
+								add_province_modifier = {
+									name = U39_non_interference_agreement
+									duration = -1
+								}
+							"
+						}
+					}
+					else = {
+						border_tribes_effect = {
+							protected_population = yes
+							effect = "
+								add_province_modifier = {
+									name = U39_protected_population
+									duration = -1
+								}
+								ROOT = { 
+									add_adm_power = 20 
+									add_dip_power = 20 
+									add_mil_power = 20 
+								}
+							"
+						}
+					}
+				}
+			}
+			else = { custom_tooltip = U39_settle_amadia_else_no_tt }
+		}
+	}
+
+	U39_5_6_the_chaotic_good = {
+		icon = mission_transmutation
+		position = 6
+		required_missions = {
+			U39_5_4_in_their_own_way
+		}
+
+		provinces_to_highlight = {
+			region = amadia_region
+			OR = {
+				AND = {
+					trade_goods = damestear
+					NOT = { has_building = mage_tower }
+				}
+				AND = {
+					NOT = {
+						religion = oren_nayiru_reformed
+						has_province_modifier = U39_protected_population
+					}
+					NOT = {
+						calc_true_if = {
+							amount = 60
+							desc = U39_amadia_protected_population_tt
+							amadia_region = {
+								type = all
+								OR = {
+									religion = oren_nayiru_reformed
+									has_province_modifier = U39_protected_population
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					OR = {
+						culture = chaqanel
+						culture = quruwei
+						culture = chamullach
+						culture = banche
+						culture = quchamar
+						culture = faalte
+					}
+					OR = {
+						NOT = { owned_by = ROOT }
+						anb_has_seat_in_parliament = no
+					}
+					ROOT = {
+						NOT = {
+							num_of_owned_provinces_with = {
+								value = 10
+								OR = {
+									culture = chaqanel
+									culture = quruwei
+								}
+								anb_has_seat_in_parliament = yes
+							}
+							num_of_owned_provinces_with = {
+								value = 10
+								OR = {
+									culture = chamullach
+									culture = banche
+								}
+								anb_has_seat_in_parliament = yes
+							}
+							num_of_owned_provinces_with = {
+								value = 10
+								OR = {
+									culture = quchamar
+									culture = faalte
+								}
+								anb_has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = U39_amadia_damestear_tt
+				amadia_region = {
+					type = all
+					OR = {
+						NOT = { trade_goods = damestear }
+						has_building = mage_tower
+					}
+				}
+			}
+			calc_true_if = {
+				amount = 60
+				desc = U39_amadia_protected_population_tt
+				amadia_region = {
+					type = all
+					OR = {
+						religion = oren_nayiru_reformed
+						has_province_modifier = U39_protected_population
+					}
+				}
+			}
+			OR = {
+				num_of_owned_provinces_with = {
+					value = 10
+					OR = {
+						culture = chaqanel
+						culture = quruwei
+					}
+					anb_has_seat_in_parliament = yes
+				}
+				num_of_owned_provinces_with = {
+					value = 10
+					OR = {
+						culture = chamullach
+						culture = banche
+					}
+					anb_has_seat_in_parliament = yes
+				}
+				num_of_owned_provinces_with = {
+					value = 10
+					OR = {
+						culture = quchamar
+						culture = faalte
+					}
+					anb_has_seat_in_parliament = yes
+				}
+				custom_trigger_tooltip = {
+					tooltip = U39_amadia_bypass_tt
+					NOT = {
+						calc_true_if = {
+							amount = 10
+							south_america = {
+								type = all
+								OR = {
+									culture = chaqanel
+									culture = quruwei
+								}
+							}
+						}
+						calc_true_if = {
+							amount = 10
+							south_america = {
+								type = all
+								OR = {
+									culture = chamullach
+									culture = banche
+								}
+							}
+						}
+						calc_true_if = {
+							amount = 10
+							south_america = {
+								type = all
+								OR = {
+									culture = quchamar
+									culture = faalte
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						calc_true_if = {
+							amount = 10
+							south_america = {
+								type = all
+								OR = {
+									culture = chaqanel
+									culture = quruwei
+								}
+							}
+						}
+						calc_true_if = {
+							amount = 10
+							south_america = {
+								type = all
+								OR = {
+									culture = chamullach
+									culture = banche
+								}
+							}
+						}
+						calc_true_if = {
+							amount = 10
+							south_america = {
+								type = all
+								OR = {
+									culture = quchamar
+									culture = faalte
+								}
+							}
+						}
+					}
+				}
+				custom_tooltip = U39_buff_border_tribes_more_tt
+				set_country_flag = U39_buff_border_tribes_more_flag
+				anb_aelantir_cultural_union = { amadia = yes }
+				U39_unshackle_production = { region = amadia_region trade_good = grain }
+				country_event = {
+					id = orenvalyam_events.33 #Whims of the Wild
+				}
+			}
+		}
+	}
+
+	U39_5_8_the_new_paradigm = {
+		icon = mission_star_ascendency
+		position = 8
+		required_missions = {
+			U39_4_7_an_elemental_force
+			U39_5_6_the_chaotic_good
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					superregion = eordand_superregion
+					NOT = {
+						country_or_subject_holds_or_uncolonized = yes
+						is_island = yes
+						region = domandrod_region
+					}
+				}
+				AND = {
+					OR = {
+						continent = north_america
+						continent = south_america
+					}
+					trade_goods = precursor_relics
+					NOT = { country_or_subject_holds = ROOT }
+				}
+				AND = {
+					province_id = 2112 #Nani Kinn
+					NOT = {
+						has_great_project = {
+							type = tunnels_of_renewal
+							tier = 1
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			eordand_superregion = {
+				type = all
+				OR = {
+					country_or_subject_holds_or_uncolonized = yes
+					is_island = yes
+					region = domandrod_region
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = U39_aelantir_relics_tt
+				north_america = {
+					type = all
+					OR = {
+						NOT = { trade_goods = precursor_relics }
+						country_or_subject_holds = ROOT
+					}
+				}
+				south_america = {
+					type = all
+					OR = {
+						NOT = { trade_goods = precursor_relics }
+						country_or_subject_holds = ROOT
+					}
+				}
+			}
+			2112 = { #Nani Kinn
+				has_great_project = {
+					type = tunnels_of_renewal
+					tier = 1
+				}
+			}
+		}
+
+		effect = {
+			anb_aelantir_cultural_union = { harafic = yes }
+			custom_tooltip = U39_extraplanar_contact_buff_tt
+			remove_estate_privilege = estate_mages_U39_the_dawn_paradigm
+			set_estate_privilege = estate_mages_U39_the_pan_aelantiri_paradigm
+			set_country_flag = U39_extraplanar_contact_buff_flag
+		}
+	}
+}

@@ -1,0 +1,1714 @@
+namespace = mangrove
+
+# startup (also called when new mangrove republic is created)
+country_event = {
+	id = mangrove.0
+	title = mangrove.0.t
+	desc = mangrove.0.d
+	picture = EP_ISLAND_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			mangrove_republic_setup = yes
+		}
+	}
+
+	option = {
+		name = mangrove.0.a
+		ai_chance = { factor = 1 }
+		tooltip = {
+			mangrove_republic_setup = yes
+		}
+	}
+}
+
+# revoking mangrove republic reform
+country_event = {
+	id = mangrove.1
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+	option = {
+		name = none
+
+		remove_country_modifier = mangrove_peace
+		every_known_country = {
+			limit = { has_government_attribute = mangrove_republic }
+			remove_opinion = {
+				who = ROOT
+				modifier = mangrove_republic_relations
+			}
+			reverse_remove_opinion = {
+				who = ROOT
+				modifier = mangrove_republic_relations
+			}
+		}
+		every_owned_province = {
+			limit = {
+				region = tagaala_mangroves_region
+				has_province_modifier = mangrove_bio_infra_decay
+			}
+			remove_province_modifier = mangrove_bio_infra_decay
+		}
+	}
+}
+
+# disable most cbs
+country_event = {
+	id = mangrove.2
+	title = mangrove.2.t
+	desc = mangrove.2.d
+	picture = COLONIZATION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.2.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+# reclamation donation
+country_event = {
+	id = mangrove.3
+	title = mangrove.3.t
+	desc = mangrove.3.d
+	picture = COLONIZATION_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			export_to_variable = {
+				which = mangrove_manpower
+				value = manpower
+			}
+			export_to_variable = {
+				which = mangrove_money
+				value = treasury
+			}
+			every_known_country = {
+				limit = { has_government_attribute = mangrove_republic }
+				if = {
+					limit = { has_saved_event_target = mangrove_highest_other }
+					if = {
+						limit = {
+							check_variable = {
+								which = mangrove_influence
+								which = event_target:mangrove_highest_other
+							}
+						}
+						save_event_target_as = mangrove_highest_other
+					}
+				}
+				else = {
+					save_event_target_as = mangrove_highest_other
+				}
+			}
+		}
+	}
+
+	option = {
+		name = mangrove.3.a
+		trigger = {
+			anb_require_all_power = { VAL = 50 }
+		}
+		ai_chance = {
+			factor = 1
+		}
+		anb_remove_all_power = { VAL = 50 }
+		mangrove_gain_influence = { INFLUENCE = 2 }
+		hidden_effect = {
+			mangrove_donate = yes
+		}
+		custom_tooltip = mangrove_donate_tt
+	}
+	option = {
+		name = mangrove.3.b
+		trigger = {
+			check_variable = {
+				which = mangrove_manpower
+				which = mangrove_manpower_check
+			}
+		}
+		ai_chance = {
+			factor = 1
+		}
+		hidden_effect = {
+			set_variable = {
+				which = mangrove_manpower_cost
+				which = mangrove_manpower_check
+			}
+			var_effect = {
+				effect = add_manpower
+				var = mangrove_manpower_cost
+				sign = -
+			}
+			multiply_variable = { mangrove_manpower_check = 2 }
+			mangrove_donate = yes
+		}
+		custom_tooltip = mangrove_donate_manpower_tt
+		mangrove_gain_influence = { INFLUENCE = 1 }
+		custom_tooltip = mangrove_donate_tt
+	}
+	option = {
+		name = mangrove.3.e
+		trigger = {
+			check_variable = {
+				which = mangrove_money
+				which = mangrove_money_check
+			}
+		}
+		ai_chance = {
+			factor = 1
+		}
+		hidden_effect = {
+			set_variable = {
+				which = mangrove_money_cost
+				which = mangrove_money_check
+			}
+			var_effect = {
+				effect = add_treasury
+				var = mangrove_money_cost
+				sign = -
+			}
+			multiply_variable = { mangrove_money_check = 2 }
+			mangrove_donate = yes
+		}
+		custom_tooltip = mangrove_donate_money_tt
+		mangrove_gain_influence = { INFLUENCE = 1 }
+		custom_tooltip = mangrove_donate_tt
+	}
+	option = {
+		name = mangrove.3.f
+		ai_chance = {
+			factor = 0
+		}
+		if = { # ai bypass in case they can't afford any options
+			limit = { ai = yes }
+			mangrove_gain_influence = { INFLUENCE = 1 }
+			mangrove_donate = yes
+		}
+	}
+}
+
+# RNG add random dev
+province_event = {
+	id = mangrove.4
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = none
+		ai_chance = {
+			factor = 1
+		}
+		add_base_tax = 1
+	}
+	option = {
+		name = none
+		ai_chance = {
+			factor = 1
+		}
+		add_base_production = 1
+	}
+	option = {
+		name = none
+		ai_chance = {
+			factor = 1
+		}
+		add_base_manpower = 1
+	}
+}
+
+# punia logia decision
+country_event = {
+	id = mangrove.5
+	title = mangrove.5.t
+	desc = mangrove.5.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			every_known_country = {
+				limit = { has_government_attribute = mangrove_republic }
+				if = {
+					limit = { has_saved_event_target = mangrove_highest_other }
+					if = {
+						limit = {
+							check_variable = {
+								which = mangrove_punia_logi
+								which = event_target:mangrove_highest_other
+							}
+						}
+						save_event_target_as = mangrove_highest_other
+					}
+				}
+				else = {
+					save_event_target_as = mangrove_highest_other
+				}
+			}
+		}
+	}
+
+	option = {
+		name = mangrove.5.a
+		highlight = yes
+		trigger = {
+			treasury = 100
+		}
+		ai_chance = {
+			factor = 1
+		}
+		add_treasury = -100
+		change_variable = { mangrove_punia_logi = 1 }
+		set_country_flag = mangrove_punia_logi_constructed
+		custom_tooltip = mangrove_punia_logi_compare_info_tt
+	}
+	option = {
+		name = mangrove.5.b
+		highlight = yes
+		trigger = {
+			num_of_allies = 2
+			check_variable = { mangrove_influence = 5 }
+		}
+		ai_chance = {
+			factor = 1
+		}
+		change_variable = { mangrove_punia_logi = 1 }
+		mangrove_lose_influence = { INFLUENCE = 5 }
+		set_country_flag = mangrove_punia_logi_constructed
+		custom_tooltip = mangrove_punia_logi_compare_info_tt
+	}
+	option = {
+		name = mangrove.5.c
+		highlight = yes
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = mangrove_finished_bio_infra_tt
+				any_owned_province = {
+					has_province_flag = mangrove_bio_infra_finished
+				}
+			}
+			check_variable = { mangrove_influence = 5 }
+		}
+		ai_chance = {
+			factor = 1
+		}
+		change_variable = { mangrove_punia_logi = 1 }
+		mangrove_lose_influence = { INFLUENCE = 5 }
+		set_country_flag = mangrove_punia_logi_constructed
+		custom_tooltip = mangrove_punia_logi_compare_info_tt
+	}
+	option = {
+		name = mangrove.5.e
+		ai_chance = {
+			factor = 0
+		}
+	}
+	after = {
+		hidden_effect = {
+			if = {
+				limit = { has_country_flag = mangrove_punia_logi_constructed }
+				if = {
+					limit = { ai = yes }
+					add_country_modifier = {
+						name = mangrove_punia_logi_cooldown
+						duration = 465
+					}
+				}
+				else = {
+					add_country_modifier = {
+						name = mangrove_punia_logi_cooldown
+						duration = 365
+					}
+				}
+				clr_country_flag = mangrove_punia_logi_constructed
+			}
+		}
+	}
+}
+
+# reclamation handling below here
+
+# reclamation vote handler
+country_event = {
+	id = mangrove.100
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		NOT = {
+			has_global_flag = mangrove_voting
+			has_global_flag = delete_insyaa_region
+		}
+	}
+
+	immediate = {
+		clr_global_flag = mangrove_restart_voting
+		set_global_flag = mangrove_voting
+		mangrove_clear_votes = yes
+	}
+
+	option = {
+		name = none
+
+		# only start voting if there is an empty province
+		if = {
+			limit = { mangrove_reclamation_provinces = { is_empty = yes } }
+			mangrove_event = { COUNTRY_EVENT = "mangrove.101"}
+			country_event = {
+				id = mangrove.102 # end voting
+				days = 130
+			}
+		}
+		# begin stage 5 if fully colonized - only happens if you colonize all provinces during stage 1 - skipping stages 1-4
+		else = {
+			country_event = {
+				id = mangrove.108
+			}
+		}
+	}
+}
+
+# reclamation voting
+country_event = {
+	id = mangrove.101
+	title = mangrove.101.t
+	desc = mangrove.101.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = {
+		hidden_effect = {
+			mangrove_calc_true_influence = yes
+			set_variable = { mangrove_manpower_check = 1 }
+			set_variable = { mangrove_money_check = 50 }
+		}
+	}
+
+	option = {
+		name = mangrove.101.a
+		trigger = { 6955 = { is_empty = yes } }
+		ai_chance = { factor = 1 }
+		goto = 6955
+		hidden_effect = { mangrove_vote = { TARGET = 6955 } }
+		custom_tooltip = mangrove_vote_tt
+	}
+	option = {
+		name = mangrove.101.b
+		trigger = { 6958 = { is_empty = yes } }
+		ai_chance = { factor = 1 }
+		goto = 6958
+		hidden_effect = { mangrove_vote = { TARGET = 6958 } }
+		custom_tooltip = mangrove_vote_tt
+	}
+	option = {
+		name = mangrove.101.c
+		trigger = { 6959 = { is_empty = yes } }
+		ai_chance = { factor = 1 }
+		goto = 6959
+		hidden_effect = { mangrove_vote = { TARGET = 6959 } }
+		custom_tooltip = mangrove_vote_tt
+	}
+	option = {
+		name = mangrove.101.e
+		trigger = { 6960 = { is_empty = yes } }
+		ai_chance = { factor = 1 }
+		goto = 6960
+		hidden_effect = { mangrove_vote = { TARGET = 6960 } }
+		custom_tooltip = mangrove_vote_tt
+	}
+	option = {
+		name = mangrove.101.f
+		trigger = { 6963 = { is_empty = yes } }
+		ai_chance = { factor = 1 }
+		goto = 6963
+		hidden_effect = { mangrove_vote = { TARGET = 6963 } }
+		custom_tooltip = mangrove_vote_tt
+	}
+	option = {
+		name = mangrove.101.g
+		trigger = { 6964 = { is_empty = yes } }
+		ai_chance = { factor = 1 }
+		goto = 6964
+		hidden_effect = { mangrove_vote = { TARGET = 6964 } }
+		custom_tooltip = mangrove_vote_tt
+	}
+	option = {
+		name = mangrove.101.h
+		trigger = { 6965 = { is_empty = yes } }
+		ai_chance = { factor = 1 }
+		goto = 6965
+		hidden_effect = { mangrove_vote = { TARGET = 6965 } }
+		custom_tooltip = mangrove_vote_tt
+	}
+}
+
+# end voting handler
+country_event = {
+	id = mangrove.102
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		NOT = { has_global_flag = delete_insyaa_region }
+	}
+
+	option = {
+		name = none
+
+		mangrove_new_target_province = yes
+		if = {
+			limit = { has_saved_global_event_target = mangrove_target_province }
+			event_target:mangrove_leader = {
+				event_target:mangrove_target_province = {
+					change_trade_goods = wool
+					add_core = PREV
+					cede_province = PREV
+					add_permanent_province_modifier = {
+						name = mangrove_reclamation_site
+						duration = 1850 # ~5 years
+					}
+					add_local_autonomy = -50
+					set_variable = { mangrove_donations = 0 }
+
+					# decide trade goods
+					province_event = {
+						id = mangrove.1020
+						days = 730 # 2 years
+					}
+					province_event = {
+						id = mangrove.1021
+						days = 1460 # 4 years
+					}
+					province_event = {
+						id = mangrove.104
+						days = 1825 # 5 years
+					}
+				}
+			}
+			mangrove_event = { COUNTRY_EVENT = "mangrove.103" }
+			set_global_flag = mangrove_reclaiming
+		}
+		else = { # edge case if outsider colonized the last province mid-vote
+			set_global_flag = mangrove_restart_voting
+			mangrove_event = { COUNTRY_EVENT = "mangrove.122" }
+		}
+
+		clr_global_flag = mangrove_voting
+	}
+}
+
+# invest into trade goods
+province_event = {
+	id = mangrove.1020
+	title = mangrove.1020.t
+	desc = mangrove.1020.d
+	picture = COLONIZATION_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		has_province_modifier = mangrove_reclamation_site
+	}
+
+	option = {
+		name = mangrove.1020.a
+		# AI won't go into debt
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 0
+				owner = {
+					NOT = { treasury = 50 }
+				}
+			}
+		}
+		highlight = yes
+		set_province_flag = mangrove_high_tier_goods
+		owner = {
+			add_treasury = -50
+		}
+		custom_tooltip = mangrove_high_investment_tt
+	}
+	option = {
+		name = mangrove.1020.b
+		ai_chance = {
+			factor = 1
+		}
+		set_province_flag = mangrove_low_tier_goods
+		custom_tooltip = mangrove_low_investment_tt
+	}
+}
+
+# trade good selection
+province_event = {
+	id = mangrove.1021
+	title = mangrove.1021.t
+	desc = mangrove.1021.d
+	picture = COLONIZATION_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		has_province_modifier = mangrove_reclamation_site
+	}
+
+	option = {
+		name = mangrove.1021.a
+		trigger = { has_province_flag = mangrove_high_tier_goods }
+		owner = {
+			add_manpower = -1
+		}
+		change_trade_goods = salt
+	}
+	option = {
+		name = mangrove.1021.b
+		trigger = { has_province_flag = mangrove_high_tier_goods }
+		owner = {
+			add_manpower = -1
+		}
+		change_trade_goods = gems
+	}
+	option = {
+		name = mangrove.1021.c
+		trigger = { has_province_flag = mangrove_high_tier_goods }
+		owner = {
+			add_manpower = -1
+		}
+		change_trade_goods = ivory
+	}
+	option = {
+		name = mangrove.1021.e
+		trigger = { has_province_flag = mangrove_high_tier_goods }
+		owner = {
+			add_manpower = -1
+		}
+		change_trade_goods = dyes
+	}
+	option = {
+		name = mangrove.1021.f
+		trigger = { has_province_flag = mangrove_low_tier_goods }
+		owner = {
+			add_manpower = -1
+		}
+		change_trade_goods = fish
+	}
+	option = {
+		name = mangrove.1021.g
+		trigger = { has_province_flag = mangrove_low_tier_goods }
+		owner = {
+			add_manpower = -1
+		}
+		change_trade_goods = naval_supplies
+	}
+	option = {
+		name = mangrove.1021.h
+		trigger = { has_province_flag = mangrove_low_tier_goods }
+		owner = {
+			add_manpower = -1
+		}
+		change_trade_goods = tropical_wood
+	}
+	option = {
+		name = mangrove.1021.i
+		trigger_switch = {
+			on_trigger = has_province_flag
+			mangrove_high_tier_goods = {
+				random_list = {
+					1 = { change_trade_goods = salt }
+					1 = { change_trade_goods = gems }
+					1 = { change_trade_goods = ivory }
+					1 = { change_trade_goods = dyes }
+				}
+			}
+			mangrove_low_tier_goods = {
+				random_list = {
+					1 = { change_trade_goods = fish }
+					1 = { change_trade_goods = naval_supplies }
+					1 = { change_trade_goods = tropical_wood }
+				}
+			}
+		}
+	}
+
+	after = {
+		clr_province_flag = mangrove_high_tier_goods
+		clr_province_flag = mangrove_low_tier_goods
+	}
+}
+
+# election result alert
+country_event = {
+	id = mangrove.103
+	title = mangrove.103.t
+	desc = mangrove.103.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = mangrove.103.a
+		ai_chance = { factor = 1 }
+		goto = event_target:mangrove_target_province
+		tooltip = {
+			event_target:mangrove_leader = {
+				event_target:mangrove_target_province = {
+					add_core = PREV
+				}
+			}
+		}
+		custom_tooltip = mangrove_reclamation_tt
+	}
+}
+
+# end reclamation handler
+province_event = {
+	id = mangrove.104
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		has_province_modifier = mangrove_reclamation_site
+	}
+
+	option = {
+		name = none
+	
+		event_target:mangrove_target_province = {
+			save_event_target_as = mangrove_reclaimed_permanently
+		}
+		clear_global_event_target = mangrove_target_province
+
+		clr_global_flag = mangrove_reclaiming
+		set_global_flag = mangrove_inward_focus
+
+		mangrove_event = { COUNTRY_EVENT = "mangrove.105" }
+
+		event_target:mangrove_leader = {
+			mangrove_lose_influence = { INFLUENCE = 10 }
+		}
+
+		REB = {
+			country_event = {
+				id = mangrove.106 # end inward focus
+				days = 730 # 2 years
+			}
+		}
+	}
+}
+
+# reclamation end alert
+country_event = {
+	id = mangrove.105
+	title = mangrove.105.t
+	desc = mangrove.105.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = mangrove.105.a
+		ai_chance = { factor = 1 }
+		goto = event_target:mangrove_reclaimed_permanently
+		custom_tooltip = mangrove_inward_focus_tt
+		clr_country_flag = mangrove_donation_cooldown
+	}
+}
+
+# end inward focus handler
+country_event = {
+	id = mangrove.106
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		has_global_flag = mangrove_inward_focus
+	}
+
+	option = {
+		name = none
+
+		clr_global_flag = mangrove_inward_focus
+		clr_global_flag = mangrove_reclaiming
+		clr_global_flag = mangrove_shift_focus_taken
+
+		if = {
+			# check for empty provinces
+			limit = {
+				mangrove_reclamation_provinces = { is_empty = yes }
+			}
+
+			mangrove_event = { COUNTRY_EVENT = "mangrove.107" }
+			
+			# begin the voting again
+			set_global_flag = mangrove_restart_voting
+		}
+		# begin the vying for dominance
+		else = {
+			country_event = {
+				id = mangrove.108
+			}
+		}
+	}
+}
+
+# begin voting again alert
+country_event = {
+	id = mangrove.107
+	title = mangrove.107.t
+	desc = mangrove.107.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.107.a
+		ai_chance = { factor = 1 }
+	}
+}
+
+# vying handler
+country_event = {
+	id = mangrove.108
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = none
+
+		clr_global_flag = mangrove_voting
+
+		# find largest tag and player tag
+		every_country = {
+			limit = { has_government_attribute = mangrove_republic }
+			# the largest tag determines the type of vying
+			if = {
+				limit = {
+					has_saved_event_target = mangrove_largest_tag
+				}
+				if = {
+					limit = { total_development = event_target:mangrove_largest_tag }
+					save_event_target_as = mangrove_largest_tag
+				}
+			}
+			else = {
+				save_event_target_as = mangrove_largest_tag
+			}
+			# also find largest player tag
+			if = {
+				limit = { ai = no }
+				if = {
+					limit = {
+						has_saved_event_target = mangrove_largest_player
+					}
+					if = {
+						limit = { total_development = event_target:mangrove_largest_player }
+						save_event_target_as = mangrove_largest_player
+					}
+				}
+				else = {
+					save_event_target_as = mangrove_largest_player
+				}
+			}
+		}
+
+		# choose path based on largest tag
+		if = {
+			limit = {
+				event_target:mangrove_largest_tag = {
+					OR = {
+						primary_culture = togavaopaolo
+						tag = P22 # Anatu'agao
+					}
+				}
+			}
+			# choose diplo path
+			set_global_flag = mangrove_dip_vying
+		}
+		else_if = {
+			limit = {
+				event_target:mangrove_largest_tag = {
+					OR = {
+						primary_culture = aliiula
+						tag = P21 # Seila Agaga
+					}
+				}
+			}
+			# choose mil path
+			set_global_flag = mangrove_mil_vying
+		}
+		else = {
+			# choose random path
+			random_list = {
+				50 = {
+					set_global_flag = mangrove_dip_vying
+				}
+				50 = {
+					set_global_flag = mangrove_mil_vying
+				}
+			}
+		}
+
+		if = { # player can change type of vying
+			limit = { has_saved_event_target = mangrove_largest_player }
+			event_target:mangrove_largest_player = {
+				country_event = { id = mangrove.109 }
+			}
+		}
+		else = { # otherwise just begin the vying
+			country_event = {
+				id = mangrove.110
+			}
+		}
+	}
+}
+
+# vying alert - let largest player change the type of vying if they wish
+country_event = {
+	id = mangrove.109
+	title = mangrove.109.t
+	desc = mangrove.109.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.109.a
+		ai_chance = { factor = 1 }
+		custom_tooltip = mangrove_largest_tag_explain_tt
+		trigger_switch = {
+			on_trigger = has_global_flag
+			mangrove_dip_vying = { custom_tooltip = mangrove_dip_vying_pre_explain_tt }
+			mangrove_mil_vying = { custom_tooltip = mangrove_mil_vying_pre_explain_tt }
+		}
+	}
+
+	option = {
+		name = mangrove.109.b
+		trigger = {
+			tag = event_target:mangrove_largest_player
+		}
+		ai_chance = { factor = 0 }
+
+		anb_remove_all_power = { VAL = 50 }
+		add_treasury = -50
+
+		trigger_switch = {
+			on_trigger = has_global_flag
+			mangrove_dip_vying = {
+				clr_global_flag = mangrove_dip_vying
+				set_global_flag = mangrove_mil_vying
+				custom_tooltip = mangrove_vying_swap_mil_tt
+				custom_tooltip = mangrove_mil_vying_pre_explain_tt
+			}
+			mangrove_mil_vying = {
+				clr_global_flag = mangrove_mil_vying
+				set_global_flag = mangrove_dip_vying
+				custom_tooltip = mangrove_vying_swap_dip_tt
+				custom_tooltip = mangrove_dip_vying_pre_explain_tt
+			}
+		}
+	}
+
+	after = {
+		REB = {
+			country_event = {
+				id = mangrove.110
+			}
+		}
+	}
+}
+
+# vying begins
+country_event = {
+	id = mangrove.110
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = none
+		set_global_flag = mangrove_vying_for_dominance
+
+		# set the two sides if vying militarily
+		if = {
+			limit = { has_global_flag = mangrove_mil_vying }
+			
+			# if players are in the region
+			if = {
+				limit = { has_saved_event_target = mangrove_largest_player }
+				event_target:mangrove_largest_player = {
+					save_global_event_target_as = mangrove_side_1
+					# find 2nd largest player as well
+					select_highest_dev_known_country_with_limit = {
+						index = 0
+						limit = "
+							has_government_attribute = mangrove_republic
+							ai = no
+						"
+						effect = "
+							save_global_event_target_as = mangrove_side_2
+						"
+					}
+					# if no 2nd player, just find largest tag that isn't the player
+					if = {
+						limit = { NOT = { has_saved_event_target = mangrove_side_2 } }
+						select_highest_dev_known_country_with_limit = {
+							index = 0
+							limit = "
+								has_government_attribute = mangrove_republic
+							"
+							effect = "
+								save_global_event_target_as = mangrove_side_2
+							"
+						}
+					}
+				}
+			}
+			# if only ai is in the region, find 2nd largest tag
+			else = {
+				event_target:mangrove_largest_tag = {
+					save_global_event_target_as = mangrove_side_1
+	
+					select_highest_dev_known_country_with_limit = {
+						index = 0
+						limit = "
+							has_government_attribute = mangrove_republic
+						"
+						effect = "
+							save_global_event_target_as = mangrove_side_2
+						"
+					}
+				}
+			}
+
+			event_target:mangrove_side_1 = {
+				set_country_flag = mangrove_side_1
+			}
+			event_target:mangrove_side_2 = {
+				set_country_flag = mangrove_side_2
+			}
+
+			country_event = {
+				id = mangrove.112
+				days = 1095 # 3 years
+			}
+		}
+		# alert players if vying diplo
+		else = {
+			country_event = {
+				id = mangrove.116
+				days = 3650 # 10 years
+			}
+		}
+
+		mangrove_event = { COUNTRY_EVENT = "mangrove.111" }
+	}
+}
+
+# vying begin alert
+country_event = {
+	id = mangrove.111
+	title = mangrove.111.t
+	desc = {
+		trigger = {
+			has_global_flag = mangrove_dip_vying
+		}
+		desc = mangrove.111.d.dip
+	}
+	desc = {
+		trigger = {
+			has_global_flag = mangrove_mil_vying
+		}
+		desc = mangrove.111.d.mil
+	}
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.111.a
+		trigger_switch = {
+			on_trigger = has_global_flag
+			mangrove_dip_vying = { custom_tooltip = mangrove_dip_vying_tt }
+			mangrove_mil_vying = { custom_tooltip = mangrove_mil_vying_tt }
+		}
+	}
+}
+
+# start war handler
+country_event = {
+	id = mangrove.112
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = none
+		# make each tag choose a side
+		mangrove_event = { COUNTRY_EVENT = "mangrove.113" }
+
+		set_global_flag = mangrove_unification_war_ongoing
+
+		event_target:mangrove_side_2 = {
+			event_target:mangrove_side_1 = {
+				if = {
+					limit = {
+						is_in_war = {
+							participants = PREV
+						}
+					}
+					white_peace = PREV
+				}
+				declare_war_with_cb = {
+					who = PREV
+					casus_belli = cb_mangrove_unification
+				}
+				country_event = { id = mangrove.114 }
+			}
+			country_event = { id = mangrove.114 }
+		}
+
+		country_event = {
+			id = mangrove.121
+			days = 2555 # 7 years
+		}
+	}
+}
+
+# choosing sides helper
+country_event = {
+	id = mangrove.113
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		NOT = {
+			has_country_flag = mangrove_side_1
+			has_country_flag = mangrove_side_2
+		}
+	}
+
+	option = {
+		name = none
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					who = event_target:mangrove_side_1
+					value = 100
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					who = event_target:mangrove_side_1
+					value = 150
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					who = event_target:mangrove_side_1
+					value = 200
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_1
+					value = 20
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_1
+					value = 40
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_1
+					value = 60
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_1
+					value = 80
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_1
+					value = 100
+				}
+			}
+		}
+		every_owned_province = {
+			set_province_flag = mangrove_swayed_1
+		}
+		event_target:mangrove_side_1 = {
+			inherit = PREV
+		}
+	}
+	option = {
+		name = none
+		ai_chance = {
+			factor = 1
+			modifier = {
+				factor = 2
+				has_opinion = {
+					who = event_target:mangrove_side_2
+					value = 100
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					who = event_target:mangrove_side_2
+					value = 150
+				}
+			}
+			modifier = {
+				factor = 2
+				has_opinion = {
+					who = event_target:mangrove_side_2
+					value = 200
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_2
+					value = 20
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_2
+					value = 40
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_2
+					value = 60
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_2
+					value = 80
+				}
+			}
+			modifier = {
+				factor = 2
+				trust = {
+					who = event_target:mangrove_side_2
+					value = 100
+				}
+			}
+		}
+		every_owned_province = {
+			set_province_flag = mangrove_swayed_2
+		}
+		event_target:mangrove_side_2 = {
+			inherit = PREV
+		}
+	}
+}
+
+# war of unification alert
+country_event = {
+	id = mangrove.114
+	title = mangrove.114.t
+	desc = mangrove.114.d
+	picture = NUSANTARA_WAR_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.114.a
+		custom_tooltip = mangrove_unification_war_tt
+	}
+}
+
+# end of war
+country_event = {
+	id = mangrove.115
+	title = mangrove.115.t
+	desc = mangrove.115.d
+	picture = SIEGE_eventPicture
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	immediate = {
+		hidden_effect = {
+			clr_global_flag = mangrove_unification_war_ongoing
+			clr_global_flag = mangrove_mil_vying
+
+			# avoid error log spam with global event targets as RHS args in effects
+			event_target:mangrove_side_1 = {
+				save_event_target_as = mangrove_side_1_local
+			}
+			event_target:mangrove_side_2 = {
+				save_event_target_as = mangrove_side_2_local
+			}
+		}
+	}
+
+	option = {
+		name = mangrove.115.a
+
+		trigger_switch = {
+			on_trigger = has_country_flag
+			mangrove_side_1 = {
+				inherit = event_target:mangrove_side_2_local
+				every_owned_province = {
+					limit = {
+						region = tagaala_mangroves_region
+						has_province_flag = mangrove_swayed_1
+					}
+					clr_province_flag = mangrove_swayed_1
+					set_province_flag = mangrove_free_upgrade
+				}
+				clr_country_flag = mangrove_side_1
+			}
+			mangrove_side_2 = {
+				inherit = event_target:mangrove_side_1_local
+				every_owned_province = {
+					limit = {
+						region = tagaala_mangroves_region
+						has_province_flag = mangrove_swayed_2
+					}
+					clr_province_flag = mangrove_swayed_2
+					set_province_flag = mangrove_free_upgrade
+				}
+				clr_country_flag = mangrove_side_2
+			}
+		}
+		custom_tooltip = mangrove_vying_mil_reward_tt
+		mangrove_consolidate = yes
+	}
+}
+
+# end of diplo vying
+country_event = {
+	id = mangrove.116
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = none
+
+		# find tag with most punia logi
+		every_country = {
+			limit = { has_government_attribute = mangrove_republic }
+			if = {
+				limit = { has_saved_event_target = mangrove_most_punia_logi }
+				if = {
+					limit = {
+						event_target:mangrove_most_punia_logi = {
+							NOT = {
+								check_variable = {
+									which = mangrove_punia_logi
+									which = PREV
+								}
+							}
+						}
+					}
+					save_event_target_as = mangrove_most_punia_logi
+				}
+			}
+			else = {
+				save_event_target_as = mangrove_most_punia_logi
+			}
+		}
+		# check for tie
+		if = {
+			limit = {
+				event_target:mangrove_most_punia_logi = {
+					any_known_country = {
+						has_government_attribute = mangrove_republic
+						check_variable = {
+							which = mangrove_punia_logi
+							which = PREV
+						}
+					}
+				}
+			}
+			if = {
+				limit = { NOT = { has_global_flag = mangrove_dip_vying_tied } }
+				# check for winner in 2 years
+				set_global_flag = mangrove_dip_vying_tied
+				country_event = {
+					id = mangrove.116
+					days = 730
+				}
+				mangrove_event = { COUNTRY_EVENT = "mangrove.117" }
+			}
+			else = {
+				# random winner among the tied
+				clr_global_flag = mangrove_dip_vying_tied
+				event_target:mangrove_most_punia_logi = {
+					random_country = {
+						limit = {
+							has_government_attribute = mangrove_republic
+							check_variable = {
+								which = mangrove_punia_logi
+								which = PREV
+							}
+						}
+						country_event = { id = mangrove.118 }
+					}
+				}
+			}
+		}
+		else = {
+			clr_global_flag = mangrove_dip_vying_tied
+			event_target:mangrove_most_punia_logi = {
+				country_event = { id = mangrove.118 }
+			}
+		}
+	}
+}
+
+# punia logi tie alert
+country_event = {
+	id = mangrove.117
+	title = mangrove.117.t
+	desc = mangrove.117.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.117.a
+		custom_tooltip = mangrove_punia_logi_warning_tt
+	}
+}
+
+# punia logi winner
+country_event = {
+	id = mangrove.118
+	title = mangrove.118.t
+	desc = mangrove.118.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	immediate = {
+		clr_global_flag = mangrove_dip_vying
+	}
+
+	option = {
+		name = mangrove.118.a
+
+		tagaala_mangroves_region = {
+			limit = {
+				NOT = { owned_by = ROOT }
+			}
+			set_province_flag = mangrove_free_upgrade
+		}
+		every_known_country = {
+			limit = { has_government_attribute = mangrove_republic }
+			ROOT = {
+				inherit = PREV
+			}
+		}
+		custom_tooltip = mangrove_vying_dip_reward_tt
+
+		add_adm_power = 100
+		add_dip_power = 100
+		add_mil_power = 100
+
+		mangrove_consolidate = yes
+	}
+}
+
+# no military vying winner handler
+country_event = {
+	id = mangrove.119
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+	fire_only_once = yes
+
+	trigger = {
+		has_global_flag = mangrove_unification_war_ongoing
+	}
+
+	immediate = {
+		clr_global_flag = mangrove_unification_war_ongoing
+		clr_global_flag = mangrove_mil_vying
+	}
+
+	option = {
+		name = none
+		mangrove_end_reclamation = yes
+		mangrove_event = { COUNTRY_EVENT = "mangrove.120" }
+	}
+}
+
+# no military vying winner alert
+country_event = {
+	id = mangrove.120
+	title = mangrove.120.t
+	desc = mangrove.120.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.120.a
+		mangrove_remove_modifiers = yes
+	}
+}
+
+# military vying time run out
+country_event = {
+	id = mangrove.121
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		has_global_flag = mangrove_unification_war_ongoing
+	}
+
+	option = {
+		name = none
+		if = {
+			limit = {
+				event_target:mangrove_side_1 = {
+					war_score_against = {
+						who = event_target:mangrove_side_2
+						value = 0
+					}
+				}
+			}
+			event_target:mangrove_side_1 = {
+				country_event = { id = mangrove.115 }
+			}
+		}
+		else = {
+			event_target:mangrove_side_2 = {
+				country_event = { id = mangrove.115 }
+			}
+		}
+	}
+}
+
+# cancel reclamation if outsider tag colonizes/conquers mid-process
+country_event = {
+	id = mangrove.122
+	title = mangrove.122.t
+	desc = mangrove.122.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.122.a
+	}
+}
+
+# new mangrove leader alert
+country_event = {
+	id = mangrove.123
+	title = mangrove.123.t
+	desc = mangrove.123.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	trigger = {
+		NOT = { has_country_flag = mangrove_disable_new_leader_event }
+	}
+
+	option = {
+		name = mangrove.123.a
+	}
+
+	option = {
+		name = mangrove.123.b
+		highlight = yes
+		set_country_flag = mangrove_disable_new_leader_event
+		custom_tooltip = mangrove_disable_new_leader_event_tt
+	}
+}
+
+# pulse events below here
+
+# 5 year pulse mangrove influence events
+country_event = {
+	id = mangrove.200
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+
+	trigger = {
+		has_government_attribute = mangrove_republic
+		NOT = { has_global_flag = mangrove_reclamation_done }
+		NOT = { has_global_flag = mangrove_vying_for_dominance } # disable the influence events during vying for dominance
+	}
+
+	option = {
+		name = none
+		random_list = {
+			1 = {}
+			1 = {
+				country_event = { id = mangrove.201 }
+			}
+			1 = {
+				country_event = { id = mangrove.202 }
+			}
+			1 = {
+				trigger = {
+					has_country_flag = eo_chronicling
+					has_country_flag = eo_positive_next_event
+				}
+				country_event = { id = mangrove.203 }
+			}
+			1 = {
+				trigger = {
+					has_country_flag = eo_chronicling
+					has_country_flag = eo_negative_next_event
+				}
+				country_event = { id = mangrove.204 }
+			}
+		}
+	}
+}
+
+# lose influence pulse
+country_event = {
+	id = mangrove.201
+	title = mangrove.201.t
+	desc = mangrove.201.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.201.a
+		random_list = {
+			1 = {
+				mangrove_lose_influence = { INFLUENCE = 1 }
+			}
+			1 = {
+				mangrove_lose_influence = { INFLUENCE = 2 }
+			}
+			1 = {
+				mangrove_lose_influence = { INFLUENCE = 3 }
+			}
+		}
+	}
+}
+
+# gain influence pulse
+country_event = {
+	id = mangrove.202
+	title = mangrove.202.t
+	desc = mangrove.202.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.202.a
+		random_list = {
+			1 = {
+				mangrove_gain_influence = { INFLUENCE = 1 }
+			}
+			1 = {
+				mangrove_gain_influence = { INFLUENCE = 2 }
+			}
+			1 = {
+				mangrove_gain_influence = { INFLUENCE = 3 }
+			}
+		}
+	}
+}
+
+# negative chronicle pulse
+country_event = {
+	id = mangrove.203
+	title = mangrove.203.t
+	desc = mangrove.203.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.203.a
+		random_list = {
+			1 = {
+				mangrove_lose_influence = { INFLUENCE = 2 }
+			}
+			1 = {
+				mangrove_lose_influence = { INFLUENCE = 3 }
+			}
+			1 = {
+				mangrove_lose_influence = { INFLUENCE = 4 }
+			}
+		}
+	}
+}
+
+# positive chronicle pulse
+country_event = {
+	id = mangrove.204
+	title = mangrove.204.t
+	desc = mangrove.204.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = mangrove.204.a
+		random_list = {
+			1 = {
+				mangrove_gain_influence = { INFLUENCE = 2 }
+			}
+			1 = {
+				mangrove_gain_influence = { INFLUENCE = 3 }
+			}
+			1 = {
+				mangrove_gain_influence = { INFLUENCE = 4 }
+			}
+		}
+	}
+}

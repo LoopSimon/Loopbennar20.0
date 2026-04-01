@@ -40,7 +40,6 @@ update_artifice_points = {
 				which = ArtificePointsDamestear
 				value = 0
 			}
-
 			if = {
 				limit = { NOT = { has_reform = bazuneizar_clockwork_republic } }
 				6168 = {
@@ -51,7 +50,6 @@ update_artifice_points = {
 						}
 					}
 				}
-
 				change_variable = {
 					which = MaxArtificePoints
 					which = GlobalArtificeLimit
@@ -501,6 +499,13 @@ update_artifice_points = {
 				}
 			}
 			if = {
+				limit = { has_country_flag = non_artificery_culture }
+				subtract_variable = {
+					which = ArtificePointsMultiplier
+					value = 0.5
+				}
+			}
+			if = {
 				limit = { 
 					tag = J84 #Taychendi Empire
 					has_country_flag = J84_increased_percent_artifice_capacity_flag
@@ -751,18 +756,7 @@ set_up_artifice_system = {
 			NOT = { has_country_flag = artificery_choice }
 			NOT = { tag = H74 } #dak special
 			OR = {
-				AND = {
-					is_tribal = no
-					OR = {
-						culture_group = kobold
-						culture_group = goblin
-						culture_group = gnomish
-					}
-					NOT = {
-						primary_culture = goldscale_kobold
-						primary_culture_insyaa_kobold = yes
-					}
-				}
+				is_artificery_culture_government = yes
 				AND = {
 					has_institution = manufactories
 					OR = {
@@ -774,8 +768,24 @@ set_up_artifice_system = {
 		}
 		country_event = {
 			id = magic_artificery_setup.1
-		}
+		}	
 		set_country_flag = artificery_choice
+	}
+	else_if = {
+		limit = {
+			OR = {
+				has_estate_privilege = estate_artificers_organization_pillar_expedition
+				has_estate_privilege = estate_artificers_organization_mechanim_base
+			}
+			has_institution = manufactories
+			NOT = { has_country_flag = artificery_choice }
+		}
+		country_event = {
+			id = magic_artificery_setup.2
+		}	
+		set_country_flag = artificery_choice
+		clr_country_flag = artifice_no_research_yes_inventions
+		clr_country_flag = artifice_no_base_privileges
 	}
 	else_if = {
 		limit = { #you have no flags and are a spawnable
@@ -1552,6 +1562,13 @@ estate_action_GRANT_GENERALSHIP_ARTIFICE = {
 	create_leader_scaling_with_tradition_artifice = {
 		leader = general
 		type = army
+	}
+	if = { 
+		limit = { has_country_flag = RSP_palegold_improved_artificer_generals }
+		create_leader_scaling_with_tradition_artifice = {
+			leader = admiral
+			type = navy
+		}
 	}
 	add_estate_loyalty = {
 		estate = estate_artificers
@@ -2440,6 +2457,489 @@ artifice_research_select_innovation_options_effect = {
 					}
 				}
 				set_country_flag = research_artifice_invention_law_books
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			#Insyaa tab inventions
+			1 = { #Economic
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_tgs_farmland
+							has_country_flag = unlocked_artifice_invention_tgs_farmland
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					NOT = {
+						capital_scope = {
+							continent = oceania
+						}
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_tgs_farmland_global
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_tgs_farmland
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Economic
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_tgs_livestock
+							has_country_flag = unlocked_artifice_invention_tgs_livestock
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					NOT = {
+						capital_scope = {
+							continent = oceania
+						}
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_tgs_livestock_global
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_tgs_livestock
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Economic
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_construction_bots
+							has_country_flag = unlocked_artifice_invention_construction_bots
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					NOT = {
+						capital_scope = {
+							continent = oceania
+						}
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_construction_bots_global
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_construction_bots
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Socitey
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_steel_tracking
+							has_country_flag = unlocked_artifice_invention_steel_tracking
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_steel_tracking_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_steel_tracking_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_steel_tracking
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					has_country_flag = magic_artificery_artificery_only
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_sonic_weaponary
+							has_country_flag = unlocked_artifice_invention_sonic_weaponary
+							has_country_flag = artifice_researching_society
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_sonic_weaponary_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_sonic_weaponary_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_sonic_weaponary
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					NOT = { has_country_flag = magic_artificery_artificery_only }
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_sonic_amplifiers
+							has_country_flag = unlocked_artifice_invention_sonic_amplifiers
+							has_country_flag = artifice_researching_society
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_sonic_amplifiers_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_sonic_amplifiers_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_sonic_amplifiers
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_seed_siege
+							has_country_flag = unlocked_artifice_invention_seed_siege
+							has_country_flag = artifice_researching_society
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					capital_scope = {
+						continent = oceania
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_seed_siege_local
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_seed_siege
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Society
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_titano_weed
+							has_country_flag = unlocked_artifice_invention_titano_weed
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					capital_scope = {
+						continent = oceania
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_titano_weed_local
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_titano_weed
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Society
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_pillar_scouts
+							has_country_flag = unlocked_artifice_invention_pillar_scouts
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					capital_scope = {
+						continent = oceania
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_pillar_scouts_local
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_pillar_scouts
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Economic
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_animal_gene
+							has_country_flag = unlocked_artifice_invention_animal_gene
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					capital_scope = {
+						continent = oceania
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_animal_gene_local
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_animal_gene
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Society + Economic
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_reverse_mechanim
+							has_country_flag = unlocked_artifice_invention_reverse_mechanim
+							has_country_flag = artifice_researching_military
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_reverse_mechanim_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_reverse_mechanim_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_reverse_mechanim
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			#Mechanim specific
+			1 = { #Economic
+				trigger = {
+					has_country_modifier = mechanim_administration
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_mech_steel_detector
+							has_country_flag = unlocked_artifice_invention_mech_steel_detector
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_mech_steel_detector
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Economic
+				trigger = {
+					has_country_modifier = mechanim_administration
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_mech_building_plates
+							has_country_flag = unlocked_artifice_invention_mech_building_plates
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_mech_building_plates
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					has_country_modifier = mechanim_administration
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_mech_terrain_specialization
+							has_country_flag = unlocked_artifice_invention_mech_terrain_specialization
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_mech_terrain_specialization
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					has_country_modifier = mechanim_administration
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_mech_lava_cell
+							has_country_flag = unlocked_artifice_invention_mech_lava_cell
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_mech_lava_cell
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					has_country_modifier = mechanim_administration
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_mech_fireproof_plating
+							has_country_flag = unlocked_artifice_invention_mech_fireproof_plating
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_mech_fireproof_plating
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Society
+				trigger = {
+					has_country_modifier = mechanim_administration
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_mech_reawakening_procedure
+							has_country_flag = unlocked_artifice_invention_mech_reawakening_procedure
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_mech_reawakening_procedure
+				subtract_variable = {
+					which = artificeResearchOptionsTier1
+					value = 1
+				}
+			}
+			1 = { #Society
+				trigger = {
+					has_country_modifier = mechanim_administration
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_mech_pillar_scouts
+							has_country_flag = unlocked_artifice_invention_mech_pillar_scouts
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_mech_pillar_scouts
 				subtract_variable = {
 					which = artificeResearchOptionsTier1
 					value = 1
@@ -3451,6 +3951,339 @@ artifice_research_select_innovation_options_effect = {
 					value = 1
 				}
 			}			
+			#Insyaa
+			1 = { #Society
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_memory_module
+							has_country_flag = unlocked_artifice_invention_memory_module
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					capital_scope = {
+						continent = oceania
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_memory_module_local
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_memory_module
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = { #Economic
+				trigger = {
+					has_country_flag = magic_artificery_artificery_only
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_crop_enlarge
+							has_country_flag = unlocked_artifice_invention_crop_enlarge
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_crop_enlarge_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_crop_enlarge_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_crop_enlarge
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = { #Economic
+				trigger = {
+					NOT = { has_country_flag = magic_artificery_artificery_only }
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_assisted_growth
+							has_country_flag = unlocked_artifice_invention_assisted_growth
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_assisted_growth_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_assisted_growth_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_assisted_growth
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_titano_thorns
+							has_country_flag = unlocked_artifice_invention_titano_thorns
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_titano_thorns_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_titano_thorns_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_titano_thorns
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_titano_thorns
+							has_country_flag = unlocked_artifice_invention_titano_thorns
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_titano_thorns_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_titano_thorns_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_titano_thorns
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_flak_cannons
+							has_country_flag = unlocked_artifice_invention_flak_cannons
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_flak_cannons_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_flak_cannons_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_flak_cannons
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = { #Society
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_okalu_scanners
+							has_country_flag = unlocked_artifice_invention_okalu_scanners
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_military
+						}
+					}
+					capital_scope = {
+						continent = oceania
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_okalu_scanners_local
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_okalu_scanners
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_fireproof_plating
+							has_country_flag = unlocked_artifice_invention_fireproof_plating
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+					capital_scope = {
+						continent = oceania
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_fireproof_plating_local
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_fireproof_plating
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_mechanim_regiments
+							has_country_flag = unlocked_artifice_invention_mechanim_regiments
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_society
+						}
+					}
+					capital_scope = {
+						NOT = { continent = oceania }
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_mechanim_regiments_global
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_mechanim_regiments
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
+			1 = { #Society
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_auto_scribes
+							has_country_flag = unlocked_artifice_invention_auto_scribes
+							has_country_flag = artifice_researching_economic
+							has_country_flag = artifice_researching_military
+						}
+					}
+					capital_scope = {
+						NOT = { continent = oceania }
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_auto_scribes_global
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_auto_scribes
+				subtract_variable = {
+					which = artificeResearchOptionsTier2
+					value = 1
+				}
+			}
 		}
 		if = {
 			limit = {
@@ -3977,6 +4810,221 @@ artifice_research_select_innovation_options_effect = {
 					value = 1
 				}
 			}
+			#Insyaa
+			1 = { #Society + Economic
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_industrial_automatories
+							has_country_flag = unlocked_artifice_invention_industrial_automatories
+							has_country_flag = artifice_researching_society
+						}
+					}
+					has_country_flag = unlocked_artifice_invention_reverse_mechanim #You cant have industrial automatories without inventing them
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_industrial_automatories_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_industrial_automatories_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_industrial_automatories
+				subtract_variable = {
+					which = artificeResearchOptionsTier3
+					value = 1
+				}
+			}
+			1 = { #Economic
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_terrain_shaper
+							has_country_flag = unlocked_artifice_invention_terrain_shaper
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_society
+						}
+					}
+					OR = {
+						AND = {
+							capital_scope = {
+								continent = oceania
+							}
+							6234 = {
+								had_province_flag = {
+									flag = unlocked_artifice_invention_terrain_shaper_local
+									days = 5475
+								}
+							}
+						}
+						6234 = {
+							had_province_flag = {
+								flag = unlocked_artifice_invention_terrain_shaper_global
+								days = 5475
+							}
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_terrain_shaper
+				subtract_variable = {
+					which = artificeResearchOptionsTier3
+					value = 1
+				}
+			}
+			1 = { #Society
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_memory_storage
+							has_country_flag = unlocked_artifice_invention_memory_storage
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					capital_scope = {
+						continent = oceania
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_memory_storage_local
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_memory_storage
+				subtract_variable = {
+					which = artificeResearchOptionsTier3
+					value = 1
+				}
+			}
+			1 = { #Society
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_mechanim_deconstructor
+							has_country_flag = unlocked_artifice_invention_mechanim_deconstructor
+							has_country_flag = artifice_researching_military
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					capital_scope = {
+						NOT = { continent = oceania }
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_mechanim_deconstructor_global
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_mechanim_deconstructor
+				subtract_variable = {
+					which = artificeResearchOptionsTier3
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_titano_cav
+							has_country_flag = unlocked_artifice_invention_titano_cav
+							has_country_flag = artifice_researching_society
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					capital_scope = {
+						NOT = { continent = oceania }
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_titano_cav_global
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_titano_cav
+				subtract_variable = {
+					which = artificeResearchOptionsTier3
+					value = 1
+				}
+			}
+			1 = { #Military
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_titano_artif
+							has_country_flag = unlocked_artifice_invention_titano_artif
+							has_country_flag = artifice_researching_society
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					capital_scope = {
+						NOT = { continent = oceania }
+					}
+					6234 = {
+						had_province_flag = {
+							flag = unlocked_artifice_invention_titano_artif_global
+							days = 5475
+						}
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_titano_artif
+				subtract_variable = {
+					which = artificeResearchOptionsTier3
+					value = 1
+				}
+			}
+			1 = { #Society
+				trigger = {
+					NOT = { has_country_modifier = mechanim_administration }
+					NOT = {
+						OR = {
+							has_country_flag = research_artifice_invention_behavioral_chip
+							has_country_flag = unlocked_artifice_invention_behavioral_chip
+							has_country_flag = artifice_researching_society
+							has_country_flag = artifice_researching_economic
+						}
+					}
+					capital_scope = {
+						NOT = { continent = oceania }
+					}
+					OR = {
+						has_estate_privilege = artifice_invention_reverse_mechanim
+						has_estate_privilege = artifice_invention_industrial_automatories
+					}
+				}
+				set_country_flag = research_artifice_invention_from_insyaa
+				set_country_flag = research_artifice_invention_behavioral_chip
+				subtract_variable = {
+					which = artificeResearchOptionsTier3
+					value = 1
+				}
+			}
 		}
 		if = {
 			limit = {
@@ -4407,6 +5455,8 @@ artifice_gui_tab_flag_clearing = {
 	clr_country_flag = artifice_invention_menu_open_cultural
 	clr_country_flag = artifice_invention_menu_open_unique_large
 	clr_country_flag = artifice_invention_menu_open_unique_small
+	clr_country_flag = artifice_invention_menu_open_insyaa_mechanim
+	clr_country_flag = artifice_invention_menu_open_insyaa_biological
 }
 
 artifice_inventions_currently_used_increase = {
@@ -4522,6 +5572,7 @@ artifice_magic_switch_to_mixed_mode = {
 		limit = { NOT = { has_country_flag = magic_artificery_mixed } }
 		add_country_modifier = { name = magic_artificery_mixed_mod duration = -1 }
 		hidden_effect = {
+			change_mana = yes #update mana bar
 			clr_country_flag = magic_artificery_mage_only
 			clr_country_flag = magic_artificery_artificery_only
 			set_country_flag = magic_artificery_mixed
@@ -6280,6 +7331,723 @@ one_time_decrease_artificery_research_time = {
 					days = 1
 					random = 120
 				}
+			}
+		}
+	}
+}
+
+unlock_insyaa_invention = {
+	set_country_flag = unlocked_$invention$
+	if = {
+		limit = {
+			capital_scope = {
+				NOT = { continent = oceania }
+			}
+		}
+		6234 = {
+			set_province_flag = unlocked_$invention$_global
+		}
+	}
+	6234 = {
+		set_province_flag = unlocked_$invention$_local
+	}	
+}
+mechanim_automatory_cooldown_effect = {
+	if = {
+		limit = {
+			has_country_flag = mechanim_automatory_building_allowed
+			automatory = 1
+			NOT = {
+				has_country_modifier = racial_pop_mechanim_expulsion
+				has_country_modifier = racial_pop_mechanim_purge
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_estate_privilege = artifice_invention_industrial_automatories
+					NOT = { has_country_flag = automatory_cooldown }
+				}
+			}
+			set_country_flag = automatory_cooldown
+			if = {
+				limit = { ai = yes }
+				mechanim_automatory_cooldown_count_ai = yes
+			}
+			else = {
+				mechanim_automatory_cooldown_count_player = yes
+			}
+		}
+		else = {
+			clr_country_flag = automatory_cooldown
+		}
+	}
+}
+mechanim_automatory_cooldown_count_ai = {
+	if = {
+		limit = { automatory = 5 }
+		change_variable = {
+			which = mechanim_spread_country
+			value = 5
+		}
+	}
+	else_if = {
+		limit = { automatory = 4 }
+		change_variable = {
+			which = mechanim_spread_country
+			value = 4
+		}
+	}
+	else_if = {
+		limit = { automatory = 3 }
+		change_variable = {
+			which = mechanim_spread_country
+			value = 3
+		}
+	}
+	else_if = {
+		limit = { automatory = 2 }
+		change_variable = {
+			which = mechanim_spread_country
+			value = 2
+		}
+	}
+	else = {
+		change_variable = {
+			which = mechanim_spread_country
+			value = 1
+		}
+	}
+}
+mechanim_automatory_cooldown_count_player = {
+	every_owned_province = {
+		limit = {
+			has_building = automatory
+			had_province_flag = { #Was built at least 5 years ago
+				flag = automatory_built
+				days = 1825
+			}
+			development = 15
+		}
+		if = {
+			limit = {
+				OR = { #Do I have mechanims?
+					culture_group = mechanim
+					has_large_mechanim_minority_trigger = yes
+				}
+			}
+			owner = {
+				change_variable = {
+					which = mechanim_spread_country
+					value = 1
+				}
+			}
+		}
+		else = { #Spread to itself
+			add_mechanim_minority_size_effect = yes
+			mechanim_automatory_additional_effects = yes
+		}
+
+		#Cost
+		remove_random_development = yes
+		#Additional effect
+		owner = {
+			if = {
+				limit = { has_estate_privilege = artifice_invention_behavioral_chip }
+				medium_decrease_of_mechanim_tolerance_effect = yes
+			}
+		}
+	}
+	mechanim_automatory_cap_spread_country = { cap = 20 } #If more than 20 set to 20
+	mechanim_automatory_count_spread_per_year = yes
+}
+mechanim_automatory_cap_spread_country = { 
+	if = { 
+		limit = {
+			check_variable = {
+				which = mechanim_spread_country
+				value = $cap$
+			}
+		}
+		set_variable = {
+			which = mechanim_spread_country
+			value = $cap$
+		}
+	}
+}
+mechanim_automatory_count_spread_per_year = {
+	set_variable = {
+		which = mechanim_spread_per_year
+		which = mechanim_spread_country
+	}
+	if = {
+		limit = { has_estate_privilege = artifice_invention_industrial_automatories }
+		divide_variable = {
+			which = mechanim_spread_per_year
+			value = 4 #One less than cooldown for now
+		}
+	}
+	else = {
+		divide_variable = {
+			which = mechanim_spread_per_year
+			value = 9 #One less than cooldown for now
+		}		
+	}
+	round_variable = {
+   		which = mechanim_spread_per_year
+		value = 1
+	}
+}
+mechanim_automatory_start_of_spread_effect = {
+	if = {
+		limit = {
+			has_country_flag = mechanim_automatory_building_allowed
+			automatory = 1
+			NOT = {
+				has_country_modifier = racial_pop_mechanim_expulsion
+				has_country_modifier = racial_pop_mechanim_purge
+			}
+			check_variable = {
+				which = mechanim_spread_country
+				value = 1
+			}
+		}
+		
+		if = {
+			limit = {
+				ai = yes
+			}
+			if = {
+				limit =  {
+					check_variable = {
+						which = mechanim_spread_country
+						value = 1
+					}
+				}
+				subtract_variable = {
+					which = mechanim_spread_country
+					value = 1
+				}
+				mechanim_automatory_spread_for_ai = yes
+			}
+		}
+		else = {
+			mechanim_automatory_spread = yes
+		}
+	}
+}
+mechanim_automatory_spread_for_ai = {
+	random_owned_province = {
+		limit = {
+			NOT = {
+				culture_group = mechanim
+				has_large_mechanim_minority_trigger = yes
+			}
+		}
+		save_event_target_as = mechanim_spread_province
+	}
+	if = { #If failed to find province to do normal spread finish with else
+		limit = { NOT = { has_saved_event_target = mechanim_spread_province } }
+		random_owned_province = {
+			save_event_target_as = mechanim_spread_province
+		}
+	}
+	event_target:mechanim_spread_province = {
+		#Main effect
+		mechanim_automatory_main_effect = yes
+		#Additional effects
+		mechanim_automatory_additional_effects = yes
+	}
+}
+mechanim_automatory_spread = {
+	export_to_variable = {
+		which = automatory_number_of_provinces_without_mechanim
+		value = trigger_value:num_of_cities 
+	}
+	if = {
+		limit = {
+			check_variable = { #Checking if variable is set 
+				which = mechanim_count
+				value = 1
+			}
+		}
+		multiply_variable = { #Trying to account for small minorities
+			which = automatory_number_of_provinces_without_mechanim
+			value = 1.2
+		}
+		subtract_variable = {
+			which = automatory_number_of_provinces_without_mechanim
+			which = mechanim_count
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {
+				which = mechanim_spread_country
+				which = mechanim_spread_per_year
+			}
+		}
+		subtract_variable = {
+			which = mechanim_spread_country
+			which = mechanim_spread_per_year
+		}
+		set_variable = {
+			which = mechanim_spread_current
+			which = mechanim_spread_per_year
+		}
+	}
+	else = {
+		set_variable = {
+			which = mechanim_spread_current
+			which = mechanim_spread_country
+		}
+		set_variable = {
+			which = mechanim_spread_country
+			value = 0
+		}
+	}
+	if = { #Small amount of Mechanims in our country
+		limit = {
+			check_variable = {
+				which = automatory_number_of_provinces_without_mechanim
+				which = mechanim_count
+			}
+		}
+		while = {
+			limit =  {
+				check_variable = {
+					which = mechanim_spread_current
+					value = 1
+				}
+			}
+			subtract_variable = {
+				which = mechanim_spread_current
+				value = 1
+			}
+			mechanim_automatory_spread_for_player = yes
+		}
+	}
+	else = { #There is a lot of mechanims in our country
+		while = {
+			limit =  {
+				check_variable = {
+					which = mechanim_spread_current
+					value = 1
+				}
+			}
+			subtract_variable = {
+				which = mechanim_spread_current
+				value = 1
+			}
+			reverse_mechanim_automatory_spread_for_player = yes
+		}
+	}
+	clr_country_flag = mechanim_automatory_spread_finish_while_with_else
+}
+mechanim_automatory_spread_for_player = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = mechanim_automatory_spread_finish_while_with_else }
+		}
+		random_owned_province = {
+			limit = {
+				OR = {
+					culture_group = mechanim
+					has_large_mechanim_minority_trigger = yes
+				}
+				any_neighbor_province = {
+					owned_by = ROOT
+					NOT = {
+						culture_group = mechanim
+						has_large_mechanim_minority_trigger = yes
+					}
+				}
+			}
+			random_neighbor_province = {
+				limit = {
+					owned_by = ROOT
+					NOT = {
+						culture_group = mechanim
+						has_large_mechanim_minority_trigger = yes
+					}
+				}
+				save_event_target_as = mechanim_spread_province
+				owner = { set_country_flag = found_mechanim_spread_province }
+			}
+		}
+		if = { #If failed to find province to do normal spread finish with else
+			limit = { NOT = { has_country_flag = found_mechanim_spread_province } } #Cant use has_saved_event_target because we could see province from previous while
+			set_country_flag = mechanim_automatory_spread_finish_while_with_else #Cleared once while ends
+			random_owned_province = {
+				save_event_target_as = mechanim_spread_province
+			}
+		}
+		else = {
+			clr_country_flag = found_mechanim_spread_province
+		}
+	}
+	else = {
+		random_owned_province = {
+			save_event_target_as = mechanim_spread_province
+		}
+	}
+	event_target:mechanim_spread_province = {
+		#Main effect
+		mechanim_automatory_main_effect = yes
+		#Additional effects
+		mechanim_automatory_additional_effects = yes
+	}
+}
+reverse_mechanim_automatory_spread_for_player = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = mechanim_automatory_spread_finish_while_with_else }
+		}
+		random_owned_province = { #Province not fully saturated with mechanims
+			limit = {
+				OR = {
+					NOT = { fast_has_pop_of_race = { race = mechanim } }
+					has_small_mechanim_minority_trigger = yes
+				}
+				any_neighbor_province = {
+					owned_by = ROOT
+					OR = {
+						culture_group = mechanim
+						has_large_mechanim_minority_trigger = yes
+					}
+				}
+			}
+			save_event_target_as = mechanim_spread_province
+			owner = { set_country_flag = found_mechanim_spread_province }
+		}
+		if = { #If failed to find province to do normal spread finish with else
+			limit = { NOT = { has_country_flag = found_mechanim_spread_province } } #Cant use has_saved_event_target because we could see province from previous while
+			set_country_flag = mechanim_automatory_spread_finish_while_with_else #Cleared once while ends
+			random_owned_province = {
+				save_event_target_as = mechanim_spread_province
+			}
+		}
+		else = {
+			clr_country_flag = found_mechanim_spread_province
+		}
+	}
+	else = {
+		random_owned_province = {
+			save_event_target_as = mechanim_spread_province
+		}
+	}
+	event_target:mechanim_spread_province = {
+		#Main effect
+		mechanim_automatory_main_effect = yes
+		#Additional effects
+		mechanim_automatory_additional_effects = yes
+	}
+}
+mechanim_automatory_main_effect = {
+	if = {
+		limit = { OR = { has_large_mechanim_minority_trigger = yes culture_group = mechanim } }
+		if = {
+			limit = { owner = { ai = no } }
+			add_random_development = 1
+		}
+	}
+	else_if = {
+		limit = { NOT = { development = 6 } }
+		change_culture = awoken_mechanim
+	}
+	else = {
+		add_mechanim_minority_size_effect = yes
+	}
+}
+mechanim_automatory_additional_effects = {
+	if = {
+		limit = {
+			owner = {
+				has_estate_privilege = artifice_invention_auto_scribes
+			}
+		}
+		random = {
+			chance = 10
+			add_base_tax = 1
+		}
+	}
+	if = {
+		limit = { owner = { has_estate_privilege = artifice_invention_memory_module } }
+		add_province_modifier = {
+			name = artifice_memory_module_modifier
+			duration = -1
+		}
+	}
+	if = {
+		limit = { owner = { has_estate_privilege = artifice_invention_behavioral_chip } }
+		add_province_modifier = {
+			name = artifice_behavioral_chip_modifier
+			duration = -1
+		}
+	}
+}
+artifice_unlock_random_part_head = {
+	hidden_effect = {
+		random_list = {
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_head_long_range }
+				}
+				set_country_flag = unlocked_artifice_invention_head_long_range
+				country_event = {
+					id = insyaa_flavour.134
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_head_war_craved }
+				}
+				set_country_flag = unlocked_artifice_invention_head_war_craved
+				country_event = {
+					id = insyaa_flavour.135
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_head_human_like }
+				}
+				set_country_flag = unlocked_artifice_invention_head_human_like
+				country_event = {
+					id = insyaa_flavour.136
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_head_adm_oversight }
+				}
+				set_country_flag = unlocked_artifice_invention_head_adm_oversight
+				country_event = {
+					id = insyaa_flavour.137
+				}
+			}
+		}
+	}
+}
+artifice_unlock_random_part_torso = {
+	hidden_effect = {
+		random_list = {
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_torso_self_repair }
+				}
+				set_country_flag = unlocked_artifice_invention_torso_self_repair
+				country_event = {
+					id = insyaa_flavour.138
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_torso_war_craved }
+				}
+				set_country_flag = unlocked_artifice_invention_torso_war_craved
+				country_event = {
+					id = insyaa_flavour.139
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_torso_container_part }
+				}
+				set_country_flag = unlocked_artifice_invention_torso_container_part
+				country_event = {
+					id = insyaa_flavour.140
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_torso_war_machine }
+				}
+				set_country_flag = unlocked_artifice_invention_torso_war_machine
+				country_event = {
+					id = insyaa_flavour.141
+				}
+			}
+		}
+	}
+}
+artifice_unlock_random_part_chassis = {
+	hidden_effect = {
+		random_list = {
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_chassis_heavy }
+				}
+				set_country_flag = unlocked_artifice_invention_chassis_heavy
+				country_event = {
+					id = insyaa_flavour.142
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_chassis_light }
+				}
+				set_country_flag = unlocked_artifice_invention_chassis_light
+				country_event = {
+					id = insyaa_flavour.143
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_chassis_waterproof }
+				}
+				set_country_flag = unlocked_artifice_invention_chassis_waterproof
+				country_event = {
+					id = insyaa_flavour.144
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_chassis_soarer_struts }
+				}
+				set_country_flag = unlocked_artifice_invention_chassis_soarer_struts
+				country_event = {
+					id = insyaa_flavour.145
+				}
+			}
+		}
+	}	
+}
+artifice_unlock_random_part_arms = {
+	hidden_effect = {
+		random_list = {
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_arms_dual_pair }
+				}
+				set_country_flag = unlocked_artifice_invention_arms_dual_pair
+				country_event = {
+					id = insyaa_flavour.146
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_arms_stabilizer }
+				}
+				set_country_flag = unlocked_artifice_invention_arms_stabilizer
+				country_event = {
+					id = insyaa_flavour.147
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_arms_construction }
+				}
+				set_country_flag = unlocked_artifice_invention_arms_construction
+				country_event = {
+					id = insyaa_flavour.148
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_arms_sonic_firearm }
+				}
+				set_country_flag = unlocked_artifice_invention_arms_sonic_firearm
+				country_event = {
+					id = insyaa_flavour.149
+				}
+			}
+		}
+	}
+}
+artifice_unlock_random_part_legs = {
+	hidden_effect = {
+		random_list = {
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_legs_quadripedal }
+				}
+				set_country_flag = unlocked_artifice_invention_legs_quadripedal
+				country_event = {
+					id = insyaa_flavour.150
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_legs_bipedal }
+				}
+				set_country_flag = unlocked_artifice_invention_legs_bipedal
+				country_event = {
+					id = insyaa_flavour.151
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_legs_octipedal }
+				}
+				set_country_flag = unlocked_artifice_invention_legs_octipedal
+				country_event = {
+					id = insyaa_flavour.152
+				}
+			}
+			1 = {
+				trigger = {
+					NOT = { has_country_flag = unlocked_artifice_invention_legs_trailblazer }
+				}
+				set_country_flag = unlocked_artifice_invention_legs_trailblazer
+				country_event = {
+					id = insyaa_flavour.153
+				}
+			}
+		}
+	}
+}
+artifice_unlock_random_part_all_30 = { #30% to get something
+	hidden_effect = {
+		random_list = {
+			6 = {
+				artifice_unlock_random_part_head = yes
+			}
+			6 = {
+				artifice_unlock_random_part_torso = yes
+			}
+			6 = {
+				artifice_unlock_random_part_chassis = yes
+			}
+			6 = {
+				artifice_unlock_random_part_arms = yes
+			}
+			6 = {
+				artifice_unlock_random_part_legs = yes
+			}
+			70 = {
+
+			}
+		}
+	}
+}
+artifice_mechanim_inventions_scripted_effect = {
+	if = {
+		limit = { has_estate_privilege = artifice_invention_memory_module }
+		every_owned_province = {
+			if = {
+				limit = { fast_has_pop_of_race = { race = mechanim } }
+				add_province_modifier = {
+					name = artifice_memory_module_modifier
+					duration = -1
+				}
+			}
+			else = {
+				remove_province_modifier = artifice_memory_module_modifier
+			}
+		}
+	}
+	else_if = {
+		limit = { has_estate_privilege = artifice_invention_behavioral_chip }
+		every_owned_province = {
+			if = {
+				limit = { fast_has_pop_of_race = { race = mechanim } }
+				add_province_modifier = {
+					name = artifice_behavioral_chip_modifier
+					duration = -1
+				}
+			}
+			else = {
+				remove_province_modifier = artifice_behavioral_chip_modifier
 			}
 		}
 	}

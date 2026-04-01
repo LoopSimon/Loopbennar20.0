@@ -1,0 +1,190 @@
+# aPUI bio infra button stuff
+
+mangrove_bio_infra_upgrade_exists = {
+	NOT = { has_province_modifier = mangrove_bio_infra_$PATH$_$UPGRADE$ }
+}
+
+# the chosen path is invalid during stage 3
+mangrove_bio_infra_check_valid_path = {
+	OR = {
+		AND = {
+			NOT = { has_province_flag = mangrove_bio_infra_stage_3 }
+			has_province_flag = mangrove_bio_infra_$PATH$_chosen
+		}
+		AND = {
+			has_province_flag = mangrove_bio_infra_stage_3
+			NOT = { has_province_flag = mangrove_bio_infra_$PATH$_chosen }
+		}
+	}
+	NOT = {
+		has_province_flag = mangrove_bio_infra_stage_4
+		has_province_flag = mangrove_bio_infra_finished
+	}
+}
+
+mangrove_check_bio_infra_path_cost = {
+	if = {
+		limit = { has_province_flag = mangrove_free_upgrade }
+		custom_trigger_tooltip = {
+			tooltip = mangrove_free_upgrade_tt
+			always = yes
+		}
+	}
+	else = {
+		FROM = { $PATH$_power = 100 }
+	}
+}
+
+mangrove_check_bio_infra_cost = {
+	if = {
+		limit = { has_province_flag = mangrove_free_upgrade }
+		custom_trigger_tooltip = {
+			tooltip = mangrove_free_upgrade_tt
+			always = yes
+		}
+	}
+	else_if = {
+		limit = { has_province_flag = mangrove_bio_infra_stage_1 }
+		FROM = {
+			$PATH$_power = 150
+		}
+	}
+	else_if = {
+		limit = { has_province_flag = mangrove_bio_infra_stage_2 }
+		FROM = {
+			$PATH$_power = 200
+		}
+	}
+	else_if = {
+		limit = { has_province_flag = mangrove_bio_infra_stage_3 }
+		FROM = {
+			$PATH$_power = 250
+		}
+	}
+}
+
+mangrove_bio_infra_can_afford_final = {
+	if = {
+		limit = { has_province_flag = mangrove_free_upgrade }
+		custom_trigger_tooltip = {
+			tooltip = mangrove_free_upgrade_tt
+			always = yes
+		}
+	}
+	else = {
+		FROM = {
+			if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 0 }
+				}
+				anb_require_all_power = { VAL = 50 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 1 }
+				}
+				anb_require_all_power = { VAL = 100 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 2 }
+				}
+				anb_require_all_power = { VAL = 150 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 3 }
+				}
+				anb_require_all_power = { VAL = 200 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 4 }
+				}
+				anb_require_all_power = { VAL = 250 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 5 }
+				}
+				anb_require_all_power = { VAL = 300 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 6 }
+				}
+				anb_require_all_power = { VAL = 350 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 7 }
+				}
+				anb_require_all_power = { VAL = 400 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 8 }
+				}
+				anb_require_all_power = { VAL = 450 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 9 }
+				}
+				anb_require_all_power = { VAL = 500 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 10 }
+				}
+				anb_require_all_power = { VAL = 550 }
+			}
+			else_if = {
+				limit = {
+					is_variable_equal = { which = mangrove_bio_infra_finished_count value = 11 }
+				}
+				anb_require_all_power = { VAL = 600 }
+			}
+			else = {
+				anb_require_all_power = { VAL = 650 }
+			}
+		}
+	}
+}
+
+mangrove_bio_infra_final_trigger = {
+	if = {
+		limit = { NOT = { has_province_flag = mangrove_bio_infra_finished } }
+		custom_trigger_tooltip = {
+			tooltip = mangrove_aux_trigger_tt
+			has_province_flag = mangrove_bio_infra_stage_4
+		}
+		mangrove_bio_infra_can_afford_final = yes
+	}
+}
+
+mangrove_check_capstone_effect_in_province = {
+	owner = {
+		has_country_flag = mangrove_capstone_unlocked
+	}
+	has_province_flag = mangrove_bio_infra_finished
+}
+
+# if modifier already exists, trigger is always valid to show activated upgrades
+mangrove_bio_infra_button_trigger = {
+	if = {
+		limit = {
+			mangrove_bio_infra_upgrade_exists = { PATH = $PATH$ UPGRADE = $UPGRADE$ }
+		}
+		if = {
+			limit = {
+				NOT = { mangrove_bio_infra_check_valid_path = { PATH = $PATH$ } }
+			}
+			custom_trigger_tooltip = {
+				tooltip = mangrove_bio_infra_invalid_path_tt
+				always = no
+			}
+		}
+		mangrove_check_bio_infra_cost = { PATH = $PATH$ }
+	}
+}

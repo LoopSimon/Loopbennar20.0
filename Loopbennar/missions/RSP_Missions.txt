@@ -1,0 +1,1768 @@
+RSP_shared_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = { 
+		OR = {
+			tag = J95
+			tag = J96
+			tag = J97
+			tag = J98
+		}
+	} 
+
+	RSP_just_adventuring = {
+		icon = mission_iberian_conquistador
+		position = 2
+		required_missions = { RSP_what_we_do_best } 
+
+		trigger = {
+			has_estate_privilege = estate_adventurers_generous_quest_rewards
+			has_estate_privilege = estate_adventurers_sponsor_rogues
+			faction_in_power = pr_buccaneers
+			num_of_mercenaries = 4
+		} 
+
+		effect = {
+			custom_tooltip = RSP_just_adventuring_unlock_estate_privilege_tt
+			add_country_modifier = {
+				name = RSP_grabbing_last_scraps
+				duration = 18250																#50 years
+			}
+			hidden_effect = {
+				set_country_flag = RSP_swashbuckling_expertise_unlocked							#Unlock 'Swashbuckling Expertise' Estate Privilege
+				set_country_flag = no_nobles_ennoblement_of_adventurers							#Unlock 'Ennoblement of Adventurers' Estate Privilege
+			}
+		} 
+	}
+}
+RSP_shared_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = {
+		OR = {
+			tag = J95
+			tag = J96
+			tag = J97
+			tag = J98
+		}
+	} 
+
+	RSP_what_we_do_best = {
+		icon = mission_pirate_flag
+		position = 1
+
+		trigger = {
+			treasury = 250
+			calc_true_if = {
+				amount = 8
+				all_known_country = {
+					OR = {
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = pirated_us
+						}
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = slaves_raided
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.1
+			}
+			custom_tooltip = RSP_what_we_do_best_ei
+		} 
+	}
+
+	RSP_protect_our_loot = {
+		icon = mission_konkani_pirates
+		position = 2
+		required_missions = { RSP_what_we_do_best } 
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+		} 
+
+		trigger = {
+			has_mil_advisor = yes
+			capital_scope = {
+				has_fort_building_trigger = yes
+				has_coast_defense_building_trigger = yes
+			}
+		} 
+
+		effect = {
+			capital_scope = {
+				add_or_upgrade_fort_building = yes
+				add_or_upgrade_naval_defense_building = yes
+				add_province_modifier = {
+					name = RSP_den_of_piracy_capital
+					duration = -1
+				}
+				custom_tooltip = RSP_protect_our_loot_effect_tt
+				hidden_effect = {
+					every_country = {
+						limit = { 
+							is_core = PREV
+							NOT = { tag = ROOT }
+						}
+						PREV = {
+							remove_core = PREV
+							remove_claim = PREV
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	RSP_learning_the_ropes = {
+		icon = mission_dominate_home_trade_node
+		position = 3
+		required_missions = {
+			RSP_just_adventuring
+			RSP_protect_our_loot
+			RSP_piratical_diplomacy
+		}
+		provinces_to_highlight = {
+			OR = {
+				is_capital_of = ROOT
+				owner = {
+					NOT = { tag = ROOT }
+					1527 = { is_strongest_trade_power = PREV }
+				}
+			}
+		} 
+
+		trigger = {
+			capital_scope = {
+				if = { limit = { has_dlc = "Leviathan" } num_of_times_expanded_infrastructure = 1 } else = { development = 15 }
+			}
+			OR = {
+				faction_in_power = pr_smugglers
+				trader = 1
+				has_dip_advisor_2 = yes
+			}
+			OR = {
+				1527 = {
+					is_strongest_trade_power = ROOT
+				}
+				1527 = {
+					strongest_trade_power = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 30
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.2
+			}
+			custom_tooltip = RSP_learning_the_ropes_ei
+		} 
+	}
+
+	RSP_homemade = {
+		icon = mission_shipyards_of_gujarat
+		position = 4
+		required_missions = {
+			RSP_learning_the_ropes
+			RSP_strenghtening_our_grasp
+		}
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				AND = {
+					NOT = { has_shipyard_building_trigger = yes }
+					has_dock_building_trigger = yes
+				}
+				AND = {
+					has_shipyard_building_trigger = yes
+					NOT = { has_dock_building_trigger = yes }
+				}
+			}
+		} 
+
+		trigger = {
+			navy_tradition = 40
+			num_of_owned_provinces_with = {
+				value = 10
+				has_shipyard_building_trigger = yes
+				has_dock_building_trigger = yes
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.4
+			}
+			custom_tooltip = RSP_homemade_ei
+		} 
+	}
+
+	RSP_isle_of_mists = {
+		icon = mission_jungle
+		position = 5
+		required_missions = {
+			RSP_homemade
+			RSP_cut_the_purses
+		}
+		provinces_to_highlight = {
+			region = endralliande_region
+			NOT = { owned_by = ROOT }
+		} 
+
+		trigger = {
+			endralliande_region = {
+				owned_by = ROOT
+				has_building = mage_tower
+				has_shipyard_building_trigger = yes
+				has_dock_building_trigger = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				region = endralliande_region
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_isle_of_mists_effect_tt
+			hidden_effect = {
+				random_owned_province = {
+					limit = {
+						region = endralliande_region
+						has_shipyard_building_trigger = yes
+						has_dock_building_trigger = yes
+						has_building = mage_tower
+					}
+					add_base_tax = 2
+					add_base_production = 4
+					add_base_manpower = 3
+					add_province_modifier = {
+						name = RSP_den_of_piracy
+						duration = -1
+					}
+					add_or_upgrade_shipyard_building = yes
+					add_or_upgrade_dock_building = yes
+				}
+			}
+			ravenous_isle_region = {
+				add_permanent_claim = ROOT
+			}
+		} 
+	}
+}
+RSP_shared_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = { 
+		OR = {
+			tag = J95
+			tag = J96
+			tag = J97
+			tag = J98
+		} 
+	} 
+
+	RSP_piratical_diplomacy = {
+		icon = mission_pirate_havens
+		position = 2
+		required_missions = { RSP_what_we_do_best } 
+		provinces_to_highlight = {
+			owner = {
+				OR = {
+					tag = J95
+					tag = J96
+					tag = J97
+					tag = J98
+					tag = G93
+				}
+				NOT = { tag = ROOT }
+				OR = {
+					NOT = { has_been_insulted_by_root = yes }
+					NOT = { has_been_insulted_by_root = yes }
+					NOT = { has_50_opinion_improved_relation = { target = ROOT } }
+				}
+			}
+		} 
+
+		trigger = {
+			navy_size_percentage = 0.90
+			OR = {
+				any_ally = {
+					has_reform = pirate_republic_reform
+					has_50_opinion_improved_relation = { target = ROOT }
+				}
+				any_enemy_country = {
+					has_reform = pirate_republic_reform
+					has_been_insulted_by_root = yes
+				}
+				any_rival_country = {
+					has_reform = pirate_republic_reform
+					has_been_insulted_by_root = yes
+				}
+				custom_trigger_tooltip = {
+					tooltip = RSP_piratical_diplomacy_ctt
+					all_known_country = {
+						OR = {
+							NOT = { has_reform = pirate_republic_reform }
+							NOT = {
+								capital_scope = { continent = north_america }
+								capital_scope = { continent = south_america }
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = RSP_lust_for_gold
+				duration = 9125
+			}
+			custom_tooltip = RSP_piratical_diplomacy_effect_tt
+			hidden_effect = {
+				every_ally = {
+					limit = { has_reform = pirate_republic_reform has_50_opinion_improved_relation = { target = ROOT } }
+					add_trust = { who = ROOT value = 10 mutual = yes }
+					add_favors = { who = ROOT amount = 10 }
+				}
+				every_enemy_country = {
+					limit = { has_reform = pirate_republic_reform has_been_insulted_by_root = yes }
+					ROOT = { add_sailors = 2000 }
+				}
+				every_rival_country = {
+					limit = { has_reform = pirate_republic_reform has_been_insulted_by_root = yes }
+					ROOT = { add_sailors = 2000 }
+				}
+			}
+		} 
+	}
+
+	RSP_strenghtening_our_grasp = {
+		icon = support_the_bulk_trades
+		position = 3
+		required_missions = {
+			RSP_piratical_diplomacy
+			RSP_to_the_depths
+		}
+		provinces_to_highlight = {
+			owner = {
+				OR = {
+					tag = ROOT
+					is_subject_of = ROOT
+				}
+			}
+			OR = {
+				region = ruined_isles_region
+				region = north_ruined_isles_region
+			}
+			AND = {
+				local_autonomy = 25
+				NOT = { has_province_modifier = autonomy_decreased }
+			}
+		} 
+
+		trigger = {
+			num_of_heavy_ship = 10
+			num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with = {
+				value = 15
+				OR = {
+					region = ruined_isles_region
+					region = north_ruined_isles_region
+				}
+				OR = {
+					NOT = { local_autonomy = 25 }
+					has_province_modifier = autonomy_decreased
+				}
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.3
+			}
+			custom_tooltip = RSP_strenghtening_our_grasp_ei
+		} 
+	}
+
+	RSP_cut_the_purses = {
+		icon = indonesian_trade
+		position = 4
+		required_missions = {
+			RSP_strenghtening_our_grasp
+			RSP_pillaging_the_shores
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2164
+				province_id = 1086
+				province_id = 927
+				province_id = 1058
+			}
+		} 
+
+		trigger = {
+			calc_true_if = {
+				amount = 2
+				OR = {
+					has_won_war_against = {
+						who = G97
+						max_years_since = 25
+					}
+					owns = 2164
+				}
+				OR = {
+					has_won_war_against = {
+						who = G98
+						max_years_since = 25
+					}
+					owns = 1086
+				}
+				OR = {
+					has_won_war_against = {
+						who = G99
+						max_years_since = 25
+					}
+					owns = 927
+				}
+				OR = {
+					has_won_war_against = {
+						who = G90
+						max_years_since = 25
+					}
+					owns = 1058
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_cut_the_purses_effect_tt
+			hidden_effect = {
+				if = {
+					limit = {
+						OR = {
+							has_won_war_against = {
+								who = G90
+								max_years_since = 25
+							}
+							owns = 1058
+						}
+					}
+					add_prestige = 25
+					add_treasury = 250
+					capital_scope = {
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							has_won_war_against = {
+								who = G99
+								max_years_since = 25
+							}
+							owns = 927
+						}
+					}
+					add_prestige = 25
+					add_treasury = 250
+					capital_scope = {
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							has_won_war_against = {
+								who = G98
+								max_years_since = 25
+							}
+							owns = 1086
+						}
+					}
+					add_prestige = 25
+					add_treasury = 250
+					capital_scope = {
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							has_won_war_against = {
+								who = G97
+								max_years_since = 25
+							}
+							owns = 2164
+						}
+					}
+					add_prestige = 25
+					add_treasury = 250
+					capital_scope = {
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+						voc_indiamen_light = ROOT
+					}
+				}
+			}
+			endralliande_region = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	RSP_the_liquid_gold = {
+		icon = mission_wine_monopolies
+		position = 5
+		required_missions = { RSP_cut_the_purses } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			OR = {
+				trade_goods = grain
+				trade_goods = sugar
+			}
+			NOT = {
+				has_production_building_trigger = yes
+				base_production = 6
+			}
+		} 
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 5
+				OR = {
+					trade_goods = grain
+					trade_goods = sugar
+				}
+				has_production_building_trigger = yes
+				base_production = 6
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.5
+			}
+			custom_tooltip = RSP_the_liquid_gold_ei
+		} 
+	}
+}
+RSP_shared_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = no
+	potential = {
+		OR = {
+			tag = J95
+			tag = J96
+			tag = J97
+			tag = J98
+		}
+	} 
+
+	RSP_to_the_depths = {
+		icon = mission_corsairs_of_the_north_sea
+		position = 2
+		required_missions = { RSP_what_we_do_best } 
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+		} 
+
+		trigger = {
+			army_size = 15
+			num_of_generals = 1
+			capital_scope = {
+				has_manpower_building_trigger = yes
+				base_manpower = 5
+			}
+		} 
+
+		effect = {
+			add_army_tradition_or_mil_power = { amount = 15 }
+			custom_tooltip = RSP_to_the_depths_effect_tt
+			hidden_effect = {
+				1077 = { area = { add_permanent_claim = ROOT } }
+				1082 = { area = { add_permanent_claim = ROOT } }
+				1099 = { area = { add_permanent_claim = ROOT } }
+				1100 = { area = { add_permanent_claim = ROOT } }
+				2135 = { area = { add_permanent_claim = ROOT } }
+				add_country_modifier = {
+					name = RSP_dominated_fleets_0
+					duration = -1
+				}
+				set_country_flag = RSP_unlock_dominate_fleets_decision
+			}
+		} 
+	}
+
+	RSP_pillaging_the_shores = {
+		icon = mission_raid_on_iceland
+		position = 3
+		required_missions = { RSP_to_the_depths } 
+		provinces_to_highlight = {
+			has_port = yes
+			superregion = ruin_proper_superregion
+			NOT = { has_province_modifier = slaves_raided }
+			NOT = { owned_by = ROOT }
+		} 
+
+		trigger = {
+			num_of_times_used_pillage_capital = 5
+			calc_true_if = {
+				amount = 70
+				ruin_proper_superregion = {
+					type = all
+					OR = {
+						has_province_modifier = slaves_raided
+						owned_by = ROOT
+					}
+				}
+			}
+			OR = {
+				num_of_war_reparations = 3
+				num_of_captured_ships_with_boarding_doctrine = 25
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_pillaging_the_shores_effect_tt
+			hidden_effect = { set_country_flag = RSP_pillaging_the_shores_unlocked }
+		}
+	}
+
+	RSP_living_legends = {
+		icon = mission_raid_on_genoa
+		position = 5
+		required_missions = {
+			RSP_cut_the_purses
+			RSP_pillaging_the_shores
+		}
+
+		trigger = {
+			any_great_power = {
+				has_been_insulted_by_root = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = RSP_living_legends_buried_treasures_ctt
+				check_variable = {
+					which = RSP_buried_treasures_found
+					value = 4
+				}
+			}
+			adm = 4
+			dip = 4
+			mil = 4
+			has_leader_with = {
+				admiral = yes
+				total_pips = 14
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_living_legends_effect_tt
+			hidden_effect = {
+				set_country_flag = RSP_living_legends_create_legendary_pirates
+				if = {														#Gain 100 of each Monarch Power if Ruler is a Legendary Pirate
+					limit = {
+						ruler_has_personality = legendary_pirate_personality
+					}
+					add_adm_power = 100
+					add_dip_power = 100
+					add_mil_power = 100
+				}
+				else = {													#Give Ruler Legendary Pirate personality if they are not one
+					force_add_ruler_personality = { personality = legendary_pirate_personality }
+				}
+			}
+		} 
+	}
+}
+
+#RHASAIL
+
+RSP_rhasail_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J95 } 
+
+	RSP_rhasail_letters_of_marque = {
+		icon = mission_launch_a_flagship
+		position = 2
+		required_missions = { RSP_what_we_do_best } 
+		provinces_to_highlight = {
+			owner = {
+				capital_scope = {
+					continent = europe
+				}
+				any_rival_country = {
+					any_owned_province = {
+						OR = {
+							continent = north_america
+							continent = south_america
+						}
+					}
+				}
+			}
+		} 
+
+		trigger = {
+			calc_true_if = {
+				amount = 2
+				desc = RSP_rhasail_letters_of_marque_ctt
+				all_known_country = {
+					capital_scope = { continent = europe }
+					any_rival_country = {
+						any_owned_province = {
+							OR = {
+								continent = north_america
+								continent = south_america
+							}
+						}
+					}
+					has_10_opinion_sent_gift = { target = ROOT }
+					has_50_opinion_improved_relation = { target = ROOT }
+				}
+			}
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = RSP_rhasail_gentlemanly_conduct
+				duration = 10950
+			}
+			custom_tooltip = RSP_rhasail_letters_of_marque_tt
+			hidden_effect = {
+				set_country_flag = enables_estate_nobles_flag
+				set_country_flag = RSP_rhasail_letters_of_marque_effect
+				add_country_modifier = {
+					name = RSP_improved_buried_treasures
+					duration = 10950
+					hidden = yes
+				}
+			}
+		} 
+	}
+
+	RSP_rhasail_charming_rogues = {
+		icon = the_viennese_waltz
+		position = 3
+		required_missions = { RSP_rhasail_letters_of_marque } 
+
+		trigger = {
+			NOT = { average_unrest = 1 }
+			has_estate_privilege = estate_nobles_noble_officer_right
+			any_known_country = {
+				capital_scope = {
+					continent = europe
+				}
+				trust = {
+					who = ROOT
+					value = 60
+				}
+			}
+			OR = {
+				commandant = 2
+				has_commanding_three_star = yes
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_rhasail_charming_rogues_effect_tt
+			hidden_effect = {
+				capital_scope = {
+					add_human_minority_size_effect = yes
+					add_elven_minority_size_effect = yes
+					add_dwarven_minority_size_effect = yes
+					add_halfling_minority_size_effect = yes
+					add_half_elven_minority_size_effect = yes
+					change_trade_goods = naval_supplies
+				}
+				if = {
+					limit = {
+						calc_true_if = {
+							amount = 5
+							all_known_country = {
+								capital_scope = {
+									continent = europe
+								}
+								has_opinion = {
+									who = ROOT
+									value = 100
+								}
+							}
+						}
+					}
+					add_republican_tradition = 15
+					add_prestige = 25
+				}
+				else = {
+					every_known_country = {
+						limit = {
+							capital_scope = {
+								continent = europe
+							}
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+						ROOT = {
+							add_republican_tradition = 3
+							add_prestige = 5
+						}
+					}
+				}
+				set_country_flag = RSP_rhasail_improved_nobles_officer_corp
+			}
+		} 
+	}
+
+	RSP_rhasail_yours_truly = {
+		icon = fra_golden_march
+		position = 5
+		required_missions = {
+			RSP_rhasail_charming_rogues
+			RSP_rhasail_honour_among_thieves
+		}
+
+		trigger = {
+			prestige = 50
+			OR = {
+				diplomatic_reputation = 6
+				calc_true_if = {
+					amount = 50
+					desc = RSP_rhasail_yours_truly_cannor_ctt
+					europe = {
+						type = all
+						owner = {
+							OR = {
+								alliance_with = ROOT
+								overlord = { alliance_with = ROOT }
+							}
+						}
+					}
+				}
+			}
+			OR = {
+				custom_trigger_tooltip = {
+					tooltip = RSP_rhasail_yours_truly_behemoth_ctt
+					has_country_modifier = lencori_behemoth_of_the_seas
+					capital_scope = { has_province_modifier = lencori_behemoth_shipyard }
+				}
+				calc_true_if = {
+					amount = 3
+					desc = RSP_rhasail_yours_truly_lencori_ctt
+					all_known_country = {
+						culture_group = lencori
+						has_50_opinion_improved_relation = { target = ROOT }
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_rhasail_yours_truly_effect_tt
+			hidden_effect = { set_country_flag = RSP_yours_truly_effect }
+			simple_dynamic_effect = {
+				first_custom_tooltip = RSP_rhasail_yours_truly_first_effect_ct
+				first_limit = "has_country_modifier = lencori_behemoth_of_the_seas capital_scope = { OR = { has_province_modifier = lencori_behemoth_shipyard has_province_modifier = RSP_rhasail_freefolk_arsenal } }"
+				first_effect = "custom_tooltip = RSP_rhasail_yours_truly_first_effect_tt hidden_effect = { capital_scope = { remove_province_modifier = lencori_behemoth_shipyard add_province_modifier = { name = RSP_rhasail_freefolk_arsenal duration = -1 } } lencori_behemoth_update_all_shipyards = yes }"
+				second_limit = "NOT = { has_country_modifier = lencori_behemoth_of_the_seas capital_scope = { has_province_modifier = lencori_behemoth_shipyard } }"
+				second_effect = "custom_tooltip = RSP_rhasail_yours_truly_second_effect_tt hidden_effect = { add_country_modifier = { name = lencori_behemoth_of_the_seas duration = -1 } hidden_effect = { set_country_flag = have_behemoth lencori_behemoth_update_all_shipyards = yes } }"
+			}
+		} 
+	}
+}
+RSP_rhasail_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J95 } 
+
+	RSP_rhasail_honour_among_thieves = {
+		icon = mission_court_education
+		position = 4
+		required_missions = {
+			RSP_rhasail_charming_rogues
+			RSP_learning_the_ropes
+		}
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+		} 
+
+		trigger = {
+			army_professionalism = 0.2
+			num_of_regiments_at_full_drill = 10
+			capital_scope = {
+				if = { limit = { has_dlc = "Leviathan" } num_of_times_expanded_infrastructure = 2 } else = { development = 30 }
+				has_courthouse_building_trigger = yes
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.23
+			}
+			custom_tooltip = RSP_rhasail_honour_among_thieves_ei
+		} 
+	}
+}
+RSP_rhasail_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J95 } 
+
+	RSP_rhasail_lord_of_pirates = {
+		icon = mission_pirate_fleet
+		position = 6
+		required_missions = {
+			RSP_rhasail_yours_truly
+			RSP_isle_of_mists
+			RSP_the_liquid_gold
+			RSP_living_legends
+		}
+		provinces_to_highlight = {
+			OR = {
+				owner = {
+					capital_scope = {
+						superregion = ruin_proper_superregion
+					}
+					navy_size = ROOT
+				}
+				AND = {
+					province_id = 1081
+					NOT = { has_great_project = { type = the_driftcourt tier = 1 } }
+				}
+			}
+		} 
+
+		trigger = {
+			1081 = { has_great_project = { type = the_driftcourt tier = 1 } }
+			custom_trigger_tooltip = {
+				tooltip = RSP_lord_of_pirates_dominate_fleets_ctt
+				has_country_modifier = RSP_dominated_fleets_4
+			}
+			custom_trigger_tooltip = {
+				tooltip = RSP_lord_of_pirates_largest_fleet_ctt
+				all_known_country = {
+					OR = {
+						capital_scope = { NOT = { superregion = ruin_proper_superregion } }
+						NOT = { navy_size = ROOT }
+					}
+				}
+			}
+			OR = {
+				ruler_has_personality = legendary_pirate_personality
+				power_projection = 50
+			}
+			num_ships_privateering = 30
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.6
+			}
+			custom_tooltip = RSP_lord_of_pirates_ei
+		} 
+	}
+}
+
+#LAMENTAIRE
+RSP_lamentaire_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J96 } 
+
+	RSP_lamentaire_establish_the_stormmaidens = {
+		icon = mission_stormy_seas
+		position = 2
+		required_missions = { RSP_what_we_do_best } 
+
+		trigger = {
+			has_estate = estate_church
+			at_war_with_religious_enemy = yes
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = RSP_lamentaire_devout_of_uelos
+				duration = 10950
+			}
+			custom_tooltip = RSP_lamentaire_establish_the_stormmaidens_tt
+			hidden_effect = {
+				set_country_flag = RSP_lamentaire_establish_the_stormmaidens_effect
+				add_country_modifier = {
+					name = RSP_improved_buried_treasures
+					duration = 10950
+					hidden = yes
+				}
+			}
+		} 
+	}
+
+	RSP_lamentaire_praise_be_to_uelos = {
+		icon = mission_priest_church
+		position = 3
+		required_missions = { RSP_lamentaire_establish_the_stormmaidens } 
+		provinces_to_highlight = {
+			owned_by = ROOT
+			NOT = { religion = uelos_cult }
+		} 
+
+		trigger = {
+			calc_true_if = {
+				amount = 2
+				desc = RSP_lamentaire_praise_be_to_uelos_ctt
+				has_country_flag = uelos_avenging_kraken
+				has_country_flag = uelos_devouring_shark
+				has_country_flag = uelos_lightning_sailfish
+				has_country_flag = uelos_spectral_whale
+				has_country_flag = uelos_eternal_jellyfish
+				has_country_flag = uelos_endless_coral
+				has_country_flag = uelos_mourning_cuttlefish
+			}
+			num_of_religion = {
+				value = 10
+				religion = uelos_cult
+			}
+			has_estate_privilege = estate_church_for_the_faith
+		} 
+
+		effect = {
+			custom_tooltip = RSP_lamentaire_praise_be_to_uelos_tt
+			hidden_effect = {
+				set_country_flag = RSP_lamentaire_improved_for_the_faith
+				if = {
+					limit = {
+						num_of_owned_provinces_with = {
+							value = 20
+							religion = uelos_cult
+						}
+					}
+					add_church_power = 200
+				}
+				else = {
+					every_owned_province = {
+						limit = { religion = uelos_cult }
+						ROOT = { add_church_power = 10 }
+					}
+				}
+			}
+		} 
+	}
+
+	RSP_lamentaire_worthy_servants = {
+		icon = mission_protect_white_sea_trade
+		position = 5
+		required_missions = {
+			RSP_lamentaire_praise_be_to_uelos
+			RSP_lamentaire_recover_the_sunken_temple
+		}
+		provinces_to_highlight = {
+			superregion = ruin_proper_superregion
+			NOT = { religion = uelos_cult }
+		} 
+
+		trigger = {
+			is_defender_of_faith = yes
+			custom_trigger_tooltip = {
+				tooltip = RSP_lamentaire_worthy_servants_ctt
+				has_country_flag = RSP_lamentaire_has_used_uelos_deep_one
+			}
+			calc_true_if = {
+				amount = 50
+				ruin_proper_superregion = {
+					type = all
+					religion = uelos_cult
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_lamentaire_worthy_servants_tt
+			add_country_modifier = {
+				name = sea_beast_kraken
+				duration = -1
+			}
+			hidden_effect = {
+				set_country_flag = RSP_lamentaire_worthy_servants_effect
+			}
+		} 
+	}
+}
+RSP_lamentaire_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J96 } 
+
+	RSP_lamentaire_recover_the_sunken_temple = {
+		icon = mission_temple_patronage
+		position = 4
+		required_missions = {
+			RSP_lamentaire_praise_be_to_uelos
+			RSP_learning_the_ropes
+		}
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+		} 
+
+		trigger = {
+			estate_loyalty = {
+				estate = estate_church
+				loyalty = 60
+			}
+			church_power = 100
+			capital_scope = {
+				if = { limit = { has_dlc = "Leviathan" } num_of_times_expanded_infrastructure = 2 } else = { development = 30 }
+				has_tax_building_trigger = yes
+			}
+		} 
+
+		effect = {
+			add_church_power = -100
+			country_event = {
+				id = flavour_RSP.20
+			}
+		} 
+	}
+}
+RSP_lamentaire_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J96 } 
+
+	RSP_lamentaire_lord_of_pirates = {
+		icon = mission_pirate_fleet
+		position = 6
+		required_missions = {
+			RSP_lamentaire_worthy_servants
+			RSP_isle_of_mists
+			RSP_the_liquid_gold
+			RSP_living_legends
+		}
+		provinces_to_highlight = {
+			OR = {
+				owner = {
+					capital_scope = {
+						superregion = ruin_proper_superregion
+					}
+					navy_size = ROOT
+				}
+				AND = {
+					province_id = 1081
+					NOT = { has_great_project = { type = the_driftcourt tier = 1 } }
+				}
+			}
+		} 
+
+		trigger = {
+			1081 = { has_great_project = { type = the_driftcourt tier = 1 } }
+			custom_trigger_tooltip = {
+				tooltip = RSP_lord_of_pirates_dominate_fleets_ctt
+				has_country_modifier = RSP_dominated_fleets_4
+			}
+			custom_trigger_tooltip = {
+				tooltip = RSP_lord_of_pirates_largest_fleet_ctt
+				all_known_country = {
+					OR = {
+						capital_scope = { NOT = { superregion = ruin_proper_superregion } }
+						NOT = { navy_size = ROOT }
+					}
+				}
+			}
+			OR = {
+				ruler_has_personality = legendary_pirate_personality
+				power_projection = 50
+			}
+			num_ships_privateering = 30
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.6
+			}
+			custom_tooltip = RSP_lord_of_pirates_ei
+		} 
+	}
+}
+
+
+#TROLLSHAUNT
+RSP_trollshaunt_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J97 } 
+
+	RSP_trollshaunt_dreaded_mists = {
+		icon = mission_conquer_air
+		position = 2
+		required_missions = { RSP_what_we_do_best } 
+
+		trigger = {
+			has_cast_false_life = yes
+			has_cast_invisibility = yes
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = RSP_trollshaunt_studying_eldritch_mists
+				duration = 10950
+			}
+			custom_tooltip = RSP_trollshaunt_dreaded_mists_tt
+			hidden_effect = {
+				set_country_flag = RSP_trollshaunt_dreaded_mists_effect
+				add_country_modifier = {
+					name = RSP_improved_buried_treasures
+					duration = 10950
+					hidden = yes
+				}
+			}
+		} 
+	}
+
+	RSP_trollshaunt_focus_the_magic = {
+		icon = mission_magic_tower
+		position = 3
+		required_missions = { RSP_trollshaunt_dreaded_mists } 
+		provinces_to_highlight = {
+			has_port = yes
+			OR = {
+				AND = {
+					ROOT = { NOT = { has_country_flag = RSP_trollshaunt_raided_damestear_province } }
+					trade_goods = damestear
+				}
+				AND = {
+					ROOT = { NOT = { has_country_flag = RSP_trollshaunt_raided_precursor_relics_province } }
+					trade_goods = precursor_relics
+				}
+			}
+		} 
+
+		trigger = {
+			has_estate_privilege = estate_mages_development_of_mage_towers
+			OR = {
+				any_owned_province = {
+					trade_goods = damestear
+				}
+				custom_trigger_tooltip = {
+					tooltip = RSP_trollshaunt_focus_the_magic_damestear_ctt
+					has_country_flag = RSP_trollshaunt_raided_damestear_province
+				}
+				any_known_country = {
+					damestear = 1
+					has_spy_network_from = { who = ROOT value = 25 }
+				}
+			}
+			OR = {
+				any_owned_province = {
+					trade_goods = precursor_relics
+				}
+				custom_trigger_tooltip = {
+					tooltip = RSP_trollshaunt_focus_the_magic_precursor_relics_ctt
+					has_country_flag = RSP_trollshaunt_raided_precursor_relics_province
+				}
+				any_known_country = {
+					precursor_relics = 1
+					has_spy_network_from = { who = ROOT value = 25 }
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_trollshaunt_focus_the_magic_effect_tt
+			hidden_effect = {
+				set_country_flag = RSP_trollshaunt_improved_development_of_mage_towers
+				if = {
+					limit = { mage_tower = 5 }
+					change_mana = { amount = 75 }
+				}
+				else = {
+					every_owned_province = {
+						limit = { has_building = mage_tower }
+						ROOT = { change_mana = { amount = 15 } }
+					}
+				}
+				capital_scope = {
+					change_trade_goods = damestear
+					set_province_flag = permanent_damestear
+				}
+			}
+		} 
+	}
+
+	RSP_trollshaunt_the_army_of_the_wretched = {
+		icon = mission_ghost_town
+		position = 5
+		required_missions = {
+			RSP_trollshaunt_focus_the_magic
+			RSP_trollshaunt_the_beacon
+		}
+
+		trigger = {
+			has_country_modifier = undead_military
+			custom_trigger_tooltip = {
+				tooltip = RSP_trollshaunt_the_army_of_the_wretched_ctt
+				check_variable = {
+					which = total_land_units_killed
+					value = 30000
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_trollshaunt_the_army_of_the_wretched_effect_tt
+			hidden_effect = {
+				set_country_flag = RSP_trollshaunt_the_army_of_the_wretched_effect
+			}
+		} 
+	}
+}
+RSP_trollshaunt_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J97 } 
+
+	RSP_trollshaunt_the_beacon = {
+		icon = mission_magisterium_fold_eight
+		position = 4
+		required_missions = {
+			RSP_trollshaunt_focus_the_magic
+			RSP_learning_the_ropes
+		}
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+		} 
+
+		trigger = {
+			estate_loyalty = {
+				estate = estate_mages
+				loyalty = 60
+			}
+			estate_influence = {
+				estate = estate_mages
+				influence = 50
+			}
+			is_overall_illusion_level_2_minimum = yes
+			capital_scope = {
+				if = { limit = { has_dlc = "Leviathan" } num_of_times_expanded_infrastructure = 2 } else = { development = 30 }
+				has_building = mage_tower
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.21
+			}
+			custom_tooltip = RSP_trollshaunt_the_beacon_ei
+		}  
+	}
+}
+RSP_trollshaunt_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J97 } 
+
+	RSP_trollshaunt_lord_of_pirates = {
+		icon = mission_pirate_fleet
+		position = 6
+		required_missions = {
+			RSP_trollshaunt_the_army_of_the_wretched
+			RSP_isle_of_mists
+			RSP_the_liquid_gold
+			RSP_living_legends
+		}
+		provinces_to_highlight = {
+			OR = {
+				owner = {
+					capital_scope = {
+						superregion = ruin_proper_superregion
+					}
+					navy_size = ROOT
+				}
+				AND = {
+					province_id = 1081
+					NOT = { has_great_project = { type = the_driftcourt tier = 1 } }
+				}
+			}
+		} 
+
+		trigger = {
+			1081 = { has_great_project = { type = the_driftcourt tier = 1 } }
+			custom_trigger_tooltip = {
+				tooltip = RSP_lord_of_pirates_dominate_fleets_ctt
+				has_country_modifier = RSP_dominated_fleets_4
+			}
+			custom_trigger_tooltip = {
+				tooltip = RSP_lord_of_pirates_largest_fleet_ctt
+				all_known_country = {
+					OR = {
+						capital_scope = { NOT = { superregion = ruin_proper_superregion } }
+						NOT = { navy_size = ROOT }
+					}
+				}
+			}
+			OR = {
+				ruler_has_personality = legendary_pirate_personality
+				power_projection = 50
+			}
+			num_ships_privateering = 30
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.6
+			}
+			custom_tooltip = RSP_lord_of_pirates_ei
+		}  
+	}
+}
+
+#PALEGOLD
+RSP_palegold_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J98 } 
+
+	RSP_palegold_pirates_of_tomorrow = {
+		icon = mission_recruiting_only_the_best
+		position = 2
+		required_missions = { RSP_what_we_do_best } 
+
+		trigger = {
+			OR = {
+				is_ahead_of_time_in_technology = { tech = dip }
+				is_ahead_of_time_in_technology = { tech = adm }
+				is_ahead_of_time_in_technology = { tech = mil }
+			}
+			AND = {
+				has_adm_advisor = yes
+				has_dip_advisor = yes
+				has_mil_advisor = yes
+			}
+		} 
+
+		effect = {
+			add_country_modifier = {
+				name = RSP_palegold_relic_smuggling
+				duration = 10950
+			}
+			custom_tooltip = RSP_palegold_pirates_of_tomorrow_tt
+			hidden_effect = {
+				add_country_modifier = {
+					name = artifice_research_temporarily_disabled
+					duration = -1
+				}
+				add_country_modifier = {
+					name = RSP_improved_buried_treasures
+					duration = 10950
+					hidden = yes
+				}
+				country_event = {
+					id = magic_artificery_setup.1
+				}
+			}
+		} 
+	}
+
+	RSP_palegold_acquiring_good_stuff = {
+		icon = mission_gnome_tinkering
+		position = 3
+		required_missions = { RSP_palegold_pirates_of_tomorrow } 
+		provinces_to_highlight = {
+			OR = {
+				province_id = 1670
+				owner = {
+					precursor_relics = 1
+					NOT = { tag = ROOT }
+					NOT = { has_spy_network_from = { who = ROOT value = 25 } }
+				}
+			}
+		} 
+
+		trigger = {
+			any_known_country = {
+				precursor_relics = 1
+				has_spy_network_from = {
+					who = ROOT
+					value = 25
+				}
+			}
+			1670 = {
+				num_of_units_in_province = {
+					who = ROOT
+					type = light_ship
+					amount = 10
+				}
+			}
+			has_estate_privilege = estate_artificers_artificer_generals
+		} 
+
+		effect = {
+			custom_tooltip = RSP_palegold_acquiring_good_stuff_effect_tt
+			hidden_effect = {
+				set_country_flag = RSP_palegold_improved_artificer_generals
+				capital_scope = {
+					change_trade_goods = precursor_relics
+					add_goblin_minority_size_effect = yes
+					add_kobold_minority_size_effect = yes
+					add_gnomish_minority_size_effect = yes
+				}
+				large_increase_of_goblin_tolerance_effect = yes
+				large_increase_of_kobold_tolerance_effect = yes
+				large_increase_of_gnomish_tolerance_effect = yes
+				if = {
+					limit = { precursor_relics = 5 }
+					add_estate_loyalty = {
+						estate = estate_artificers
+						loyalty = 25
+					}
+				}
+				else = {
+					every_owned_province = {
+						limit = { trade_goods = precursor_relics }
+						ROOT = {
+							add_estate_loyalty = {
+								estate = estate_artificers
+								loyalty = 5
+							}
+						}
+					}
+				}
+			}
+		} 
+	}
+
+	RSP_palegold_the_mecha_pirates = {
+		icon = mission_runeforged_cannons
+		position = 5
+		required_missions = {
+			RSP_palegold_acquiring_good_stuff
+			RSP_palegold_wonders_of_trade
+		}
+		provinces_to_highlight = {
+			has_port = yes
+			trade_goods = precursor_relics
+			OR = {
+				continent = south_america
+				continent = north_america
+			}
+			OR = {
+				development = capital
+				NOT = { has_province_modifier = slaves_raided }
+			}
+		} 
+
+		trigger = {
+			OR = {
+				calc_true_if = {
+					amount = 5
+					desc = RSP_palegold_the_mecha_pirates_1_ctt
+					south_america = {
+						type = all
+						trade_goods = precursor_relics
+						num_of_units_in_province = {
+							who = ROOT
+							amount = 5
+						}
+					}
+					north_america = {
+						type = all
+						trade_goods = precursor_relics
+						num_of_units_in_province = {
+							who = ROOT
+							amount = 5
+						}
+					}
+				}
+				trading_bonus = {
+					trade_goods = precursor_relics
+					value = yes
+				}		
+			}
+			custom_trigger_tooltip = {
+				tooltip = RSP_palegold_the_mecha_pirates_2_ctt
+				south_america = {
+					type = all
+					OR = {
+						NOT = { has_port = yes }
+						NOT = { trade_goods = precursor_relics }
+						NOT = { higher_development_than = 1099 }
+						has_province_modifier = slaves_raided
+					}
+				}
+				north_america = {
+					type = all
+					OR = {
+						NOT = { has_port = yes }
+						NOT = { trade_goods = precursor_relics }
+						NOT = { higher_development_than = 1099 }
+						has_province_modifier = slaves_raided
+					}
+				}
+			}
+			OR = {
+				AND = {
+					num_artifice_inventions_discovered = { VAL = 5 }
+					has_institution = global_trade
+				}
+				num_artifice_inventions_discovered = { VAL = 10 }
+			}
+		} 
+
+		effect = {
+			custom_tooltip = RSP_palegold_the_mecha_pirates_effect_tt
+			hidden_effect = {
+				set_country_flag = unlocked_artifice_invention_clockwork_rope_swingers
+				set_country_flag = RSP_palegold_the_mecha_pirates_effect
+				country_event = {
+					id = magic_artificery_setup.1
+				}
+			}
+		} 
+	}
+}
+RSP_palegold_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J98 } 
+
+	RSP_palegold_wonders_of_trade = {
+		icon = mission_guarded_market
+		position = 4
+		required_missions = {
+			RSP_palegold_acquiring_good_stuff
+			RSP_learning_the_ropes
+		}
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+		} 
+
+		trigger = {
+			if = { limit = { has_dlc = "Rule Britannia" } innovativeness = 20 }
+			mercantilism = 20
+			capital_scope = {
+				if = { limit = { has_dlc = "Leviathan" } num_of_times_expanded_infrastructure = 2 } else = { development = 30 }
+				has_trade_building_trigger = yes
+			}
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.22
+			}
+			custom_tooltip = RSP_palegold_wonders_of_trade_ei
+		} 
+	}
+}
+RSP_palegold_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = J98 } 
+
+	RSP_palegold_lord_of_pirates = {
+		icon = mission_pirate_fleet
+		position = 6
+		required_missions = {
+			RSP_palegold_the_mecha_pirates
+			RSP_isle_of_mists
+			RSP_the_liquid_gold
+			RSP_living_legends
+		}
+		provinces_to_highlight = {
+			OR = {
+				owner = {
+					capital_scope = {
+						superregion = ruin_proper_superregion
+					}
+					navy_size = ROOT
+				}
+				AND = {
+					province_id = 1081
+					NOT = { has_great_project = { type = the_driftcourt tier = 1 } }
+				}
+			}
+		} 
+
+		trigger = {
+			1081 = { has_great_project = { type = the_driftcourt tier = 1 } }
+			custom_trigger_tooltip = {
+				tooltip = RSP_lord_of_pirates_dominate_fleets_ctt
+				has_country_modifier = RSP_dominated_fleets_4
+			}
+			custom_trigger_tooltip = {
+				tooltip = RSP_lord_of_pirates_largest_fleet_ctt
+				all_known_country = {
+					OR = {
+						capital_scope = { NOT = { superregion = ruin_proper_superregion } }
+						NOT = { navy_size = ROOT }
+					}
+				}
+			}
+			OR = {
+				ruler_has_personality = legendary_pirate_personality
+				power_projection = 50
+			}
+			num_ships_privateering = 30
+		} 
+
+		effect = {
+			country_event = {
+				id = flavour_RSP.6
+			}
+			custom_tooltip = RSP_lord_of_pirates_ei
+		}  
+	}
+}

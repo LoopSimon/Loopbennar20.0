@@ -547,6 +547,7 @@ deranne_slot1_1 = {
 						add_permanent_claim = ROOT
 					}
 				}
+				set_country_flag = deranne_greatest_behemoth_enabled_flag
 			}
 			west_vanburia_area = {
 				add_base_tax = -1
@@ -589,9 +590,7 @@ deranne_slot1_1 = {
 				name = deranne_cut_competition
 				duration = 18250
 			}
-			country_event = {
-				id = flavour_deranne.17
-			}
+			custom_tooltip = deranne_final_invention.tt
 		}
 	}
 }
@@ -1129,13 +1128,27 @@ deranne_slot2_1 = {
 		
 		provinces_to_highlight = {
 			region = endralliande_region
-			NOT = { country_or_non_sovereign_subject_holds = ROOT }
+			NOT = { 
+				country_or_non_sovereign_subject_holds = ROOT
+				owner = {
+					colonial_parent = {
+						is_subject_of = ROOT
+					}
+				}
+			}
 		}
 
 		trigger = {
 			endralliande_region = {
 				type = all
-				country_or_non_sovereign_subject_holds = ROOT 
+				OR = {
+					country_or_non_sovereign_subject_holds = ROOT 
+					owner = {
+						colonial_parent = {
+							is_subject_of = ROOT
+						}
+					}
+				}
 			}
 			1504 = { #Banished Isles
 				trade_share = {
@@ -1321,9 +1334,17 @@ deranne_slot2_1 = {
 				OR = {
 					AND = {
 						country_or_non_sovereign_subject_holds = ROOT
-						has_great_project = {
-							type = arbeloch_ascensor
-							tier = 3
+						OR = {
+							has_great_project = {
+								type = arbeloch_ascensor
+								tier = 3
+							}
+							1153 = {
+								has_great_project = {
+									type = arbeloch_ascensor
+									tier = 3
+								}
+							}
 						}
 					}
 					owner = {
@@ -1339,9 +1360,17 @@ deranne_slot2_1 = {
 				OR = {
 					AND = {
 						country_or_non_sovereign_subject_holds = ROOT
-						has_great_project = {
-							type = arca_venaan
-							tier = 3
+						OR = {
+							has_great_project = {
+								type = arca_venaan
+								tier = 3
+							}
+							2757 = {
+								has_great_project = {
+									type = arca_venaan
+									tier = 3
+								}
+							}
 						}
 					}
 					owner = {
@@ -1850,7 +1879,7 @@ deranne_slot3 = {
 						value = 100
 					}
 				}
-				add_liberty_desire = 20
+				add_liberty_desire = 35
 
 			}
 			every_known_country = {
@@ -2251,8 +2280,18 @@ deranne_slot3_1 = {
 		}
 
 		effect = {
-			#Behemoth stuff here
-
+			if = {
+				limit = {
+					has_dlc = "Domination" 
+				}
+				112 = {
+					remove_province_modifier = lencori_shipyard_of_lament
+					add_permanent_province_modifier = {
+						name = lencori_shipyard_of_lament_upgrade
+						duration = -1
+					}
+				}
+			}
 			add_country_modifier = {
 				name = deranne_behemoths
 				duration = -1
@@ -2265,6 +2304,12 @@ deranne_slot3_1 = {
 			}
 			stalwart_outpost_area = {
 				add_permanent_claim = ROOT
+			}
+			hidden_effect = {
+				country_event = {
+					id = flavour_deranne.32
+					days = 180
+				}
 			}
 		}
 	}
@@ -2283,7 +2328,11 @@ deranne_slot3_1 = {
 		trigger = { 
 			custom_trigger_tooltip = {
 				tooltip = deranne_terror_uelos_trigger.tt
-				has_country_modifier = deranne_lumber_modifier_2 
+				OR = {
+					has_country_modifier = deranne_lumber_modifier_2 
+					has_country_modifier = deranne_lumber_modifier_3 
+					has_country_modifier = deranne_lumber_modifier_4
+				}
 			}
 			navy_size_percentage = 0.90
 			num_of_heavy_ship = 40
@@ -2370,8 +2419,29 @@ deranne_slot3_1 = {
 		}
 		
 		effect = {
-			country_event = {
-				id = flavour_deranne.13
+			dao_nako_region = {
+				add_permanent_claim = ROOT
+			}
+			bavabetsaro_area = {
+				add_permanent_claim = ROOT
+			}
+			tanfandoro_area = {
+				add_permanent_claim = ROOT
+			}
+			nafalofimapo_area = {
+				add_permanent_claim = ROOT
+			}
+			5710 = { #Kunolo
+				add_permanent_province_modifier = {
+					name = deranne_dtc_establishment 
+					duration = -1
+				}
+			}
+			5763 = { #New Hooksfield
+				add_permanent_province_modifier = {
+					name = deranne_dtc_establishment 
+					duration = -1
+				}
 			}
 		}
 	}
@@ -2623,7 +2693,13 @@ deranne_slot3_1 = {
 		}
 		
 		trigger = {
-			is_hegemon_of_type = naval_hegemon
+			OR = {
+				is_hegemon_of_type = naval_hegemon
+				AND = {
+					is_hegemon = yes
+					navy_size = 400
+				}
+			}
 			num_of_nodes_with_trade_share = {
 				amount = 15
 				share = 60
@@ -3390,6 +3466,15 @@ deranne_slot4 = {
 
 		effect = {
 			custom_tooltip = deranne_lorent_form_buffs.tt
+			add_permanent_power_projection = {
+				type = 10_permanent_power_projection
+				amount = 10
+       		}
+			add_prestige = 30
+			add_estate_loyalty = {
+				estate = all
+				loyalty = 10
+			}
 			124 = { #Sildthol
 				add_province_modifier = {
 					name = deranne_shields_of_lencenor
@@ -3413,10 +3498,6 @@ deranne_slot4 = {
 					name = deranne_shields_of_lencenor
 					duration = -1
 				}  
-			}
-			country_event = {
-				id = flavour_deranne.8
-				days = 730
 			}
 		}
 	}
@@ -3578,9 +3659,18 @@ deranne_slot4_1 = {
 				}
 			}
 			112 = {
-				add_province_modifier = {
-					name = deranne_world_shipyard
-					duration = -1
+				if = {
+					limit = { has_dlc = "Domination" }
+					add_province_modifier = {
+						name = deranne_world_shipyard_dlc
+						duration = -1
+					}
+				}
+				else = {
+					add_province_modifier = {
+						name = deranne_world_shipyard
+						duration = -1
+					}
 				}
 			}
 		}

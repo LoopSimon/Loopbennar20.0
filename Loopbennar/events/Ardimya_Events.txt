@@ -1,0 +1,797 @@
+namespace = ardimya
+
+#1-19 Ardimyan Independence staffs
+
+#Birth of Ardimyan Culture
+country_event = {
+	id = ardimya.1
+	title = ardimya.1.t
+	desc = ardimya.1.d
+	picture = COLONIZATION_eventPicture
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	major = yes
+	major_trigger = {
+		capital_scope = { continent = europe }
+		num_of_colonists = 1
+		any_owned_province = {
+			region = ardimya_region
+		}
+	}
+	
+	trigger = { 
+		capital_scope = { continent = europe }
+		has_country_flag = cannorian_ardimya_colonist
+		OR = {
+			culture_is_human = yes
+			culture_is_half_elven = yes
+		}
+		OR = {
+			AND = {
+				current_age = age_of_reformation
+				num_of_owned_provinces_with = {
+					value = 30
+					region = ardimya_region
+					culture_is_human = yes
+					is_colony = no
+				}
+			}
+			AND = {
+				current_age = age_of_absolutism
+				num_of_owned_provinces_with = {
+					value = 15
+					region = ardimya_region
+					culture_is_human = yes
+					is_colony = no
+				}
+			}
+		}
+	}
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					region = ardimya_region
+					is_colony = no
+					culture_is_human = yes
+				}
+				save_event_target_as = ardimyan_rise_province
+				
+			}
+			set_global_flag = ardimya_event_chain_started
+		}
+
+	}
+	
+	option = {
+		name = ardimya.1.a
+		goto = ardimyan_rise_province
+		event_target:ardimyan_rise_province = {
+			add_province_modifier = { name = ardimya_rise_of_new_people duration = 18250 }
+			change_culture = ardimyan
+			hidden_effect = {
+				province_event = {
+					id = ardimya.3
+					days = 7300
+				}
+				set_variable = {
+					which = ardimya_convert_counter
+					value = 10
+				}
+				province_event = {
+					id = ardimya.2
+					days = 730
+				}			
+			}
+		}
+	}
+}
+
+#Choose a tag to spread Ardimyan culture
+province_event = {
+	id = ardimya.2
+	title = ardimya.2.t
+	desc = ardimya.2.d
+	picture = COLONIZATION_eventPicture
+	hidden = yes
+	
+	is_triggered_only = yes
+	trigger = { 
+		check_variable = {
+			which = ardimya_convert_counter
+			value = 1
+		}
+	}
+	
+	immediate = {
+		#this event have already HIDDEN...
+		subtract_variable = {
+			which = ardimya_convert_counter
+			value = 1
+		}
+	}
+	
+	option = {
+		name = ardimya.2.a
+		random_country = {
+			limit = {
+				has_country_flag = cannorian_ardimya_colonist
+				capital_scope = { continent = europe }
+				ardimya_region = {
+					owned_by = PREV
+					is_colony = no
+					culture_is_human = yes
+					NOT = { culture = ardimyan }
+				}
+			}
+			country_event = {
+				id = ardimya.4
+			}
+			ROOT = { 
+				province_event = {
+					id = ardimya.2
+					days = 730
+				}
+			}
+		}
+		
+	}
+}
+
+#Choose a tag to create ardimya
+province_event = {
+	id = ardimya.3
+	title = ardimya.3.t
+	desc = ardimya.3.d
+	picture = COLONIZATION_eventPicture
+	hidden = yes
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = { 
+		always = yes
+	}
+	
+	
+	option = {
+		name = ardimya.3.a
+		every_country = {
+			limit = {
+				#I think this one is more restricted 
+				has_country_flag = cannorian_ardimya_colonist
+				capital_scope = { continent = europe }
+			}
+			every_owned_province = {
+				limit = {
+					region = ardimya_region
+				}
+				PREV = {
+					change_variable = {
+						which = ardimya_provinces
+						value = 1
+					}				
+				}
+			}
+			if = {
+				limit = {  has_saved_event_target = ardimya_overlord  }
+				if = {
+					limit = {
+						check_variable = {
+							which = ardimya_provinces
+							which = event_target:ardimya_overlord
+						}
+					}
+					save_event_target_as = ardimya_overlord
+				}						
+			}
+			else = {
+				save_event_target_as = ardimya_overlord
+			}
+		}
+		
+		event_target:ardimya_overlord = {
+			country_event = {
+				id = ardimya.5
+			}
+		}
+	}
+}
+
+#Spread Ardimyan culture
+country_event = {
+	id = ardimya.4
+	title = ardimya.4.t
+	desc = ardimya.4.d
+	picture = COLONIZATION_eventPicture
+	
+	is_triggered_only = yes
+	trigger = { 
+		capital_scope = { continent = europe }
+	}
+	
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					region = ardimya_region
+					is_colony = no
+					culture_is_human = yes
+					NOT = { culture = ardimyan }
+				}
+				save_event_target_as = ardimyan_conversion_1
+			}
+			random_owned_province = {
+				limit = {
+					region = ardimya_region
+					is_colony = no
+					culture_is_human = yes
+					NOT = { culture = ardimyan }
+					NOT = { province_id = event_target:ardimyan_conversion_1 }
+				}
+
+				save_event_target_as = ardimyan_conversion_2
+			}
+			if = {
+				limit = { has_saved_event_target = ardimyan_conversion_2 }
+				random_owned_province = {
+					limit = {
+						region = ardimya_region
+						is_colony = no
+						culture_is_human = yes
+						NOT = { culture = ardimyan }
+						NOT = { province_id = event_target:ardimyan_conversion_1 }
+						NOT = { province_id = event_target:ardimyan_conversion_2 }
+					}
+					save_event_target_as = ardimyan_conversion_3
+				}			
+			}		
+		}
+	}
+	option = {
+		name = ardimya.4.a
+		event_target:ardimyan_conversion_1 = {
+			add_province_modifier = { name = ardimya_rise_of_new_people duration = 18250 }
+			change_culture = ardimyan
+		}
+		if = {
+			limit = { has_saved_event_target = ardimyan_conversion_2 }
+			event_target:ardimyan_conversion_2 = {
+				add_province_modifier = { name = ardimya_rise_of_new_people duration = 18250 }
+				change_culture = ardimyan
+			}
+		}
+		if = {
+			limit = { has_saved_event_target = ardimyan_conversion_3 }
+			event_target:ardimyan_conversion_3 = {
+				add_province_modifier = { name = ardimya_rise_of_new_people duration = 18250 }
+				change_culture = ardimyan
+			}
+		}		
+	}
+}
+
+#Birth of Ardimya
+country_event = {
+	id = ardimya.5
+	title = ardimya.5.t
+	desc = ardimya.5.d
+	picture = TRANSYLVANIAN_OTTOMAN_eventPicture
+	
+	is_triggered_only = yes
+	trigger = { 
+		capital_scope = { continent = europe }
+		#if the cannorian country who owned MOST ardimya provinces have 0 ardimya provinces,this event chain should stop.
+		any_owned_province = {
+			region = ardimya_region
+			is_colony = no
+			
+		}
+	}
+	immediate = { set_global_flag = ardimya_founded }
+	option = {
+		name = ardimya.5.a
+		every_owned_province = {
+			limit = {
+				region = ardimya_region
+				is_colony = no
+			}
+			cede_province = S91
+			add_core = S91
+		}
+		if = {
+			limit = { has_dlc = "Leviathan" }
+			create_subject = {
+				subject_type = crown_colony
+				subject = S91
+			}
+		}
+		else = {
+			create_subject = {
+				subject_type = colony
+				subject = S91
+			}
+		}
+
+		6076 = {
+			add_trade_modifier = {
+				who = ROOT
+				duration = -1
+				power = 100
+				key = STRONG_MERCHANTS
+			}
+		}
+		add_country_modifier = {
+			name = ardimya_rise_of_trade
+			duration = -1
+		}
+		hidden_effect = {
+			S91 = {
+				primary_and_ruler_culture_change = { race = human new_culture = ardimyan }
+			}
+			country_event = {
+				id = ardimya.6
+				days = 7300
+			}
+		}
+	}
+	option = {
+		name = ardimya.5.b
+		
+		trigger = {
+			ai = no
+		}
+		
+		every_owned_province = {
+			limit = {
+				region = ardimya_region
+				is_colony = no
+			}
+			cede_province = S91
+			add_core = S91
+		}
+		if = {
+			limit = { has_dlc = "Leviathan" }
+			create_subject = {
+				subject_type = crown_colony
+				subject = S91
+			}
+		}
+		else = {
+			create_subject = {
+				subject_type = colony
+				subject = S91
+			}
+		}
+		6076 = {
+			add_trade_modifier = {
+				who = ROOT
+				duration = -1
+				power = 100
+				key = STRONG_MERCHANTS
+			}
+		}
+		add_country_modifier = {
+			name = ardimya_rise_of_trade
+			duration = -1
+		}
+		hidden_effect = {
+			S91 = {
+				primary_and_ruler_culture_change = { race = human new_culture = ardimyan }
+			}
+			country_event = {
+				id = ardimya.6
+				days = 7300
+			}
+		}
+		switch_tag = S91
+		
+	}
+	option = {
+		name = ardimya.5.c
+		every_owned_province = {
+			limit = {
+				region = ardimya_region
+				is_colony = no
+				has_province_modifier = ardimya_rise_of_new_people
+			}
+			add_province_modifier = {
+				name = restless_ardimyans
+				duration = -1
+			}
+			add_local_autonomy = 80
+		}
+		custom_tooltip = ardimya_ardimyan_annoyed_tt
+		hidden_effect = {
+			country_event = {
+				id = ardimya.6
+				days = 1825
+			}
+		}
+	}
+}
+#Ardimya Rebellion for Colonial Power
+country_event = {
+	id = ardimya.6
+	title = ardimya.6.t
+	desc = ardimya.6.d
+	picture = REVOLT_HUNGARIAN_eventPicture
+
+	is_triggered_only = yes
+	trigger = { 
+		capital_scope = { continent = europe }
+		S91 = {
+			OR = {
+				AND = {
+					exists = yes
+					is_subject_of = ROOT
+				}
+				exists = no
+			}
+		}
+	}
+	option = {
+		name = ardimya.6.a
+		remove_country_modifier = ardimya_rise_of_trade
+		set_country_flag = ardimya_war_of_independence_colonial_power
+		ardimya_region = {
+			limit = {
+				owned_by = ROOT
+				is_colony = no
+			}
+			add_local_autonomy = -60
+			remove_province_modifier = restless_ardimyans
+			cede_province = S91
+			add_core = S91
+		}
+		if = {
+			limit = {
+				NOT = { S91 = { is_subject_of = ROOT } }
+			}
+			if = {
+				limit = { has_dlc = "Leviathan" }
+				create_subject = {
+					subject_type = crown_colony
+					subject = S91
+				}
+			}
+			else = {
+				create_subject = {
+					subject_type = colony
+					subject = S91
+				}
+			}
+			S91 = {
+				primary_and_ruler_culture_change = { race = human new_culture = ardimyan }
+			}
+		}
+		S91 = {
+			country_event = {
+				id = ardimya.7
+			}
+		}
+		custom_tooltip = ardimya_independece_timelimit_tt
+		hidden_effect = {
+			country_event = {
+				id = ardimya.11
+				days = 3650
+			}		
+		}
+
+	}
+}
+
+#Ardimya Rebellion for Ardimya
+country_event = {
+	id = ardimya.7
+	title = ardimya.7.t
+	desc = ardimya.7.d
+	picture = REVOLT_HUNGARIAN_eventPicture
+	is_triggered_only = yes
+	
+	trigger = {
+		always = yes
+	}
+	
+	option = {
+		name = ardimya.7.a		
+		set_country_flag = ardimya_war_of_independence
+		
+		add_country_modifier = {
+			name = ardimya_independence_war
+			duration = -1
+		}
+		add_country_modifier = {
+			name = ardimya_independence_war_income
+			duration = 1825
+		}
+		if = {
+			limit = {
+				ai = yes
+			}
+			random_owned_province = {
+				limit  = {
+					has_port = yes
+				}
+				build_to_forcelimit = {
+					infantry = 0.5
+					cavalry = 0.15
+					artillery = 0.2
+					heavy_ship = 0.4
+					light_ship = 0.4
+				}
+			}
+			while = {
+				limit = {
+					NOT = { manpower_percentage = 0.99 }
+				}
+				add_manpower = 5
+			}			
+		}
+		else = {
+			capital_scope = {
+				infantry = ROOT
+				infantry = ROOT
+				infantry = ROOT
+				infantry = ROOT
+				infantry = ROOT
+			}
+			add_manpower = 10
+		}
+
+
+		declare_war_with_cb = {
+			casus_belli = cb_independence_war
+			who = overlord
+		}
+		custom_tooltip = ardimya_independece_timelimit_tt
+
+	}
+
+}
+
+#Ardimya Rebellion Success POV Ardimya
+country_event = {
+	id = ardimya.8
+	title = ardimya.8.t
+	desc = ardimya.8.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+
+	option = {
+		name = ardimya.8.a		
+		remove_country_modifier = ardimya_independence_war
+		clr_country_flag = ardimya_war_of_independence
+		custom_tooltip = ardimya_conquest_culture_convert_tt
+		hidden_effect = {
+			ardimya_region = {
+				limit = {
+					owner = {
+						capital_scope = { continent = europe }
+					}
+				}
+				set_province_flag = ardimya_conquer_target
+				add_core = S91
+			}		
+		}
+
+		add_country_modifier = {
+			name = ardimya_nation_founded
+			duration = 9125
+		}
+		merfolk_add_opinion_effect_large = yes
+		change_country_color = { 
+			color = { 231 228 148 }
+		}
+	}
+}
+#Ardimya Rebellion Success POV Colonial Power
+country_event = {
+	id = ardimya.9
+	title = ardimya.9.t
+	desc = ardimya.9.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = ardimya.9.a		
+		add_prestige = -25
+	}
+}
+
+#Ardimya Rebellion Failed POV Colonial Power
+country_event = {
+	id = ardimya.10
+	title = ardimya.10.t
+	desc = ardimya.10.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+	
+	option = {
+		name = ardimya.10.a		
+		inherit = S91
+		6076 = {
+			add_trade_modifier = {
+				who = ROOT
+				duration = -1
+				power = 25
+				key = STRONG_MERCHANTS
+			}
+		}
+		add_treasury = 2000
+		ardimya_region = {
+			limit = {
+				owned_by = ROOT
+			}
+			remove_province_modifier = ardimya_rise_of_new_people
+			add_province_modifier = {
+				name = strangling_burgeoning_elites
+				duration = -1
+			}
+			add_nationalism = -100
+		}
+	}
+	option = {
+		name = ardimya.10.b		
+		6076 = {
+			add_trade_modifier = {
+				who = ROOT
+				duration = -1
+				power = 50
+				key = STRONG_MERCHANTS
+			}
+		}
+		add_country_modifier = {
+			name = ardimya_rise_of_trade_lesser
+			duration = -1
+		}
+		ardimya_region = {
+			limit = {
+				OR = {
+					owned_by = S91
+					owned_by = ROOT
+				}
+			}
+			remove_province_modifier = ardimya_rise_of_new_people
+			add_province_modifier = {
+				name = a_failed_project_ardimya
+				duration = -1
+			}
+		}
+		S91 = {
+			add_country_modifier = {
+				name = ardimya_tight_leash
+				duration = -1
+			}
+		}
+	}
+}
+
+#When Ardimya independence wars takes too long
+country_event = {
+	id = ardimya.11
+	title = ardimya.11.t
+	desc = ardimya.11.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+	
+	trigger = {
+		#check with this flag..
+		has_country_flag = ardimya_war_of_independence_colonial_power
+	}
+	
+	immediate = {
+		hidden_effect = {
+			S91 = {
+				country_event = {
+					id = ardimya.12
+				}
+			}
+			clr_country_flag = ardimya_war_of_independence_colonial_power
+			white_peace = S91
+		}
+
+	}
+	option = {
+		name = ardimya.11.a
+		tooltip = {
+			white_peace = S91
+		}
+	}
+}
+
+country_event = {
+	id = ardimya.12
+	title = ardimya.12.t
+	desc = ardimya.12.d
+	picture = DEBATE_REPUBLICAN_eventPicture
+	is_triggered_only = yes
+	
+	trigger = {
+		has_country_flag = ardimya_war_of_independence
+	}
+	option = {
+		name = ardimya.12.a
+		clr_country_flag = ardimya_war_of_independence
+		tooltip = {
+			white_peace = FROM
+		}
+	}
+}
+
+#Ardimyan culture Convert
+country_event = {
+	id = ardimya.13
+	title = ardimya.13.t
+	desc = ardimya.13.d
+	picture = COLONIZATION_eventPicture
+	is_triggered_only = yes
+	
+	trigger = {
+		tag = S91
+		any_owned_province = {
+			has_province_flag = ardimya_conquer_target
+		}
+	}
+	
+	option = {
+		name = ardimya.13.a
+		every_owned_province = {
+			limit = {
+				has_province_flag = ardimya_conquer_target
+				#should only convert human
+				culture_is_human = yes
+			}
+			change_culture = ardimyan
+			clr_province_flag = ardimya_conquer_target
+		}
+	}
+	option = {
+		name = ardimya.13.b
+		every_owned_province = {
+			limit = {
+				has_province_flag = ardimya_conquer_target
+				#should only convert human
+				culture_is_human = yes
+			}
+			change_culture = ardimyan
+			clr_province_flag = ardimya_conquer_target
+		}
+		set_country_flag = ardimya_mute_convert
+	}
+} 
+
+#a duplicate of ardimya.13 but hidden
+country_event = {
+	id = ardimya.14
+	title = ardimya.14.t
+	desc = ardimya.14.d
+	picture = COLONIZATION_eventPicture
+	is_triggered_only = yes
+	hidden = yes
+	
+	
+	trigger = {
+		tag = S91
+		any_owned_province = {
+			has_province_flag = ardimya_conquer_target
+		}
+		has_country_flag = ardimya_mute_convert
+	}
+	
+	
+	option = {
+		name = ardimya.14.a
+		every_owned_province = {
+			limit = {
+				has_province_flag = ardimya_conquer_target
+				#should only convert human
+				culture_is_human = yes
+			}
+			change_culture = ardimyan
+			clr_province_flag = ardimya_conquer_target
+		}
+	}
+} 

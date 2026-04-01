@@ -1,0 +1,2657 @@
+#Zena (L06) MT - By Bromar
+
+zena_slot_01 = {
+	slot = 1
+	generic = no
+	ai = yes
+	potential = {
+		tag = L06
+	}
+	has_country_shield = yes
+
+	L06_root_of_universe = {
+		icon = mission_stormy_seas
+		position = 2
+		required_missions = {
+			L06_faith_in_foundations
+		}
+
+		trigger = {
+			OR = {
+				has_idea = quest_for_the_new_world
+				num_of_heavy_ship  = 3
+			}
+			naval_maintenance = 1
+			if = {
+				limit = {
+					has_dlc = "domination"
+				}
+				OR = {
+					has_estate_privilege = estate_burghers_force_impressment
+					has_estate_privilege = estate_burghers_naval_school_right
+				}
+			}
+			else = {
+				estate_loyalty = {
+					estate = estate_burghers
+					loyalty = 60
+				}
+			}			
+		}
+
+		effect = {
+			hidden_effect = { #Sets a flag for the Mission The Radiant Fleet to upgrade whichever you had active
+				if = {
+					limit = {
+						has_estate_privilege = estate_burghers_force_impressment
+					}
+					set_country_flag = zena_force_impressment
+				}
+				if = {
+					limit = {
+						has_estate_privilege = estate_burghers_naval_school_right
+					}
+					set_country_flag = zena_naval_schools
+				}
+			}
+			if = { #if you have explo 1, get a stronger version
+				limit = {
+					has_idea = quest_for_the_new_world
+				}
+				add_country_modifier = { #+30% Colo Range, -25% Ship Recruit Speed, +15% Global Sailors Modifier, +55% Native Assimilation 
+					name = zena_the_infinite_west_plus
+					duration = 21900
+				}
+			}
+			else = { #if no explo 1, get base version + explorers
+				add_country_modifier = { #+25% Colo Range, -20% Ship Recruit Speed, +10% Global Sailors, +50% Native Assimilation
+					name = zena_the_infinite_west
+					duration = 18250
+				}
+				add_country_modifier = { #Can recruit explorers 
+					name = zena_beyond_saltwater_horizon
+					duration = -1
+				}
+			}
+		}
+	}
+
+	L06_a_new_people = {
+		icon = mission_invade_island
+		position = 3
+		required_missions = {
+			L06_root_of_universe
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				area = far_uelos_isles_area
+				area = sil_berkhens_land_area
+			}
+			NOT = { country_or_subject_holds = ROOT }
+		}
+
+		trigger = {
+			religion = noukahi_pantheon
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 3
+				OR = {
+					area = far_uelos_isles_area
+					area = sil_berkhens_land_area
+				}
+				is_city = yes #I know I said I didn't care if people cheesed this but then I thought about it and realized I did
+			}
+			custom_trigger_tooltip = { #Have successfully completed at least one pilgrimage
+				tooltip = zena_one_pilgrimage_tt
+				noukahi_has_completed_num_unique_pilgrimages = { amount = 1 }
+			}
+		}
+
+		effect = {
+			large_increase_of_halfling_tolerance_effect = yes
+			every_subject_country = {
+				large_increase_of_halfling_tolerance_effect = yes
+			}
+			large_increase_of_ruinborn_tolerance_effect = yes
+			every_subject_country = {
+				large_increase_of_ruinborn_tolerance_effect = yes
+			}
+			add_country_modifier = { #50% Colony cost, +1 colonist, +30 colonial growth, -15% envoy travel time
+				name = zena_unwritten_atlas
+				duration = 21900
+			}
+		}
+	}
+
+	L06_roots_beyond_root = {
+		icon = mission_jungle
+		position = 4
+		required_missions = {
+			L06_a_new_people
+		}
+
+		provinces_to_highlight = {
+			colonial_region = colonial_lai_peninsula
+			fast_has_pop_of_race = { race = ruinborn }
+		}
+
+		trigger = {
+			any_subject_country = {
+				capital_scope = {
+					colonial_region = colonial_lai_peninsula
+				}
+				is_colonial_nation = yes
+				fast_owns_num_pops_of_race = { race = ruinborn amount = 3 }
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 3
+				colonial_region = colonial_lai_peninsula
+				OR = {
+					has_fort_building_trigger = yes 
+					has_trade_building_trigger = yes
+					has_tax_building_trigger = yes
+					has_production_building_trigger = yes
+					has_manufactory_trigger = yes
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = zena_roots_beyond_halfling_tt
+			random_subject_country = {
+				limit = {
+					capital_scope = {
+						colonial_region = colonial_lai_peninsula
+					}
+					is_colonial_nation_of = ROOT
+				}
+				for = {
+					amount = 5
+					effect = "
+						random_owned_province = {
+							limit = {
+								NOT = {
+									fast_has_pop_of_race = { race = halfling }
+									has_province_modifier = zena_horashesh_outreach
+								}
+							}
+							add_halfling_minority_size_effect = yes
+							add_province_modifier = {
+								name = zena_horashesh_outreach
+								duration = 14600
+							}
+						}
+					"
+				}
+			}
+			every_subject_country = {
+				large_increase_of_ruinborn_tolerance_effect = yes
+			}
+			large_increase_of_ruinborn_tolerance_effect = yes
+			every_country = {
+				limit = {
+					OR = {
+						culture = parura
+						culture = laii
+						culture = oonoi
+						culture = thamvoii
+					}
+				}
+				add_opinion = {
+					who = ROOT
+					modifier = zena_opinion_horashesh_branches
+				}
+				reverse_add_opinion = {
+					who = ROOT
+					modifier = zena_opinion_horashesh_branches
+				}
+			}
+		}
+	}
+
+	L06_deeper_into_effelai = {
+		icon = mission_alone_in_the_forest
+		position = 5
+		required_missions = {
+			L06_roots_beyond_root
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				colonial_region = colonial_lai_peninsula
+				AND = {
+					exists = G15
+					is_capital_of = G15 #Sel'Parura
+				}
+			}
+			NOT = {
+				country_or_subject_holds = ROOT
+			}
+		}
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 10
+				colonial_region = colonial_lai_peninsula
+			}
+			any_owned_or_subject_province = {
+				superregion = effelai_superregion
+				is_city = yes
+			}
+			OR = {
+				NOT = {
+					exists = G15 #Sel'Parura
+				}
+				G15 = {
+					has_opinion = {
+						who = ROOT
+						value = 125
+					}
+				}
+			}
+			OR = {
+				high_tolerance_ruinborn_race_trigger = yes
+				medium_tolerance_ruinborn_race_trigger = yes
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						exists = G15 #Sel'Parura
+					}
+				}
+				random_subject_country = {
+					limit = {
+						is_colonial_nation_of = ROOT
+						OR = {
+							capital_scope = { colonial_region = colonial_lai_peninsula }
+							capital_scope = { colonial_region = colonial_leechden }
+						}
+					}
+					if = {
+                        limit = {
+                            NOT = { any_owned_province = { is_core = G15 } } #Sel'Parura
+                        }
+                        random_owned_or_subject_province = {
+                            limit = { is_capital = no superregion = effelai_superregion }
+                            add_core = G15 #Sel'Parura
+                        }
+                    } 
+                    release_with_religion_and_culture = { tag = G15 religion = chahinanito culture = parura } #Sel'Parura
+				}
+			}			
+			create_conquistador = {
+				tradition = 90
+				culture = parura
+			}
+			add_historical_friend = G15 #Sel'Parura
+			every_subject_country = {
+				limit = {
+					is_colonial_nation_of = ROOT
+					capital_scope = { continent = south_america }
+				}
+				change_religion = chahinanito
+				every_owned_province = {
+					change_religion = chahinanito
+				}
+			}
+			large_increase_of_ruinborn_tolerance_effect = yes
+			every_subject_country = {
+				large_increase_of_ruinborn_tolerance_effect = yes
+			}
+			create_alliance = G15 #Sel'Parura
+			G15 = {
+				add_historical_friend = ROOT
+				largest_increase_of_human_tolerance_effect = yes
+				largest_increase_of_halfling_tolerance_effect = yes
+				create_conquistador = {
+					tradition = 90
+					culture = zuvunwa
+				}
+				capital_scope = {
+					zena_bivuzena_generic_add_race_effect = { race = human }
+					zena_bivuzena_generic_add_race_effect = { race = halfling }
+				}
+			}
+		}
+	}
+
+	L06_radiant_fleet = {
+		icon = mission_fleet
+		position = 8
+		required_missions = {
+			L06_parura_partnership
+		}
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2302 #Dry Coast Trade Node
+				province_id = 1539 #East Effelai Trade Node
+				province_id = 1544 #Kalavend Trade Node
+				province_id = 1511 #Leechdens Trade Node
+			}
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = zena_radiant_fleet_tt
+				OR = {
+					2302 = { #Dry Coast Trade Node
+						any_trade_node_member_province = {
+							light_ships_in_province = 20
+							light_ships_in_province = ROOT
+						}
+					}
+					1539 = { #East Effelai Trade Node
+						any_trade_node_member_province = {
+							light_ships_in_province = 20
+							light_ships_in_province = ROOT
+						}
+					}
+					1544 = { #Kalavend Trade Node
+						any_trade_node_member_province = {
+							light_ships_in_province = 20
+							light_ships_in_province = ROOT
+						}
+					}
+					1511 = { #Leechdens Trade Node
+						any_trade_node_member_province = {
+							light_ships_in_province = 20
+							light_ships_in_province = ROOT
+						}
+					}
+				}
+			}
+			OR = {
+				calc_true_if = {
+					amount = 2
+					all_subject_country = {
+						has_divert_trade = yes
+					}
+				}
+				all_subject_country = {
+					has_embargo_rivals = yes
+				}
+			}
+			OR = {
+				light_ship_fraction = 0.75
+				navy_size_percentage = 0.9
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					has_country_flag = zena_force_impressment
+				}
+				hidden_effect = {
+					clr_country_flag = zena_force_impressment
+					set_country_flag = zena_improved_force_draft					
+				}
+				custom_tooltip = zena_force_draft_improved_tt
+			}
+			if = {
+				limit = {
+					has_country_flag = zena_naval_schools
+				}
+				hidden_effect = {
+					clr_country_flag = zena_naval_schools
+					set_country_flag = zena_improved_naval_schools
+				}
+				custom_tooltip = zena_naval_schools_improved_tt
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_dlc = "Domination"
+					}
+				}
+				add_estate_loyalty = {
+					estate = estate_burghers
+					loyalty = 15
+				}
+			}
+			custom_tooltip = zena_radiant_fleet_protectorate_upgrade_tt
+		}
+	}
+
+	L06_floating_jewel_of_west = {
+		icon = mission_goddess_heart
+		position = 9
+		required_missions = {
+			L06_radiant_fleet
+			L06_mushroom_mythos
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						region = turtleback_isle_region
+						region = severed_coast_region
+					}
+					NOT = { owned_by_subject_of = ROOT }
+				}
+				AND = {
+					province_id = 2324
+					OR = {
+						has_trade_building_trigger = no
+						has_fort_building_trigger = no
+					}
+				}
+			}
+		}
+
+		trigger = {
+			all_subject_country = {
+				NOT = {
+					liberty_desire = 25
+				}
+				has_opinion = {
+					who = ROOT
+					value = 200
+				}
+			}
+			G15 = { #Sel'Parura
+				trust = {
+					who = ROOT
+					value = 90
+				}
+			}
+			turtleback_isle_region = {
+				type = all
+				owned_by_subject_of = ROOT
+			}
+			severed_coast_region = {
+				type = all
+				owned_by_subject_of = ROOT
+			}
+			2324 = { #Timberpoint
+				has_trade_building_trigger = yes
+				has_fort_building_trigger = yes
+			}
+		}
+
+		effect = {
+			random_subject_country = {
+				limit = {
+					is_colonial_nation_of = ROOT
+					capital_scope = {
+						colonial_region = colonial_lai_peninsula 
+					}
+				}
+				set_capital = 2324 #Timberpoint
+			}
+			2324 = { #Timberpoint
+				zena_bivuzena_generic_add_race_effect = { race = ruinborn }
+				zena_bivuzena_generic_add_race_effect = { race = halfling }
+				add_province_modifier = { #-50% Local Ship Build Time, +75% Ship Repair Speed, +25 Local Trade Power
+					name = zena_effelai_forward_base
+					duration = -1
+				}
+			}
+			if = {
+				limit = {
+					G15 = {
+						ai = yes
+					}
+				}
+				G15 = {
+					add_liberty_desire = -35
+				}
+			}
+			custom_tooltip = zena_cede_south_aelantir_tt
+            if = {
+				limit = {
+					num_of_provinces_owned_or_owned_by_subjects_with = {
+						value = 300
+						zena_cede_regions_trigger = yes
+					}
+				}
+					G15 = {
+						add_country_modifier = {
+							name = zena_chosen_not_alone_max
+							duration = -1
+						}
+						if = {
+							limit = {
+								monthly_income = 41
+							}
+							add_years_of_income = 5
+						}
+						else = {
+							add_treasury = 2500
+						}
+					}
+					add_country_modifier = {
+						name = zena_jungle_song_heard_max
+						duration = -1
+					}
+					if = {
+						limit = {
+							monthly_income = 41
+						}
+						add_years_of_income = 10
+					}
+					else = {
+						add_treasury = 5000
+					}
+			}
+			else_if = {
+				limit = {
+					num_of_provinces_owned_or_owned_by_subjects_with = {
+						value = 200
+						zena_cede_regions_trigger = yes
+					}
+				}
+					G15 = {
+						add_country_modifier = {
+							name = zena_chosen_not_alone_four
+							duration = 36500
+						}
+						if = {
+							limit = {
+								monthly_income = 41
+							}
+							add_years_of_income = 4
+						}
+						else = {
+							add_treasury = 2000
+						}
+					}
+					add_country_modifier = {
+						name = zena_jungle_song_heard_four
+						duration = 36500
+					}
+					if = {
+						limit = {
+							monthly_income = 41
+						}
+						add_years_of_income = 8
+					}
+					else = {
+						add_treasury = 4000
+					}
+				}
+			else_if = {
+				limit = {
+					num_of_provinces_owned_or_owned_by_subjects_with = {
+						value = 100
+						zena_cede_regions_trigger = yes
+					}
+				}
+					G15 = {
+						add_country_modifier = {
+							name = zena_chosen_not_alone_three
+							duration = 29200
+						}
+						if = {
+							limit = {
+								monthly_income = 41
+							}
+							add_years_of_income = 3
+						}
+						else = {
+							add_treasury = 1500
+						}
+					}
+					add_country_modifier = {
+						name = zena_jungle_song_heard_three
+						duration = 29200
+					}
+					if = {
+						limit = {
+							monthly_income = 41
+						}
+						add_years_of_income = 6
+					}
+					else = {
+						add_treasury = 3000
+					}
+			}
+			else_if = {
+				limit = {
+					num_of_provinces_owned_or_owned_by_subjects_with = {
+						value = 30
+						zena_cede_regions_trigger = yes
+					}
+				}
+					G15 = {
+						add_country_modifier = {
+							name = zena_chosen_not_alone_two
+							duration = 21900
+						}
+						if = {
+							limit = {
+								monthly_income = 41
+							}
+							add_years_of_income = 2
+						}
+						else = {
+							add_treasury = 1000
+						}
+					}
+					add_country_modifier = {
+						name = zena_jungle_song_heard_two
+						duration = 21900
+					}
+					if = {
+						limit = {
+							monthly_income = 41
+						}
+						add_years_of_income = 4
+					}
+					else = {
+						add_treasury = 2000
+					}
+			}
+			else = {
+					G15 = {
+						add_country_modifier = {
+							name = zena_chosen_not_alone_min
+							duration = 14600
+						}
+						if = {
+							limit = {
+								monthly_income = 41
+							}
+							add_years_of_income = 1
+						}
+						else = {
+							add_treasury = 500
+						}
+					}
+					add_country_modifier = {
+						name = zena_jungle_song_heard_min
+						duration = 14600
+					}
+					if = {
+						limit = {
+							monthly_income = 41
+						}
+						add_years_of_income = 2
+					}
+					else = {
+						add_treasury = 1000
+					}
+			}
+			hidden_effect = {
+				every_owned_or_subject_province = {
+					limit = {
+						zena_cede_regions_trigger = yes
+						NOT = {
+							owned_by = G15 #Sel'Parura
+						}
+					}
+					add_core = G15
+					cede_province = G15
+				}
+			}
+		}
+	}
+}
+
+zena_slot_02 = {
+	slot = 2
+	generic = no
+	ai = yes
+	potential = {
+		tag = L06
+	}
+	has_country_shield = yes
+
+	L06_faith_in_foundations = {
+		icon = mission_early_game_buildings
+		position = 1
+
+		provinces_to_highlight = {
+			province_id = 5847 #Bivuzena
+		}
+
+		trigger = {
+			NOT = {
+				is_in_deficit = yes
+			}
+			num_of_light_ship = 4
+			5847 = { #Bivuzena
+				num_of_times_improved_by_owner = 2
+				is_capital = yes
+				is_core = ROOT
+			}
+		}
+
+		effect = {
+			5847 = { #Bivuzena
+				add_devastation = -10
+			}
+			add_war_exhaustion = -2
+			add_years_of_income = 1
+			add_government_power = {
+				mechanic_type = anb_medasi_power_share
+				power_type = medasi_power_share
+				value = -5
+			}
+		}
+	}
+
+	L06_bivuzena_unbroken = {
+		icon = fortress_of_belgrade
+		position = 2
+		required_missions = {
+			L06_faith_in_foundations
+		}
+
+		provinces_to_highlight = {
+			province_id = 5847 #Bivuzena
+		}
+
+		trigger = {
+			5847 = { #Bivuzena
+				is_capital = yes
+				is_core = ROOT
+				has_province_modifier = zena_nyanza_market_level_one
+				base_manpower = 8
+				has_fort_building_trigger = yes
+			}
+		}
+
+		effect = {
+			medium_increase_of_halfling_tolerance_effect = yes
+			every_subject_country = {
+				medium_increase_of_halfling_tolerance_effect = yes
+			}
+			custom_tooltip = bivuzena_random_dev_races_tt
+			bivuzena_dev_races_effect = yes
+			hidden_effect = {
+				while = { #+1 random dev in bivuzena 
+					limit = {
+						check_variable = {
+							which = bivuzena_happy_pops
+							value = 1
+						}
+					}
+					5847 = {
+						add_random_development = 1
+					}
+					subtract_variable = {
+						which = bivuzena_happy_pops
+						value = 1
+					}
+				}
+			}
+		}
+	}
+
+	L06_ananoma_secrets = {
+		icon = mission_city_of_victory_vij
+		position = 3
+		required_missions = {
+			L06_root_of_universe
+			L06_bivuzena_unbroken
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = fahvanosy_region 
+					fast_has_pop_of_race = { race = halfling }
+				}
+				has_province_modifier = ananoma_dilapidated
+				has_province_modifier = ananoma_improved
+				has_province_modifier = ananoma_standart
+			}
+			NOT = { country_or_subject_holds = ROOT }
+		}
+
+		trigger = {
+			high_tolerance_halfling_race_trigger = yes
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 2
+				region = fahvanosy_region
+				fast_has_pop_of_race = { race = halfling }
+			}
+			any_owned_or_subject_province = {
+				OR = {
+					has_province_modifier = ananoma_dilapidated
+					has_province_modifier = ananoma_improved
+					has_province_modifier = ananoma_standart
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = zena_ananoma_human_tt
+			for = {
+				amount = 3
+				effect = "
+					random_owned_or_subject_province = {
+						limit = {
+							NOT = {
+								has_large_human_minority_trigger = yes
+								has_human_majority_trigger = yes
+							}
+						fast_has_pop_of_race = { race = halfling }
+						}
+						generic_add_race_minority_size_effect = { race = human }
+					}
+				"
+			}
+			create_conquistador = {
+				tradition = 70
+				culture = zohebidi
+			}
+			custom_tooltip = zena_blueprints_of_tomorrow_unlock_tt
+		}
+	}
+
+	L06_adventure_to_masses = {
+		icon = mission_crystal_cave
+		position = 6
+		required_missions = {
+			L06_deeper_into_effelai
+			L06_pushing_papers
+		}
+
+		provinces_to_highlight = {
+			province_id = 5847 #Bivuzena
+		}
+
+		trigger = {
+			5847 = {
+				base_manpower = 10
+				has_dock_building_trigger = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = zena_hunted_south_ael_fauna_tt
+				has_country_flag = zena_cheetahs_acquired
+			}
+		}
+
+		effect = {
+			2302 = { #Dry Coast Trade Node
+				add_trade_modifier = {
+					who = ROOT
+					duration = 9125
+					power = 22.5
+					key = zena_trade_power
+				}
+			}
+			1539 = { #East Effelai Trade Node
+				add_trade_modifier = {
+					who = ROOT
+					duration = 9125
+					power = 22.5
+					key = zena_trade_power
+				}
+			}
+			5847 = { #Bivuzena
+				remove_province_modifier = zena_medakas_majestic_menagerie_level_one
+				add_permanent_province_modifier = {
+					name = zena_medakas_majestic_menagerie_level_two
+					duration = -1
+				}
+			}
+			bivuzena_dev_races_effect = yes
+			hidden_effect = {
+				while = { #+1 random production or tax in bivuzena 
+					limit = {
+						check_variable = {
+							which = bivuzena_happy_pops
+							value = 1
+						}
+					}
+					5847 = {
+						random_list = {
+							50 = {
+								add_base_production = 1
+							} 
+							50 = {
+								add_base_tax = 1
+							}
+						}
+					}
+					subtract_variable = {
+						which = bivuzena_happy_pops
+						value = 1
+					}
+				}
+			}
+			custom_tooltip = bivuzena_prodtax_dev_races_tt
+		}
+	}
+
+	L06_parura_partnership = {
+		icon = mission_forest_shrine
+		position = 7
+		required_missions = {
+			L06_adventure_to_masses
+			L06_bounties_blue_roses
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					exists = G15
+					is_capital_of = G15 #Sel'Parura
+				}
+				province_id = 2336 #Orotha'ua
+				province_id = 2302 #Uumunkes
+				province_id = 2273 #Tswohvothamus
+				province_id = 2240 #Ainemuno
+			}
+			NOT = { AND = { province_has_center_of_trade_of_level = 2 has_trade_building_trigger = yes } }
+		}
+
+		trigger = {
+			OR = {
+				full_idea_group = humanist_ideas #Tolerance
+				high_tolerance_ruinborn_race_trigger = yes
+			}
+			G15 = {
+				trust = {
+					who = ROOT
+					value = 75
+				}
+			}
+			any_owned_or_subject_province = {
+                OR = {
+                    province_id = 2336 #Orotha'ua
+                    province_id = 2302 #Uumunkes
+                    province_id = 2273 #Tswohvothamus
+                    province_id = 2240 #Ainemuno
+                }
+                province_has_center_of_trade_of_level = 2
+                has_trade_building_trigger = yes
+            }
+		}
+
+		effect = {
+			G15 = { #Sel'Parura
+				country_event = { #Will make them a trade protectorate if AI. If human, can decline
+					id = flavour_zena.7
+				}
+				custom_tooltip = flavour_zena.7.insight
+				largest_increase_of_halfling_tolerance_effect = yes
+				largest_increase_of_human_tolerance_effect = yes
+				capital_scope = {
+					zena_bivuzena_generic_add_race_effect = { race = human }
+					zena_bivuzena_generic_add_race_effect = { race = halfling }
+					if = {
+						limit = {
+							has_building = stock_exchange
+						}
+						add_province_modifier = { #+25% Local Trade Power, Tax Modifier, Institution Spread
+							name = zena_medakas_favour
+							duration = -1
+						}
+					}
+					else = {
+						upgrade_trade_building = yes
+					}
+				}
+			}
+		}
+	}
+
+	L06_mushroom_mythos = {
+		icon = mission_che_botanical_exports
+		position = 8
+		required_missions = {
+			L06_parura_partnership
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				colonial_region = colonial_lai_peninsula
+				colonial_region = colonial_leechden
+				AND = {
+					OR = {
+						region = leechdens_region
+						region = mushroom_forest_region
+					}
+					NOT = { trade_goods = gold }
+				}
+			}
+			NOT = { country_or_subject_holds = ROOT }
+		}
+
+		trigger = {
+			all_subject_country = {
+				NOT = {
+					liberty_desire = 25
+				}
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 12
+				colonial_region = colonial_lai_peninsula
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 7
+				colonial_region = colonial_leechden
+			}
+			any_owned_or_subject_province = {
+				OR = {
+					region = leechdens_region
+					region = mushroom_forest_region
+				}
+				NOT = {
+					trade_goods = gold
+				}
+				num_of_units_in_province = {
+					amount = 15
+					who = ROOT
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = zena_mushroom_subjects_tt
+			tooltip = {
+				add_country_modifier = {
+					name = zena_tales_of_gold_fungi
+					duration = 21900
+				}
+			}
+			hidden_effect = {
+				every_subject_country = {
+					add_country_modifier = {
+						name = zena_tales_of_gold_fungi
+						duration = 21900
+					}
+				}
+			}
+			add_country_modifier = {
+				name = zena_tales_of_gold_fungi
+				duration = 21900
+			}
+			custom_tooltip = zena_shrooms_to_gold_tt
+			for = {
+				amount = 4
+				effect = "
+					random_owned_or_subject_province = {
+						limit = {
+							OR = {
+								region = leechdens_region
+								region = mushroom_forest_region
+							}
+							NOT = {
+								trade_goods = gold
+							}
+						}
+						change_trade_goods = gold
+					}
+				"
+			}
+			custom_tooltip = zena_cheetahs_upgrade_tt
+			set_country_flag = zena_buff_cheetahs_animal
+			tooltip = {
+				add_country_modifier = {
+					name = zena_cheetahs_upgraded_marquee
+					duration = 9125
+				}
+			}
+		}
+	}
+
+	L06_memories_in_heart = {
+		icon = mission_amur_acquisition
+		position = 9
+		required_missions = {
+			L06_mushroom_mythos
+			L06_giant_of_griots_tales
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5847 #Bivuzena
+				trade_goods = grain
+				trade_goods = livestock
+				trade_goods = fish
+				trade_goods = ivory
+			}
+		}
+
+		trigger = {
+			5847 = {
+				base_manpower = 15
+			}
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 15
+				OR = {
+					trade_goods = grain
+					trade_goods = livestock
+					trade_goods = fish
+					trade_goods = ivory
+				}
+			}
+		}
+
+		effect = {
+			hidden_effect = {
+				every_owned_or_subject_province = {
+					limit = {
+						OR = {
+							trade_goods = grain
+							trade_goods = livestock
+							trade_goods = fish
+						}
+					}
+					add_province_modifier = {
+						name = zena_feeding_menagerie
+						duration = 18250
+					}
+				}
+			}
+			custom_tooltip = zena_feeding_menagerie_tt
+			tooltip = {
+				add_province_modifier = {
+					name = zena_feeding_menagerie
+					duration = 18250
+				}
+			}
+			5847 = {
+				remove_province_modifier = zena_medakas_majestic_menagerie_level_three
+				add_permanent_province_modifier = {
+					name = zena_medakas_majestic_menagerie_level_four
+					duration = -1
+				}
+			}
+		}
+	}
+}
+
+zena_slot_03 = {
+	slot = 3
+	generic = no
+	ai = yes
+	potential = {
+		tag = L06
+	}
+	has_country_shield = yes
+
+	L06_curated_grandeur = {
+		icon = friends_in_high_places
+		position = 3
+		required_missions = {
+			L06_root_of_universe
+			L06_bivuzena_unbroken
+			L06_end_of_second_kuiika_war
+		}
+
+		provinces_to_highlight = {
+			is_capital = yes
+			owner = {
+				NOT = {
+					culture_group = vurebindu
+					culture_group = kheteratan
+				}
+				knows_country = ROOT 
+			}
+		}
+
+		trigger = {
+			NOT = {
+				is_at_war = yes
+			}
+			treasury = 100
+			num_of_explorers = 1
+			any_known_country = {
+				NOT = {
+					culture_group = vurebindu
+					culture_group = kheteratan
+				}
+				has_opinion = {
+					who = ROOT
+					value = 100
+				}
+			}
+		}
+
+		effect = {
+			add_treasury = -100
+			5847 = {
+				add_permanent_province_modifier = {
+					name = zena_medakas_exceptional_treasures_level_one
+					duration = -1
+				}
+			}
+			add_government_power = {
+				mechanic_type = anb_medasi_power_share
+				power_type = medasi_power_share
+				value = -10
+			}
+			custom_tooltip = zena_unlock_relics_tt
+			country_event = {
+				id = flavour_zena.11
+				days = 1
+				random = 364
+			}
+		}
+	}
+
+	L06_wharfs_second_sunrise = {
+		icon = mission_market
+		position = 4
+		required_missions = {
+			L06_a_new_people
+			L06_ananoma_secrets
+			L06_curated_grandeur
+			L06_jungle_guides
+		}
+
+		provinces_to_highlight = {
+			province_id = 5847 #Bivuzena
+		}
+
+		trigger = {
+			5847 = { #Bivuzena
+				is_capital = yes
+				is_core = ROOT
+				province_has_center_of_trade_of_level = 2
+			}
+			OR = {
+				has_idea = cultural_ties #Tolerance/Humanism Ideas 4
+				custom_trigger_tooltip = {
+					tooltip = has_racial_focus_tt
+					has_racial_focus = yes
+				}
+			}
+			OR = {
+				diplomat = 2
+				statesman = 2
+				5847 = { #Bivuzena
+					custom_trigger_tooltip = {
+						tooltip = zena_wharf_bivuzena_pops_tt
+						calc_true_if = {
+							amount = 3
+							zena_wharf_bivuzena_pops_trigger = { race = dwarven }
+							zena_wharf_bivuzena_pops_trigger = { race = elven }
+							zena_wharf_bivuzena_pops_trigger = { race = halfling }
+							zena_wharf_bivuzena_pops_trigger = { race = gnomish }
+							zena_wharf_bivuzena_pops_trigger = { race = half_orcish }
+							zena_wharf_bivuzena_pops_trigger = { race = kobold }
+							zena_wharf_bivuzena_pops_trigger = { race = orcish }
+							zena_wharf_bivuzena_pops_trigger = { race = gnollish }
+							zena_wharf_bivuzena_pops_trigger = { race = ruinborn }
+							zena_wharf_bivuzena_pops_trigger = { race = goblin }
+							zena_wharf_bivuzena_pops_trigger = { race = harpy }
+							zena_wharf_bivuzena_pops_trigger = { race = troll }
+							zena_wharf_bivuzena_pops_trigger = { race = half_elven }
+							zena_wharf_bivuzena_pops_trigger = { race = ogre }
+							zena_wharf_bivuzena_pops_trigger = { race = harimari }
+							zena_wharf_bivuzena_pops_trigger = { race = centaur }
+							zena_wharf_bivuzena_pops_trigger = { race = hobgoblin }
+							zena_wharf_bivuzena_pops_trigger = { race = lizardfolk }
+							zena_wharf_bivuzena_pops_trigger = { race = mechanim }
+						}
+					}
+				}
+			}
+		}
+
+		effect = {
+			5847 = { #Bivuzena
+				remove_province_modifier = zena_nyanza_market_level_one
+				add_permanent_province_modifier = {
+					name = zena_nyanza_market_level_two
+					duration = -1
+				}
+			}
+			bivuzena_racial_increase_effect = yes
+			zena_wharf_allies_subjects_tolerance_boost_effect = yes
+		}
+	}
+
+	L06_pushing_papers = {
+		icon = mission_missive
+		position = 5
+		required_missions = {
+			L06_wharfs_second_sunrise
+			L06_elephants_for_menagerie
+			L06_stand_together_not_at_all
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				trade_goods = tropical_wood
+				province_id = 5847 #Bivuzena
+			}
+		}
+
+		trigger = {
+			num_of_provinces_owned_or_owned_by_subjects_with = {
+				value = 4
+				trade_goods = tropical_wood
+			}
+			all_subject_country = {
+				NOT = {
+					num_of_rebel_armies = 1
+				}
+			}
+			5847 = { #Bivuzena
+				has_production_building_trigger = yes
+			}
+		}
+
+		effect = {
+			zenavuma_area = {
+				change_trade_goods = paper
+			}
+			hidden_effect = { 
+				for = {
+					amount = 5
+					effect = "
+						random_owned_or_subject_province = {
+							limit = {
+								trade_goods = tropical_wood
+							}
+							add_province_modifier = { 
+								name = zena_paper_production_quotas
+								duration = 10950
+							}
+						}
+					"
+				}
+			}
+			custom_tooltip = zena_pushing_papers_tt
+			tooltip = {
+				add_province_modifier = { 
+					name = zena_paper_production_quotas
+					duration = 10950
+				}
+			}
+			custom_tooltip = zena_extension_effect_15_tt
+			zena_extension_effect = {
+				zena_extension_days = 5475
+			}
+		}
+	}
+
+	L06_bounties_blue_roses = {
+		icon = mission_lotus_flower
+		position = 6
+		required_missions = {
+			L06_pushing_papers
+		}
+
+		provinces_to_highlight = {
+			province_id = 5847 #Bivuzena
+		}
+
+		trigger = {
+			5847 = {
+				has_tax_building_trigger = yes
+				base_tax = 10
+			}
+			check_variable = {
+				which = zena_relics_found
+				value = 2
+			}
+		}
+
+		effect = {
+			5872 = { #Gunwa Trade Node
+				add_trade_modifier = {
+					who = ROOT
+					duration = 9125
+					power = 22.5
+					key = zena_trade_power
+				}
+			}
+			5914 = { #Adzalaz Gulf Trade Node
+				add_trade_modifier = {
+					who = ROOT
+					duration = 9125
+					power = 22.5
+					key = zena_trade_power
+				}
+			}
+			5847 = {
+				remove_province_modifier = zena_medakas_exceptional_treasures_level_one
+				add_permanent_province_modifier = {
+					name = zena_medakas_exceptional_treasures_level_two
+					duration = -1
+				}
+			}
+			bivuzena_dev_races_effect = yes
+			hidden_effect = {
+				while = { #+1 random production or manpower in bivuzena 
+					limit = {
+						check_variable = {
+							which = bivuzena_happy_pops
+							value = 1
+						}
+					}
+					5847 = {
+						random_list = {
+							50 = {
+								add_base_production = 1
+							} 
+							50 = {
+								add_base_manpower = 1
+							}
+						}
+					}
+					subtract_variable = {
+						which = bivuzena_happy_pops
+						value = 1
+					}
+				}
+			}
+			custom_tooltip = bivuzena_prodman_dev_races_tt
+		}
+	}
+
+	L06_lessons_of_effelai = {
+		icon = mission_magical_forest
+		position = 7
+		required_missions = {
+			L06_adventure_to_masses
+			L06_haven_for_all_halann
+			L06_bounties_blue_roses
+		}
+
+		trigger = {
+			custom_trigger_tooltip = { #Have successfully completed at least two unique pilgrimages
+				tooltip = zena_two_pilgrimage_tt
+				noukahi_has_completed_num_unique_pilgrimages = { amount = 2 }
+			}
+			G15 = {
+				trust = {
+					who = ROOT
+					value = 75
+				}
+			}
+			OR = {
+				full_idea_group = religious_ideas #Religious
+				high_tolerance_ruinborn_race_trigger = yes
+			}
+			OR = {
+				G15 = { #Sel'Parura
+					OR = {
+						num_of_owned_provinces_with = {
+							value = 5
+							continent = south_america
+							has_tax_building_trigger = yes
+						}
+						all_owned_province = {
+							has_tax_building_trigger = yes
+						}
+					}
+				}
+				num_of_provinces_owned_or_owned_by_subjects_with = {
+					value = 10
+					continent = south_america
+					has_tax_building_trigger = yes
+				}
+			}
+		}
+
+		effect = {
+			large_increase_of_ruinborn_tolerance_effect = yes
+				define_advisor = {
+					type = artist
+					skill = 2
+					culture = parura
+					cost_multiplier = 0.75
+					religion = chahinanito
+				}
+			G15 = {
+				define_advisor = {
+					type = naval_reformer
+					skill = 2
+					culture = ROOT
+					cost_multiplier = 0.75
+					religion = ROOT
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						exists = G15
+					}
+				}
+				custom_tooltip = zena_lessons_effelai_reward_tt2
+			}
+			else = {
+				custom_tooltip = zena_lessons_effelai_reward_tt1
+			}
+			hidden_effect = {
+				remove_random_vanilla_ruler_personality = yes
+				set_global_flag = effelai_pilgrimage_available
+			}
+			add_ruler_personality = mage_personality
+		}
+	}
+
+	L06_giant_of_griots_tales = {
+		icon = mission_four_men
+		position = 8
+		required_missions = {
+			L06_parura_partnership
+			L06_lessons_of_effelai
+		}
+
+		provinces_to_highlight = {
+			area = zenavuma_area
+		}
+
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = giant_griots_tales_trigger_tt
+				OR = {
+					has_country_modifier = zena_drakon_marquee
+					has_country_modifier = zena_tlalusk_marquee
+					has_country_modifier = zena_cheetahs_marquee
+					has_country_modifier = zena_elephant_marquee
+					has_country_modifier = zena_landfish_marquee
+					has_country_modifier = zena_varghund_marquee
+					has_country_modifier = zena_ghost_coral_marquee
+					has_country_modifier = zena_terror_bird_marquee
+					has_country_modifier = zena_drakon_upgraded_marquee
+					has_country_modifier = zena_tlalusk_upgraded_marquee
+					has_country_modifier = zena_cheetahs_upgraded_marquee
+					has_country_modifier = zena_elephant_upgraded_marquee
+					has_country_modifier = zena_landfish_upgraded_marquee
+					has_country_modifier = zena_varghund_upgraded_marquee
+					has_country_modifier = zena_ghost_coral_upgraded_marquee
+					has_country_modifier = zena_terror_bird_upgraded_marquee
+				}
+			}
+			zenavuma_area = {
+				type = all
+				owned_by = ROOT
+				is_core = ROOT
+				has_production_building_trigger = yes
+			}
+			treasury = 900
+			custom_trigger_tooltip = {
+				tooltip = zena_giant_pilgrim_tt
+				has_country_flag = noukahi_effelai_pilgrimage_completed_at_least_once
+			}
+		}
+
+		effect = {
+			add_treasury = -900
+			zenavuma_area = {
+				limit = {
+					NOT = {
+						has_building = counting_house
+					}
+				}
+				add_building_construction = {
+					building = counting_house
+					speed = 1.5
+					cost = 0
+				}
+			}
+			5847 = { #Bivuzena
+				remove_province_modifier = zena_medakas_majestic_menagerie_level_two
+				remove_province_modifier = zena_medakas_exceptional_treasures_level_two
+				add_permanent_province_modifier = {
+					name = zena_medakas_exceptional_treasures_level_three
+					duration = -1
+				}
+				add_permanent_province_modifier = {
+					name = zena_medakas_majestic_menagerie_level_three
+					duration = -1
+				}
+				custom_tooltip = zena_menagerie_level_three_tt
+			}
+			custom_tooltip = zena_extension_effect_25_tt
+			zena_extension_effect = {
+				zena_extension_days = 9125
+			}
+		}
+	}
+
+	L06_vyzemby_skylines_realized = {
+		icon = mission_magic_tower
+		position = 9
+		required_missions = {
+			L06_giant_of_griots_tales
+		}
+
+		provinces_to_highlight = {
+			province_id = 5847 #Bivuzena
+		}
+
+		trigger = {
+			5847 = { #Bivuzena
+				base_production = 15
+				province_has_center_of_trade_of_level = 3
+			}
+			check_variable = {
+				which = zena_blueprints_of_tomorrow_value
+				value = 2
+			}
+		}
+
+		effect = {
+			zena_blueprints_enlarge_effect = yes
+			bivuzena_racial_increase_effect = yes
+			5847 = { #Bivuzena
+				remove_province_modifier = zena_nyanza_market_level_three
+				add_permanent_province_modifier = {
+					name = zena_nyanza_market_level_four
+					duration = -1
+				}
+			}
+		}
+	}
+
+	L06_jewel_of_tanib_dajek = {
+		icon = mission_new_dawn
+		position = 10
+		required_missions = {
+			L06_memories_in_heart
+			L06_vyzemby_skylines_realized
+			L06_worlds_collection
+			L06_end_of_the_medasi_system
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5847 #Bivuzena
+				province_id = 5872 #Gunwa Trade Node
+				province_id = 5914 #Adzalaz Gulf Trade Node
+				province_id = 2302 #Dry Coast Trade Node
+				province_id = 1539 #East Effelai Trade Node
+				province_id = 3082 #Clovesight Trade Node
+				province_id = 3084 #Sea of Lel Trade Node
+			}
+			NOT = { is_strongest_trade_power = ROOT }
+		}
+
+		trigger = {
+			5847 = {
+				OR = {
+					num_of_times_expanded_infrastructure = 2
+					development = 50
+					is_prosperous = yes
+				}
+			}
+			calc_true_if = {
+				amount = 2
+				5872  = {
+					is_strongest_trade_power = ROOT
+				}
+				5914 = {
+					is_strongest_trade_power = ROOT
+				}
+				2302 = {
+					is_strongest_trade_power = ROOT
+				}
+				1539 = {
+					is_strongest_trade_power = ROOT
+				}
+				3082 = {
+					is_strongest_trade_power = ROOT
+				}
+				3084 = {
+					is_strongest_trade_power = ROOT
+				}
+			}
+			check_variable = {
+				which = zena_blueprints_of_tomorrow_value
+				value = 3
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavour_zena.9
+			}
+			custom_tooltip = flavour_zena.9.insight
+		}
+	}
+
+}
+
+zena_slot_04 = {
+	slot = 4
+	generic = no
+	ai = yes
+	potential = {
+		tag = L06
+	}
+	has_country_shield = yes
+
+	L06_end_of_second_kuiika_war = {
+		icon = mission_heated_battle
+		position = 2
+		required_missions = {
+			L06_elephants_memory
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				area = zenavuma_area
+				area = kumashet_area
+				AND = {
+					exists = L03
+					is_capital_of = L03 #Isagumze
+				}
+			}
+			NOT = { country_or_subject_holds = ROOT }
+		}
+
+		trigger = {
+			zenavuma_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			kumashet_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			OR = {
+				NOT = {
+					exists = L03 #Isagumze
+				}
+				L03 = { #Isagumze
+					OR = {
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = insulted
+						}
+						has_opinion_modifier = {
+							who = ROOT
+							modifier = scornfully_insulted
+						}
+					}
+					OR = {
+						has_been_eclipsed_by = ROOT
+						is_enemy = ROOT
+						has_spy_network_from = {
+							who = ROOT
+							value = 25
+						}	
+					}
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = { #+1 Colonist, +75% Native Assimilation, -25% Native Uprising Chance
+				name = zena_ikilshebe_protection
+				duration = 27375
+			}
+			bivirir_area = {
+				change_native_ferocity = -3
+				change_native_hostileness = -3
+			}
+			porhonozy_area = {
+				change_native_ferocity = -3
+				change_native_hostileness = -3				
+			}
+			largest_increase_of_lizardfolk_tolerance_effect = yes
+			every_subject_country = {
+				largest_increase_of_lizardfolk_tolerance_effect = yes
+			}
+		}
+	}
+
+	L06_jungle_guides = {
+		icon = mission_jungle_pilgrim
+		position = 3
+		required_missions = {
+			L06_end_of_second_kuiika_war
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				area = bivirir_area
+				area = porhonozy_area
+			}
+		}
+
+		trigger = {
+			native_policy = native_policy_trade
+			bivirir_area = {
+				type = all
+				country_or_subject_holds = ROOT
+				is_city = yes
+			}
+			porhonozy_area = {
+				type = all
+				country_or_subject_holds = ROOT
+				is_city = yes
+			}
+			5858 = { #Igazimpa
+				num_of_units_in_province = {
+					who = ROOT
+					amount = 5
+				}
+				unit_has_leader = yes
+				has_trade_building_trigger = yes
+			}
+		}
+
+		effect = {
+			largest_increase_of_lizardfolk_tolerance_effect = yes
+			every_subject_country = {
+				largest_increase_of_lizardfolk_tolerance_effect = yes
+			}
+			5847 = {
+				zena_bivuzena_generic_add_race_effect = { race = lizardfolk }
+			}
+			create_explorer = {
+				tradition = 80
+				culture = arraskay_lizardfolk
+			}
+		}
+	}
+
+	L06_elephants_for_menagerie = {
+		icon = mission_elephant_herd
+		position = 4
+		required_missions = {
+			L06_curated_grandeur
+			L06_bonds_against_khet
+		}
+
+		provinces_to_highlight = {
+			AND = {
+				exists = L05
+				is_capital_of = L05 #Iqhekabi
+			}
+		}
+
+		trigger = {
+			treasury = 50
+			custom_trigger_tooltip = {
+				tooltip = zena_elephants_for_menagerie_trust_tt
+				OR = {
+					AND = {
+						exists = L05 #Iqhekabi
+						L05 = { #Iqhekabi
+							trust = {
+								who = ROOT 
+								value = 85
+							}
+						}
+					}
+					AND = {
+						NOT = {
+							exists = L05 #Iqhekabi
+						}
+						any_owned_or_subject_province = {
+							trade_goods = ivory
+							development = 10
+						}
+					}
+				}
+			}
+			check_variable = {
+				which = zena_relics_found
+				value = 1
+			}
+		}
+
+		effect = {
+			add_treasury = -50
+			add_government_power = {
+				mechanic_type = anb_medasi_power_share
+				power_type = medasi_power_share
+				value = -10
+			}
+			5847 = { #Bivuzena
+				add_permanent_province_modifier = {
+					name = zena_medakas_majestic_menagerie_level_one
+					duration = -1
+				}
+			}
+			custom_tooltip = zena_unlock_menagerie_tt
+			hidden_effect = {
+				set_country_flag = aPUI_zena_medakas_majestic_menagerie_enabled
+			}
+			custom_tooltip = zena_unlock_fauna_tt
+			country_event = {
+				id = flavour_zena.52
+				days = 1
+				random = 364
+			}
+		}
+	}
+
+	L06_haven_for_all_halann = {
+		icon = mission_lantern_festival
+		position = 6
+		required_missions = {
+			L06_pushing_papers
+		}
+
+		provinces_to_highlight = {
+			province_id = 5847 #Bivuzena
+		}
+
+		trigger = {
+			5847 = { #Bivuzena
+				base_production = 10
+				has_courthouse_building_trigger = yes
+			}
+			check_variable = {
+				which = zena_blueprints_of_tomorrow_value
+				value = 1
+			}
+		}
+
+		effect = {
+			zena_blueprints_enlarge_effect = yes
+			3084 = { #Sea of Lel Trade Node
+				add_trade_modifier = {
+					who = ROOT
+					duration = 9125
+					power = 22.5
+					key = zena_trade_power
+				}
+			}
+			3082 = { #Clovesight Trade Node
+				add_trade_modifier = {
+					who = ROOT
+					duration = 9125
+					power = 22.5
+					key = zena_trade_power
+				}
+			}
+			5847 = { #Bivuzena
+				remove_province_modifier = zena_nyanza_market_level_two
+				add_permanent_province_modifier = {
+					name = zena_nyanza_market_level_three
+					duration = -1
+				}
+			}
+			bivuzena_racial_increase_effect = yes
+		}
+	}
+
+
+	L06_worlds_collection = {
+		icon = mission_precursor_relics
+		position = 9
+		required_missions = {
+			L06_giant_of_griots_tales
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				province_id = 5847 #Bivuzena
+			}
+		}
+
+		trigger = {
+			5847 = { #Bivuzena
+				base_tax = 15
+			}
+			calc_true_if = {
+				amount = 2
+				accepted_culture = amezatany
+				accepted_culture = mboala
+				accepted_culture = fomarati
+				accepted_culture = mazava
+				accepted_culture = vyoronsi
+				accepted_culture = zohebidi
+				accepted_culture = parura
+				accepted_culture = effe
+				accepted_culture = laii
+				accepted_culture = thamvoii
+				accepted_culture = oonoi
+				accepted_culture = shagashay_lizardfolk
+				accepted_culture = ichiadza_lizardfolk
+				accepted_culture = arraskay_lizardfolk
+				accepted_culture = mashkay_lizardfolk
+				accepted_culture = adzalanas_lizardfolk
+				accepted_culture = shagatyn_lizardfolk
+				accepted_culture = karshyray_lizardfolk
+				accepted_culture = ashhana_lizardfolk
+				accepted_culture = skarakara_lizardfolk
+				accepted_culture = rhada_lizardfolk
+			}
+		}
+		effect = {
+			change_government_reform_progress = 75
+			5847 = {
+				remove_province_modifier = zena_medakas_exceptional_treasures_level_three
+				add_permanent_province_modifier = {
+					name = zena_medakas_exceptional_treasures_level_four
+					duration = -1
+				}
+			}
+			increase_all_tolerances = { size = medium }
+			every_subject_country = {
+				increase_all_tolerances = { size = medium }
+			}
+			custom_tooltip = zena_cheaper_relics_tt
+		}
+	}
+}
+
+zena_slot_05 = {
+	slot = 5
+	generic = no
+	ai = yes
+	potential = {
+		tag = L06
+	}
+	has_country_shield = yes
+
+	L06_elephants_memory = {
+		icon = mission_elephant_king
+		position = 1
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					exists = L05
+					is_capital_of = L05 #Iqhekabi
+				}
+				AND = {
+					NOT = {
+						exists = L05 #Iqhekabi
+					}
+					OR = {
+						area = zenavuma_area
+						area = kumashet_area
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				num_of_generals = 1
+				num_of_admirals = 1
+			}
+			NOT = {
+				has_government_power = {
+					mechanic_type = anb_medasi_power_share
+					power_type = medasi_power_share
+					value = -10
+				}
+			}
+			if = {
+				limit = {
+					exists = L05 #Iqhekabi
+				}
+				OR = {
+					AND = {
+						L05 = { #Iqhekabi
+							has_opinion = {
+								who = ROOT
+								value = 100
+							}
+						}
+						OR = {
+							alliance_with = L05 #Iqhekabi
+							L05 = { #Iqhekabi
+								has_opinion_modifier = {
+									who = ROOT
+									modifier = sent_gift
+								}
+							}
+						}
+					}
+					AND = {
+						is_rival = L05 #Iqhekabi
+						is_enemy = L05 #Iqhekabi
+						has_spy_network_in = {
+							who = L05 #Iqhekabi
+							value = 30
+						}
+					}
+				}
+			}
+			else = {
+                OR = {
+                    AND = {
+                        zenavuma_area = {
+                            type = all
+                            country_or_subject_holds = ROOT
+                        }
+                        kumashet_area = {
+                            type = all
+                            country_or_subject_holds = ROOT
+                        }
+                    }
+                    zenavuma_area = {
+                        owner = {
+                            has_spy_network_from = {
+                                who = ROOT
+                                value = 30
+                            }
+                        }
+                    }
+                    kumashet_area = {
+                        owner = {
+                            has_spy_network_from = {
+                                who = ROOT
+                                value = 30
+                            }
+                        }
+                    }
+                }
+			}
+		}
+		
+		effect = {
+			add_country_modifier = { #+5% Naval Morale, +20% Blocade Efficiency
+				name = zena_saltwater_horizon
+				duration = 18250
+			}
+			if = {
+				limit = {
+					exists = L05 #Iqhekabi
+				}
+				L05 = { #Iqhekabi
+					country_event = { #Iqhekabi will see the benefit in an alliance with us
+						id = flavour_zena.2
+					}
+				}
+				custom_tooltip = zena_flavour.2.insight
+			}
+			else = {
+				add_country_modifier = { #+10% Cav Power, -15% Land Maintenance Modifier
+					name = zena_noble_elephants_shadow
+					duration = 18250
+				}
+			}
+		}
+	}
+
+	L06_bonds_against_khet = {
+		icon = mission_desert_pilgrim
+		position = 3
+		required_missions = {
+			L06_elephants_memory
+		}
+
+		trigger = {
+			NOT = {
+				has_government_power = {
+					mechanic_type = anb_medasi_power_share
+					power_type = medasi_power_share
+					value = -25
+				}
+			}
+			OR = {
+				NOT = {
+					exists = L05 #Iqhekabi
+				}
+				L05 = { #Iqhekabi
+						trust = {
+							who = ROOT 
+							value = 65
+						}
+					}
+			}
+			OR = {
+				all_known_country = {
+					NOT = {
+						culture_group = kheteratan
+					}
+				}
+				AND = {
+					num_of_wars = { amount =  3 }
+					custom_trigger_tooltip = {
+						tooltip = zena_khet_war_won_tt
+						has_country_flag = zena_khet_war_won
+					}
+				}
+			}
+		}
+
+		effect = {
+			zugvuma_area = {
+				add_permanent_claim = ROOT
+			}
+			chibuswa_area = {
+				add_permanent_claim = ROOT
+			}
+			aramoole_area = {
+				if = {
+					limit = {
+						exists = L05 #Iqhekabi
+					}
+					add_permanent_claim = L05 #Iqhekabi
+				}
+				else = {
+					add_permanent_claim = ROOT
+				}
+			}
+			hidden_effect = {
+				L05 = { #Iqhekabi
+					every_owned_or_subject_province = {
+						limit = {
+							OR = {
+								has_terrain = hills
+								has_terrain = mountain
+								has_terrain = highlands
+							}
+						}
+						add_province_modifier = { #+15% Local Defensivness, +5% COUNTRY Improve Relation Modifier, +5% COUNTRY Spy Power
+							name = zena_stand_against_sands
+							duration = 18250
+						}
+					}
+				}
+			}
+			custom_tooltip = zena_bonds_sands_tt
+			tooltip = {
+				add_province_modifier = { #+15% Local Defensivness, +5% COUNTRY Improve Relation Modifier, +5% COUNTRY Spy Power
+					name = zena_stand_against_sands
+					duration = 18250
+				}
+			}
+			hidden_effect = {
+				every_owned_or_subject_province = {
+					limit = {
+						OR = {
+							has_terrain = hills
+							has_terrain = mountain
+							has_terrain = highlands
+						}
+						NOT = {
+							has_province_modifier = zena_stand_against_sands
+						}
+					}
+					add_province_modifier = { #+15% Local Defensivness, +5% COUNTRY Improve Relation Modifier, +5% COUNTRY Spy Power
+						name = zena_stand_against_sands
+						duration = 18250
+					}
+				}
+			}
+		}
+	}
+
+	L06_stand_together_not_at_all = {
+		icon = mission_swear_fealty_knight
+		position = 4
+		required_missions = {
+			L06_bonds_against_khet
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					exists = L05
+					is_capital_of = L05 #Iqhekabi
+				}
+				AND = {
+					NOT = {
+						exists = L05 #Iqhekabi
+					}
+					is_capital = yes
+					owner = {
+						OR = {
+							culture_group = vurebindu
+							culture_group = irsukuba
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = {
+					exists = L05
+				}
+				OR = {
+					alliance_with = L05 #Iqhekabi
+					vassal_of = L05 #Iqhekabi
+					L05 = { #Iqhekabi
+						vassal_of = ROOT
+					}
+				}
+				L05 = { #Iqhekabi
+					trust = {
+						who = ROOT 
+						value = 90
+					}
+				}
+			}
+			else = {
+				any_known_country = {
+					OR = {
+						culture_group = vurebindu
+						culture_group = irsukuba
+					}
+					OR = {
+						is_enemy = ROOT
+						has_been_eclipsed_by = ROOT
+					}
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						alliance_with = L05 #Iqhekabi
+						vassal_of = L05 #Iqhekabi
+					}
+				}
+				zugvuma_area = {
+					type = all
+					OR = {
+						AND = {
+							owned_by = ROOT
+							is_core = ROOT
+						}
+						owned_by = L05
+					}
+				}
+			}
+			else = {
+				zugvuma_area = {
+					type = all
+					owned_by = ROOT
+					is_core = ROOT
+				}
+			}
+			NOT = {
+				has_government_power = {
+					mechanic_type = anb_medasi_power_share
+					power_type = medasi_power_share
+					value = -50
+				}
+			}
+		}
+
+		effect = {
+			custom_tooltip = zena_together_effects_tt
+			if = {
+				limit = {
+					NOT = {
+						exists = L05 #Iqhekabi
+					}
+				}
+				country_event = { #Lone Inheritors of Horashesh
+					id = flavour_zena.3
+				}
+				custom_tooltip = zena_flavour.3.insight_tt
+			}
+			else_if = {
+				limit = {
+					L05 = { #Iqhekabi
+						ai = yes
+					}
+					alliance_with = L05 #Iqhekabi
+				}
+				vassalize = L05 #Iqhekabi
+				L05 = {
+					tooltip = {
+						random_owned_province = {
+							spawn_rebels = {
+								type = nationalist_rebels
+								size = 1
+								culture = gumzemo
+								should_take_capital = yes
+							}
+						}
+					}
+					custom_tooltip = zena_stand_together_rebels_tt
+					for = {
+						amount = 4
+						effect = "
+							random_owned_province = {
+								limit = {
+									NOT = {
+										has_rebel_faction = nationalist_rebels
+									}
+								}
+								spawn_rebels = {
+									type = nationalist_rebels
+									size = 1
+									culture = gumzemo
+									should_take_capital = yes
+								}
+							}
+						"
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					L05 = {
+						ai = yes
+						vassal_of = ROOT
+					}
+				}
+				add_adm_power = 100
+				add_dip_power = 100
+				add_mil_power = 100
+				L05 = {
+					add_country_modifier = { #Just -25% Lib Desire
+						name = zena_stand_together
+						duration = 18250
+					}
+				}
+			}
+			else_if = { #If it's two human players, sorry, they're gonna have to kill each other
+				limit = {
+					NOT = {
+						ai = yes
+					}
+					L05 = { #Iqhekabi
+						NOT = {
+							ai = yes
+						}
+					}
+				}
+				country_event = { #Not At All
+					id = flavour_zena.4
+				}
+				L05 = {
+					country_event = { #Not At All
+						id = flavour_zena.5
+						days = 20
+						random = 20
+					}
+				}
+				custom_tooltip = zena_flavour.4_5.insight_tt
+				hidden_effect = { #For the rewards later
+					set_country_flag = zena_together_or_not_at_all_war
+					L05 = {
+						set_country_flag = zena_together_or_not_at_all_war
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					vassal_of = L05 #Iqhekabi
+				}
+				if = {
+					limit = {
+						ai = yes
+					}
+					add_country_modifier = { #-25% Lib Desire, +10% Trade Steering, +10% Global Trade Power
+						name = zena_bivuzena_trading
+						duration = 18250
+					}
+				}
+				else = {
+					add_country_modifier = { #+10% Trade Steering, +10% Global Trade Power 
+						name = zena_bivuzena_trading_overlord
+						duration = 18250
+					}
+				}
+				L05 = { #Iqhekabi
+					add_country_modifier = { #+10% Trade Steering, +10% Global Trade Power
+						name = zena_bivuzena_trading_overlord
+						duration = 18250
+					}
+				}
+			}
+		}
+	}
+
+	L06_end_of_the_medasi_system = {
+		icon = mission_spoils_of_war
+		position = 9
+		required_missions = {
+			L06_stand_together_not_at_all
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					exists = L05
+					is_capital_of = L05
+				}
+				AND = {
+					owned_by = ROOT
+					culture_group = kheteratan
+				}
+				AND = {
+					country_or_subject_holds = ROOT
+					religion_group = khetist
+				}
+				AND = {
+					OR = {
+						area = zuvavim_area
+						area = zugvuma_area
+						area = chibuswa_area
+						area = zenavuma_area
+						area = kumashet_area
+						area = bivirir_area
+						area = porhonozy_area
+						area = zuvaziva_area
+						area = aramoole_area
+						area = imivama_area
+						area = iqhekabi_area
+					}
+					NOT = {
+						country_or_subject_holds = ROOT
+					}	
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				NOT = {
+					exists = L05 #Iqhekabi
+				}
+				L05 = { #Iqhekabi
+					is_subject_of = ROOT
+					NOT = {
+						liberty_desire = 25
+					}
+					NOT = {
+						num_of_rebel_armies = 1
+					}
+				}
+			}
+			all_owned_or_subject_province = {
+				NOT = {
+					religion_group = khetist
+				}
+			}
+			all_owned_province = {
+				NOT = {
+					culture_group = kheteratan
+				}
+			}
+			zuvavim_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			zugvuma_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			chibuswa_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			zenavuma_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			kumashet_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			bivirir_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			porhonozy_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			zuvaziva_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			aramoole_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			imivama_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+			iqhekabi_area = {
+				type = all
+				country_or_subject_holds = ROOT
+			}
+		}
+		
+		effect = {
+			horashesh_region = {
+				add_permanent_claim = ROOT
+			}
+			custom_tooltip = zena_end_medasi_system_tt
+			tooltip = {
+				add_prestige = 10
+				add_war_exhaustion = -2
+				add_country_modifier = {
+					name = zena_tears_drown_sorrow
+					duration = -1
+					desc = zena_tears_drown_sorrow_tt
+				}
+			}
+			if = {
+				limit = {
+					exists = L05
+				}
+				custom_tooltip = zena_iqhekabi_integrate_tt
+				hidden_effect = { #Integrate iqhekabi @ 2 dip per dev
+					export_to_variable = {
+						which = zena_iqhekabi_dev
+						value = total_development
+						who = L05
+					}
+					multiply_variable = {
+						which = zena_iqhekabi_dev
+						value = 2
+					}
+					var_effect = { var = zena_iqhekabi_dev effect = add_dip_power sign = - }
+					L05 = {
+						every_owned_province = {
+							add_core = ROOT
+							cede_province = ROOT
+						}
+					}
+				}
+			}
+			else = {
+				add_prestige = 10
+				add_power_projection = {
+					type = mission_rewards_power_projection
+					amount = 10
+				}
+			}
+			custom_tooltip = zena_elephant_upgrade_tt
+			set_country_flag = zena_buff_elephant_animal
+			tooltip = {
+				add_country_modifier = {
+					name = zena_elephant_upgraded_marquee
+					duration = 9125
+				}
+			}
+		}
+	}
+}

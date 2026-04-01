@@ -71,9 +71,21 @@ custom_button = {
 			NOT = { has_province_modifier = incomplete_hold }
 		}
 		if = { limit = { has_province_modifier = F23_flooded_depths }
-			custom_trigger_tooltip = {
-				tooltip = F23_cannot_dig_why
-				always = no
+			if = {
+				limit = { owner = { tag = F23 } }
+				custom_trigger_tooltip = {
+					tooltip = F23_cannot_dig_why
+					always = no
+				}
+			}
+			else = {
+				OR = {
+					owner = {
+						adm_tech = 10
+						treasury = 1000					
+					}
+					NOT = { has_province_modifier = F23_flooded_depths }
+				}
 			}
 		}
 		hidden_trigger = { NOT = { has_province_modifier = incomplete_hold_0 } }
@@ -170,6 +182,11 @@ custom_button = {
 				}
 			}
 			play_sound = diggy_diggy_pickaxe_sfx
+		}
+		if = {
+			limit = { has_province_modifier = F23_flooded_depths }
+			remove_province_modifier = F23_flooded_depths
+			owner = { add_treasury = -1000 }
 		}
 	}
 	tooltip = dig_hold_go_button_tt
@@ -695,6 +712,12 @@ custom_button = { #Merfolk Settlements
 	}
 
 	effect = {
+
+		if = {
+			limit = { owner = { check_variable = { which = MerfolkLoweredPenatly value = 1 } } }
+			custom_tooltip = has_discounted_merfolk_left
+		}
+
 		if = { #generate
 			limit = { owner = { has_country_flag = merfolk_opinion_allied } }
 			province_event = { id = merfolk_events.7 } 
@@ -978,6 +1001,27 @@ custom_button = { #Ebonsteel Expand Infra replacement for players without DLC
 		}
 	}
 	tooltip = ebonsteel_expand_infra_button_tt
+}
+custom_button = { #Mangrove Biological Infrastructure
+	name = mangrove_bio_infra_button
+	potential = {
+		has_eligible_aPUI_mangrove_bio_infra_in_province = yes
+	}
+	trigger = {
+		region = tagaala_mangroves_region
+	}
+	effect = {
+		# unlock capstone tooltip
+		if = {
+			limit = {
+				is_capital = yes
+				NOT = { has_province_flag = mangrove_bio_infra_finished }
+			}
+			custom_tooltip = mangrove_unlock_capstone_tt
+		}
+		open_aPUI_in_province = { name = mangrove_bio_infra }
+	}
+	tooltip = mangrove_bio_infra_button_tt
 }
 
 #Slot 3 - Religion specific button
@@ -1284,7 +1328,7 @@ custom_button = { #build Lencori Behemoth shipyard
 			}
 		}
 		if = {
-			limit = { NOT = { owner = { has_country_modifier = improved_behemoth_construction } } }
+			limit = { NOT = { owner = { has_country_flag = improved_behemoth_construction } } }
 			if = {
 				limit = { NOT = { owner = { has_estate_privilege = estate_burghers_control_over_behemoth_shipyards } } }
 				owner_has_less_than_n_lencori_behemoth_shipyards = { n = 5 }
@@ -1311,6 +1355,8 @@ custom_button = { #build Lencori Behemoth shipyard
 					has_province_modifier = lencori_behemoth_shipyard_improved
 					has_province_modifier = lencori_behemoth_shipyard_impress_improved
 					has_province_modifier = lencori_shipyard_of_lament
+					has_province_modifier = lencori_shipyard_of_lament_upgrade
+					has_province_modifier = RSP_rhasail_freefolk_arsenal
 				}
 			}
 		}
@@ -1330,16 +1376,16 @@ custom_button = { #build Lencori Behemoth shipyard
 			}
 			hidden_effect = {
 				if = {
-					limit = { has_country_modifier = improved_behemoth_construction }
+					limit = { has_country_flag = improved_behemoth_construction }
 					subtract_variable = {
 						which = lencori_behemoth_required_naval_supplies
-						value = 5
+						value = 3
 					}
 				}
 				else = {
 					subtract_variable = {
 						which = lencori_behemoth_required_naval_supplies
-						value = 10
+						value = 5
 					}
 				}
 				export_lencori_behemoth_required_naval_supplies_value_for_tt = yes
@@ -1981,23 +2027,23 @@ custom_button = { #Endhuvi Traveling Society Button
 		FROM = { NOT = { has_country_modifier = R36_traveling_society_button_cooldown } }
 	}
 	effect = {
-		FROM = {
-			event_target:endhuvi_cinnabar_lotus_province = {
-				remove_province_modifier = R36_cinnabar_lotus_society_barge_3
-				if = {
-					limit = { NOT = { has_province_flag = R36_traveling_society_button_used_for_first_time } }
-					set_province_flag = R36_traveling_society_button_used_for_first_time
-					add_base_tax = 1
-					add_base_production = 1
-					add_base_manpower = 1
-				}
+		event_target:endhuvi_cinnabar_lotus_province = {
+			remove_province_modifier = R36_cinnabar_lotus_society_barge_3
+			if = {
+				limit = { NOT = { has_province_flag = R36_traveling_society_button_used_for_first_time } }
+				set_province_flag = R36_traveling_society_button_used_for_first_time
+				add_base_tax = 1
+				add_base_production = 1
+				add_base_manpower = 1
 			}
 		}
 		add_permanent_province_modifier = {
 			name = R36_cinnabar_lotus_society_barge_3
 			duration = -1
 		}
-		save_global_event_target_as = endhuvi_cinnabar_lotus_province
+		hidden_effect = {
+			save_global_event_target_as = endhuvi_cinnabar_lotus_province
+		}
 		FROM = {
 			hidden_effect = { country_event = { id = flavour_endhuvi.102 } }
 			add_country_modifier = {
@@ -2422,47 +2468,11 @@ custom_text_box = {
 	name = aPUI_transmutative_path_title
 }
 custom_button = {
-	name = aPUI_transmutative_path_button_1
-	tooltip = aPUI_transmutative_path_button_1_tt
-	trigger = {
-		custom_trigger_tooltip = {
-			tooltip = build_chi_wellspring_tt
-			province_has_no_chi_wellspring_trigger = yes
-			NOT = {
-				any_neighbor_province = {
-					owned_by = FROM
-					province_has_chi_wellspring_trigger = yes
-				}
-			}
-			NOT = { transmutative_path_infuse_province_trigger = yes }
-			NOT = { is_capital = yes }
-			development = 10
-			owner = {
-				treasury = 100
-				adm_power = 25
-				dip_power = 25
-				mil_power = 25
-			}
-		}
-	}
-	effect = {
-		custom_tooltip = " " #Linebreak
-		owner = {
-			add_treasury = -100
-			add_adm_power = -25
-			add_dip_power = -25
-			add_mil_power = -25
-		}
-		add_chi_wellspring_to_size = yes
-	}
-}
-custom_button = {
 	name = aPUI_transmutative_path_button_2_xia
 	tooltip = aPUI_transmutative_path_button_2_xia_tt
-	potential = {
-		has_province_flag = is_xia_origin
-	}
+	potential = {}
 	trigger = {
+		province_is_xia_origin = yes
 		FROM = { has_church_aspect = transmutative_path_temples_for_warriors }
 		custom_trigger_tooltip = {
 			tooltip = transmutative_path_200_chi_tt
@@ -2482,40 +2492,18 @@ custom_button = {
 custom_button = {
 	name = aPUI_transmutative_path_button_3
 	tooltip = aPUI_transmutative_path_button_3_tt
-	potential = {
-		FROM = {
-			OR = {
-				culture_group = kai
-				culture = naamjyut
-				culture = antmvura
-				culture = gon
-				is_or_was_tag = { tag = Y86 }
-			}
-		}
-	}
+	potential = {}
 	trigger = {
 		custom_trigger_tooltip = {
 			tooltip = transmutative_path_change_trade_good_tt
+			FROM = { church_power = 100 }
 			transmutative_path_change_trade_good_trigger = yes
-			transmutative_path_owner_has_chi_trigger = yes
-			owner = { NOT = { has_country_modifier = trade_good_change_cd } }
 		}
 	}
 	effect = {
 		custom_tooltip = " " #Linebreak
-		custom_tooltip = transmutative_path_pay_for_chi_preview
+		FROM = { add_church_power = -100 }
 		transmutative_path_change_trade_good_effect = yes
-		transmutative_path_destroy_chi_wellspring_to_size_effect = yes #edge case
-		hidden_effect = {
-			transmutative_path_pay_chi_effect = yes
-			owner = {
-				add_country_modifier = {
-					name = trade_good_change_cd
-					duration = 9125
-					hidden = yes
-				}
-			}
-		}
 	}
 }
 custom_button = {
@@ -2530,11 +2518,8 @@ custom_button = {
 			tooltip = transmutative_path_active_aspect_tt
 			owner = { transmutative_path_valid_slot_trigger = { slot = 0 } }
 		}
-		custom_trigger_tooltip = {
-			tooltip = infuse_province_tt
-			transmutative_path_infuse_province_trigger = yes
-			transmutative_path_owner_has_chi_trigger = yes
-		}
+		transmutative_path_preferred_province_trigger = yes
+		transmutative_path_owner_has_chi_trigger = yes
 	}
 	effect = {
 		transmutative_path_infuse_province_effect = { slot = 0 }
@@ -2552,11 +2537,8 @@ custom_button = {
 			tooltip = transmutative_path_active_aspect_tt
 			owner = { transmutative_path_valid_slot_trigger = { slot = 1 } }
 		}
-		custom_trigger_tooltip = {
-			tooltip = infuse_province_tt
-			transmutative_path_infuse_province_trigger = yes
-			transmutative_path_owner_has_chi_trigger = yes
-		}
+		transmutative_path_preferred_province_trigger = yes
+		transmutative_path_owner_has_chi_trigger = yes
 	}
 	effect = {
 		transmutative_path_infuse_province_effect = { slot = 1 }
@@ -2574,11 +2556,8 @@ custom_button = {
 			tooltip = transmutative_path_active_aspect_tt
 			owner = { transmutative_path_valid_slot_trigger = { slot = 2 } }
 		}
-		custom_trigger_tooltip = {
-			tooltip = infuse_province_tt
-			transmutative_path_infuse_province_trigger = yes
-			transmutative_path_owner_has_chi_trigger = yes
-		}
+		transmutative_path_preferred_province_trigger = yes
+		transmutative_path_owner_has_chi_trigger = yes
 	}
 	effect = {
 		transmutative_path_infuse_province_effect = { slot = 2 }
@@ -3095,3 +3074,490 @@ custom_button = {
 		}
 	}
 }
+
+#Zena Bivuzena Medaka's Majestic Menagerie Button Begins
+custom_button = {
+	name = aPUI_zena_medakas_majestic_menagerie_button
+	tooltip = zena_visit_menagerie_tt
+	potential = {
+		has_eligible_aPUI_zena_medakas_majestic_menagerie_in_province = yes
+	}
+	frame = {
+		number = 1
+		trigger = {
+			has_province_modifier = zena_medakas_majestic_menagerie_level_one
+		}
+	}
+	frame = {
+		number = 2
+		trigger = {
+			has_province_modifier = zena_medakas_majestic_menagerie_level_two
+		}
+	}
+	frame = {
+		number = 3
+		trigger = {
+			has_province_modifier = zena_medakas_majestic_menagerie_level_three
+		}
+	}
+	frame = {
+		number = 4
+		trigger = {
+			has_province_modifier = zena_medakas_majestic_menagerie_level_four
+		}
+	}
+	trigger = { 
+	}
+	effect = { 
+		open_aPUI_in_province = { name = zena_medakas_majestic_menagerie }
+	}
+}
+custom_button = { #Dummy copy
+	name = aPUI_zena_medakas_majestic_menagerie_button_dummy
+	tooltip = zena_visit_menagerie_dummy_tt
+	potential = { 
+		has_eligible_aPUI_zena_medakas_majestic_menagerie_in_province = yes
+	}
+	frame = {
+		number = 1
+		trigger = {
+			has_province_modifier = zena_medakas_majestic_menagerie_level_one
+		}
+	}
+	frame = {
+		number = 2
+		trigger = {
+			has_province_modifier = zena_medakas_majestic_menagerie_level_two
+		}
+	}
+	frame = {
+		number = 3
+		trigger = {
+			has_province_modifier = zena_medakas_majestic_menagerie_level_three
+		}
+	}
+	frame = {
+		number = 4
+		trigger = {
+			has_province_modifier = zena_medakas_majestic_menagerie_level_four
+		}
+	}
+	effect = { }
+}
+custom_window = {
+	name = aPUI_zena_medakas_majestic_menagerie_window
+	potential = { 
+		has_open_aPUI_in_province = { name = zena_medakas_majestic_menagerie }
+	}
+}
+custom_button = {
+	name = aPUI_zena_medakas_majestic_menagerie_button_1
+	tooltip = zena_marquee_tt
+	potential = { 
+		FROM = {
+			mission_completed = L06_elephants_for_menagerie
+		}
+	}
+	frame = {
+		number = 1
+	}
+	trigger = { 
+		zena_menagerie_button_trigger = {
+			animal = elephant
+		}
+	}
+	effect = {
+		zena_menagerie_button_effect = {
+			animal = elephant
+		}
+	}
+}
+custom_button = { #Cheetahs
+	name = aPUI_zena_medakas_majestic_menagerie_button_2
+	tooltip = zena_marquee_tt
+	potential = { 
+		FROM = {
+			has_country_flag = zena_cheetahs_acquired
+		}
+	}
+	frame = {
+		number = 2
+	}
+	trigger = {
+		zena_menagerie_button_trigger = {
+			animal = cheetahs
+		}
+	}
+	effect = { 
+		zena_menagerie_button_effect = {
+			animal = cheetahs
+		}
+	}
+}
+custom_button = { #Landfish
+	name = aPUI_zena_medakas_majestic_menagerie_button_3
+	tooltip = zena_marquee_tt
+	potential = { 
+		FROM = {
+			has_country_flag = zena_landfish_acquired
+		}
+	}
+	frame = {
+		number = 3 
+	}
+	trigger = { 
+		zena_menagerie_button_trigger = {
+			animal = landfish
+		}
+	}
+	effect = { 
+		zena_menagerie_button_effect = {
+			animal = landfish
+		}
+	}
+}
+custom_button = { #Varghund
+	name = aPUI_zena_medakas_majestic_menagerie_button_4
+	tooltip = zena_marquee_tt
+	potential = { 
+		FROM = {
+			has_country_flag = zena_varghund_acquired
+		}
+	}
+	frame = {
+		number = 4
+	}
+	trigger = {
+		zena_menagerie_button_trigger = {
+			animal = varghund
+		}
+	}
+	effect = { 
+		zena_menagerie_button_effect = {
+			animal = varghund
+		}
+	}
+}
+custom_button = { #Drakon
+	name = aPUI_zena_medakas_majestic_menagerie_button_5
+	tooltip = zena_marquee_tt
+	potential = { 
+		FROM = {
+			has_country_flag = zena_drakon_acquired
+		}
+	}
+	frame = {
+		number = 5
+	}
+	trigger = { 
+		zena_menagerie_button_trigger = {
+			animal = drakon
+		}
+	}
+	effect = { 
+		zena_menagerie_button_effect = {
+			animal = drakon
+		}
+	}
+}
+custom_button = { #Tlalusk
+	name = aPUI_zena_medakas_majestic_menagerie_button_6
+	tooltip = zena_marquee_tt
+	potential = { 
+		FROM = {
+			has_country_flag = zena_tlalusk_acquired
+		}
+	}
+	frame = {
+		number = 6
+	}
+	trigger = {
+		zena_menagerie_button_trigger = {
+			animal = tlalusk
+		}
+	}
+	effect = { 
+		zena_menagerie_button_effect = {
+			animal = tlalusk
+		}
+	}
+}
+custom_button = { #Terror-Birds
+	name = aPUI_zena_medakas_majestic_menagerie_button_7
+	tooltip = zena_marquee_tt
+	potential = { 
+		FROM = {
+			has_country_flag = zena_terror_bird_acquired
+		}
+	}
+	frame = {
+		number = 7
+	}
+	trigger = { 
+		zena_menagerie_button_trigger = {
+			animal = terror_bird
+		}
+	}
+	effect = { 
+		zena_menagerie_button_effect = {
+			animal = terror_bird
+		}
+	}
+}
+custom_button = { #Ghost Corals
+	name = aPUI_zena_medakas_majestic_menagerie_button_8
+	tooltip = zena_marquee_tt
+	potential = { 
+		FROM = {
+			has_country_flag = zena_ghost_coral_acquired
+		}
+	}
+	frame = {
+		number = 8
+	}
+	trigger = { 
+		zena_menagerie_button_trigger = {
+			animal = ghost_coral
+		}
+	}
+	effect = { 
+		zena_menagerie_button_effect = {
+			animal = ghost_coral
+		}
+	}
+}
+
+
+# Mangrove Biological Infrastructure aPUI Start
+custom_window = {
+	name = aPUI_mangrove_bio_infra_window
+	potential = {
+		has_open_aPUI_in_province = { name = mangrove_bio_infra }
+	}
+}
+custom_text_box = {
+	#name = loc key to grab your title
+	name = aPUI_mangrove_bio_infra_title
+}
+custom_text_box = {
+	#name = loc key to grab your loc
+	name = aPUI_mangrove_bio_infra_textbox_text
+}
+
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_adm
+	tooltip = mangrove_bio_infra_button_adm_tt
+	potential = {
+		NOT = { has_province_flag = mangrove_bio_infra_path_chosen }
+	}
+	trigger = {
+		mangrove_check_bio_infra_path_cost = { PATH = adm }
+	}
+	effect = {
+		mangrove_bio_infra_choose_path = { PATH = adm }
+	}
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_dip
+	tooltip = mangrove_bio_infra_button_dip_tt
+	potential = {
+		NOT = { has_province_flag = mangrove_bio_infra_path_chosen }
+	}
+	trigger = {
+		mangrove_check_bio_infra_path_cost = { PATH = dip }
+	}
+	effect = {
+		mangrove_bio_infra_choose_path = { PATH = dip }
+	}
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_mil
+	tooltip = mangrove_bio_infra_button_mil_tt
+	potential = {
+		NOT = { has_province_flag = mangrove_bio_infra_path_chosen }
+	}
+	trigger = {
+		mangrove_check_bio_infra_path_cost = { PATH = mil }
+	}
+	effect = {
+		mangrove_bio_infra_choose_path = { PATH = mil }
+	}
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_aux_button
+	tooltip = mangrove_bio_infra_aux_button_tt
+	trigger = {
+		mangrove_bio_infra_final_trigger = yes
+	}
+	effect = {
+		mangrove_bio_infra_final_upgrade = yes
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_aux_select_glow
+	potential = { has_province_flag = mangrove_bio_infra_finished }
+}
+
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_1
+	tooltip = mangrove_bio_infra_adm_0
+	frame = { number = 1 }
+	potential = {
+		has_province_flag = mangrove_bio_infra_path_chosen
+	}
+	trigger = {
+		mangrove_bio_infra_button_trigger = { PATH = adm UPGRADE = 0 }
+	}
+	effect = {
+		mangrove_bio_infra_choose_upgrade = { PATH = adm UPGRADE = 0 }
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_button_1_select_glow
+	potential = { has_province_modifier = mangrove_bio_infra_adm_0 }
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_2
+	tooltip = mangrove_bio_infra_adm_1
+	frame = { number = 2 }
+	potential = {
+		has_province_flag = mangrove_bio_infra_path_chosen
+	}
+	trigger = {
+		mangrove_bio_infra_button_trigger = { PATH = adm UPGRADE = 1 }
+	}
+	effect = {
+		mangrove_bio_infra_choose_upgrade = { PATH = adm UPGRADE = 1 }
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_button_2_select_glow
+	potential = { has_province_modifier = mangrove_bio_infra_adm_1 }
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_3
+	tooltip = mangrove_bio_infra_adm_2
+	frame = { number = 3 }
+	potential = {
+		has_province_flag = mangrove_bio_infra_path_chosen
+	}
+	trigger = {
+		mangrove_bio_infra_button_trigger = { PATH = adm UPGRADE = 2 }
+	}
+	effect = {
+		mangrove_bio_infra_choose_upgrade = { PATH = adm UPGRADE = 2 }
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_button_3_select_glow
+	potential = { has_province_modifier = mangrove_bio_infra_adm_2 }
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_4
+	tooltip = mangrove_bio_infra_dip_0
+	frame = { number = 4 }
+	potential = {
+		has_province_flag = mangrove_bio_infra_path_chosen
+	}
+	trigger = {
+		mangrove_bio_infra_button_trigger = { PATH = dip UPGRADE = 0 }
+	}
+	effect = {
+		mangrove_bio_infra_choose_upgrade = { PATH = dip UPGRADE = 0 }
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_button_4_select_glow
+	potential = { has_province_modifier = mangrove_bio_infra_dip_0 }
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_5
+	tooltip = mangrove_bio_infra_dip_1
+	frame = { number = 5 }
+	potential = {
+		has_province_flag = mangrove_bio_infra_path_chosen
+	}
+	trigger = {
+		mangrove_bio_infra_button_trigger = { PATH = dip UPGRADE = 1 }
+	}
+	effect = {
+		mangrove_bio_infra_choose_upgrade = { PATH = dip UPGRADE = 1 }
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_button_5_select_glow
+	potential = { has_province_modifier = mangrove_bio_infra_dip_1 }
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_6
+	tooltip = mangrove_bio_infra_dip_2
+	frame = { number = 6 }
+	potential = {
+		has_province_flag = mangrove_bio_infra_path_chosen
+	}
+	trigger = {
+		mangrove_bio_infra_button_trigger = { PATH = dip UPGRADE = 2 }
+	}
+	effect = {
+		mangrove_bio_infra_choose_upgrade = { PATH = dip UPGRADE = 2 }
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_button_6_select_glow
+	potential = { has_province_modifier = mangrove_bio_infra_dip_2 }
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_7
+	tooltip = mangrove_bio_infra_mil_0
+	frame = { number = 7 }
+	potential = {
+		has_province_flag = mangrove_bio_infra_path_chosen
+	}
+	trigger = {
+		mangrove_bio_infra_button_trigger = { PATH = mil UPGRADE = 0 }
+	}
+	effect = {
+		mangrove_bio_infra_choose_upgrade = { PATH = mil UPGRADE = 0 }
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_button_7_select_glow
+	potential = { has_province_modifier = mangrove_bio_infra_mil_0 }
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_8
+	tooltip = mangrove_bio_infra_mil_1
+	frame = { number = 8 }
+	potential = {
+		has_province_flag = mangrove_bio_infra_path_chosen
+	}
+	trigger = {
+		mangrove_bio_infra_button_trigger = { PATH = mil UPGRADE = 1 }
+	}
+	effect = {
+		mangrove_bio_infra_choose_upgrade = { PATH = mil UPGRADE = 1 }
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_button_8_select_glow
+	potential = { has_province_modifier = mangrove_bio_infra_mil_1 }
+}
+custom_button = {
+	name = aPUI_mangrove_bio_infra_button_9
+	tooltip = mangrove_bio_infra_mil_2
+	frame = { number = 9 }
+	potential = {
+		has_province_flag = mangrove_bio_infra_path_chosen
+	}
+	trigger = {
+		mangrove_bio_infra_button_trigger = { PATH = mil UPGRADE = 2 }
+	}
+	effect = {
+		mangrove_bio_infra_choose_upgrade = { PATH = mil UPGRADE = 2 }
+	}
+}
+custom_icon = {
+	name = aPUI_mangrove_bio_infra_button_9_select_glow
+	potential = { has_province_modifier = mangrove_bio_infra_mil_2 }
+}
+# Mangrove Biological Infrastructure aPUI End

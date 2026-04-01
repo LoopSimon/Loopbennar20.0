@@ -1294,6 +1294,7 @@ custom_button = { #vampire_blood_invitation_action #Friendly version
 # tag = H85
 # tag = B37
 # tag = Y25
+# # is_or_was_tag = { tag = J95 }
 
 # Y20 Feiten
 custom_window = {
@@ -2805,5 +2806,334 @@ custom_button = { # Y25_zongji_fealty_action_ai_accept
 	}
 	frame = {
 		number = 1
+	}
+}
+
+custom_window = {
+	name = custom_diplomacy_J95
+	potential = {
+		FROM = {
+			custdip_unique_J95_potential = yes
+		}
+	}
+}
+custom_button = { # J95_rhasail_parrrley_action
+	name = J95_rhasail_parrrley_action
+	tooltip = J95_rhasail_parrrley_action_tt
+	potential = { }
+	trigger = {
+		ROOT = {
+			NOT = { is_rival = FROM }
+			NOT = { is_enemy = FROM }
+			NOT = { is_at_war = yes }
+			has_50_opinion_improved_relation = { target = FROM }
+		}
+		FROM = { NOT = { truce_with = ROOT } }
+	}
+	effect = {
+		custom_tooltip = J95_rhasail_parrrley_action_effect_tt
+		FROM = { add_truce_with = ROOT }
+		hidden_effect = {
+			ROOT = {
+				remove_opinion = {
+					who = FROM
+					modifier = pirated_us
+				}
+				remove_opinion = {
+					who = FROM
+					modifier = slaves_raided
+				}
+			}
+		}
+	}
+}
+
+# I69 Star Rider
+custom_window = {
+	name = custom_diplomacy_I69
+	potential = {
+		FROM = {
+			custdip_unique_I69_potential = yes
+		}
+	}
+}
+
+custom_button = { #Star Rider Shattering
+	name = star_rider_fervour_action
+	tooltip = star_rider_fervour_action_tt
+	potential = { }
+	trigger = {
+		FROM = { 
+			treasury = 100
+		}
+		ROOT = {
+			is_subject_of_type_with_overlord = {
+				who = I69
+				type = tributary_state_anb
+			}
+			capital_scope = {
+				superregion = forbidden_lands_superregion
+			}
+			any_owned_province = {
+				has_tax_building_trigger = no
+				has_any_ongoing_construction = no
+				num_free_building_slots = 1
+			}
+		}
+	}
+	effect = {
+		FROM = { 
+			change_mana = { amount = 5 } 
+			add_treasury = -100
+		}
+		ROOT = {
+			random_owned_province = {
+				limit = {
+					has_any_ongoing_construction = no
+					num_free_building_slots = 1
+					has_tax_building_trigger = no
+				}
+				add_building_construction = {
+					building = temple
+					cost = 0
+				}
+			} 
+			if = {
+				limit = { NOT = { has_country_modifier = I69_cooldown } } 
+				add_liberty_desire = -20
+				hidden_effect = {
+					add_country_modifier = {
+						name = I69_cooldown
+						duration = 1095
+						hidden = yes
+					}
+				}
+			}
+			if = {
+				limit = { NOT = { has_country_flag = I69_extorted_manpower } }
+				overlord = { 
+					add_yearly_manpower = 0.5
+				} 
+				set_country_flag = I69_extorted_manpower
+			}
+			if = { #Building a temple in a subject will release all countries, those becoming Tributaries of Star Rider
+				limit = { 
+					overlord = { 
+						has_country_flag = I69_temple_2 
+					} 
+				}
+				if = {
+					limit = { #Requires a spy network of 25
+						overlord = {
+							has_spy_network_in = {
+								who = PREV
+								value = 25
+							}
+						}
+					}
+					add_liberty_desire = 5
+					custom_tooltip = I69_shamanic_influencing_button_2_tt
+					hidden_effect = {
+						overlord = {
+							add_spy_network_in = {
+								who = PREV
+								value = -25
+							}
+						}
+						every_subject_country = {
+							I69 = {
+								create_subject = {
+									subject_type = tributary_state_anb
+									who = PREV
+								}
+							}
+						}
+						every_owned_province = {
+							set_province_flag = I69_release_then_take
+						}
+						release_all_possible_countries = yes
+						forbidden_lands_superregion = {
+							limit = {
+								has_province_flag = I69_release_then_take
+							}
+							owner = {
+								country_event = {
+									id = centaur.0
+								}
+								if = {
+									limit = { 
+										NOT = { 
+											is_subject_of_type_with_overlord = {
+												who = I69
+												type = tributary_state_anb
+											}
+										}
+									}
+									I69 = {
+										create_subject = {
+											subject_type = tributary_state_anb
+											who = PREV
+										}
+									}
+								}
+							}
+							clr_province_flag = I69_release_then_take
+						}
+					}
+				}
+				else = { #Tooltip saying that you don't have enough spynetwork
+					custom_tooltip = I69_shamanic_influencing_button_2_nospies_tt
+				}
+			}
+		}
+	}
+}
+
+# Y15 Beikdugang
+custom_window = {
+	name = custom_diplomacy_Y15
+	potential = {
+		FROM = {
+			custdip_unique_Y15_potential = yes
+		}
+	}
+}
+custom_button = {
+	name = beikdugang_turn_subject_revolutionary
+	tooltip = beikdugang_turn_subject_revolutionary_tt
+	potential = {
+		ROOT = {
+			is_subject_of = FROM
+			is_subject_of_type = trade_protectorate
+		}
+		FROM = {
+			has_government_attribute = is_beikdugang_custom_diplo_action
+		}
+	}
+	trigger = { 
+		ROOT = {
+			NOT =  { is_revolutionary = yes } 
+			NOT = { liberty_desire = 30 }
+			has_opinion = {
+				who = FROM
+				value = 150
+			}
+		}
+		FROM = {
+			adm_power = 25
+			dip_power = 25
+			mil_power = 25
+		}
+	}
+	effect = { 
+		ROOT = {
+			change_government = republic
+			add_government_reform = junior_revolutionary_republic_reform
+		}
+		FROM = {
+			hidden_effect = {
+				export_to_variable = {
+					which = Y15_trade_protectorate_cost
+					value = total_development
+					who = ROOT
+				}
+				divide_variable = {
+					which = Y15_trade_protectorate_cost
+					value = 25
+				}
+				if = {
+					limit = {
+						check_variable = {
+							which = Y15_trade_protectorate_cost
+							value =  200
+						}
+					}
+					set_variable = {
+						which = Y15_trade_protectorate_cost
+						value = 200
+					}
+				}
+			}
+			currency_effect = {
+				takeFrom = FROM
+				which = Y15_trade_protectorate_cost
+				currency = adm_power
+			}
+			currency_effect = {
+				takeFrom = FROM
+				which = Y15_trade_protectorate_cost
+				currency = dip_power
+			}
+			currency_effect = {
+				takeFrom = FROM
+				which = Y15_trade_protectorate_cost
+				currency = mil_power
+			}
+		}
+	}
+}
+
+# U39 Orenvalyam
+custom_window = {
+	name = custom_diplomacy_U39
+	potential = {
+		FROM = {
+			custdip_unique_U39_potential = yes
+		}
+	}
+}
+custom_button = { # U39_assassination_action
+	name = U39_assassination_action
+	tooltip = U39_assassination_action_tt
+	potential = { }
+	trigger = {
+		FROM = {
+			if = {
+				limit = { has_country_flag = U39_improve_assassination_flag }
+				has_mana = { amount = 25 }
+			}
+			OR = {
+				has_spy_network_in = {
+					who = ROOT
+					value = 30
+				}
+				has_cast_invisibility = yes
+			}
+			if = {
+				limit = { has_country_flag = U39_assassination_success_flag }
+				custom_trigger_tooltip = {
+					tooltip = U39_ass_succ_deadline_tt
+					had_country_flag = {
+						flag = U39_assassination_success_flag
+						days = 3650 #10 years
+					}
+				}
+			}
+			if = {
+				limit = { has_country_flag = U39_assassination_fail_flag }
+				custom_trigger_tooltip = {
+					tooltip = U39_ass_fail_deadline_tt
+					had_country_flag = {
+						flag = U39_assassination_fail_flag
+						days = 180 #6 months
+					}
+				}
+			}
+		}
+	}
+	effect = {
+		hidden_effect = {
+			set_country_flag = orenvalyam_assassination_target_flag
+			FROM = {
+				tooltip = { country_event = { id = orenvalyam_events.400 days = 1 } }
+				hidden_effect = { capital_scope = { add_province_triggered_modifier = orenvalyam_randomness_ptm } }
+			}
+		}
+		FROM = {
+			if = {
+				limit = { has_country_flag = U39_improve_assassination_flag }
+				change_mana = { amount = -25 }
+			}
+		}
 	}
 }

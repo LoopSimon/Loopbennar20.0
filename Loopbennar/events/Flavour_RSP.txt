@@ -1,0 +1,449 @@
+namespace = flavour_RSP
+
+#RSP.1   - 6   - General MT events
+#RSP.10  - 11  - Treasure Hunt System events
+#RSP.20  - 23  - Tag-unique MT events
+
+#######################
+#  GENERAL MT EVENTS  #
+#######################
+
+country_event = {	#Expanding Our Scope
+	id = flavour_RSP.1
+	title = flavour_RSP.1.t
+	desc = flavour_RSP.1.d
+	picture = CARIBBEAN_PIRATE_FORT_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Double time boys!
+		name = flavour_RSP.1.a
+		add_navy_tradition = 20
+		custom_tooltip = flavour_RSP_1_a
+		capital_scope = {
+			add_province_modifier = {
+				name = RSP_scrapping_the_flotsam
+				duration = 9125
+			}
+		}
+		hidden_effect = { set_country_flag = RSP_treasure_hunt_system_enabled }
+	}
+}
+
+country_event = {	#Another Busy Day in Capital
+	id = flavour_RSP.2
+	title = flavour_RSP.2.t
+	desc = flavour_RSP.2.d
+	picture = SMUGGLERS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#What a time to be alive!
+		name = flavour_RSP.2.a
+		add_navy_tradition = 20
+		capital_scope = {
+			center_of_trade = 1
+			add_production_manufactory_building = yes
+			add_province_modifier = {
+				name = RSP_bustling_port
+				duration = -1
+			}
+		}
+	}
+}
+
+country_event = {	#A Daring Heist
+	id = flavour_RSP.3
+	title = flavour_RSP.3.t
+	desc = flavour_RSP.3.d
+	picture = BUCCANEERS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Let's put this plan into motion then!
+		name = flavour_RSP.3.a
+		add_country_modifier = {
+			name = RSP_corsair_warfare
+			duration = 10950
+		}
+		ruined_isles_region = {
+			add_permanent_claim = ROOT
+		}
+		north_ruined_isles_region = {
+			add_permanent_claim = ROOT
+		}
+	}
+}
+
+country_event = {	#Blood, Salt and Gold
+	id = flavour_RSP.4
+	title = flavour_RSP.4.t
+	desc = flavour_RSP.4.d
+	picture = FLAGSHIP_CAPTURED_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Fair pay, fair play!
+		name = flavour_RSP.4.a
+		custom_tooltip = flavour_RSP_4_a
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					OR = {
+						has_province_modifier = RSP_den_of_piracy
+						has_province_modifier = RSP_den_of_piracy_capital
+					}
+				}
+				upgrade_dock_building = yes
+				upgrade_shipyard_building = yes
+			}
+			set_country_flag = RSP_unlock_unique_flagship_modifications
+			if = { limit = { tag = J95 } set_country_flag = RSP_rhasail_flagship_enabled }
+			else_if = { limit = { tag = J96 } set_country_flag = RSP_lamentaire_flagship_enabled }
+			else_if = { limit = { tag = J97 } set_country_flag = RSP_trollshaunt_flagship_enabled }
+			else_if = { limit = { tag = J98 } set_country_flag = RSP_palegold_flagship_enabled }
+		}	
+	}
+}
+
+country_event = {	#Tavern Brawl
+	id = flavour_RSP.5
+	title = flavour_RSP.5.t
+	desc = flavour_RSP.5.d
+	picture = SOLDIER_INFIGHTING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#Easy boys and girls!
+		name = flavour_RSP.5.a
+		add_country_modifier = {
+			name = RSP_pirates_favourite
+			duration = -1
+		}
+		custom_tooltip = flavour_RSP_5_a
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					trade_goods = grain
+					has_production_building_trigger = yes
+					base_production = 6
+				}
+				change_trade_goods = sugar
+			}
+			distribute_development = {
+				amount = 5
+				limit = "trade_goods = sugar"
+				type = production
+			}
+			pick_best_province = {
+				scope = every_owned_province
+				scale = higher_development_than
+				global_trigger = "trade_goods = sugar NOT = { has_building = plantations }"
+				event_target_name = "RSP_highest_sugar_prov_target"
+				number = 1
+			}
+			if = {
+				limit = {
+					has_saved_event_target = RSP_highest_sugar_prov_target_1
+				}
+				event_target:RSP_highest_sugar_prov_target_1 = {
+					add_production_manufactory_building = yes
+				}
+			}
+		}
+	}
+}
+
+country_event = {	#Coronation
+	id = flavour_RSP.6
+	title = flavour_RSP.6.t
+	desc = flavour_RSP.6.d
+	picture = PIRATE_CAPTAINS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#The King of the Pirates - I like it!
+		name = flavour_RSP.6.a
+		custom_tooltip = flavour_RSP_6_a
+		hidden_effect = {
+			set_country_flag = RSP_the_king_of_the_pirates
+		}	
+	}
+
+	option = {		#Raiding will lead to nothing! It's time to remove the Black Flag
+		name = flavour_RSP.6.b
+		custom_tooltip = flavour_RSP_6_b
+		add_stability_or_adm_power = yes
+		hidden_effect = {
+			remove_government_reform = pirate_republic_reform
+			clr_country_flag = RSP_ban_colonial_formables
+			country_event = {
+				id = marcher.1
+				days = 1
+			}
+		}	
+	}
+}
+
+country_event = {	#To Sail Under Flag
+	id = flavour_RSP.7
+	title = flavour_RSP.7.t
+	desc = flavour_RSP.7.d
+	picture = STREET_SPEECH_eventPicture
+
+	is_triggered_only = yes
+
+	option = {		#We keep the confederacy colours!
+		name = flavour_RSP.7.a
+		add_stability = 1
+	}
+
+	option = {		#Rhasail colour
+		trigger = { was_tag = J95 }
+		name = flavour_RSP.7.b
+		custom_tooltip = flavour_RSP_7_b
+		override_country_name = RHASAIL_RUINSAIL
+		hidden_effect = {
+			change_country_color = {
+				country = J95
+			}
+		}
+	}
+
+	option = {		#Lamentaire colour
+		trigger = { was_tag = J96 }
+		name = flavour_RSP.7.c
+		custom_tooltip = flavour_RSP_7_c
+		override_country_name = LAMENTAIRE_RUINSAIL
+		hidden_effect = {
+			change_country_color = {
+				country = J96
+			}
+		}
+	}
+
+	option = {		#Trollshaunt colour
+		trigger = { was_tag = J97 }
+		name = flavour_RSP.7.e
+		custom_tooltip = flavour_RSP_7_e
+		override_country_name = TROLLSHAUNT_RUINSAIL
+		hidden_effect = {
+			change_country_color = {
+				country = J97
+			}
+		}
+	}
+
+	option = {		#Palegold colour
+		trigger = { was_tag = J98 }
+		name = flavour_RSP.7.f
+		custom_tooltip = flavour_RSP_7_f
+		override_country_name = PALEGOLD_RUINSAIL
+		hidden_effect = {
+			change_country_color = {
+				country = J98
+			}
+		}
+	}
+}
+
+country_event = {
+	id = flavour_RSP.10
+	title = flavour_RSP.10.t
+	desc = flavour_RSP.10.d
+	picture = COASTLINE_MAP_eventPicture
+	
+	is_triggered_only = yes
+	
+	trigger = {
+		ai = no
+		has_country_flag = RSP_treasure_hunt_system_enabled
+		OR = {
+			is_or_was_tag = { tag = J95 }
+			is_or_was_tag = { tag = J96 }
+			is_or_was_tag = { tag = J97 }
+			is_or_was_tag = { tag = J98 }
+		}
+		any_province = {
+			has_province_flag = RSP_buried_treasure
+			NOT = { country_or_subject_holds = ROOT }
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_province = {
+				limit = { 
+					has_province_flag = RSP_buried_treasure
+					NOT = { country_or_subject_holds = ROOT }
+				}
+				save_event_target_as = treasuremapprovince
+			}
+		}
+	}
+
+	option = {
+		name = flavour_RSP.10.a
+		goto = treasuremapprovince
+		event_target:treasuremapprovince = {
+			clr_province_flag = RSP_buried_treasure
+			add_claim = ROOT
+			add_province_modifier = {
+				name = RSP_x_marks_the_spot
+				duration = 3650
+			}
+		}
+		custom_tooltip = flavour_RSP_10_a
+	}
+}
+
+country_event = {
+	id = flavour_RSP.11
+	title = flavour_RSP.11.t
+	desc = flavour_RSP.11.d
+	picture = LAKE_TREASURE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_RSP.11.a
+		custom_tooltip = flavour_RSP_11_a
+		hidden_effect = { 
+			trigger_switch = {
+				on_trigger = government_rank
+				3 = { random_list = { 25 = { add_treasury = 600 } 40 = { add_treasury = 450 add_prestige = 75 } 25 = { add_treasury = 300 add_adm_power = 90 add_mil_power = 90 add_dip_power = 90} 10 = { add_prestige = 75 add_adm_power = 90 add_mil_power = 90 add_dip_power = 90} } }
+				2 = { random_list = { 25 = { add_treasury = 400 } 40 = { add_treasury = 300 add_prestige = 50 } 25 = { add_treasury = 200 add_adm_power = 60 add_mil_power = 60 add_dip_power = 60} 10 = { add_prestige = 50 add_adm_power = 60 add_mil_power = 60 add_dip_power = 60} } }
+				1 = { random_list = { 25 = { add_treasury = 200 } 40 = { add_treasury = 150 add_prestige = 25 } 25 = { add_treasury = 100 add_adm_power = 30 add_mil_power = 30 add_dip_power = 30} 10 = { add_prestige = 25 add_adm_power = 30 add_mil_power = 30 add_dip_power = 30} } }
+			}
+			if = {
+				limit = { has_country_modifier = RSP_improved_buried_treasures }
+				trigger_switch = {
+					on_trigger = tag
+					J95 = { 
+						random_known_country = { 
+							limit = { 
+								NOT = { is_enemy = J95 }
+								capital_scope = { continent = europe }
+							}
+							add_opinion = { who = J95 modifier = RSP_rhasail_treasure_opinion }
+						}
+					}
+					J96 = {
+						random_province = {
+    						limit = {
+								has_port = yes
+								superregion = ruin_proper_superregion
+								NOT = { religion = uelos_cult }
+							}
+    						change_religion = uelos_cult
+						}
+					}
+					J97 = { increase_magic_experience = { amount = 50 } }
+					J98 = { artifice_unlock_random_invention_effect = yes }
+				}
+			}
+			change_variable = {
+				which = RSP_buried_treasures_found
+				value = 1
+			}
+		}
+	}
+}
+
+
+#UNIQUE MISSION EVENTS
+#LAMENTAIRE
+country_event = {
+	id = flavour_RSP.20
+	title = flavour_RSP.20.t
+	desc = flavour_RSP.20.d
+	picture = LAKE_TREASURE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_RSP.20.a
+		capital_scope = {
+			upgrade_tax_building = yes
+			add_province_modifier = {
+				name = RSP_lamentaire_sunken_temple_of_uelos
+				duration = -1
+			}
+			add_province_modifier = {
+				name = religious_center
+				duration = -1
+			}
+		}
+	}
+}
+
+#TROLLSHAUNT
+country_event = {
+	id = flavour_RSP.21
+	title = flavour_RSP.21.t
+	desc = flavour_RSP.21.d
+	picture = RUNESTONE_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_RSP.21.a
+		capital_scope = {
+			upgrade_tax_building = yes
+			add_province_modifier = {
+				name = RSP_trollshaunt_beacon_of_mists
+				duration = -1
+			}
+		}
+		hidden_effect = {
+			set_country_flag = count_total_land_units_killed_flag
+		}
+	}
+}
+
+#PALEGOLD
+country_event = {
+	id = flavour_RSP.22
+	title = flavour_RSP.22.t
+	desc = flavour_RSP.22.d
+	picture = indiangfx_MERCHANTS_TALKING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_RSP.22.a
+		capital_scope = {
+			upgrade_trade_building = yes
+			add_province_modifier = {
+				name = RSP_palegold_seahammer_yards
+				duration = -1
+			}
+		}
+		remove_country_modifier = artifice_research_temporarily_disabled
+	}
+}
+
+#RHASAIL
+country_event = {
+	id = flavour_RSP.23
+	title = flavour_RSP.23.t
+	desc = flavour_RSP.23.d
+	picture = MERCHANTS_TALKING_eventPicture
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = flavour_RSP.23.a
+		add_country_modifier = {
+			name = RSP_rhasail_prize_court_country
+			duration = -1
+		}
+		capital_scope = {
+			upgrade_courthouse_building = yes
+			add_province_modifier = {
+				name = RSP_rhasail_prize_court_province
+				duration = -1
+			}
+		}
+	}
+}

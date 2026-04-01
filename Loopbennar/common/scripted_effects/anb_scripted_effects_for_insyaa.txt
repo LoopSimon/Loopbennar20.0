@@ -1,32 +1,58 @@
 open_stormwall = {
-	4774 = {
+	if = {
+		limit = { NOT = { has_global_flag = stormwall_open } }
+		# like monuments, FROM must be a valid country scope for add_canal to succeed, so do this to ensure it
+		random_country = { country_event = { id = insyaa_flavour.9998 } }
+		set_global_flag = stormwall_open
 		if = {
-			limit = { NOT = { has_global_flag = stormwall_open } }
-			3580 = { add_canal = stormwall_canal }
-			3582 = { add_canal = stormwall_canal }
-			1621 = { add_canal = stormwall_canal }
-			3559 = { add_canal = stormwall_canal }
-			3615 = { add_canal = stormwall_canal }
-			3616 = { add_canal = stormwall_canal }
-			3619 = { add_canal = stormwall_canal }
-			3618 = { add_canal = stormwall_canal }
-			3624 = { add_canal = stormwall_canal }
-			3622 = { add_canal = stormwall_canal }
-			6905 = { add_canal = stormwall_canal }
-			6859 = { add_canal = stormwall_canal }
-			set_global_flag = stormwall_open
-		}
-		if = {
-			limit = { NOT = { has_global_flag = endless_ocean_first_opening } }
+			limit = { NOT = { has_global_flag = stormwall_first_opening } }
 			every_country = {
 				limit = { religion = endless_ocean }
 				country_event = {
 					id = endless_ocean_events.100
 				}
 			}
-			set_global_flag = endless_ocean_first_opening
+			#REMOVE AFTER INSYAA PILLARS ARE MERGED
+			6234 = {
+				set_province_flag = unlocked_artifice_invention_reverse_mechanim_global
+				set_province_flag = unlocked_artifice_invention_industrial_automatories_global
+				set_province_flag = unlocked_artifice_invention_memory_module_global
+				set_province_flag = unlocked_artifice_invention_fireproof_plating_global
+				set_province_flag = unlocked_artifice_invention_okalu_scanners_global
+				set_province_flag = unlocked_artifice_invention_pillar_scouts_global
+				set_province_flag = unlocked_artifice_invention_behavioral_chip_global
+				set_province_flag = unlocked_artifice_invention_construction_bots_global
+				set_province_flag = unlocked_artifice_invention_mechanim_regiments_global
+				set_province_flag = unlocked_artifice_invention_auto_scribes_global
+				set_province_flag = unlocked_artifice_invention_crop_enlarge_global
+				set_province_flag = unlocked_artifice_invention_assisted_growth_global
+				set_province_flag = unlocked_artifice_invention_animal_gene_global
+				set_province_flag = unlocked_artifice_invention_titano_thorns_global
+				set_province_flag = unlocked_artifice_invention_titano_weed_global
+				set_province_flag = unlocked_artifice_invention_seed_siege_global
+				set_province_flag = unlocked_artifice_invention_tgs_farmland_global
+				set_province_flag = unlocked_artifice_invention_tgs_livestock_global
+				set_province_flag = unlocked_artifice_invention_titano_artif_global
+				set_province_flag = unlocked_artifice_invention_titano_cav_global
+				set_province_flag = unlocked_artifice_invention_sonic_amplifiers_global
+				set_province_flag = unlocked_artifice_invention_sonic_weaponary_global
+				set_province_flag = unlocked_artifice_invention_flak_cannons_global
+				set_province_flag = unlocked_artifice_invention_terrain_shaper_global
+				set_province_flag = unlocked_artifice_invention_steel_tracking_global
+				set_province_flag = unlocked_artifice_invention_memory_storage_global
+				set_province_flag = unlocked_artifice_invention_mechanim_deconstructor_global
+			}
+			set_global_flag = stormwall_first_opening #Please dont clear it
+			4871 = { # tianlou
+				province_event = {
+					id = spirits.1005 # stormwall opens alert event
+				}
+				province_event = {
+					id = spirits.1006
+					days = 912 # 2.5 years
+				}
+			}
 		}
-		
 	}
 }
 
@@ -1562,13 +1588,12 @@ insyaa_charkuchin_kobolds_ai_supply_centre = {
 	}
 	random_owned_province = {
 		limit = {
-			# base_production = 4
-			OR = {
-				has_fort_building_trigger = yes
-				has_production_building_trigger = yes
+			is_city = yes
+			superregion = charkuchar_superregion # Only give them freebies in the mountain range
+			NOT = {
+				has_province_modifier = charkuchin_kobold_supply_facility
+				has_charkuchin_kobold_citadel = yes
 			}
-			NOT = { has_province_modifier = charkuchin_kobold_supply_facility }
-			NOT = { has_charkuchin_kobold_citadel = yes }
 		}
 		add_permanent_province_modifier = {
 			name = charkuchin_kobold_supply_facility
@@ -1596,16 +1621,16 @@ insyaa_charkuchin_kobolds_released_setup = {
 	}
 	trigger_switch = {
 		on_trigger = government
-		monarchy = { add_government_reform = charkuchin_kobold_feudalism_reform }
-		republic = { add_government_reform = charkuchin_kobold_oligarchy_reform }
-		theocracy = { add_government_reform = charkuchin_kobold_monastic_order_reform }
+		monarchy = { add_government_reform = charkuchin_monarchy_reform }
+		republic = { add_government_reform = charkuchin_council_reform }
+		theocracy = { add_government_reform = charkuchin_citadel_clerical_administration }
 		tribal = {
 			change_government = monarchy
-			add_government_reform = charkuchin_kobold_feudalism_reform
+			add_government_reform = charkuchin_monarchy_reform
 		}
 		native = {
 			change_government = monarchy
-			add_government_reform = charkuchin_kobold_feudalism_reform
+			add_government_reform = charkuchin_monarchy_reform
 		}
 	}
 	country_event = { #Initial variable setup and some modifiers
@@ -1635,5 +1660,12 @@ insyaa_charkuchin_kobolds_released_setup = {
 		}
 		subtract_variable = { kobold_admin_tech = 1 }
 		insyaa_charkuchin_kobold_citadel_supplies_tech = yes
+	}
+}
+add_mechanim_minority_large_effect = {
+	custom_tooltip = add_mechanim_minority_large_effect_tooltip
+	hidden_effect = { 
+		add_mechanim_minority_size_effect = yes
+		add_mechanim_minority_size_effect = yes
 	}
 }

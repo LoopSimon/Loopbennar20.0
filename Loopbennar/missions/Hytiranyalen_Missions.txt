@@ -149,7 +149,10 @@ hytiranyalen_1 = {
 				limit = { exists = U15 }
 				U15 = {
 					custom_tooltip = start_demonsterization_title
-					hidden_effect = { start_demonsterization_effect = yes }
+					hidden_effect = {
+						start_demonsterization_effect = yes
+						decrease_monstrous_20 = yes
+					}
 				}
 			}
 			crathanor_area = { add_permanent_claim = ROOT }
@@ -219,39 +222,41 @@ hytiranyalen_1 = {
 		} 
 
 		trigger = {
-			if = {
-				limit = { NOT = { exists = U15 } }
-				536 = { has_courthouse_building_trigger = yes }
-			}
-			else = {
-				U15 = {
-					NOT = { num_of_cities = 25 }
-					if = {
-						limit = { has_dlc = "Leviathan" }
-						has_opinion = {
-							who = ROOT
-							value = 200
+			OR = {
+				AND = {
+					U15 = {
+						NOT = { num_of_cities = 25 }
+						if = {
+							limit = { has_dlc = "Leviathan" }
+							has_opinion = {
+								who = ROOT
+								value = 200
+							}
 						}
-					}
-					else = {
-						trust = {
-							who = ROOT
-							value = 100
+						else = {
+							trust = {
+								who = ROOT
+								value = 100
+							}
 						}
-					}
-					has_support_loyalists = yes
-					OR = {
-						has_25_opinion_sent_gift = { target = ROOT }
-						custom_trigger_tooltip = {
-							tooltip = hyti_has_gobbo_dad
-							OR = {
-								has_heir_flag = goblin_father
-								has_ruler_flag = goblin_father
+						has_support_loyalists = yes
+						OR = {
+							has_25_opinion_sent_gift = { target = ROOT }
+							custom_trigger_tooltip = {
+								tooltip = hyti_has_gobbo_dad
+								OR = {
+									has_heir_flag = goblin_father
+									has_ruler_flag = goblin_father
+								}
 							}
 						}
 					}
+					dip_power = 300
 				}
-				dip_power = 300
+				AND = {
+					NOT = { exists = U15 }
+					536 = { has_courthouse_building_trigger = yes }
+				}
 			}
 		} 
 
@@ -463,6 +468,7 @@ hytiranyalen_2 = {
 				hidden_effect = { remove_core = ROOT }
 				add_harpy_minority_size_effect = yes
 			}
+			add_inflation = -5
 			if = {
 				limit = {
 					3223 = { owned_by = U15 }
@@ -603,7 +609,6 @@ hytiranyalen_2 = {
 							has_trade_building_trigger = yes
 							has_production_building_trigger = yes
 							harpy_roost_st_has_any_roost = yes
-							hold_condition = { Repaired = yes }
 						}
 					}
 				}
@@ -627,7 +632,6 @@ hytiranyalen_2 = {
 				has_trade_building_trigger = yes
 				has_production_building_trigger = yes
 				harpy_roost_st_has_any_roost = yes
-				hold_condition = { Repaired = yes }
 			}
 			510 = {
 				owned_by = ROOT
@@ -808,6 +812,8 @@ hytiranyalen_2 = {
 				}
 			}
 			set_country_flag = hyti_free_mil_swap
+			set_country_flag = can_change_to_harpy_military_regardless_of_dev
+			set_country_flag = can_change_to_goblin_military_regardless_of_dev
 			custom_tooltip = hyti_new_army2
 		}
 	}
@@ -959,7 +965,7 @@ hytiranyalen_3 = {
 						white_peace = PREV
 					}				
 				}
-				add_treasury = 100
+				add_treasury = 125
 			}
 			kuzak_area = { add_permanent_claim = ROOT }
 			azka_evran_area = { add_permanent_claim = ROOT }
@@ -1097,7 +1103,6 @@ hytiranyalen_3 = {
 
 		trigger = {
 			2942 = {
-				hold_condition = { Repaired = yes }
 				has_trade_building_trigger = yes
 				has_manufactory_trigger = yes
 				any_neighbor_province = {
@@ -1585,6 +1590,10 @@ hytiranyalen_4 = {
 		} 
 
 		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = hyti_song_breakthrough
+				has_country_flag = hyti_song_breakthrough
+			}
 			655 = {
 				has_great_project = {
 					type = mount_lazzaward
@@ -1606,10 +1615,6 @@ hytiranyalen_4 = {
 			}
 			all_owned_province = {
 				OR = {
-					NOT = { development = 25 }
-					has_building = mage_tower
-				}
-				OR = {
 					NOT = { development = 10 }
 					custom_trigger_tooltip = {
 						tooltip = hyti_diffusing_tt
@@ -1625,6 +1630,19 @@ hytiranyalen_4 = {
 							}
 						}
 					}
+				}
+			}
+			OR = {
+				all_owned_province = {
+					OR = {
+						NOT = { development = 25 }
+						has_building = mage_tower
+					}	
+				}
+				num_of_owned_provinces_with = {
+					value = 10
+					development = 25
+					has_building = mage_tower
 				}
 			}
 		} 

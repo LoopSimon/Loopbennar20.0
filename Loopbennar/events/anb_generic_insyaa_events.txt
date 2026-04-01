@@ -4,8 +4,11 @@
 #Events 16-21 - Gift Ring events
 #Events 30-39 - Pachpalka events
 #Events 40-49 - Mechanim flavour events
-#Events 50-99 - Unused
+#Events 50-99 - Artificery related events
+#Events 100-199 - Unlocked invention/mechanim parts
+#Events 1000 - Mechanim Over Forcelimit event
 #Events 100 - Mechanim Over Forcelimit event
+#Events 9998-9999 - Kiamoa/Stormwall
 
 namespace = insyaa_flavour
 
@@ -201,7 +204,6 @@ country_event = { #Life in the Mound
 		}
     }
 }
-
 province_event = { # Helper event for Golodh, Wandering
 	id = insyaa_flavour.10
 	title = insyaa_flavour.10.t
@@ -342,6 +344,31 @@ country_event = { # Golodh, at the End of the Beginning
 			add_country_modifier = { name = golodh_weakened_mod duration = 18250 }
 		}
 		change_religion = foundationism
+		if = { # Beikdugang MT effect
+			limit = { 4907 = { owner = { mission_completed = Y15_tides_of_change } } }
+			custom_tooltip = Y15_inumbe_fucked_tt
+			hidden_effect = {
+				M30 = {
+					every_neighbor_country = {
+						save_event_target_as = Y15_kill_inumbe_target
+						M30 = {
+							every_owned_province = {
+								add_claim = event_target:Y15_kill_inumbe_target
+							}
+						}
+					}
+
+					random_neighbor_country = {
+						save_event_target_as = Y15_kill_inumbe_target
+						M30 = {
+							every_owned_province = {
+								add_core = event_target:Y15_kill_inumbe_target
+							}
+						}
+					}
+				}	
+			}
+		}
 		# AI buffs for I-numbe, up to insyaa team to add later
 	}
 }
@@ -1106,7 +1133,7 @@ country_event = {
 		capital_scope = { superregion = kanolowele_superregion }
 		culture_is_kanolowele_native_country = yes
 		any_owned_province = {
-			terrain_is_not_titanoterrain = yes
+			NOT = { terrain_is_titanoterrain = yes }
 			culture_is_kanolowele_native_province = yes
 		}
 	}
@@ -1115,7 +1142,7 @@ country_event = {
 		hidden_effect = {
 			random_owned_province = {
 				limit = {
-					terrain_is_not_titanoterrain = yes
+					NOT = { terrain_is_titanoterrain = yes }
 					culture_is_kanolowele_native_province = yes
 				}
 				save_event_target_as = hinuiterrain_overgrowth_target
@@ -1969,11 +1996,1295 @@ country_event = { #soaring impression
 		}
 	}
 }
+country_event = { #Automatory event
+	id = insyaa_flavour.50
+	title = insyaa_flavour.50.t
+	desc = {
+		desc = insyaa_flavour.50.da
+		trigger = {
+			high_tolerance_mechanim_race_trigger = yes
+		}
+	}
+	desc = {
+		desc = insyaa_flavour.50.db
+		trigger = {
+			NOT = { high_tolerance_mechanim_race_trigger = yes }
+		}
+	}
+	
+	picture = KOBOLD_HOARD_eventPicture
+	
+	is_triggered_only = yes
+	trigger = {
+		any_owned_province = {
+			NOT = {
+				fast_has_pop_of_race = { race = mechanim }
+			}
+		}
+	}
 
-country_event = { #Mechanim Over Forcelimit event
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					development = 25
+					NOT = { fast_has_pop_of_race = { race = mechanim } }
+				}
+				save_event_target_as = event_province
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_saved_event_target = event_province
+					}
+				}
+				random_owned_province = {
+					limit = {
+						development = 15
+						NOT = { fast_has_pop_of_race = { race = mechanim } }
+					}
+					save_event_target_as = event_province
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_saved_event_target = event_province
+						}
+					}
+					random_owned_province = {
+						limit = {
+							NOT = { fast_has_pop_of_race = { race = mechanim } }
+						}
+						save_event_target_as = event_province
+					}
+				}
+			}
+		}
+	}
+	
+	option = {
+		name = insyaa_flavour.50.a
+		goto = event_province
+		event_target:event_province = {
+			add_mechanim_minority_large_effect = yes
+		}
+		if = {
+			limit = { high_tolerance_mechanim_race_trigger = yes }
+			if = {
+				limit = { has_country_flag = third_automatory_build }
+				add_country_modifier = {
+					name = artifice_new_tolerant_mechanims_gen_3
+					duration = 1825
+				}
+			}
+			else_if = {
+				limit = { has_country_flag = second_automatory_build }
+				add_country_modifier = {
+					name = artifice_new_tolerant_mechanims_gen_2
+					duration = 1825
+				}
+			}
+			else = {
+				add_country_modifier = {
+					name = artifice_new_tolerant_mechanims_gen_1
+					duration = 1825
+				}
+			}
+		}
+		else = {
+			event_target:event_province = {
+				add_province_modifier = {
+					name = artifice_new_slave_mechanims
+					duration = 1825
+				}
+			}
+		}
+		
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #Setup Artificery mechanims
+	id = insyaa_flavour.51
+	title = insyaa_flavour.51.t
+	desc = insyaa_flavour.51.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+	
+	option = {
+		name = insyaa_flavour.52.a
+		set_estate_privilege = estate_artificers_organization_mechanim_base
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #Enlarged Crops too much
+	id = insyaa_flavour.52
+	title = insyaa_flavour.52.t
+	desc = insyaa_flavour.52.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			has_estate_privilege = artifice_invention_tgs_farmland
+			has_estate_privilege = artifice_invention_crop_enlarge
+		}
+	}
+	
+	option = {
+		name = insyaa_flavour.52.a
+		if = {
+			limit = {
+				has_estate_privilege = artifice_invention_crop_enlarge
+			}
+			custom_tooltip = insyaa_flavour.52.1tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						trade_goods = grain
+						trade_goods = wine
+						trade_goods = fungi
+						trade_goods = serpentbloom
+					}
+					add_devastation = 25
+					owner = {
+						add_treasury = 25
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_estate_privilege = artifice_invention_tgs_farmland
+			}
+			custom_tooltip = insyaa_flavour.52.2tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = {
+						province_with_arable_goods = yes
+					}
+					add_devastation = 25
+					owner = {
+						add_treasury = 25
+					}
+				}
+			}
+		}
+
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { # Chikens everywhere!
+	id = insyaa_flavour.53
+	title = insyaa_flavour.53.t
+	desc = insyaa_flavour.53.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			has_estate_privilege = artifice_invention_tgs_livestock
+			has_estate_privilege = artifice_invention_animal_gene
+		}
+	}
+	
+	option = {
+		name = insyaa_flavour.53.a
+		
+		custom_tooltip = insyaa_flavour.53.tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = {
+					trade_goods = livestock
+					trade_goods = fish
+					trade_goods = fur
+				}
+				add_devastation = 25
+				owner = {
+					add_treasury = 25
+				}
+			}
+		}
+		ai_chance = { factor = 1 }
+	}
+}
+country_event = { #RISE! but mechanim
+	id = insyaa_flavour.54
+	title = insyaa_flavour.55.t
+	desc = insyaa_flavour.55.d
+	picture = KOBOLD_HOARD_eventPicture
+
+	is_triggered_only = yes
+	trigger = { check_variable = { self_repair = 3001 } } #Don't raise if it was a nothing battle
+	hidden = yes
+
+	option = {
+		name = artifice_inventions.55.a
+
+		divide_variable = { self_repair = 2 } #50% of the dead are repaired yey!
+		round_variable = { #truncate decimal portion yes yes!
+			which = self_repair
+			value = -1
+		}
+
+		if = {
+			limit = { has_country_flag = hide_repair_on_battle }
+			divide_variable = { self_repair = 1000 }
+			var_effect_granular = { effect = add_manpower var = self_repair sign = + }
+		}
+		else = {
+			country_event = { id = insyaa_flavour.55 }
+		}
+	}
+}
+country_event = { #Self Repair Army Manpower notif event
+	id = insyaa_flavour.55
+	title = insyaa_flavour.55.t
+	desc = insyaa_flavour.55.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	is_triggered_only = yes
+
+	option = {	#Rise!
+		name = insyaa_flavour.55.a
+		
+		custom_tooltip = insyaa_flavour.55.tt
+	}
+	
+	option = {	#Rise! (But hide these pop-ups from now on)
+		name = insyaa_flavour.55.b
+		
+		custom_tooltip = insyaa_flavour.55.tt
+		hidden_effect = { set_country_flag = hide_repair_on_battle }
+	}
+
+	after = {
+		hidden_effect = {
+			divide_variable = { self_repair = 1000 }
+			var_effect_granular = { effect = add_manpower var = self_repair sign = + }
+		}
+	}
+}
+country_event = { #Precursor Relics Discovered
+	id = insyaa_flavour.56
+	title = insyaa_flavour.56.t
+	desc = insyaa_flavour.56.d
+	picture = KOBOLD_HOARD_eventPicture
+	
+	is_triggered_only = yes
+
+	trigger = {
+		OR = {
+			has_estate_privilege = artifice_invention_steel_tracking
+			has_estate_privilege = artifice_invention_mech_steel_detector
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					continent = oceania
+					NOT = { has_province_flag = precursor_steel_tracking }
+					NOT = { trade_goods = precursor_relics }
+				}
+				save_event_target_as = artificery_precursor_relic_target
+				set_province_flag = precursor_steel_tracking
+			}
+		}
+	}
+
+	option = {	#Yey
+		name = insyaa_flavour.56.a
+		goto = artificery_precursor_relic_target
+		event_target:artificery_precursor_relic_target = {
+			change_trade_goods = precursor_relics
+		}
+	}
+	
+	option = {	#No thanks
+		name = insyaa_flavour.56.b
+
+	}
+}
+country_event = { #artifice_invention_reverse_mechanim
 	id = insyaa_flavour.100
 	title = insyaa_flavour.100.t
 	desc = insyaa_flavour.100.d
+	picture = INVENTION_eventPicture
+
+	is_triggered_only = yes
+
+
+	option = {
+		name = artifice_inventions.69.a
+
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_industrial_automatories
+	id = insyaa_flavour.101
+	title = insyaa_flavour.101.t
+	desc = insyaa_flavour.101.d
+	picture = INVENTION_eventPicture
+
+	is_triggered_only = yes
+
+
+	option = {
+		name = artifice_inventions.69.a
+
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_memory_module
+	id = insyaa_flavour.102
+	title = insyaa_flavour.102.t
+	desc = insyaa_flavour.102.d
+	picture = INVENTION_eventPicture
+
+	is_triggered_only = yes
+
+
+	option = {
+		name = artifice_inventions.69.a
+
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_fireproof_plating
+	id = insyaa_flavour.103
+	title = insyaa_flavour.103.t
+	desc = insyaa_flavour.103.d
+	picture = INVENTION_eventPicture
+
+	is_triggered_only = yes
+
+
+	option = {
+		name = artifice_inventions.69.a
+
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_okalu_scanners
+	id = insyaa_flavour.104
+	title = insyaa_flavour.104.t
+	desc = insyaa_flavour.104.d
+	picture = INVENTION_eventPicture
+
+	is_triggered_only = yes
+
+
+	option = {
+		name = artifice_inventions.69.a
+
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_pillar_scouts
+	id = insyaa_flavour.105
+	title = insyaa_flavour.105.t
+	desc = insyaa_flavour.105.d
+	picture = INVENTION_eventPicture
+
+	is_triggered_only = yes
+
+
+	option = {
+		name = artifice_inventions.69.a
+
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_behavioral_chip
+	id = insyaa_flavour.106
+	title = insyaa_flavour.106.t
+	desc = insyaa_flavour.106.d
+	picture = INVENTION_eventPicture
+
+	is_triggered_only = yes
+
+
+	option = {
+		name = artifice_inventions.69.a
+
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 15
+		}
+		small_decrease_of_mechanim_tolerance_effect = yes
+
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}		
+country_event = { #artifice_invention_construction_bots
+	id = insyaa_flavour.107
+	title = insyaa_flavour.107.t
+	desc = insyaa_flavour.107.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_mechanim_regiments
+	id = insyaa_flavour.108
+	title = insyaa_flavour.108.t
+	desc = insyaa_flavour.108.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}	
+country_event = { #artifice_invention_auto_scribes
+	id = insyaa_flavour.109
+	title = insyaa_flavour.109.t
+	desc = insyaa_flavour.109.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}		
+#Gene Magic		
+country_event = { #artifice_invention_crop_enlarge
+	id = insyaa_flavour.110
+	title = insyaa_flavour.110.t
+	desc = insyaa_flavour.110.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_brilliance
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_assisted_growth
+	id = insyaa_flavour.111
+	title = insyaa_flavour.111.t
+	desc = insyaa_flavour.111.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_technomancy
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}	
+country_event = { #artifice_invention_animal_gene
+	id = insyaa_flavour.112
+	title = insyaa_flavour.112.t
+	desc = insyaa_flavour.112.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_technomancy
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}		
+country_event = { #artifice_invention_titano_thorns
+	id = insyaa_flavour.113
+	title = insyaa_flavour.113.t
+	desc = insyaa_flavour.113.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_technomancy
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_titano_weed
+	id = insyaa_flavour.114
+	title = insyaa_flavour.114.t
+	desc = insyaa_flavour.114.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_technomancy
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_seed_siege
+	id = insyaa_flavour.115
+	title = insyaa_flavour.115.t
+	desc = insyaa_flavour.115.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_brilliance
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}		
+country_event = { #artifice_invention_tgs_farmland
+	id = insyaa_flavour.116
+	title = insyaa_flavour.116.t
+	desc = insyaa_flavour.116.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_brilliance
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}		
+country_event = { #artifice_invention_tgs_livestock
+	id = insyaa_flavour.117
+	title = insyaa_flavour.117.t
+	desc = insyaa_flavour.117.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_brilliance
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}		
+country_event = { #artifice_invention_titano_artif
+	id = insyaa_flavour.118
+	title = insyaa_flavour.118.t
+	desc = insyaa_flavour.118.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_brilliance
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}		
+country_event = { #artifice_invention_titano_cav
+	id = insyaa_flavour.119
+	title = insyaa_flavour.119.t
+	desc = insyaa_flavour.119.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_brilliance
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+#Precursors
+country_event = { #artifice_invention_sonic_amplifiers
+	id = insyaa_flavour.120
+	title = insyaa_flavour.120.t
+	desc = insyaa_flavour.120.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_technomancy
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_sonic_weaponary
+	id = insyaa_flavour.121
+	title = insyaa_flavour.121.t
+	desc = insyaa_flavour.121.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_flak_cannons
+	id = insyaa_flavour.122
+	title = insyaa_flavour.122.t
+	desc = insyaa_flavour.122.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}	
+country_event = { #artifice_invention_terrain_shaper
+	id = insyaa_flavour.123
+	title = insyaa_flavour.123.t
+	desc = insyaa_flavour.123.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_technomancy
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_steel_tracking
+	id = insyaa_flavour.124
+	title = insyaa_flavour.124.t
+	desc = insyaa_flavour.124.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_technomancy
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_memory_storage
+	id = insyaa_flavour.125
+	title = insyaa_flavour.125.t
+	desc = insyaa_flavour.125.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_mechanim_deconstructor
+	id = insyaa_flavour.126
+	title = insyaa_flavour.126.t
+	desc = insyaa_flavour.126.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+### Mechanim ###
+country_event = { #artifice_invention_mech_steel_detector
+	id = insyaa_flavour.127
+	title = insyaa_flavour.127.t
+	desc = insyaa_flavour.127.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_mech_reawakening_procedure
+	id = insyaa_flavour.128
+	title = insyaa_flavour.128.t
+	desc = insyaa_flavour.128.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_mech_building_plates
+	id = insyaa_flavour.129
+	title = insyaa_flavour.129.t
+	desc = insyaa_flavour.129.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_mech_terrain_specialization
+	id = insyaa_flavour.130
+	title = insyaa_flavour.130.t
+	desc = insyaa_flavour.130.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_mech_lava_cell
+	id = insyaa_flavour.131
+	title = insyaa_flavour.131.t
+	desc = insyaa_flavour.131.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_mech_fireproof_plating
+	id = insyaa_flavour.132
+	title = insyaa_flavour.132.t
+	desc = insyaa_flavour.132.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+country_event = { #artifice_invention_mech_pillar_scouts
+	id = insyaa_flavour.133
+	title = insyaa_flavour.133.t
+	desc = insyaa_flavour.133.d
+	picture = INVENTION_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = artifice_inventions.69.a
+		add_faction_influence = {
+			faction = tec_mechanists
+			influence = 10
+		}
+		custom_tooltip = new_artifice_invention_tooltip
+	}
+}
+#Heads
+country_event = { #artifice_invention_head_long_range
+	id = insyaa_flavour.134
+	title = insyaa_flavour.134.t
+	desc = insyaa_flavour.134.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_head_part_tooltip
+	}
+}
+country_event = { #artifice_invention_head_war_craved
+	id = insyaa_flavour.135
+	title = insyaa_flavour.135.t
+	desc = insyaa_flavour.135.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_head_part_tooltip
+	}
+}
+country_event = { #artifice_invention_head_human_like
+	id = insyaa_flavour.136
+	title = insyaa_flavour.136.t
+	desc = insyaa_flavour.136.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_head_part_tooltip
+	}
+}
+country_event = { #artifice_invention_head_adm_oversight
+	id = insyaa_flavour.137
+	title = insyaa_flavour.137.t
+	desc = insyaa_flavour.137.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_head_part_tooltip
+	}
+}
+#Torso
+country_event = { #artifice_invention_torso_self_repair
+	id = insyaa_flavour.138
+	title = insyaa_flavour.138.t
+	desc = insyaa_flavour.138.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_torso_part_tooltip
+	}
+}
+country_event = { #artifice_invention_torso_war_craved
+	id = insyaa_flavour.139
+	title = insyaa_flavour.139.t
+	desc = insyaa_flavour.139.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_torso_part_tooltip
+	}
+}
+
+country_event = { #artifice_invention_torso_container_part
+	id = insyaa_flavour.140
+	title = insyaa_flavour.140.t
+	desc = insyaa_flavour.140.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_torso_part_tooltip
+	}
+}
+country_event = { #artifice_invention_torso_war_machine
+	id = insyaa_flavour.141
+	title = insyaa_flavour.141.t
+	desc = insyaa_flavour.141.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_torso_part_tooltip
+	}
+}
+#Chassis
+country_event = { #artifice_invention_chassis_heavy
+	id = insyaa_flavour.142
+	title = insyaa_flavour.142.t
+	desc = insyaa_flavour.142.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_chassis_part_tooltip
+	}
+}
+country_event = { #artifice_invention_chassis_light
+	id = insyaa_flavour.143
+	title = insyaa_flavour.143.t
+	desc = insyaa_flavour.143.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_chassis_part_tooltip
+	}
+}
+country_event = { #artifice_invention_chassis_waterproof
+	id = insyaa_flavour.144
+	title = insyaa_flavour.144.t
+	desc = insyaa_flavour.144.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_chassis_part_tooltip
+	}
+}
+country_event = { #artifice_invention_chassis_soarer_struts
+	id = insyaa_flavour.145
+	title = insyaa_flavour.145.t
+	desc = insyaa_flavour.145.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_chassis_part_tooltip
+	}
+}
+#Arms
+country_event = { #artifice_invention_arms_dual_pair
+	id = insyaa_flavour.146
+	title = insyaa_flavour.146.t
+	desc = insyaa_flavour.146.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_arms_part_tooltip
+	}
+}
+country_event = { #artifice_invention_arms_stabilizer
+	id = insyaa_flavour.147
+	title = insyaa_flavour.147.t
+	desc = insyaa_flavour.147.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_arms_part_tooltip
+	}
+}
+country_event = { #artifice_invention_arms_construction
+	id = insyaa_flavour.148
+	title = insyaa_flavour.148.t
+	desc = insyaa_flavour.148.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_arms_part_tooltip
+	}
+}
+country_event = { #artifice_invention_arms_sonic_firearm
+	id = insyaa_flavour.149
+	title = insyaa_flavour.149.t
+	desc = insyaa_flavour.149.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_arms_part_tooltip
+	}
+}
+#Legs
+country_event = { #artifice_invention_legs_quadripedal
+	id = insyaa_flavour.150
+	title = insyaa_flavour.150.t
+	desc = insyaa_flavour.150.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_legs_part_tooltip
+	}
+}
+country_event = { #artifice_invention_legs_bipedal
+	id = insyaa_flavour.151
+	title = insyaa_flavour.151.t
+	desc = insyaa_flavour.151.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_legs_part_tooltip
+	}
+}
+country_event = { #artifice_invention_legs_octipedal
+	id = insyaa_flavour.152
+	title = insyaa_flavour.152.t
+	desc = insyaa_flavour.152.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_legs_part_tooltip
+	}
+}
+country_event = { #artifice_invention_legs_trailblazer
+	id = insyaa_flavour.153
+	title = insyaa_flavour.153.t
+	desc = insyaa_flavour.153.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.134.a
+		
+		custom_tooltip = new_artifice_legs_part_tooltip
+	}
+}
+country_event = { #Switching Head
+	id = insyaa_flavour.195
+	title = insyaa_flavour.195.t
+	desc = insyaa_flavour.195.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.195.a
+		if = {
+			limit = { has_country_flag = switching_to_artifice_invention_head_long_range }
+			set_estate_privilege = artifice_invention_head_long_range
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_head_war_craved }
+			set_estate_privilege = artifice_invention_head_war_craved
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_head_human_like }
+			set_estate_privilege = artifice_invention_head_human_like
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_head_adm_oversight }
+			set_estate_privilege = artifice_invention_head_adm_oversight
+		}
+	}
+	after = {
+		hidden_effect = {
+			clr_country_flag = switching_to_artifice_invention_head_long_range
+			clr_country_flag = switching_to_artifice_invention_head_war_craved
+			clr_country_flag = switching_to_artifice_invention_head_human_like
+			clr_country_flag = switching_to_artifice_invention_head_adm_oversight
+			clr_country_flag = mechanim_waiting_for_head_event
+		}
+	}
+}
+country_event = { #Switching Torso
+	id = insyaa_flavour.196
+	title = insyaa_flavour.196.t
+	desc = insyaa_flavour.196.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.196.a
+		if = {
+			limit = { has_country_flag = switching_to_artifice_invention_torso_self_repair }
+			set_estate_privilege = artifice_invention_torso_self_repair
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_torso_war_craved }
+			set_estate_privilege = artifice_invention_torso_war_craved
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_torso_container_part }
+			set_estate_privilege = artifice_invention_torso_container_part
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_torso_war_machine }
+			set_estate_privilege = artifice_invention_torso_war_machine
+		}
+	}
+	after = {
+		hidden_effect = {
+			clr_country_flag = switching_to_artifice_invention_torso_self_repair
+			clr_country_flag = switching_to_artifice_invention_torso_war_craved
+			clr_country_flag = switching_to_artifice_invention_torso_container_part
+			clr_country_flag = switching_to_artifice_invention_torso_war_machine
+			clr_country_flag = mechanim_waiting_for_torso_event
+		}
+	}
+}
+country_event = { #Switching Chassis
+	id = insyaa_flavour.197
+	title = insyaa_flavour.197.t
+	desc = insyaa_flavour.197.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.197.a
+		if = {
+			limit = { has_country_flag = switching_to_artifice_invention_chassis_heavy }
+			set_estate_privilege = artifice_invention_chassis_heavy
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_chassis_light }
+			set_estate_privilege = artifice_invention_chassis_light
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_chassis_waterproof }
+			set_estate_privilege = artifice_invention_chassis_waterproof
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_chassis_soarer_struts }
+			set_estate_privilege = artifice_invention_chassis_soarer_struts
+		}
+	}
+	after = {
+		hidden_effect = {
+			clr_country_flag = switching_to_artifice_invention_chassis_heavy
+			clr_country_flag = switching_to_artifice_invention_chassis_light
+			clr_country_flag = switching_to_artifice_invention_chassis_waterproof
+			clr_country_flag = switching_to_artifice_invention_chassis_soarer_struts
+			clr_country_flag = mechanim_waiting_for_chassis_event
+		}
+	}
+}
+country_event = { #Switching Arms
+	id = insyaa_flavour.198
+	title = insyaa_flavour.198.t
+	desc = insyaa_flavour.198.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.198.a
+		if = {
+			limit = { has_country_flag = switching_to_artifice_invention_arms_dual_pair }
+			set_estate_privilege = artifice_invention_arms_dual_pair
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_arms_stabilizer }
+			set_estate_privilege = artifice_invention_arms_stabilizer
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_arms_construction }
+			set_estate_privilege = artifice_invention_arms_construction
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_arms_sonic_firearm }
+			set_estate_privilege = artifice_invention_arms_sonic_firearm
+		}
+	}
+	after = {
+		hidden_effect = {
+			clr_country_flag = switching_to_artifice_invention_arms_dual_pair
+			clr_country_flag = switching_to_artifice_invention_arms_stabilizer
+			clr_country_flag = switching_to_artifice_invention_arms_construction
+			clr_country_flag = switching_to_artifice_invention_arms_sonic_firearm
+			clr_country_flag = mechanim_waiting_for_arms_event
+		}
+	}
+}
+country_event = { #Switching Legs
+	id = insyaa_flavour.199
+	title = insyaa_flavour.199.t
+	desc = insyaa_flavour.199.d
+	picture = KOBOLD_HOARD_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = insyaa_flavour.199.a
+		if = {
+			limit = { has_country_flag = switching_to_artifice_invention_legs_quadripedal }
+			set_estate_privilege = artifice_invention_legs_quadripedal
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_legs_bipedal }
+			set_estate_privilege = artifice_invention_legs_bipedal
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_legs_octipedal }
+			set_estate_privilege = artifice_invention_legs_octipedal
+		}
+		else_if = {
+			limit = { has_country_flag = switching_to_artifice_invention_legs_trailblazer }
+			set_estate_privilege = artifice_invention_legs_trailblazer
+		}
+	}
+	after = {
+		hidden_effect = {
+			clr_country_flag = switching_to_artifice_invention_legs_quadripedal
+			clr_country_flag = switching_to_artifice_invention_legs_bipedal
+			clr_country_flag = switching_to_artifice_invention_legs_octipedal
+			clr_country_flag = switching_to_artifice_invention_legs_trailblazer
+			clr_country_flag = mechanim_waiting_for_legs_event
+		}
+	}
+}
+
+country_event = { #Mechanim Over Forcelimit event
+	id = insyaa_flavour.1000
+	title = insyaa_flavour.1000.t
+	desc = insyaa_flavour.1000.d
 	picture = OVEREXTENSION_eventPicture
 
 	is_triggered_only = yes
@@ -1986,7 +3297,7 @@ country_event = { #Mechanim Over Forcelimit event
 	}
 
 	option = {
-		name = insyaa_flavour.100.a
+		name = insyaa_flavour.1000.a
 		if = {
 			limit = { army_size_percentage = 1.001 }
 			add_country_modifier = {
@@ -2036,5 +3347,45 @@ country_event = { #Random dev
 				}
 			}
 		}
+	}
+}
+
+country_event = { #Kiamoa Change FROM scope to country
+	id = insyaa_flavour.9998
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+	immediate = {
+		country_event = { id = insyaa_flavour.9999 }
+	}
+	option = {
+		name = none
+	}
+}
+country_event = { #Kiamoa add canals
+	id = insyaa_flavour.9999
+	title = none
+	desc = none
+	picture = none
+	is_triggered_only = yes
+	hidden = yes
+	immediate = {
+		3580 = { add_canal = stormwall_canal }
+		3582 = { add_canal = stormwall_canal }
+		1621 = { add_canal = stormwall_canal }
+		3559 = { add_canal = stormwall_canal }
+		3615 = { add_canal = stormwall_canal }
+		3616 = { add_canal = stormwall_canal }
+		3619 = { add_canal = stormwall_canal }
+		3618 = { add_canal = stormwall_canal }
+		3624 = { add_canal = stormwall_canal }
+		3622 = { add_canal = stormwall_canal }
+		6905 = { add_canal = stormwall_canal }
+		6859 = { add_canal = stormwall_canal }
+	}
+	option = {
+		name = none
 	}
 }

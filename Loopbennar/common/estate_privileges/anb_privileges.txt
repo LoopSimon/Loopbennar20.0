@@ -299,7 +299,6 @@ estate_adventurers_organization_stone_army = {
 estate_adventurers_suhuskar_palace = {
 	icon = privilege_promote_maratha_nobility
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
 	loyalty = 0.1
 	influence = 0.15
 	is_valid = {
@@ -653,7 +652,13 @@ estate_adventurers_ennoblement_of_adventurers = {
 	influence = 0.05
 	is_valid = { NOT = { OR = { religion = gods_of_the_taychend religion = oren_nayiru } } NOT = { has_country_flag = estate_adventurers_ennoblement_of_adventurers_invalid } }
 	can_select = {
-		has_estate = estate_nobles
+		OR = {
+			has_estate = estate_nobles
+			custom_trigger_tooltip = {
+				tooltip = no_nobles_ennoblement_of_adventurers_tt
+				has_country_flag = no_nobles_ennoblement_of_adventurers
+			}
+		}
 	}
 	on_granted = {
 	}
@@ -761,9 +766,12 @@ estate_adventurers_ennoblement_of_adventurers = {
 estate_adventurers_heroes_in_the_army = {
 	icon = privilege_recruit_minister
 	max_absolutism = -10
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes NOT = { has_country_flag = Z88_heros_upgrade_3_mod mission_completed = gor_vazumbrog_dauntless_drills } } modifier = { max_absolutism = 2 } }
 	influence = 0.2
 	loyalty = -0.1
+	is_valid = {
+		NOT = { has_country_flag = U39_update_heroes_army_priv_flag } #Orenvalyam
+	}
 	can_select = {
 		army_tradition = 30
 	}
@@ -1083,7 +1091,7 @@ estate_adventurers_generous_quest_rewards = {
 estate_adventurers_advisors = {
 	icon = privilege_empty_throne
 	max_absolutism = -10
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes NOT = { has_country_flag = khadisrapur_appoint_guild_ambassadors_completed_flag } } modifier = { max_absolutism = 2 } }
 	conditional_modifier = { trigger = { has_country_flag = khadisrapur_appoint_guild_ambassadors_completed_flag } modifier = { max_absolutism = 10 } }
 	influence = 0.1
 	loyalty = 0.05
@@ -2531,6 +2539,7 @@ estate_monstrous_tribes_magocratic_customs = {
 		has_estate = estate_mages
 	}
 	can_select = {
+		I69_no_privileges = yes #Star Rider Shenanigans
 	}
 	can_revoke = {
 	}
@@ -2625,7 +2634,6 @@ estate_monstrous_tribes_free_clans = {
 	loyalty = 0.05
 	influence = 0
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
 	is_valid = {
 		culture_group = centaur
 		NOT = { has_country_flag = centaur_caehns_valor_2 }
@@ -2664,7 +2672,6 @@ estate_monstrous_tribes_caehns_valor = {
 	loyalty = 0.1
 	influence = 0.05
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	is_valid = {
 		culture_group = centaur
 		has_country_flag = centaur_caehns_valor_1
@@ -2697,7 +2704,6 @@ estate_monstrous_tribes_gozlamoir_system = {
 	loyalty = -0.05
 	influence = 0
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	is_valid = {
 		culture_group = centaur
 		custom_trigger_tooltip = {
@@ -2823,7 +2829,8 @@ estate_monstrous_tribes_embrace_singluar_cult = {
 	penalties = {
 	}
 	benefits = {
-		no_stability_loss_on_monarch_death = yes
+		# duplicate, selecting a primary cult already gives back the stab
+		# no_stability_loss_on_monarch_death = yes
 	}
 #	conditional_modifier = {
 #		trigger = { has_government_attribute = no_influence_from_fetishist_privileges }
@@ -7140,7 +7147,6 @@ estate_burghers_steam_barons_industry = {
 
 estate_burghers_steam_barons_sponsorship_of_borborduz = {
 	icon = privilege_prestige
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 
 	loyalty = 0.0
 	influence = 0.1
@@ -7761,6 +7767,7 @@ estate_adventurer_designated_guild_hall = {
 # G53 - Empkeios - Independent Trading for the Slaver Guilds
 estate_burghers_slaver_independent_trading = {
 	icon = privilege_monopoly_of_goods_slaves
+	max_absolutism = -10
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
 	loyalty = 0.15
 	influence = 0.1
@@ -8183,6 +8190,94 @@ estate_church_violet_cults = {
 	}
 	benefits = {
 		technology_cost = -0.05
+	}
+	can_revoke = {
+		always = no
+	}
+	ai_will_do = { factor = 1 }
+}
+
+estate_nobles_violetblooded_kamrayakval = {
+	icon = privilege_devotion_purple
+	max_absolutism = 20
+	loyalty = 0.1
+	influence = 0.05
+	is_valid = {
+		has_country_flag = G81_unlock_violetblooded_kamrayakval
+	}
+	on_granted = {
+		custom_tooltip = estate_nobles_violetblooded_kamrayakval_tt
+	}
+	benefits = {
+		technology_cost = -0.05
+		stability_cost_modifier = -0.25
+		tolerance_own = -1
+	}
+	can_revoke = {
+		always = no
+	}
+	ai_will_do = { factor = 1 }
+}
+
+estate_church_high_kavalali_of_the_dumrusvarn = {
+	icon = privilege_devotion_purple
+	max_absolutism = 0
+	loyalty = 0.1
+	influence = 0.15
+	land_share = 10
+	is_valid = {
+		has_country_flag = G81_unlock_high_kavalali_of_the_dumrusvarn
+	}
+	on_granted = {
+		custom_tooltip = estate_church_high_kavalali_of_the_dumrusvarn_tt
+		custom_tooltip = G81_dynastic_kavalali_modifiers_tt
+		hidden_effect = {
+			2541 = {
+				add_province_modifier = {
+					name = U39_dynastic_kavalali
+					duration = -1
+				}
+			}
+			2525 = {
+				add_province_modifier = {
+					name = U39_dynastic_kavalali
+					duration = -1
+				}
+			}
+			2537 = {
+				add_province_modifier = {
+					name = U39_dynastic_kavalali
+					duration = -1
+				}
+			}
+			2545 = {
+				add_province_modifier = {
+					name = U39_dynastic_kavalali
+					duration = -1
+				}
+			}
+			2520 = {
+				add_province_modifier = {
+					name = U39_dynastic_kavalali
+					duration = -1
+				}
+			}
+			2539 = {
+				add_province_modifier = {
+					name = U39_dynastic_kavalali
+					duration = -1
+				}
+			}
+		}
+	}
+	benefits = {
+		technology_cost = -0.05
+	}
+	modifier_by_land_ownership = {
+		parliament_backing_chance = 0.25
+	}
+	can_revoke = {
+		always = no
 	}
 	ai_will_do = { factor = 1 }
 }
@@ -8878,7 +8973,7 @@ estate_nobles_sunijalla_triunic_nobles = {
 estate_burghers_exwes_leading_naval_supplier = {
 	icon = privilege_ducats
 	land_share = 5
-	max_absolutism = 0
+	max_absolutism = -10
 	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
 	influence = 0.05
 	loyalty = 0.05
@@ -9082,7 +9177,6 @@ estate_church_isagumze_warrior_griots = {
 estate_nobility_overreliance_on_mercenaries = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9131,7 +9225,6 @@ estate_nobility_overreliance_on_mercenaries = {
 estate_nobility_war_of_colours_defeated_red = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9213,7 +9306,6 @@ estate_nobility_scaleguard_minor_houses = {
 estate_nobility_nazhyn_princes = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9238,7 +9330,6 @@ estate_nobility_nazhyn_princes = {
 estate_nobility_bulwark_against_ashhana = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9275,7 +9366,6 @@ estate_nobility_bulwark_against_ashhana = {
 estate_nobility_forgotten_city = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9336,7 +9426,6 @@ estate_nobility_besieged_heart = {
 estate_church_memories_of_black_needles = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9362,7 +9451,6 @@ estate_church_memories_of_black_needles = {
 estate_church_war_of_colours_imperial_green = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9385,7 +9473,6 @@ estate_church_war_of_colours_imperial_green = {
 estate_church_state_loyal_nagas = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9411,7 +9498,6 @@ estate_church_state_loyal_nagas = {
 estate_church_struggle_against_nagas = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9434,7 +9520,6 @@ estate_church_struggle_against_nagas = {
 estate_church_questions_of_succession = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9458,7 +9543,6 @@ estate_church_questions_of_succession = {
 estate_burghers_merchants_of_narasad = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9499,7 +9583,6 @@ estate_burghers_merchants_of_narasad = {
 estate_burghers_war_of_colours_treacherous_gold = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9522,7 +9605,6 @@ estate_burghers_war_of_colours_treacherous_gold = {
 estate_burghers_nazhyn_wars = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -9602,7 +9684,7 @@ estate_church_naga_mutation = {
 	max_absolutism = -10
 	conditional_modifier = { trigger = { mission_completed = khatalashya_two_hubs_of_naga } modifier = { max_absolutism = 30 } }
 	conditional_modifier = { trigger = { has_country_flag = estate_church_no_absolutism_cost NOT = { mission_completed = khatalashya_two_hubs_of_naga } } modifier = { max_absolutism = 10 } }
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes NOT = { has_country_flag = estate_church_no_absolutism_cost } } modifier = { max_absolutism = 2 } }
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes NOT = { has_country_flag = estate_church_no_absolutism_cost mission_completed = khatalashya_two_hubs_of_naga } } modifier = { max_absolutism = 2 } }
 	loyalty = 0.05
 	influence = 0.1
 	is_valid = { 
@@ -9712,7 +9794,7 @@ estate_church_abundance_of_nagas_mutation = {
 	max_absolutism = -10
 	conditional_modifier = { trigger = { mission_completed = khatalashya_two_hubs_of_naga } modifier = { max_absolutism = 30 } }
 	conditional_modifier = { trigger = { has_country_flag = estate_church_no_absolutism_cost NOT = { mission_completed = khatalashya_two_hubs_of_naga } } modifier = { max_absolutism = 10 } }
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes NOT = { has_country_flag = estate_church_no_absolutism_cost } NOT = { mission_completed = khatalashya_two_hubs_of_naga } } modifier = { max_absolutism = 2 } }
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes NOT = { has_country_flag = estate_church_no_absolutism_cost mission_completed = khatalashya_two_hubs_of_naga } } modifier = { max_absolutism = 2 } }
 	loyalty = 0.1
 	influence = 0.2
 	is_valid = { 
@@ -9810,7 +9892,6 @@ estate_church_abundance_of_nagas_mutation = {
 estate_church_naga_upgraded_mutation = { #Rayaz MT
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.1
 	influence = 0.1
 	is_valid = { 
@@ -9893,7 +9974,6 @@ estate_church_naga_upgraded_mutation = { #Rayaz MT
 estate_burghers_ashhana_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.05
 	is_valid = { 
@@ -9962,7 +10042,6 @@ estate_burghers_ashhana_mutation = {
 estate_burghers_zganaga_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.05
 	is_valid = { 
@@ -10028,7 +10107,6 @@ estate_burghers_zganaga_mutation = {
 estate_nobility_boaga_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.05
 	is_valid = { 
@@ -10097,7 +10175,6 @@ estate_nobility_boaga_mutation = {
 estate_nobility_trazoskala_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.05
 	is_valid = { 
@@ -10241,7 +10318,6 @@ estate_church_khateshala_mutation = {
 estate_burghers_tatashyahyts_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.05
 	is_valid = { 
@@ -10306,7 +10382,6 @@ estate_burghers_tatashyahyts_mutation = {
 estate_burghers_duuma_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.05
 	is_valid = { 
@@ -10371,7 +10446,6 @@ estate_burghers_duuma_mutation = {
 estate_nobility_gakhakaya_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.1
 	is_valid = { 
@@ -10439,7 +10513,6 @@ estate_nobility_gakhakaya_mutation = {
 estate_nobility_gakhakaya_upgraded_mutation = { #Rayaz MT
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.1
 	is_valid = { 
@@ -10507,7 +10580,6 @@ estate_nobility_gakhakaya_upgraded_mutation = { #Rayaz MT
 estate_burghers_khtashhana_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.1
 	is_valid = { 
@@ -10572,7 +10644,6 @@ estate_burghers_khtashhana_mutation = {
 estate_burghers_tsyhyra_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.1
 	is_valid = { 
@@ -10638,7 +10709,6 @@ estate_burghers_tsyhyra_mutation = {
 estate_nobility_shanyza_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.05
 	is_valid = { 
@@ -10703,7 +10773,6 @@ estate_nobility_shanyza_mutation = {
 estate_burghers_thanats_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.1
 	is_valid = { 
@@ -10778,7 +10847,6 @@ estate_burghers_thanats_mutation = {
 estate_burghers_thanats_upgraded_mutation = { #Rayaz MT
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.1
 	is_valid = { 
@@ -10851,7 +10919,6 @@ estate_burghers_thanats_upgraded_mutation = { #Rayaz MT
 estate_burghers_gasabi_mutation = {
 	icon = privilege_lizardfolk_mutation
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0.05
 	influence = 0.05
 	is_valid = { 
@@ -13040,7 +13107,6 @@ estate_noble_monopoly_of_fuel = {
 				}
 				custom_tooltip = MONOPOLY_INCOME_TROPICAL_WOOD_DESC
 			}
-			custom_tooltip = estate_noble_monopoly_of_fuel_effect_tooltip
 		}
 	}
 	on_granted_province = {
@@ -13060,9 +13126,7 @@ estate_noble_monopoly_of_fuel = {
 			remove_province_modifier = estate_noble_monopoly_of_fuel_mod
 		}
 	}
-	on_revoked = {
-		custom_tooltip = estate_noble_monopoly_of_fuel_revoke_tooltip
-	}
+	on_revoked = { }
 	on_revoked_province = {
 		if = {
 			limit = {
@@ -13071,9 +13135,7 @@ estate_noble_monopoly_of_fuel = {
 			remove_province_modifier = estate_noble_monopoly_of_fuel_mod
 		}
 	}
-	on_invalid = {
-		custom_tooltip = estate_noble_monopoly_of_fuel_revoke_tooltip
-	}
+	on_invalid = { }
 	on_invalid_province = {
 		if = {
 			limit = {
@@ -13435,6 +13497,7 @@ estate_burghers_friends_in_high_places = {
 		has_country_flag = I90_burghers_collab_enabled
 	}
 	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	benefits = {
 		interest = -1
 		merchants = 1
@@ -14095,6 +14158,7 @@ estate_merchant_J52_nuzurbokh_argiculture_guild = {
 	influence = 0.1
 	land_share = 5
 	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	is_valid = {
 		is_or_was_tag = { tag = J52 } #Ikogshaantus
 		has_country_flag = J52_enable_nuzurbokh_argiculture_guild_flag
@@ -14232,7 +14296,6 @@ rezankand_estate_church_new_exemplars = {
 estate_clergy_cold_forges = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -14272,7 +14335,6 @@ estate_clergy_cold_forges = {
 estate_burghers_taafi_tariffs = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -14315,7 +14377,6 @@ estate_burghers_taafi_tariffs = {
 estate_adventurers_cowardly_ruler = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -14358,7 +14419,6 @@ estate_adventurers_cowardly_ruler = {
 estate_nobility_humiliated_nobles = {
 	icon = privilege_grant_autonomy
 	max_absolutism = 0
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 0 } }
 	loyalty = 0
 	influence = 0
 	is_valid = { 
@@ -14973,6 +15033,7 @@ estate_church_lrm_bellacaire_the_pink_stripe = {
 estate_nobles_emulants_of_the_hartlord = {
 	icon = privilege_promote_purbias
 	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	influence = 0.05
 	loyalty = 0.00
 	land_share = 0
@@ -15008,6 +15069,7 @@ estate_nobles_emulants_of_the_hartlord = {
 estate_adventurers_the_wider_loop = {
 	icon = privilege_demand_more_troops
 	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	influence = 0.05
 	loyalty = 0.00
 	land_share = 0
@@ -15043,6 +15105,7 @@ estate_adventurers_the_wider_loop = {
 estate_burghers_supremacy_of_napesfleet = {
 	icon = privilege_comission_merchant_ships_for_war
 	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	influence = 0.10
 	loyalty = 0.05
 	land_share = 0
@@ -15404,6 +15467,7 @@ estate_monstrous_tribes_other_believers = {
 	loyalty = 0.00
 	influence = 0.05
 	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 	is_valid = {
 		is_or_was_tag = {
 			tag = Z18 
@@ -15508,6 +15572,11 @@ estate_church_kaxhkeddax_fundamentalism = {
 		has_government_attribute = enables_corrivalry
 	}
 	on_granted = {
+		custom_tooltip = estate_church_kaxhkeddax_fundamentalism_effect_tt
+		hidden_effect = {
+			remove_estate_privilege = estate_mages_organization_kelmaxherho_pragmatism
+			set_estate_privilege = estate_mages_organization_favoured_slaves
+		}
 		scaling_with_influence_privilege_tooltip = {
 			estate_privilege = estate_church_kaxhkeddax_fundamentalism
 		}
@@ -16135,7 +16204,6 @@ estate_burghers_committe_of_urban_development = {
 estate_adventurers_ride_of_the_worthy = {
 	icon = privilege_promote_maratha_nobility
 	max_absolutism = 0
-	conditional_modifier = {}
 	loyalty = 0.20
 	influence = 0.20
 	land_share = 0
@@ -16182,7 +16250,6 @@ estate_adventurers_ride_of_the_worthy = {
 estate_nobles_noble_wyvernriders = {
 	icon = privilege_promote_maratha_nobility
 	max_absolutism = 0
-	conditional_modifier = {}
 	loyalty = 0.20
 	influence = 0.20
 	land_share = 0
@@ -16510,15 +16577,8 @@ z22_military_demonopolisation = {
 	}
 
 	loyalty = -0.1
-
-	conditional_modifier = { 
-		trigger = { 
-			has_absolutism_reduction_for_estate_privileges = yes 
-		} 
-		modifier = { 
-			max_absolutism = 1
-		} 
-	}
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 
 	benefits = {
 		manpower_recovery_speed = 0.1
@@ -16672,16 +16732,8 @@ z22_whitespear_whaling_privilege = {
 
 	loyalty = 0.1
 	influence = 0.05
-	max_absolutism = -1
-
-	conditional_modifier = { 
-		trigger = { 
-			has_absolutism_reduction_for_estate_privileges = yes 
-		} 
-		modifier = { 
-			max_absolutism = 5
-		} 
-	}
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 
 	on_granted = {
 		custom_tooltip = z22_whitespear_whaling_tt
@@ -17904,6 +17956,7 @@ estate_nobles_deranne_rogue_vassal = {
 	loyalty = -0.05
 	influence = 0
 	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 
 	can_select = {
 		always = no
@@ -17914,9 +17967,8 @@ estate_nobles_deranne_rogue_vassal = {
 	}
 
 	penalties = {
-		development_cost = 0.10
-		all_estate_loyalty_equilibrium = -0.05
-		prestige = -1
+		development_cost = 0.05
+		prestige = -0.5
 	}
 
 	is_valid = {
@@ -17953,8 +18005,8 @@ estate_nobles_deranne_lorentish_resistance = {
 	}
 
 	penalties = {
-		legitimacy = -2
-		promote_culture_cost = 0.25
+		legitimacy = -1
+		promote_culture_cost = 0.20
 	}
 
 	is_valid = {
@@ -17989,7 +18041,7 @@ estate_nobles_deranne_lorentish_resistance_2 = {
 	}
 
 	penalties = {
-		legitimacy = -1
+		legitimacy = -0.25
 		promote_culture_cost = 0.1
 	}
 
@@ -18020,6 +18072,7 @@ estate_burghers_deranne_compromise_with_priestess = {
 	loyalty = 0
 	influence = 0
 	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
 
 	can_select = {
 		always = no
@@ -18217,7 +18270,7 @@ estate_burghers_deranne_dalairey_lumber = {
 	}
 }
 
-deranne_estate_burghers_dtc_merchant_fleets = {
+deranne_estate_burghers_privileges_of_trade = {
 	icon = privilege_fluyt_cargo_space
 
 	loyalty = 0.10
@@ -19236,5 +19289,60 @@ estate_church_disobedience_of_the_neoksamaji = {
 
 	ai_will_do = {
 		factor = 1
+	}
+}
+
+estate_adventurers_RSP_swashbuckling_expertise = {
+	icon = privilege_military_power
+	land_share = 10
+	max_absolutism = -5
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 1 } }
+	loyalty = -0.05
+	is_valid = {
+		has_country_flag = RSP_swashbuckling_expertise_unlocked
+	}
+	can_select = { }
+	on_granted = { }
+	penalties = { }
+	benefits = {
+		country_military_power = 1
+	}
+	ai_will_do = {
+		factor = 100
+	}
+}
+estate_adventurers_U39_order_of_exemplars = { #Orenvalyam
+	icon = privilege_recruit_minister
+	max_absolutism = -10
+	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
+	influence = 0.2
+	loyalty = -0.1
+	
+	is_valid = {
+		has_country_flag = U39_update_heroes_army_priv_flag
+	}
+	benefits = {
+		leader_land_manuever = 1
+		land_morale = 0.1
+		yearly_army_professionalism = 0.01
+		global_unrest = -1
+	}
+	penalties = {
+		general_cost = 0.25
+	}
+	ai_will_do = {
+		factor = 5
+		modifier = {
+			factor = 0
+			NOT = { crown_land_share = 25 }
+			estate_influence = {
+				estate = estate_adventurers
+				influence = 60
+			}
+		}
+		modifier = {
+			factor = 0.8
+			is_absolutism_active = yes
+		}
 	}
 }

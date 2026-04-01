@@ -1,0 +1,191 @@
+country_decisions = {
+
+	#Blueprints of Tomorrow
+	zena_blueprints_of_tomorrow_decision = {
+		major = yes
+
+		potential = {
+			ai = no
+			mission_completed = L06_ananoma_secrets
+			NOT = {
+				has_country_flag = zena_blueprints_complete
+			}				
+			is_or_was_tag = {
+				tag = L06 #Zena
+			}
+		}
+
+		allow = {
+			owns_core_province = 5847 #Bivuzena
+			hidden_trigger = {
+				ai = no
+				NOT = { has_country_flag = zena_blueprints_open }
+			}
+		}
+
+		provinces_to_highlight = {
+			province_id = 5847
+		}
+
+		effect = {
+			country_event = { #Blueprints of Tomorrow handler event
+				id = flavour_zena.27
+			}
+			set_country_flag = zena_blueprints_open
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	#Fauna Hunting
+	zena_fauna_hunt_decision = {
+		major = yes
+
+		potential = {
+			NOT = {
+				ai = yes
+			}
+			mission_completed = L06_elephants_for_menagerie
+			is_or_was_tag = {
+				tag = L06 #Zena
+			}
+			owns_core_province = 5847 #Bivuzena
+			OR = {
+				has_country_flag = zena_ghost_coral_began
+				has_country_flag = zena_tlalusk_began
+				has_country_flag = zena_terror_bird_began
+				has_country_flag = zena_drakon_began
+				has_country_flag = zena_cheetahs_began
+				has_country_flag = zena_varghund_began
+				has_country_flag = zena_landfish_began
+			}
+		}
+
+		allow = {
+			hidden_trigger = {
+				ai = no
+				mission_completed = L06_elephants_for_menagerie
+			}
+			OR = {
+				zena_fauna_decision_trigger = {
+					location = event_target:zena_cheetahs_province_target
+					animal = cheetahs
+				}
+				zena_fauna_decision_trigger = {
+					location = event_target:zena_landfish_province_target
+					animal = landfish
+				}
+				zena_fauna_decision_trigger = {
+					location = 982
+					animal = varghund
+				}
+				zena_fauna_decision_trigger = {
+					location = 4217
+					animal = drakon
+				}
+				zena_fauna_decision_trigger = {
+					location = event_target:zena_tlalusk_province_target
+					animal = tlalusk
+				}
+				zena_fauna_decision_trigger = {
+					location = event_target:zena_terror_bird_province_target
+					animal = terror_bird
+				}
+				zena_fauna_decision_trigger = {
+					insyaa = yes
+					location = 6184
+					animal = ghost_coral
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = zena_no_current_confrontation_tt
+				NOT = { has_country_flag = zena_already_spawned_rebels }
+			}
+		}
+
+		provinces_to_highlight = {
+			OR = {
+				has_province_modifier = zena_ghost_coral_province
+				has_province_modifier = zena_tlalusk_province
+				has_province_modifier = zena_terror_bird_province
+				has_province_modifier = zena_drakon_province
+				has_province_modifier = zena_varghund_province
+				has_province_modifier = zena_cheetahs_province
+				has_province_modifier = zena_landfish_province
+			}
+		}
+
+		effect = { #The effects are a bit hacky, but since you can have multiple hunts up at the same time, I want to make sure the effect only hits for whichever one you're actively on at the time
+			zena_fauna_spawn_effect = {
+				animal = cheetahs
+				location = event_target:zena_cheetahs_province_target
+				rebel_size = 2
+			}
+			zena_fauna_spawn_effect = {
+				animal = landfish
+				location = event_target:zena_landfish_province_target
+				rebel_size = 1
+			}
+			zena_fauna_spawn_effect = {
+				animal = varghund
+				location = 982
+				rebel_size = 2
+			}
+			zena_fauna_spawn_effect = {
+				animal = drakon
+				location = 4217
+				rebel_size = 3
+			}
+			zena_fauna_spawn_effect = {
+				animal = tlalusk
+				location = event_target:zena_tlalusk_province_target
+				rebel_size = 3
+			}
+			zena_fauna_spawn_effect = {
+				animal = terror_bird
+				location = event_target:zena_terror_bird_province_target
+				rebel_size = 2
+			}
+			if = {
+				limit = { has_country_flag = zena_ghost_coral_began }
+				if = {
+					limit = {
+						6184 = {
+							has_province_modifier = zena_ghost_coral_province
+							units_in_province = ROOT
+							unit_has_leader = yes
+						}
+						OR = {
+							has_leader_with = {
+								fire = 5
+							}
+							has_leader_with = {
+								shock = 5
+							}
+							has_leader_with = {
+								manuever = 5
+							}
+							has_leader_with = {
+								siege = 5
+							}
+						}
+					}
+					country_event = {
+						id = flavour_zena.65
+					}
+				}
+				else = {
+					custom_tooltip = zena_potential_tt
+					tooltip = {
+						country_event = {
+							id = flavour_zena.65
+						}
+					}
+				}
+			}
+			custom_tooltip = zena_hunt_time_tt
+		}
+	}
+}

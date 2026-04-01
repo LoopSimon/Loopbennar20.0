@@ -129,26 +129,7 @@ country_event = {
 	}
 }
 
-#Relic Monopoly
-country_event = {
-	id = flavor_beikdugang.4
-	title = flavor_beikdugang.4.t
-	desc = flavor_beikdugang.4.d
-	picture = TRADE_GOODS_METALS_AND_MINING_EQUIPENT_eventPicture
-	
-	is_triggered_only = yes
-	major = yes
-	
-	option = {
-		name = flavor_beikdugang.4.a
-		every_owned_province = {
-			limit = { trade_goods = precursor_relics }
-			add_province_modifier = { name = beikdugang_monopoly duration = -1 }
-		}
-	}
-}
-
-#Houzhao Targuun
+# Equinox Accord
 country_event = {
 	id = flavor_beikdugang.5
 	title = flavor_beikdugang.5.t
@@ -176,12 +157,15 @@ country_event = {
 	option = {
 		name = flavor_beikdugang.5.a
 		ai_chance = { factor = 30 }
-		small_decrease_of_ruinborn_tolerance_effect = yes
+		largest_increase_of_ruinborn_tolerance_effect = yes
 		event_target:Y15_eordand_colony = {
-			small_decrease_of_ruinborn_tolerance_effect = yes
 			add_liberty_desire = -30
 			add_country_modifier = {
 				name = Y15_sated
+				duration = -1
+			}
+			add_country_modifier = {
+				name = Y15_human_corule
 				duration = -1
 			}
 		}
@@ -189,80 +173,21 @@ country_event = {
 	option = {
 		name = flavor_beikdugang.5.b
 		ai_chance = { factor = 30 }
-		add_stability = -1
 		largest_increase_of_ruinborn_tolerance_effect = yes
-		event_target:Y15_eordand_colony = {
-			largest_increase_of_ruinborn_tolerance_effect = yes
-			add_liberty_desire = -30
-			add_country_modifier = {
-				name = Y15_sated
-				duration = -1
-			}
-		}
-	}
-	option = {
-		name = flavor_beikdugang.5.c
-		ai_chance = { factor = 30 }
 		event_target:Y15_eordand_colony = {
 			add_tariff_value = -1
 			add_liberty_desire = -150
-			if = {
-				limit = {
-					num_of_owned_provinces_with = {
-						value = 5
-						culture = peitar
-					}
-				}
-				change_primary_culture = peitar
-				change_religion = eordellon
+			change_primary_culture = caamas
+			override_country_name = Y15_ruinborn_eordand_colony
+			add_accepted_culture = kuldaakin
+			add_country_modifier = {
+				name = Y15_ruinborn_accord
+				duration = -1
 			}
-			else_if = {
-				limit = {
-					num_of_owned_provinces_with = {
-						value = 5
-						culture = snecboth
-					}
-				}
-				change_primary_culture = snecboth
-				change_religion = winter_court
+			change_subject_type = {
+				subject_type = self_governing_colony
 			}
-			else = {
-				change_primary_culture = caamas
-				change_religion = summer_court
-			}
-			add_accepted_culture = jiangyang
 		}
-	}
-}
-
-#Triunic Soldiers
-country_event = {
-	id = flavor_beikdugang.6
-	title = flavor_beikdugang.6.t
-	desc = flavor_beikdugang.6.d
-	picture = LAND_MILITARY_eventPicture
-	
-	is_triggered_only = yes
-	
-	option = {
-		name = flavor_beikdugang.6.a
-		ai_chance = { factor = 50 }
-		add_army_tradition = 20
-		unlock_merc_company = {
-			merc_company = merc_beikdugang_triunic
-		}
-	}
-	
-	option = {
-		name = flavor_beikdugang.6.b
-		ai_chance = { factor = 50 }
-		change_unit_type = tech_triunic
-		add_country_modifier = {
-			name = Y15_triunic_military
-			duration = -1
-		}
-		add_stability = -1
-		add_army_tradition = -20
 	}
 }
 
@@ -334,7 +259,7 @@ country_event = {
 	}
 }
 
-#Weizhen Bodojiin
+# Leader of Tomorrow
 country_event = {
 	id = flavor_beikdugang.9
 	title = flavor_beikdugang.9.t
@@ -345,6 +270,14 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
+			define_ruler = {
+				name = "Weizhen Bodojiin"
+				age = 30
+				adm = 4
+				dip = 4
+				mil = 4
+				culture = kuldaakin
+			}
 			add_ruler_personality = silver_tongue_personality
 			define_powerful_mage = {
 				type = ruler
@@ -355,11 +288,23 @@ country_event = {
 				evocation = 2
 				illusion = 1
 			}
-		}		
+		}
 	}
 	
 	option = {
 		name = flavor_beikdugang.9.a
+		add_government_reform = beikdugang_revolutionary_thalassocracy_reform
+		custom_tooltip = Y15_brothers_revolution
+		hidden_effect = {
+			every_known_country = {
+				limit = { has_country_flag = Y15_toppled }
+				change_government = republic
+				add_government_reform = junior_revolutionary_republic_reform
+				add_revolutionary_zeal = 10
+			}
+		}
+		set_revolution_target = ROOT
+		add_revolutionary_zeal = 30
 		tooltip = {
 			add_ruler_personality = mage_personality
 			add_ruler_personality = silver_tongue_personality
@@ -368,6 +313,31 @@ country_event = {
 			name = Y15_weizhen_bodojiin
 			duration = -1
 		}
+		add_ruler_modifier = {
+			name = exceptional_willpower_100
+		}
+		custom_tooltip = Y15_kalsyto_revolutionary_tt
+		hidden_effect = {
+			J33 = {
+				add_government_reform = revolutionary_republic_reform
+			}	
+		}
+
+		if = {
+			limit = { 
+				exists = Y96 
+				Y96 = { ai = yes }
+			}
+			custom_tooltip = Y15_guwaamud_revolutionary_tt
+			hidden_effect = {
+				Y96 = {
+					change_government = republic
+					add_government_reform = junior_revolutionary_republic_reform
+				}
+			}
+		}
+		
+		custom_tooltip = Y15_revolutionary_trade_protectorate_unlock_tt
 	}
 }
 
@@ -394,6 +364,1015 @@ country_event = {
 			J33 = { add_historical_friend = ROOT }
 		}
 		hidden_effect = { 4907 = { add_province_triggered_modifier = Y15_J33_friends2 } }
+	}
+}
+
+
+
+# Crisis refugees arrive
+country_event = {
+	id = flavor_beikdugang.11
+	picture = PLAGUE_eventPicture
+	title = flavor_beikdugang.11.t
+	desc = flavor_beikdugang.11.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.11.a
+		random_owned_province = {
+			limit = {
+				OR = {
+					area = beidugang_area
+					culture = kuldaakin
+				}
+			}
+			add_random_development = 1
+		}
+	}
+}
+# Beikdugang Proclamation
+country_event = {
+	id = flavor_beikdugang.12
+	picture = REFORM_eventPicture
+	title = flavor_beikdugang.12.t
+	desc = flavor_beikdugang.12.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.12.a
+		add_government_reform = beikdugang_plutocracy_reform
+		set_country_flag = Y15_no_yanshen
+		every_known_country = {
+			limit = {
+				capital_scope = {
+					superregion = yanshen_superregion
+				}
+				OR = {
+					has_reform = eunuch_republic
+					has_reform = eunuch_dynasty_reform
+				}
+				NOT = { alliance_with = ROOT }
+			}
+			reverse_add_casus_belli = {
+				type = cb_change_government
+				target = ROOT
+				months = 600
+			}
+		}
+		every_known_country = {
+			limit = {
+				capital_scope = {
+					superregion = yanshen_superregion
+				}
+				OR = {
+					has_reform = eunuch_republic
+					has_reform = eunuch_dynasty_reform
+				}
+				alliance_with = ROOT
+			}
+			country_event = {
+				id = flavor_beikdugang.13
+			}
+		}
+
+		add_country_modifier = {
+			name = Y15_brothers
+			duration = -1
+		}
+		J33 = {
+			add_country_modifier = {
+				name = Y15_brothers
+				duration = -1
+			}
+		}
+
+		country_event = {
+			id = flavor_beikdugang.14
+			days = 365
+		}
+	}
+}
+# Beikdugang is Asking Nicely
+country_event = {
+	id = flavor_beikdugang.13
+	picture = asiangfx_RELIGIOUS_TURMOIL_eventPicture
+	title = flavor_beikdugang.13.t
+	desc = flavor_beikdugang.13.d
+
+	is_triggered_only = yes
+	
+	option = {
+		name = flavor_beikdugang.13.a
+		set_country_flag = Y15_toppled
+		set_country_flag = anti_eunuch_country
+		if = {
+			limit = {
+				has_reform = eunuch_republic
+			}
+
+			remove_government_reform = eunuch_republic
+			add_government_reform = oligarchy_reform
+		}
+		else_if = {
+			limit = { has_reform = eunuch_dynasty_reform }
+			remove_government_reform = eunuch_dynasty_reform
+			add_government_reform = feudalism_reform 
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+	# fuck no
+	option = {
+		name = flavor_beikdugang.13.b
+
+		reverse_add_casus_belli = {
+			type = cb_change_government
+			target = FROM
+			months = 600
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+# One People
+country_event = {
+	id = flavor_beikdugang.14
+	picture = asiangfx_RELIGIOUS_CONVERSION_eventPicture
+	title = flavor_beikdugang.14.t
+	desc = flavor_beikdugang.14.d
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.14.a
+		change_religion = kalyin_worshippers
+		beidugang_area = {
+			change_religion = kalyin_worshippers
+		}
+		override_country_name = kuldozein
+		change_primary_culture = kuldaakin
+		every_owned_province = {
+			limit = { 
+				OR = {
+					area = beidugang_area
+					is_overseas = yes
+				}
+				culture = jiangyang
+			}
+			change_culture = kuldaakin
+		}
+		every_subject_country = {
+			limit = { is_colonial_nation = yes }
+			change_primary_culture = kuldaakin
+		}
+		add_accepted_culture_or_dip_power = {
+			culture = jiangyang
+			free = yes
+		}
+		add_country_modifier = {
+			name = Y15_two_people_united
+			duration = 10950
+		}
+		add_country_modifier = {
+			name = triunic_kalyins_truth_revealed
+			duration = 7200
+		}
+		add_harmonized_religion = yukel_followers
+		tooltip = {
+			add_harmonized_religion = accretive_path
+		}
+		4907 = { add_reform_center = kalyin_worshippers }
+		
+		custom_tooltip = triunic_kalyin_yanshen_tt
+		set_global_flag = triunic_kalyin_yanshen
+		every_subject_country = {
+			limit = {
+				is_colonial_nation = yes
+			}
+			random_list = {
+				1 = { change_religion = kalyin_worshippers }
+				1 = { }
+			}
+		}
+	}
+
+	option = {
+		name = flavor_beikdugang.14.b
+		override_country_name = kuldozein
+		change_primary_culture = kuldaakin
+		every_owned_province = {
+			limit = { 
+				OR = {
+					area = beidugang_area
+					is_overseas = yes
+				}
+				culture = jiangyang
+			}
+			change_culture = kuldaakin
+		}
+		every_subject_country = {
+			limit = { is_colonial_nation = yes }
+			change_primary_culture = kuldaakin
+		}
+		add_accepted_culture_or_dip_power = {
+			culture = jiangyang
+			free = yes
+		}
+		add_country_modifier = {
+			name = Y15_two_people_united
+			duration = 10950
+		}
+		every_subject_country = {
+			limit = {
+				is_colonial_nation = yes
+			}
+			random_list = {
+				3 = { change_religion = kalyin_worshippers }
+				7 = { }
+			}
+		}
+
+		for = {
+			amount = 5
+			effect = "random_owned_province = { limit = { NOT = {religion = kalyin_worshippers} NOT = { province_id = 4871 } NOT = { province_id = 4907 } } change_religion = kalyin_worshippers }"
+			custom_tooltip = Y15_one_people_tt
+		}
+	}
+}
+# Decadent Caste
+country_event = {
+	id = flavor_beikdugang.15
+	picture = EUNUCH_ESTATE_upset_eventPicture
+	title = flavor_beikdugang.15.t
+	desc = flavor_beikdugang.15.d
+	
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.15.a
+		custom_tooltip = Y15_decadent_caste_remove_eunuchs_tt
+		set_country_flag = anti_eunuch_country
+		set_country_flag = Y15_toppled
+		add_prestige = 20
+		add_opinion = {
+			who = FROM
+			modifier = Y15_removed_eunuchs
+		}
+		ai_chance = {
+			factor = 1
+		}
+	}
+
+
+	option = {
+		name = flavor_beikdugang.15.b
+		add_estate_loyalty = {
+			estate = estate_eunuchs_anb
+			loyalty = 20
+		}
+		add_legitimacy_equivalent = { amount = 20 }
+		add_opinion = {
+			who = FROM
+			modifier = Y15_refused_remove_eunuchs
+		}
+
+		reverse_add_casus_belli = {
+			type = cb_change_government
+			target = FROM
+			months = 600
+		}
+
+		ai_chance = {
+			factor = 0
+		}
+	}
+}
+
+# The Many Colors of Gold
+country_event = {
+	id = flavor_beikdugang.16
+	picture = ANB_GLOBAL_TRADE_eventPicture
+	title = flavor_beikdugang.16.t
+	desc = flavor_beikdugang.16.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.16.a
+		custom_tooltip = Y15_get_rid_of_land_tt
+		hidden_effect = {
+			bamaliwuni_region = {
+				limit = {
+					OR = {
+						NOT = { has_port = yes }
+						NOT = { province_has_center_of_trade_of_level = 1 }
+					}
+					owned_by = ROOT
+				}
+				remove_core = ROOT
+
+				#alive core tag
+				if = {
+					limit = { 
+						any_core_country = {
+							NOT = { tag = ROOT }
+							NOT = { is_subject_of = ROOT }
+							PREV = { is_neighbor_of = PREV }
+							exists = yes
+						}
+					}
+					random_core_country = {
+						limit = {
+							NOT = { tag = ROOT }
+							NOT = { is_subject_of = ROOT}
+							PREV = { is_neighbor_of = PREV }
+							exists = yes
+						}
+						save_event_target_as = new_owner
+					}
+					cede_province = event_target:new_owner
+				}
+				else_if = {
+					limit = { 
+						any_core_country = {
+							NOT = { tag = ROOT }
+							NOT = { is_subject_of = ROOT }
+							exists = yes
+						}
+					}
+					random_core_country = {
+						limit = {
+							NOT = { tag = ROOT }
+							NOT = { is_subject_of = ROOT}
+							exists = yes
+						}
+						save_event_target_as = new_owner
+					}
+					cede_province = event_target:new_owner
+				}
+				#dead core tag
+				else_if = {
+					limit = { 
+						any_core_country = {
+							NOT = { tag = ROOT }
+						}
+					}
+					random_core_country = {
+						limit = {
+							NOT = { tag = ROOT }
+						}
+						save_event_target_as = new_owner
+					}
+					cede_province = event_target:new_owner
+					event_target:new_owner = { country_event = { id = anbennar_setup.3 } }
+				}
+				#previous owner
+				else = { cede_province = previous_owner }
+			}
+			ishyamtumu_region = {
+				limit = {
+					OR = {
+						NOT = { has_port = yes }
+						NOT = { province_has_center_of_trade_of_level = 1 }
+					}
+					owned_by = ROOT
+				}
+				remove_core = ROOT
+
+				#alive core tag
+				if = {
+					limit = { 
+						any_core_country = {
+							NOT = { tag = ROOT }
+							NOT = { is_subject_of = ROOT }
+							PREV = { is_neighbor_of = PREV }
+							exists = yes
+						}
+					}
+					random_core_country = {
+						limit = {
+							NOT = { tag = ROOT }
+							NOT = { is_subject_of = ROOT}
+							PREV = { is_neighbor_of = PREV }
+							exists = yes
+						}
+						save_event_target_as = new_owner
+					}
+					cede_province = event_target:new_owner
+				}
+				else_if = {
+					limit = { 
+						any_core_country = {
+							NOT = { tag = ROOT }
+							NOT = { is_subject_of = ROOT }
+							exists = yes
+						}
+					}
+					random_core_country = {
+						limit = {
+							NOT = { tag = ROOT }
+							NOT = { is_subject_of = ROOT}
+							exists = yes
+						}
+						save_event_target_as = new_owner
+					}
+					cede_province = event_target:new_owner
+				}
+				#dead core tag
+				else_if = {
+					limit = { 
+						any_core_country = {
+							NOT = { tag = ROOT }
+						}
+					}
+					random_core_country = {
+						limit = {
+							NOT = { tag = ROOT }
+						}
+						save_event_target_as = new_owner
+					}
+					cede_province = event_target:new_owner
+					event_target:new_owner = { country_event = { id = anbennar_setup.3 } }
+				}
+				#previous owner
+				else = { cede_province = previous_owner }
+			}
+
+			#fallback
+			if = {
+				limit = { 
+					any_owned_province = { 
+						OR = {
+							NOT = { has_port = yes }
+							NOT = { province_has_center_of_trade_of_level = 1 }
+						}
+						OR = {
+							region = ishyamtumu_region
+							region = bamaliwuni_region
+						}
+					} 
+				}
+				every_owned_province = {
+					limit = { 
+						OR = {
+							NOT = { has_port = yes }
+							NOT = { province_has_center_of_trade_of_level = 1 }
+						}
+						OR = {
+							region = ishyamtumu_region
+							region = bamaliwuni_region
+						}
+					}
+					random_neighbor_province = {
+						limit = { 
+							is_city = yes
+							NOT = { country_or_subject_holds = ROOT }
+						}
+						owner = { save_event_target_as = new_owner }
+					}
+					cede_province = event_target:new_owner
+				}
+			}	
+		}
+		
+		custom_tooltip = Y15_colors_of_gold_effect_tt
+		hidden_effect = {
+			bamaliwuni_region = {
+				if = {
+					limit = {
+						OR = {
+							trade_goods = livestock
+							trade_goods = grain
+						}
+						NOT = { country_or_subject_holds = ROOT }
+					}
+					change_trade_goods = coffee
+				}
+				if = {
+					limit = { NOT = { country_or_subject_holds = ROOT } }
+					add_permanent_province_modifier = {
+						name = Y15_east_sarhal_farm_economy
+						duration = -1
+					}
+				}
+				else_if = {
+					limit = {
+						has_port = yes
+						province_has_center_of_trade_of_level = 1
+					}
+					add_permanent_province_modifier = {
+						name = Y15_markets_of_color_and_flavor
+						duration = -1
+					}
+				}
+			}
+
+			ishyamtumu_region = {
+				if = {
+					limit = {
+						OR = {
+							trade_goods = livestock
+							trade_goods = grain
+						}
+						NOT = { country_or_subject_holds = ROOT }
+					}
+					change_trade_goods = dyes
+				}
+				if = {
+					limit = { NOT = { country_or_subject_holds = ROOT } }
+					add_permanent_province_modifier = {
+						name = Y15_east_sarhal_farm_economy
+						duration = -1
+					}
+				}
+				else_if = {
+					limit = {
+						has_port = yes
+						province_has_center_of_trade_of_level = 1
+						
+					}
+					add_permanent_province_modifier = {
+						name = Y15_markets_of_color_and_flavor
+						duration = -1
+					}
+				}
+			}	
+		}
+	}
+
+	option = {
+		name = flavor_beikdugang.15.b
+		add_prestige = 20
+		custom_tooltip = Y15_colors_of_gold_effect_tt
+		hidden_effect = {
+			bamaliwuni_region = {
+				if = {
+					limit = {
+						OR = {
+							trade_goods = livestock
+							trade_goods = grain
+						}
+						NOT = { country_or_subject_holds = ROOT }
+					}
+					change_trade_goods = coffee
+				}
+				if = {
+					limit = { NOT = { country_or_subject_holds = ROOT } }
+					add_permanent_province_modifier = {
+						name = Y15_east_sarhal_farm_economy
+						duration = -1
+					}
+				}
+				else_if = {
+					limit = {
+						has_port = yes
+						province_has_center_of_trade_of_level = 1
+					}
+					add_permanent_province_modifier = {
+						name = Y15_markets_of_color_and_flavor
+						duration = -1
+					}
+					
+				}
+			}
+
+			ishyamtumu_region = {
+				if = {
+					limit = {
+						OR = {
+							trade_goods = livestock
+							trade_goods = grain
+						}
+						NOT = { country_or_subject_holds = ROOT }
+					}
+					change_trade_goods = dyes
+				}
+				if = {
+					limit = { NOT = { country_or_subject_holds = ROOT } }
+					add_permanent_province_modifier = {
+						name = Y15_east_sarhal_farm_economy
+						duration = -1
+					}
+				}
+				else_if = {
+					limit = {
+						has_port = yes
+						province_has_center_of_trade_of_level = 1
+					}
+					add_permanent_province_modifier = {
+						name = Y15_markets_of_color_and_flavor
+						duration = -1
+					}
+				}
+			}	
+		}
+	}
+}
+
+# Startup - Across the Waves
+country_event = {
+	id = flavor_beikdugang.17
+	picture = TREASURE_FLEET_SHIP_eventPicture
+	title = flavor_beikdugang.17.t
+	desc = flavor_beikdugang.17.d
+	fire_only_once = yes
+	is_triggered_only = yes
+	trigger = {
+		tag = Y15
+	}
+
+	option = {
+		name = flavor_beikdugang.17.a
+		add_opinion = {
+			who = Y93
+			modifier = Y15_fuck_danggun
+		}
+		add_country_modifier = {
+			name = Y15_prepare_the_reconquest
+			duration = 3650
+		}
+	}
+}
+
+# Wonders of the Lost
+country_event = {
+	id = flavor_beikdugang.18
+	picture = GENIE_RUINS_eventPicture
+	title = flavor_beikdugang.18.t
+	desc = flavor_beikdugang.18.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.18.a
+		set_country_flag = Y15_magical_skills
+		country_event = {
+			id = flavor_beikdugang.22
+			days = 1825
+		}
+		custom_tooltip = Y15_genie_magic_tt
+
+	}
+	option = {
+		name = flavor_beikdugang.18.b
+		set_country_flag = Y15_history
+		country_event = {
+			id = flavor_beikdugang.22
+			days = 1825
+		}
+		custom_tooltip = Y15_genie_history_tt
+	}
+	option = {
+		name = flavor_beikdugang.18.c
+		set_country_flag = Y15_architecture
+		country_event = {
+			id = flavor_beikdugang.22
+			days = 1825
+		}
+		custom_tooltip = Y15_genie_architecture_tt
+	}
+}
+
+# Synthetic Life
+country_event = {
+	id = flavor_beikdugang.19
+	picture = SYNTHETICS_eventPicture
+	title = flavor_beikdugang.19.t
+	desc = flavor_beikdugang.19.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.19.a
+		large_increase_of_mechanim_tolerance_effect = yes
+		custom_tooltip = Y15_heart_of_machine_tolerance_tt
+		hidden_effect = {
+			every_subject_country = {
+				large_increase_of_mechanim_tolerance_effect = yes
+			}	
+		}
+		J33 = {
+			large_increase_of_mechanim_tolerance_effect = yes
+		}
+		4979 = { # Damaogong
+			change_culture = seasong_mechanim
+		}
+		4907 = { # Beikdugang
+			add_mechanim_minority_size_effect = yes
+		}
+		add_accepted_culture_or_dip_power = {
+			culture = seasong_mechanim
+			free = yes
+		}
+		add_country_modifier = {
+			name = Y15_heart_of_machine_modifier
+			duration = -1
+		}
+		J33 = {
+			random_owned_province = {
+				limit = {
+					province_group = triunic_cities
+					NOT = { has_terrain = city_terrain }
+					NOT = { is_capital = yes }
+				}
+				change_culture = seasong_mechanim
+			}
+			add_accepted_culture_or_dip_power = {
+				culture = seasong_mechanim
+				free = yes
+			}
+			add_country_modifier = {
+				name = Y15_heart_of_machine_modifier
+				duration = -1
+			}
+		}
+		custom_tooltip = Y15_mechanim_colonization_tt
+		hidden_effect = {
+			set_country_flag = Y15_robot_colonies
+		}
+	}
+}
+
+# From the Sands of Time
+country_event = {
+	id = flavor_beikdugang.22
+	picture = GENIE_RUINS_eventPicture
+	title = flavor_beikdugang.22.t
+	desc = flavor_beikdugang.22.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.18.a
+		trigger = { has_country_flag = Y15_magical_skills }
+		add_country_modifier = {
+			name = Y15_genies_divines
+			duration = -1
+		}
+	}
+	option = {
+		name = flavor_beikdugang.18.b
+		trigger = { has_country_flag = Y15_history }
+		add_country_modifier = {
+			name = Y15_genies_empire_makers
+			duration = -1
+		}
+	}
+	option = {
+		name = flavor_beikdugang.18.c
+		trigger = { has_country_flag = Y15_architecture }
+		add_country_modifier = {
+			name = Y15_genies_architects
+			duration = -1
+		}
+	}
+}
+
+# Against the Light of Evil
+country_event = {
+	id = flavor_beikdugang.20
+	picture = BIG_STAR_IN_SKY_eventPicture
+	title = flavor_beikdugang.20.t
+	desc = flavor_beikdugang.20.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.20.a
+		S93 = { # Alefisol
+			every_owned_province = {
+				add_core = S79 # Umoji Baashidi
+			}
+			for = {
+				amount = 20
+				effect = "
+					random_owned_province = { cede_province = S79 }
+				"
+				custom_tooltip = Y15_umoji_revolt_tt
+			}
+		}
+		S79 = {
+			change_government = republic
+			add_government_reform = junior_revolutionary_republic_reform
+			override_country_name = army_of_the_free
+			set_country_flag = Y15_baashidi_freedom
+			
+			if = {
+				limit = { ROOT = { religion = kalyin_worshippers }}
+				change_religion = kalyin_worshippers
+				add_harmonized_religion = rinta_seekers
+			}
+			else = {
+				change_religion = rinta_seekers
+			}
+			create_alliance = Y15
+			declare_war_with_cb = {
+				casus_belli = cb_independence_war
+				who = S93
+			}
+		}
+
+		join_all_offensive_wars_of = S79
+	}
+}
+
+# To The Shadows Whence You Came
+country_event = {
+	id = flavor_beikdugang.21
+	picture = THE_COVENANT_eventPicture
+	title = flavor_beikdugang.21.t
+	desc = flavor_beikdugang.21.d
+
+	is_triggered_only = yes
+
+	option = {
+		name = flavor_beikdugang.21.a
+
+		S93 = { # Alefisol
+			every_owned_province = {
+				cede_province = S79
+			}
+		}
+		S79 = { # The Army of the Free
+			restore_country_name = yes
+			add_revolutionary_zeal = 10
+		}
+		add_prestige = 50
+		add_army_tradition = 30
+		add_navy_tradition = 30
+
+		custom_tooltip = Y15_qasri_bariga_port
+		hidden_effect = { 6675 = { add_permanent_province_modifier = { name = JY_LF_port duration = -1} } } # Qasri Bariga
+		add_country_modifier = {
+			name = Y15_unbreakable_vanguard_of_sarhal
+			duration = -1
+		}
+		add_revolutionary_zeal = 10
+
+		custom_tooltip = Y15_revolution_spread_faster_sarhal_tt
+		custom_tooltip = Y15_expand_route_tt
+		custom_tooltip = Y15_revolution_in_sarhal_tt
+		hidden_effect = {
+			africa = {
+				limit = {
+					NOT = { superregion = bulwar_superregion }
+					NOT = { superregion = north_salahad_superregion }
+					province_has_center_of_trade_of_level = 1
+				}
+				set_revolution_in_province = yes
+			}	
+		}
+	}
+}
+# Our Shine Acorss the World
+country_event = {
+	id = flavor_beikdugang.100
+	picture = ENLIGHTENMENT_eventPicture
+	title = flavor_beikdugang.100.t
+	desc = flavor_beikdugang.100.d
+
+	is_triggered_only = yes
+	option = {
+		name = flavor_beikdugang.100.a
+		trigger = { NOT = { all_country = { is_revolutionary = yes }}}
+		add_country_modifier = {
+			name = Y15_light_liberty
+			duration = -1
+		}
+
+		mission_reward_artifice_points_10 = yes
+		custom_tooltip = Y15_shine_across_bonus_hint_tt
+	}
+
+	option = {
+		name = flavor_beikdugang.100.a
+		trigger = { all_country = { is_revolutionary = yes }}
+		highlight = yes
+		add_country_modifier = {
+			name = Y15_light_liberty
+			duration = -1
+		}
+		mission_reward_artifice_points_10 = yes
+		country_event = {
+			id = flavor_beikdugang.101
+		}
+	}
+}
+
+# Light at Worlds End
+country_event = {
+	id = flavor_beikdugang.101
+	picture = ENLIGHTENMENT_eventPicture
+	title = flavor_beikdugang.101.t
+	desc = flavor_beikdugang.101.d
+
+	is_triggered_only = yes
+	option = {
+		name = flavor_beikdugang.101.a
+		add_country_modifier = {
+			name = Y15_halanns_eternal_light
+			duration = -1
+		}
+
+		mission_reward_artifice_points_20 = yes
+
+		set_country_flag = Y15_light_at_worlds_end
+	}
+
+}
+
+country_event = {
+	title = flavor_beikdugang.300.t
+	desc = flavor_beikdugang.300.d
+	id = flavor_beikdugang.300
+	picture = TREASURE_FLEET_SHIP_eventPicture
+	is_triggered_only = yes
+	option = {
+		name = flavor_beikdugang.300.a
+		add_treasury = 200
+		FROM = {
+			add_trade_modifier = {
+				who = ROOT
+				duration = 1875
+				power = 10
+				key = Y15_treasure_fleet_trade_power
+			}
+		}
+	}
+
+	option = {
+		name = flavor_beikdugang.300.b
+		add_treasury = 200
+		FROM = {
+			add_trade_modifier = {
+				who = ROOT
+				duration = 1875
+				power = 10
+				key = Y15_treasure_fleet_trade_power
+			}
+		}
+		hidden_effect = { set_country_flag = Y15_treasure_fleet_shutup }
+	}
+}
+
+country_event = {
+	id = flavor_beikdugang.301
+	picture = NECORIN_eventPicture
+	hidden = yes
+	is_triggered_only = yes
+	title = flavor_beikdugang.301.t
+	desc = flavor_beikdugang.301.d
+	option = {
+		ai_chance = {
+			factor = 1
+		}
+		add_treasury = 200
+		FROM = {
+			add_trade_modifier = {
+				who = ROOT
+				duration = 1875
+				power = 10
+				key = Y15_treasure_fleet_trade_power
+			}
+		}
+	}
+}
+country_event = {
+	id = flavor_beikdugang.400
+	picture = ARTIFICE_GEAR_eventPicture
+	title = flavor_beikdugang.400.t
+	desc = flavor_beikdugang.400.d
+	hidden = yes
+	is_triggered_only = yes
+	option = {
+		name = flavor_beikdugang.a
+			add_estate_loyalty = {
+			estate = estate_artificers
+			loyalty = 10
+		}
+		add_estate_influence_modifier = {
+			influence = 10
+			duration = 3650
+			estate = estate_artificers
+			desc = Y15_artificer_flamekeepers
+		}
+		add_estate_loyalty = {
+			estate = estate_mages
+			loyalty = -10
+		}
+		add_estate_influence_modifier = {
+			influence = -10
+			duration = 3650
+			estate = estate_artificers
+			desc = Y15_artificer_flamekeepers
+		}
+		remove_estate_privilege = estate_mages_flamekeepers
+		set_estate_privilege = estate_artificers_flamekeepers
 	}
 }
 
@@ -449,10 +1428,6 @@ country_event = {
 	}
 	option = {
 		name = flavor_beikdugang.0.c
-		hidden_effect = { 4909 = { add_province_triggered_modifier = beikdugang_rev_sub } }
-	}
-	option = {
-		name = flavor_beikdugang.0.c
 		random_list = {
 			33 = { JY_LF_Y15_adm_advisor = yes }	
 			33 = { JY_LF_Y15_dip_advisor = yes }
@@ -461,3 +1436,4 @@ country_event = {
 		}
 	}
 }
+

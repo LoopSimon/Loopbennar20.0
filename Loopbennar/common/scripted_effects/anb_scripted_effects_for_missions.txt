@@ -13073,6 +13073,10 @@ yinquan_exile_effect = {
 			limit = { NOT = { has_ruler_flag = bladedancer_patron } }
 			yinquan_approval_effect = yes
 		}
+		if = {
+			limit = { type_is_advancing_magic = { type = ruler } }
+			magic_advancement_abort_all_effect = yes #MUST be the effect, cannot be the hidden event
+		}
 		exile_ruler_as = { name = $ruler$_ruler }
 		set_country_flag = Y26_election_allowed #prevents election events firing with flavour_yinquan.40
 	}
@@ -13080,10 +13084,6 @@ yinquan_exile_effect = {
 
 yinquan_ruler_returns_effect = {
 	set_ruler = $ruler$_ruler
-	if = {
-		limit = { type_is_advancing_magic = { type = ruler } }
-		hidden_effect = { country_event = { id = magic_system.99 } }
-	}
 	clr_ruler_flag = magic_project_summoning_started
 	clr_ruler_flag = magic_project_summoning_started
 	clr_ruler_flag = magic_project_celestial_summoning_1
@@ -13106,30 +13106,18 @@ yinquan_ruler_returns_effect = {
 			limit = { has_ruler_flag = bladedancer_patron }
 			clr_magic_patron = {
 				name_key = bladedancer
-				favoured_school_1 = divination
-				favoured_school_2 = evocation
-				disfavoured_school_1 = abjuration
-				disfavoured_school_2 = illusion
 			}
 		}
 		if = { 
 			limit = { has_ruler_flag = is_holi }
 			set_magic_patron = {
 				name_key = huli_jing
-				favoured_school_1 = enchantment
-				favoured_school_2 = illusion
-				disfavoured_school_1 = divination
-				disfavoured_school_2 = necromancy
 			}
 		}
 		else_if = {
 			limit = { has_ruler_flag = is_sado }
 			set_magic_patron = {
 				name_key = gumiho
-				favoured_school_1 = enchantment
-				favoured_school_2 = illusion
-				disfavoured_school_1 = abjuration
-				disfavoured_school_2 = evocation
 			}
 		}
 		trigger_switch = {
@@ -21478,10 +21466,9 @@ S61_upgrade_ways_of_war = {
 hyti_better_holds_effect = {
 	if = {
 		limit = {
-			owner = { is_or_was_tag = { tag = F81 } }
-			has_terrain = dwarven_hold
+			owner = { is_or_was_tag = { tag = F81 } }			
 		}
-		if = { limit = { has_province_modifier = hyti_cave_mod4 }
+		if = { limit = { has_province_modifier = hyti_cave_mod4 has_terrain = dwarven_hold }
 			owner = {
 				every_owned_province = {
 					limit = { has_terrain = dwarven_hold }
@@ -21490,7 +21477,7 @@ hyti_better_holds_effect = {
 				clr_country_flag = hyti_cave_mod4
 			}
 		}
-		else_if = { limit = { has_province_modifier = hyti_cave_mod5 }
+		else_if = { limit = { has_province_modifier = hyti_cave_mod5 has_terrain = dwarven_hold }
 			owner = {
 				every_owned_province = {
 				limit = { has_terrain = dwarven_hold }
@@ -21504,6 +21491,7 @@ hyti_better_holds_effect = {
 				set_country_flag = hyti_cave_mod4
 			}
 		}
+		else = { remove_province_modifier = hyti_repair_mod }
 	}
 }
 hyti_new_heir_effect = {
@@ -21564,5 +21552,61 @@ S86_get_raided_lol = {
 				modifier = S86_raided_territory_opinion_gain_native
 			}
 		}
+	}
+}
+#Rijalsahil
+S88_move_buildings_effect = {
+	copy_building_to_target_province = { target = $target$ building = native_earthwork }
+	copy_building_to_target_province = { target = $target$ building = native_palisade }
+	copy_building_to_target_province = { target = $target$ building = native_fortified_house }
+	copy_building_to_target_province = { target = $target$ building = native_ceremonial_fire_pit }
+	copy_building_to_target_province = { target = $target$ building = native_irrigation }
+	copy_building_to_target_province = { target = $target$ building = native_storehouse }
+	copy_building_to_target_province = { target = $target$ building = native_longhouse }
+	copy_building_to_target_province = { target = $target$ building = native_sweat_lodge }
+	copy_building_to_target_province = { target = $target$ building = native_great_trail }
+	copy_building_to_target_province = { target = $target$ building = native_three_sisters_field }
+}
+
+S88_sea_migration_effect = {
+	hidden_effect = {
+		$province$ = { cede_province = ROOT move_capital_effect = yes }
+		event_target:S85_old_capital = { S88_move_buildings_effect = { target = $province$ } }
+		add_core = $province$
+		remove_core = event_target:S85_old_capital
+		event_target:S85_old_capital = { change_tribal_land = ROOT decolonize = yes }
+		add_government_reform = native_federation_reform
+		add_government_reform = native_chiefdom_reform
+		$province$ = { change_religion = genie_cult }
+		every_province = {
+			limit = { has_province_flag = S85_tribal_land_fl }
+			change_tribal_land = ROOT
+			clr_province_flag = S85_tribal_land_fl
+		}
+		change_variable = {
+			which = S88_track_sea_migration_count
+			value = 1
+		}
+	}
+}
+#Vanrahar
+vanrahar_apex_effect = {
+	add_country_modifier = { name = vanrahar_apex_$prey$ duration = -1 }
+	if = {
+		limit = {
+			has_country_modifier = vanrahar_apex_harimari
+			has_country_modifier = vanrahar_apex_command
+			has_country_modifier = vanrahar_apex_bulwar
+			has_country_modifier = vanrahar_apex_xia
+			has_country_modifier = vanrahar_apex_nadimraj
+			has_country_modifier = vanrahar_apex_dhujat
+		}
+		remove_country_modifier = vanrahar_apex_harimari
+		remove_country_modifier = vanrahar_apex_command
+		remove_country_modifier = vanrahar_apex_bulwar
+		remove_country_modifier = vanrahar_apex_xia
+		remove_country_modifier = vanrahar_apex_nadimraj
+		remove_country_modifier = vanrahar_apex_dhujat
+		add_country_modifier = { name = vanrahar_apex_all duration = -1 }
 	}
 }

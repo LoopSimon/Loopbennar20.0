@@ -58,9 +58,19 @@ province_event = {
 		NOT = { has_province_flag = permanent_damestear }
 		NOT = { has_province_modifier = dwindling_resources }
 		NOT = { province_id = 3389 }
-		had_province_flag = {
-			flag = has_damestear_flag
-			days = 1825 #5 years
+
+		OR = {
+			had_province_flag = {
+				flag = has_damestear_flag
+				days = 5475 #15 years
+			}
+			AND = {
+				NOT = { has_province_flag = summoned_damestear } #Summoned damestear is a bit stronger
+				had_province_flag = {
+					flag = has_damestear_flag
+					days = 1825 #5 years
+				}
+			}
 		}
 	}
 	
@@ -307,7 +317,6 @@ country_event = {
 	
 	immediate = {
 		hidden_effect = {
-			clr_country_flag = devouring_path_damestear_bypass_flag
 			random_owned_province = {
 				limit = {
 					is_city = yes
@@ -343,7 +352,15 @@ country_event = {
 				name = damestear_rich_deposit
 				duration = -1
 			}
+			if = {
+				limit = { owner = { has_country_flag = devouring_path_damestear_bypass_flag } }
+				set_province_flag = summoned_damestear
+			}
 		}
-		set_add_damestear_count = yes
+		if = {
+			limit = { NOT = { has_country_flag = devouring_path_damestear_bypass_flag } }
+			set_add_damestear_count = yes
+		}
+		else = { clr_country_flag = devouring_path_damestear_bypass_flag }
 	}
 }

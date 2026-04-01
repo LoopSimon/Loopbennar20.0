@@ -8,6 +8,7 @@ JY_LF_clear_pirate_choice = {
 	clr_global_flag = JY_LF_P_sneak_2
 	clr_global_flag = JY_LF_P_fight_2
 	clr_global_flag = JY_LF_P_met
+	clr_global_flag = JY_LF_P_no_pirates
 }
 
 JY_LF_clear_pirate_status = {
@@ -110,7 +111,7 @@ JY_LF_trade = {
 	}
 	if = {
 		limit = {
-			owner = { mission_completed = Y15_goods_purse }
+			owner = { mission_completed = Y15_haven_sea }
 			NOT = { has_global_flag = JY_LF_Y15_perks }
 		}
 		owner = { JY_LF_Y15 = yes }
@@ -120,6 +121,41 @@ JY_LF_trade = {
 	if = {
 		limit = { owner = { has_country_flag = JY_LF_wants_no_news } }
 		custom_tooltip = JY_LF_three_ports
+	}
+	if = {
+		limit = {
+			4907 = {
+				owner = {
+					OR = {
+						mission_completed = Y15_expand_route
+						mission_completed = Y15_genies_land
+					}
+				}
+			}
+			OR = {
+				continent = africa
+				superregion = rahen_superregion
+				province_id = 4701 # Cay Cam Simh
+				province_id = 4962 # Hasiksibou
+				province_id = 2913 # Davharral
+
+			}
+		} # Beikdugang Rahen money
+		hidden_effect = {
+			4907 = { 
+				owner = {
+					if = {
+						limit = { has_country_flag = Y15_treasure_fleet_shutup }
+						country_event = { id = flavor_beikdugang.301 }
+					}
+					if = {
+						limit = {NOT = { has_country_flag = Y15_treasure_fleet_shutup }}
+						country_event = { id = flavor_beikdugang.300 } 
+
+					}
+				}
+			}	
+		}
 	}
 }
 
@@ -649,6 +685,11 @@ JY_LF_pirate_status = {
 		custom_tooltip = JY_LF_lost_P_t
 		clr_global_flag = JY_LF_lost_P
 	}
+	if = {
+		limit = { has_global_flag = JY_LF_P_no_pirates }
+		custom_tooltip = JY_LF_P_no_t
+		clr_global_flag = JY_LF_P_no_pirates
+	}
 }
 
 #How much money per port the Fleet gets
@@ -734,6 +775,17 @@ JY_LF_rahen_expansion = {
 	}
 }
 
+JY_LF_sarhal_expansion = {
+	custom_tooltip = JY_LF_expansion_sarhal_tt
+	hidden_effect = {
+		5529 = { add_permanent_province_modifier = { name = JY_LF_port duration = -1 } }
+		5558 = { add_permanent_province_modifier = { name = JY_LF_port duration = -1 } }
+		5586 = { add_permanent_province_modifier = { name = JY_LF_port duration = -1 } }
+		6063 = { add_permanent_province_modifier = { name = JY_LF_port duration = -1 } }
+		6138 = { add_permanent_province_modifier = { name = JY_LF_port duration = -1 } }
+	}
+}
+
 
 
 
@@ -747,23 +799,6 @@ JY_LF_Y15 = {
 			33 = { JY_LF_Y15_dip_advisor = yes }
 			33 = { JY_LF_Y15_mil_advisor = yes }
 			1 = { JY_LF_Y15_kuk_advisor = yes }
-		}
-	}
-	if = {
-		limit = { has_global_flag = JY_LF_federation_crisis }
-		random_owned_province = { 
-			limit = {
-				OR = {
-					area = beidugang_area
-					culture = kuldaakin
-				}
-			}
-			custom_tooltip = JY_LF_Y15_refugees_come
-			random_list = {
-				33 = { add_base_tax = 1 }
-				33 = { add_base_production = 1 }
-				33 = { add_base_manpower = 1 }
-			}
 		}
 	}
 }

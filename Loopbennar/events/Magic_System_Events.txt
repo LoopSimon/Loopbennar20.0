@@ -123,8 +123,15 @@ country_event = { #Generates variables with all of the xp modifiers for localisa
 		update_magic_xp_val_deci = { category = transmutation }
 		update_magic_xp_val_deci = { category = total }
 
-		divide_variable = { which = months_till_advancement_done which = last_months_xp_gain }
-		round_variable = { which = months_till_advancement_done value = 1 } #round up
+		if = { #Avoid division by 0
+			limit = { is_variable_equal = { which = last_months_xp_gain value = 0 } }
+			set_variable = { months_till_advancement_done = 0 }
+		}
+		else = {
+			divide_variable = { which = months_till_advancement_done which = last_months_xp_gain }
+			#Tooltip bits
+			round_variable = { which = months_till_advancement_done value = 1 } #round up
+		}
 	}
 
 	option = {
@@ -1105,23 +1112,23 @@ country_event = { #War Magic handler
 		#log = "[Root.GetName] just cast Divination 2 1 (mana [Root.currentMana.GetValue])"
 	}
 
-	option = { #Mass Charm
-		name = enchantment_1_mass_charm_spell
+	option = { #Heartstring
+		name = enchantment_1_heartstring_spell
 		ai_chance = { factor = 10 }
 		trigger = {
-			enchantment_1_mass_charm_trigger = yes
+			enchantment_1_heartstring_trigger = yes
 
 			is_overall_enchantment_level_1 = yes #AI prefer upcast
 		}
-		generic_cast_spell = { school = enchantment level = 1 id = mass_charm war = yes }
+		generic_cast_spell = { school = enchantment level = 1 id = heartstring war = yes }
 		#log = "[Root.GetName] just cast Enchantment 1 0 (mana [Root.currentMana.GetValue])"
 	}
 
-	option = { #Mass Charm 2
-		name = enchantment_2_mass_charm_2_spell
+	option = { #Thoughtweave
+		name = enchantment_2_thoughtweave_spell
 		ai_chance = { factor = 20 }
-		trigger = { enchantment_2_mass_charm_2_trigger = yes }
-		generic_cast_spell = { school = enchantment level = 2 id = mass_charm_2 war = yes }
+		trigger = { enchantment_2_thoughtweave_trigger = yes }
+		generic_cast_spell = { school = enchantment level = 2 id = thoughtweave war = yes }
 		#log = "[Root.GetName] just cast Enchantment 2 0 (mana [Root.currentMana.GetValue])"
 	}
 
@@ -1255,10 +1262,7 @@ country_event = { #Siege magic handler
 
 		random_owned_province = {
 			limit = {
-				fort_level = 1
-				controlled_by = ROOT
-				has_siege = yes
-				hidden_trigger = { unit_in_battle = no } #Reported cases of simultaneous sieges and battles
+				siege_interface_defensive_trigger = yes
 				abjuration_1_ward_local_trigger = yes
 			}
 			ROOT = { generic_cast_spell = { school = abjuration level = 1 id = ward } }
@@ -1288,8 +1292,8 @@ country_event = { #Siege magic handler
 
 		random_province = {
 			limit = {
-				fort_level = 1
-				siege_interface_siege_trigger = yes
+				siege_interface_offensive_trigger = yes
+				enchantment_3_dominate_to_surrender_local_trigger = yes
 			}
 			ROOT = { generic_cast_spell = { school = enchantment level = 3 id = dominate_to_surrender } }
 		}
@@ -1302,14 +1306,11 @@ country_event = { #Siege magic handler
 		trigger = {
 			evocation_0_fireball_trigger = { menu = yes }
 
-			is_overall_evocation_level_2_minimum = no #AI prefers upcasting
+			#is_overall_evocation_level_2_minimum = no #AI prefers upcasting exception b/c meteor feelsbad
 		}
 
 		random_province = {
-			limit = {
-				fort_level = 1
-				siege_interface_siege_trigger = yes
-			}
+			limit = { siege_interface_offensive_trigger = yes }
 			ROOT = { generic_cast_spell = { school = evocation level = 0 id = fireball } }
 		}
 		#log = "[Root.GetName] just cast Evocation 0 0 (mana [Root.currentMana.GetValue])"
@@ -1322,8 +1323,7 @@ country_event = { #Siege magic handler
 
 		random_province = {
 			limit = {
-				fort_level = 1
-				siege_interface_siege_trigger = yes
+				siege_interface_offensive_trigger = yes
 				evocation_2_meteor_swarm_local_trigger = yes
 			}
 			ROOT = { generic_cast_spell = { school = evocation level = 2 id = meteor_swarm } }
@@ -1337,9 +1337,7 @@ country_event = { #Siege magic handler
 		trigger = { necromancy_1_contagion_trigger = { menu = yes } }
 		random_owned_province = {
 			limit = {
-				fort_level = 1
-				controlled_by = ROOT
-				has_siege = yes
+				siege_interface_defensive_trigger = yes
 				necromancy_1_contagion_local_trigger = yes
 			}
 			ROOT = { generic_cast_spell = { school = necromancy level = 1 id = contagion } }
@@ -1355,7 +1353,7 @@ country_event = { #Siege magic handler
 		random_province = {
 			limit = {
 				fort_level = 1
-				siege_interface_siege_trigger = yes
+				siege_interface_offensive_trigger = yes
 				transmutation_1_mass_enlarge_local_trigger = yes
 			}
 			ROOT = { generic_cast_spell = { school = transmutation level = 1 id = mass_enlarge } }

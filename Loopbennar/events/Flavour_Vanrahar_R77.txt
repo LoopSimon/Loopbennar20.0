@@ -1,0 +1,422 @@
+namespace = vanrahar
+
+country_event = {
+	id = vanrahar.0
+	title = vanrahar.0.t
+	desc = vanrahar.0.d
+	picture = TIGER_BODYGUARD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.0.a
+
+		vanrahar_apex_effect = { prey = harimari }
+		generic_decrease_of_racial_tolerance_effect = { race = human largest = yes }
+		generic_decrease_of_racial_tolerance_effect = { race = human largest = yes }
+		generic_decrease_of_racial_tolerance_effect = { race = human largest = yes }
+	}
+}
+
+country_event = { #Not Out of Hate
+	id = vanrahar.1
+	title = vanrahar.1.t
+	desc = vanrahar.1.d
+	picture = BATTLE_eventPicture
+
+	is_triggered_only = yes
+	major = yes
+	major_trigger = { tag = R38 }
+
+	option = {
+		name = vanrahar.1.a
+
+		hidden_effect = {
+			4389 = { add_core = ROOT } #edge case where you lost the core
+			R38 = {
+				set_country_flag = no_callaction
+				set_country_flag = allow_subjects_war
+				set_country_flag = no_allies_war@ROOT
+			}
+			set_country_flag = no_callaction
+			set_country_flag = no_allies_warR38
+		}
+		declare_war_with_cb = {
+			who = R38 #Bhuvauri
+			casus_belli = cb_core
+			war_goal_province = 4389 #Biyijinda
+		}
+		every_ally = {
+			limit = {
+				OR = {
+					owns = 4469 #White Herd
+					owns = 4479 #Red Herd
+					owns = 4508 #Purple Herd
+					owns = 4486 #Black Herd
+					owns = 4477 #Palace Herd
+					owns = 4483 #Castle Herd
+					owns = 4512 #Grey Herd
+				}
+			}
+			set_country_flag = allow_to_join_war_nonetheless
+			ROOT = { add_favors = { who = PREV amount = 10 } }
+			set_ai_attitude = { attitude = attitude_hostile who = R38 locked = yes }
+		}
+		custom_tooltip = vanrahar.1.tt
+	}
+}
+
+country_event = { #The Cradle Awakens
+	id = vanrahar.2
+	title = vanrahar.2.t
+	desc = vanrahar.2.d
+	picture = BAD_WITH_MONARCH_eventPicture
+
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = vanrahar.2.a
+		
+		add_legitimacy = -50
+		custom_tooltip = vanrahar.2.tt
+		hidden_effect = {
+			every_known_country = {
+				limit = {
+					OR = {
+						is_the_raja = yes
+						is_subject_of_the_raja = yes
+					}
+				}
+				add_trust = { who = FROM value = -10 }
+				add_opinion = { who = FROM modifier = rabaghekhur_upstarts }
+			}
+		}
+	}
+}
+
+country_event = { #Identity
+	id = vanrahar.3
+	title = vanrahar.3.t
+	desc = vanrahar.3.d
+	picture = CROSSROADS_eventPicture
+
+	is_triggered_only = yes
+
+	option = { #Pursue Vanrahar
+		name = vanrahar.3.a
+		
+		custom_tooltip = vanrahar.3.tt1
+		tooltip = { add_country_modifier = { name = umdaj_elephant_king duration = -1 } }
+		hidden_effect = { every_owned_province = { add_local_autonomy = -100 } }
+	}
+
+	option = { #Pursue Sardhasi
+		name = vanrahar.3.b
+		
+		custom_tooltip = vanrahar.3.tt2
+		tooltip = { add_country_modifier = { name = umdaj_elephant_king duration = -1 } }
+		hidden_effect = {
+			set_country_flag = umdaj_chose_sardhasi
+			for = {
+				amount = 4
+				effect = "random_owned_province = { noble_rebels = 1 }"
+			}
+		}
+	}
+}
+
+country_event = { #Our People Spread
+	id = vanrahar.4
+	title = vanrahar.4.t
+	desc = vanrahar.4.d
+	picture = TIGER_THRONE_eventPicture
+
+	is_triggered_only = yes
+	trigger = {
+		any_owned_province = {
+			has_province_modifier = vanrahar_second_wave_settlement
+			culture = primal_harimari
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					has_province_modifier = vanrahar_second_wave_settlement
+					culture = primal_harimari
+				}
+				save_event_target_as = converted_province
+			}
+		}
+	}
+
+	option = {
+		name = vanrahar.4.a
+		goto = converted_province
+		
+		event_target:converted_province = { add_random_development = 1 }
+	}
+}
+
+country_event = { #Mighty Monarch on the Lotus Throne
+	id = vanrahar.5
+	title = vanrahar.5.t
+	desc = vanrahar.5.d
+	picture = TIGER_THRONE_eventPicture
+
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = vanrahar.5.a
+		
+		add_country_modifier = { name = vanrahar_legacy_black duration = -1 }
+		custom_tooltip = vanrahar.5.tt
+		hidden_effect = {
+			every_known_country = {
+				limit = { culture_group = harimari }
+				add_prestige = -10
+			}
+		}
+	}
+}
+
+country_event = { #The World Will Never Change
+	id = vanrahar.6
+	title = vanrahar.6.t
+	desc = vanrahar.6.d
+	picture = MARCHING_PEASANTS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.6.a
+		
+		add_country_modifier = { name = vanrahar_purity_white duration = -1 }
+	}
+}
+
+country_event = { #Change is not always good
+	id = vanrahar.7
+	title = vanrahar.7.t
+	desc = vanrahar.7.d
+	picture = ELEPHANT_KING_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.7.a
+		
+		add_country_modifier = { name = umdaj_elephant_king duration = -1 }
+	}
+}
+
+country_event = { #Freedom in Death
+	id = vanrahar.8
+	title = vanrahar.8.t
+	desc = vanrahar.8.d
+	picture = VILLAGE_BURNING_eventPicture
+	goto = 4420 #Sramaya
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.8.a
+		
+		4420 = {
+			add_base_tax = -6
+			add_base_production = -6
+			add_base_manpower = -6
+			add_devastation = 100
+			change_culture = primal_harimari
+		}
+		capital_scope = {
+			add_base_tax = 2
+			add_base_production = 2
+			add_base_manpower = 2
+		}
+		add_treasury = 1000
+	}
+}
+
+country_event = { #Paper Crimes
+	id = vanrahar.9
+	title = vanrahar.9.t
+	desc = vanrahar.9.d
+	picture = OVEREXTENSION_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.9.a
+		
+		add_adm_power = -10
+		add_dip_power = -10
+		add_mil_power = -10
+	}
+}
+
+country_event = { #A Home for Veterans
+	id = vanrahar.10
+	title = vanrahar.10.t
+	desc = vanrahar.10.d
+	picture = WOUNDED_SOLDIERS_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.10.a
+		
+		add_manpower = -10
+	}
+}
+
+country_event = { #Monster of the West
+	id = vanrahar.11
+	title = vanrahar.11.t
+	desc = {
+		desc = vanrahar.11.desc_zokka
+		trigger = { 2923 = { previous_owner = F29 } } #Zokka
+	}
+	desc = {
+		desc = vanrahar.11.desc_jaddari
+		trigger = { 2923 = { previous_owner = F46 } } #Jaddari
+	}
+	desc = {
+		desc = vanrahar.11.desc_neither
+		trigger = { 2923 = { NOT = { previous_owner = F46 previous_owner = F29 } } }#Neither
+	}
+	picture = PRINCE_BISHOP_RESIGN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.11.a
+		
+		vanrahar_apex_effect = { prey = bulwar }
+	}
+}
+
+country_event = { #Efforts of the State
+	id = vanrahar.12
+	title = vanrahar.12.t
+	desc = vanrahar.12.d
+	picture = REVOLT_HUNGARIAN_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.12.a
+		
+		add_country_modifier = { name = vanrahar_community_support duration = -1 }
+		custom_tooltip = vanrahar_community_support_desc
+	}
+}
+
+country_event = { #The REAL Guru Suhan
+	id = vanrahar.13
+	title = vanrahar.13.t
+	desc = vanrahar.13.d
+	picture = CASTELLOS_IS_DEAD_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.13.a
+		
+		add_country_modifier = { name = vanrahar_praxis_crushed duration = -1 }
+	}
+}
+
+country_event = { #Locals Rebel
+	id = vanrahar.14
+	title = vanrahar.14.t
+	desc = vanrahar.14.d
+	picture = ANGRY_MOB_eventPicture
+	goto = rebel_province
+
+	is_triggered_only = yes
+	trigger = {
+		any_owned_province = {
+			culture = primal_harimari
+			has_human_minority_trigger = yes
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			random_owned_province = {
+				limit = {
+					culture = primal_harimari
+					has_human_minority_trigger = yes
+				}
+				save_event_target_as = rebel_province
+			}
+		}
+	}
+
+	option = {
+		name = vanrahar.14.a
+		
+		event_target:rebel_province = { anti_tax_rebels = 2 }
+	}
+}
+
+country_event = { #The Die Is Cast
+	id = vanrahar.15
+	title = vanrahar.15.t
+	desc = vanrahar.15.d
+	picture = ANGRY_MOB_eventPicture
+
+	is_triggered_only = yes
+
+	immediate = { hidden_effect = { add_country_modifier = { name = vanrahar_die_cast duration = -1 } } }
+
+	option = {
+		name = vanrahar.15.a
+		
+		add_country_modifier = { name = vanrahar_die_cast duration = -1 }
+		capital_scope = { blood_lotus_rebel = 3 }
+		custom_tooltip = vanrahar_blood_lotus_tt
+		hidden_effect = {
+			every_owned_province = {
+				limit = { culture_is_human = yes superregion = rahen_superregion }
+				blood_lotus_rebel = 3
+				add_province_modifier = { name = vanrahar_blood_human duration = -1 }
+			}
+		}
+	}
+}
+
+country_event = { #A Humbling
+	id = vanrahar.16
+	title = vanrahar.16.t
+	desc = vanrahar.16.d
+	picture = LOOMING_DEATH_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.16.a
+		
+		add_country_modifier = { name = vanrahar_mightiest_haless duration = 5475 }
+	}
+}
+
+country_event = { #A Victory to Last
+	id = vanrahar.17
+	title = vanrahar.17.t
+	desc = vanrahar.17.d
+	picture = muslimgfx_COUNTRY_COLLAPSE_eventPicture
+
+	is_triggered_only = yes
+
+	option = {
+		name = vanrahar.17.a
+
+		remove_country_modifier = vanrahar_die_cast
+		hidden_effect = { every_owned_province = { remove_province_modifier = vanrahar_blood_human } }
+		custom_tooltip = vanrahar.17.tt
+	}
+}

@@ -14,6 +14,66 @@ namespace = magic_spell
 ### CONJURATION (200-299) ###
 #############################
 
+country_event = { #Hidden disband event for summon animals to prevent cheese
+	id = magic_spell.200
+	title = magic_spell.200.t
+	desc = magic_spell.200.d
+	picture = EP_MANIHOLE_HELMET_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = magic_spell.200.a
+
+		if = {
+			limit = {
+				has_not_cast_summon_animals = yes #Didn't recast the spell
+				any_hired_mercenary_company = { template = merc_feral_animals } #Prevents errorspam
+			}
+			random_hired_mercenary_company = {
+				limit = { template = merc_feral_animals }
+				disband_mercenary_company = THIS
+			}
+		}
+	}
+}
+country_event = { #Hidden disband event for summon elementals to prevent cheese
+	id = magic_spell.201
+	title = magic_spell.201.t
+	desc = magic_spell.201.d
+	picture = EP_MANIHOLE_HELMET_eventPicture
+	
+	is_triggered_only = yes
+	hidden = yes
+
+	option = {
+		name = magic_spell.201.a
+
+		#We check for each company individually in case of mismatched mods
+		if = {
+			limit = {
+				NOT = { has_country_modifier = conjuration_2_summon_elementals_mod }
+				any_hired_mercenary_company = { template = merc_leashed_elementals } #Prevents errorspam
+			}
+			random_hired_mercenary_company = {
+				limit = { template = merc_leashed_elementals }
+				disband_mercenary_company = THIS
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_country_modifier = conjuration_2_greater_summon_elementals_mod }
+				any_hired_mercenary_company = { template = merc_greater_leashed_elementals } #Prevents errorspam
+			}
+			random_hired_mercenary_company = {
+				limit = { template = merc_greater_leashed_elementals }
+				disband_mercenary_company = THIS
+			}
+		}
+	}
+}
+
 country_event = { #Remove temporary mercs from conjuration level 1
 	id = magic_spell.202
 	title = magic_spell.202.t
@@ -21,35 +81,51 @@ country_event = { #Remove temporary mercs from conjuration level 1
 	picture = EP_MANIHOLE_HELMET_eventPicture
 	
 	is_triggered_only = yes
+	
+	after = { hidden_effect = { country_event = { id = magic_spell.200 days = 31 } } } #Anti-cheese
 
-	trigger = { any_hired_mercenary_company = { template = merc_feral_animals } }
-
-	option = {
+	option = { #Give it up
 		name = magic_spell.202.a
 		ai_chance = { factor = 1 }
 
-		random_hired_mercenary_company = {
-			limit = { template = merc_feral_animals }
-			disband_mercenary_company = THIS
+		if = {
+			limit = { has_cast_summon_animals = yes } #You kept the event open and recast the spell
+			custom_tooltip = you_already_recast_tt
 		}
-		clr_country_flag = extended_conj_1
+		else = {
+			clr_country_flag = extended_conj_1
+			if = {
+				limit = { any_hired_mercenary_company = { template = merc_feral_animals } }
+				random_hired_mercenary_company = {
+					limit = { template = merc_feral_animals }
+					disband_mercenary_company = THIS
+				}
+			}
+		}
 	}
 
-	option = {
+	option = { #Extend it
 		name = magic_spell.202.b
 		ai_chance = { factor = 0 }
 		trigger = { NOT = { has_country_flag = extended_conj_1 } }
 
 		if = {
+			limit = { has_cast_summon_animals = yes } #You kept the event open and recast the spell
+			custom_tooltip = you_already_recast_tt
+		}
+		else_if = {
 			limit = { conjuration_1_summon_animals_trigger = { player = yes } }
 			generic_cast_spell = { school = conjuration level = 1 id = summon_animals }
 			set_country_flag = extended_conj_1
 		}
 		else = {
 			custom_tooltip = not_enough_mana_tt
-			random_hired_mercenary_company = {
-				limit = { template = merc_feral_animals }
-				disband_mercenary_company = THIS
+			if = {
+				limit = { any_hired_mercenary_company = { template = merc_feral_animals } }
+				random_hired_mercenary_company = {
+					limit = { template = merc_feral_animals }
+					disband_mercenary_company = THIS
+				}
 			}
 		}
 	}
@@ -62,58 +138,34 @@ country_event = { #Remove temporary mercs from conjuration level 2
 	
 	is_triggered_only = yes
 
-	trigger = { any_hired_mercenary_company = { template = merc_leashed_elementals } }
+	after = { hidden_effect = { country_event = { id = magic_spell.201 days = 31 } } } #Anti-cheese
 
 	option = {
 		name = magic_spell.202.a
 		ai_chance = { factor = 1 }
 
-		random_hired_mercenary_company = {
-			limit = { template = merc_leashed_elementals }
-			disband_mercenary_company = THIS
-		}
-		clr_country_flag = extended_conj_2
-	}
-
-	option = {
-		name = magic_spell.202.b
-		ai_chance = { factor = 0 }
-		trigger = { NOT = { has_country_flag = extended_conj_2 } }
-
 		if = {
-			limit = { conjuration_2_summon_elementals_trigger = { player = yes } }
-			generic_cast_spell = { school = conjuration level = 2 id = summon_elementals }
-			set_country_flag = extended_conj_2
+			limit = { has_cast_summon_elementals = yes } #You kept the event open and recast the spell
+			custom_tooltip = you_already_recast_tt
 		}
 		else = {
-			custom_tooltip = not_enough_mana_tt
-			random_hired_mercenary_company = {
-				limit = { template = merc_leashed_elementals }
-				disband_mercenary_company = THIS
+			clr_country_flag = extended_conj_2
+			if = { #This only has to kind of work, the actual anti-cheese is in the hidden event
+				limit = { any_hired_mercenary_company = { template = merc_leashed_elementals } }
+				random_hired_mercenary_company = {
+					limit = { template = merc_leashed_elementals }
+					disband_mercenary_company = THIS
+				}
+			}
+			if = { #This only has to kind of work, the actual anti-cheese is in the hidden event
+				limit = { any_hired_mercenary_company = { template = merc_greater_leashed_elementals } }
+				random_hired_mercenary_company = {
+					limit = { template = merc_greater_leashed_elementals }
+					disband_mercenary_company = THIS
+				}
 			}
 		}
 	}
-}
-country_event = { #Remove temporary mercs from conjuration level 2 upgraded by Eka-Idulnazzar
-	id = magic_spell.204
-	title = magic_spell.204.t
-	desc = magic_spell.202.d
-	picture = EP_MANIHOLE_HELMET_eventPicture
-	
-	is_triggered_only = yes
-
-	trigger = { any_hired_mercenary_company = { template = merc_greater_leashed_elementals } }
-
-	option = {
-		name = magic_spell.202.a
-		ai_chance = { factor = 1 }
-
-		random_hired_mercenary_company = {
-			limit = { template = merc_greater_leashed_elementals }
-			disband_mercenary_company = THIS
-		}
-		clr_country_flag = extended_conj_2
-	}
 
 	option = {
 		name = magic_spell.202.b
@@ -121,15 +173,29 @@ country_event = { #Remove temporary mercs from conjuration level 2 upgraded by E
 		trigger = { NOT = { has_country_flag = extended_conj_2 } }
 
 		if = {
+			limit = { has_cast_summon_elementals = yes } #You kept the event open and recast the spell
+			custom_tooltip = you_already_recast_tt
+		}
+		else_if = {
 			limit = { conjuration_2_summon_elementals_trigger = { player = yes } }
 			generic_cast_spell = { school = conjuration level = 2 id = summon_elementals }
 			set_country_flag = extended_conj_2
 		}
 		else = {
 			custom_tooltip = not_enough_mana_tt
-			random_hired_mercenary_company = {
-				limit = { template = merc_greater_leashed_elementals }
-				disband_mercenary_company = THIS
+			if = { #This only has to kind of work, the actual anti-cheese is in the hidden event
+				limit = { any_hired_mercenary_company = { template = merc_leashed_elementals } }
+				random_hired_mercenary_company = {
+					limit = { template = merc_leashed_elementals }
+					disband_mercenary_company = THIS
+				}
+			}
+			if = { #This only has to kind of work, the actual anti-cheese is in the hidden event
+				limit = { any_hired_mercenary_company = { template = merc_greater_leashed_elementals } }
+				random_hired_mercenary_company = {
+					limit = { template = merc_greater_leashed_elementals }
+					disband_mercenary_company = THIS
+				}
 			}
 		}
 	}
@@ -255,8 +321,8 @@ country_event = { #Enchantment consequences handler
 	trigger = {
 		is_overall_enchantment_level_1_minimum = yes
 		OR = {
-			has_country_modifier = enchantment_1_mass_charm_mod
-			has_country_modifier = enchantment_2_mass_charm_2_mod
+			has_country_modifier = enchantment_1_heartstring_mod
+			has_country_modifier = enchantment_2_thoughtweave_mod
 			has_country_modifier = enchantment_3_dominate_to_surrender_tracker_mod
 		}
 		NOT = { has_country_modifier = magic_enchantment_consequences_cooldown_mod }
@@ -422,16 +488,31 @@ country_event = { #Tearfall Notif
 
 	immediate = {
 		hidden_effect = {
-			random_owned_province = {
-				limit = {
-					NOT = {
-						has_terrain = cavern
-						has_terrain = dwarven_road
-						province_group = hold_province
-						trade_goods = damestear
+			if = {
+				limit = { has_country_flag = I69_next_tearfall }
+				random_owned_province = {
+					limit = {
+						OR = {
+							has_province_modifier = I69_starstruck_observatory
+							has_province_modifier = I69_starstruck_observatory_cyclops
+						}
 					}
+					save_event_target_as = damestear_province
+					set_province_flag = permanent_damestear
 				}
-				save_event_target_as = damestear_province
+			}
+			else = {
+				random_owned_province = {
+					limit = {
+						NOT = {
+							has_terrain = cavern
+							has_terrain = dwarven_road
+							province_group = hold_province
+							trade_goods = damestear
+						}
+					}
+					save_event_target_as = damestear_province
+				}
 			}
 		}
 	}
@@ -463,6 +544,7 @@ country_event = { #Tearfall Notif
 				province_event = { id = damestear.5 days = 7300 random = 7300 }
 			}
 		}
+		clr_country_flag = I69_next_tearfall #Star Rider thing
 	}
 
 	option = { #Where did that go?
@@ -538,14 +620,18 @@ country_event = { #Shadows in the Night
 		name = magic_spell.600.a
 		ai_chance = { factor = 1 }
 		
-		tooltip = { add_country_modifier = { name = illusion_2_shadows_in_the_night_mod duration = 1825 } }
+		tooltip = { add_country_modifier = { name = illusion_2_shadows_in_the_night_sabotage_mod duration = 1825 } }
 	}
 }
 
 country_event = { #Fear and Loathing
 	id = magic_spell.601
 	title = magic_spell.601.t
-	desc = magic_spell.601.desc
+	desc = {
+		trigger = { FROM = { has_country_flag = G61_spell_effect_razzle } }
+		desc = fear_loathing_desc_kimanis
+	}
+	desc = magic_spell.601.desc #Default desc
 	picture = PANIC_eventPicture
 
 	is_triggered_only = yes
@@ -554,7 +640,12 @@ country_event = { #Fear and Loathing
 		name = magic_spell.601.a
 		ai_chance = { factor = 1 }
 		
-		tooltip = { capital_scope = { anti_tax_rebels = 1 } }
+		tooltip = { add_country_modifier = { name = illusion_1_fear_and_loathing_sabotage_mod duration = 3650 } }
+
+		if = {
+			limit = { war_with = FROM } #rivals don't get rebels
+			tooltip = { illusion_1_fear_and_loathing_sub_effect = { caster_scope = FROM } }
+		}
 	}
 }
 
@@ -573,15 +664,8 @@ country_event = { #Chronophage consequences
 	option = {
 		name = magic_spell.700.a
 
-		custom_tooltip = chronophage_consequences_tt
-		hidden_effect = {
-			while = {
-				limit = { check_variable = { chronophage_tracker = 1 } }
-				reduce_stability_or_adm_power = yes
-				add_war_exhaustion = 1
-				subtract_variable = { chronophage_tracker = 1 }
-			}
-		}
+		reduce_stability_or_adm_power = yes
+		add_war_exhaustion = 1
 	}
 }
 
@@ -672,8 +756,8 @@ country_event = { #Rite of Conception: Total Success!
 				50 = {
 					trigger = { 
 						NOT = { 
-							ruler_is_harpy = yes
-							consort_is_harpy = yes
+							fast_ruler_is_harpy = yes
+							fast_consort_is_harpy = yes
 						} 
 					}
 					set_country_flag = boy_child
@@ -699,33 +783,46 @@ country_event = { #Rite of Conception: Total Success!
 			}
 		}
 		if = { 
-			limit = {
-				has_country_flag = boy_child
-			}
+			limit = { has_country_flag = boy_child }
 			define_heir = {
 				age = 0
 				dynasty = ROOT
 				claim = 80
+				adm = 5
+				dip = 5
+				mil = 5
 			}
-			change_heir_adm = 3
-			change_heir_dip = 3
-			change_heir_mil = 3
 		}
 		if = { 
-			limit = {
-				has_country_flag = girl_child
-			}
+			limit = { has_country_flag = girl_child }
 			define_heir = {
 				age = 0
 				dynasty = ROOT
 				claim = 80
 				female = yes
+				adm = 5
+				dip = 5
+				mil = 5
 			}
-			change_heir_adm = 3
-			change_heir_dip = 3
-			change_heir_mil = 3
 		}
 		define_powerful_mage = { type = heir }
+
+		if = {
+			limit = { OR = { has_country_modifier = homunculus_consort_f has_country_modifier = homunculus_consort_m } }
+			custom_tooltip = homunculus_consort_bonus
+			hidden_effect = {
+				change_heir_adm = 1
+				change_heir_dip = 1
+				change_heir_mil = 1
+			}
+		}
+
+		hidden_effect = {
+			if = {
+				limit = { fast_consort_is_harpy = yes fast_heir_is_harpy = no }
+				set_heir_culture = new_variable:consort_culture
+			}
+		}
 	}
 
 	option = { #Rather not
@@ -786,33 +883,47 @@ country_event = { #Rite of Conception: Magical Idiot
 			}
 		}
 		if = { 
-			limit = {
-				has_country_flag = boy_child
-			}
+			limit = { has_country_flag = boy_child }
 			define_heir = {
 				age = 0
 				dynasty = ROOT
 				claim = 20
-				max_random_adm = 3
-				max_random_dip = 3
-				max_random_mil = 3
+				adm = 3
+				dip = 3
+				mil = 3
 			}
 		}
 		if = { 
-			limit = {
-				has_country_flag = girl_child
-			}
+			limit = { has_country_flag = girl_child }
 			define_heir = {
 				age = 0
 				dynasty = ROOT
 				claim = 20
 				female = yes
-				max_random_adm = 3
-				max_random_dip = 3
-				max_random_mil = 3
+				adm = 3
+				dip = 3
+				mil = 3
 			}
 		}
-		define_powerful_mage = { type = heir bonus = 2 }
+		custom_tooltip = powerful_mage_bonus_legendary
+		if = {
+			limit = { OR = { has_country_modifier = homunculus_consort_f has_country_modifier = homunculus_consort_m } }
+			custom_tooltip = homunculus_consort_bonus
+			hidden_effect = {
+				change_heir_adm = 1
+				change_heir_dip = 1
+				change_heir_mil = 1
+			}
+		}
+		hidden_effect = {
+			set_country_flag = next_powerful_mage_bonus_legendary_school
+			define_powerful_mage = { type = heir }
+			
+			if = {
+				limit = { fast_consort_is_harpy = yes fast_heir_is_harpy = no }
+				set_heir_culture = new_variable:consort_culture
+			}
+		}
 	}
 
 	option = { #Rather not
@@ -828,118 +939,24 @@ country_event = { #Rite of Conception: Complications During Childbirth...
 	picture = KING_SICK_IN_BED_eventPicture
 	is_triggered_only = yes
 
-	immediate = {
-		hidden_effect = {
-			remove_country_modifier = transmutation_3_rite_of_conception_cooldown_mod
-			random_list = {
-				50 = {
-					trigger = { 
-						NOT = { 
-							ruler_is_harpy = yes
-							consort_is_harpy = yes
-						} 
-					}
-					set_country_flag = boy_child
-				}
-				50 = { set_country_flag = girl_child }
-			}
-		}
-	}
-	after = {
-		clr_country_flag = girl_child
-		clr_country_flag = boy_child
-	}
+	immediate = { hidden_effect = { remove_country_modifier = transmutation_3_rite_of_conception_cooldown_mod } }
 
-	option = { #Sacrifice the heir
+	option = { #Choose the Golden Child
 		name = magic_spell.802.a
-		ai_chance = { factor = 0 }
+
+		country_event = { id = magic_spell.800 }
+		custom_tooltip = golden_child_tt
+		custom_tooltip = other_child_becomes_magical_abom
+		capital_scope = { magical_abomination = 3 }
 	}
 	
-	option = { #Sacrifice your consort
+	option = { #Choose the Laughing Magician
 		name = magic_spell.802.b
-		ai_chance = { factor = 1 }
-		trigger = { has_consort = yes }
 
-		remove_consort_effect = yes
-
-		if = {
-			limit = { has_heir = yes }
-			if = {
-				limit =  { has_reform = magical_elite_reform }
-				custom_tooltip = magic_estate_magical_elite_heir
-			}
-			else = {
-				custom_tooltip = magic_estate_disinherit_heir
-				add_prestige = -50
-			}
-		}
-		if = { 
-			limit = {
-				has_country_flag = boy_child
-			}
-			define_heir = {
-				age = 0
-				dynasty = ROOT
-				claim = 60
-			}
-		}
-		if = { 
-			limit = {
-				has_country_flag = girl_child
-			}
-			define_heir = {
-				age = 0
-				dynasty = ROOT
-				claim = 60
-				female = yes
-			}
-		}
-		define_powerful_mage = { type = heir }
-	}
-
-	option = { #Sacrifice yourself
-		name = magic_spell.802.c
-		ai_chance = { factor = 1 }
-		
-		random_list = {
-			1 = { trigger = { adm = 1 } change_adm = -1 }
-			1 = { trigger = { dip = 1 } change_dip = -1 }
-			1 = { trigger = { mil = 1 } change_mil = -1 }
-		}
-
-		if = {
-			limit = { has_heir = yes }
-			if = {
-				limit =  { has_reform = magical_elite_reform }
-				custom_tooltip = magic_estate_magical_elite_heir
-			}
-			else = {
-				custom_tooltip = magic_estate_disinherit_heir
-				add_prestige = -50
-			}
-		}
-		if = { 
-			limit = {
-				has_country_flag = boy_child
-			}
-			define_heir = {
-				age = 0
-				dynasty = ROOT
-				claim = 60
-			}
-		}
-		if = { 
-			limit = {
-				has_country_flag = girl_child
-			}
-			define_heir = {
-				age = 0
-				dynasty = ROOT
-				claim = 60
-				female = yes
-			}
-		}
-		define_powerful_mage = { type = heir }
+		country_event = { id = magic_spell.801 }
+		custom_tooltip = laughing_magician_tt
+		custom_tooltip = other_child_becomes_magical_abom
+		capital_scope = { magical_abomination = 3 }
 	}
 }
 
@@ -955,23 +972,6 @@ country_event = { #Rite of Conception: Tughayasa Special
 		ai_chance = { factor = 1 }
 
 		define_powerful_mage = { type = ruler }
-	}
-}
-
-country_event = { #Rite of Conception: Abomination
-	id = magic_spell.804
-	title = magic_spell.804.t
-	desc = magic_spell.804.d
-	picture = APOSTLE_eventPicture
-
-	is_triggered_only = yes
-
-	option = { #A monster!
-		name = magic_spell.804.a
-		ai_chance = { factor = 1 }
-
-		remove_consort_effect = yes
-		capital_scope = { magical_abomination = 2 }
 	}
 }
 

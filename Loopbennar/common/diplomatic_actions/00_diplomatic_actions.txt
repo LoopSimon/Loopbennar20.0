@@ -734,6 +734,23 @@ declarewar = {
 			liberty_desire = 50
 		}
 	}
+
+	condition = { #If mission is done, prevent war between tributaries
+		tooltip = I69_reversing_negeal_war_tt
+		potential = { 
+			is_subject_of_type_with_overlord = {
+				who = I69 #Star Rider
+				type = tributary_state_anb
+			}
+		}
+		allow = { 
+			NOT = {
+				overlord = {
+					mission_completed = I69_reversing_negeal
+				}
+			}
+		}
+	}
 	
 	effect = {
 		on_war_declaration_effect = yes #1.35
@@ -763,12 +780,17 @@ declarewar = {
 		if = {
 			limit = {
 				has_global_flag = war_of_salt_and_silence
-				tag = event_target:salt_and_silence_emperor
-				FROM = { tag = event_target:salt_and_silence_giant }
+				has_saved_global_event_target = salt_and_silence_emperor
 			}
-			event_target:salt_and_silence_emperor = {
-				set_country_flag = currently_in_salt_silence_war
-				country_event = { id = flavor_salt_silence_incident.11 days = 1825 }
+			if = {
+				limit = {
+					tag = event_target:salt_and_silence_emperor
+					FROM = { tag = event_target:salt_and_silence_giant }
+				}
+				event_target:salt_and_silence_emperor = {
+					set_country_flag = currently_in_salt_silence_war
+					country_event = { id = flavor_salt_silence_incident.11 days = 1825 }
+				}
 			}
 		}
 
@@ -1666,12 +1688,12 @@ declarewar = {
 					has_government_attribute = war_as_art_ability
 				}
 				ashhana_blood_curse_add_control_by_source = {
-					claw_strength = 3
+					claw_strength = 2
 				}
 			}
 			else = {
 				ashhana_blood_curse_add_control_by_source = {
-					claw_strength = 1.5
+					claw_strength = 1
 				}
 			}
 		}
@@ -1688,6 +1710,60 @@ declarewar = {
 					id = flavor_umbral_covenant.250
 				}
 			}
+		}
+		#Zena War Boost Against Kheteratan Nations 
+		if = {
+			limit = {
+				mission_completed = L06_end_of_the_medasi_system
+				FROM = {
+					culture_group = kheteratan
+				}
+			}
+			add_country_modifier = {
+				name = zena_tears_drown_sorrow
+				duration = -1
+			}
+		}
+
+		# Stop Taga'ala republics from using any land-taking cbs
+		if = {
+			limit = {
+				ai = no
+				has_country_modifier = mangrove_peace
+				has_government_attribute = mangrove_republic
+				NOT = {
+					is_in_war = {
+						defender_leader = FROM
+						casus_belli = cb_mangrove_conflict
+					}
+					is_in_war = {
+						defender_leader = FROM
+						casus_belli = cb_mangrove_unification
+					}
+					is_in_war = {
+						defender_leader = FROM
+						casus_belli = cb_trade_conflict
+					}
+					is_in_war = {
+						defender_leader = FROM
+						casus_belli = cb_humiliate_rotw
+					}
+					is_in_war = {
+						defender_leader = FROM
+						casus_belli = cb_trade_war
+					}
+					is_in_war = {
+						defender_leader = FROM
+						casus_belli = cb_trade_war_triggered
+					}
+					is_in_war = {
+						defender_leader = FROM
+						casus_belli = cb_trade_conflict_triggered
+					}
+				}
+			}
+			white_peace = FROM	# Immediate white peace
+			country_event = { id = mangrove.2 }
 		}
 
 		#Tsukqiao
@@ -1729,7 +1805,7 @@ declarewar = {
 			}
 			if = { #Doctrine of Might
 				limit = {
-					has_doctrine_of_control_aspect = yes
+					has_doctrine_of_might_aspect = yes
 					church_power = 100
 				}
 				add_church_power = -100
@@ -1753,10 +1829,6 @@ declarewar = {
 			}
 		}
 
-		if = { #Chronophage tracking
-			limit = { has_country_modifier = necromancy_3_chronophage_mod }
-			hidden_effect = { change_variable = { chronophage_tracker = 1 } }
-		}
 		if = {
 			limit = {
 				B43 = { has_country_flag = B43_defend_grasshopper }
@@ -2995,7 +3067,11 @@ annexationaction = {
 					vassal_of = ROOT
 					AND = {
 						is_subject_of = ROOT
-						is_subject_of_type = medasi_subject
+						OR = {
+							is_subject_of_type = medasi_subject
+							is_subject_of_type = great_daimyo_vassal
+							is_subject_of_type = vizier_vassal
+						}
 					}
 				}				
 			}
@@ -3019,7 +3095,7 @@ annexationaction = {
 			4411 = {
 				check_variable = {
 					which = raj_var_cohesion
-					value = 75
+					value = 70
 				}
 			}
 		}
@@ -3690,7 +3766,7 @@ callaction = {
 				NOT = { truce_with = FROM }  #(important when you want subject to fight their previous overlord)
 			}
 			OR = {
-				has_country_flag = allow_to_join_war_nonetheless #Use this flag on countries you want to join fight
+				FROM = { has_country_flag = allow_to_join_war_nonetheless } #Use this flag on countries you want to join fight
 				AND = {
 					ROOT = { has_country_flag = allow_subjects_war } #Flag for allowing subjects/overlords to join
 					OR = {
@@ -3949,6 +4025,30 @@ callaction = {
 		if = {
 			limit = { FROM = { alliance_with = ROOT } }
 			accretive_path_gain_chi = { aspect = fill_the_begging_bowls category = dip amount = 20 }
+		}
+	}
+
+	effect = {
+		if = { #Orenvalyam
+			limit = { has_country_flag = U39_hunted_by_the_righteous_flag }
+			every_war_enemy_country = {
+				add_country_modifier = {
+					name = U39_hunted_by_the_righteous
+					duration = -1
+				}
+			}
+		}
+
+		if = { #Orenvalyam
+			limit = { FROM = { has_country_flag = U39_hunted_by_the_righteous_flag } }
+			FROM = {
+				every_war_enemy_country = {
+					add_country_modifier = {
+						name = U39_hunted_by_the_righteous
+						duration = -1
+					}
+				}
+			}
 		}
 	}
 }

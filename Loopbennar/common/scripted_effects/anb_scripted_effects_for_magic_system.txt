@@ -15,6 +15,9 @@
 # Modifiers, however, are only tracked for country and province.
 # A ruler modifier is just a special kind of country modifier cleared on ruler death.
 
+# If you like this system and want to compensate the creators,
+# Give 20 bucks to the next homeless person you meet.
+
 #################################
 ### NAVIGATING THE MAGIC MENU ###
 #################################
@@ -374,6 +377,8 @@ historical_magic_advancements = {
 	[[illusion] set_country_flag = illusion_$illusion$]
 	[[necromancy] set_country_flag = necromancy_$necromancy$]
 	[[transmutation] set_country_flag = transmutation_$transmutation$]
+	
+	[[banned_necromancy] set_$banned_necromancy$_flag = banned_necromancy]
 
 	[[infrastructure]
 		add_country_modifier = { name = magical_infrastructure_$infrastructure$ duration = -1 hidden = yes }
@@ -408,6 +413,13 @@ magic_advancement_abort_all_effect = { #Indiscriminate. Assumes nothing about yo
 		### Magic XP Target
 		set_variable = { magic_experience_target = 0 }
 		set_variable = { current_experience_percent = 0 }
+		set_variable = { months_till_advancement_done = 0 }
+
+		### Generic Modifiers
+		remove_country_modifier = conjuration_0_summon_familiars_mod
+		remove_country_modifier = conjuration_0_summon_familiars_mod_1
+		remove_country_modifier = conjuration_0_summon_familiars_mod_2
+		remove_country_modifier = conjuration_0_summon_familiars_mod_3
 
 		### Infrastructure Modifiers and Flags
 		remove_country_modifier = advancing_magical_infrastructure_mod
@@ -798,8 +810,8 @@ ai_random_study = {
 			ai_pay_for_xp = { study = illusion type = $type$ }
 			magic_school_level_up = { type = $type$ school = illusion }
 		}
-		2 = { #Necromancy is a high-impact school and we'd prefer it appear less often
-			trigger = { NOT = { has_$type$_flag = necromancy_3 } }
+		1 = { #Necromancy is a high-impact school and we'd prefer it appear less often
+			trigger = { NOT = { has_$type$_flag = necromancy_3 } has_not_banned_necromancy = yes }
 			modifier = { factor = 2 has_$type$_flag = necromancy_1 }
 			modifier = { factor = 4 has_$type$_flag = necromancy_2 }
 			ai_pay_for_xp = { study = necromancy type = $type$ }
@@ -879,6 +891,18 @@ show_magic_project_lichdom_warning = {
 		}
 		custom_tooltip = lichdom_mage_only_lock
 	}
+}
+
+#Scripted Effect to be used when spawning a country in mid to late game
+copy_magical_infrastracture_from_root = {
+    trigger_switch = {
+        on_trigger = has_country_modifier
+        magical_infrastructure_4 = { $target$ = { add_country_modifier = { name = magical_infrastructure_4 duration = -1 hidden = yes } change_variable = { mana_regen_infra = 1.00 } } }
+        magical_infrastructure_3 = { $target$ = { add_country_modifier = { name = magical_infrastructure_3 duration = -1 hidden = yes } change_variable = { mana_regen_infra = 0.75 } } }
+        magical_infrastructure_2 = { $target$ = { add_country_modifier = { name = magical_infrastructure_2 duration = -1 hidden = yes } change_variable = { mana_regen_infra = 0.50 } } }
+        magical_infrastructure_1 = { $target$ = { add_country_modifier = { name = magical_infrastructure_1 duration = -1 hidden = yes } change_variable = { mana_regen_infra = 0.25 } } }
+    }
+    $target$ = { change_mana = yes update_mana_regen_vars = yes }
 }
 
 ##################
@@ -1127,8 +1151,15 @@ increase_magic_experience = { #CANNOT BE FIRED INSIDE AN ELSE IN A SCRIPTED EFFE
 				update_advancement_progress_bar = { type = country }
 			}
 
-			divide_variable = { which = months_till_advancement_done which = last_months_xp_gain } #Tooltip bits
-			round_variable = { which = months_till_advancement_done value = 1 } #round up
+			if = { #Avoid division by 0
+				limit = { is_variable_equal = { which = last_months_xp_gain value = 0 } }
+				set_variable = { months_till_advancement_done = 0 }
+			}
+			else = {
+				divide_variable = { which = months_till_advancement_done which = last_months_xp_gain }
+				#Tooltip bits
+				round_variable = { which = months_till_advancement_done value = 1 } #round up
+			}
 		}
 
 		country_event = { id = magic_system.100 } #XP Advancement pulse
@@ -1164,6 +1195,96 @@ reduce_infrastructure_institution_penalty = {
 		add_country_modifier = { name = magical_infrastructure_institution_1_penalty duration = -1 desc = until_advancement_concludes }
 	}
 	else = { remove_country_modifier = magical_infrastructure_institution_1_penalty }
+}
+
+add_MI_institution_penalty_bypass_effect = {
+	hidden_effect = { set_country_flag = bypass_magical_infrastructure_$level$_institution_penalty_$amount$ }
+	custom_tooltip = bypass_MI_$level$_penalty_$amount$_tt #"You will suffer no/half experience penalty when unlocking MI X"
+}
+
+add_amount_MI_X_institution_penalty_bypass = { #Bypass an xp penalty for a specific MI level
+	if = {
+		limit = { at_least_magical_infrastructure_level_$level$ = yes }
+		custom_tooltip = bypass_MI_$level$_penalty_$amount$_tt #Say what it would have done
+		custom_tooltip = MI_$level$_already_achieved #say something, do nothing
+	}
+	else = {
+		add_MI_institution_penalty_bypass_effect = { level = $level$ amount = $amount$ }
+	}
+}
+
+### Bypass an xp penalty for the next MI level
+#I'm a bit iffy on this
+add_bypass_2_to_next_MI_advance_effect = {
+	add_next_MI_institution_penalty_bypass_effect = { full = yes amount = 2 }
+}
+add_partial_penalty_bypass_to_next_MI_advance_effect = {
+	add_next_MI_institution_penalty_bypass_effect = { partial = yes amount = 1 }
+}
+add_next_MI_institution_penalty_bypass_effect = { #Don't use this directly, #<full/partial> = yes
+	custom_tooltip = add_next_bypass_tt
+	if = {
+		limit = { has_magical_infrastructure_level_0 = yes }
+		[[full]
+			add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 1 }
+		]
+		[[partial]
+			if = {
+				limit = { NOT = { has_institution = renaissance } }
+				add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 1 }
+			}
+		]
+	}
+	else_if = {
+		limit = { exactly_magical_infrastructure_level = { level = 1 } }
+		[[full]
+			add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 2 }
+		]
+		[[partial]
+			if = {
+				limit = { NOT = { has_institution = new_world_i } }
+				add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 2 }
+			}
+		]
+	}
+	else_if = {
+		limit = { exactly_magical_infrastructure_level = { level = 2 } }
+		[[full]
+			add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 3 }
+		]
+		[[partial]
+			if = {
+				limit = { NOT = { has_institution = printing_press } }
+				add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 3 }
+			}
+		]
+	}
+	else_if = {
+		limit = { exactly_magical_infrastructure_level = { level = 3 } }
+		[[full]
+			add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 4 }
+		]
+		[[partial]
+			if = {
+				limit = { NOT = { has_institution = global_trade } }
+				add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 4 }
+			}
+		]
+	}
+	else_if = {
+		limit = { exactly_magical_infrastructure_level = { level = 4 } }
+		custom_tooltip = MI_max_already_achieved #say something, do nothing
+	}
+}
+
+calc_MI_xp_penalty_for_advancement_effect = { #target_level, penalty
+	custom_tooltip = MI_$target_level$_missing_$penalty$_institution_tt
+	add_country_modifier = { name = magical_infrastructure_institution_$penalty$_penalty duration = -1 desc = until_advancement_concludes } 
+}
+
+remove_infrastructure_institution_penalty = { #For when you want to fully remove the penalty as a reward
+	reduce_infrastructure_institution_penalty = yes
+	reduce_infrastructure_institution_penalty = yes
 }
 
 ai_magic_xp_pulse = {
@@ -1321,6 +1442,21 @@ monthly_magic_upkeep_pulse = {
 			}
 			update_magic_ui_experience_modifiers = yes
 		}
+	}
+}
+
+ban_necromancy = {
+	[[country]
+		set_country_flag = banned_necromancy
+		custom_tooltip = ban_necromancy_country_tt
+	]
+	[[ruler]
+		set_ruler_flag = banned_necromancy
+		custom_tooltip = ban_necromancy_ruler_tt
+	]
+	if = {
+		limit = { is_overall_advancing_school = { school = necromancy } }
+		magic_advancement_abort_all_effect = yes
 	}
 }
 
@@ -1497,7 +1633,7 @@ give_random_spell_school = {
 		1 = { trigger = { NOT = { has_$type$_flag = enchantment_3 } } magic_school_level_up = { type = $type$ school = enchantment } }
 		1 = { trigger = { NOT = { has_$type$_flag = evocation_3 } } magic_school_level_up = { type = $type$ school = evocation } }
 		1 = { trigger = { NOT = { has_$type$_flag = illusion_3 } } magic_school_level_up = { type = $type$ school = illusion } }
-		1 = { trigger = { NOT = { has_$type$_flag = necromancy_3 } } magic_school_level_up = { type = $type$ school = necromancy } }
+		1 = { trigger = { NOT = { has_$type$_flag = necromancy_3 } has_not_banned_necromancy = yes } magic_school_level_up = { type = $type$ school = necromancy } }
 		1 = { trigger = { NOT = { has_$type$_flag = transmutation_3 } } magic_school_level_up = { type = $type$ school = transmutation } }
 	}
 }
@@ -1530,8 +1666,20 @@ magic_setup_give_random_level = { #lacks most of the functionality of give_rando
 		1 = { trigger = { NOT = { has_$type$_flag = enchantment_3 } } magic_setup_level_up = { type = $type$ school = enchantment } }
 		1 = { trigger = { NOT = { has_$type$_flag = evocation_3 } } magic_setup_level_up = { type = $type$ school = evocation } }
 		1 = { trigger = { NOT = { has_$type$_flag = illusion_3 } } magic_setup_level_up = { type = $type$ school = illusion } }
-		1 = { trigger = { NOT = { has_$type$_flag = necromancy_3 } } magic_setup_level_up = { type = $type$ school = necromancy } }
+		1 = { trigger = { NOT = { has_$type$_flag = necromancy_3 } has_not_banned_necromancy = yes } magic_setup_level_up = { type = $type$ school = necromancy } }
 		1 = { trigger = { NOT = { has_$type$_flag = transmutation_3 } } magic_setup_level_up = { type = $type$ school = transmutation } }
+	}
+}
+magic_setup_give_random_legendary_school = { #Includes Necromancy
+	random_list =  {
+		1 = { trigger = { NOT = { has_$type$_flag = abjuration_3 } } set_$type$_flag = abjuration_3 }
+		1 = { trigger = { NOT = { has_$type$_flag = conjuration_3 } } set_$type$_flag = conjuration_3 }
+		1 = { trigger = { NOT = { has_$type$_flag = divination_3 } } set_$type$_flag = divination_3 }
+		1 = { trigger = { NOT = { has_$type$_flag = enchantment_3 } } set_$type$_flag = enchantment_3 }
+		1 = { trigger = { NOT = { has_$type$_flag = evocation_3 } } set_$type$_flag = evocation_3 }
+		1 = { trigger = { NOT = { has_$type$_flag = illusion_3 } } set_$type$_flag = illusion_3 }
+		1 = { trigger = { NOT = { has_$type$_flag = necromancy_3 } has_not_banned_necromancy = yes } set_$type$_flag = necromancy_3 }
+		1 = { trigger = { NOT = { has_$type$_flag = transmutation_3 } } set_$type$_flag = transmutation_3 }
 	}
 }
 
@@ -1554,6 +1702,12 @@ give_magic_starting_schools = { #Types are ruler, heir, and consort in this cont
 				1 = { set_$type$_flag = illusion_3 }
 				1 = { set_$type$_flag = transmutation_3 }
 			}
+		}
+
+		if = {
+			limit = { has_country_flag = next_powerful_mage_bonus_legendary_school }
+			magic_setup_give_random_legendary_school = { type = $type$ }
+			clr_country_flag = next_powerful_mage_bonus_legendary_school
 		}
 		
 		random_list = { #The vagaries of talent
@@ -1931,6 +2085,12 @@ define_type_to_war_wizard_effect = { #works on heir and ruler, else statements i
 		custom_tooltip = war_wizard_mil_0_base_stats_tt
 	}
 
+	if = {
+		limit = { at_least_magic_project_level = { project = battlemage_academy level = 3 } }
+		add_country_modifier = { name = ruler_war_wizard_max_academy_mod duration = 1 hidden = yes } #+1 Shock
+		custom_tooltip = war_wizard_max_academy_tt
+	}
+
 	if = { #Wyvernheart
 		limit = { has_estate_privilege = estate_wyvernheart_floodborn_council }
 		add_country_modifier = { name = wyvernheart_war_wizard_mod duration = 1 hidden = yes } #+1 maneuver
@@ -2048,7 +2208,6 @@ estate_action_RECRUIT_COURT_MAGE = {
 		estate = estate_mages
 		loyalty = -10
 	}
-	decrease_estate_witch_king_points = { size = medium }
 }
 
 define_war_wizard = { #Allows access to a few pre-defined war wizards.
@@ -2079,27 +2238,27 @@ define_war_wizard_sub_effect = { #the levels here correspond with the war wizard
 create_war_wizard = { #the more general war-wizard function
 	custom_tooltip = create_war_wizard_tt
 	hidden_effect = {
-		set_saved_name = { key = male_name type = leader }
-		set_saved_name = { key = female_name type = leader female = yes }
+		set_saved_name = { key = ww_male_name type = leader }
+		set_saved_name = { key = ww_female_name type = leader female = yes }
 	}
 
 	if = { #all the tooltips go after this block!
 		limit = { exactly_magic_project_level = { project = battlemage_academy level = 3 } }
-		add_country_modifier = { name = war_wizard_3_mod duration = 1 hidden = yes } #3/8/7/4
+		add_country_modifier = { name = war_wizard_3_mod duration = 1 hidden = yes } #4/9/7/4
 		custom_tooltip = war_wizard_level_3_base_stats_tt
 	}
 	else_if = {
 		limit = { exactly_magic_project_level = { project = battlemage_academy level = 2 } }
-		add_country_modifier = { name = war_wizard_2_mod duration = 1 hidden = yes } #2/8/5/3
+		add_country_modifier = { name = war_wizard_2_mod duration = 1 hidden = yes } #2/8/6/3
 		custom_tooltip = war_wizard_level_2_base_stats_tt
 	}
 	else_if = {
 		limit = { exactly_magic_project_level = { project = battlemage_academy level = 1 } }
-		add_country_modifier = { name = war_wizard_1_mod duration = 1 hidden = yes } #1/7/4/2
+		add_country_modifier = { name = war_wizard_1_mod duration = 1 hidden = yes } #1/7/5/2
 		custom_tooltip = war_wizard_level_1_base_stats_tt
 	}
 	else = {
-		add_country_modifier = { name = war_wizard_0_mod duration = 1 hidden = yes } #0/7/2/1
+		add_country_modifier = { name = war_wizard_0_mod duration = 1 hidden = yes } #0/7/3/1
 		custom_tooltip = war_wizard_level_0_base_stats_tt
 	}
 
@@ -2112,19 +2271,19 @@ create_war_wizard = { #the more general war-wizard function
 	hidden_effect = { #We need the PRNG for situations like the evocation project
 		if = {
 			limit = { culture_is_harpy = yes }
-			create_general = { name = female_name female = yes }
+			create_general = { name = ww_female_name female = yes }
 		}
 		else = {
 			randnum_effect = {
 				max = 2
-				case1 = "create_general = { name = male_name }"
-				case2 = "create_general = { name = female_name female = yes }"
+				case1 = "create_general = { name = ww_male_name }"
+				case2 = "create_general = { name = ww_female_name female = yes }"
 			}
 		}
 
 		#Clear names
-		clear_saved_name = male_name
-		clear_saved_name = female_name
+		clear_saved_name = ww_male_name
+		clear_saved_name = ww_female_name
 
 		#Clear war wizard modifiers
 		remove_country_modifier = war_wizard_3_mod
@@ -2446,6 +2605,7 @@ decrease_type_witch_king_points_large = { #4 points
 	}
 }
 clr_type_witch_king_points = {
+	custom_tooltip = clr_$type$_witch_king_points_tt
 	hidden_effect = {
 		clr_$type$_flag = is_infamous_$type$ #We check for this when transferring points
 		set_variable = { $type$_witch_king_points = 0 }
@@ -2584,98 +2744,11 @@ transfer_witch_king_points_from_estate = {
 	transfer_witch_king_points = { from = country to = $to$ }
 }
 
-## Scripted Effects
-##
-#primary scripted effect
-add_MI_institution_penalty_bypass_effect = {
-	hidden_effect = {
-		set_country_flag = bypass_magical_infrastructure_$level$_institution_penalty_$amount$
-	}
-	custom_tooltip = bypass_MI_$level$_penalty_$amount$_tt #"You will suffer no/half experience penalty when unlocking MI X"
-}
-
-## Bypass an xp penalty for a specific MI level
-add_amount_MI_X_institution_penalty_bypass = {
-	if = {
-		limit = { at_least_magical_infrastructure_level_$level$ = yes }
-		custom_tooltip = bypass_MI_$level$_penalty_$amount$_tt #Say what it would have done
-		custom_tooltip = MI_$level$_already_achieved #say something, do nothing
-	}
-	else = {
-		add_MI_institution_penalty_bypass_effect = { level = $level$ amount = $amount$ }
-	}
-}
-
-### Bypass an xp penalty for the next MI level
-#I'm a bit iffy on this
-add_bypass_2_to_next_MI_advance_effect = {
-	add_next_MI_institution_penalty_bypass_effect = { full = yes amount = 2 }
-}
-add_partial_penalty_bypass_to_next_MI_advance_effect = {
-	add_next_MI_institution_penalty_bypass_effect = { partial = yes amount = 1 }
-}
-add_next_MI_institution_penalty_bypass_effect = { #Don't use this directly, #<full/partial> = yes
-	custom_tooltip = add_next_bypass_tt
-	if = {
-		limit = { has_magical_infrastructure_level_0 = yes }
-		[[full]
-			add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 1 }
-		]
-		[[partial]
-			if = {
-				limit = { NOT = { has_institution = renaissance } }
-				add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 1 }
-			}
-		]
-	}
-	else_if = {
-		limit = { exactly_magical_infrastructure_level = { level = 1 } }
-		[[full]
-			add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 2 }
-		]
-		[[partial]
-			if = {
-				limit = { NOT = { has_institution = new_world_i } }
-				add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 2 }
-			}
-		]
-	}
-	else_if = {
-		limit = { exactly_magical_infrastructure_level = { level = 2 } }
-		[[full]
-			add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 3 }
-		]
-		[[partial]
-			if = {
-				limit = { NOT = { has_institution = printing_press } }
-				add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 3 }
-			}
-		]
-	}
-	else_if = {
-		limit = { exactly_magical_infrastructure_level = { level = 3 } }
-		[[full]
-			add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 4 }
-		]
-		[[partial]
-			if = {
-				limit = { NOT = { has_institution = global_trade } }
-				add_amount_MI_X_institution_penalty_bypass = { amount = $amount$ level = 4 }
-			}
-		]
-	}
-	else_if = {
-		limit = { exactly_magical_infrastructure_level = { level = 4 } }
-		custom_tooltip = MI_max_already_achieved #say something, do nothing
-	}
-}
-
-calc_MI_xp_penalty_for_advancement_effect = { #target_level, penalty
-	custom_tooltip = MI_$target_level$_missing_$penalty$_institution_tt
-	add_country_modifier = { name = magical_infrastructure_institution_$penalty$_penalty duration = -1 desc = until_advancement_concludes } 
-}
-
-remove_infrastructure_institution_penalty = { #For when you want to fully remove the penalty as a reward
-	reduce_infrastructure_institution_penalty = yes
-	reduce_infrastructure_institution_penalty = yes
-}
+### STOP.
+### IF YOU ARE HERE, IT IS BECAUSE YOU ARE TRYING TO ADD A NEW SCRIPTED EFFECT TO THE SYSTEM
+### BEFORE BLINDLY ADDING IT TO THE BOTTOM OF THE LIST, ASK YOURSELF:
+### "IS THERE A CATEGORY TO WHICH THIS EFFECT MIGHT BELONG?"
+### THE ANSWER, DEAR READER,
+### IS YES.
+### IF YOU ADD A SCRIPTED EFFECT HERE NOT RELATED TO INFAMY,
+### I WILL BE VERY DISAPPOINTED.

@@ -595,6 +595,20 @@ custom_button = {
 		religion = shadow_pact
 	}
 	trigger = {
+		if = {
+			limit = {
+				has_country_flag = shadow_pact_double_cost_reroll
+			}
+			church_power = 50
+		}
+		else_if = {
+			limit = {
+				has_country_flag = shadow_pact_no_cost_reroll
+			}
+		}
+		else = {
+			church_power = 25
+		}
 		custom_trigger_tooltip = {
 			tooltip = shadow_pact_can_reroll_portent_tt
 			shadow_pact_can_reroll = yes
@@ -606,6 +620,20 @@ custom_button = {
 		}
 	}
 	effect = {
+		if = {
+			limit = {
+				has_country_flag = shadow_pact_double_cost_reroll
+			}
+			add_church_power = -50
+		}
+		else_if = {
+			limit = {
+				has_country_flag = shadow_pact_no_cost_reroll
+			}
+		}
+		else = {
+			add_church_power = -25
+		}
 		hidden_effect = {
 			capital_scope = {
 				add_province_triggered_modifier = shadow_pact_reroll_randomisation_ptm
@@ -2442,9 +2470,9 @@ custom_icon = {
 	name = noukahi_pantheon_pilgrimage_unique_button_2_gilded
 	potential = { has_country_flag = np_temple_ruby_bronze_pilgrimage_complete }
 }
-custom_button = {#special unused
+custom_button = {#Zena Effelai Pilgrimage
 	name = noukahi_pantheon_pilgrimage_unique_button_3
-	tooltip = ""
+	tooltip = effelai_superregion
 	potential = { has_country_flag = noukahi_pantheon_pilgrimage_unique_open }
 	frame = {
 		number = 3
@@ -2453,18 +2481,64 @@ custom_button = {#special unused
 	trigger = {
 		np_can_go_on_pilgrimmage = yes
 		NOT = { religion = elikhetist }
-		#special condition here
-		always = no #remove when implemented
-	}
+		if = {
+			limit = {
+				has_global_flag = effelai_pilgrimage_available
+			}
+			if = {
+				limit = {
+					NOT = {
+						exists = G15 #Sel'Parura
+					}
+				}
+				2378 = { #Andwohii
+					np_holy_site_is_available_for_pilgrimmage = yes
+				}
+			}
+			else = {
+				G15 = { #Sel'Parura
+					OR = {
+						religion = noukahi_pantheon
+						is_subject_of = ROOT
+						alliance_with =  ROOT
+						has_opinion = {
+							who = ROOT
+							value = 100
+						}
+					}
+				}
+				OR = {
+					medium_tolerance_ruinborn_race_trigger = yes
+					high_tolerance_ruinborn_race_trigger = yes
+				}
+			}
+		}
+		else = {
+			custom_trigger_tooltip = {
+				tooltip = zena_np_effelai_pilgrimage_tt
+				always = no
+			}	
+		}
+	}	
+
 	effect = {
-		#set the flag here
-		#np_pilgrimmage_setup = yes
+		set_ruler_flag = np_effelai
+		np_pilgrimmage_setup = yes
+		if = {
+			limit = {
+				has_country_flag = noukahi_effelai_pilgrimage_completed_at_least_once
+			}
+			custom_tooltip = noukahi_effelai_tooltip_full_effect_tooltip
+		}
+		else = {
+			custom_tooltip = noukahi_effelai_tooltip_cryptic_effect_tooltip
+		}
 	} #put the effect here
 }
-# custom_icon = {
-# 	name = noukahi_pantheon_pilgrimage_unique_button_3_gilded
-# 	potential = { has_country_flag = np_XXXXXXXX_pilgrimage_complete }
-# }
+custom_icon = {
+ 	name = noukahi_pantheon_pilgrimage_unique_button_3_gilded
+ 	potential = { has_ruler_modifier = np_effelai_pilgrimage }
+}
 custom_button = {#special unused
 	name = noukahi_pantheon_pilgrimage_unique_button_4
 	tooltip = ""

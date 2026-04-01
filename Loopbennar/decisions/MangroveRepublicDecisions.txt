@@ -1,0 +1,124 @@
+country_decisions = {
+	mangrove_shift_focus = {
+		potential = {
+			ai = no
+			has_government_attribute = mangrove_republic
+			has_global_flag = mangrove_inward_focus
+		}
+		allow = {
+			hidden_trigger = {
+				ai = no
+				has_government_attribute = mangrove_republic
+				has_global_flag = mangrove_inward_focus
+			}
+			anb_require_all_power = { VAL = 150 }
+			custom_trigger_tooltip = {
+				tooltip = mangrove_shift_focus_trigger_tt
+				NOT = { has_global_flag = mangrove_shift_focus_taken }
+			}
+		}
+		effect = {
+			anb_remove_all_power = { VAL = 150 }
+			set_global_flag = mangrove_shift_focus_taken
+			hidden_effect = {
+				REB = {
+					country_event = {
+						id = mangrove.106
+						days = 30
+					}
+				}
+			}
+			custom_tooltip = mangrove_shift_focus_tt
+		}
+	}
+
+	mangrove_construct_punia_logi = {
+		potential = {
+			has_government_attribute = mangrove_republic
+			has_global_flag = mangrove_dip_vying
+			has_global_flag = mangrove_vying_for_dominance
+		}
+		allow = {
+			hidden_trigger = {
+				has_government_attribute = mangrove_republic
+				has_global_flag = mangrove_dip_vying
+				has_global_flag = mangrove_vying_for_dominance
+			}
+			OR = {
+				treasury = 100
+				AND = {
+					check_variable = { mangrove_influence = 5 }
+					OR = {
+						num_of_allies = 2
+						custom_trigger_tooltip = {
+							tooltip = mangrove_finished_bio_infra_tt
+							any_owned_province = {
+								has_province_flag = mangrove_bio_infra_finished
+							}
+						}
+					}
+				}
+			}
+			custom_trigger_tooltip = {
+				tooltip = mangrove_punia_logi_cooldown_tt
+				NOT = { has_country_modifier = mangrove_punia_logi_cooldown }
+			}
+		}
+		effect = {
+			country_event = { id = mangrove.5 }
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+	mangrove_donate_reclamation = {
+		potential = {
+			has_government_attribute = mangrove_republic
+			has_global_flag = mangrove_reclaiming
+		}
+		allow = {
+			hidden_trigger = {
+				has_government_attribute = mangrove_republic
+			}
+			custom_trigger_tooltip = {
+				tooltip = mangrove_donate_reclamation_trigger_tt
+				has_global_flag = mangrove_reclaiming
+			}
+			if = {
+				limit = {
+					has_country_flag = mangrove_donation_cooldown
+				}
+				had_country_flag = {
+					flag = mangrove_donation_cooldown
+					days = 730 # 2 years
+				}
+			}
+		}
+		effect = {
+			country_event = { id = mangrove.3 }
+			if = {
+				limit = { ai = yes }
+				set_country_flag = mangrove_donation_cooldown
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+	mangrove_display_influence = {
+		major = yes
+		potential = {
+			ai = no
+			has_government_attribute = mangrove_republic
+			NOT = { has_global_flag = mangrove_reclamation_done }
+		}
+		allow = {
+			always = no
+		}
+		effect = {
+			custom_tooltip = mangrove_display_influence_tt
+		}
+	}
+}

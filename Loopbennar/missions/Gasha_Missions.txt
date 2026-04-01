@@ -1,0 +1,708 @@
+gasha_1 = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L76 } 
+
+	L76_the_source_of_corruption = {
+		icon = mission_alone_in_the_wood
+		position = 3
+		required_missions = { L76_claim_the_jungle } 
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = adgur_area
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 5971
+					owned_by = ROOT
+					NOT = { has_fort_building_trigger = yes }
+				}
+			}
+		} 
+
+		trigger = {
+			adgur_area = { type = all owned_by = ROOT }
+			5971 = { has_fort_building_trigger = yes }
+			OR = {
+				NOT = { has_discovered = 6730 }
+				S70 = { has_50_opinion_improved_relation = { target = ROOT } }
+			}
+		} 
+
+		effect = {
+			5971 = {
+				add_building_construction = { building = ramparts speed = 1 cost = 0 }
+				add_province_modifier = { name = L76_claiming_the_cursed_spire duration = -1 desc = until_great_project_upgrades }
+			}
+			S70 = { add_truce_with = ROOT }
+		}
+	}
+
+	L76_ritual_frenzy = {
+		icon = mission_dark_ritual
+		position = 5
+		required_missions = { L76_shade_of_the_cursed_spire } 
+		provinces_to_highlight = {
+			is_capital_of = ROOT
+			NOT = { has_building = mage_tower }
+		} 
+
+		trigger = {
+			OR = {
+				capital_scope = { has_building = mage_tower }
+				treasury = 250
+			}
+			estate_loyalty = { estate = estate_mages loyalty = 60 }
+			num_of_estate_agendas_completed = { estate = estate_mages value = 1 }
+			has_spent_amount_mana_on_spells = {
+				school = evocation
+				amount = 100
+			}
+			has_spent_amount_mana_on_spells = {
+				school = transmutation
+				amount = 100
+			}
+		} 
+
+		effect = {
+			simple_dynamic_effect = {
+				first_custom_tooltip = L76_ritual_frenzy_first_custom_tooltip_tt
+				first_limit = "capital_scope = { has_building = mage_tower }"
+				first_effect = "create_war_wizard = yes"
+				second_effect = "add_treasury = -250 capital_scope = { add_building = mage_tower }"
+			}
+			custom_tooltip = L76_ritual_frenzy_rip_and_tear_upgrade
+			hidden_effect = { 
+				set_country_flag = L76_rip_and_tear_upgrade
+				set_variable = { which = ripAndTearBattlesWon value = 0 }
+			}
+		} 
+	}
+}
+gasha_2 = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L76 } 
+
+	L76_bloodlet = {
+		icon = mission_blood_sacrifice
+		position = 1
+
+		trigger = {
+			army_size_percentage = 0.9
+			num_of_generals = 1
+			OR = {
+				has_personal_deity = the_onslaught
+				has_personal_deity = the_mistake
+			}
+		} 
+
+		effect = {
+			zatal_area = { add_permanent_claim = ROOT }
+			add_country_modifier = { name = L76_pain_of_the_jungle duration = 9125 }
+		} 
+	}
+
+	L76_claim_the_jungle = {
+		icon = mission_jungle_pilgrim
+		position = 2
+		required_missions = { L76_bloodlet } 
+		provinces_to_highlight = {
+			area = zatal_area
+			NOT = { owned_by = ROOT }
+		} 
+
+		trigger = {
+			zatal_area = { type = all owned_by = ROOT }
+			custom_trigger_tooltip = {
+				tooltip = L76_claim_the_jungle_ctt
+				check_variable = { which = claw_strength which = canvas_strength }
+			}
+		} 
+
+		effect = {
+			custom_tooltip = L76_claim_the_jungle_effect_tt
+			hidden_effect = {
+				zatal_area = {
+					add_nationalism = -30
+					remove_random_development = yes
+				}
+				ashhana_blood_curse_add_control_by_source = { claw_strength = 1.125 }
+				add_treasury = 75
+			}
+			adgur_area = { add_permanent_claim = ROOT }
+		}  
+	}
+
+	L76_shade_of_the_cursed_spire = {
+		icon = mission_moon_moon
+		position = 4
+		required_missions = {
+			L76_the_source_of_corruption
+			L76_strike_the_bards
+		}
+		provinces_to_highlight = {
+			province_id = 5971
+		} 
+
+		trigger = {
+			has_mana = { amount = 50 }
+			has_estate_privilege = estate_burghers_gasabi_mutation
+			5971 = { num_of_units_in_province = { amount = 5 who = ROOT } }
+		}
+
+		effect = {
+			change_mana = { amount = -50 }
+			custom_tooltip = L76_shade_of_the_cursed_spire_effect_tt
+			define_advisor = {
+				type = court_mage
+				skill = 2
+				culture = ahzdara_lizardfolk
+				religion = shadow_pact
+				cost_multiplier = 0.25
+			}
+			hidden_effect = {
+				5971 = { kill_units = { who = ROOT amount = 5 } }
+				every_owned_province = { remove_claim = S70 }
+			}
+		}
+	}
+
+	L76_prophesised_calamity = {
+		icon = mission_destroyed_city
+		position = 6
+		required_missions = {
+			L76_ritual_frenzy
+			L76_the_spear_of_agony
+		}
+		provinces_to_highlight = {
+			owned_by = L95
+			culture = ashhana_lizardfolk
+		} 
+
+		trigger = {
+			OR = {
+				has_won_war_against = { who = L95 max_years_since = 10 }
+				L95 = {
+					OR = {
+						NOT = { any_owned_province = { culture = ashhana_lizardfolk } }
+						exists = no
+					}
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 5
+				culture = ashhana_lizardfolk
+				has_manpower_building_trigger = yes
+			}
+		}
+
+		effect = {
+			custom_tooltip = L76_prophesised_calamity_effect_tt
+			hidden_effect = {
+				set_dynasty = "Shadowfang"
+				distribute_development = {
+					amount = 10
+					type = manpower
+					limit = "culture = ashhana_lizardfolk"
+				}
+				pick_best_provinces = {
+					5 = yes
+					scope = every_owned_province
+					scale = higher_development_than
+					global_trigger = "culture = ashhana_lizardfolk"
+					event_target_name = gasha_manpower_building
+				}
+				event_target:gasha_manpower_building_1 = { add_or_upgrade_manpower_building = yes }
+				event_target:gasha_manpower_building_2 = { add_or_upgrade_manpower_building = yes }
+				event_target:gasha_manpower_building_3 = { add_or_upgrade_manpower_building = yes }
+				event_target:gasha_manpower_building_4 = { add_or_upgrade_manpower_building = yes }
+				event_target:gasha_manpower_building_5 = { add_or_upgrade_manpower_building = yes }
+			}
+		}
+	}
+}
+gasha_3 = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L76 } 
+
+	L76_bad_blood = {
+		icon = mission_dark_book
+		position = 2
+		required_missions = {
+			L76_bloodlet
+			L76_hidden_whispers
+		}
+		provinces_to_highlight = {
+			owner = {
+				culture = ashhana_lizardfolk
+				NOT = { has_spy_network_from = { who = ROOT value = 20 } }
+			}
+		} 
+
+		trigger = {
+			calc_true_if = {
+				amount = 2
+				desc = L76_bad_blood_ctt
+				all_known_country = {
+					primary_culture = ashhana_lizardfolk
+					has_spy_network_from = { who = ROOT value = 20 }
+				}
+			}
+			OR = {
+				spymaster = 1
+				AND = {
+					has_dip_advisor = yes
+					dip_power = 50
+				}
+			}
+		} 
+
+		effect = {
+			complex_dynamic_effect = {
+				first_custom_tooltip = L76_bad_blood_first_custom_tooltip_tt
+				first_limit = "NOT = { spymaster = 1 }"
+				first_effect = "add_dip_power = -50"
+			}
+			custom_tooltip = L76_bad_blood_effect_tt
+			hidden_effect = {
+				force_add_ruler_personality = { personality = intricate_web_weaver_personality }
+				every_known_country = {
+					limit = {
+						ai = yes
+						primary_culture = ashhana_lizardfolk
+						has_spy_network_from = { who = ROOT value = 20 }
+					}
+					every_ally = {
+						add_trust = {
+							who = PREV
+							value = -75
+						}
+					}
+					ROOT = { ashhana_blood_curse_add_control_by_source = { claw_strength = 0.75 } }
+				}
+			}
+		} 
+	}
+
+	L76_strike_the_bards = {
+		icon = mission_steppe_warriors
+		position = 3
+		required_missions = { L76_bad_blood } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			5985 = { owned_by = ROOT }
+			has_estate_privilege = estate_nobles_neighbor_raids
+			OR = {
+				has_reform = war_as_art
+				has_reform = rally_to_the_roar
+			}
+			OR = {
+				has_won_war_against = { who = L80 max_years_since = 10 }
+				L80 = { exists = no }
+			}
+		} 
+
+		effect = {
+			country_event = { id = flavour_gasha.2 }
+			custom_tooltip = L76_strike_the_bards_effect_ei
+		} 
+	}
+
+	L76_gashing_wound = {
+		icon = mission_blood_for_the_gods
+		position = 4
+		required_missions = {
+			L76_strike_the_bards
+			L76_express_the_pain
+		}
+		provinces_to_highlight = { area = zulbur_area } 
+
+		trigger = {
+			num_of_mamluks = 4
+			zulbur_area = {
+				type = all
+				owned_by = ROOT
+				OR = {
+					has_province_modifier = province_razed
+					is_core = ROOT
+				}
+				OR = {
+					NOT = { local_autonomy = 25 }
+					has_province_modifier = autonomy_decreased
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = L76_gashing_wound_effect_tt
+			hidden_effect = {
+				taneyas_superregion = {
+					limit = { culture = ashhana_lizardfolk }
+					add_permanent_claim = ROOT
+				}
+			}
+			add_country_modifier = {
+				name = L76_druidic_charms
+				duration = 5475
+			}
+		} 
+	}
+
+	L76_the_spear_of_agony = {
+		icon = mission_forge
+		position = 5
+		required_missions = {
+			L76_shade_of_the_cursed_spire
+			L76_gashing_wound
+		}
+		provinces_to_highlight = {
+			province_id = 5996
+			NOT = { has_production_building_trigger = yes }
+		} 
+
+		trigger = {
+			OR = {
+				treasury = 125
+				5996 = { NOT = { has_production_building_trigger = yes } }
+			}
+			has_institution = feudalism
+			capital_scope = { provincial_institution_progress = { which = renaissance value = 25 } }
+			custom_trigger_tooltip = {
+				tooltip = L76_the_spear_of_agony_ctt
+				check_variable = { which = gashaExploitedDevelopmentCounter value = 5}
+			}
+		} 
+
+		effect = {
+			complex_dynamic_effect = {
+				first_custom_tooltip = L76_the_spear_of_agony_first_custom_tooltip_tt
+				first_limit = "5996 = { NOT = { has_production_building_trigger = yes } }"
+				first_effect = "add_treasury = -125 custom_tooltip = L76_the_spear_of_agony_first_effect_tt hidden_effect = { 5996 = { add_or_upgrade_production_building = yes } }"
+			}
+			country_event = { id = flavour_gasha.3 }
+			custom_tooltip = L76_the_spear_of_agony_effect_ei
+		} 
+	}
+
+	L76_sanctified_slaughter = {
+		icon = mission_jungle
+		position = 6
+		required_missions = {
+			L76_the_spear_of_agony
+			L76_silence_of_songs
+			L76_cold_blooded
+		}
+
+		trigger = {
+			num_of_cities = 25
+			num_of_mamluks = 8
+			OR = {
+				AND = {
+					adm_power = 100
+					dip_power = 100
+					mil_power = 100
+				}
+				power_projection = 25
+			}
+			custom_trigger_tooltip = {
+				tooltip = ashhana_free_our_souls_requirement_tt.1
+				has_country_flag = ashhana_the_agony_of_expression_complete
+			}
+		} 
+
+		effect = {
+			country_event = { id = flavour_gasha.6 }
+			custom_tooltip = L76_sanctified_slaughter_effect_ei
+		} 
+	}
+}
+gasha_4 = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L76 } 
+
+	L76_hidden_whispers = {
+		icon = mission_whisper
+		position = 1
+
+		trigger = {
+			has_consort = yes
+			has_estate_privilege = estate_mages_seek_magical_advice
+		} 
+
+		effect = {
+			country_event = { id = flavour_gasha.1 }
+			custom_tooltip = L76_hidden_whispers_effect_ei
+		} 
+	}
+
+	L76_focus_casting = {
+		icon = mission_mage_general
+		position = 2
+		required_missions = { L76_hidden_whispers }  
+
+		trigger = {
+			5974 = { num_of_times_improved_by_owner = 3 }
+			has_cast_longstrider = yes
+			OR = {
+				is_overall_evocation_level_1_minimum = yes
+				is_overall_transmutation_level_1_minimum = yes
+			}
+		} 
+
+		effect = {
+			5974 = { add_province_modifier = { name = L76_bloody_jungle duration = -1 } }
+			custom_tooltip = L76_focus_casting_effect_tt
+			hidden_effect = {
+				set_country_flag = L76_bloody_jungle_flag
+				extend_country_modifier = {
+					name = transmutation_0_longstrider_mod
+					duration = 3650
+				}
+			}
+		} 
+	}
+
+	L76_express_the_pain = {
+		icon = mission_blackpurgis
+		position = 3
+		required_missions = {
+			L76_bad_blood
+			L76_focus_casting
+		}
+
+		trigger = {
+			OR = {
+				temple = 2
+				treasury = 250
+			}
+			custom_trigger_tooltip = {
+				tooltip = L76_express_the_pain_ctt
+				has_country_flag = had_zaradyrra_festival
+			}
+			OR = {
+				has_reform = festivals_of_blood
+				AND = {
+					has_reform_on_level = 3
+					government_reform_progress = 50
+				}
+			}
+		} 
+
+		effect = {
+			complex_dynamic_effect_without_alternative = {
+				first_custom_tooltip = L76_express_the_pain_fourth_custom_tooltip_tt
+				first_effect = "add_treasury = -250 custom_tooltip = L76_express_the_pain_fourth_effect_tt hidden_effect = { random_owned_province = { limit = { has_tax_building_trigger = no } add_building = temple } random_owned_province = { limit = { has_tax_building_trigger = no } add_building = temple } }"
+			}
+			simple_dynamic_effect = {
+				first_custom_tooltip = L76_express_the_pain_first_custom_tooltip_tt
+				first_limit = "has_reform = festivals_of_blood"
+				first_effect = "add_stability_or_adm_power = yes"
+				second_limit = "NOT = { has_reform = festivals_of_blood }"
+				second_effect = "change_government_reform_progress = -50 custom_tooltip = L76_express_the_pain_second_effect_tt hidden_effect = { add_government_reform = festivals_of_blood }"
+			}
+			custom_tooltip = L76_express_the_pain_third_effect_tt
+			hidden_effect = {
+				change_variable = {
+					which = ashhana_festivals_of_blood_var
+					value = 2
+				}
+				zaradyrra_fire_random_festival_effect = yes
+			}
+		} 
+	}
+
+	L76_silence_of_songs = {
+		icon = mission_goddess_heart
+		position = 5
+		required_missions = {
+			L76_gashing_wound
+			L76_tear_them_apart
+		}
+		provinces_to_highlight = {
+			owner = {
+				primary_culture = ashhana_lizardfolk
+				NOT = { tag = ROOT }
+			}
+		} 
+
+		trigger = {
+			NOT = { any_known_country = { primary_culture = ashhana_lizardfolk } }
+			teranak_area = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					owner = {
+						NOT = { army_size = ROOT }
+						has_been_insulted_by_root = yes
+					}
+				}
+			}
+			zatsuti_tara_area = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					owner = {
+						NOT = { army_size = ROOT }
+						has_been_insulted_by_root = yes
+					}
+				}
+			}
+			yassa_tara_area = {
+				type = all
+				OR = {
+					owned_by = ROOT
+					owner = {
+						NOT = { army_size = ROOT }
+						has_been_insulted_by_root = yes
+					}
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = L76_silence_of_songs_effect_tt
+			hidden_effect = {
+				add_or_extend_country_modifier = {
+					name = L76_druidic_charms
+					duration = 5475
+				}
+				every_owned_province = {
+					limit = { has_province_modifier = province_razed }
+					L76 = {
+						change_government_reform_progress = 5
+						add_treasury = 25
+					}
+				}
+			}
+			teranak_area = { add_permanent_claim = ROOT }
+			zatsuti_tara_area = { add_permanent_claim = ROOT }
+			yassa_tara_area = { add_permanent_claim = ROOT }
+		} 
+	}
+}
+gasha_5 = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = L76 } 
+
+	L76_tear_them_apart = {
+		icon = mission_skull
+		position = 4
+		required_missions = { L76_express_the_pain } 
+		provinces_to_highlight = {  } 
+
+		trigger = {
+			grown_by_development = 50
+			custom_trigger_tooltip = {
+				tooltip = L76_tear_them_apart_ctt_1
+				all_known_country = {
+					OR = {
+						NOT = { primary_culture = ashhana_lizardfolk }
+						has_been_eclipsed_by = ROOT
+						NOT = { army_size = ROOT }
+					}
+				}
+			}
+			if = {
+				limit = { any_known_country = { primary_culture = ashhana_lizardfolk } }
+				custom_trigger_tooltip = {
+					tooltip = L76_tear_them_apart_ctt_2
+					all_known_country = {
+						OR = {
+							NOT = { primary_culture = ashhana_lizardfolk }
+							has_spy_network_from = {
+								who = ROOT
+								value = 20
+							}
+						}
+					}
+				}
+			}
+		} 
+
+		effect = {
+			simple_dynamic_effect = {
+				first_custom_tooltip = L76_tear_them_apart_first_custom_tooltip_tt
+				first_limit = "all_known_country = { NOT = { primary_culture = ashhana_lizardfolk } }"
+				first_effect = "add_splendor = 400 change_mana = { amount = 100 } add_power_projection = { type = 10_permanent_power_projection amount = 10 }"
+				second_effect = "custom_tooltip = L76_tear_them_apart_second_effect_tt
+				hidden_effect = { 
+					every_known_country = { 
+						limit = { primary_culture = ashhana_lizardfolk has_spy_network_from = { who = ROOT value = 20 } } 
+						ROOT = { change_mana = { amount = 10 } } 
+						random_neighbor_country = { PREV = { declare_war = PREV } } 
+					} 
+				}"
+			}
+		} 
+	}
+
+	L76_cold_blooded = {
+		icon = mch_bypass_great_wall
+		position = 5
+		required_missions = { L76_tear_them_apart }  
+
+		trigger = {
+			has_government_power = { mechanic_type = ashhana_blood_curse_mechanic power_type = ashhana_blood_curse_control value = 66 }
+			check_variable = { which = claw_strength value = 33 }
+			army_tradition = 30
+			custom_trigger_tooltip = {
+				tooltip = L76_cold_blooded_ctt
+				OR = {
+					AND = { army_tradition = 30 mil_power = 100 }
+					AND = { army_tradition = 35 mil_power = 75 }
+					AND = { army_tradition = 40 mil_power = 50 }
+					AND = { army_tradition = 45 mil_power = 25 }
+					AND = { army_tradition = 50 }
+				}
+			}
+		} 
+
+		effect = {
+			custom_tooltip = L76_cold_blooded_zero_effect_tt
+			hidden_effect = {
+				if = {
+					limit = { NOT = { army_tradition = 50 } }
+					if = {
+						limit = { army_tradition = 45 }
+						add_mil_power = -25
+					}
+					else_if = {
+						limit = { army_tradition = 40 }
+						add_mil_power = -50
+					}
+					else_if = {
+						limit = { army_tradition = 35 }
+						add_mil_power = -75
+					}
+					else = { add_mil_power = -100 }
+				}
+				hidden_effect = { country_event = { id = flavour_gasha.7 days = 30 } }
+			}
+			add_country_modifier = { name = L76_heart_piercing_roar duration = 3650 }
+			simple_dynamic_effect_without_alternative = {
+				first_custom_tooltip = L76_cold_blooded_first_custom_tooltip_tt
+				first_limit = "NOT = { check_variable = { which = canvas_minus_claw value = -10 } }"
+				first_effect = "custom_tooltip = L76_cold_blooded_first_effect_tt hidden_effect = { extend_country_modifier = { name = L76_heart_piercing_roar duration = 3650 } }"
+				second_custom_tooltip = L76_cold_blooded_second_custom_tooltip_tt
+				second_limit = "NOT = { check_variable = { which = canvas_minus_claw value = -20 } }"
+				second_effect = "custom_tooltip = L76_cold_blooded_second_effect_tt hidden_effect = { extend_country_modifier = { name = L76_heart_piercing_roar duration = 3650 } }"
+			}
+		} 
+	}
+}
