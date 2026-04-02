@@ -847,7 +847,6 @@ estate_artificers_organization_feiten_shuimu_cadre = {
 			movement_speed_in_fleet_modifier = 2
 			allowed_rajput_fraction = 0.025
 			naval_maintenance_modifier = 0.5
-			fire_damage_received = 0.2 # Balloons/airships blowing/burning up result in lots of collateral damage
 		}
 	}
 	# 0% to 50% over cap
@@ -872,7 +871,6 @@ estate_artificers_organization_feiten_shuimu_cadre = {
 			movement_speed_in_fleet_modifier = 1.5
 			allowed_rajput_fraction = 0.025
 			naval_maintenance_modifier = 0.5
-			fire_damage_received = 0.2
 		}
 	}
 	# 50% to 100% over cap
@@ -897,7 +895,6 @@ estate_artificers_organization_feiten_shuimu_cadre = {
 			movement_speed_in_fleet_modifier = 1
 			allowed_rajput_fraction = 0.025
 			naval_maintenance_modifier = 0.5
-			fire_damage_received = 0.2
 		}
 	}
 	# >100% over cap
@@ -916,7 +913,6 @@ estate_artificers_organization_feiten_shuimu_cadre = {
 			movement_speed_in_fleet_modifier = 0.5
 			allowed_rajput_fraction = 0.025
 			naval_maintenance_modifier = 0.5
-			fire_damage_received = 0.2
 		}
 	}
 	ai_will_do = {
@@ -1285,10 +1281,8 @@ estate_artificers_monopoly_of_damestear = {
 	is_valid = {
 		has_dlc = "Emperor"
 		damestear = 1
-		NOT = { has_country_flag = artifice_no_base_privileges }
 	}
 	can_select = {
-		
 		custom_trigger_tooltip = {
 			tooltip = unavailable_during_revolution_disaster
 			NOT = { has_disaster = revolution }
@@ -1382,11 +1376,11 @@ estate_artificers_monopoly_of_relics = {
 	loyalty = 0.05
 	is_valid = {
 		has_dlc = "Emperor"
-		NOT = { has_country_flag = artifice_no_base_privileges }
-		precursor_relics = 1
+		any_owned_province = {
+			trade_goods = precursor_relics
+		}
 	}
 	can_select = {
-		
 		custom_trigger_tooltip = {
 			tooltip = unavailable_during_revolution_disaster
 			NOT = { has_disaster = revolution }
@@ -1475,7 +1469,6 @@ estate_artificers_artificer_generals = {
 		NOT = { has_country_flag = artifice_no_base_privileges }
 	}
 	can_select = {
-		
 	}
 	on_granted = {
 		enable_estate_action = {
@@ -1528,7 +1521,6 @@ estate_artificers_relic_fueled_artificery = {
 	loyalty = 0
 	influence = 0.1
 	is_valid = {
-		NOT = { has_country_flag = artifice_no_base_privileges }
 		OR = {
 			num_of_provinces_owned_or_owned_by_subjects_with = {
 				value = 2
@@ -1542,7 +1534,6 @@ estate_artificers_relic_fueled_artificery = {
 		NOT = { has_country_flag = gor_vazumbrog_limited_artificery_privileges }
 	}
 	can_select = {
-		
 		custom_trigger_tooltip = {
 			tooltip = artifice_requires_artificery_only_mode_tt
 			has_country_flag = magic_artificery_artificery_only
@@ -2263,8 +2254,6 @@ estate_artificers_trained_mage_hunters = {
 		modifier = {
 			land_morale = 0.1
 			naval_morale = 0.1
-			discipline = 0.05
-			shock_damage_received = -0.1
 		}
 	}
 	conditional_modifier = {
@@ -2333,58 +2322,6 @@ estate_artificers_focus_on_artificer_units = {
 	}
 	ai_will_do = {
 		factor = 5
-	}
-}
-estate_artificers_draft_artificers = {
-	icon = privilege_artificers_draft_artificers
-	max_absolutism = -10
-	conditional_modifier = { trigger = { has_absolutism_reduction_for_estate_privileges = yes } modifier = { max_absolutism = 2 } }
-	loyalty = 0.05
-	influence = 0.05
-	is_valid = {
-		NOT = { has_estate_privilege = estate_artificers_organization_strict_state_supervision }
-		NOT = { has_country_flag = artifice_no_base_privileges }
-		NOT = { has_country_flag = gor_vazumbrog_limited_artificery_privileges }
-	}
-	can_select = {
-		
-	}
-	can_revoke = {
-
-	}
-	on_granted = {
-		enable_estate_action = {
-			estate_action = GRANT_DRAFT_ARTIFICERS_ARTIFICE
-		}
-	}
-	on_invalid = {
-		disable_estate_action = {
-			estate_action = GRANT_DRAFT_ARTIFICERS_ARTIFICE
-		}
-	}
-	on_revoked = {
-		disable_estate_action = {
-			estate_action = GRANT_DRAFT_ARTIFICERS_ARTIFICE
-		}
-		if = {
-			limit = {
-				has_country_flag = ANB_estate_artificers_loyalty_refund
-			}
-			clr_country_flag = ANB_estate_artificers_loyalty_refund
-			add_estate_loyalty = {
-				estate = estate_artificers
-				loyalty = 20
-			}
-		}
-	}
-	penalties = {
-		
-	}
-	benefits = {
-		
-	}
-	ai_will_do = {
-		factor = 400
 	}
 }
 
@@ -3174,7 +3111,7 @@ artifice_invention_portable_turrets = {
 	benefits = {
 		artificers_privilege_slots = 1
 		dragon_command_privilege_slots = 1
-		siege_ability = 0.1
+		siege_ability = 0.075
 		tec_mechanists_influence = 0.02
 	}
 	ai_will_do = {
@@ -4031,7 +3968,7 @@ artifice_invention_living_mirrors = {
 		artificers_privilege_slots = 1
 		dragon_command_privilege_slots = 1
 		global_unrest = -2
-		num_accepted_cultures = 2
+		min_autonomy_in_territories = -0.1
 		tec_technomancy_influence = 0.02
 	}
 	ai_will_do = {
@@ -4511,8 +4448,7 @@ artifice_invention_prototype_tanks = {
 	benefits = {
 		artificers_privilege_slots = 1
 		dragon_command_privilege_slots = 1
-		cavalry_fire = 0.25
-		cavalry_power = 0.15
+		cavalry_power = 0.1
 		tec_brilliance_influence = 0.04
 	}
 	ai_will_do = {
@@ -4754,7 +4690,7 @@ artifice_invention_magic_missile_deployer = {
 	benefits = {
 		artificers_privilege_slots = 1
 		dragon_command_privilege_slots = 1
-		shock_damage_received = -0.1
+		shock_damage = 0.1
 		tec_technomancy_influence = 0.02
 	}
 	ai_will_do = {
@@ -4994,7 +4930,7 @@ artifice_invention_balloonboost_packs = {
 	benefits = {
 		artificers_privilege_slots = 1
 		dragon_command_privilege_slots = 1
-		leader_naval_manuever = 2
+		leader_naval_manuever = 1
 		leader_land_manuever = 2
 		tec_brilliance_influence = 0.04
 	}
@@ -5169,7 +5105,7 @@ artifice_invention_box_of_holding = {
 		artificers_privilege_slots = 1
 		dragon_command_privilege_slots = 1
 		#bonuses in paper provinces?
-		global_tariffs = 0.4
+		global_tariffs = 0.1
 		treasure_fleet_income = 0.1
 		tec_technomancy_influence = 0.02
 	}
@@ -5766,7 +5702,7 @@ artifice_invention_think_quik_drink_mix = {
 	}
 	benefits = {
 		artificers_privilege_slots = 1
-		all_power_cost = -0.05
+		all_power_cost = -0.025
 		tec_brilliance_influence = 0.06
 	}
 	ai_will_do = {
@@ -6209,7 +6145,7 @@ artifice_invention_sunbeam_armaments = {
 	}
 	benefits = {
 		artificers_privilege_slots = 1
-		siege_ability = 0.2
+		siege_ability = 0.1
 		tec_brilliance_influence = 0.02
 	}
 	ai_will_do = {
@@ -7494,7 +7430,7 @@ artifice_invention_believable_ruin_bomb = {
 	}
 	benefits = {
 		artificers_privilege_slots = 1
-		diplomatic_reputation = 3
+		diplomatic_reputation = 5
 		accept_vassalization_reasons = 5
 		tec_brilliance_influence = 0.02
 	}
@@ -7612,7 +7548,6 @@ artifice_invention_wonderous_lunchbox = {
 	}
 	benefits = {
 		artificers_privilege_slots = 1
-		development_cost = -0.1
 		land_attrition = -0.2
 		tec_brilliance_influence = 0.04
 	}
@@ -8065,7 +8000,7 @@ artifice_invention_centipedal_chests = {
 		artificers_privilege_slots = 1
 		dragon_command_privilege_slots = 1
 		envoy_travel_time = -0.25
-		shock_damage_received = -0.05
+		shock_damage = 0.05
 		tec_brilliance_influence = 0.02
 	}
 	ai_will_do = {
@@ -8638,8 +8573,8 @@ artifice_invention_weather_predicticator = {
 	}
 	benefits = {
 		artificers_privilege_slots = 1
-		global_trade_goods_size_modifier = 0.05
-		development_cost = -0.15
+		global_trade_goods_size_modifier = 0.1
+		development_cost = -0.1
 		tec_technomancy_influence = 0.04
 	}
 	ai_will_do = {
@@ -14986,8 +14921,8 @@ artifice_invention_kinetic_multiplier = {
 	benefits = {
 		artificers_privilege_slots = 1
 		tec_brilliance_influence = 0.02
-		cavalry_shock = 0.15
-		siege_ability = 0.1
+		cavalry_shock = 0.1
+		siege_ability = 0.05
 	}
 	ai_will_do = {
 		factor = 5
@@ -15045,8 +14980,7 @@ artifice_invention_reaver_axe_rifle = {
 	benefits = {
 		artificers_privilege_slots = 1
 		tec_brilliance_influence = 0.02
-		infantry_fire = 0.15
-		shock_damage = 0.10
+		infantry_fire = 0.1
 	}
 
 	ai_will_do = {
@@ -15739,7 +15673,6 @@ artifice_invention_kevlar_shields = {
 	benefits = {
 		artificers_privilege_slots = 1
 		tec_mechanists_influence = 0.02
-		shock_damage = 0.05
 		fire_damage_received = -0.05
 	}
 
