@@ -1,0 +1,3237 @@
+#
+#MT designed by Leaffrog
+northern_holds = {
+	slot = 1
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = F78 }
+
+	F78_cross_the_stones_gaze = { #possibly shift to slot 2
+		icon = mission_dominate_the_mediterranean
+		position = 9
+		required_missions = { F78_divenhal_markets }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					NOT = { owned_by = ROOT }
+					OR = {
+						province_group = east_divenhal_islands
+						area = outer_drolas_area
+						area = inner_drolas_area
+						AND = {
+							province_id = 379 #stonegaze
+							NOT = {
+								owner = {
+									has_opinion = {
+										who = ROOT
+										value = 120
+									}
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					has_port = yes
+					trade_goods = naval_supplies
+					OR = {
+						region = bahar_region
+						region = ourdia_region
+					}
+					OR = {
+						NOT = { base_production = 8 }
+						NOT = { has_shipyard_building_trigger = yes }
+						NOT = {
+							has_production_building_trigger = yes
+							has_building = wharf
+							has_building = impressment_offices
+						}
+					}
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 3
+								trade_goods = naval_supplies
+								has_shipyard_building_trigger = yes
+								base_production = 8
+								OR = {
+									has_production_building_trigger = yes
+									has_building = wharf
+									has_building = impressment_offices
+								}
+							}
+						}
+					}
+
+				}
+			}
+		}
+
+		trigger = {
+			east_divenhal_islands = {
+				type = all
+				owned_by = ROOT
+			}
+			outer_drolas_area = {
+				type = all
+				owned_by = ROOT
+			}
+			inner_drolas_area = {
+				type = all
+				owned_by = ROOT
+			}
+			379 = { #stonegaze
+				OR = {
+					owned_by = ROOT
+					owner = {
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+					}
+				}
+			}
+			num_of_owned_provinces_with = {
+				value = 3
+				trade_goods = naval_supplies
+				has_shipyard_building_trigger = yes
+				base_production = 8
+				OR = {
+					has_production_building_trigger = yes
+					has_building = wharf
+					has_building = impressment_offices
+				}
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = F78_expanding_goblin_fleet
+				duration = -1
+			}
+			custom_tooltip = overclan_discover_cannor_tt
+			hidden_effect = {
+				western_cannor_superregion = {
+					discover_country = ROOT
+				}
+			}
+		}
+	}
+
+	F78_descendants_and_ancestors = {
+		icon = mission_dwarf
+		position = 10
+		required_missions = { F78_cross_the_stones_gaze }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 525
+						province_id = 527
+					}
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 1
+								area = tungr_mountains_area
+								NOT = { province_id = 525 }
+								has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+				AND = {
+					province_id = 526 #Ovdal Tungr
+					OR = {
+						NOT = { has_chief_advisor_present = yes }
+						NOT = { has_seat_in_parliament = yes }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			526 = {
+				owned_by = ROOT
+				anb_has_seat_in_parliament = yes
+				has_chief_advisor_present = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				area = tungr_mountains_area
+				anb_has_seat_in_parliament = yes
+			}
+			has_enacted_parliament_action = { parliament_action = overclan_dwarven_tax_and_trade_rights }
+		}
+
+		effect = {
+			country_event = { 
+				id = flavour_overclan.8
+			}
+			if = {
+				limit = {
+					mission_completed = F78_promise_of_tolerance
+					mission_completed = F78_winged_mountains
+				}
+				custom_tooltip = f78_mad_religions_folk_removal_tt
+				hidden_effect = {
+					every_owned_province = {
+						remove_province_modifier = F78_mad_religions_folk
+					}
+					clr_country_flag = F78_mad_religions_folk
+				}
+			}
+			else = {
+				custom_tooltip = f78_mad_religions_folk_removal_tungr_tt
+				hidden_effect = {
+					tungr_mountains_area = {
+						remove_province_modifier = F78_mad_religions_folk
+					}
+				}
+			}
+		}
+	}
+				
+	F78_holds_of_marble_and_glass = {
+		icon = porcelain_from_meissen
+		position = 11
+		required_missions = { F78_descendants_and_ancestors }
+		provinces_to_highlight = {
+			OR = {
+				province_id = 2942 #Shaz
+				province_id = 4238 #Orlghelovar
+			}
+			OR = {
+				NOT = { owned_by = ROOT }
+				devastation = 0.01
+				NOT = { num_of_buildings_in_province = 5 }
+				has_seat_in_parliament = no
+				NOT = { hold_condition = { Repaired = yes } }
+			}
+		}
+
+		trigger = {
+			2942 = {
+				owned_by = ROOT
+				hold_condition = { Repaired = yes }
+				num_of_buildings_in_province = 5
+				anb_has_seat_in_parliament = yes
+				NOT = { devastation = 0.01 }
+			}
+			4238 = {
+				owned_by = ROOT
+				hold_condition = { Repaired = yes }
+				num_of_buildings_in_province = 5
+				anb_has_seat_in_parliament = yes
+				NOT = { devastation = 0.01 }
+			}
+		}
+
+		effect = {
+			2942 = {
+				change_culture = marble_dwarf
+				add_province_modifier = {
+					name = F78_marble_dwarf_influx
+					duration = 7300 #20 years
+				}
+				overclan_create_voltoj_academy = yes
+				add_human_minority_size_effect = yes
+				add_human_minority_size_effect = yes
+				add_elven_minority_size_effect = yes
+				add_elven_minority_size_effect = yes
+			}
+			4238 = {
+				change_culture = marble_dwarf
+				add_province_modifier = {
+					name = F78_marble_dwarf_influx
+					duration = 7300 #20 years
+				}
+				overclan_create_voltoj_academy = yes
+				add_human_minority_size_effect = yes
+				add_human_minority_size_effect = yes
+				add_elven_minority_size_effect = yes
+				add_elven_minority_size_effect = yes
+			}
+		}
+	}
+
+	F78_caverns_plight = {
+		icon = mission_underground_cave
+		position = 12
+		required_missions = { F78_holds_of_marble_and_glass }
+		provinces_to_highlight = {
+			has_terrain = cavern
+			OR = {
+				region = serpentreach_region
+				region = middle_dwarovar_region
+			}
+			OR = {
+				AND = {
+					owned_by = ROOT
+					OR = {
+						NOT = { development = 8 }
+						NOT = { has_courthouse_building_trigger = yes }
+						NOT = { anb_has_seat_in_parliament = yes }
+						NOT = { has_manufactory_trigger = yes }
+					}
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 2
+								has_terrain = cavern
+								development = 8
+								has_courthouse_building_trigger = yes
+								anb_has_seat_in_parliament = yes
+								has_manufactory_trigger = yes
+							}
+						}
+					}
+				}
+				AND = {
+					NOT = { owned_by = ROOT }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 10
+								has_terrain = cavern
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 10
+				has_terrain = cavern
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				has_terrain = cavern
+				development = 8
+				has_courthouse_building_trigger = yes
+				anb_has_seat_in_parliament = yes
+				has_manufactory_trigger = yes
+			}
+		}
+
+		effect = {
+			unlock_issue = {
+				issue = overclan_goblins_orcs_holds_act
+			}
+			serpentreach_region = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	F78_holds_where_light_shines = {
+		icon = mission_west_serpentspine_map
+		position = 13
+		required_missions = { F78_caverns_plight }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 4100 #V Skom
+					OR = {
+						devastation = 0.01
+						NOT = { num_of_buildings_in_province = 5 }
+						has_seat_in_parliament = no
+						NOT = { hold_condition = { Repaired = yes } }
+					}
+				}
+				AND = {
+					region = serpentreach_region
+					NOT = { owned_by = ROOT }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 40
+								region = serpentreach_region
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			4100 = {#Verkal Skomdihr
+				owned_by = ROOT
+				hold_condition = { Repaired = yes }
+				num_of_buildings_in_province = 5
+				anb_has_seat_in_parliament = yes
+				NOT = { devastation = 0.01 }
+			}
+			num_of_owned_provinces_with = {
+				value = 40
+				region = serpentreach_region
+			}
+		}
+
+		effect = {
+			4100 = {
+				overclan_create_voltoj_academy = yes
+				add_human_minority_size_effect = yes
+				add_human_minority_size_effect = yes
+				add_elven_minority_size_effect = yes
+				add_elven_minority_size_effect = yes
+			}
+			hidden_effect = {
+				country_event = {
+					id = flavour_overclan.21
+				}
+			}
+		}
+	}
+
+	F78_followers_of_the_dead_dragon = { #possibly trade columns with F78_inner_hold_seat
+		icon = mission_redscales
+		position = 14
+		required_missions = { F78_holds_where_light_shines }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = buradforge_area
+					OR = {
+						NOT = { has_pasha = yes }
+						NOT = { development = 8 }
+						NOT = { has_tax_building_trigger = yes }
+						NOT = { has_manpower_building_trigger = yes }
+						devastation = 0.01
+					}
+				}
+				AND = {
+					culture = darkscale_kobold
+					NOT = { has_seat_in_parliament = yes }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 2
+								culture = darkscale_kobold
+								anb_has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			accepted_culture = darkscale_kobold
+			num_of_owned_provinces_with = {
+				value = 2
+				culture = darkscale_kobold
+				anb_has_seat_in_parliament = yes
+			}
+			buradforge_area = {
+				owned_by = ROOT
+				has_pasha = yes
+				has_building = state_house
+			}
+			buradforge_area = {
+				type = all
+				development = 8
+				has_tax_building_trigger = yes
+				has_manpower_building_trigger = yes
+				NOT = { devastation = 0.01 }
+			}
+		}
+
+		effect = {
+			unlock_issue = { issue = overclan_sponsor_kobold_settlement }
+			add_country_modifier = {
+				name = F78_kobold_logistics_study
+				duration = -1
+			}
+			custom_tooltip = dead_dragon_minorities_tt
+			custom_tooltip = F78_mad_dwarovar_folk_removal_kobold_tt
+			hidden_effect = {
+				every_owned_province = {
+					limit = { province_group = hold_province }
+					add_kobold_minority_size_effect = yes
+				}
+				for = {
+					amount = 5
+					effect = "
+						random_owned_province = {
+							limit = {
+								superregion = bulwar_superregion
+								has_kobold_minority_trigger = no
+							}
+							add_kobold_minority_size_effect = yes
+						}
+					"
+				}
+				serpentreach_region = {
+					limit = { culture = darkscale_kobold }
+					remove_province_modifier = F78_mad_dwarovar_folk
+					clr_province_flag = f78_madness_is_due
+				}
+				buradforge_area = {
+					clr_province_flag = f78_kobolds_are_due
+				}
+			}
+		}
+	}
+}
+
+divenhal_eastern_holds = {
+	slot = 2
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = F78 }
+
+	F78_sharks_claim = {
+		icon = mission_growth_of_surat
+		position = 7
+		required_missions = { F78_toll_of_war }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					region = ourdia_region
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 510 #Bal Ourd
+					OR = {
+						devastation = 0.01
+						NOT = { num_of_buildings_in_province = 3 }
+						NOT = { has_province_modifier = castanorian_citadel }
+						NOT = { development = 10 }
+					}
+				}
+				AND = {
+					culture = ourdi
+					devastation = 0.01
+				}
+			}
+		}
+
+		trigger = {
+			ourdia_region = {
+				type = all
+				owned_by = ROOT
+			}
+			510 = {
+				num_of_buildings_in_province = 3
+				development = 10
+				NOT = { devastation = 0.01 }
+				has_province_modifier = castanorian_citadel
+			}
+			all_owned_province = {
+				OR = {
+					NOT = { devastation = 0.01 }
+					NOT = { culture = ourdi }
+				}
+			}
+		}
+
+		effect = {
+			510 = {
+				overclan_create_voltoj_academy = yes
+				center_of_trade = 1
+				add_goblin_minority_size_effect = yes
+				add_goblin_minority_size_effect = yes
+				add_province_modifier = {
+					name = F78_mouth_of_the_ourdi_sea
+					duration = -1
+				}
+			}
+		}
+	}
+
+	F78_divenhal_markets = {
+		icon = mission_horde_trade
+		position = 8
+		required_missions = { F78_sharks_claim }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 1312 #Bahar node
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 60
+						}
+					}
+				}
+				AND = {
+					province_id = 1303 #Dostanesck node
+					NOT = {
+						trade_share = {
+							country = ROOT
+							share = 30
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					owner = {
+						AND = {
+							NOT = { trade_embargo_by = ROOT }
+							NOT = { transfers_trade_power_to = ROOT }
+							1303 = {
+								trade_share = {
+									country = PREV
+									share = 10
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					superregion = western_cannor_superregion
+					NOT = {
+						owner = {
+							has_opinion = {
+								who = ROOT
+								value = 120
+							}
+						}
+					}
+					NOT = {
+						ROOT = {
+							calc_true_if = {
+								amount = 2
+								all_known_country = {
+									capital_scope = {
+										superregion = western_cannor_superregion
+									}
+									has_opinion = {
+										who = ROOT
+										value = 120
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		trigger = {
+			calc_true_if = {
+				amount = 2
+				all_known_country = {
+					capital_scope = {
+						superregion = western_cannor_superregion
+					}
+					has_opinion = {
+						who = ROOT
+						value = 120
+					}
+				}
+			}
+			num_of_trade_embargos = 1
+			NOT = { overextension_percentage = 0.01 }
+			1312 = { #Bahar node
+				trade_share = {
+					country = ROOT
+					share = 60
+				}
+			}
+			1303 = {#Dostanesck node
+				trade_share = {
+					country = ROOT
+					share = 30
+				}
+			}
+		}
+
+		effect = {
+			generate_scaled_advisor_of_type_and_religion_effect = {
+				type = trader
+				discount = yes
+				religion = ROOT
+			}
+			452 = { #Gem Isle
+				add_province_modifier = {
+					name = F78_trade_investments
+					duration = -1
+				}
+			}
+			6760 = { #Pasah
+				add_province_modifier = {
+					name = F78_trade_investments
+					duration = -1
+				}
+			}
+			535 = { #Tenkar
+				add_province_modifier = {
+					name = F78_trade_investments
+					duration = -1
+				}
+			}
+			east_divenhal_islands = {
+				add_permanent_claim = ROOT
+			}
+			inner_drolas_area = {
+				add_permanent_claim = ROOT
+			}
+			outer_drolas_area = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	F78_promise_of_tolerance = {
+		icon = mission_corin
+		position = 10
+		required_missions = {
+			F78_cross_the_stones_gaze
+			F78_first_cannorian_idea
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 452 #Gem Isle
+						province_id = 6760 #Pasah
+						province_id = 535 #Tenkar
+					}
+					OR = {
+						NOT = { development = 10 }
+						NOT = { has_production_building_trigger = yes }
+						NOT = { has_trade_building_trigger = yes }
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					has_seat_in_parliament = no
+					OR = {
+						religion = regent_court
+						religion = corinite
+					}
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 2
+								has_seat_in_parliament = yes
+								OR = {
+									religion = regent_court
+									religion = corinite
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					hre_size = 4
+					has_discovered = ROOT
+					owner = {
+						is_part_of_hre = yes
+						NOT = {
+							has_opinion = {
+								who = ROOT
+								value = 120
+							}
+						}
+					}
+					NOT = {
+						ROOT = {
+							calc_true_if = {
+								amount = 4
+								any_known_country = {
+									is_part_of_hre = yes
+									has_opinion = {
+										who = ROOT
+										value = 120
+									}
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					exists = Z01
+					owned_by = Z01
+					owner = {
+						NOT = {
+							has_opinion = {
+								who = ROOT
+								value = 120
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					NOT = { hre_size = 4 }
+					NOT = { exists = Z01 }
+					continent = europe
+					owner = {
+						OR = {
+							culture_group = anbennarian
+							primary_culture = wexonard
+							primary_culture = vertesker
+							primary_culture = nathalairey
+							primary_culture = silver_dwarf
+							primary_culture = imperial_gnome
+							primary_culture = imperial_halfling
+							primary_culture = dovesworn_gnoll
+						}
+						NOT = {
+							has_opinion = {
+								who = ROOT
+								value = 120
+							}
+						}
+					}
+					NOT = {
+						ROOT = {
+							calc_true_if = {
+								all_known_country = {
+									capital_scope = { continent = europe }
+									OR = {
+										culture_group = anbennarian
+										primary_culture = wexonard
+										primary_culture = vertesker
+										primary_culture = nathalairey
+										primary_culture = silver_dwarf
+										primary_culture = imperial_gnome
+										primary_culture = imperial_halfling
+										primary_culture = dovesworn_gnoll
+									}
+									has_opinion = {
+										who = ROOT
+										value = 120
+									}
+								}
+								amount = 2
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		trigger = {
+			452 = {
+				development = 10
+				has_production_building_trigger = yes
+				has_trade_building_trigger = yes
+			}
+			6760 = {
+				development = 10
+				has_production_building_trigger = yes
+				has_trade_building_trigger = yes
+			}
+			535 = {
+				development = 10
+				has_production_building_trigger = yes
+				has_trade_building_trigger = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				anb_has_seat_in_parliament = yes
+				OR = {
+					religion = regent_court
+					religion = corinite
+				}
+			}
+			if = {
+				limit = { hre_size = 4 }
+				calc_true_if = {
+					all_known_country = {
+						is_part_of_hre = yes
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+					}
+					amount = 4
+				}
+			}
+			else_if = {
+				limit = { exists = Z01 }
+				Z01 = {
+					has_opinion = {
+						who = ROOT
+						value = 120
+					}
+				}
+			}
+			else = {
+				calc_true_if = {
+					all_known_country = {
+						capital_scope = { continent = europe }
+						OR = {
+							culture_group = anbennarian
+							primary_culture = wexonard
+							primary_culture = vertesker
+							primary_culture = nathalairey
+							primary_culture = silver_dwarf
+							primary_culture = imperial_gnome
+							primary_culture = imperial_halfling
+							primary_culture = dovesworn_gnoll
+						}
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+					}
+					amount = 2
+				}
+			}
+		}
+
+		effect = {
+			#coastal bahar trade centers
+			custom_tooltip = f78_tolerance_gain_tt
+			516 = {
+				add_province_modifier = {
+					name = F78_cannorian_traders_mod
+					duration = -1
+				}
+			}
+			hidden_effect = {
+				521 = {
+					add_province_modifier = {
+						name = F78_cannorian_traders_mod
+						duration = -1
+					}
+				}
+				526 = {
+					add_province_modifier = {
+						name = F78_cannorian_traders_mod
+						duration = -1
+					}
+				}
+				536 = {
+					add_province_modifier = {
+						name = F78_cannorian_traders_mod
+						duration = -1
+					}
+				}
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						capital_scope = { continent = europe }
+						primary_culture = moon_elf
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+					}
+				}
+				516 = { add_elven_minority_size_effect = yes }
+				hidden_effect = {
+					521 = { add_elven_minority_size_effect = yes }
+					526 = { add_elven_minority_size_effect = yes }
+					536 = { add_elven_minority_size_effect = yes }
+				}
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						capital_scope = { continent = europe }
+						OR = {
+							tag = Z01
+							culture_group = anbennarian
+							primary_culture = wexonard
+							primary_culture = vertesker
+						}
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+					}
+				}
+				516 = { add_human_minority_size_effect = yes }
+				hidden_effect = {
+					521 = { add_human_minority_size_effect = yes }
+					526 = { add_human_minority_size_effect = yes }
+					536 = { add_human_minority_size_effect = yes }
+				}
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						capital_scope = { continent = europe }
+						primary_culture = imperial_gnome
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+					}
+				}
+				516 = { add_gnomish_minority_size_effect = yes }
+				hidden_effect = {
+					521 = { add_gnomish_minority_size_effect = yes }
+					526 = { add_gnomish_minority_size_effect = yes }
+					536 = { add_gnomish_minority_size_effect = yes }
+				}
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						capital_scope = { continent = europe }
+						primary_culture = silver_dwarf
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+						culture_is_dwarven = yes
+					}
+				}
+				516 = { add_dwarven_minority_size_effect = yes }
+				hidden_effect = {
+					521 = { add_dwarven_minority_size_effect = yes }
+					526 = { add_dwarven_minority_size_effect = yes }
+					536 = { add_dwarven_minority_size_effect = yes }
+				}
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						capital_scope = { continent = europe }
+						primary_culture = imperial_halfling
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+					}
+				}
+				516 = { add_halfling_minority_size_effect = yes }
+				hidden_effect = {
+					521 = { add_halfling_minority_size_effect = yes }
+					526 = { add_halfling_minority_size_effect = yes }
+					536 = { add_halfling_minority_size_effect = yes }
+				}
+			}
+			
+			if = {
+				limit = {
+					mission_completed = F78_winged_mountains
+					mission_completed = F78_descendants_and_ancestors
+				}
+				custom_tooltip = f78_mad_religions_folk_removal_tt
+				hidden_effect = {
+					clr_country_flag = F78_mad_religions_folk
+					every_owned_province = {
+						remove_province_modifier = F78_mad_religions_folk
+					}
+				}
+			}
+			else = {
+				custom_tooltip = f78_mad_religions_folk_removal_ourdi_tt
+				hidden_effect = {
+					every_owned_province = {
+						limit = {
+							OR = {
+								culture = ilatani
+								culture = ourdi
+							}
+						}
+						remove_province_modifier = F78_mad_religions_folk
+					}
+				}
+			}
+		}
+	}
+
+	F78_second_goblin_navy = {
+		icon = mission_arabian_sea_trade
+		position = 12
+		required_missions = {
+			F78_promise_of_tolerance
+			F78_holds_of_marble_and_glass
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 526 #Ovdal Tungr
+					OR = {
+						NOT = { development = 50 }
+						NOT = { has_shipyard_building_trigger = yes }
+						NOT = { has_dock_building_trigger = yes }
+					}
+				}
+				AND = {
+					owner = { navy_size = ROOT }
+					has_port = yes
+					NOT = { is_overseas = yes }
+					NOT = { owned_by = ROOT }
+					sea_zone = {
+						OR = {
+							area = sea_of_stone_area
+							area = sea_of_follies_area
+							area = east_diven_area
+							area = gulf_of_glass_area
+							area = brasanni_sea_area
+						}
+					}
+				}
+			}
+			#"divenhal" countries with larger navy
+			#So like the borders, daravans folly Bahar, Busilar + Eborthil, Western Bulwar and like Kheterata (border the eastern divenhal)
+			#any home port in there
+		}
+		
+		trigger = {
+			custom_trigger_tooltip = {
+				tooltip = have_strongest_navy_east_divenhal_tt
+				NOT = {#is there a better way?
+					any_known_country = {
+						navy_size = ROOT
+						any_owned_province = {
+							has_port = yes
+							NOT = { is_overseas = yes }
+							sea_zone = {#the province's port is on the tile:
+								OR = {
+									area = sea_of_stone_area
+									area = sea_of_follies_area
+									area = east_diven_area
+									area = gulf_of_glass_area
+									area = brasanni_sea_area
+								}
+							}
+						}
+					}
+				}
+			}
+			526 = {
+				development = 50
+				has_shipyard_building_trigger = yes
+				has_dock_building_trigger = yes
+			}
+			OR = {
+				AND = {
+					has_dwarven_advisor = yes
+					has_goblin_advisor = yes
+					high_tolerance_dwarven_race_trigger = yes			
+				}
+				dip_power = 100
+			}
+		}
+
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						AND = {
+							has_dwarven_advisor = yes
+							has_goblin_advisor = yes
+							high_tolerance_dwarven_race_trigger = yes			
+						}
+					}
+				}
+				add_dip_power = -100
+			}
+			country_event = { id = flavour_overclan.10 }
+		}
+	}
+
+	F78_inner_hold_seat = {
+		icon = mission_the_grand_bazaar
+		position = 14
+		required_missions = { F78_holds_where_light_shines }
+		provinces_to_highlight = {
+			province_group = serpentreach_hold_province
+			OR = {
+				NOT = { has_pasha = yes }
+				NOT = { has_seat_in_parliament = yes }
+				NOT = { infantry_in_province = 10 }
+				devastation = 0.01
+			}
+		}
+		
+		trigger = {
+			serpentreach_hold_province = {
+				type = all
+				owned_by = ROOT
+				has_pasha = yes
+				anb_has_seat_in_parliament = yes
+				infantry_in_province = 10
+				NOT = { devastation = 0.01 }
+			}
+			has_enacted_parliament_action = { parliament_action = overclan_inner_holds_representation_act }
+		}
+
+		effect = {
+			custom_tooltip = F78_mad_dwarovar_folk_removal_tt
+			hidden_effect = {
+				serpentreach_region = {
+					limit = {
+						NOT = { culture_group = kobold }
+						NOT = { has_province_flag = f78_kobolds_are_due }
+					}
+					remove_province_modifier = F78_mad_dwarovar_folk
+					clr_province_flag = f78_madness_is_due
+				}
+			}
+			add_country_modifier = {
+				name = F78_studied_dwarven_administration
+				duration = -1
+			}
+			custom_tooltip = overclan_dwarven_unlocked_tt
+			unlock_issue = { issue = overclan_sponsor_dwarven_settlement }
+		}
+	}
+
+	F78_segbandal = {
+		icon = mam_tabriz
+		position = 18
+		required_missions = {
+			F78_inner_hold_seat
+			F78_surani_cities
+		}
+		provinces_to_highlight = {
+			province_id = 4124 #Segdihr
+			OR = {
+				NOT = { owned_by = ROOT }
+				NOT = { num_of_buildings_in_province = 5 }
+				devastation = 0.01
+				hold_condition = { Damaged = yes }
+			}
+		}
+		
+		trigger = {
+			4124 = {
+				owned_by = ROOT
+				hold_condition = { Repaired = yes }
+				NOT = { devastation = 0.01 }
+				num_of_buildings_in_province = 5
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.17 }
+			set_country_flag = hold_operation #lets us click dig button
+		}
+	}
+
+	F78_control_gold_tide = {
+		icon = reform_the_monte
+		position = 19
+		required_missions = { F78_segbandal }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = verkal_gulan_area
+						province_id = 2915
+					}
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					owned_by = ROOT
+					trade_goods = gold
+					NOT = { area_for_scope_province = { has_building = state_house } }
+				}
+				AND = {
+					province_id = 2914 #Verkal Gulan
+					OR = {
+						NOT = { owned_by = ROOT }
+						NOT = { num_of_buildings_in_province = 5 }
+						devastation = 0.01
+						NOT = { hold_condition = { Repaired = yes } }
+						NOT = { has_dwarven_hold_3 = yes }
+						NOT = { has_pasha = yes }
+						NOT = { has_seat_in_parliament = yes }
+					}
+				}
+			}
+		}
+		
+		trigger = {
+			all_owned_province = {
+				OR = {
+					NOT = { trade_goods = gold }
+					has_building = state_house
+					area_for_scope_province = {
+						type = any
+						has_building = state_house
+					}
+				}
+			}
+			treasury = 500
+			verkal_gulan_area = {
+				type = all
+				owned_by = ROOT
+			}
+			2915 = {
+				owned_by = ROOT
+			}
+			2914 = {
+				owned_by = ROOT
+				hold_condition = { Repaired = yes }
+				NOT = { devastation = 0.01 }
+				has_dwarven_hold_3 = yes
+				has_pasha = yes
+				anb_has_seat_in_parliament = yes
+				num_of_buildings_in_province = 5
+			}
+		}
+
+		effect = {
+			add_treasury = -500
+			2914 = {
+				add_province_modifier = {
+					name = F78_gold_bank
+					duration = -1
+				}
+			}
+			every_owned_province = {
+				limit = { trade_goods = gold }
+				add_dwarven_minority_size_effect = yes
+				add_province_modifier = {
+					name = F78_new_dwarven_miners
+					duration = 3650
+				}
+			}
+			custom_tooltip = overclan_sponsor_dwarven_settlement_upgrade_tt
+		}
+	}
+}
+
+central_conflict = {
+	slot = 3
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = F78 }
+
+	F78_toll_of_war = {
+		icon = mission_skull
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 526 #Ovdal Tungr
+						province_id = 521 #Re-uyel
+						province_id = 536 #Aqatbar
+					}
+					OR = {
+						NOT = { owned_by = ROOT }
+						NOT = { num_of_buildings_in_province = 4 }
+						devastation = 0.01
+					}
+				}
+				AND = {
+					province_id = 536 #Aqatbar
+					NOT = { development = 30 }
+				}
+			}
+		}
+
+		trigger = {
+			536 = {
+				development = 30
+				owned_by = ROOT
+				num_of_buildings_in_province = 4
+				NOT = { devastation = 0.01 }
+			}
+			526 = {
+				owned_by = ROOT
+				num_of_buildings_in_province = 4
+				NOT = { devastation = 0.01 }
+			}
+			521 = {
+				owned_by = ROOT
+				num_of_buildings_in_province = 4
+				NOT = { devastation = 0.01 }
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.2 }
+			custom_tooltip = OVERCLAN_NEW_VOLTOJ_SCHOOL
+		}
+	}
+
+	F78_revelatory_eastern_words = {
+		icon = per_restore_the_avesta
+		position = 8
+		required_missions = {
+			F78_sharks_claim
+			F78_rule_the_hills
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 2909 #Ebbusubtu
+					NOT = {
+						owner = {
+							OR = {
+								has_spy_network_from = {
+									who = ROOT
+									value = 30
+								}
+								has_opinion = {
+									who = ROOT
+									value = 120
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					culture_group = bulwari
+					NOT = { has_tax_building_trigger = yes }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 10
+								culture_group = bulwari
+								has_tax_building_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			2909 = {
+				owner = {
+					OR = {
+						has_spy_network_from = {
+							who = ROOT
+							value = 30
+						}
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+					}
+				}
+			}
+			stability = 1
+			employed_advisor = {
+				religion = bulwari_sun_cult
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				culture_group = bulwari
+				has_tax_building_trigger = yes
+			}
+		}
+
+		effect = {
+			add_prestige = 15
+			if = {
+				limit = { NOT = { religion = the_jadd } }
+				add_stability = -1 #TODO keep the stab hit even if you're jadd?
+			}
+			change_religion = the_jadd
+			for = {
+				amount = 10
+				effect = "
+					random_owned_province = {
+						limit = {
+							religion = bulwari_sun_cult
+							OR = {
+								culture_group = elven
+								has_human_majority_trigger = yes
+							}
+						}
+						change_religion = the_jadd
+					}
+				"
+			}
+			set_country_flag = F78_mad_religions_folk
+			hidden_effect = {
+				country_event = {
+					id = flavour_overclan.20
+					days = 30
+				}
+			}
+		}
+	}
+
+	F78_first_cannorian_idea = {
+		icon = mission_moon_throne
+		position = 9
+		required_missions = {
+			F78_divenhal_markets
+			F78_revelatory_eastern_words
+			F78_moons_mountain
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = tungr_mountains_area
+						area = crathanor_area
+						area = tencmarck_area
+						area = kuzak_area
+						area = siffiraeri_area
+					}
+					OR = {
+						NOT = { owned_by = ROOT }
+						NOT = { has_pasha = yes }
+					}
+				}
+				AND = {
+					is_capital = yes
+					continent = europe
+					owner = {
+						OR = {
+							is_emperor = yes
+							is_elector = yes
+							tag = Z01
+						}
+						NOT = {
+							has_opinion = {
+								who = ROOT
+								value = 120
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			if = {
+				limit = { exists = Z01 }
+				Z01 = {
+					has_opinion = {
+						who = ROOT
+						value = 120
+					}
+				}
+			}
+			else = {
+				OR = {
+					emperor = {
+						has_opinion = {
+							who = ROOT
+							value = 120
+						}
+					}
+					calc_true_if = {
+						all_elector = {
+							has_opinion = {
+								who = ROOT
+								value = 120
+							}
+						}
+						amount = 2
+					}
+				}
+			}
+			government_reform_progress = 100
+			reform_level = 3
+			tungr_mountains_area = {
+				owned_by = ROOT
+				has_pasha = yes
+			}
+			crathanor_area = {
+				owned_by = ROOT
+				has_pasha = yes
+			}
+			tencmarck_area = {
+				owned_by = ROOT
+				has_pasha = yes
+			}
+			kuzak_area = {
+				owned_by = ROOT
+				has_pasha = yes
+			}
+			siffiraeri_area = {
+				owned_by = ROOT
+				has_pasha = yes
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.6 }
+			custom_tooltip = OVERCLAN_NEW_GOVERNMENT
+		}
+	}
+
+	F78_old_sun_new_sun = {
+		icon = mission_sunset_alternative
+		position = 10
+		required_missions = { F78_first_cannorian_idea }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 536 #Aqatbar
+					NOT = { has_chief_advisor_present = yes }
+				}
+				AND = {
+					owned_by = ROOT
+					religion = old_bulwari_sun_cult
+					OR = {
+						NOT = { has_tax_building_trigger = yes }
+						NOT = { has_seat_in_parliament = yes }
+					}
+					NOT = {
+						owner = {
+							num_of_owned_provinces_with = {
+								value = 2
+								religion = old_bulwari_sun_cult
+								has_tax_building_trigger = yes
+								anb_has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					religion = bulwari_sun_cult
+					OR = {
+						NOT = { has_tax_building_trigger = yes }
+						NOT = { has_seat_in_parliament = yes }
+					}
+					NOT = {
+						owner = {
+							num_of_owned_provinces_with = {
+								value = 2
+								religion = bulwari_sun_cult
+								has_tax_building_trigger = yes
+								anb_has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+				AND = {
+					culture_group = elven
+					NOT = { has_seat_in_parliament = yes }
+					NOT = {
+						owner = {
+							any_owned_province = {
+								culture_group = elven
+								anb_has_seat_in_parliament = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			has_enacted_parliament_action = { parliament_action = overclan_church_and_state_act }
+			num_of_owned_provinces_with = {
+				value = 2
+				religion = old_bulwari_sun_cult
+				has_tax_building_trigger = yes
+				anb_has_seat_in_parliament = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 2
+				religion = bulwari_sun_cult
+				has_tax_building_trigger = yes
+				anb_has_seat_in_parliament = yes
+			}
+			any_owned_province = {
+				culture_group = elven
+				anb_has_seat_in_parliament = yes
+			}
+			536 = {
+				has_chief_advisor_present = yes
+			}
+		}
+
+		effect = {
+			for = {
+				amount = 6
+				effect = "
+					random_owned_province = {
+						limit = {
+							NOT = { religion = old_bulwari_sun_cult }
+							OR = {
+								culture = gelkar
+								culture = bahari
+								culture = kuzarami
+							}
+						}
+						change_religion = old_bulwari_sun_cult
+					}
+				"
+			}
+			add_country_modifier = {
+				name = F78_old_sun_cultist_connections
+				duration = -1
+			}
+			custom_tooltip = f78_mad_religions_folk_removal_kuzak_tt
+			hidden_effect = {
+				kuzak_area = {
+					remove_province_modifier = F78_mad_religions_folk
+				}
+				every_owned_province = {
+					limit = { religion = old_bulwari_sun_cult }
+					remove_province_modifier = F78_mad_religions_folk
+				}
+				every_owned_province = {
+					limit = { culture = sun_elf }
+					remove_province_modifier = F78_mad_religions_folk
+				}
+				every_owned_province = {
+					limit = { culture = bahari }
+					remove_province_modifier = F78_mad_religions_folk
+				}
+			}
+		}
+	}
+
+	F78_expanding_bureaucracy = {
+		icon = mission_plc_governance_act
+		position = 12
+		required_missions = { F78_winged_mountains }
+		provinces_to_highlight = {
+			has_voltoj_academy = yes
+			OR = {
+				AND = {
+					NOT = { has_major_voltoj_academy = yes }
+					NOT = {
+						owner = {
+							num_of_owned_provinces_with = {
+								value = 2
+								has_major_voltoj_academy = yes
+							}
+						}
+					}
+				}
+				AND = {
+					OR = {
+						NOT = { has_courthouse_building_trigger = yes }
+						NOT = { has_manufactory_trigger = yes }
+					}
+					NOT = {
+						owner = {
+							num_of_owned_provinces_with = {
+								value = 3
+								has_voltoj_academy = yes
+								has_courthouse_building_trigger = yes
+								has_manufactory_trigger = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			has_enacted_parliament_action = { parliament_action = overclan_expand_voltoj_recruitment_act }
+			num_of_owned_provinces_with = {
+				value = 2
+				has_major_voltoj_academy = yes
+			}
+			num_of_owned_provinces_with = {
+				value = 3
+				has_voltoj_academy = yes
+				has_courthouse_building_trigger = yes
+				has_manufactory_trigger = yes
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.30 }
+		}
+	}
+
+	F78_gunpowder_army = {
+		icon = mission_ramsteel_gunpowder
+		position = 13
+		required_missions = {
+			F78_expanding_bureaucracy
+			F78_second_goblin_navy
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 510 #Bal Ourd
+						province_id = 521 #Re-uyel
+					}
+					OR = {
+						NOT = { has_manpower_building_trigger = yes }
+						NOT = { has_forcelimit_building_trigger = yes }
+						AND = {
+							has_chief_advisor_present = yes
+							NOT = { #either is fine, but we want one of them
+								510 = { has_unique_voltoj_building = yes }
+								521 = { has_unique_voltoj_building = yes }
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					has_discovered = ROOT
+					owner = { culture_group = dwarven }
+					NOT = {
+						ROOT = {
+							any_known_country = {
+								culture_group = dwarven
+								has_opinion = {
+									who = ROOT
+									value = 120
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			OR = {
+				army_tradition = 80
+				AND = {
+					num_of_regiments_at_full_drill = 30
+					army_professionalism = 0.2
+				}
+			}
+			510 = {
+				has_manpower_building_trigger = yes
+				has_forcelimit_building_trigger = yes
+			}
+			521 = {
+				has_manpower_building_trigger = yes
+				has_forcelimit_building_trigger = yes
+			}
+			OR = {
+				510 = {
+					has_unique_voltoj_building = yes
+				}
+				521 = {
+					has_unique_voltoj_building = yes
+				}
+			}
+			any_known_country = {
+				culture_group = dwarven
+				has_opinion = {
+					who = ROOT
+					value = 120
+				}
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.11 }
+		}
+	}
+
+	F78_corner_divenhal_trade = {
+		icon = mission_magnificent_castle
+		position = 14
+		required_missions = { F78_gunpowder_army }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = anzabad_area
+						area = anzarzax_area
+						area = medurubar_area
+						area = upper_brasan_area
+						area = lower_brasan_area
+					}
+					OR = {
+						NOT = { owned_by = ROOT }
+						devastation = 0.01
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 565 #Brasan province
+						province_id = 561 #Medurubar province
+					}
+					OR = {
+						NOT = { num_of_buildings_in_province = 5 }
+						NOT = { has_seat_in_parliament = yes }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			anzabad_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			anzarzax_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			medurubar_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			upper_brasan_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			lower_brasan_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			565 = {
+				num_of_buildings_in_province = 5
+				anb_has_seat_in_parliament = yes
+			}
+			561 = {
+				num_of_buildings_in_province = 5
+				anb_has_seat_in_parliament = yes
+			}
+		}
+
+		effect = {
+			565 = {
+				overclan_create_voltoj_academy = yes
+			}
+			561 = {
+				overclan_create_voltoj_academy = yes
+			}
+			unlock_issue = {
+				issue = overclan_sponsor_brassani_vessels
+			}
+			zansap_area = {
+				add_permanent_claim = ROOT
+			}
+			irrliam_area = {
+				add_permanent_claim = ROOT
+			}
+			add_country_modifier = {
+				name = F78_control_divenhal_trade
+				duration = -1
+			}
+		}
+	}
+
+	F78_control_the_heart = {
+		icon = mission_conquer_andhra_vij
+		position = 15
+		required_missions = {
+			F78_corner_divenhal_trade
+			F78_shores_of_lake_naza
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = zansap_area
+						area = irrliam_area
+						area = kumarkand_area
+						area = bulwar_area
+					}
+					OR = {
+						NOT = { owned_by = ROOT }
+						devastation = 0.01
+					}
+				}
+				AND = {
+					province_id = 601 #Bulwar province
+					OR = {
+						NOT = { num_of_buildings_in_province = 5 }
+						NOT = { has_seat_in_parliament = yes }
+						has_province_modifier = old_bulwari_canals
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 565 #Brasan province
+						province_id = 561 #Medurubar province
+					}
+					OR = {
+						NOT = { has_major_voltoj_academy = yes } #medium voltoj 
+						NOT = { development = 25 }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			zansap_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			irrliam_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			kumarkand_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			bulwar_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			601 = {
+				num_of_buildings_in_province = 5
+				anb_has_seat_in_parliament = yes
+				NOT = { has_province_modifier = old_bulwari_canals }
+			}
+			565 = {
+				development = 25
+				has_major_voltoj_academy = yes
+			}
+			561 = {
+				development = 25
+				has_major_voltoj_academy = yes
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavour_overclan.31
+			}
+		}
+	}
+
+	F78_declawing_xhazob = {
+		icon = mission_rb_control_state_religion
+		position = 15
+		required_missions = { F78_control_the_heart }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_group = sur_mountains
+					OR = {
+						NOT = { owned_by = ROOT }
+						AND = {
+							culture_group = gnollish
+							NOT = { has_pasha = yes }
+						}
+					}
+				}
+				AND = {
+					province_id = 688 #Ekluzagnu or Ekyrigrax
+					OR = {
+						NOT = { num_of_buildings_in_province = 5 }
+						NOT = { has_seat_in_parliament = yes }
+						NOT = { has_building = state_house }
+						AND = {
+							NOT = { has_province_modifier = restored_ekluzagnu_fortress }
+							NOT = { has_province_modifier = restored_ekluzagnu_palace }
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			sur_mountains = {
+				type = all
+				owned_by = ROOT
+				OR = {
+					NOT = { culture_group = gnollish }
+					has_pasha = yes
+				}
+			}
+			688 = {
+				num_of_buildings_in_province = 5
+				anb_has_seat_in_parliament = yes
+				has_building = state_house
+				OR = {
+					has_province_modifier = restored_ekluzagnu_fortress
+					has_province_modifier = restored_ekluzagnu_palace
+				}
+			}
+			high_tolerance_gnollish_race_trigger = yes
+			has_country_modifier = racial_focus_gnollish
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.14 }
+			custom_tooltip = OVERCLAN_NEW_VOLTOJ_SCHOOL
+		}
+	}
+
+	F78_western_faith = {
+		icon = mission_pray_light
+		position = 16
+		required_missions = { F78_declawing_xhazob }
+
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					is_capital = yes
+					has_discovered = ROOT
+					owner = { religion = ravelian }
+					NOT = {
+						ROOT = {
+							any_known_country = {
+								religion = ravelian
+								has_opinion = {
+									who = ROOT
+									value = 120
+								}
+							}
+						}
+					}
+				}
+				AND = {
+					province_group = voltoj_city_lower_river_province
+					NOT = {
+						voltoj_city_lower_river_province = {
+							has_large_voltoj_academy = yes
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			any_known_country = {
+				religion = ravelian
+				has_opinion = {
+					who = ROOT
+					value = 120
+				}
+			}
+			voltoj_city_lower_river_province = {
+				has_large_voltoj_academy = yes
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.16 }
+		}
+	}
+
+	F78_first_of_many = {
+		icon = mission_strengthen_the_vegvar
+		position = 19
+		required_missions = { F78_segbandal }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					area = hehos_legacy_area
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 4078 #Hehodovar
+					OR = {
+						NOT = { num_of_buildings_in_province = 5 }
+						devastation = 0.01
+						NOT = { hold_condition = { Repaired = yes } }
+						NOT = { has_dwarven_hold_2 = yes }
+						NOT = { has_pasha = yes }
+						NOT = { has_seat_in_parliament = yes }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			hehos_legacy_area = {
+				type = all
+				owned_by = ROOT
+			}
+			4078 = {
+				owned_by = ROOT
+				hold_condition = { Repaired = yes }
+				has_dwarven_hold_2 = yes
+				anb_has_seat_in_parliament = yes
+				has_pasha = yes
+				num_of_buildings_in_province = 5
+				NOT = { devastation = 0.01 }
+			}
+		}
+
+		effect = {
+			define_advisor = {
+				type = natural_scientist
+				skill = 3
+				discount = yes
+			}
+			add_country_modifier = {
+				name = F78_secrets_of_the_dwarover
+				duration = -1
+			}
+		}
+	}
+
+	F78_represent_new_segband = {
+		icon = per_protect_the_west_iranian
+		position = 20
+		required_missions = {
+			F78_control_gold_tide
+			F78_first_of_many
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 643 #azka-sur
+					OR = {
+						NOT = { has_chief_advisor_present = yes }
+						NOT = { development = 30 }
+						NOT = { has_province_modifier = F78_dwarven_caravanserais }
+					}
+				}
+				AND = {
+					province_id = 4124 #Segdihr
+					NOT = { has_dwarven_hold_5 = yes }
+				}
+				AND = {
+					OR = {
+						province_id = 4218 #Gor Ozumbrog
+						province_id = 4217 #Gor Vazumbrog
+					}
+					NOT = { has_dwarven_hold_2 = yes }
+				}
+				AND = {
+					province_id = 2915 #hero's vale
+					NOT = {
+						has_great_project = {
+							type = heros_gate
+							tier = 3
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			643 = {
+				has_chief_advisor_present = yes
+				has_unique_voltoj_building = yes
+				development = 30
+			}
+			2915 = {
+				has_great_project = {
+					type = heros_gate
+					tier = 3
+				}
+			}
+			4124 = {#do we care about repair & ownership
+				has_dwarven_hold_5 = yes
+			}
+			4218 = {
+				has_dwarven_hold_2 = yes
+			}
+			4217 = {
+				has_dwarven_hold_2 = yes
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.33 }
+			custom_tooltip = SEGBANDEL_REPRESENTATION
+		}
+	}
+
+	F78_new_legacy = {
+		icon = per_tim_legacy_of_timur
+		position = 21
+		required_missions = {
+			F78_represent_new_segband
+			F78_last_extension
+		}
+		provinces_to_highlight = {
+			province_group = voltoj_city_province
+			OR = {
+				NOT = { development = 45 }
+				AND = {
+					province_group = voltoj_hold_city_province
+					NOT = { development = 80 }
+				}
+				AND = {
+					has_unique_voltoj_building = no
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 7
+								has_unique_voltoj_building = yes
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			num_of_owned_provinces_with = {
+				value = 7
+				has_unique_voltoj_building = yes
+			}
+			voltoj_city_province = {
+				type = all
+				development = 45
+			}
+			voltoj_hold_city_province = {
+				type = all
+				development = 80
+			}
+			OR = {
+				in_golden_age = yes
+				has_had_golden_age = yes
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavour_overclan.0
+			}
+		}
+	}
+}
+
+marching_east = {
+	slot = 4
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = F78 }
+
+	F78_sheeps_hills = {
+		icon = mission_rb_conquer_wales
+		position = 6
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = kuzak_area
+						area = elusadul_area
+					}
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 650 #Gorihradin
+					OR = {
+						NOT = { infantry_in_province = 10 }
+						NOT = { has_fort_building_trigger = yes }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			kuzak_area = {
+				type = all
+				owned_by = ROOT
+			}
+			elusadul_area = {
+				type = all
+				owned_by = ROOT
+			}
+			650 = {
+				infantry_in_province = 10
+				has_fort_building_trigger = yes
+			}
+		}
+
+		effect = {
+			lawassar_area = {
+				add_permanent_claim = ROOT
+			}
+			gelkalis_area = {
+				add_permanent_claim = ROOT
+			}
+			country_event = {
+				id = flavour_overclan.3
+			}
+		}
+	}
+
+	F78_rule_the_hills = {
+		icon = mission_the_caucasus_rus
+		position = 7
+		required_missions = { F78_sheeps_hills }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 665 #Gelkalis
+					OR = {
+						devastation = 0.01
+						NOT = { owned_by = ROOT }
+						NOT = { development = 30 }
+						NOT = { num_of_buildings_in_province = 3 }
+						NOT = { has_production_building_trigger = yes }
+					}
+				}
+				AND = {
+					culture = gelkar
+					devastation = 0.01
+					owned_by = ROOT
+				}
+			}
+		}
+
+		trigger = {
+			NOT = {
+				any_owned_province = {
+					AND = {
+						culture = gelkar
+						devastation = 0.01
+					}
+				}
+			}
+			665 = { #Gelkalis
+				owned_by = ROOT
+				development = 30
+				has_production_building_trigger = yes
+				num_of_buildings_in_province = 3
+				NOT = { devastation = 0.01 }
+			}
+		}
+
+		effect = {
+			665 = {
+				overclan_create_voltoj_academy = yes
+			}
+			gelkalis_area = {
+				add_goblin_minority_size_effect = yes # should hit both
+			}
+			harpy_hills_region = {
+				add_permanent_claim = ROOT
+			}
+		}
+	}
+
+	F78_moons_mountain = {
+		icon = mission_moon_moon
+		position = 8
+		required_missions = { F78_rule_the_hills }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 549 #Birsartansbar province
+					OR = {
+						devastation = 0.01
+						NOT = { development = 20 }
+						NOT = { has_courthouse_building_trigger = yes }
+					}
+				}
+				AND = {
+					OR = {
+						area = kuz_mountains_area
+						area = imuluses_area
+						area = birsartenslib_area
+					}
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					is_capital = yes
+					has_discovered = ROOT
+					owner = { culture_is_elven = yes }
+					NOT = { owner = { is_rival = ROOT } }
+					NOT = { owner = { is_enemy = ROOT } }
+					NOT = {
+						ROOT = {
+							any_known_country = {
+								culture_is_elven = yes
+								NOT = { is_rival = ROOT }
+								NOT = { is_enemy = ROOT }
+								has_opinion = {
+									who = ROOT
+									value = 120
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			549 = {
+				development = 20
+				has_courthouse_building_trigger = yes
+				NOT = { devastation = 0.01 }
+			}
+			if = {
+				limit = {
+					any_known_country = {
+						culture_is_elven = yes
+						NOT = { is_rival = ROOT }
+						NOT = { is_enemy = ROOT }
+					}
+				}
+				any_known_country = {
+					culture_is_elven = yes
+					has_opinion = {
+						who = ROOT
+						value = 120
+					}
+				}
+			}
+			kuz_mountains_area = {
+				type = all
+				owned_by = ROOT
+			}
+			imuluses_area = {
+				type = all
+				owned_by = ROOT
+			}
+			birsartenslib_area = {
+				type = all
+				owned_by = ROOT
+			}
+		}
+
+		effect = {
+			add_country_modifier = {
+				name = F78_phoenix_administration_lessons
+				duration = 7300 #20 years
+			}
+			549 = {
+				change_trade_goods = paper
+				add_province_modifier = {
+					name = F78_old_phoenix_administration_center
+					duration = -1
+				}
+			}
+		}
+	}
+
+	F78_winged_mountains = {
+		icon = mission_heunthume
+		position = 11
+		required_missions = { F78_old_sun_new_sun }
+		provinces_to_highlight = {
+			province_id = 660 #Harpylen province?
+			OR = {
+				devastation = 0.01
+				NOT = { has_courthouse_building_trigger = yes }
+				NOT = { has_production_building_trigger = yes }
+				NOT = { has_tax_building_trigger = yes }
+				NOT = { has_trade_building_trigger = yes }
+				NOT = { has_seat_in_parliament = yes }
+			}
+		}
+
+		trigger = {
+			660 = {#harpylen province
+				anb_has_seat_in_parliament = yes
+				has_courthouse_building_trigger = yes
+				has_production_building_trigger = yes
+				has_tax_building_trigger = yes
+				has_trade_building_trigger = yes
+				NOT = { devastation = 0.01 }
+			}
+		}
+
+		effect = {
+			660 = {
+				add_province_modifier = {
+					name = F78_dam_infrastructure_mod
+					duration = -1
+				}
+			}
+			665 = {
+				add_province_modifier = {
+					name = F78_dam_infrastructure_mod
+					duration = -1
+				}
+			}
+			country_event = { id = flavour_overclan.7 }
+			if = {
+				limit = {
+					mission_completed = F78_promise_of_tolerance
+					mission_completed = F78_descendants_and_ancestors
+				}
+				custom_tooltip = f78_mad_religions_folk_removal_tt
+				hidden_effect = {
+					every_owned_province = {
+						remove_province_modifier = F78_mad_religions_folk
+					}
+					clr_country_flag = F78_mad_religions_folk
+				}
+			}
+			else = {
+				custom_tooltip = f78_mad_religions_folk_removal_harpy_tt
+				hidden_effect = {
+					every_owned_province = {
+						limit = { culture_group = harpy }
+						remove_province_modifier = F78_mad_religions_folk
+					}
+				}
+			}
+		}
+	}
+
+	F78_uniform_army = {
+		icon = mission_janissaries
+		position = 12
+		required_missions = { F78_winged_mountains }
+		provinces_to_highlight = {
+			province_id = 665 #Gelkalis province
+		}
+
+		trigger = {
+			665 = {
+				development = 30
+				has_manufactory_trigger = yes
+				province_has_center_of_trade_of_level = 2
+				NOT = { devastation = 0.01 }
+				has_chief_advisor_present = yes
+			}
+		}
+
+		effect = {
+			traz_buranun_area = {
+				add_permanent_claim = ROOT
+			}
+			north_naza_area = {
+				add_permanent_claim = ROOT
+			}
+			east_naza_area = {
+				add_permanent_claim = ROOT
+			}
+			south_naza_area = {
+				add_permanent_claim = ROOT
+			}
+			country_event = { id = flavour_overclan.9 }
+		}
+	}
+
+	F78_shores_of_lake_naza = {
+		icon = mission_conquer_malwa_guj
+		position = 14
+		required_missions = { F78_uniform_army }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = traz_buranun_area
+						area = north_naza_area
+						area = east_naza_area
+						area = south_naza_area
+					}
+					OR = {
+						devastation = 0.01
+						NOT = { owned_by = ROOT }
+					}
+				}
+				AND = {
+					province_id = 613 #province
+					OR = {
+						NOT = { num_of_buildings_in_province = 5 }
+						NOT = { has_seat_in_parliament = yes }
+					}
+				}
+			}
+		}
+
+		trigger = {
+			traz_buranun_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			north_naza_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			east_naza_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			south_naza_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			613 = {
+				num_of_buildings_in_province = 5
+				anb_has_seat_in_parliament = yes
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.12 }
+			custom_tooltip = OVERCLAN_NEW_VOLTOJ_SCHOOL
+		}
+	}
+
+	F78_elven_city = {
+		icon = mam_city_thousand_minarets
+		position = 16
+		required_missions = {
+			F78_control_the_heart
+			F78_shores_of_lake_naza
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = sareyand_area
+						area = avamezan_area
+						area = harklum_area
+					}
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 625 #Sareyand province
+					OR = {
+						NOT = { num_of_buildings_in_province = 5 }
+						NOT = { has_seat_in_parliament = yes }
+					}
+				}
+				AND = {
+					owned_by = ROOT
+					has_any_elven_pop_trigger = yes
+					NOT = { num_of_times_improved_by_owner = 2 }
+					NOT = {
+						ROOT = {
+							num_of_owned_provinces_with = {
+								value = 10
+								has_any_elven_pop_trigger = yes
+								num_of_times_improved_by_owner = 2
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			sareyand_area = {
+				type = all
+				owned_by = ROOT
+			}
+			avamezan_area = {
+				type = all
+				owned_by = ROOT
+			}
+			harklum_area = {
+				type = all
+				owned_by = ROOT
+			}
+			high_tolerance_elven_race_trigger = yes
+			625 = {
+				anb_has_seat_in_parliament = yes
+				num_of_buildings_in_province = 5
+			}
+			num_of_owned_provinces_with = {
+				value = 10
+				has_any_elven_pop_trigger = yes
+				num_of_times_improved_by_owner = 2
+			}
+		}
+
+		effect = {
+			country_event = {
+				id = flavour_overclan.13
+			}
+		}
+	}
+
+	F78_surani_cities = {
+		icon = mission_advance_to_the_arabian_sea
+		position = 17
+		required_missions = {
+			F78_declawing_xhazob
+			F78_elven_city
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						area = azka_sur_area
+						area = eduz_vacyn_area
+					}
+					devastation = 0.01
+					NOT = { owned_by = ROOT }
+				}
+				AND = {
+					province_id = 625
+					NOT = {
+						has_great_project = {
+							type = ash_palace
+							tier = 2
+						}
+					}
+				}
+				AND = {
+					OR = {
+						province_id = 631 #Eduz_vacyn Eduz vacyn province
+						province_id = 643 #Azka Sur azka-sur azka_sur province
+					}
+					OR = {
+						NOT = { num_of_buildings_in_province = 5 }
+						NOT = { has_seat_in_parliament = yes }
+					}
+				}
+				AND = {
+					province_group = voltoj_city_province
+					province_group = suran_river #probably not suran_and_baranun_river
+					NOT = { development = 30 }
+				}
+			}
+		}
+
+		trigger = {
+			azka_sur_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			eduz_vacyn_area = {
+				type = all
+				owned_by = ROOT
+				NOT = { devastation = 0.01 }
+			}
+			643 = {
+				anb_has_seat_in_parliament = yes
+				num_of_buildings_in_province = 5
+			}
+			631 = {
+				anb_has_seat_in_parliament = yes
+				num_of_buildings_in_province = 5
+			}
+			625 = {
+				has_great_project = {
+					type = ash_palace
+					tier = 2
+				}
+			}
+			OR = {
+				625 = { has_major_voltoj_academy = yes }
+				613 = { has_major_voltoj_academy = yes }
+			}
+			voltoj_city_province = {
+				type = all
+				OR = {
+					development = 30
+					NOT = { province_group = suran_river }
+				} #TODO possibly TT this
+			}
+		}
+
+		effect = {
+			country_event = { id = flavour_overclan.32 }
+			custom_tooltip = OVERCLAN_NEW_VOLTOJ_SCHOOL
+			hidden_effect = {
+				country_event = {
+					id = flavour_overclan.15
+					days = 90
+				}
+			}
+		}
+	}
+}
+
+artifice_and_roads = {
+	slot = 5
+	generic = no
+	ai = yes
+	has_country_shield = yes
+	potential = { tag = F78 }
+
+	F78_lawasarri_wisdom = {
+		icon = mission_bektashi
+		position = 8
+		required_missions = { F78_rule_the_hills }
+		provinces_to_highlight = {
+			province_id = 655 #Lawassar province
+			OR = {
+				NOT = { development = 10 }
+				NOT = { infantry_in_province = 10 }
+				NOT = { has_tax_building_trigger = yes }
+				NOT = { has_building = mage_tower }
+			}
+		}
+
+		trigger = {
+			655 = {
+				development = 10
+				infantry_in_province = 10
+				has_tax_building_trigger = yes
+				has_building = mage_tower
+			}
+			custom_trigger_tooltip = {
+				tooltip = has_bulwari_advisor_tt
+				OR = {
+					employed_advisor = { culture = bahari }
+					employed_advisor = { culture = gelkar }
+					employed_advisor = { culture = brasanni }
+					employed_advisor = { culture = surani }
+					employed_advisor = { culture = zanite }
+					employed_advisor = { culture = abtazari }
+					employed_advisor = { culture = kuzarami }
+					employed_advisor = { culture = maqeti }
+					employed_advisor = { culture = masnsih }
+					employed_advisor = { culture = sadnatu }
+					employed_advisor = { culture = bulwari_half_elf }
+					employed_advisor = { culture = itrahuresi }
+				}
+			}
+			if = {
+				limit = { has_estate = estate_mages }
+				estate_loyalty = {
+					estate = estate_mages
+					loyalty = 50
+				}
+				estate_influence = {
+					estate = estate_mages
+					influence = 40
+				}
+			}
+			else = {
+				treasury = 100
+				dip_power = 100
+			}
+		}
+
+		effect = {
+			if = {
+				limit = { NOT = { has_estate = estate_mages } }
+
+				add_treasury = -100
+				add_dip_power = -100
+			}
+			country_event = { id = flavour_overclan.4 }
+			custom_tooltip = lawasarri_wisdom_insight_tt
+		}
+	}
+
+	F78_students_to_teachers = {
+		icon = mission_mage_general
+		position = 9
+		required_missions = { F78_lawasarri_wisdom }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 665 #Gelkalis
+					NOT = { has_building = mage_tower }
+				}
+			}
+			AND = {
+				province_id = 655 #lazzaward
+				NOT = {
+					has_great_project = {
+						type = mount_lazzaward
+						tier = 2
+					}
+				}
+			}
+		}
+
+		trigger = {
+			665 = {
+				has_building = mage_tower
+				#unique building isn't unlocked yet
+			}
+			655 = {
+				has_great_project = {
+					type = mount_lazzaward
+					tier = 2
+				}
+			}
+		}
+
+		effect = {
+			set_country_flag = F78_inscription_buildings_unlocked
+			custom_tooltip = overclan_inscription_unlocked_tt
+			unlock_issue = {
+				issue = overclan_promote_new_magi
+			}
+			define_general = {
+				fire = 3
+				shock = 8
+				manuever = 4
+				siege = 3
+			}
+		}
+	}
+
+	F78_goblins_academy = {
+		icon = mission_lit_jesuit_academy
+		position = 12
+		required_missions = {
+			F78_winged_mountains
+			F78_students_to_teachers
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					province_id = 536 #Aqatbar
+					OR = {
+						NOT = { has_building = mage_tower }
+						NOT = {
+							has_great_project = {
+								type = eduz_ginakku
+								tier = 2
+							}
+						}
+					}
+				}
+				AND = {
+					is_capital = yes
+					OR = {
+						continent = europe
+						continent = africa
+					}
+					has_discovered = ROOT
+					owner = { culture_group = gnomish }
+					NOT = {
+						ROOT = {
+							any_country = {
+								culture_group = gnomish
+								capital_scope = {
+									OR = {
+										continent = europe
+										continent = africa
+									}
+								}
+								has_opinion = {
+									who = ROOT
+									value = 120
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		trigger = {
+			536 = {
+				has_building = mage_tower
+				has_great_project = {
+					type = eduz_ginakku
+					tier = 2
+				}
+			}
+			if = {
+				limit = {
+					any_country = {
+						culture_group = gnomish
+						capital_scope = { 
+							OR = {
+								continent = europe
+								continent = africa
+							}
+						}
+					}
+				}
+				any_known_country = {
+					culture_group = gnomish
+					has_opinion = {
+						who = ROOT
+						value = 120
+					}
+				}
+			}
+			else = {
+				any_known_country = {
+					num_of_owned_provinces_with = {
+						value = 1
+						culture_group = gnomish
+					}
+					has_opinion = {
+						who = ROOT
+						value = 120
+					}
+				}
+			}
+		}
+
+		effect = {
+			set_country_flag = unlocked_artifice_invention_machine_inscribers
+			custom_tooltip = F78_unlocked_artifice_invention_machine_inscribers_tt
+			set_country_flag = F78_artificery_buildings_unlocked
+			custom_tooltip = overclan_artificery_unlocked_tt
+		}
+	}
+
+	F78_investing_in_order_magic = {
+		icon = mission_delighted_mage
+		position = 15
+		required_missions = {
+			F78_shores_of_lake_naza
+			F78_goblins_academy
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					OR = {
+						province_id = 6761 #Annailsub
+						province_id = 609 #Ulmis Idiqlat
+					}
+					OR = {
+						NOT = { development = 20 }
+						NOT = { has_building = state_house }
+						NOT = { has_building = mage_tower }
+						NOT = { has_seat_in_parliament = yes }
+					}
+				}
+				AND = {
+					province_id = 536 #Aqatbar
+					has_unique_voltoj_building = no
+				}
+			}
+		}
+
+		trigger = {
+			has_enacted_parliament_action = { parliament_action = overclan_expand_voltoj_recruitment_act }
+			536 = {
+				has_unique_voltoj_building = yes
+			}
+			6761 = {
+				development = 20
+				has_building = state_house
+				#num_of_times_expanded_infrastructure = 1 #just a hint
+				has_building = mage_tower
+				anb_has_seat_in_parliament = yes
+			}
+			609 = {
+				development = 20
+				has_building = state_house
+				#num_of_times_expanded_infrastructure = 1 #just a hint
+				has_building = mage_tower
+				anb_has_seat_in_parliament = yes
+			}
+		}
+
+		effect = {
+			526 = {
+				remove_province_modifier = F23_flooded_depths
+			}
+			set_country_flag = unlocked_artifice_invention_order_inscribed_forges
+			custom_tooltip = F78_unlocked_artifice_invention_order_inscribed_forges_tt
+			set_country_flag = F78_order_buildings_unlocked
+			custom_tooltip = overclan_order_unlocked_tt
+		}
+	}
+
+	F78_aqatbar_path = {
+		icon = byz_city_of_worlds_desire
+		position = 18
+		required_missions = {
+			F78_surani_cities
+			F78_investing_in_order_magic
+		}
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = ROOT
+					superregion = bulwar_superregion
+					has_province_modifier = golden_highway_under_construction
+				}
+				AND = {
+					province_group = golden_highway_aqatbar
+					NOT = { units_in_province = 1 }
+				}
+				AND = {
+					province_id = 536 #Aqatbar
+					NOT = { development = 50 }
+				}
+				AND = {
+					province_id = 665 #Gelkalis
+					NOT = { development = 40 }
+				}
+				AND = {
+					province_id = 688 #Ekluzagnu
+					NOT = { development = 40 }
+				}
+			}
+		}
+
+		trigger = {
+			has_global_flag = golden_highway_bulwar_proper_started
+			has_global_flag = golden_highway_far_bulwar_started
+			NOT = {
+				any_owned_province = {
+					superregion = bulwar_superregion
+					has_province_modifier = golden_highway_under_construction
+				}
+			}
+			golden_highway_aqatbar = {
+				type = all
+				units_in_province = 1
+			}
+			536 = {
+				development = 50
+			}
+			665 = {
+				development = 40
+			}
+			688 = {
+				development = 40
+			}
+		}
+
+		effect = {
+			golden_highway_aqatbar = {
+				add_permanent_province_modifier = {
+					name = golden_highway_under_construction
+					duration = -1
+				}
+				hidden_effect = { province_event = { id = golden_highway.1 days = 180 random = 365 } }
+			}
+		}
+	}
+
+	F78_last_extension = {
+		icon = mission_the_grand_trunk_road_dlh
+		position = 20
+		required_missions = { F78_aqatbar_path }
+		provinces_to_highlight = {
+			OR = {
+				AND = {
+					owned_by = ROOT
+					superregion = bulwar_superregion
+					has_province_modifier = golden_highway_under_construction
+				}
+				AND = {
+					province_group = golden_highway_bahar
+					NOT = { units_in_province = 1 }
+				}
+				AND = {
+					province_id = 526 #Ovdal Tungr province
+					NOT = { development = 80 }
+				}
+				AND = {
+					province_id = 510 #Bal Ourd province
+					NOT = { development = 50 }
+				}
+				AND = {
+					province_id = 521 #Re-uyel province
+					NOT = { development = 50 }
+				}
+			}
+		}
+
+		trigger = {
+			NOT = {
+				any_owned_province = {
+					superregion = bulwar_superregion
+					has_province_modifier = golden_highway_under_construction
+				}
+			}
+			golden_highway_bahar = {
+				type = all
+				units_in_province = 1
+			}
+			526 = {
+				development = 80
+			}
+			510 = {
+				development = 50
+			}
+			521 = {
+				development = 50
+			}
+		}
+
+		effect = {
+			golden_highway_bahar = {
+				add_permanent_province_modifier = {
+					name = golden_highway_under_construction
+					duration = -1
+				}
+				hidden_effect = { province_event = { id = golden_highway.1 days = 180 random = 365 } }
+			}
+		}
+	}
+}
