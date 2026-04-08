@@ -172,6 +172,7 @@ on_startup = {
 		flavour_star_rider.1 #Star Rider Start
 		flavour_nispac.1 #Nispac Starting Event
 		flavor_beikdugang.17 # Beikdugang intro
+		shadowdreamer.1 #Shadowdreamer Starting Event
 
 		#Silver Families
 		silver_families.1		#Silmuna
@@ -4357,8 +4358,26 @@ on_siege_won_country = {
 		FROM = { remove_province_modifier = RSP_x_marks_the_spot }
 		country_event = { id = flavour_RSP.11 }
 	}
+	#shadowdreamer 
+	if = {
+		limit = {
+			tag = H83
+			has_reform = H83_dream_dominion_reform
+			FROM = {
+				OR = {
+					has_terrain = dwarven_hold
+					has_terrain = dwarven_hold_surface
+				}
+				hold_condition = { Repaired = yes }
+			}
+		}
+		add_government_power = {
+	        mechanic_type = anb_shadowdreamer_dreamfire
+	        power_type = dreamfire
+	        value = 15
+        }
+	}
 }
-
 # country
 # root = losing country, from = location
 on_siege_lost_country = {
@@ -9042,6 +9061,83 @@ on_monthly_pulse = {
 			}
 		}
 	}
+	if = {
+		limit = {
+			is_or_was_tag = { tag = H83 }
+		}
+		if = {
+			limit = {
+				has_reform = H83_dreamfire_crusade_reform
+				OR = {
+					any_war_enemy_country = {
+						culture_group = dwarven
+					}
+					AND = {
+						has_country_flag = H83_upgraded_crusade
+						OR = {
+							any_war_enemy_country = {
+								culture_group = troll
+							}
+							any_war_enemy_country = {
+								culture_group = goblin
+							}
+						}
+					}
+				}
+			}
+			add_country_modifier = {
+				name = H83_dreamfire_crusade_at_war_with_dwarf
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				has_reform = H83_dream_dominion_reform
+				any_war_enemy_country = {
+					culture_group = dwarven
+				}
+			}
+			add_country_modifier = {
+				name = H83_dreamfire_dominion_at_war_with_dwarf
+				duration = -1
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					NOT = {
+						has_country_flag = H83_upgraded_crusade
+						any_war_enemy_country = {
+							culture_group = dwarven
+						}
+					}
+					NOT = {
+						any_war_enemy_country = {
+							culture_group = dwarven
+						}
+						any_war_enemy_country = {
+							culture_group = troll
+						}
+						any_war_enemy_country = {
+							culture_group = goblin
+						}
+					}
+				}
+			}
+			remove_country_modifier = H83_dreamfire_crusade_at_war_with_dwarf
+		}
+		if = {
+			limit = {
+				has_country_modifier = H83_dreamfire_dominion_at_war_with_dwarf
+				NOT = {
+					any_war_enemy_country = {
+						culture_group = dwarven
+					}
+				}
+			}
+			remove_country_modifier = H83_dreamfire_dominion_at_war_with_dwarf
+		}
+	}
 
 	planetouched_land_share_equalizer_effect = yes
 }
@@ -9626,6 +9722,21 @@ on_yearly_pulse = {
             }
         }
     }
+
+
+	if = {
+		limit = {
+			has_reform = H83_dream_dominion_reform
+			has_government_power = {
+				mechanic_type = anb_shadowdreamer_dreamfire
+				power_type = dreamfire
+				value = 95
+			}
+		}
+		country_event = {
+			id = blorc.101
+		}
+	}
 }
 
 on_yearly_pulse_2 = {
@@ -18419,6 +18530,19 @@ on_province_owner_change = {
 		}
 	}
 
+	if = {
+		limit = {
+			owner = {
+				has_country_flag = H83_dream_transport_network_flag
+			}
+			continent = serpentspine
+		}
+		add_province_modifier = {
+			name = H83_dreamforged_transport_network
+			duration = -1
+		}
+	}
+
 	#Kimanis Wine Cults
 	if = {
 		limit = {
@@ -18620,8 +18744,38 @@ on_province_owner_change = {
 		}
 		reveria_change_province_names_effect = yes
 	}
+	
+	if = {
+		limit = {
+			owner = {
+				has_country_flag = H83_fires_of_war_flag
+            }
+			OR = {
+                trade_goods = copper
+                trade_goods = iron
+                trade_goods = gold
+                trade_goods = mithril
+                trade_goods = serpentbloom
+                trade_goods = grain
+                trade_goods = livestock
+                trade_goods = fungi
+                trade_goods = wine
+                trade_goods = fish
+                trade_goods = spices
+                trade_goods = tea
+                trade_goods = sugar
+                trade_goods = coffee
+                trade_goods = cocoa
+                trade_goods = cloves
+                trade_goods = salt
+			}
+		}
+		add_province_modifier = {
+			name = H83_the_fires_of_war_modifier
+			duration = -1
+		}
+	}
 }
-
 # country 1.35
 on_parliament_debate_reset = {
 	on_parliament_debate_reset_effect = yes
